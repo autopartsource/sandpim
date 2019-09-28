@@ -20,7 +20,7 @@ if($yearcount<=40){$groupcount=4;}
 if($yearcount<=30){$groupcount=3;}
 if($yearcount<=20){$groupcount=2;}
 if($yearcount<=10){$groupcount=1;}
-
+// comment
 
 $yearcount=count($years);
 $groupsize=intval(count($years)/$groupcount);
