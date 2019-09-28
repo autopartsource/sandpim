@@ -5,6 +5,7 @@ include_once('./class/pimClass.php');
 $vcdb=new vcdb;
 //$pim= new pim;
 
+
 $makeid=intval($_GET['makeid']);
 $modelid=intval($_GET['modelid']);
 $years=$vcdb->getYears($makeid,$modelid);
@@ -13,12 +14,12 @@ $years=$vcdb->getYears($makeid,$modelid);
 
 $groupcount=5;
 $yearcount=count($years);
-if($yearcount<=70){$yearcount=6;}
-if($yearcount<=60){$yearcount=5;}
-if($yearcount<=40){$yearcount=4;}
-if($yearcount<=30){$yearcount=3;}
-if($yearcount<=20){$yearcount=2;}
-if($yearcount<=10){$yearcount=1;}
+if($yearcount<=70){$groupcount=6;}
+if($yearcount<=60){$groupcount=5;}
+if($yearcount<=40){$groupcount=4;}
+if($yearcount<=30){$groupcount=3;}
+if($yearcount<=20){$groupcount=2;}
+if($yearcount<=10){$groupcount=1;}
 
 
 $yearcount=count($years);
