@@ -16,6 +16,7 @@ if($modelcount<=40){$groupcount=4;}
 if($modelcount<=30){$groupcount=3;}
 if($modelcount<=20){$groupcount=2;}
 if($modelcount<=10){$groupcount=1;}
+//comment
 
 $groupsize=intval(count($models)/$groupcount);
 $i=0; $groupnumber=0; $groupemodeles=array();
