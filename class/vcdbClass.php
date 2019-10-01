@@ -92,6 +92,24 @@ class vcdb
   return $name;
  }
 
+ function niceMMYofBasevid($basevehicelid)
+ {
+  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $nice='not found';
+  if($stmt=$db->conn->prepare('select MakeName,ModelName,YearID from BaseVehicle,Make,Model where Make.MakeID=BaseVehicle.MakeID and Model.ModelID=BaseVehicle.ModelID and BaseVehicle.BaseVehicleID=? order by MakeName, ModelName, YearID'))
+  {
+   $stmt->bind_param('i', $basevehicelid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $nice=$row['MakeName'].', '.$row['ModelName'].', '.$row['YearID'];
+   }
+  }else{echo 'problem with prepare:'.$db->conn->error;}
+  $db->close();
+  return $nice;
+ }
+
 
 
  function getVehiclesForBaseVehicleid($basevehicleid)

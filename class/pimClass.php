@@ -23,6 +23,27 @@ class pim
   return $apps;
  }
 
+
+ function getAppsByPartnumber($partnumber)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $apps=array();
+  if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+  {
+   $stmt->bind_param('s', $partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $attributes=$this->getAppAttributes($row['id']);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes);
+   }
+  }
+  $db->close();
+  return $apps;
+ }
+
+
  function getFavoriteMakes()
  {
   $db = new mysql; $db->dbname='pim'; $db->connect();
@@ -62,6 +83,7 @@ class pim
   return $app;
  }
 
+
  function getAppAttributes($appid)
  {
   $db = new mysql; $db->dbname='pim'; $db->connect();
@@ -82,6 +104,128 @@ class pim
  }
 
 
+ function getPart($partnumber)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $part=false;
+  if($stmt=$db->conn->prepare('select * from part where partnumber=?'))
+  {
+   $stmt->bind_param('s', $partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $part=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'replacedby'=>$row['replacedby']);
+   }
+  }
+  $db->close();
+  return $part;
+ }
+
+
+ function getOIDdata($oid)
+ {
+  $data=false;
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+
+  // see if this oid is attched to an app
+  if($stmt=$db->conn->prepare('select id from application where oid=?'))
+  {
+   $stmt->bind_param('s', $oid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   { // found a hit in applications - call the getApp function to get the actual data
+    $appid=$row['id'];
+    $app=$this->getApp($appid);
+    $data=array('oid'=>$oid,'type'=>'app',$data=$app);
+    $db->close();
+    return $data;
+   }
+  }
+
+  // see if this oid is attached to a part
+  if($stmt=$db->conn->prepare('select partnumber from part where oid=?'))
+  {
+   $stmt->bind_param('s', $oid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   { // found a hit in part - call the getPart function to get the actual data
+    $partnumber=$row['partnumber'];
+    $part=$this->getPart($partnumber);
+    $data=array('oid'=>$oid,'type'=>'part',$data=$part);
+    $db->close();
+    return $data;
+   }
+  }
+
+  // see if this oid is attached to an asset
+
+  $db->close();
+  return $data;
+ }
+
+ function getOIDsInSlice($sliceid,$limit)
+ {
+  $oids=array();
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+
+  // consult slice table to get a list of appcategories to query the application table for 
+
+  $appcategories=array(0=>17);
+  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+
+
+  if($stmt=$db->conn->prepare('select oid from application where status=0 and appcategory in('.$categorylist.') limit ?'))
+  {
+   $stmt->bind_param('i', $limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $oids[]=$row['oid'];
+   }
+  }
+
+  // consult slice table to get a list of assetcategories to query the asset table for 
+
+
+
+
+  $db->close();
+  return $oids;
+ }
+
+
+ function updateAppOID($appid)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application set oid=? where id=?'))
+  {
+   $oid=$this->newoid();
+   $stmt->bind_param('si', $oid, $appid);
+   $stmt->execute();
+  }
+  $db->close();
+  return $oid;
+ }
+
+
+ function updatePartOID($partnumber)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update part set oid=? where partnumber=?'))
+  {
+   $oid=$this->newoid();
+   $stmt->bind_param('ss', $oid, $partnumber);
+   $stmt->execute();
+  }
+  $db->close();
+  return $oid;
+ }
+
+
  function getAppCategories()
  {
   $categories=array();
@@ -98,6 +242,26 @@ class pim
   $db->close();
   return $categories;
  }
+
+
+ function getPartCategories()
+ {
+  $categories=array();
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('select id,name from partcategory order by name'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $categories[]=array('id'=>$row['id'],'name'=>$row['name']);
+   }
+  }
+  $db->close();
+  return $categories;
+ }
+
+
 
  function appCategoryName($appcategoryid)
  {
@@ -116,6 +280,26 @@ class pim
   $db->close();
   return $name;
  }
+
+ function partCategoryName($partcategoryid)
+ {
+  $name='('.$partcategoryid.') Not Found';
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('select name from partcategory where id=?'))
+  {
+   $stmt->bind_param('i', $partcategoryid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $name=$row['name'];
+   }
+  }
+  $db->close();
+  return $name;
+ }
+
+
 
  function getBackgroundjobs($jobtype,$status)
  {
@@ -226,12 +410,6 @@ class pim
   return $jobid;
  }
 
-
-
-
-
-
-
  function newoid()
  {
   $charset=array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
@@ -243,6 +421,47 @@ class pim
   return $oid;
  }
 
+
+ function validPart($partnumber)
+ {
+  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $exists=false;
+  if($stmt=$db->conn->prepare('select oid from part where partnumber=?'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($result=$stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $exists=true;
+     }
+    } // else{echo 'problem with execute';}
+   } // else{echo 'problem with bind';}
+  } // else{echo 'problem with prepare';}
+  $db->close();
+  return $exists;
+ }
+
+ function createPart($partnumber,$partcategory,$parttypeid)
+ {
+  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $success=false;
+  if(!$this->validPart($partnumber))
+  {
+   $replacedby=''; $lifecyclestatus='2'; $oid=$this->newoid();
+   if($stmt=$db->conn->prepare('insert into part (partnumber,partcategory,parttypeid,replacedby,lifecyclestatus,oid) values(?,?,?,?,?,?)'))
+   {
+    if($stmt->bind_param('siisss', $partnumber,$partcategory,$parttypeid,$replacedby,$lifecyclestatus,$oid))
+    {
+     $success=$stmt->execute();
+    } // else{echo 'problem with bind';}
+   } // else{echo 'problem with prepare';}
+  } // else{echo 'already exists';}
+  $db->close();
+  return $success;
+ }
 
  function createAppFromACESsnippet($xml,$appcategory)
  {
@@ -322,6 +541,7 @@ class pim
     }
    }
    $app_count++;
+   $this->createPart($partnumber,0,$parttypeid);
   }
   $db->close();
   return $app_count;

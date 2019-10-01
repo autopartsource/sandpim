@@ -5,9 +5,11 @@ include_once('./class/pimClass.php');
 
 $vcdb=new vcdb;
 $pcdb=new pcdb;
-$pim= new pim;
+$pim=new pim;
 
 $appid=intval($_GET['appid']);
+
+if(isset($_POST['submit']) && $_POST['submit']=='Save'){$pim->updateAppOID($appid);}
 
 $app=$pim->getApp($appid);
 
@@ -36,12 +38,12 @@ $appcategories=$pim->getAppCategories();
   <?php if($app)
   {;?>
    <div style="padding:10px;">
-   <form method="post">
+   <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
     <table border="1" cellpadding="5">
+     <tr><th bgcolor="#c0c0c0" align="left">Vehicle</th><td align="left"><?php echo $vcdb->niceMMYofBasevid($app['basevehicleid']);?></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Part</th><td align="left"><?php echo $app['partnumber'];?></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Part Type</th><td align="left"><?php echo $pcdb->parttypeName($app['parttypeid']);?></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Position</th><td align="left"><?php echo $pcdb->positionName($app['positionid']);?></td></tr>
-
 
      <tr><th bgcolor="#c0c0c0" align="left">Fitment<br/>Qualifiers</th><td align="left">
      <?php
