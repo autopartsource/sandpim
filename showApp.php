@@ -27,6 +27,10 @@ $nicefitmentstring=implode('; ',$nicefitmentarray);
 $assets=array();
 $assets_linked_to_item=array();
 $appcategories=$pim->getAppCategories();
+$mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+print_r($mmy);
+
+
 
 ?>
 <html>
@@ -40,8 +44,8 @@ $appcategories=$pim->getAppCategories();
    <div style="padding:10px;">
    <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
     <table border="1" cellpadding="5">
-     <tr><th bgcolor="#c0c0c0" align="left">Vehicle</th><td align="left"><?php echo $vcdb->niceMMYofBasevid($app['basevehicleid']);?></td></tr>
-     <tr><th bgcolor="#c0c0c0" align="left">Part</th><td align="left"><?php echo $app['partnumber'];?></td></tr>
+     <tr><th bgcolor="#c0c0c0" align="left">Vehicle</th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
+     <tr><th bgcolor="#c0c0c0" align="left">Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber'];?>"><?php echo $app['partnumber'];?></a></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Part Type</th><td align="left"><?php echo $pcdb->parttypeName($app['parttypeid']);?></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Position</th><td align="left"><?php echo $pcdb->positionName($app['positionid']);?></td></tr>
 

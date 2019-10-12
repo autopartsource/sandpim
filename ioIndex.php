@@ -16,6 +16,7 @@ $pim= new pim;
   <h1>Imoprt/Export</h1>
   <div style="padding:10px;"><a href="importACESsnippet.php">Import Small ACES xml text</a></div>
   <div style="padding:10px;"><a href="importACESupload.php">Upload & import ACES xml file</a></div>
+  <div style="padding:10px;"><a href="importPartData.php">Import Part data from structured text</a></div>
  </div>
  </body>
 </html>

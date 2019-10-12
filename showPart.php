@@ -10,6 +10,7 @@ $pim= new pim;
 
 function niceAppAttributes($appattributes)
 {
+ $vcdb=new vcdb;
  $niceattributes=array();
  foreach($appattributes as $appattribute)
  {
@@ -32,7 +33,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Save'){$pim->updatePartOID($par
 
 $part=$pim->getPart($partnumber);
 $apps=$pim->getAppsByPartnumber($partnumber);
-
+$attributes=$pim->getPartAttributes($partnumber);
 $assets_linked_to_item=array();
 $partcategories=$pim->getPartCategories();
 
@@ -54,6 +55,7 @@ $partcategories=$pim->getPartCategories();
      <tr><th bgcolor="#c0c0c0" align="left">Applications</th><td align="left"><div><?php foreach($apps as $app){echo '<div><a href="showApp.php?appid='.$app['id'].'">'.$vcdb->niceMMYofBasevid($app['basevehicleid']).' '.niceAppAttributes($app['attributes']).'<a></div>';;}?></div></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Category</th><td align="right"><select name="partcategory"> <?php foreach($partcategories as $partcategory){?> <option value="<?php echo $partcategory['id'];?>"<?php if($partcategory['id']==$part['partcategory']){echo ' selected';}?>><?php echo $partcategory['name'];?></option><?php }?></select></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Internal<br/>Notes</th><td><textarea name="comments" cols="50"></textarea></td><tr>
+     <tr><th bgcolor="#c0c0c0" align="left">Attributes</th><td><table><?php foreach($attributes as $attribute){echo '<tr><td>'.$attribute['name'].'</td><td align="right">'.$attribute['value'].'</td><td>'.$attribute['uom'].'</td></tr>';}?></table></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">IDs</th><td>SandpiperOID: <?php echo $part['oid'];?></td><tr>
      <tr><th bgcolor="#c0c0c0" align="left">Status</th><td><?php echo $part['lifecyclestatus'];?></td><tr/>
      <tr><th></th><td align="right"><input type="submit" name="submit" value="Save"/></td></tr>

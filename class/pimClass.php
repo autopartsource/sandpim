@@ -122,6 +122,30 @@ class pim
   return $part;
  }
 
+ function getParts($partnumber,$matchtype,$limit)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $parts=array();
+  $sql='select part.*,partcategory.name from part left join partcategory on part.parttypeid=partcategory.id where partnumber like ? order by partnumber limit ?';
+
+  if($stmt=$db->conn->prepare($sql))
+  {
+   $searchstring=$partnumber;
+   if($matchtype=='contains'){$searchstring='%'.$partnumber.'%';}
+   if($matchtype=='startswith'){$searchstring=$partnumber.'%';}
+
+   $stmt->bind_param('si', $searchstring, $limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $parts[]=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['name'],'replacedby'=>$row['replacedby']);
+   }
+  }else{echo 'prepare';}
+  $db->close();
+  return $parts;
+ }
+
 
  function getOIDdata($oid)
  {
@@ -242,6 +266,62 @@ class pim
   $db->close();
   return $categories;
  }
+
+
+ function getPartAttribute($partnumber,$PAID,$attributename)
+ {
+  $attributes=false;
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('select id,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=? and PAID=? and userDefinedAttributeName=?'))
+  {
+   $stmt->bind_param('sis',$partnumber,$PAID,$attributename);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'value'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
+   }
+  }
+  $db->close();
+  return $attributes;
+ }
+
+ function getPartAttributes($partnumber)
+ {
+  $attributes=false;
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('select id,PAID,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=?'))
+  {
+   $stmt->bind_param('s',$partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'name'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
+   }
+  }
+  $db->close();
+  return $attributes;
+ }
+
+
+ function writePartAttribute($partnumber,$PAID,$attributename,$attributevalue,$uom)
+ { // PAID of 0 implies a user-defned attribute 
+  $id=false;
+// xxx
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+
+  if($stmt=$db->conn->prepare('insert into part_attribute (id,partnumber,PAID,userDefinedAttributeName,`value`,uom) values(null,?,?,?,?,?)'))
+  {
+   $stmt->bind_param('sisss',$partnumber,$PAID,$attributename,$attributevalue,$uom);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }else{print_r($db->conn->error);}
+
+  $db->close();
+  return $id;
+ }
+
 
 
  function getPartCategories()

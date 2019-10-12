@@ -190,14 +190,14 @@ class vcdb
  {
   $db = new mysql; $db->dbname='vcdb'; $db->connect();
   $mmy=false;
-  if($stmt=$db->conn->prepare('SELECT MakeName, ModelName,YearID FROM BaseVehicle,Make,Model WHERE BaseVehicle.MakeID=Make.MakeID AND BaseVehicle.ModelID=Model.ModelID AND BaseVehicle.BaseVehicleID = ?'))
+  if($stmt=$db->conn->prepare('SELECT  BaseVehicle.MakeID, BaseVehicle.ModelID, MakeName, ModelName,YearID FROM BaseVehicle,Make,Model WHERE BaseVehicle.MakeID=Make.MakeID AND BaseVehicle.ModelID=Model.ModelID AND BaseVehicle.BaseVehicleID = ?'))
   {
    $stmt->bind_param('i', $basevehicleid);
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $mmy = array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID']);
+    $mmy = array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID'],'MakeID'=>$row['MakeID'],'ModelID'=>$row['ModelID']);
    }
   }
   $db->close();
