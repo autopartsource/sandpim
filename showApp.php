@@ -13,12 +13,12 @@ if(isset($_POST['submit']) && $_POST['submit']=='Save'){$pim->updateAppOID($appi
 
 $app=$pim->getApp($appid);
 
-
+$attributecolors=array('vcdb'=>'52BE80','qdb'=>'6060F0','note'=>'C0C0C0');
 $niceattributes=array();
 foreach($app['attributes'] as $appattribute)
 {
- if($appattribute['type']=='vcdb'){$niceattributes[]=array('sequence'=>$appattribute['sequence'],'text'=>$vcdb->niceVCdbAttributePair($appattribute),'cosmetic'=>$appattribute['cosmetic']);}
- if($appattribute['type']=='note'){$niceattributes[]=array('sequence'=>$appattribute['sequence'],'text'=>$appattribute['value'],'cosmetic'=>$appattribute['cosmetic']);}
+ if($appattribute['type']=='vcdb'){$niceattributes[]=array('sequence'=>$appattribute['sequence'],'text'=>$vcdb->niceVCdbAttributePair($appattribute),'cosmetic'=>$appattribute['cosmetic'],'type'=>$appattribute['type'],'id'=>$appattribute['id']);}
+ if($appattribute['type']=='note'){$niceattributes[]=array('sequence'=>$appattribute['sequence'],'text'=>$appattribute['value'],'cosmetic'=>$appattribute['cosmetic'],'type'=>$appattribute['type'],'id'=>$appattribute['id']);}
 }
 
 $nicefitmentarray=array(); foreach($niceattributes as $niceattribute){$nicefitmentarray[]=$niceattribute['text'];}
@@ -28,10 +28,6 @@ $assets=array();
 $assets_linked_to_item=array();
 $appcategories=$pim->getAppCategories();
 $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
-print_r($mmy);
-
-
-
 ?>
 <html>
  <head>
@@ -52,13 +48,13 @@ print_r($mmy);
      <tr><th bgcolor="#c0c0c0" align="left">Fitment<br/>Qualifiers</th><td align="left">
      <?php
 
-     foreach($niceattributes as $niceattribute){echo '<div style="border:solid 1px;margin:5px;padding:2px;background-color:#52BE80;">'.$nicefitmentarray[]=$niceattribute['text'].'</div>';}
+     foreach($niceattributes as $niceattribute){echo '<div style="border:solid 1px;margin:5px;padding:2px;background-color:#'.$attributecolors[$niceattribute['type']].';">'.$nicefitmentarray[]=$niceattribute['text'].'</div>';}
 
 
      ?></td></tr>
 
 
-     <tr><th bgcolor="#c0c0c0" align="left">Quantity</th><td align="right"><input type="text" name="quantity" size="1" value="<?php echo $app['quantityperapp'];?>"/></td></tr>
+     <tr><th bgcolor="#c0c0c0" align="left">Quantity<br/>(on this vehicle)</th><td align="right"><input type="text" name="quantity" size="1" value="<?php echo $app['quantityperapp'];?>"/></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Cosmetic</th><td align="right"><input type="text" name="cosmetic" size="1" value="<?php echo $app['cosmetic'];?>"/></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Category</th><td align="right"><select name="appcategory"> <?php foreach($appcategories as $appcategory){?> <option value="<?php echo $appcategory['id'];?>"<?php if($appcategory['id']==$app['appcategory']){echo ' selected';}?>><?php echo $appcategory['name'];?></option><?php }?></select></td></tr>
      <tr><th bgcolor="#c0c0c0" align="left">Fitment<br/>Assets</th><td align="right"><?php if(count($assets)){foreach($assets as $asset) { echo '<div><a title="view this asset in new browser window" href="'.$asset['uri'].'" target="_blank">'.$asset['assetId'].'</a> (representation:'.$asset['representation'].', sequence: '.$asset['assetItemOrder'].') <a title="remove this asset from the application" href="./showAdminApplication.php?id='.intval($_GET['id']).'&removeasset='.$asset['id'].'">x</a><div>'; }}?>

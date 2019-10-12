@@ -34,12 +34,15 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber'])<=20 )
 
     <input type="submit" name="submit" value="Search"/>
    </form>
+
+   <?php if(count($parts)>0){?>
    <div style="padding-top:10px;">
     <table border="1">
      <tr><th>Part Number</th><th>Type</th><th>Category</th><th>Status</th></tr>
      <?php foreach($parts as $part){echo '<tr><td><a href="showPart.php?partnumber='.$part['partnumber'].'">'. $part['partnumber'].'</a></td><td>'.$pcdb->parttypeName($part['parttypeid']).'</td><td>'.$part['partcategoryname'].'</td><td>'.$part['lifecyclestatus'].'</td><tr>';}?>
     </table>
    </div>
+   <?php }?>
   </div>
  </div>
  </body>
