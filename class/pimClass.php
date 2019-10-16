@@ -88,7 +88,7 @@ class pim
  {
   $db = new mysql; $db->dbname='pim'; $db->connect();
   $attributes=array();
-  if($stmt=$db->conn->prepare('select * from application_attribute where applicationid=?'))
+  if($stmt=$db->conn->prepare('select * from application_attribute where applicationid=? order by sequence'))
   {
    $stmt->bind_param('i', $appid);
    $stmt->execute();
@@ -103,6 +103,59 @@ class pim
   return $attributes;
  }
 
+ function toggleAppAttributeCosmetic($appid,$attributeid)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application_attribute set cosmetic=cosmetic XOR 1 where applicationid=? and id=?'))
+  {
+   $this->updateAppOID($appid);
+   $stmt->bind_param('ii', $appid,$attributeid);
+   $stmt->execute();
+  } //else{print_r($db->conn->error);}
+  $db->close();
+ }
+
+ function incAppAttributeSequence($appid,$attributeid)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application_attribute set sequence=sequence+1 where applicationid=? and id=?'))
+  {
+   $this->updateAppOID($appid);
+   $stmt->bind_param('ii', $appid,$attributeid);
+   $stmt->execute();
+  } //else{print_r($db->conn->error);}
+  $db->close();
+ }
+
+ function deleteAppAttribute($appid,$attributeid)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('delete from application_attribute where applicationid=? and id=?'))
+  {
+   $this->updateAppOID($appid);
+   $stmt->bind_param('ii', $appid,$attributeid);
+   $stmt->execute();
+  } // else{print_r($db->conn->error);}
+  $db->close();
+ }
+
+ function highestAppAttributeSequence($appid)
+ {
+  $topsequence=0;
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('select max(sequence) as topsequence from application_attribute where applicationid=?'))
+  {
+   $stmt->bind_param('i', $appid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $topsequence=intval($row['topsequence']);
+   }
+  }  //else{print_r($db->conn->error);}
+  $db->close();
+  return $topsequence;
+ }
 
  function getPart($partnumber)
  {
@@ -308,15 +361,13 @@ class pim
  function writePartAttribute($partnumber,$PAID,$attributename,$attributevalue,$uom)
  { // PAID of 0 implies a user-defned attribute 
   $id=false;
-// xxx
   $db = new mysql; $db->dbname='pim'; $db->connect();
-
   if($stmt=$db->conn->prepare('insert into part_attribute (id,partnumber,PAID,userDefinedAttributeName,`value`,uom) values(null,?,?,?,?,?)'))
   {
    $stmt->bind_param('sisss',$partnumber,$PAID,$attributename,$attributevalue,$uom);
    $stmt->execute();
    $id=$db->conn->insert_id;
-  }else{print_r($db->conn->error);}
+  } // else{print_r($db->conn->error);}
 
   $db->close();
   return $id;
@@ -542,6 +593,23 @@ class pim
   $db->close();
   return $success;
  }
+
+ function addVCdbAttributeToApp($applicationid,$attributename,$attributevalue,$sequence,$cosmetic)
+ {
+  $success=true;
+  $db=new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
+  {
+   $attributetype='vcdb';
+   $stmt->bind_param('isssii', $applicationid,$attributename,$attributevalue,$attributetype,$sequence,$cosmetic);
+   $stmt->execute();
+   $this->updateAppOID($applicationid);
+  }
+  $db->close();
+  return $success;
+ }
+
+
 
  function createAppFromACESsnippet($xml,$appcategory)
  {

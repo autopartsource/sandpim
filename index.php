@@ -5,9 +5,6 @@ include_once('/var/www/html/class/pimClass.php');
 $v=new vcdb;
 $pim= new pim;
 
-$part=$pim->getPart('sPRC914');
-print_r($part);
-
 ?>
 <!DOCTYPE html>
 <html>
