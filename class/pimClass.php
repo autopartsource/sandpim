@@ -1,6 +1,19 @@
 <?php
 include_once("mysqlClass.php");
+/*  To-do roadmap
+re-sequeencing app attributes on the fly
+item-specific assets (show on the right side of showPart.php)
+qdb fitmet in showApp.php
+fitment assets (show on the right side of showApp.php)
+app-grid based adds from empty cells
+app-grid based copy-forward
+export of ACES files
+export of PIES files
+user login mechanism
+user permission mechanism
+event logging
 
+*/
 class pim
 {
  function getAppsByBasevehicleid($basevehicleid,$appcategories)
@@ -103,6 +116,35 @@ class pim
   return $attributes;
  }
 
+ function cleansequenceAppAttributes($appid)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $attributes=array();
+  if($stmt=$db->conn->prepare('select id from application_attribute where applicationid=? order by sequence'))
+  {
+   $stmt->bind_param('i', $appid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc()){$attributes[]=$row['id'];}
+  }
+
+  $sequence=1;
+  if($stmt=$db->conn->prepare('update application_attribute set sequence=? where id=?'))
+  {
+   $stmt->bind_param('ii',$sequence,$id);
+   foreach($attributes as $id)
+   {
+    $stmt->execute();
+    $sequence++;
+   }
+  }
+  $db->close();
+ }
+
+
+
+
+
  function toggleAppAttributeCosmetic($appid,$attributeid)
  {
   $db = new mysql; $db->dbname='pim'; $db->connect();
@@ -120,7 +162,7 @@ class pim
   $db = new mysql; $db->dbname='pim'; $db->connect();
   if($stmt=$db->conn->prepare('update application_attribute set sequence=sequence+1 where applicationid=? and id=?'))
   {
-   $this->updateAppOID($appid);
+//   $this->updateAppOID($appid);
    $stmt->bind_param('ii', $appid,$attributeid);
    $stmt->execute();
   } //else{print_r($db->conn->error);}
@@ -609,7 +651,67 @@ class pim
   return $success;
  }
 
+ function addNoteAttributeToApp($applicationid,$note,$sequence,$cosmetic)
+ {
+  $success=true;
+  $db=new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
+  {
+   $attributename='note'; $attributetype='note';
+   $stmt->bind_param('isssii', $applicationid,$attributename,$note,$attributetype,$sequence,$cosmetic);
+   $stmt->execute();
+   $this->updateAppOID($applicationid);
+  }
+  $db->close();
+  return $success;
+ }
 
+
+ function setAppStatus($applicationid,$status)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application set status=? where id=?'))
+  {
+   $stmt->bind_param('ii',$status,$applicationid);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+ function setAppCategory($applicationid,$appcategory)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application set appcategory=? where id=?'))
+  {
+   $stmt->bind_param('ii',$appcategory,$applicationid);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+ function setAppQuantity($applicationid,$quantityperapp)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application set quantityperapp=? where id=?'))
+  {
+   $stmt->bind_param('ii',$quantityperapp,$applicationid);
+   $stmt->execute();
+   $this->updateAppOID($applicationid);
+  }
+  $db->close();
+ }
+
+
+ function toggleAppCosmetic($appid)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application set cosmetic=cosmetic XOR 1 where id=?'))
+  {
+   $stmt->bind_param('i', $appid);
+   $stmt->execute();
+  } //else{print_r($db->conn->error);}
+  $db->close();
+ }
 
  function createAppFromACESsnippet($xml,$appcategory)
  {

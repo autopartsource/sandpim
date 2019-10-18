@@ -353,7 +353,7 @@ class vcdb
    }
   }
 
-  if($attributePair['name'] == 'FuelTypeid')
+  if($attributePair['name'] == 'FuelType')
   {
    if($stmt=$db->conn->prepare('SELECT FuelTypeName from FuelType WHERE FuelTypeID = ?'))
    {
@@ -452,7 +452,7 @@ class vcdb
    }
   }
 
-  if($attributePair['name'] == 'BrakeSystemid')
+  if($attributePair['name'] == 'BrakeSystem')
   {
    if($stmt=$db->conn->prepare('SELECT BrakeSystemName from BrakeSystem WHERE BrakeSystemID = ?'))
    {
@@ -575,7 +575,7 @@ class vcdb
       $attributesList['EngineDesignation_'.$engine['enginedesignationid']]= 'Engine Designation: '.$engine['enginedesignationname'];
      }
      if($engine['enginevinname']!='-') { $attributesList['EngineVIN_'.$engine['enginevinid']]='Engine VIN: '.$engine['enginevinname'];}
-     if($engine['engineversion']!='N/A') { $attributesList['EngineVersion_'.$engine['engineversionid']]='Engine Version: '.$engine['engineversion'];}
+     if($engine['engineversion']!='N/A' && $engine['engineversion']!='N/R') { $attributesList['EngineVersion_'.$engine['engineversionid']]='Engine Version: '.$engine['engineversion'];}
 
      $attributesList['EngineMfr_'.$engine['enginemfrid']]='Engine Mfr: '.$engine['mfrname']; 
      $attributesList['FuelDeliveryType_'.$engine['fueldeliverytypeid']]='Fuel Delivery Type: '.$engine['fueldeliverytypename']; 
@@ -599,7 +599,7 @@ class vcdb
     {
      $attributesList['FrontBrakeType_'.$brakeconfig['frontbraketypeid']]='Front '.$brakeconfig['frontbraketypename'].' Brakes';
      $attributesList['RearBrakeType_'.$brakeconfig['rearbraketypeid']]='Rear '.$brakeconfig['rearbraketypename'].' Brakes';
-     $attributesList['BrakeABS_'.$brakeconfig['brakeabsid']]=$brakeconfig['brakeabsname'];
+     if($brakeconfig['brakeabsname']!='N/A'){$attributesList['BrakeABS_'.$brakeconfig['brakeabsid']]=$brakeconfig['brakeabsname'];}
      $attributesList['BrakeSystem_'.$brakeconfig['brakesystemid']]=$brakeconfig['brakesystemname'].' Brakes';
     }
    }
@@ -629,11 +629,8 @@ class vcdb
     {
      $attributesList['TransmissionControlType_'.$transmission['transmissioncontroltypeid']]=$transmission['transmissioncontroltypename'].' Transmission';
      $attributesList['TransmissionNumSpeeds_'.$transmission['transmissionnumspeedsid']]=$transmission['transmissionnumspeeds'].' Speed Transmission';
-     $attributesList['TransmissionType_'.$transmission['transmissiontypeid']]=$transmission['transmissiontypename'].' Transmission';
-     if($transmission['transmissionmfrcode']!='N/A')
-     {
-      $attributesList['TransmissionMfrCode_'.$transmission['transmissionmfrcodeid']]='Transmission Mfr Code: '.$transmission['transmissionmfrcode'];
-     }
+     if($transmission['transmissiontypename']!='N/A'){$attributesList['TransmissionType_'.$transmission['transmissiontypeid']]=$transmission['transmissiontypename'].' Transmission';}
+     if($transmission['transmissionmfrcode']!='N/A'){$attributesList['TransmissionMfrCode_'.$transmission['transmissionmfrcodeid']]='Transmission Mfr Code: '.$transmission['transmissionmfrcode'];}
     }
    }
 
@@ -839,14 +836,14 @@ function getBrakeConfigsForVehicleid($vehicleid)
  {
   $db = new mysql; $db->dbname='vcdb'; $db->connect();
   $springs=array();
-  if($stmt=$db->conn->prepare('SELECT SpringTypeConfig.FrontSpringTypeID,FrontSpringType.SpringTypeName as FrontSpringTypeName,SpringTypeConfig.RearSpringTypeID,RearSpringType.SpringTypeName as RearSprintTypeName FROM Vehicle join VehicleToSpringTypeConfig on Vehicle.VehicleID=VehicleToSpringTypeConfig.VehicleID join SpringTypeConfig on VehicleToSpringTypeConfig.SpringTypeConfigID=SpringTypeConfig.SpringTypeConfigID join SpringType FrontSpringType on SpringTypeConfig.FrontSpringTypeID=FrontSpringType.SpringTypeID join SpringType RearSpringType on SpringTypeConfig.RearSpringTypeID=RearSpringType.SpringTypeID WHERE Vehicle.VehicleID=?'))
+  if($stmt=$db->conn->prepare('SELECT SpringTypeConfig.FrontSpringTypeID,FrontSpringType.SpringTypeName as FrontSpringTypeName,SpringTypeConfig.RearSpringTypeID,RearSpringType.SpringTypeName as RearSpringTypeName FROM Vehicle join VehicleToSpringTypeConfig on Vehicle.VehicleID=VehicleToSpringTypeConfig.VehicleID join SpringTypeConfig on VehicleToSpringTypeConfig.SpringTypeConfigID=SpringTypeConfig.SpringTypeConfigID join SpringType FrontSpringType on SpringTypeConfig.FrontSpringTypeID=FrontSpringType.SpringTypeID join SpringType RearSpringType on SpringTypeConfig.RearSpringTypeID=RearSpringType.SpringTypeID WHERE Vehicle.VehicleID=?'))
   {
    $stmt->bind_param('i', $vehicleid);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $springs[]=array('frontspringtypeid'=>$row['FrontSpringTypeID'],'frontspringtypename'=>$row['FrontSpringTypeName'], 'rearspringtypeid'=>$row['RearSpringTypeID'],'rearsprinttypename'=>$row['RearSprintTypeName']);
+    $springs[]=array('frontspringtypeid'=>$row['FrontSpringTypeID'],'frontspringtypename'=>$row['FrontSpringTypeName'], 'rearspringtypeid'=>$row['RearSpringTypeID'],'rearspringtypename'=>$row['RearSpringTypeName']);
    }
   }
   $db->close();
