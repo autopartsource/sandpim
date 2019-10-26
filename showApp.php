@@ -17,8 +17,10 @@ if(isset($_POST))
  if(isset($_POST['submit']) && $_POST['submit']=='Hide'){$pim->setAppStatus($appid,2);}
 
 
- if(isset($_POST['submit']) && $_POST['submit']=='Update Qty'){$pim->setAppQuantity($appid,intval($_POST['quantityperapp']));}
+ if(isset($_POST['submit']) && $_POST['submit']=='Update Qty'){$pim->setAppQuantity($appid,intval($_POST['quantityperapp']),true);}
  if(isset($_POST['submit']) && $_POST['submit']=='Update Category'){$pim->setAppCategory($appid,intval($_POST['appcategory']));}
+ if(isset($_POST['submit']) && $_POST['submit']=='Update Type'){$pim->setAppParttype($appid,intval($_POST['parttype']),true);}
+ if(isset($_POST['submit']) && $_POST['submit']=='Update Position'){$pim->setAppPosition($appid,intval($_POST['position']),true);}
 
 
  if(isset($_POST['submit']) && $_POST['submit']=='Add Attribute')
@@ -78,7 +80,7 @@ if(isset($_POST))
 $app=$pim->getApp($appid);
 //print_r($app);
 
-$appcolor='#c0c0c0'; if($app['cosmetic']>0){$appcolor='#33FFD7';} if($app['status']>1){$appcolor='#FFD433';} if($app['status']==1){$appcolor='#FF5533';}
+$appcolor='#d0f0c0'; if($app['cosmetic']>0){$appcolor='#33FFD7';} if($app['status']>1){$appcolor='#FFD433';} if($app['status']==1){$appcolor='#FF5533';}
 
 $attributecolors=array('vcdb'=>'52BE80','qdb'=>'6060F0','note'=>'C0C0C0');
 $niceattributes=array();
@@ -96,7 +98,12 @@ $allattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid']); //
 $assets=array();
 $assets_linked_to_item=array();
 $appcategories=$pim->getAppCategories();
+$favoriteparttypes=$pim->getFavoriteParttypes();
+$favoritepositions=$pim->getFavoritePositions();
 $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+$pcdbversion=$pcdb->version();
+
+
 ?>
 <html>
  <head>
@@ -107,11 +114,24 @@ $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
   <?php if($app)
   {;?>
    <div style="padding:10px;">
+
+    <?php
+     if($pcdb->parttypeName($app['parttypeid'])=='not found'){echo '<div style="color:red;">Part Type id '.$app['parttypeid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
+     if($pcdb->positionName($app['positionid'])=='not found'){echo '<div style="color:red;">Position id '.$app['positionid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
+    ?>
+
     <table border="1" cellpadding="5">
      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Base Vehicle</th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber'];?>"><?php echo $app['partnumber'];?></a></td></tr>
-     <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Application<br/>Part Type</th><td align="left"><?php echo $pcdb->parttypeName($app['parttypeid']);?></td></tr>
-     <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Position</th><td align="left"><?php echo $pcdb->positionName($app['positionid']);?></td></tr>
+
+     <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
+      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Application<br/>Part Type</th><td align="right"><select name="parttype"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$app['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select><input type="submit" name="submit" value="Update Type"/></td></tr>
+     </form>
+
+     <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
+      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Position</th><td align="right"><select name="position"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select><input type="submit" name="submit" value="Update Position"/></td></tr>
+     </form>
+
      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Fitment<br/>Qualifiers</th>
       <td align="left">
        <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
@@ -131,7 +151,9 @@ $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
      <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
       <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Quantity<br/>(on this vehicle)</th><td align="right"><input type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp'];?>"/><input type="submit" name="submit" value="Update Qty"/></td></tr>
       <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Cosmetic</th><td align="right"><?php if($app['cosmetic']){echo 'App is Cosmetic ';}?><input type="submit" name="submit" value="Cosmetic App"/></td></tr>
+
       <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Category</th><td align="right"><select name="appcategory"> <?php foreach($appcategories as $appcategory){?> <option value="<?php echo $appcategory['id'];?>"<?php if($appcategory['id']==$app['appcategory']){echo ' selected';}?>><?php echo $appcategory['name'];?></option><?php }?></select><input type="submit" name="submit" value="Update Category"/></td></tr>
+
       <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Fitment<br/>Assets</th><td align="right"><?php if(count($assets)){foreach($assets as $asset) { echo '<div><a title="view this asset in new browser window" href="'.$asset['uri'].'" target="_blank">'.$asset['assetId'].'</a> (representation:'.$asset['representation'].', sequence: '.$asset['assetItemOrder'].') <a title="remove this asset from the application" href="./showAdminApplication.php?id='.intval($_GET['id']).'&removeasset='.$asset['id'].'">x</a><div>'; }}?>
       <div>Asset <select name="assetid"><option value=""></option>
       <?php

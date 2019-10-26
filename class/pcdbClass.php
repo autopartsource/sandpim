@@ -8,7 +8,6 @@ class pcdb
  {
   $name='not found';
   $db = new mysql; $db->dbname='pcadb'; $db->connect();
-  $models=array();
   if($stmt=$db->conn->prepare('select Position from Positions where PositionID=?'))
   {
    $stmt->bind_param('i', $positionid);
@@ -27,7 +26,6 @@ class pcdb
  {
   $name='not found';
   $db = new mysql; $db->dbname='pcadb'; $db->connect();
-  $models=array();
   if($stmt=$db->conn->prepare('select PartTerminologyName from Parts where PartTerminologyID=?'))
   {
    $stmt->bind_param('i', $parttypeid);
@@ -41,6 +39,25 @@ class pcdb
   $db->close();
   return $name;
  }
+
+ function version()
+ {
+  $versiondate='not found';
+  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  if($stmt=$db->conn->prepare('select VersionDate from Version'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $versiondate=$row['VersionDate'];
+   }
+  }
+  $db->close();
+  return $versiondate;
+ }
+
+
 
 }
 ?>

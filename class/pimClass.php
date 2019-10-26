@@ -1,21 +1,11 @@
 <?php
 include_once("mysqlClass.php");
-/*  To-do roadmap
-re-sequeencing app attributes on the fly
-item-specific assets (show on the right side of showPart.php)
-qdb fitmet in showApp.php
-fitment assets (show on the right side of showApp.php)
-app-grid based adds from empty cells
-app-grid based copy-forward
-export of ACES files
-export of PIES files
-user login mechanism
-user permission mechanism
-event logging
 
-*/
+
 class pim
 {
+
+
  function getAppsByBasevehicleid($basevehicleid,$appcategories)
  {
   $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
@@ -29,7 +19,8 @@ class pim
    while($row = $db->result->fetch_assoc())
    {
     $attributes=$this->getAppAttributes($row['id']);
-    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes);
+    $attributeshash=$this->appAttributesHash($attributes);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
    }
   }
   $db->close();
@@ -74,8 +65,39 @@ class pim
   return $makes;
  }
 
+ function getFavoriteParttypes()
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $parttypes=array();
+  if($stmt=$db->conn->prepare('select * from parttype order by `name`'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $parttypes[]=array('id'=>$row['id'],'name'=>$row['name']);
+   }
+  }
+  $db->close();
+  return $parttypes;
+ }
 
-
+ function getFavoritePositions()
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $positions=array();
+  if($stmt=$db->conn->prepare('select * from position order by `name`'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $positions[]=array('id'=>$row['id'],'name'=>$row['name']);
+   }
+  }
+  $db->close();
+  return $positions;
+ }
 
  function getApp($appid)
  {
@@ -88,8 +110,9 @@ class pim
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>'','cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>array());
-    $app['attributes']=$this->getAppAttributes($appid);
+    $attributes=$this->getAppAttributes($appid);
+    $attributeshash=$this->appAttributesHash($attributes);
+    $app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>'','cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
    }
   }
   $db->close();
@@ -114,6 +137,16 @@ class pim
   }
   $db->close();
   return $attributes;
+ }
+
+ function appAttributesHash($attributes)
+ {
+  $hashinput='';
+  foreach($attributes as $attribute)
+  {
+   $hashinput.=$attribute['name'].$attribute['value'].$attribute['type'].$attribute['sequence'].$attribute['cosmetic'];
+  }
+  return md5($hashinput);
  }
 
  function cleansequenceAppAttributes($appid)
@@ -666,6 +699,23 @@ class pim
   return $success;
  }
 
+ function addQdbAttributeToApp($applicationid,$qdbid,$attributevalues,$sequence,$cosmetic)
+ {
+  $attributetype='qdb';
+ }
+
+
+ function removeAllAppAttributes($applicationid,$updateoid)
+ {
+  $db=new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('delete from application_attribute where applicationid=?'))
+  {
+   $stmt->bind_param('i', $applicationid);
+   $stmt->execute();
+   if($updateoid){$this->updateAppOID($applicationid);}
+  }
+  $db->close();
+ }
 
  function setAppStatus($applicationid,$status)
  {
@@ -689,14 +739,38 @@ class pim
   $db->close();
  }
 
- function setAppQuantity($applicationid,$quantityperapp)
+ function setAppPosition($applicationid,$positionid,$updateoid)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application set positionid=? where id=?'))
+  {
+   $stmt->bind_param('ii',$positionid,$applicationid);
+   $stmt->execute();
+   if($updateoid){$this->updateAppOID($applicationid);}
+  }
+  $db->close();
+ }
+
+ function setAppParttype($applicationid,$parttypeid,$updateoid)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application set parttypeid=? where id=?'))
+  {
+   $stmt->bind_param('ii',$parttypeid,$applicationid);
+   $stmt->execute();
+   if($updateoid){$this->updateAppOID($applicationid);}
+  }
+  $db->close();
+ }
+
+ function setAppQuantity($applicationid,$quantityperapp,$updateoid)
  {
   $db = new mysql; $db->dbname='pim'; $db->connect();
   if($stmt=$db->conn->prepare('update application set quantityperapp=? where id=?'))
   {
    $stmt->bind_param('ii',$quantityperapp,$applicationid);
    $stmt->execute();
-   $this->updateAppOID($applicationid);
+   if($updateoid){$this->updateAppOID($applicationid);}
   }
   $db->close();
  }
@@ -712,6 +786,71 @@ class pim
   } //else{print_r($db->conn->error);}
   $db->close();
  }
+
+ function conformApp($appid,$refappid,$copyfitment,$copyposition,$copyparttype,$copycategory)
+ {
+  // over-write app's fitment, position and parttype with that of the refapp
+  // used for drag/drop in the app grid interface
+  $refapp=$this->getApp($refappid);
+  $app=$this->getApp($appid);
+
+  $neednewOID=false;
+//$app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>'','cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>array());
+//$attributes[]=array('id'=>$row['id'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
+  if($copyfitment && $refapp['attributeshash']!=$refapp['attributeshash'])
+  {
+   $neednewOID=true;
+   $this->removeAllAppAttributes($appid,false);
+   foreach($refapp['attributes'] as $attribute)
+   { // set attributes for "to" app
+
+    switch($attribute['type'])
+    {
+     case 'vcdb':
+      $this->addVCdbAttributeToApp($appid,$attribute['name'],$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+      break;
+     case 'note':
+      $this->addNoteAttributeToApp($appid,$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+      break;
+     case 'qdb':
+//      $this->addQdbAttributeToApp($appid,...
+      break;
+     default: break;
+    }
+   }
+  }
+
+  if($copyposition && $refapp['positionid']!=$app['positionid']){$this->setAppPosition($appid,$refapp['positionid'],false); $neednewOID=true;}
+  if($copyparttype && $refapp['parttypeid']!=$app['parttypeid']){$this->setAppParttype($appid,$refapp['parttypeid'],false); $neednewOID=true;}
+  if($copycategory && $refapp['appcategory']!=$app['appcategory']){$this->setAppCategory($appid,$refapp['appcategory']);}
+  if($neednewOID){$this->updateAppOID($appid);}
+ }
+
+
+ function applyAppAttributes($appid,$attributes)
+ {
+  $this->removeAllAppAttributes($appid,false);
+  foreach($attributes as $attribute)
+  {
+   switch($attribute['type'])
+   {
+    case 'vcdb':
+     $this->addVCdbAttributeToApp($appid,$attribute['name'],$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+     break;
+    case 'note':
+     $this->addNoteAttributeToApp($appid,$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+     break;
+    case 'qdb':
+//      $this->addQdbAttributeToApp($appid,...
+     break;
+    default: break;
+   }
+  }
+  $this->updateAppOID($appid);
+ }
+
+
+
 
  function createAppFromACESsnippet($xml,$appcategory)
  {

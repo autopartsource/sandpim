@@ -1,0 +1,1814 @@
+
+Array
+(
+    [t] => ddd
+)
+Array
+(
+    [t] => ddd
+)
+Array
+(
+    [t] => ddd
+)
+Array
+(
+    [id] => some-unique-id
+)
+Array
+(
+    [id] => some-unique-id
+)
+Array
+(
+    [sourceapp] => 1598785
+)
+Array
+(
+    [sourceapp] => 1598749
+    [destapp] => 1598803
+)
+Array
+(
+    [appid] => undefined
+)
+Array
+(
+    [appid] => 1598774
+)
+Array
+(
+    [appid] => 1598794
+)
+Array
+(
+    [appid] => 1598748
+)
+Array
+(
+    [appid] => 1598777
+    [status] => trash
+)
+Array
+(
+    [appid] => 1598795
+    [status] => hide
+)
+Array
+(
+    [appid] => 1598751
+    [status] => trash
+)
+Array
+(
+    [appid] => 1598782
+    [fitment] => W3siaWQiOjIxNDE2NDksIm5hbWUiOiJTdWJNb2RlbCIsInZhbHVlIjoiMjE5OSIsInR5cGUiOiJ2Y2RiIiwic2VxdWVuY2UiOjEsImNvc21ldGljIjowfSx7ImlkIjoyMTQxNjUwLCJuYW1lIjoibm90ZSIsInZhbHVlIjoiMjgybW0gRnJvbnQgUm90b3IiLCJ0eXBlIjoibm90ZSIsInNlcXVlbmNlIjoyLCJjb3NtZXRpYyI6MH1d
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2141655
+            [name] => SubModel
+            [value] => 3496
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2141656
+            [name] => note
+            [value] => 292mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2141655
+            [name] => SubModel
+            [value] => 3496
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2141656
+            [name] => note
+            [value] => 292mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2141649
+            [name] => SubModel
+            [value] => 2199
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2141650
+            [name] => note
+            [value] => 282mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2141651
+            [name] => SubModel
+            [value] => 912
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2141652
+            [name] => note
+            [value] => 281mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2141649
+            [name] => SubModel
+            [value] => 2199
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2141650
+            [name] => note
+            [value] => 282mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2067759
+            [name] => RearBrakeType
+            [value] => 6
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2067760
+            [name] => note
+            [value] => 5 Lugs
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2067759
+            [name] => RearBrakeType
+            [value] => 6
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2067760
+            [name] => note
+            [value] => 5 Lugs
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2067759
+            [name] => RearBrakeType
+            [value] => 6
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2067760
+            [name] => note
+            [value] => 5 Lugs
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2067759
+            [name] => RearBrakeType
+            [value] => 6
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2067760
+            [name] => note
+            [value] => 5 Lugs
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2067759
+            [name] => RearBrakeType
+            [value] => 6
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2067760
+            [name] => note
+            [value] => 5 Lugs
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2213583
+            [name] => RearBrakeType
+            [value] => 6
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2213584
+            [name] => note
+            [value] => 5 Lugs
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2067755
+            [name] => SubModel
+            [value] => 492
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2067756
+            [name] => RearBrakeType
+            [value] => 5
+            [type] => vcdb
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2077391
+            [name] => RearBrakeType
+            [value] => 5
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2077392
+            [name] => note
+            [value] => Except 6 piston caliper
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2077369
+            [name] => note
+            [value] => Except 6 piston caliper
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2077370
+            [name] => note
+            [value] => parking brake
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [appid] => 1549177
+    [status] => hide
+)
+Array
+(
+    [appid] => 1549174
+    [status] => trash
+)
+Array
+(
+    [appid] => 1549169
+    [status] => trash
+)
+Array
+(
+    [appid] => 1549175
+    [status] => hide
+)
+Array
+(
+    [appid] => 1549173
+    [status] => trash
+)
+Array
+(
+    [appid] => 1549171
+    [status] => hide
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2077391
+            [name] => RearBrakeType
+            [value] => 5
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2077392
+            [name] => note
+            [value] => Except 6 piston caliper
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2077391
+            [name] => RearBrakeType
+            [value] => 5
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2077392
+            [name] => note
+            [value] => Except 6 piston caliper
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [appid] => 1549172
+    [status] => hide
+)
+Array
+(
+    [appid] => 1549168
+    [status] => hide
+)
+Array
+(
+    [appid] => 1549167
+    [status] => hide
+)
+Array
+(
+    [appid] => 1549176
+    [status] => hide
+)
+Array
+(
+    [appid] => 1549170
+    [status] => hide
+)
+Array
+(
+    [appid] => 1549166
+    [status] => hide
+)
+Array
+(
+    [appid] => 1549170
+    [status] => hide
+)
+Array
+(
+    [appid] => 1554013
+    [status] => trash
+)
+Array
+(
+    [appid] => 1554013
+    [status] => trash
+)
+Array
+(
+    [appid] => 1554016
+    [status] => hide
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081779
+            [name] => note
+            [value] => Exc Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2081780
+            [name] => note
+            [value] => parking brake
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081795
+            [name] => note
+            [value] => Exc Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2213600
+            [name] => note
+            [value] => Exc Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2081796
+            [name] => note
+            [value] => Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2213600
+            [name] => note
+            [value] => Exc Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2213600
+            [name] => note
+            [value] => Exc Sport Package
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+)
+Array
+(
+    [appid] => 1601185
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601186
+    [status] => hide
+)
+Array
+(
+    [appid] => 1601186
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601186
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601185
+    [status] => hide
+)
+Array
+(
+    [appid] => 1601185
+    [status] => hide
+)
+Array
+(
+    [appid] => 1601191
+    [status] => hide
+)
+Array
+(
+    [appid] => 1601189
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601189
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601180
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601184
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601188
+    [status] => hide
+)
+Array
+(
+    [appid] => 1601190
+    [status] => hide
+)
+Array
+(
+    [appid] => 1601181
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601182
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601183
+    [status] => trash
+)
+Array
+(
+    [appid] => 1601187
+    [status] => hide
+)
+Array
+(
+    [appid] => 1557511
+    [status] => hide
+)
+Array
+(
+    [appid] => 1557509
+    [status] => hide
+)
+Array
+(
+    [appid] => 1557501
+    [status] => trash
+)
+Array
+(
+    [appid] => 1557506
+    [status] => trash
+)
+Array
+(
+    [appid] => 1557507
+    [status] => hide
+)
+Array
+(
+    [appid] => 1557514
+    [status] => hide
+)
+Array
+(
+    [appid] => 1557500
+    [status] => hide
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2085799
+            [name] => note
+            [value] => 11" Drum
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [appid] => 1557509
+    [status] => trash
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2144950
+            [name] => SubModel
+            [value] => 20
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2144950
+            [name] => SubModel
+            [value] => 20
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [positionid] => 30
+    [parttypeid] => 1896
+)
+Array
+(
+    [positionid] => 22
+    [parttypeid] => 1896
+)
+Array
+(
+    [positionid] => 22
+    [parttypeid] => 1896
+)
+Array
+(
+    [positionid] => 22
+    [parttypeid] => 1896
+)
+Array
+(
+    [positionid] => 22
+    [parttypeid] => 1896
+)
+Array
+(
+    [positionid] => 30
+    [parttypeid] => 1684
+)
+position changed to:0
+parttype changed to:0
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2144949
+            [name] => SubModel
+            [value] => 827
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+:
+parttype changed to:1688
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2144946
+            [name] => SubModel
+            [value] => 823
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1684
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2144949
+            [name] => SubModel
+            [value] => 827
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1688
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2144949
+            [name] => SubModel
+            [value] => 827
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1684
+position changed to:22
+parttype changed to:1896
+position changed to:30
+parttype changed to:1744
+position changed to:22
+parttype changed to:1896
+parttype changed to:1684
+position changed to:30
+position changed to:22
+parttype changed to:1896
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2144946
+            [name] => SubModel
+            [value] => 823
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2144940
+            [name] => SubModel
+            [value] => 823
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145804
+            [name] => EngineBase
+            [value] => 2136
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2145792
+            [name] => EngineBase
+            [value] => 2136
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2145793
+            [name] => note
+            [value] => parking brake
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145803
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2213622
+            [name] => EngineBase
+            [value] => 2136
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1896
+parttype changed to:1684
+position changed to:22
+parttype changed to:1896
+parttype changed to:1684
+position changed to:30
+parttype changed to:10177
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145794
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2145795
+            [name] => note
+            [value] => parking brake
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2213623
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1684
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145803
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2213624
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2213625
+            [name] => note
+            [value] => parking brake
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1896
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145803
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2145794
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2145795
+            [name] => note
+            [value] => parking brake
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1684
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145804
+            [name] => EngineBase
+            [value] => 2136
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2145803
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145804
+            [name] => EngineBase
+            [value] => 2136
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2213627
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1684
+parttype changed to:1896
+parttype changed to:1684
+position changed to:22
+position changed to:22
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145801
+            [name] => EngineBase
+            [value] => 5487
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2213626
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145785
+            [name] => EngineBase
+            [value] => 5487
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2145786
+            [name] => note
+            [value] => parking brake
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2145799
+            [name] => EngineBase
+            [value] => 5487
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145801
+            [name] => EngineBase
+            [value] => 5487
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2145785
+            [name] => EngineBase
+            [value] => 5487
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2145786
+            [name] => note
+            [value] => parking brake
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1896
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145800
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2145789
+            [name] => EngineBase
+            [value] => 5487
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1684
+parttype changed to:1896
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145801
+            [name] => EngineBase
+            [value] => 5487
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2213631
+            [name] => EngineBase
+            [value] => 5487
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2213632
+            [name] => note
+            [value] => parking brake
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+parttype changed to:1896
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2145800
+            [name] => EngineBase
+            [value] => 2558
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2213628
+            [name] => EngineBase
+            [value] => 2136
+            [type] => vcdb
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [appid] => 1603412
+    [status] => trash
+)
+Array
+(
+    [appid] => 1603411
+    [status] => hide
+)
+Array
+(
+    [appid] => 1603400
+    [status] => hide
+)
+Array
+(
+    [appid] => 1603398
+    [status] => trash
+)
+Array
+(
+    [appid] => 1603409
+    [status] => hide
+)
+Array
+(
+    [appid] => 1603413
+    [status] => hide
+)
+parttype changed to:1896
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2116286
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116287
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+    [2] => Array
+        (
+            [id] => 2116288
+            [name] => note
+            [value] => with Mounting Pins
+            [type] => note
+            [sequence] => 3
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2116258
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116259
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [appid] => 1578469
+    [status] => hide
+)
+Array
+(
+    [appid] => 1578468
+    [status] => hide
+)
+Array
+(
+    [appid] => 1578461
+    [status] => hide
+)
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2116286
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116287
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+    [2] => Array
+        (
+            [id] => 2116288
+            [name] => note
+            [value] => with Mounting Pins
+            [type] => note
+            [sequence] => 3
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2116245
+            [name] => note
+            [value] => Standard Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116246
+            [name] => note
+            [value] => 325mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+attributes changed to:Array
+(
+    [0] => Array
+        (
+            [id] => 2116280
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116281
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+from:Array
+(
+    [0] => Array
+        (
+            [id] => 2116284
+            [name] => note
+            [value] => Standard Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116285
+            [name] => note
+            [value] => 325mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
