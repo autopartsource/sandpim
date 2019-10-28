@@ -793,14 +793,15 @@ class pim
   // used for drag/drop in the app grid interface
   $refapp=$this->getApp($refappid);
   $app=$this->getApp($appid);
-
-  $neednewOID=false;
+  $OID=$app['oid'];
+  $neednewOID=false; $historytext='conformApp using reference app:'.$refappid;
 //$app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>'','cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>array());
 //$attributes[]=array('id'=>$row['id'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
   if($copyfitment && $refapp['attributeshash']!=$refapp['attributeshash'])
   {
    $neednewOID=true;
    $this->removeAllAppAttributes($appid,false);
+   $historytext.='; All fitment attributes removed';
    foreach($refapp['attributes'] as $attribute)
    { // set attributes for "to" app
 
@@ -808,9 +809,11 @@ class pim
     {
      case 'vcdb':
       $this->addVCdbAttributeToApp($appid,$attribute['name'],$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+      $historytext.='; Added VCdb '.$attribute['name'].':'.$attribute['value'].';sequence:'.$attribute['sequence'].';cosmetic:'.$attribute['cosmetic'];
       break;
      case 'note':
       $this->addNoteAttributeToApp($appid,$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+      $historytext.='; Added Note:'.$attribute['value'].';sequence:'.$attribute['sequence'].';cosmetic:'.$attribute['cosmetic'];
       break;
      case 'qdb':
 //      $this->addQdbAttributeToApp($appid,...
@@ -820,14 +823,16 @@ class pim
    }
   }
 
-  if($copyposition && $refapp['positionid']!=$app['positionid']){$this->setAppPosition($appid,$refapp['positionid'],false); $neednewOID=true;}
-  if($copyparttype && $refapp['parttypeid']!=$app['parttypeid']){$this->setAppParttype($appid,$refapp['parttypeid'],false); $neednewOID=true;}
-  if($copycategory && $refapp['appcategory']!=$app['appcategory']){$this->setAppCategory($appid,$refapp['appcategory']);}
-  if($neednewOID){$this->updateAppOID($appid);}
+  if($copyposition && $refapp['positionid']!=$app['positionid']){$this->setAppPosition($appid,$refapp['positionid'],false); $neednewOID=true; $historytext.='; changed position from:'.$app['positionid'].' to '.$refapp['positionid'];}
+  if($copyparttype && $refapp['parttypeid']!=$app['parttypeid']){$this->setAppParttype($appid,$refapp['parttypeid'],false); $neednewOID=true; $historytext.='; changed parttype from:'.$app['parttypeid'].' to '.$refapp['parttypeid'];}
+  if($copycategory && $refapp['appcategory']!=$app['appcategory']){$this->setAppCategory($appid,$refapp['appcategory']); $historytext.='; changed appcategory from:'.$app['appcategory'].' to '.$refapp['appcategory'];}
+  if($neednewOID){$OID=$this->updateAppOID($appid);}
+  $userid=0;
+  $this->logHistoryEvent($appid,$userid,$historytext,$OID);
  }
 
 
- function applyAppAttributes($appid,$attributes)
+ function applyAppAttributes($appid,$attributes,$updateoid)
  {
   $this->removeAllAppAttributes($appid,false);
   foreach($attributes as $attribute)
@@ -846,7 +851,56 @@ class pim
     default: break;
    }
   }
-  $this->updateAppOID($appid);
+  if($updateoid){$this->updateAppOID($appid);}
+ }
+
+ function newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$appcategory,$cosmetic,$attributes)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $applicationid=false;
+  if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic,appcategory) values(null,?,?,0,0,?,?,?,?,0,?,?)'))
+  {
+   $oid=$this->newoid();
+   $stmt->bind_param('siiiisii', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$appcategory);
+   $stmt->execute();
+   $applicationid=$db->conn->insert_id;
+
+   if(count($attributes))
+   {
+    $this->applyAppAttributes($applicationid,$attributes,false);
+   }
+  }
+  $db->close();
+  return $applicationid;
+ }
+
+ function logHistoryEvent($applicationid,$userid,$description,$newoid)
+ {
+  $db=new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('insert into application_history (id,applicationid,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
+  {
+   $stmt->bind_param('iiss', $applicationid,$userid,$description,$newoid);
+   $stmt->execute();
+  } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+
+ function getHistoryEventsForApp($applicationid,$limit)
+ {
+  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $events=array();
+  if($stmt=$db->conn->prepare('select * from application_history where applicationid=? order by eventdatetime desc limit ?'))
+  {
+   $stmt->bind_param('ii', $applicationid,$limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $events[]=array('id'=>$row['id'],'applicationid'=>$row['applicationid'],'eventdatetime'=>$row['eventdatetime'],'userid'=>$row['userid'],'description'=>$row['description'],'new_oid'=>$row['new_oid']);
+   }
+  }
+  $db->close();
+  return $events;
  }
 
 

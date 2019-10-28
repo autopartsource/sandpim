@@ -1812,3 +1812,313 @@ from:Array
         )
 
 )
+Array
+(
+    [basevehicleid] => 141225
+    [partnumber] => 492128
+    [fitment] => YToyOntpOjA7YTo2OntzOjI6ImlkIjtpOjIyMTM2NDM7czo0OiJuYW1lIjtzOjQ6Im5vdGUiO3M6NToidmFsdWUiO3M6MTc6IkhlYXZ5IER1dHkgQnJha2VzIjtzOjQ6InR5cGUiO3M6NDoibm90ZSI7czo4OiJzZXF1ZW5jZSI7aToxO3M6ODoiY29zbWV0aWMiO2k6MDt9aToxO2E6Njp7czoyOiJpZCI7aToyMjEzNjQ0O3M6NDoibmFtZSI7czo0OiJub3RlIjtzOjU6InZhbHVlIjtzOjE3OiIzNTJtbSBGcm9udCBSb3RvciI7czo0OiJ0eXBlIjtzOjQ6Im5vdGUiO3M6ODoic2VxdWVuY2UiO2k6MjtzOjg6ImNvc21ldGljIjtpOjA7fX0=
+    [positionandparttype] => YToyOntzOjEwOiJwb3NpdGlvbmlkIjtpOjIyO3M6MTA6InBhcnR0eXBlaWQiO2k6MTg5Njt9
+)
+Array
+(
+    [basevehicleid] => 141225
+    [partnumber] => 492128
+    [appcategory] => 16
+    [cosmetic] => 0
+    [quantityperapp] => 2
+    [fitment] => YTozOntpOjA7YTo2OntzOjI6ImlkIjtpOjIxMTYyODY7czo0OiJuYW1lIjtzOjQ6Im5vdGUiO3M6NToidmFsdWUiO3M6MTc6IkhlYXZ5IER1dHkgQnJha2VzIjtzOjQ6InR5cGUiO3M6NDoibm90ZSI7czo4OiJzZXF1ZW5jZSI7aToxO3M6ODoiY29zbWV0aWMiO2k6MDt9aToxO2E6Njp7czoyOiJpZCI7aToyMTE2Mjg3O3M6NDoibmFtZSI7czo0OiJub3RlIjtzOjU6InZhbHVlIjtzOjE3OiIzNTJtbSBGcm9udCBSb3RvciI7czo0OiJ0eXBlIjtzOjQ6Im5vdGUiO3M6ODoic2VxdWVuY2UiO2k6MjtzOjg6ImNvc21ldGljIjtpOjA7fWk6MjthOjY6e3M6MjoiaWQiO2k6MjExNjI4ODtzOjQ6Im5hbWUiO3M6NDoibm90ZSI7czo1OiJ2YWx1ZSI7czoxODoid2l0aCBNb3VudGluZyBQaW5zIjtzOjQ6InR5cGUiO3M6NDoibm90ZSI7czo4OiJzZXF1ZW5jZSI7aTozO3M6ODoiY29zbWV0aWMiO2k6MDt9fQ==
+    [positionandparttype] => YToyOntzOjEwOiJwb3NpdGlvbmlkIjtpOjIyO3M6MTA6InBhcnR0eXBlaWQiO2k6MTg5Njt9
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2116280
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116281
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+Array
+(
+    [0] => Array
+        (
+            [id] => 2116255
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116256
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+    [2] => Array
+        (
+            [id] => 2116257
+            [name] => note
+            [value] => without Mounting Pins
+            [type] => note
+            [sequence] => 3
+            [cosmetic] => 0
+        )
+
+)
+141225,1684,30,1,STC1377,16,0,
+141225,1684,30,1,STC1377,16,0Array
+(
+    [0] => Array
+        (
+            [id] => 2116286
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116287
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+    [2] => Array
+        (
+            [id] => 2116288
+            [name] => note
+            [value] => with Mounting Pins
+            [type] => note
+            [sequence] => 3
+            [cosmetic] => 0
+        )
+
+)
+
+1,141225,1684,30,1,STC1377,16,0Array
+(
+    [0] => Array
+        (
+            [id] => 2116286
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116287
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+    [2] => Array
+        (
+            [id] => 2116288
+            [name] => note
+            [value] => with Mounting Pins
+            [type] => note
+            [sequence] => 3
+            [cosmetic] => 0
+        )
+
+)
+
+1676131,141225,1684,30,1,STC1377,16,0Array
+(
+    [0] => Array
+        (
+            [id] => 2116286
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2116287
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+    [2] => Array
+        (
+            [id] => 2116288
+            [name] => note
+            [value] => with Mounting Pins
+            [type] => note
+            [sequence] => 3
+            [cosmetic] => 0
+        )
+
+)
+
+1676133,141225,1684,22,1,ASD1611AP,16,0Array
+(
+    [0] => Array
+        (
+            [id] => 2213690
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2213691
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+    [2] => Array
+        (
+            [id] => 2213692
+            [name] => note
+            [value] => with Mounting Pins
+            [type] => note
+            [sequence] => 3
+            [cosmetic] => 0
+        )
+
+)
+
+1676134,141225,1896,30,2,592675,16,1Array
+(
+    [0] => Array
+        (
+            [id] => 2213693
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2213694
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+)
+
+1676135,141225,1896,22,2,PR92123,16,1Array
+(
+    [0] => Array
+        (
+            [id] => 2213695
+            [name] => note
+            [value] => Heavy Duty Brakes
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 2213696
+            [name] => note
+            [value] => 352mm Front Rotor
+            [type] => note
+            [sequence] => 2
+            [cosmetic] => 0
+        )
+
+    [2] => Array
+        (
+            [id] => 2213697
+            [name] => note
+            [value] => with Mounting Pins
+            [type] => note
+            [sequence] => 3
+            [cosmetic] => 0
+        )
+
+)
+
+Array
+(
+    [appid] => 1676138
+    [status] => hide
+)
+Array
+(
+    [appid] => 1578439
+    [status] => hide
+)
+Array
+(
+    [appid] => 1578443
+    [status] => trash
+)
+logHistoryEvent(ajaxConformApp.php; fitment changed from Array
+(
+    [0] => Array
+        (
+            [id] => 2072359
+            [name] => note
+            [value] => Non Police
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+ to Array
+(
+    [0] => Array
+        (
+            [id] => 2072363
+            [name] => note
+            [value] => Police
+            [type] => note
+            [sequence] => 1
+            [cosmetic] => 0
+        )
+
+)
+)logHistoryEvent(ajaxConformApp.php; fitment changed from a:2:{i:0;a:6:{s:2:"id";i:2067759;s:4:"name";s:13:"RearBrakeType";s:5:"value";s:1:"6";s:4:"type";s:4:"vcdb";s:8:"sequence";i:1;s:8:"cosmetic";i:0;}i:1;a:6:{s:2:"id";i:2067760;s:4:"name";s:4:"note";s:5:"value";s:6:"5 Lugs";s:4:"type";s:4:"note";s:8:"sequence";i:2;s:8:"cosmetic";i:0;}} to a:2:{i:0;a:6:{s:2:"id";i:2067755;s:4:"name";s:8:"SubModel";s:5:"value";s:3:"492";s:4:"type";s:4:"vcdb";s:8:"sequence";i:1;s:8:"cosmetic";i:0;}i:1;a:6:{s:2:"id";i:2067756;s:4:"name";s:13:"RearBrakeType";s:5:"value";s:1:"5";s:4:"type";s:4:"vcdb";s:8:"sequence";i:2;s:8:"cosmetic";i:0;}})

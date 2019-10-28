@@ -6,22 +6,57 @@ include_once('./class/pimClass.php');
 $vcdb=new vcdb;
 $pcdb=new pcdb;
 $pim=new pim;
+$userid=0;
 
 $appid=intval($_GET['appid']);
 
 if(isset($_POST))
 {
- if(isset($_POST['submit']) && $_POST['submit']=='Undelete'){$pim->setAppStatus($appid,0);}
- if(isset($_POST['submit']) && $_POST['submit']=='Unhide'){$pim->setAppStatus($appid,0);}
- if(isset($_POST['submit']) && $_POST['submit']=='Delete'){$pim->setAppStatus($appid,1);}
- if(isset($_POST['submit']) && $_POST['submit']=='Hide'){$pim->setAppStatus($appid,2);}
+ if(isset($_POST['submit']) && $_POST['submit']=='Undelete')
+ {
+  $pim->setAppStatus($appid,0);
+  $pim->logHistoryEvent($appid,$userid,'app was un-deleted','');
+ }
+ if(isset($_POST['submit']) && $_POST['submit']=='Unhide')
+ {
+  $pim->setAppStatus($appid,0);
+  $pim->logHistoryEvent($appid,$userid,'app was un-hidden','');
+ }
+ if(isset($_POST['submit']) && $_POST['submit']=='Delete')
+ {
+  $pim->setAppStatus($appid,1);
+  $pim->logHistoryEvent($appid,$userid,'app was deleted','');
+ }
+ if(isset($_POST['submit']) && $_POST['submit']=='Hide')
+ {
+  $pim->setAppStatus($appid,2);
+  $pim->logHistoryEvent($appid,$userid,'app was hidden','');
+ }
 
 
- if(isset($_POST['submit']) && $_POST['submit']=='Update Qty'){$pim->setAppQuantity($appid,intval($_POST['quantityperapp']),true);}
- if(isset($_POST['submit']) && $_POST['submit']=='Update Category'){$pim->setAppCategory($appid,intval($_POST['appcategory']));}
- if(isset($_POST['submit']) && $_POST['submit']=='Update Type'){$pim->setAppParttype($appid,intval($_POST['parttype']),true);}
- if(isset($_POST['submit']) && $_POST['submit']=='Update Position'){$pim->setAppPosition($appid,intval($_POST['position']),true);}
+ if(isset($_POST['submit']) && $_POST['submit']=='Update Qty')
+ {
+  $pim->setAppQuantity($appid,intval($_POST['quantityperapp']),true);
+  $pim->logHistoryEvent($appid,$userid,'quantityperapp was changed to:'.intval($_POST['quantityperapp']),'');
+ }
 
+ if(isset($_POST['submit']) && $_POST['submit']=='Update Category')
+ {
+  $pim->setAppCategory($appid,intval($_POST['appcategory']));
+  $pim->logHistoryEvent($appid,$userid,'appcategory was changed to:'.intval($_POST['appcategory']),'');
+ }
+
+ if(isset($_POST['submit']) && $_POST['submit']=='Update Type')
+ {
+  $pim->setAppParttype($appid,intval($_POST['parttype']),true);
+  $pim->logHistoryEvent($appid,$userid,'parttype was changed to:'.intval($_POST['parttype']),'');
+ }
+
+ if(isset($_POST['submit']) && $_POST['submit']=='Update Position')
+ {
+  $pim->setAppPosition($appid,intval($_POST['position']),true);
+  $pim->logHistoryEvent($appid,$userid,'quantityperapp was changed to:'.intval($_POST['position']),'');
+ }
 
  if(isset($_POST['submit']) && $_POST['submit']=='Add Attribute')
  {
@@ -32,6 +67,7 @@ if(isset($_POST))
    $topsequence=$pim->highestAppAttributeSequence($appid);
    $pim->addVCdbAttributeToApp($appid,$vcdbattributename,$vcdbattributevalue,$topsequence+1,$cosmetic);
    $pim->cleansequenceAppAttributes($appid);
+   $pim->logHistoryEvent($appid,$userid,'VCdb attribute added '.$vcdbattributename.'='.$vcdbattributevalue,'');
   }
  }
 
@@ -43,12 +79,14 @@ if(isset($_POST))
    $topsequence=$pim->highestAppAttributeSequence($appid);
    $pim->addNoteAttributeToApp($appid,trim($_POST['note']),$topsequence,$cosmetic);
    $pim->cleansequenceAppAttributes($appid);
+   $pim->logHistoryEvent($appid,$userid,'Fitment note added: '.trim($_POST['note']),'');
   }
  }
 
  if(isset($_POST['submit']) && $_POST['submit']=='Cosmetic App')
  {
   $pim->toggleAppCosmetic($appid);
+  $pim->logHistoryEvent($appid,$userid,'App cosmetic was toggled','');
  }
 
  foreach($_POST as $post_key=>$post_value)
@@ -102,7 +140,8 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
 $favoritepositions=$pim->getFavoritePositions();
 $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
 $pcdbversion=$pcdb->version();
-
+$historylimit=10;
+$history=$pim->getHistoryEventsForApp($appid,$historylimit);
 
 ?>
 <html>
@@ -110,7 +149,6 @@ $pcdbversion=$pcdb->version();
  </head>
  <body>
 <?php include('topnav.inc');?>
- <div style="border-style: groove;">
   <?php if($app)
   {;?>
    <div style="padding:10px;">
@@ -183,12 +221,14 @@ App status is invalid  <input type="submit" name="submit" value="Undelete"/>
 
     </table>
   </div>
+  <div>
+  <?php print_r($history);?>
+  </div>
   <?php }
   else
   { // no apps found
    echo 'Application not found';
   }?>
- </div>
  </body>
 </html>
 

@@ -11,7 +11,9 @@ reference to the Sandpiper protocol that is starting to take shape in the AutoCa
 
 ## To-Do list
 
-- spread (clone) apps on drag in apps grid (showAppsByBasevehicle.php)
+- settings (name/value pairs) read and write to database
+- settings page interface
+- event logging
 - selector page interface to put PCdb positions and parttypes into favorites tables
 - vcdb-validation an app on the fly (uppon change)
 - item-specific assets (show on the right side of showPart.php)
@@ -22,7 +24,6 @@ reference to the Sandpiper protocol that is starting to take shape in the AutoCa
 - export of PIES files
 - user login mechanism
 - user permission mechanism
-- event logging
 - utility to duplicate apps from one basevehicle to another
 - utility to duplicate apps from one partnumber to another
 - fitment logic analysis on the fly (app grid page)
