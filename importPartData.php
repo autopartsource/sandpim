@@ -1,8 +1,9 @@
 <?php
-include_once('/var/www/html/class/vcdbClass.php');
 include_once('/var/www/html/class/pimClass.php');
 
-$v=new vcdb;
+session_start();
+if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
+
 $pim= new pim;
 
 if(isset($_POST['input']))
@@ -34,8 +35,7 @@ if(isset($_POST['input']))
  <head>
  </head>
  <body>
-<?php include('topnav.inc');?>
- <div style="border-style: groove;">
+ <?php include('topnav.php');?>
   <h1>Import Part Attribute Data (non-PAdb)</h1>
   <div>
    <form method="post">
@@ -46,6 +46,5 @@ if(isset($_POST['input']))
     <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
    </form>
   </div>
- </div>
  </body>
 </html>

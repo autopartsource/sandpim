@@ -3,10 +3,13 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 
+session_start();
+if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
+
 $vcdb=new vcdb;
 $pcdb=new pcdb;
 $pim=new pim;
-$userid=0;
+$userid=$_SESSION['userid'];
 
 $appid=intval($_GET['appid']);
 
@@ -34,30 +37,6 @@ if(isset($_POST))
  }
 
 
- if(isset($_POST['submit']) && $_POST['submit']=='Update Qty')
- {
-  $pim->setAppQuantity($appid,intval($_POST['quantityperapp']),true);
-  $pim->logHistoryEvent($appid,$userid,'quantityperapp was changed to:'.intval($_POST['quantityperapp']),'');
- }
-
- if(isset($_POST['submit']) && $_POST['submit']=='Update Category')
- {
-  $pim->setAppCategory($appid,intval($_POST['appcategory']));
-  $pim->logHistoryEvent($appid,$userid,'appcategory was changed to:'.intval($_POST['appcategory']),'');
- }
-
- if(isset($_POST['submit']) && $_POST['submit']=='Update Type')
- {
-  $pim->setAppParttype($appid,intval($_POST['parttype']),true);
-  $pim->logHistoryEvent($appid,$userid,'parttype was changed to:'.intval($_POST['parttype']),'');
- }
-
- if(isset($_POST['submit']) && $_POST['submit']=='Update Position')
- {
-  $pim->setAppPosition($appid,intval($_POST['position']),true);
-  $pim->logHistoryEvent($appid,$userid,'quantityperapp was changed to:'.intval($_POST['position']),'');
- }
-
  if(isset($_POST['submit']) && $_POST['submit']=='Add Attribute')
  {
   $bits=explode('_',$_POST['vcdbattribute']);
@@ -81,12 +60,6 @@ if(isset($_POST))
    $pim->cleansequenceAppAttributes($appid);
    $pim->logHistoryEvent($appid,$userid,'Fitment note added: '.trim($_POST['note']),'');
   }
- }
-
- if(isset($_POST['submit']) && $_POST['submit']=='Cosmetic App')
- {
-  $pim->toggleAppCosmetic($appid);
-  $pim->logHistoryEvent($appid,$userid,'App cosmetic was toggled','');
  }
 
  foreach($_POST as $post_key=>$post_value)
@@ -146,9 +119,55 @@ $history=$pim->getHistoryEventsForApp($appid,$historylimit);
 ?>
 <html>
  <head>
+  <style>
+   .apppart {padding: 1px; border: 1px solid #808080; margin: 0px; background-color:#d0f0c0;}
+   .apppart-cosmetic {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#33FFD7;}
+   .apppart-hidden {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FFD433;}
+   .apppart-deleted { padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FF5533;}
+
+   a:link {color: blue; text-decoration: none;}
+   a:visited {color: blue; text-decoration: none;}
+   a:hover {color: gray; text-decoration: none;}
+   a:active {color: blue; text-decoration: none;}
+
+   table {border-collapse: collapse;}
+   table, th, td {border: 1px solid black;}
+  </style>
+  <script>
+
+function updateApp(appid,elementtype,elementid)
+{
+ var value='';
+ if(elementtype=='text'){value=document.getElementById(elementid).value;}
+ if(elementtype=='select')
+ {
+  var e=document.getElementById(elementid);
+  value=e.options[e.selectedIndex].value;
+ }
+
+ document.getElementById("sandpiperoid").innerHTML='';
+
+ var xhr = new XMLHttpRequest();
+ xhr.open('GET', 'ajaxUpdateApp.php?appid='+appid+'&elementid='+elementid+'&value='+value);
+ xhr.onload = function()
+ {
+  var response=xhr.responseText;
+  document.getElementById("sandpiperoid").innerHTML=response;
+
+  // get app's color based on status and cosmetic
+
+ };
+ xhr.send();
+}
+
+
+
+
+
+  </script>
  </head>
  <body>
-<?php include('topnav.inc');?>
+<?php include('topnav.php');?>
   <?php if($app)
   {;?>
    <div style="padding:10px;">
@@ -161,14 +180,8 @@ $history=$pim->getHistoryEventsForApp($appid,$historylimit);
     <table border="1" cellpadding="5">
      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Base Vehicle</th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber'];?>"><?php echo $app['partnumber'];?></a></td></tr>
-
-     <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Application<br/>Part Type</th><td align="right"><select name="parttype"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$app['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select><input type="submit" name="submit" value="Update Type"/></td></tr>
-     </form>
-
-     <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Position</th><td align="right"><select name="position"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select><input type="submit" name="submit" value="Update Position"/></td></tr>
-     </form>
+     <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Application<br/>Part Type</th><td align="right"><select id="parttypeid"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$app['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select><button onclick='updateApp(<?php echo $appid;?>,"select","parttypeid");'>Update Type</button></td></tr>
+     <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Position</th><td align="right"><select id="positionid"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select><button onclick='updateApp(<?php echo $appid;?>,"select","positionid");'>Update Position</button></td></tr>
 
      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Fitment<br/>Qualifiers</th>
       <td align="left">
@@ -186,11 +199,9 @@ $history=$pim->getHistoryEventsForApp($appid,$historylimit);
        </td>
       </tr>
 
-     <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Quantity<br/>(on this vehicle)</th><td align="right"><input type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp'];?>"/><input type="submit" name="submit" value="Update Qty"/></td></tr>
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Cosmetic</th><td align="right"><?php if($app['cosmetic']){echo 'App is Cosmetic ';}?><input type="submit" name="submit" value="Cosmetic App"/></td></tr>
-
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Category</th><td align="right"><select name="appcategory"> <?php foreach($appcategories as $appcategory){?> <option value="<?php echo $appcategory['id'];?>"<?php if($appcategory['id']==$app['appcategory']){echo ' selected';}?>><?php echo $appcategory['name'];?></option><?php }?></select><input type="submit" name="submit" value="Update Category"/></td></tr>
+      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp'];?>"/><button onclick='updateApp(<?php echo $appid;?>,"text","quantityperapp");'>Update Qty</button></td></tr>
+      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Cosmetic</th><td align="right"><?php if($app['cosmetic']){echo 'App is Cosmetic ';}?> <button onclick='updateApp(<?php echo $appid;?>,"button","cosmetic");'>Cosmetic</button></td></tr>
+      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Category</th><td align="right"><select id="appcategory"> <?php foreach($appcategories as $appcategory){?> <option value="<?php echo $appcategory['id'];?>"<?php if($appcategory['id']==$app['appcategory']){echo ' selected';}?>><?php echo $appcategory['name'];?></option><?php }?></select><button onclick='updateApp(<?php echo $appid;?>,"select","appcategory");'>Update Category</button></td></tr>
 
       <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Fitment<br/>Assets</th><td align="right"><?php if(count($assets)){foreach($assets as $asset) { echo '<div><a title="view this asset in new browser window" href="'.$asset['uri'].'" target="_blank">'.$asset['assetId'].'</a> (representation:'.$asset['representation'].', sequence: '.$asset['assetItemOrder'].') <a title="remove this asset from the application" href="./showAdminApplication.php?id='.intval($_GET['id']).'&removeasset='.$asset['id'].'">x</a><div>'; }}?>
       <div>Asset <select name="assetid"><option value=""></option>
@@ -205,7 +216,7 @@ $history=$pim->getHistoryEventsForApp($appid,$historylimit);
        <select name="representation"><option value="A">Actual</option><option value="R">Representative</option></select>
       </div></td></tr>
       <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Internal<br/>Notes</th><td><textarea name="comments" cols="50"><?php echo $app['internalnotes'];?></textarea></td><tr>
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">IDs</th><td>Application ID: <?php echo $app['id'];?><br/>Sandpiper OID: <?php echo $app['oid'];?><br/>BaseVehicle ID: <?php echo $app['basevehicleid'];?></td><tr>
+      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id'];?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid'];?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid'];?></div><div style="clear:both;"></div></td><tr>
       <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Status</th><td align="right">
 
 <?php switch($app['status']){case 0:?>
@@ -217,13 +228,10 @@ App is Hidden <input type="submit" name="submit" value="Unhide"/> <input type="s
 <?php break; default:?>
 App status is invalid  <input type="submit" name="submit" value="Undelete"/>
 <?php }?></td></tr>
-     </form>
 
     </table>
   </div>
-  <div>
-  <?php print_r($history);?>
-  </div>
+  <?php if(count($history)){echo '<div><a href="./appHistory.php?appid='.$appid.'">History</a></div>';}?>
   <?php }
   else
   { // no apps found

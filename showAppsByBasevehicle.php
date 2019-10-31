@@ -3,6 +3,13 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 
+session_start();
+if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
+
+header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
+header("Pragma: no-cache"); // HTTP 1.0.
+header("Expires: 0"); // Proxies.
+
 function buildModelYearLink($makeid,$modelid,$yearid,$appcategories,$displaytext)
 {
  $catsstring='';
@@ -31,11 +38,9 @@ $apps=$pim->getAppsByBasevehicleid($basevehicleid,$appcategories);
 $fitmentrowkeys=array();
 $fitmentcolumnkeys=array();
 $appmatrix=array();
+$dropzonenumber=0;
 
-$prevyearexists=$vcdb->getBasevehicleidForMidMidYid($makeid,$modelid,($yearid-1));
-$nextyearexists=$vcdb->getBasevehicleidForMidMidYid($makeid,$modelid,($yearid+1));
-
-
+$prevyearexists=$vcdb->getBasevehicleidForMidMidYid($makeid,$modelid,($yearid-1)); $nextyearexists=$vcdb->getBasevehicleidForMidMidYid($makeid,$modelid,($yearid+1));
 
 if(count($apps))
 {
@@ -67,85 +72,28 @@ if(count($apps))
 
 ksort($fitmentrowkeys);
 ksort($fitmentcolumnkeys);
-
 ?>
 <!DOCTYPE HTML>
 <html>
-<style>
-.apppart {
-  padding: 1px;
-  border: 1px solid #808080;
-  margin: 0px;
-  background-color:#d0f0c0;
-}
-
-.apppart-cosmetic {
-  padding: 1px;
-  border: 1px solid #aaaaaa;
-  margin:0px;
-  background-color:#33FFD7;
-}
-.apppart-hidden {
-  padding: 1px;
-  border: 1px solid #aaaaaa;
-  margin:0px;
-  background-color:#FFD433;
-}
-.apppart-deleted {
-  padding: 1px;
-  border: 1px solid #aaaaaa;
-  margin:0px;
-  background-color:#FF5533;
-}
-
-
-/* unvisited link */
-a:link {
- color: blue;
- text-decoration: none;
-}
-
-/* visited link */
-a:visited {
- color: blue;
- text-decoration: none;
-}
-
-/* mouse over link */
-a:hover {
- color: gray;
- text-decoration: none;
-}
-
-/* selected link */
-a:active {
- color: blue;
- text-decoration: none;
-}
-
-
-table {
-  border-collapse: collapse;
-}
-
-table, th, td {
-  border: 1px solid black;
-}
-
-
-
-  </style>
  <head>
+  <style>
+   .apppart {padding: 1px; border: 1px solid #808080; margin: 0px; background-color:#d0f0c0;}
+   .apppart-cosmetic {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#33FFD7;}
+   .apppart-hidden {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FFD433;}
+   .apppart-deleted { padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FF5533;}
+
+   a:link {color: blue; text-decoration: none;}
+   a:visited {color: blue; text-decoration: none;}
+   a:hover {color: gray; text-decoration: none;}
+   a:active {color: blue; text-decoration: none;}
+
+   table {border-collapse: collapse;}
+   table, th, td {border: 1px solid black;}
+  </style>
   <script>
 
-
-function showPartEntryBox(ev)
+function allowDrop(ev)
 {
- console.log('data-row:'+ev.target.getAttribute('data-row'));
-
-}
-
-function allowDrop(ev) {
   ev.preventDefault();
 }
 
@@ -160,7 +108,6 @@ function drag(ev)
   ev.dataTransfer.setData("sourcecosmetic", ev.target.getAttribute('data-cosmetic'));
   ev.dataTransfer.setData("sourcequantityperapp", ev.target.getAttribute('data-quantityperapp'));
   ev.dataTransfer.setData("sourceappcategory", ev.target.getAttribute('data-appcategory'));
-
 }
 
 function drop(ev)
@@ -171,22 +118,11 @@ function drop(ev)
  var sourceapp = ev.dataTransfer.getData("sourceapp");
  var sourcerow = ev.dataTransfer.getData("sourcerow");
  var sourcecolumn = ev.dataTransfer.getData("sourcecolumn");
-
  var basevehicleid = ev.dataTransfer.getData("basevehicleid");
  var sourcepartnumber = ev.dataTransfer.getData("sourcepartnumber");
  var sourcecosmetic = ev.dataTransfer.getData("sourcecosmetic");
  var sourcequantityperapp = ev.dataTransfer.getData("sourcequantityperapp");
  var sourceappcategory = ev.dataTransfer.getData("sourceappcategory");
-
-/*
- console.log('sourceapp:'+sourceapp);
- console.log('sourcerow:'+sourcerow);
- console.log('sourcecolumn:'+sourcecolumn);
-
- console.log('data-row:'+ev.target.getAttribute('data-row'));
- console.log('data-column:'+ev.target.getAttribute('data-column'));
- console.log('data-type:'+ev.target.getAttribute('data-type'));
-*/
 
  if(ev.target.getAttribute('data-type')!='dropzone'){return;}
  if(ev.target.getAttribute('data-row')==sourcerow && ev.target.getAttribute('data-column')==sourcecolumn)
@@ -195,9 +131,17 @@ function drop(ev)
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'ajaxToggleAppCosmetic.php?appid='+sourceapp);
   xhr.send();
-//  location.reload(true)
 
-//  document.getElementById(data).setAttribute("class","apppart-cosmetic");
+  if(sourcecosmetic==0)
+  {
+   document.getElementById(data).setAttribute('class','apppart-cosmetic');
+   document.getElementById(data).setAttribute('data-cosmetic','1');
+  }
+  else
+  {
+   document.getElementById(data).setAttribute('class','apppart');
+   document.getElementById(data).setAttribute('data-cosmetic','0');
+  }
   return;
  }
 
@@ -207,9 +151,6 @@ function drop(ev)
   var movingapp = document.getElementById(data).cloneNode(true);
   childapp=movingapp;
   copymove="copy";
-
-  console.log('movingapp:'+movingapp);
-
  }
  else
  {
@@ -227,13 +168,16 @@ function drop(ev)
  else
  { // app was dragged to a cell other than its own (handled elsewhere). Move the app object in the document visually  and make ajax call 
     // to apply the attributes of the destination row/column to the dragged app
-  ev.target.appendChild(childapp);
 
   if(copymove=="copy")
   { // new app is created at the row/column intersection using the part number, qty, appcategory
-
    var xhr = new XMLHttpRequest();
    xhr.open('GET', 'ajaxNewApp.php?basevehicleid='+basevehicleid+'&partnumber='+sourcepartnumber+'&appcategory='+sourceappcategory+'&cosmetic='+sourcecosmetic+'&quantityperapp='+sourcequantityperapp+'&fitment='+ev.target.getAttribute('data-row')+'&positionandparttype='+ev.target.getAttribute('data-column'));
+   xhr.onload = function()
+   {
+    var newappid=xhr.responseText;
+    ev.target.innerHTML+='<div id="apppart_'+newappid+'" class="apppart" draggable="true" ondragstart="drag(event)" data-type="app" data-row="'+ev.target.getAttribute('data-row')+'" data-column="'+ev.target.getAttribute('data-column')+'" data-sourceapp="'+newappid+'" data-basevehicleid="'+basevehicleid+'" data-partnumber="'+sourcepartnumber+'" data-quantityperapp="'+sourceappcategory+'" data-cosmetic="'+sourcecosmetic+'" data-appcategory="'+sourceappcategory+'" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid='+newappid+'">'+sourcepartnumber+'</a></div>';
+   };
    xhr.send();
   }
   else
@@ -241,21 +185,74 @@ function drop(ev)
    var xhr = new XMLHttpRequest();
    xhr.open('GET', 'ajaxConformApp.php?appid='+sourceapp+'&fitment='+ev.target.getAttribute('data-row')+'&positionandparttype='+ev.target.getAttribute('data-column'));
    xhr.send();
+   ev.target.appendChild(childapp);
+
+   // update the document element to have the new grid coordinates (over-write its origials)
+   document.getElementById(data).setAttribute('data-row',ev.target.getAttribute('data-row'));
+   document.getElementById(data).setAttribute('data-column',ev.target.getAttribute('data-column'));
   }
  }
-
-
-
-
-
 }
+
+
+function showAddPartArea(source,rowdata,columndata,basevehicleid,dropzone)
+{
+ source.outerHTML+="<div style='position:absolute;width:200px;height:100px;border:1px solid;margin-top:-1em;background-color:#ffffff;padding:1em;'>"+
+  " <p><input id='addpart_"+dropzone.toString()+"' type='text' name='partnumber'/></p>"+
+  "<button class='addpartbutton' onclick='submitAddPart(this,\""+rowdata.toString()+"\",\""+columndata.toString()+"\",\""+basevehicleid.toString()+"\",\""+dropzone.toString()+"\")'>Add</button> <button onclick='closeAddPartArea(this);'>Cancel</button></div>";
+  document.getElementById('addpart_'+dropzone).focus();
+}
+
+function submitAddPart(source,rowdata,columndata,basevehicleid,dropzone)
+{
+ var partnumber=source.parentNode.querySelector('input[name="partnumber"]').value;
+ if(partnumber===""){return;}
+ else
+ { // valid looking part number
+
+  // ajax call to add new app
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'ajaxNewApp.php?basevehicleid='+basevehicleid+'&partnumber='+partnumber+'&appcategory=16&cosmetic=0&quantityperapp=1&fitment='+rowdata+'&positionandparttype='+columndata);
+  xhr.onload = function()
+  {
+   var newappid=xhr.responseText;
+   // insert new draggable part block
+   document.getElementById(dropzone).innerHTML+='<div id="apppart_'+newappid+'" class="apppart" draggable="true" ondragstart="drag(event)" data-type="app" data-row="'+rowdata+'" data-column="'+columndata+'" data-sourceapp="'+newappid+'" data-basevehicleid="'+basevehicleid+'" data-partnumber="'+partnumber+'" data-quantityperapp="1" data-cosmetic="0" data-appcategory="16" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid='+newappid+'">'+partnumber+'</a></div>';
+  };
+  xhr.send();
+  // destroy modal popup area
+  source.parentNode.parentNode.removeChild(source.parentNode);
+ }
+}
+
+function closeAddPartArea(source)
+{
+ source.parentNode.parentNode.removeChild(source.parentNode);
+}
+
+document.addEventListener("keyup", function(event)
+{
+ if(document.activeElement.name=='partnumber')
+ {
+  if (event.keyCode == 13)
+  {
+   document.activeElement.parentNode.parentNode.querySelector('.addpartbutton').click();
+  }
+
+  if (event.keyCode == 27)
+  {
+   document.activeElement.parentNode.parentNode.parentNode.removeChild(document.activeElement.parentNode.parentNode);
+  }
+ }
+})
+
   </script>
  </head>
  <body>
-<?php include('topnav.inc');?>
+<?php include('topnav.php');?>
  <div>
   <div style="padding:10px;font-size:25px;"><?php echo $vcdb->makeName($makeid); ?>, <?php echo $vcdb->modelName($modelid); ?> <?php echo $yearid;?>
- <?php  if($prevyearexists){echo buildModelYearLink($makeid,$modelid,($yearid-1),$appcategories,'<<');}else{echo '--';} echo ' ';  if($nextyearexists){echo buildModelYearLink($makeid,$modelid,($yearid+1),$appcategories,'>>');}else{echo '--';}?></div>
+ <?php  if($prevyearexists){echo buildModelYearLink($makeid,$modelid,($yearid-1),$appcategories,'<<');}else{echo '....';} echo ' ';  if($nextyearexists){echo buildModelYearLink($makeid,$modelid,($yearid+1),$appcategories,'>>');}else{echo '....';}?></div>
   <div style="padding:10px;">
   <?php if(count($apps))
   {
@@ -284,7 +281,8 @@ function drop(ev)
     foreach($fitmentcolumnkeys as $fitmentcolumnkey=>$positionandparttype)
     {
      echo '<td style="vertical-align:top">';
-     echo '<div ondrop="drop(event)" ondragover="allowDrop(event)" onclick="showPartEntryBox(event)" data-type="dropzone" data-row="'.$rowfitmentattributes.'" data-column="'.$positionandparttype.'" style="background-color:#c0c0c0;padding-top:2px;padding-bottom:25px;padding-left:2px;padding-right:2px;">';
+     $dropzonenumber++;
+     echo '<div id="dropzone_'.$dropzonenumber.'" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="'.$rowfitmentattributes.'" data-column="'.$positionandparttype.'" style="background-color:#c0c0c0;padding-top:2px;padding-bottom:25px;padding-left:2px;padding-right:2px;">';
       if(isset($appmatrix[$fitmentrowkey][$fitmentcolumnkey]))
       {
        foreach($appmatrix[$fitmentrowkey][$fitmentcolumnkey] as $app)
@@ -294,6 +292,9 @@ function drop(ev)
        }
       }
       echo '</div>';
+
+      echo '<div onclick="showAddPartArea(this,\''.$rowfitmentattributes.'\',\''.$positionandparttype.'\',\''.$basevehicleid.'\',\'dropzone_'.$dropzonenumber.'\')" data-type="addpart">...</div>';
+
      echo '</td>';
     }
     echo '</tr>';
@@ -308,8 +309,8 @@ function drop(ev)
   { // no apps found
    echo 'No applications found for this make/model/year';
   }?>
+   
    </div>
   </div>
  </body>
 </html>
-

@@ -22,7 +22,6 @@ reference to the Sandpiper protocol that is starting to take shape in the AutoCa
 - fitment assets (show on the right side of showApp.php)
 - export of ACES files
 - export of PIES files
-- user login mechanism
 - user permission mechanism
 - utility to duplicate apps from one basevehicle to another
 - utility to duplicate apps from one partnumber to another

@@ -1,13 +1,16 @@
 <?php
 include_once('/var/www/html/class/pimClass.php');
+session_start();
 $pim= new pim;
 
-if(isset($_GET['appid']) && isset($_GET['fitment']) && isset($_GET['positionandparttype']))
+if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['fitment']) && isset($_GET['positionandparttype']))
 {
  // get the existing app for pre-comparison so we can know what to change
  $appid=intval($_GET['appid']);
  $neednewoid=false;
- $description='ajaxConformApp.php';
+ $description='grid drag';
+ $userid=$_SESSION['userid'];
+
  if($app=$pim->getApp($appid))
  {
   $attributes=unserialize(base64_decode($_GET['fitment']));
@@ -39,7 +42,6 @@ if(isset($_GET['appid']) && isset($_GET['fitment']) && isset($_GET['positionandp
   if($neednewoid)
   {
    $OID=$pim->updateAppOID($appid);
-   $userid=0;
    $pim->logHistoryEvent($appid,$userid,$description,$OID);
   }
  }

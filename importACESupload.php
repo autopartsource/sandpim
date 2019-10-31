@@ -2,6 +2,9 @@
 include_once('/var/www/html/class/vcdbClass.php');
 include_once('/var/www/html/class/pimClass.php');
 
+session_start();
+if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
+
 $v=new vcdb;
 $pim= new pim;
 $error_msg=false;
@@ -48,8 +51,7 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
  <head>
  </head>
  <body>
-<?php include('topnav.inc');?>
- <div style="border-style: groove;">
+  <?php include('topnav.php');?>
   <h1>Import ACES by file upload</h1>
   <?php if($jobs){ ?>
   <div style="border-style: groove;padding:10px;">
@@ -70,6 +72,5 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
     <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
    </form>
   </div>
- </div>
  </body>
 </html>

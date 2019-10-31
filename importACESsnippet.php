@@ -2,6 +2,10 @@
 include_once('/var/www/html/class/vcdbClass.php');
 include_once('/var/www/html/class/pimClass.php');
 
+session_start();
+if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
+
+
 $v=new vcdb;
 $pim= new pim;
 /*
@@ -50,7 +54,7 @@ $appcategories=$pim->getAppCategories();
  <head>
  </head>
  <body>
-<?php include('topnav.inc');?>
+<?php include('topnav.php');?>
  <div style="border-style: groove;">
   <h1>Import small ACES xml</h1>
   <div>
