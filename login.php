@@ -1,27 +1,36 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
+include_once('/var/www/html/class/userClass.php');
+include_once('/var/www/html/class/configClass.php');
 session_start();
-$pim= new pim;
+$user= new user;
+$config= new config;
+
 
 $error='';
 if(isset($_POST['username']) && isset($_POST['password']))
 {
  $username=$_POST['username'];
- $pepper = 'sdlfkjldskfj'; //getConfigVariable("pepper");
+ $pepper = $config->getConfigValue('pepper');
  $pwd = $_POST['password'];
  $pwd_peppered = hash_hmac("sha256", $pwd, $pepper);
- $user = $pim->getUser($username);
+ if($userid=$user->getUserByUsername($username))
+ { // known user - now verify password
+  if(password_verify($pwd_peppered, $user->hash))
+  { // valid user and password
+   $_SESSION['userid']=$user->id; // sessionize the use id and name
+   $_SESSION['name']=$user->name; // sessionize the use id and name
 
- if(password_verify($pwd_peppered, $user['hash']))
- {
-  $_SESSION['userid']=$user['id'];
-  $_SESSION['name']=$user['name'];
-  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./index.php'\" /></head><body></body></html>";
-  exit;
+   echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./index.php'\" /></head><body></body></html>";
+   exit;
+  }
+  else
+  {
+   $error='Invalid username or password';
+  }
  }
  else
- {
-  $error='Invalid username or password';
+ { // unknown user
+   $error='Invalid username or password';
  }
 }
 

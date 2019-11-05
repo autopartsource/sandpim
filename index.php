@@ -1,10 +1,12 @@
 <?php
 include_once('/var/www/html/class/pimClass.php');
+include_once('/var/www/html/class/userClass.php');
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
 
 $pim= new pim;
+$user= new user;
 $history=$pim->getHistoryEvents(20);
 
 ?>
@@ -25,6 +27,10 @@ $history=$pim->getHistoryEvents(20);
    table {border-collapse: collapse;}
    table, th, td {border: 1px solid black;}
   </style>
+  <script>
+
+
+  </script>
  </head>
  <body>
  <?php include('topnav.php');?>
@@ -34,7 +40,7 @@ $history=$pim->getHistoryEvents(20);
    echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
    foreach($history as $record)
    {
-    echo '<tr><td>'.$record['eventdatetime'].'</td><td>'.$record['userid'].'</td><td>'.$record['description'].'</td><td>'.$record['new_oid'].'</td></tr>';
+    echo '<tr><td>'.$record['eventdatetime'].'</td><td>'.$user->realNameOfUserid($record['userid']).'</td><td>'.$record['description'].'</td><td>'.$record['new_oid'].'</td></tr>';
    }
    echo '</table>';
   }?>

@@ -1,4 +1,7 @@
 <?php
+/*
+ core functions - mostly related to applications
+*/
 include_once("mysqlClass.php");
 
 
@@ -112,7 +115,7 @@ class pim
    {
     $attributes=$this->getAppAttributes($appid);
     $attributeshash=$this->appAttributesHash($attributes);
-    $app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>'','cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
+    $app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>base64_decode($row['internalnotes']),'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
    }
   }
   $db->close();
@@ -472,7 +475,7 @@ class pim
  {
   $categories=array();
   $db = new mysql; $db->dbname='pim'; $db->connect();
-  if($stmt=$db->conn->prepare('select id,name from partcategory order by name'))
+  if($stmt=$db->conn->prepare('select id,`name` from partcategory order by name'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -793,7 +796,6 @@ class pim
   $db->close();
  }
 
-
  function toggleAppCosmetic($appid)
  {
   $db = new mysql; $db->dbname='pim'; $db->connect();
@@ -804,6 +806,20 @@ class pim
   } //else{print_r($db->conn->error);}
   $db->close();
  }
+
+ function setAppInternalnotes($applicationid,$internalnotes)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  if($stmt=$db->conn->prepare('update application set internalnotes=? where id=?'))
+  {
+   $stmt->bind_param('si',base64_encode($internalnotes),$applicationid);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+
+
+
 
  function conformApp($appid,$refappid,$copyfitment,$copyposition,$copyparttype,$copycategory)
  {
@@ -1024,75 +1040,6 @@ class pim
   }
   $db->close();
   return $app_count;
- }
-
-
-
- function addUser($username,$pwd_hashed,$realname)
- {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
-  $userid=false;
-  if($stmt=$db->conn->prepare('insert into user (id,status,failedcount,`name`,username,hash) values(null,1,0,?,?,?)'))
-  {
-   if($stmt->bind_param('sss',$realname,$username,$pwd_hashed))
-   {
-    if($stmt->execute())
-    {
-     $userid=$db->conn->insert_id;
-    }
-    else
-    {
-     print_r($db->conn->error);
-    }
-   }
-   else
-   {
-    print_r($db->conn->error);
-   }
-  }
-  else
-  {
-   print_r($db->conn->error);
-  }
-
-  $db->close();
-  return $userid;
- }
-
-
- function getUser($username)
- {
-  $user=false;
-  $db = new mysql; $db->dbname='pim'; $db->connect();
-  if($stmt=$db->conn->prepare('select * from user where username=?'))
-  {
-   $stmt->bind_param('s',$username);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   if($row = $db->result->fetch_assoc())
-   { // username was found.
-    $user=array('id'=>$row['id'],'hash'=>$row['hash'],'name'=>$row['name'],'status'=>$row['status'],'failedcount'=>$row['failedcount']);
-   }
-  }
-  $db->close();
-  return $user;
- }
-
- function getUsers()
- {
-  $users=array();
-  $db = new mysql; $db->dbname='pim'; $db->connect();
-  if($stmt=$db->conn->prepare('select * from user order by username'))
-  {
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
-   {
-    $users[]=array('id'=>$row['id'],'username'=>$row['username'],'name'=>$row['name'],'status'=>$row['status'],'failedcount'=>$row['failedcount']);
-   }
-  }
-  $db->close();
-  return $users;
  }
 
 

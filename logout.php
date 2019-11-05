@@ -1,6 +1,6 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
-$pim= new pim;
+//include_once('/var/www/html/class/pimClass.php');
+//$pim= new pim;
 
 session_start();
 $_SESSION = array();

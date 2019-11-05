@@ -62,6 +62,11 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['elementid
   }
   break;
 
+  case 'internalnotes':
+   $pim->setAppInternalnotes($appid,$_GET['value']);
+   $pim->logHistoryEvent($appid,$userid,'internal notes updated',$oid);
+  break;
+
   default:
   break;
  }
