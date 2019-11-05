@@ -11,7 +11,7 @@ reference to the Sandpiper protocol that is starting to take shape in the AutoCa
 
 ## To-Do list
 
-- settings (name/value pairs) read and write to database -
+- settings (name/value pairs) read and write to database - -
 - settings page interface
 - event logging
 - selector page interface to put PCdb positions and parttypes into favorites tables
