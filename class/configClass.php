@@ -21,23 +21,41 @@ class config
   return $configs;
  }
 
- function getConfigValue($configname)
- {
-  $db=new mysql; $db->dbname='pim'; $db->connect();
-  $value=false;
-  if($stmt=$db->conn->prepare('select * from config where configname=?'))
-  {
-   $stmt->bind_param('s',$configname);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   if($row = $db->result->fetch_assoc())
-   {
-    $value=$row['configvalue'];
-   }
-  }
-  $db->close();
-  return $value;
- }
+    function getConfigValue($configname,$defaultvalue=false)
+    {
+	echo '*'.$configname.','.$defaultvalue.'*';
+     // if name is not found, and $defaultvalue is not false, write a new config record with the $defaultvalue
+        $db=new mysql; $db->dbname='pim'; $db->connect();
+        $value=false;
+        if($stmt=$db->conn->prepare('select * from config where configname=?'))
+        {
+            $stmt->bind_param('s',$configname);
+            $stmt->execute();
+            $db->result = $stmt->get_result();
+            if($row = $db->result->fetch_assoc())
+            {
+                $value=$row['configvalue'];
+            }
+            else
+            {// name not found
+                if($defaultvalue)
+		{// write the $configname/$defaultvalue as new record
+		    if($stmt=$db->conn->prepare('insert into config (configname,configvalue) values(?,?)'))
+		    {
+			if($stmt->bind_param('ss',$configname,$defaultvalue))
+			{
+			    if($stmt->execute())
+			    {
+				$value=$defaultvalue;
+			    }
+			}
+                    }           
+                }
+            }
+        }
+        $db->close();
+        return $value;
+    }
 
  function setConfigValue($configname,$configvalue)
  {
