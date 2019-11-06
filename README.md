@@ -11,7 +11,7 @@ reference to the Sandpiper protocol that is starting to take shape in the AutoCa
 
 ## To-Do list
 
-- Edit and Add-new on pair on settings page,,
+- delete existing pair or Add-new pair on settings page
 - selector page interface to put PCdb positions and parttypes into favorites tables.
 - vcdb-validation an app on the fly (uppon change)
 - item-specific assets (show on the right side of showPart.php)
