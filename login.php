@@ -1,16 +1,16 @@
 <?php
 include_once('/var/www/html/class/userClass.php');
-include_once('/var/www/html/class/configClass.php');
+include_once('/var/www/html/class/configGetClass.php');
 session_start();
 $user= new user;
-$config= new config;
+$configGet= new configGet;
 
 
 $error='';
 if(isset($_POST['username']) && isset($_POST['password']))
 {
  $username=$_POST['username'];
- $pepper = $config->getConfigValue('pepper');
+ $pepper = $configGet->getConfigValue('pepper');
  $pwd = $_POST['password'];
  $pwd_peppered = hash_hmac("sha256", $pwd, $pepper);
  if($userid=$user->getUserByUsername($username))

@@ -1,12 +1,14 @@
 <?php
 include_once('/var/www/html/class/userClass.php');
-include_once('/var/www/html/class/configClass.php');
+include_once('/var/www/html/class/configGetClass.php');
+include_once('/var/www/html/class/configSetClass.php');
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
 
 $user= new user;
-$config= new config;
+$configGet= new configGet;
+$configSet= new configSet;
 
 $error='';
 
@@ -18,11 +20,11 @@ if(isset($_POST['submit']) && $_POST['submit']=='Create User')
   {
    if($_POST['password']== $_POST['repassword'])
    {
-    $pepper = $config->getConfigValue('pepper');
+    $pepper = $configGet->getConfigValue('pepper');
     if(!$pepper)
     { // new installation - pepper value is not present - create it
      $pepper=bin2hex(random_bytes(16));
-     $config->setConfigValue('pepper',$pepper);
+     $configSet->setConfigValue('pepper',$pepper);
     }
     $pwd = $_POST['password'];
     $pwd_peppered = hash_hmac("sha256", $pwd, $pepper);

@@ -1,14 +1,14 @@
 <?php
 include_once('/var/www/html/class/userClass.php');
-include_once('/var/www/html/class/configClass.php');
+include_once('/var/www/html/class/configGetClass.php');
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
 
 $user=new user;
-$config=new config;
+$configGet=new configGet;
 
-$configs=$config->getAllConfigValues();
+$configs=$configGet->getAllConfigValues();
 
 
 ?>
