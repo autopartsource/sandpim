@@ -50,8 +50,6 @@ $logpreviewlength=intval($configGet->getConfigValue('logPreviewDescriptionLength
     }
     echo '</table>';
     }?>
-  
-  hello world!
 
  </body>
 </html>
