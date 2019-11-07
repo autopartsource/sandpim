@@ -23,7 +23,6 @@ class config
 
     function getConfigValue($configname,$defaultvalue=false)
     {
-	echo '*'.$configname.','.$defaultvalue.'*';
      // if name is not found, and $defaultvalue is not false, write a new config record with the $defaultvalue
         $db=new mysql; $db->dbname='pim'; $db->connect();
         $value=false;
