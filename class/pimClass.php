@@ -812,7 +812,8 @@ class pim
   $db = new mysql; $db->dbname='pim'; $db->connect();
   if($stmt=$db->conn->prepare('update application set internalnotes=? where id=?'))
   {
-   $stmt->bind_param('si',base64_encode($internalnotes),$applicationid);
+   $encodednotes=base64_encode($internalnotes);
+   $stmt->bind_param('si', $encodednotes,$applicationid);
    $stmt->execute();
   } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
