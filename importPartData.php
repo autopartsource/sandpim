@@ -1,5 +1,6 @@
 <?php
 include_once('/var/www/html/class/pimClass.php');
+$navCategory = 'import/export';
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
@@ -33,6 +34,7 @@ if(isset($_POST['input']))
 <!DOCTYPE html>
 <html>
  <head>
+     <link rel="stylesheet" type="text/css" href="styles.css" />
  </head>
  <body>
  <?php include('topnav.php');?>

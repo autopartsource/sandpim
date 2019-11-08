@@ -2,6 +2,7 @@
 include_once('/var/www/html/class/pimClass.php');
 include_once('/var/www/html/class/userClass.php');
 include_once('/var/www/html/class/configGetClass.php');
+$navCategory = 'dashboard';
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
@@ -18,7 +19,7 @@ $logpreviewlength=intval($configGet->getConfigValue('logPreviewDescriptionLength
 <!DOCTYPE html>
 <html>
  <head>
-     <link rel="stylesheet" type="text/css" href="styles.css">
+     <link rel="stylesheet" type="text/css" href="styles.css" />
   <script>
 
 
@@ -26,7 +27,8 @@ $logpreviewlength=intval($configGet->getConfigValue('logPreviewDescriptionLength
  </head>
  <body>
  <?php include('topnav.php');?>
-  <h1>Dashboard</h1>
+     <div class="center">
+  <h1 class="header">Dashboard</h1>
   <?php if(count($history))
     {
     echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th></tr>';
@@ -37,6 +39,6 @@ $logpreviewlength=intval($configGet->getConfigValue('logPreviewDescriptionLength
     }
     echo '</table>';
     }?>
-
+     </div>
  </body>
 </html>

@@ -39,8 +39,23 @@ ul.topnav li a {
   text-decoration: none;
 }
 
-ul.topnav li a:hover:not(.active) {background-color: #111;}
+ul.topnav li a:hover:not(.navActive) {background-color: #111;} 
 
-ul.topnav li a.active {background-color: #4CAF50;}
+ul.topnav li a.navActive {background-color: #1469a9}
 
 ul.topnav li.right {float: right;}
+
+html {
+    height: 100%;
+    margin: auto;
+}
+
+.header {text-align: left;}
+
+.center {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}

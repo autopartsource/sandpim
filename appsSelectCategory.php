@@ -2,6 +2,7 @@
 include_once('./class/vcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/userClass.php');
+$navCategory = 'applications';
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
