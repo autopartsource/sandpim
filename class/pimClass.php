@@ -1043,5 +1043,31 @@ class pim
   return $app_count;
  }
 
+ 
+ function addFavoriteParttype($parttypeid,$myname)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $parttypes=array();
+  if($stmt=$db->conn->prepare('insert into parttype values(?,?)'))
+  {
+   $stmt->bind_param('is', $parttypeid,$myname); 
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+ function removeFavoriteParttype($parttypeid)
+ {
+  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $parttypes=array();
+  if($stmt=$db->conn->prepare('delete from parttype where id=?'))
+  {
+   $stmt->bind_param('i', $parttypeid); 
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ 
 
 }?>

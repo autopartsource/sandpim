@@ -58,6 +58,26 @@ class pcdb
  }
 
 
+  function getPartTypes($searchstring)
+ {
+  $types=array();
+  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  if($stmt=$db->conn->prepare('select PartTerminologyID, PartTerminologyName from Parts where PartTerminologyName like ? order by PartTerminologyName'))
+  {
+   $stmt->bind_param('s', $searchstring);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $types[]=array('id'=>$row['PartTerminologyID'],'name'=>$row['PartTerminologyName']);
+   }
+  }
+  $db->close();
+  return $types;
+ }
+
+ 
+ 
 
 }
 ?>
