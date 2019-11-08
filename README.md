@@ -26,13 +26,6 @@ reference to the Sandpiper protocol that is starting to take shape in the AutoCa
 - fitment logic analysis on the fly (app grid page)
 - background auditing and reporoting of parts
 - background auditing and reporoting of apps
-- API service exposure
-- API client
-- Luke - test add 11/6/19 10:57pm - and more
-- Luke - removed Gilmar's fraudulent pim folder 11-7-19 9:25am
-- LPS 1019am
-- GGP 1038am
-- GGP Laptop 1043am
-- LPS 10:49
-- GGP Laptop 1056am
+- API service to expose sandpiper objects
+- API client features to consume sandpiper objects
 

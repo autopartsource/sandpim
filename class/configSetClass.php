@@ -16,7 +16,7 @@ class configSet
    { // existing record
     if($stmt=$db->conn->prepare('update config set configvalue=? where configname=?'))
     {
-     $stmt->bind_param('ss',$configname,$configvalue);
+     $stmt->bind_param('ss',$configvalue,$configname);
      $stmt->execute();
     }
    }
