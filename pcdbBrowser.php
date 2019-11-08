@@ -39,6 +39,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
 <!DOCTYPE html>
 <html>
  <head>
+  <link rel="stylesheet" type="text/css" href="styles.css">
   <script>
    function addRemoveType(parttypeid)
    {
@@ -60,21 +61,6 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
    }
 
   </script>
-     
-  <style>
-   .apppart {padding: 1px; border: 1px solid #808080; margin: 0px; background-color:#d0f0c0;}
-   .apppart-cosmetic {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#33FFD7;}
-   .apppart-hidden {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FFD433;}
-   .apppart-deleted { padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FF5533;}
-
-   a:link {color: blue; text-decoration: none;}
-   a:visited {color: blue; text-decoration: none;}
-   a:hover {color: gray; text-decoration: none;}
-   a:active {color: blue; text-decoration: none;}
-
-   table {border-collapse: collapse;}
-   table, th, td {border: 1px solid black;}
-  </style>
  </head>
  <body>
  <?php include('topnav.php');?>

@@ -17,20 +17,7 @@ $history=$pim->getHistoryEventsForApp($appid,1000);
 ?>
 <html>
  <head>
-  <style>
-   .apppart {padding: 1px; border: 1px solid #808080; margin: 0px; background-color:#d0f0c0;}
-   .apppart-cosmetic {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#33FFD7;}
-   .apppart-hidden {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FFD433;}
-   .apppart-deleted { padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FF5533;}
-
-   a:link {color: blue; text-decoration: none;}
-   a:visited {color: blue; text-decoration: none;}
-   a:hover {color: gray; text-decoration: none;}
-   a:active {color: blue; text-decoration: none;}
-
-   table {border-collapse: collapse;}
-   table, th, td {border: 1px solid black;}
-  </style>
+  <link rel="stylesheet" type="text/css" href="styles.css">
   <script>
   </script>
  </head>
