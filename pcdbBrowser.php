@@ -8,10 +8,11 @@ if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equi
 $pcdb=new pcdb;
 $pim=new pim;
 
-$types=array();
+ $alltypes=array();
+ $mytypes=$pim->getFavoriteParttypes(); $idkeyedmytypes=array(); foreach($mytypes as $mytype){$idkeyedmytypes[$mytype['id']]=$mytype['name'];}
 
 $searchtype='';
-if(isset($_GET['searchtype']) && isset($_GET['searchterm']) && $_GET['searchterm']!='')
+if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchterm']) && $_GET['searchterm']!='')
 {
     $searchtype=$_GET['searchtype'];
     $searchterm=$_GET['searchterm'];
@@ -19,13 +20,13 @@ if(isset($_GET['searchtype']) && isset($_GET['searchterm']) && $_GET['searchterm
     switch ($searchtype)
     {
         case 'begins':
-            $types=$pcdb->getPartTypes($searchterm.'%');
+            $alltypes=$pcdb->getPartTypes($searchterm.'%');
             break;
         case 'contains':
-            $types=$pcdb->getPartTypes('%'.$searchterm.'%');
+            $alltypes=$pcdb->getPartTypes('%'.$searchterm.'%');
             break;
         case 'ends':
-            $types=$pcdb->getPartTypes('%'.$searchterm);
+            $alltypes=$pcdb->getPartTypes('%'.$searchterm);
             break;
         
         default :break;
@@ -85,15 +86,25 @@ if(isset($_GET['searchtype']) && isset($_GET['searchterm']) && $_GET['searchterm
           <option value="contains"<?php if($searchtype=='contains'){echo ' selected';}?>>Contains</option>
           <option value="ends"<?php if($searchtype=='ends'){echo ' selected';}?>>Ends with</option>
       </select>
-      <input type="text" name="searchterm"/> 
+      <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
       <input name="submit" type="submit" value="Search"/>
    <div style="padding-left:10px;">
+       <?php if(count($alltypes)){?>
        <table><tr><th>Name</th><th>ID</th><th>Favorite</th></tr>
-       <?php foreach ($types as $type)
-       {
-        echo '<tr><td>'.$type['name'].'</td><td>'.$type['id'].'</td>';
-        echo '<td align="center"><input type="checkbox" id="parttypeid_'.$type['id'].'" name="parttypeid_'.$type['id'].'" onclick="addRemoveType(\''.$type['id'].'\')" name="appcategory_'.$appcategory['id'].'"  ></td>';
-        echo '</tr>';
+       <?php foreach ($alltypes as $type)
+        {
+	   $checked=''; if(array_key_exists($type['id'], $idkeyedmytypes)){$checked=' checked';}
+	    echo '<tr><td>'.$type['name'].'</td><td>'.$type['id'].'</td>';
+	    echo '<td align="center"><input type="checkbox" id="parttypeid_'.$type['id'].'" name="parttypeid_'.$type['id'].'" onclick="addRemoveType(\''.$type['id'].'\')" name="appcategory_'.$appcategory['id'].'"  '.$checked.'></td>';
+	    echo '</tr>';
+        }
+       }
+       else
+       { // no results found
+	   if(isset($_GET['submit']))
+	   { // user submitted a search
+	       echo '<div style="padding:10px;">No Results Found</div>';
+	   }
        }
        ?>
     </table>
