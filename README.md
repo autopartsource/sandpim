@@ -5,7 +5,8 @@ reference to the Sandpiper protocol that is starting to take shape in the AutoCa
 SandPIM is intentionally written with minimal layers of abstraction and without a third-party framework. This is to lower 
 the barriers to entry for a casual experimenter or contributor. 
 
-This project is in the early stages and is not ready for use in the real world. 
+This project is in the early stages and is not ready for use in the real world as an actual PIM. 
+AutoPartSource's goal is to have it built out to the point of usability in Q1 of 2020. 
 We are getting organized and developing our Git workflow. If you are interested in
 contributing in any way (even just offering opinions!), please don't hesitate to reach out.
 
