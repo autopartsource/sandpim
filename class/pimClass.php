@@ -84,7 +84,7 @@ class pim
   $db->close();
   return $parttypes;
  }
-
+ 
  function getFavoritePositions()
  {
   $db = new mysql; $db->dbname='pim'; $db->connect();

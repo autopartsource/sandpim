@@ -20,7 +20,8 @@ $pim=new pim;
    <div style="padding-left:10px;">
     <div><a href="./users.php">User Maintenance</a></div>
     <div><a href="./config.php">Configuration Parameters</a></div>
-    <div><a href="./pcdbBrowser.php">Manager PCdb favorite parttypes and positions</a></div>
+    <div><a href="./pcdbTypeBrowser.php">Manage PCdb favorite parttypes</a></div>
+    <div><a href="./pcdbPositionBrowser.php">Manage PCdb favorite positions</a></div>
    </div>
  </body>
 </html>

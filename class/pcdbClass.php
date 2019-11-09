@@ -58,7 +58,7 @@ class pcdb
  }
 
 
-  function getPartTypes($searchstring)
+ function getPartTypes($searchstring)
  {
   $types=array();
   $db = new mysql; $db->dbname='pcadb'; $db->connect();
@@ -76,6 +76,23 @@ class pcdb
   return $types;
  }
 
+ function getPositions($searchstring)
+ {
+  $positions=array();
+  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  if($stmt=$db->conn->prepare('select PositionID, Position from Positions where Position like ? order by Position'))
+  {
+   $stmt->bind_param('s', $searchstring);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $positions[]=array('id'=>$row['PositionID'],'name'=>$row['Position']);
+   }
+  }
+  $db->close();
+  return $positions;
+ }
  
  
 
