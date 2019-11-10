@@ -21,6 +21,20 @@ class mysql
   return $error;
  }
 
+ function connect_nodb()
+ {
+  $error='';
+  $this->conn = mysqli_connect($this->host, $this->user, $this->passwd);
+  if(!$this->conn)
+  {
+   $error='Unable to connect to "'.$this->host.'/'.$this->dbname.'" with username "'.$this->user.'" (error:'.mysqli_connect_errno().')'; 
+  }
+  return $error;
+ }
+
+ 
+ 
+ 
  function close()
  {
   if($this->conn)
