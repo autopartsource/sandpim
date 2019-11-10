@@ -1,6 +1,7 @@
 <?php
 include_once("mysqlClass.php");
-
+include_once("configGetClass.php");
+include_once("configSetClass.php");
 
 class user
 {
@@ -221,4 +222,86 @@ class user
   $db->close();
  }
 
+ function installationState()
+ {
+    $configGet= new configGet;
+    $setupusername=$configGet->getConfigValue('setupUsername');
+     
+    $users=array();
+    
+    $returnval=0;
+     // 0 - fresh install. database is in default (empty) state
+     // 1 - setup user established and is the only user
+     // 2 - fully functional (multiple users)
+     // 
+    $db = new mysql; $db->connect();
+    if($stmt=$db->conn->prepare('select id,username from user'))
+    {  
+        $stmt->execute();
+        $db->result = $stmt->get_result();
+        while($row = $db->result->fetch_assoc())
+        {
+          $users[$row['username']]=$row['id'];  
+        }
+    }
+
+    if(count($users)>0)
+    { // 1 or more users exist in the table
+        if(count($users)==1)
+        { // exactly 1 user exists
+            if(array_key_exists($setupusername, $users))
+            {// the lone user is the one named in the config table
+                $returnval=1;
+            }
+            else
+            {// the lone user is not the setupuser
+                $returnval=2;
+            }
+        }
+        else
+        {// multiple users exist
+            $returnval=2;
+        }
+    }
+    else
+    { // no users exist. system is in inital setup
+        $returnval=0;
+    }
+
+    $db->close();
+    return $returnval;
+ }
+ 
+ function createSetupUser()
+ {
+  $configGet= new configGet;
+  $username=$configGet->getConfigValue('setupUsername');
+
+  $configSet= new configSet;
+  $returnvalue=false;
+
+  if(!$username)
+  { // configname 'setupUsername' does not already exist
+   $charset=array('A','B','C','D','E','F','G','H','I','J','K','M','N','P','R','S','T','U','V','W','X','Y','Z','1','2','3','4','5','6','7','8','9');
+   $username=''; for($i=0;$i<5;$i++){$username.=$charset[random_int(0,22)];}
+   $password='';for($i=0;$i<6;$i++){$password.=$charset[random_int(23,31)];}
+  
+   $pepper = $configGet->getConfigValue('pepper');
+   if(!$pepper)
+   { // new installation - pepper value is not present - create it
+    $pepper=bin2hex(random_bytes(16));
+    $configSet->setConfigValue('pepper',$pepper);
+   }
+   $password_peppered = hash_hmac("sha256", $password, $pepper);
+   $password_hashed = password_hash($password_peppered, PASSWORD_ARGON2ID);
+   $userid=$user->addUser($_POST['username'],$password_hashed,'Setup User');
+   if($userid)
+   {
+    $returnvalue=array('username'=>$username,'password'=>$password);
+    $configSet->setConfigValue('setupUsername', $username);
+   }
+  }
+  return $returnvalue;
+ }
+ 
 }?>
