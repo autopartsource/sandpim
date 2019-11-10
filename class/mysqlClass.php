@@ -12,13 +12,13 @@ class mysql
 
  function connect()
  {
+  $error='';
   $this->conn = mysqli_connect($this->host, $this->user, $this->passwd, $this->dbname);
   if(!$this->conn)
   {
-   echo "Error: Unable to connect to pim." . PHP_EOL;
-//   echo "Debugging errno: " . mysqli_connect_errno() . PHP_EOL;
-//   echo "Debugging error: " . mysqli_connect_error() . PHP_EOL;
+   $error='Unable to connect to "'.$this->host.'/'.$this->dbname.'" with username "'.$this->user.'" (error:'.mysqli_connect_errno().')'; 
   }
+  return $error;
  }
 
  function close()
