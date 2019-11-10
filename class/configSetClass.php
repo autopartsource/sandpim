@@ -6,7 +6,9 @@ class configSet
 
  function setConfigValue($configname,$configvalue)
  {
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select * from config where configname=?'))
   {
    $stmt->bind_param('s',$configname);

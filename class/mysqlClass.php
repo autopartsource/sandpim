@@ -4,7 +4,7 @@ class mysql
  var $host = "localhost";
  var $user = 'webservice';
  var $passwd = 'OsBBVrgJKw';
- var $dbname = '';
+ var $dbname = 'pim';
  var $debug;
  var $conn;
  var $sql;

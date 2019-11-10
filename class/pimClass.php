@@ -12,7 +12,9 @@ class pim
  function getAppsByBasevehicleid($basevehicleid,$appcategories)
  {
   $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+//  $db->dbname='pim';
+  $db->connect();
   $apps=array();
   if($stmt=$db->conn->prepare('select * from application where basevehicleid=? and appcategory in('.$categorylist.') order by partnumber'))
   {
@@ -33,7 +35,9 @@ class pim
 
  function getAppsByPartnumber($partnumber)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   $apps=array();
   if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
   {
@@ -53,7 +57,9 @@ class pim
 
  function getFavoriteMakes()
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $makes=array();
   if($stmt=$db->conn->prepare('select * from Make order by MakeName'))
   {
@@ -70,7 +76,9 @@ class pim
 
  function getFavoriteParttypes()
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   $parttypes=array();
   if($stmt=$db->conn->prepare('select * from parttype order by `name`'))
   {
@@ -87,7 +95,9 @@ class pim
  
  function getFavoritePositions()
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   $positions=array();
   if($stmt=$db->conn->prepare('select * from position order by `name`'))
   {
@@ -104,7 +114,9 @@ class pim
 
  function getApp($appid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $app=false;
   if($stmt=$db->conn->prepare('select * from application where id=?'))
   {
@@ -124,7 +136,9 @@ class pim
 
  function getOIDofApp($appid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $oid='';
   if($stmt=$db->conn->prepare('select oid from application where id=?'))
   {
@@ -143,7 +157,9 @@ class pim
 
  function getAppAttributes($appid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   $attributes=array();
   if($stmt=$db->conn->prepare('select * from application_attribute where applicationid=? order by sequence'))
   {
@@ -172,7 +188,9 @@ class pim
 
  function cleansequenceAppAttributes($appid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $attributes=array();
   if($stmt=$db->conn->prepare('select id from application_attribute where applicationid=? order by sequence'))
   {
@@ -201,7 +219,9 @@ class pim
 
  function toggleAppAttributeCosmetic($appid,$attributeid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('update application_attribute set cosmetic=cosmetic XOR 1 where applicationid=? and id=?'))
   {
    $this->updateAppOID($appid);
@@ -213,7 +233,9 @@ class pim
 
  function incAppAttributeSequence($appid,$attributeid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('update application_attribute set sequence=sequence+1 where applicationid=? and id=?'))
   {
 //   $this->updateAppOID($appid);
@@ -225,7 +247,9 @@ class pim
 
  function deleteAppAttribute($appid,$attributeid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('delete from application_attribute where applicationid=? and id=?'))
   {
    $this->updateAppOID($appid);
@@ -238,7 +262,9 @@ class pim
  function highestAppAttributeSequence($appid)
  {
   $topsequence=0;
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select max(sequence) as topsequence from application_attribute where applicationid=?'))
   {
    $stmt->bind_param('i', $appid);
@@ -255,7 +281,9 @@ class pim
 
  function getPart($partnumber)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $part=false;
   if($stmt=$db->conn->prepare('select * from part where partnumber=?'))
   {
@@ -273,7 +301,9 @@ class pim
 
  function getParts($partnumber,$matchtype,$limit)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $parts=array();
   $sql='select part.*,partcategory.name from part left join partcategory on part.parttypeid=partcategory.id where partnumber like ? order by partnumber limit ?';
 
@@ -299,7 +329,9 @@ class pim
  function getOIDdata($oid)
  {
   $data=false;
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
 
   // see if this oid is attched to an app
   if($stmt=$db->conn->prepare('select id from application where oid=?'))
@@ -342,7 +374,9 @@ class pim
  function getOIDsInSlice($sliceid,$limit)
  {
   $oids=array();
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
 
   // consult slice table to get a list of appcategories to query the application table for 
 
@@ -373,7 +407,9 @@ class pim
 
  function updateAppOID($appid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('update application set oid=? where id=?'))
   {
    $oid=$this->newoid();
@@ -387,7 +423,9 @@ class pim
 
  function updatePartOID($partnumber)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('update part set oid=? where partnumber=?'))
   {
    $oid=$this->newoid();
@@ -402,7 +440,9 @@ class pim
  function getAppCategories()
  {
   $categories=array();
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select id,name from appcategory order by name'))
   {
    $stmt->execute();
@@ -420,7 +460,9 @@ class pim
  function getPartAttribute($partnumber,$PAID,$attributename)
  {
   $attributes=false;
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select id,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=? and PAID=? and userDefinedAttributeName=?'))
   {
    $stmt->bind_param('sis',$partnumber,$PAID,$attributename);
@@ -438,7 +480,9 @@ class pim
  function getPartAttributes($partnumber)
  {
   $attributes=false;
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select id,PAID,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=?'))
   {
    $stmt->bind_param('s',$partnumber);
@@ -457,7 +501,9 @@ class pim
  function writePartAttribute($partnumber,$PAID,$attributename,$attributevalue,$uom)
  { // PAID of 0 implies a user-defned attribute 
   $id=false;
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('insert into part_attribute (id,partnumber,PAID,userDefinedAttributeName,`value`,uom) values(null,?,?,?,?,?)'))
   {
    $stmt->bind_param('sisss',$partnumber,$PAID,$attributename,$attributevalue,$uom);
@@ -474,7 +520,9 @@ class pim
  function getPartCategories()
  {
   $categories=array();
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select id,`name` from partcategory order by name'))
   {
    $stmt->execute();
@@ -493,7 +541,9 @@ class pim
  function appCategoryName($appcategoryid)
  {
   $name='not found';
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('select name from appcategory where id=?'))
   {
    $stmt->bind_param('i', $appcategoryid);
@@ -511,7 +561,9 @@ class pim
  function partCategoryName($partcategoryid)
  {
   $name='('.$partcategoryid.') Not Found';
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select name from partcategory where id=?'))
   {
    $stmt->bind_param('i', $partcategoryid);
@@ -530,7 +582,9 @@ class pim
 
  function getBackgroundjobs($jobtype,$status)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $jobs=false;
   if($stmt=$db->conn->prepare('select * from backgroundjob where jobtype=? and status like ? order by datetimecreated'))
   {
@@ -549,7 +603,9 @@ class pim
 
  function getBackgroundjob_log($jobid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $events=false;
   if($stmt=$db->conn->prepare('select * from backgroundjob_log where jobid=? order by timestamp'))
   {
@@ -568,7 +624,9 @@ class pim
 
  function updateBackgroundjob($jobid,$status,$currenttask,$percentage,$datetimeended)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('update backgroundjob set status=?,percentage=?,datetimeended=? where id=?'))
   {
    if($stmt->bind_param('sisi', $status,$percentage,$datetimeended,$jobid))
@@ -589,7 +647,9 @@ class pim
 
  function hideBackgroundjob($jobid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   $status='hidden'; $currenttask='hidden by user';
   if($stmt=$db->conn->prepare('update backgroundjob set status=? where id=?'))
   {
@@ -618,7 +678,9 @@ class pim
  function createBackgroundjob($jobtype,$status,$userid,$inputfile,$outputfile,$parameters,$datetimetostart)
  {
   $jobid=false;
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
 
   if($stmt=$db->conn->prepare('insert into backgroundjob (id,jobtype,status,userid,inputfile,outputfile,parameters,datetimecreated,datetimetostart,datetimestarted,datetimeended,percentage) values(null,?,?,?,?,?,?,now(),?,0,0,0)'))
   {
@@ -651,7 +713,9 @@ class pim
 
  function validPart($partnumber)
  {
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $exists=false;
   if($stmt=$db->conn->prepare('select oid from part where partnumber=?'))
   {
@@ -673,7 +737,9 @@ class pim
 
  function createPart($partnumber,$partcategory,$parttypeid)
  {
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $success=false;
   if(!$this->validPart($partnumber))
   {
@@ -693,7 +759,9 @@ class pim
  function addVCdbAttributeToApp($applicationid,$attributename,$attributevalue,$sequence,$cosmetic)
  {
   $success=true;
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
   {
    $attributetype='vcdb';
@@ -708,7 +776,9 @@ class pim
  function addNoteAttributeToApp($applicationid,$note,$sequence,$cosmetic)
  {
   $success=true;
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
   {
    $attributename='note'; $attributetype='note';
@@ -728,7 +798,9 @@ class pim
 
  function removeAllAppAttributes($applicationid,$updateoid)
  {
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('delete from application_attribute where applicationid=?'))
   {
    $stmt->bind_param('i', $applicationid);
@@ -740,7 +812,9 @@ class pim
 
  function setAppStatus($applicationid,$status)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('update application set status=? where id=?'))
   {
    $stmt->bind_param('ii',$status,$applicationid);
@@ -751,7 +825,9 @@ class pim
 
  function setAppCategory($applicationid,$appcategory)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('update application set appcategory=? where id=?'))
   {
    $stmt->bind_param('ii',$appcategory,$applicationid);
@@ -762,7 +838,9 @@ class pim
 
  function setAppPosition($applicationid,$positionid,$updateoid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('update application set positionid=? where id=?'))
   {
    $stmt->bind_param('ii',$positionid,$applicationid);
@@ -774,7 +852,9 @@ class pim
 
  function setAppParttype($applicationid,$parttypeid,$updateoid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('update application set parttypeid=? where id=?'))
   {
    $stmt->bind_param('ii',$parttypeid,$applicationid);
@@ -786,7 +866,9 @@ class pim
 
  function setAppQuantity($applicationid,$quantityperapp,$updateoid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('update application set quantityperapp=? where id=?'))
   {
    $stmt->bind_param('ii',$quantityperapp,$applicationid);
@@ -798,7 +880,9 @@ class pim
 
  function toggleAppCosmetic($appid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('update application set cosmetic=cosmetic XOR 1 where id=?'))
   {
    $stmt->bind_param('i', $appid);
@@ -809,7 +893,9 @@ class pim
 
  function setAppInternalnotes($applicationid,$internalnotes)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('update application set internalnotes=? where id=?'))
   {
    $encodednotes=base64_encode($internalnotes);
@@ -891,7 +977,9 @@ class pim
 
  function newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$appcategory,$cosmetic,$attributes)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $applicationid=false;
   if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic,appcategory) values(null,?,?,0,0,?,?,?,?,0,?,?)'))
   {
@@ -911,7 +999,9 @@ class pim
 
  function logHistoryEvent($applicationid,$userid,$description,$newoid)
  {
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   if($stmt=$db->conn->prepare('insert into application_history (id,applicationid,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
   {
    $stmt->bind_param('iiss', $applicationid,$userid,$description,$newoid);
@@ -922,7 +1012,9 @@ class pim
 
  function getHistoryEventsForApp($applicationid,$limit)
  {
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   $events=array();
   if($stmt=$db->conn->prepare('select * from application_history where applicationid=? order by eventdatetime desc limit ?'))
   {
@@ -940,7 +1032,9 @@ class pim
 
  function getHistoryEvents($limit)
  {
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $events=array();
   if($stmt=$db->conn->prepare('select * from application_history order by eventdatetime desc limit ?'))
   {
@@ -961,7 +1055,9 @@ class pim
 
  function createAppFromACESsnippet($xml,$appcategory)
  {
-  $db=new mysql; $db->dbname='pim'; $db->connect();
+  $db=new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $app_count=0;
 
   foreach($xml->App as $app)
@@ -1046,7 +1142,9 @@ class pim
  
  function addFavoriteParttype($parttypeid,$myname)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $parttypes=array();
   if($stmt=$db->conn->prepare('insert into parttype values(?,?)'))
   {
@@ -1058,7 +1156,9 @@ class pim
 
  function removeFavoriteParttype($parttypeid)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
   $parttypes=array();
   if($stmt=$db->conn->prepare('delete from parttype where id=?'))
   {

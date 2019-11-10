@@ -6,7 +6,9 @@ class logs
 
  function logSystemEvent($eventtype,$userid,$text)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql;
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('insert into system_history (id,eventdatetime,eventtype,userid,description) values(null,now(),?,?,?)'))
   {
    $stmt->bind_param('sis',$eventtype,$userid,$text);
@@ -18,7 +20,9 @@ class logs
 
  function getSystemEvents($eventtype,$userid,$limit)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql;
+  //$db->dbname='pim'; 
+  $db->connect();
   $events=array();
 
   if($userid)

@@ -13,7 +13,9 @@ class user
 
  function addUser($username,$pwd_hashed,$realname)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   $userid=false;
   if($stmt=$db->conn->prepare('insert into user (id,status,failedcount,`name`,username,hash) values(null,1,0,?,?,?)'))
   {
@@ -32,7 +34,9 @@ class user
 
  function updateUserPassword($userid,$pwd_hashed)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('update user set hash=? where id=?'))
   {
    $stmt->bind_param('si',$pwd_hashed,$userid);
@@ -44,7 +48,9 @@ class user
 
  function updateUserRealname($userid,$name)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('update user set `name`=? where id=?'))
   {
    $stmt->bind_param('si',$name,$userid);
@@ -57,7 +63,9 @@ class user
  function getUserByUsername($username)
  {
   $user=false;
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select * from user where username=?'))
   {
    $stmt->bind_param('s',$username);
@@ -80,7 +88,9 @@ class user
  function getUserByID($userid)
  {
   $user=false;
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select * from user where id=?'))
   {
    $stmt->bind_param('i',$userid);
@@ -102,7 +112,9 @@ class user
  function realNameOfUserid($userid)
  {
   $name='not found (userid '.$userid.')';
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select `name` from user where id=?'))
   {
    $stmt->bind_param('i',$userid);
@@ -120,7 +132,9 @@ class user
  function getUsers()
  {
   $users=array();
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare('select * from user order by username'))
   {
    $stmt->execute();
@@ -138,7 +152,9 @@ class user
  function getUserVisibleAppcategories($userid)
  {
   $appcategories=array();
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare("select appcategory as id,`name` from user_appcategory,appcategory where user_appcategory.appcategory=appcategory.id and permissionname='canView' and userid=? order by `name`"))
   {
    $stmt->bind_param('i',$userid);
@@ -155,7 +171,9 @@ class user
 
  function setUserVisibleAppcategories($userid,$appcategories)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare("delete from user_appcategory where permissionname='canView' and userid=?"))
   {
    $stmt->bind_param('i',$userid);
@@ -178,7 +196,9 @@ class user
 
  function addAppcategoryToUser($userid,$appcategory,$permissionname)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare("insert into user_appcategory (id,userid,appcategory,permissionname,permissionvalue) values(null,?,?,?,0)"))
   {
 //   $fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $userid.','.$appcategory.','.$permissionname."\n");fclose($fp);
@@ -190,7 +210,9 @@ class user
 
  function removeAppcategoryFromUser($userid,$appcategory,$permissionname)
  {
-  $db = new mysql; $db->dbname='pim'; $db->connect();
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
   if($stmt=$db->conn->prepare("delete from user_appcategory where userid=? and appcategory=? and permissionname=?"))
   {
    $stmt->bind_param('iis',$userid,$appcategory,$permissionname);
