@@ -294,7 +294,7 @@ class user
    }
    $password_peppered = hash_hmac("sha256", $password, $pepper);
    $password_hashed = password_hash($password_peppered, PASSWORD_ARGON2ID);
-   $userid=$user->addUser($_POST['username'],$password_hashed,'Setup User');
+   $userid= $this->addUser($username,$password_hashed,'Setup User');
    if($userid)
    {
     $returnvalue=array('username'=>$username,'password'=>$password);

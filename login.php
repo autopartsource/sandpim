@@ -5,6 +5,7 @@ session_start();
 $user= new user;
 $configGet= new configGet;
 
+$installationtate=$user->installationState();
 
 $error='';
 if(isset($_POST['username']) && isset($_POST['password']))
@@ -40,13 +41,25 @@ if(isset($_POST['username']) && isset($_POST['password']))
  <head>
  </head>
  <body>
- <div>
-  <form method="post">
-   <div><?php echo $error;?></div>
-   <div style="padding:5px;">Username <input type="text" name="username"/></div>
-   <div style="padding:5px;">Password <input type="password" name="password"/></div>
-   <div><input type="submit" name="submit" value="Login"/></div>
-  </form>
- </div>
+
+  
+  <?php if($installationtate==0)
+  {
+     $setupuser=$user->createSetupUser();
+  ?>
+     <div>Temporary admin account was created for completing the setup process. Be sure to record these credentials - the password will not be shown again.  <br/>
+     username: <?php echo $setupuser['username'] ;?> <br/>
+     password: <?php echo $setupuser['password'] ;?> <br/>
+     </div>
+  <?php } ?>
+      
+  <div>
+   <form method="post">
+    <div><?php echo $error;?></div>
+    <div style="padding:5px;">Username <input type="text" name="username"/></div>
+    <div style="padding:5px;">Password <input type="password" name="password"/></div>
+    <div><input type="submit" name="submit" value="Login"/></div>
+   </form>
+  </div>
  </body>
 </html>
