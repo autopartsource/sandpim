@@ -35,14 +35,10 @@ foreach($years as $year)
  $i++; if($i>$groupsize){$i=0; $groupnumber++;}
 }
 
+include('/var/www/html/includes/header.php');
 ?>
-<!DOCTYPE html>
-<html>
- <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
- </head>
- <body>
-  <?php include('topnav.php');?>
+
+<div class="wrapper">
   <h1>Applications (<?php echo $vcdb->makeName($makeid).' '.$vcdb->modelName($modelid);?>)</h1>
   <?php
   echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[0] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';
@@ -54,6 +50,8 @@ foreach($years as $year)
   if(isset($groupedyears[6])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[6] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
   if(isset($groupedyears[7])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[7] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
   echo '<div style="clear:both;"></div>';?>
- </body>
-</html>
+</div>
 
+<?php
+include('/var/www/html/includes/footer.php');
+?>

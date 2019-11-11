@@ -9,15 +9,12 @@ if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equi
 $vcdb=new vcdb;
 $pim=new pim;
 
+include('/var/www/html/includes/header.php');
 ?>
-<!DOCTYPE html>
-<html>
- <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
- </head>
- <body>
- <?php include('topnav.php');?>
-  <h1>Reports</h1>
- </body>
-</html>
 
+<div class="wrapper">
+  <h1>Reports</h1>
+</div>
+<?php
+include('/var/www/html/includes/footer.php');
+?>

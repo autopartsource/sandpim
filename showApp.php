@@ -158,7 +158,8 @@ function updateApp(appid,elementtype,elementid)
   </script>
  </head>
  <body>
-<?php include('topnav.php');?>
+<?php include('topnav.php'); ?>
+     <div class="wrapper">
   <?php if($app)
   {;?>
    <div style="padding:10px;">
@@ -228,6 +229,8 @@ App status is invalid  <input type="submit" name="submit" value="Undelete"/>
   { // no apps found
    echo 'Application not found';
   }?>
- </body>
-</html>
+     </div>
+<?php
+include('/var/www/html/includes/footer.php');
+?>
 

@@ -29,15 +29,10 @@ foreach($models as $model)
  $groupedmodels[$groupnumber][]=$model;
  $i++; if($i>$groupsize){$i=0; $groupnumber++;}
 }
-
+include('/var/www/html/includes/header.php');
 ?>
-<!DOCTYPE html>
-<html>
- <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
- </head>
- <body>
-  <?php include('topnav.php');?>
+
+<div class="wrapper">
   <h1>Applications (<?php echo $vcdb->makeName($makeid); ?>)</h1>
    <?php
   echo '<div style="float:left;padding:10px;">'; foreach($groupedmodels[0] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';
@@ -49,6 +44,7 @@ foreach($models as $model)
   if(isset($groupedmodels[6])){echo '<div style="float:left;padding:10px;">'; foreach($groupedmodels[6] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
   if(isset($groupedmodels[7])){echo '<div style="float:left;padding:10px;">'; foreach($groupedmodels[7] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
   echo '<div style="clear:both;"></div>';?>
- </body>
-</html>
-
+</div>
+<?php
+include('/var/www/html/includes/footer.php');
+?>
