@@ -304,4 +304,21 @@ class user
   return $returnvalue;
  }
  
+ function sabotageSetupUser()
+ {
+     // torch the password hash of the setup user so that it can never be logged into again
+    $configGet= new configGet;
+    $username=$configGet->getConfigValue('setupUsername');
+    if($username)
+    {
+        $userid=$this->getUserByUsername($username);
+        if($userid)
+        {
+            $bogushash='$argon2id$v=19$m=65536,t=4,p=1$xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+            $this->updateUserPassword($userid,$bogushash);
+        }
+    }
+ }
+ 
+ 
 }?>

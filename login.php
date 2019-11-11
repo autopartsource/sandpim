@@ -7,6 +7,9 @@ $configGet= new configGet;
 
 $installationtate=$user->installationState();
 
+//$user->sabotageSetupUser();
+
+
 $error='';
 if(isset($_POST['username']) && isset($_POST['password']))
 {
