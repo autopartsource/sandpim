@@ -47,7 +47,7 @@ if(isset($_POST['username']) && isset($_POST['password']))
   {
      $setupuser=$user->createSetupUser();
   ?>
-     <div>Temporary admin account was created for completing the setup process. Be sure to record these credentials - the password will not be shown again.  <br/>
+     <div style="background-color: #FF5533">A temporary account was created for completing the setup process. Be sure to record these credentials - the password will not be shown again.  <br/>
      username: <?php echo $setupuser['username'] ;?> <br/>
      password: <?php echo $setupuser['password'] ;?> <br/>
      </div>
