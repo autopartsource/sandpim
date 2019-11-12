@@ -15,5 +15,8 @@ include('/var/www/html/includes/header.php');
 
 <div class="wrapper">
     <h1>Assets</h1>
+    <div style="padding-left:10px;">
+	<div><a href="./assetUpload.php">Upload Asset File</a></div>
+   </div>
 </div>
 <?php include('/var/www/html/includes/footer.php'); ?>

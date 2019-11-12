@@ -10,12 +10,6 @@ $pim=new pim;
 
 ?>
 <!DOCTYPE html>
-<html>
- <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
- </head>
- <body>
- <?php include('topnav.php');?>
   <h1>Settings</h1>
    <div style="padding-left:10px;">
     <div><a href="./users.php">User Maintenance</a></div>
