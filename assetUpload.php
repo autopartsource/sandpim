@@ -6,6 +6,7 @@ $navCategory = 'assets';
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
 
+$asset= new asset;
 $pim= new pim;
 $error_msg=false;
 
@@ -14,23 +15,15 @@ if(isset($_POST['submit']) && $_POST['submit']=='Upload')
 {
  $target_dir = '/var/www/html/ACESuploads/'; $target_file = $target_dir.basename($_FILES['fileToUpload']['name']);
 
- // Check if file already exists
  if(!file_exists($target_file))
  {
   if(move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_file))
   {
-      
    $pathparts= pathinfo( $_FILES['fileToUpload']['name']);
-      
-   $error_msg='The file ['.$pathparts['basename']. '] has been uploaded.';
-   
-   
    
    if($exiftype=exif_imagetype($target_file))
    {
     $filesize = getimagesize($target_file);
-    
-    $asset= new asset;
     
     $assetTypeCode='P04';
     $orientationViewCode='front';
@@ -46,10 +39,19 @@ if(isset($_POST['submit']) && $_POST['submit']=='Upload')
     $oid=$pim->newoid();
     $fileHashMD5= md5_file($target_file);
     
-    $asset->addAsset($pathparts['filename'], $pathparts['basename'], 'http://', $assetTypeCode, $orientationViewCode, $colorModeCode, $assetHeight, $assetWidth, $dimensionUOM, $background, $fileType, $public, $approved, $description, $oid, $fileHashMD5);
+    if($id=$asset->addAsset($pathparts['filename'], $pathparts['basename'], 'http://', $assetTypeCode, $orientationViewCode, $colorModeCode, $assetHeight, $assetWidth, $dimensionUOM, $background, $fileType, $public, $approved, $description, $oid, $fileHashMD5))
+    {
+     $error_msg='Asset id '.$id.' was created.';
+    }
+    else
+    { // asset not created
+     $error_msg='Error creating asset';
+    }
    }
-   
-   
+   else
+   { // not a supported image type
+    $error_msg='Not a supported image type';
+   }
   }
   else
   {
@@ -62,21 +64,37 @@ if(isset($_POST['submit']) && $_POST['submit']=='Upload')
  }
 }
 
+
+$assets=$asset->getRecentAssets(20);
+
+include('/var/www/html/includes/header.php');
+
 ?>
-<!DOCTYPE html>
-<html>
- <head>
-     <link rel="stylesheet" type="text/css" href="styles.css" />
- </head>
- <body>
-  <?php include('topnav.php');?>
   <h1>Upload Asset File</h1>
-  <div>
-   <?php if($error_msg){echo $error_msg;}?>
-   <form method="post" enctype="multipart/form-data">
-    <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
-    <div style="padding:10px;"><input name="submit" type="submit" value="Upload"/></div>
-   </form>
+  <div class="wrapper">
+    <div class="contentLeft"></div>
+    <div class="contentRight">
+     <div>
+      <?php if($error_msg){echo $error_msg;}?>
+      <form method="post" enctype="multipart/form-data">
+       <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
+       <div style="padding:10px;"><input name="submit" type="submit" value="Upload"/></div>
+      </form>
+     </div>
+     <div>
+      <?php
+      if(count($assets)){
+       echo '<table><tr><th>AssetID</th><th>Filename</th><th>Description</th><th>File Attributes</th></tr>';
+       foreach ($assets as $record)
+       {
+        echo '<tr><td>'.$record['assetid'].'</td><td>'.$record['filename'].'</td><td>'.$record['description'].'</td><td>'.$record['fileType'].', '.$record['assetHeight'].' x '.$record['assetWidth'].'</td></tr>';
+       }
+       echo '</table>';
+      }?>
+     </div>
+    </div>
   </div>
- </body>
-</html>
+	
+ <?php
+include('/var/www/html/includes/footer.php');
+?>
