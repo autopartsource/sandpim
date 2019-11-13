@@ -14,7 +14,7 @@ $pim = new pim;
 $error_msg = false;
 
 
-if (isset($_POST['submit']) && $_POST['submit'] == 'Upload') {
+if (isset($_POST['submit']) && $_POST['submit'] == 'Upload' && isset($_POST['assetrecordid'])) {
     $target_dir = '/var/www/html/ACESuploads/';
     $target_file = $target_dir . basename($_FILES['fileToUpload']['name']);
 
@@ -93,7 +93,8 @@ $assets = $asset->getRecentAssets(20);
                         echo '</table>';
                     }
                     ?>
-                </div>
+                </div>                </div>
+
             </div>
 
             <div class="contentRight"></div>

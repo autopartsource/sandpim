@@ -29,7 +29,7 @@ $pim = new pim;
             <!-- Main Content -->
             <div class="contentMain">
                 <div style="padding-left:10px;">
-                    <div><a href="./assetUpload.php">Upload Asset File</a></div>
+                    <div><a href="./assetUploadForm.php">Upload Asset File</a></div>
                 </div>
             </div>
 
