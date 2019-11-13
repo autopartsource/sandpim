@@ -311,7 +311,15 @@ class setup
         description text not null,
         oid varchar(255) not null,
         fileHashMD5 varchar(255) not null,
-        PRIMARY KEY (id))";
+        PRIMARY KEY (id),
+        INDEX idx_assetid (assetid),
+        INDEX idx_oid (oid),
+        INDEX idx_createdDate(createdDate),
+        INDEX idx_fileType(fileType),
+        INDEX idx_assetTypeCode(assetTypeCode),
+        INDEX idx_approved(approved),
+        INDEX idx_fileHashMD5(fileHashMD5)
+        )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - asset ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - asset ('.$db->conn->error.')';}
 
         $sql="CREATE TABLE application_history (
@@ -325,7 +333,7 @@ class setup
         INDEX idx_applicationid (applicationid),
         INDEX idx_eventdatetime (eventdatetime),
         INDEX idx_userid (userid),
-        INDEX idx_new_oid (new_oid)
+        INDEX idx_new_oid (new_oid)       
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - application_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - application_history ('.$db->conn->error.')';}
 
