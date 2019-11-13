@@ -297,7 +297,6 @@ class setup
         assetid varchar(255) NOT NULL,
         filename varchar(255) NOT NULL,
         uri text not null,
-        assetTypeCode varchar(255) not null,
         orientationViewCode varchar(255) not null,
         colorModeCode varchar(255) not null,
         assetHeight int unsigned not null,
@@ -316,7 +315,6 @@ class setup
         INDEX idx_oid (oid),
         INDEX idx_createdDate(createdDate),
         INDEX idx_fileType(fileType),
-        INDEX idx_assetTypeCode(assetTypeCode),
         INDEX idx_approved(approved),
         INDEX idx_fileHashMD5(fileHashMD5)
         )";
@@ -404,8 +402,13 @@ class setup
         $sql="CREATE TABLE part_asset (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         partnumber varchar(20) NOT NULL,
-        assetId varchar(255) NOT NULL,
-        PRIMARY KEY (id))";
+        assetid varchar(255) NOT NULL,
+        assettypecode varchar(255) not null,
+        sequence int unsigned not null,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber),
+        INDEX idx_assetid (assetid)
+        )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_asset ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_asset ('.$db->conn->error.')';}
 
         $sql="CREATE TABLE slice (

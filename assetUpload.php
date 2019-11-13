@@ -25,7 +25,6 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload') {
             if ($exiftype = exif_imagetype($target_file)) {
                 $filesize = getimagesize($target_file);
 
-                $assetTypeCode = 'P04';
                 $orientationViewCode = 'front';
                 $colorModeCode = 'RBG';
                 $assetHeight = $filesize[0];
@@ -39,7 +38,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload') {
                 $oid = $pim->newoid();
                 $fileHashMD5 = md5_file($target_file);
 
-                if ($id = $asset->addAsset($pathparts['filename'], $pathparts['basename'], 'http://', $assetTypeCode, $orientationViewCode, $colorModeCode, $assetHeight, $assetWidth, $dimensionUOM, $background, $fileType, $public, $approved, $description, $oid, $fileHashMD5)) {
+                if ($id = $asset->addAsset($pathparts['filename'], $pathparts['basename'], 'http://', $orientationViewCode, $colorModeCode, $assetHeight, $assetWidth, $dimensionUOM, $background, $fileType, $public, $approved, $description, $oid, $fileHashMD5)) {
                     $error_msg = 'Asset id ' . $id . ' was created.';
                 } else { // asset not created
                     $error_msg = 'Error creating asset';
