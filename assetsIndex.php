@@ -9,14 +9,34 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $pim = new pim;
-
-include('/var/www/html/includes/header.php');
 ?>
 
-<div class="wrapper">
-    <h1>Assets</h1>
-    <div style="padding-left:10px;">
-	<div><a href="./assetUpload.php">Upload Asset File</a></div>
-   </div>
-</div>
-<?php include('/var/www/html/includes/footer.php'); ?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php include('topnav.php'); ?>
+        
+        <!-- Header -->
+        <h1>Assets</h1>
+        
+        <div class="wrapper">
+            <div class="contentLeft"></div>
+
+            <!-- Main Content -->
+            <div class="contentMain">
+                <div style="padding-left:10px;">
+                    <div><a href="./assetUpload.php">Upload Asset File</a></div>
+                </div>
+            </div>
+
+            <div class="contentRight"></div>
+        </div>
+                
+        <!-- Footer -->
+        <?php include('/var/www/html/includes/footer.php'); ?>
+    </body>
+</html>

@@ -55,37 +55,52 @@ $users=$user->getUsers();
 ?>
 <!DOCTYPE html>
 <html>
- <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
- </head>
- <body>
-  <?php include('topnav.php');?>
-  <h1>User Accounts</h1>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php include('topnav.php'); ?>
+        
+        <!-- Header -->
+        <h1>User Accounts</h1>
+        
+        <div class="wrapper">
+            <div class="contentLeft"></div>
 
-  <div style="padding:10px;">
-   <h3>Existing Accounts</h3>
-   <table>
-    <tr><th>Username</th><th>Real Name</th><th>Status</th><th>Application Category Permissions</th><th>System Permissions</th></tr>
-    <?php foreach($users as $user)
-    {
-     $nicestatus='Inactive';if($user['status']==1){$nicestatus='Active';}
-     echo '<tr><td><a href="./user.php?userid='.$user['id'].'">'.$user['username'].'</a></td><td>'.$user['name'].'</td><td>'.$nicestatus.'</td><td></td><td></td></tr>';
-    }?>
-   </table>
-  </div>
+            <!-- Main Content -->
+            <div class="contentMain" style="flex-direction: column;">
+                <div style="padding:10px;">
+                <h3>Existing Accounts</h3>
+                <table>
+                 <tr><th>Username</th><th>Real Name</th><th>Status</th><th>Application Category Permissions</th><th>System Permissions</th></tr>
+                 <?php foreach($users as $user)
+                 {
+                  $nicestatus='Inactive';if($user['status']==1){$nicestatus='Active';}
+                  echo '<tr><td><a href="./user.php?userid='.$user['id'].'">'.$user['username'].'</a></td><td>'.$user['name'].'</td><td>'.$nicestatus.'</td><td></td><td></td></tr>';
+                 }?>
+                </table>
+               </div>
 
-  <div style="padding:10px;">
-   <h3>Create a new account</h3>
-   <form method="post">
-    <div style="width:350px;padding:3px;border:1px solid;">
-     <div style="padding:3px;"><div style="float:left;">Username</div> <div style="float:right;"><input type="text" name="username"/></div><div style="clear:both;"></div></div>
-     <div style="padding:3px;"><div style="float:left;">Real Name</div> <div style="float:right;"><input type="text" name="realname"/></div><div style="clear:both;"></div></div>
-     <div style="padding:3px;"><div style="float:left;">Password</div> <div style="float:right;"><input type="password" name="password"/></div><div style="clear:both;"></div></div>
-     <div style="padding:3px;"><div style="float:left;">Confirm Password</div> <div style="float:right;"><input type="password" name="repassword"/></div><div style="clear:both;"></div></div>
-     <div style="padding:3px;"><div style="float:right;"><input type="submit" name="submit" value="Create User"/></div><div style="clear:both;"></div></div>
-     <div style="padding:4px;color:red;"><?php echo $error;?></div>
-    </div>
-   </form>
-  </div>
- </body>
+               <div style="padding:10px;">
+                <h3>Create a new account</h3>
+                <form method="post">
+                 <div style="width:350px;padding:3px;border:1px solid;">
+                  <div style="padding:3px;"><div style="float:left;">Username</div> <div style="float:right;"><input type="text" name="username"/></div><div style="clear:both;"></div></div>
+                  <div style="padding:3px;"><div style="float:left;">Real Name</div> <div style="float:right;"><input type="text" name="realname"/></div><div style="clear:both;"></div></div>
+                  <div style="padding:3px;"><div style="float:left;">Password</div> <div style="float:right;"><input type="password" name="password"/></div><div style="clear:both;"></div></div>
+                  <div style="padding:3px;"><div style="float:left;">Confirm Password</div> <div style="float:right;"><input type="password" name="repassword"/></div><div style="clear:both;"></div></div>
+                  <div style="padding:3px;"><div style="float:right;"><input type="submit" name="submit" value="Create User"/></div><div style="clear:both;"></div></div>
+                  <div style="padding:4px;color:red;"><?php echo $error;?></div>
+                 </div>
+                </form>
+               </div>
+            </div>
+
+            <div class="contentRight"></div>
+        </div>
+                
+        <!-- Footer -->
+        <?php include('/var/www/html/includes/footer.php'); ?>
+    </body>
 </html>

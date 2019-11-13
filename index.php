@@ -17,31 +17,43 @@ $configGet = new configGet;
 $history = $pim->getHistoryEvents(20);
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php include('topnav.php'); ?>
+        
+        <!-- Header -->
+        <h1>Dashboard</h1>
+        
+        <div class="wrapper">
+            <div class="contentLeft"></div>
 
-include('/var/www/html/includes/header.php');
-?>
-<h1>Dashboard</h1>
-<div class="wrapper">
-    <div class="contentLeft"></div>
-    
-    <div class="contentRight">
-    <?php
-    if (count($history)) {
-        echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th></tr>';
-        foreach ($history as $record) {
-            $nicedescription = $record['description'];
-            if (strlen($nicedescription) > $logpreviewlength) {
-                $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
-            }
-            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $nicedescription . '</td></tr>';
-        }
-        echo '</table>';
-    }
-    ?>
-    </div>
-    
-    <div class="contentLeft"></div>
-</div>
-<?php
-include('/var/www/html/includes/footer.php');
-?>
+            <!-- Main Content -->
+            <div class="contentMain">
+                <?php
+                if (count($history)) {
+                    echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th></tr>';
+                    foreach ($history as $record) {
+                        $nicedescription = $record['description'];
+                        if (strlen($nicedescription) > $logpreviewlength) {
+                            $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                        }
+                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $nicedescription . '</td></tr>';
+                    }
+                    echo '</table>';
+                }
+                ?>
+            </div>
+
+            <div class="contentRight"></div>
+        </div>
+                
+        <!-- Footer -->
+        <?php include('/var/www/html/includes/footer.php'); ?>
+    </body>
+</html>

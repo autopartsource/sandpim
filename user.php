@@ -74,58 +74,72 @@ $user->getUserByID($userid);
 ?>
 <!DOCTYPE html>
 <html>
- <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
-  <script>
-   function addRemoveAppcategory(userid,appcategory)
-   {
-    if(document.getElementById('appcategory_'+appcategory).checked) 
-    { // appcategory has been clocked on 
-//     console.log(appcategory);
-     var xhr = new XMLHttpRequest();
-     xhr.open('GET', 'ajaxAddRemoveUserAppcateory.php?userid='+userid+'&appcategory='+appcategory+'&permissionname=canView&action=add');
-     xhr.send();
-    }
-    else
-    { // appcategory has been clocked off
-     var xhr = new XMLHttpRequest();
-     xhr.open('GET', 'ajaxAddRemoveUserAppcateory.php?userid='+userid+'&appcategory='+appcategory+'&permissionname=canView&action=remove');
-     xhr.send();
-    }
-   }
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <script>
+            function addRemoveAppcategory(userid,appcategory)
+            {
+             if(document.getElementById('appcategory_'+appcategory).checked) 
+             { // appcategory has been clocked on 
+         //     console.log(appcategory);
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddRemoveUserAppcateory.php?userid='+userid+'&appcategory='+appcategory+'&permissionname=canView&action=add');
+              xhr.send();
+             }
+             else
+             { // appcategory has been clocked off
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddRemoveUserAppcateory.php?userid='+userid+'&appcategory='+appcategory+'&permissionname=canView&action=remove');
+              xhr.send();
+             }
+            }
 
-   </script>
- </head>
- <body>
-  <?php include('topnav.php');?>
-  <h1>Edit User Account - <?php echo $user->name;?></h1>
-  <div style="padding:10px;">
+        </script>
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php include('topnav.php'); ?>
+        
+        <!-- Header -->
+        <h1>Edit User Account - <?php echo $user->name;?></h1>
+        
+        <div class="wrapper">
+            <div class="contentLeft"></div>
 
-   <form method="post" action="./user.php?userid=<?php echo $userid;?>">
+            <!-- Main Content -->
+            <div class="contentMain" >
+                <div style="padding:10px;">
+                    <form method="post" action="./user.php?userid=<?php echo $userid;?>">
+                        <div style="width:400px;padding:3px;border:1px solid;">
+                         <div style="padding:3px;">
+                          <div style="float:left;">Real Name</div>
+                          <div style="float:right;">
+                           <input type="text" name="realname" value="<?php echo $user->name;?>"/>
+                           <input type="submit" name="submit" value="Update Name"/>
+                          </div>
+                          <div style="clear:both;"></div>
+                         </div>
 
-    <div style="width:400px;padding:3px;border:1px solid;">
-     <div style="padding:3px;">
-      <div style="float:left;">Real Name</div>
-      <div style="float:right;">
-       <input type="text" name="realname" value="<?php echo $user->name;?>"/>
-       <input type="submit" name="submit" value="Update Name"/>
-      </div>
-      <div style="clear:both;"></div>
-     </div>
 
+                         <div style="padding:3px;"><div style="float:left;">Password</div> <div style="float:right;"><input type="password" name="password"/></div><div style="clear:both;"></div></div>
+                         <div style="padding:3px;"><div style="float:left;">Confirm Password</div> <div style="float:right;"><input type="password" name="repassword"/></div><div style="clear:both;"></div></div>
+                         <div style="padding:3px;"><div style="float:right;"><input type="submit" name="submit" value="Update Password"/></div><div style="clear:both;"></div></div>
+                         <div style="padding:4px;color:red;"><?php echo $error;?></div>
+                        </div>
+                    </form>
+                </div>
+                <div>
+                    <h3>Application Category Permissions</h3>
+                    <div style="padding:20px;">
+                        <?php foreach($appcategories as $appcategory){$checked=''; if(array_key_exists($appcategory['id'],$idkeyedallowlist)){$checked='checked';} echo '<div><input type="checkbox" id="appcategory_'.$appcategory['id'].'" onclick="addRemoveAppcategory(\''.$userid.'\',\''.$appcategory['id'].'\')" name="appcategory_'.$appcategory['id'].'" '.$checked.'><label for="appcategory_'.$appcategory['id'].'">'.$appcategory['name'].'</label></div>';}?>
+                    </div>
+                </div>
+            </div> <!-- End Main Content -->
 
-     <div style="padding:3px;"><div style="float:left;">Password</div> <div style="float:right;"><input type="password" name="password"/></div><div style="clear:both;"></div></div>
-     <div style="padding:3px;"><div style="float:left;">Confirm Password</div> <div style="float:right;"><input type="password" name="repassword"/></div><div style="clear:both;"></div></div>
-     <div style="padding:3px;"><div style="float:right;"><input type="submit" name="submit" value="Update Password"/></div><div style="clear:both;"></div></div>
-     <div style="padding:4px;color:red;"><?php echo $error;?></div>
-    </div>
-   </form>
-  </div>
-  <div>
-   <h3>Application Category Permissions</h3>
-   <div style="padding:20px;">
-    <?php foreach($appcategories as $appcategory){$checked=''; if(array_key_exists($appcategory['id'],$idkeyedallowlist)){$checked='checked';} echo '<div><input type="checkbox" id="appcategory_'.$appcategory['id'].'" onclick="addRemoveAppcategory(\''.$userid.'\',\''.$appcategory['id'].'\')" name="appcategory_'.$appcategory['id'].'" '.$checked.'><label for="appcategory_'.$appcategory['id'].'">'.$appcategory['name'].'</label></div>';}?>
-   </div>
-  </div>
- </body>
+            <div class="contentRight"></div>
+        </div>
+                
+        <!-- Footer -->
+        <?php include('/var/www/html/includes/footer.php'); ?>
+    </body>
 </html>

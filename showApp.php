@@ -118,119 +118,126 @@ $historylimit=10;
 $history=$pim->getHistoryEventsForApp($appid,$historylimit);
 
 ?>
+<!DOCTYPE html>
 <html>
- <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
-  <script>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <script>
+            function updateApp(appid,elementtype,elementid)
+            {
+             var value='';
+             if(elementtype=='text'){value=document.getElementById(elementid).value;}
+             if(elementtype=='select')
+             {
+              var e=document.getElementById(elementid);
+              value=e.options[e.selectedIndex].value;
+             }
 
-function updateApp(appid,elementtype,elementid)
-{
- var value='';
- if(elementtype=='text'){value=document.getElementById(elementid).value;}
- if(elementtype=='select')
- {
-  var e=document.getElementById(elementid);
-  value=e.options[e.selectedIndex].value;
- }
-
- // console.log(appid);
-
-
- document.getElementById("sandpiperoid").innerHTML='';
-
- var xhr = new XMLHttpRequest();
- xhr.open('GET', 'ajaxUpdateApp.php?appid='+appid+'&elementid='+elementid+'&value='+encodeURI(value));
- xhr.onload = function()
- {
-  var response=xhr.responseText;
-  document.getElementById("sandpiperoid").innerHTML=response;
-
-  // get app's color based on status and cosmetic
-
- };
- xhr.send();
-}
+             // console.log(appid);
 
 
+             document.getElementById("sandpiperoid").innerHTML='';
 
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdateApp.php?appid='+appid+'&elementid='+elementid+'&value='+encodeURI(value));
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+              document.getElementById("sandpiperoid").innerHTML=response;
 
+              // get app's color based on status and cosmetic
 
-  </script>
- </head>
- <body>
-<?php include('topnav.php'); ?>
-     <div class="wrapper">
-  <?php if($app)
-  {;?>
-   <div style="padding:10px;">
+             };
+             xhr.send();
+            }
+        </script>
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php include('topnav.php'); ?>
+        
+        <!-- Header -->
+        <h1></h1>
+        
+        <div class="wrapper">
+            <div class="contentLeft"></div>
 
-    <?php
-     if($pcdb->parttypeName($app['parttypeid'])=='not found'){echo '<div style="color:red;">Part Type id '.$app['parttypeid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
-     if($pcdb->positionName($app['positionid'])=='not found'){echo '<div style="color:red;">Position id '.$app['positionid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
-    ?>
+            <!-- Main Content -->
+            <div class="contentMain">
+                <?php if($app) {;?>
+                <div style="padding:10px;">
 
-    <table border="1" cellpadding="5">
-     <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Base Vehicle</th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
-     <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber'];?>"><?php echo $app['partnumber'];?></a></td></tr>
-     <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$app['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
-     <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Position</th><td align="right"><select id="positionid"  onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','positionid');"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select></td></tr>
+                 <?php
+                  if($pcdb->parttypeName($app['parttypeid'])=='not found'){echo '<div style="color:red;">Part Type id '.$app['parttypeid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
+                  if($pcdb->positionName($app['positionid'])=='not found'){echo '<div style="color:red;">Position id '.$app['positionid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
+                 ?>
 
-     <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Fitment<br/>Qualifiers</th>
-      <td align="left">
-       <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
-        <?php foreach($niceattributes as $niceattribute){$text_decoration=''; if($niceattribute['cosmetic']==1){$text_decoration='text-decoration: line-through;';} echo '<div style="border:solid 1px;margin:5px;'.$text_decoration.'padding:2px;background-color:#'.$attributecolors[$niceattribute['type']].';">'.$nicefitmentarray[]=$niceattribute['text'].' <input type="submit" name="cosmetic_'.$niceattribute['id'].'" value="Cosmetic"/><input type="submit" name="sequenceup_'.$niceattribute['id'].'" value="Down"/><input type="submit" name="remove_'.$niceattribute['id'].'" value="Remove"/></div>';} ?>
-       </form>
+                 <table border="1" cellpadding="5">
+                  <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Base Vehicle</th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
+                  <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber'];?>"><?php echo $app['partnumber'];?></a></td></tr>
+                  <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$app['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
+                  <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Position</th><td align="right"><select id="positionid"  onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','positionid');"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select></td></tr>
 
-       <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
-        <div>
-         <select name="vcdbattribute"><option value="">-- Select a VCdb Attribute --</option> <?php foreach($allattributes as $attributekey=>$allattributename){echo '<option value="'.$attributekey.'">'.$allattributename.'</option>';}?> </select>
-         <input type="submit" name="submit" value="Add Attribute"/><br/>
-         <input type="text" name="note"/><input type="submit" name="submit" value="Add Note"/>
-        </div>
-        </form>
-       </td>
-      </tr>
+                  <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Fitment<br/>Qualifiers</th>
+                   <td align="left">
+                    <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
+                     <?php foreach($niceattributes as $niceattribute){$text_decoration=''; if($niceattribute['cosmetic']==1){$text_decoration='text-decoration: line-through;';} echo '<div style="border:solid 1px;margin:5px;'.$text_decoration.'padding:2px;background-color:#'.$attributecolors[$niceattribute['type']].';">'.$nicefitmentarray[]=$niceattribute['text'].' <input type="submit" name="cosmetic_'.$niceattribute['id'].'" value="Cosmetic"/><input type="submit" name="sequenceup_'.$niceattribute['id'].'" value="Down"/><input type="submit" name="remove_'.$niceattribute['id'].'" value="Remove"/></div>';} ?>
+                    </form>
 
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp'];?>"/><button onclick='updateApp(<?php echo $appid;?>,"text","quantityperapp");'>Update Qty</button></td></tr>
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Cosmetic</th><td align="right"><?php if($app['cosmetic']){echo 'App is Cosmetic ';}?> <button onclick='updateApp(<?php echo $appid;?>,"button","cosmetic");'>Cosmetic</button></td></tr>
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Category</th><td align="right"><select id="appcategory" onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','appcategory');"   > <?php foreach($appcategories as $appcategory){?> <option value="<?php echo $appcategory['id'];?>"<?php if($appcategory['id']==$app['appcategory']){echo ' selected';}?>><?php echo $appcategory['name'];?></option><?php }?></select></td></tr>
+                    <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
+                     <div>
+                      <select name="vcdbattribute"><option value="">-- Select a VCdb Attribute --</option> <?php foreach($allattributes as $attributekey=>$allattributename){echo '<option value="'.$attributekey.'">'.$allattributename.'</option>';}?> </select>
+                      <input type="submit" name="submit" value="Add Attribute"/><br/>
+                      <input type="text" name="note"/><input type="submit" name="submit" value="Add Note"/>
+                     </div>
+                     </form>
+                    </td>
+                   </tr>
 
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Fitment<br/>Assets</th><td align="right"><?php if(count($assets)){foreach($assets as $asset) { echo '<div><a title="view this asset in new browser window" href="'.$asset['uri'].'" target="_blank">'.$asset['assetId'].'</a> (representation:'.$asset['representation'].', sequence: '.$asset['assetItemOrder'].') <a title="remove this asset from the application" href="./showAdminApplication.php?id='.intval($_GET['id']).'&removeasset='.$asset['id'].'">x</a><div>'; }}?>
-      <div>Asset <select name="assetid"><option value=""></option>
-      <?php
-      foreach($assets_linked_to_item as $asset)
-      {
-       $already_applied=false; foreach($assets as $tempasset){if($tempasset['assetId']==$asset['assetId']){$already_applied=true;}} if($already_applied){continue;}
-       echo '<option value="'.$asset['assetId'].'">'.$asset['fileType'].' - '.$asset['filename'].' ('.$asset['description'].')</option>';
-      }?>
-       </select>
-       Sequence <input type="text" name="assetorder" size="3" value="1"/>
-       <select name="representation"><option value="A">Actual</option><option value="R">Representative</option></select>
-      </div></td></tr>
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Internal<br/>Notes</th><td><textarea id="internalnotes" cols="60" rows="5"><?php echo $app['internalnotes'];?></textarea><div><button onclick='updateApp(<?php echo $appid;?>,"text","internalnotes");'>Save</button></div></td><tr>
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id'];?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid'];?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid'];?></div><div style="clear:both;"></div></td><tr>
-      <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Status</th><td align="right">
+                   <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp'];?>"/><button onclick='updateApp(<?php echo $appid;?>,"text","quantityperapp");'>Update Qty</button></td></tr>
+                   <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Cosmetic</th><td align="right"><?php if($app['cosmetic']){echo 'App is Cosmetic ';}?> <button onclick='updateApp(<?php echo $appid;?>,"button","cosmetic");'>Cosmetic</button></td></tr>
+                   <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Category</th><td align="right"><select id="appcategory" onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','appcategory');"   > <?php foreach($appcategories as $appcategory){?> <option value="<?php echo $appcategory['id'];?>"<?php if($appcategory['id']==$app['appcategory']){echo ' selected';}?>><?php echo $appcategory['name'];?></option><?php }?></select></td></tr>
 
-<?php switch($app['status']){case 0:?>
-App is Active <input type="submit" name="submit" value="Delete"/> <input type="submit" name="submit" value="Hide"/>
-<?php break; case 1:?>
-App is Deleted <input type="submit" name="submit" value="Undelete"/>
-<?php break; case 2:?>
-App is Hidden <input type="submit" name="submit" value="Unhide"/> <input type="submit" name="submit" value="Delete"/>
-<?php break; default:?>
-App status is invalid  <input type="submit" name="submit" value="Undelete"/>
-<?php }?></td></tr>
+                   <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Fitment<br/>Assets</th><td align="right"><?php if(count($assets)){foreach($assets as $asset) { echo '<div><a title="view this asset in new browser window" href="'.$asset['uri'].'" target="_blank">'.$asset['assetId'].'</a> (representation:'.$asset['representation'].', sequence: '.$asset['assetItemOrder'].') <a title="remove this asset from the application" href="./showAdminApplication.php?id='.intval($_GET['id']).'&removeasset='.$asset['id'].'">x</a><div>'; }}?>
+                   <div>Asset <select name="assetid"><option value=""></option>
+                   <?php
+                   foreach($assets_linked_to_item as $asset)
+                   {
+                    $already_applied=false; foreach($assets as $tempasset){if($tempasset['assetId']==$asset['assetId']){$already_applied=true;}} if($already_applied){continue;}
+                    echo '<option value="'.$asset['assetId'].'">'.$asset['fileType'].' - '.$asset['filename'].' ('.$asset['description'].')</option>';
+                   }?>
+                    </select>
+                    Sequence <input type="text" name="assetorder" size="3" value="1"/>
+                    <select name="representation"><option value="A">Actual</option><option value="R">Representative</option></select>
+                   </div></td></tr>
+                   <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Internal<br/>Notes</th><td><textarea id="internalnotes" cols="60" rows="5"><?php echo $app['internalnotes'];?></textarea><div><button onclick='updateApp(<?php echo $appid;?>,"text","internalnotes");'>Save</button></div></td><tr>
+                   <tr><th bgcolor="<?php echo $appcolor;?>" align="left">IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id'];?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid'];?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid'];?></div><div style="clear:both;"></div></td><tr>
+                   <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Status</th><td align="right">
 
-    </table>
-  </div>
-  <?php if(count($history)){echo '<div><a href="./appHistory.php?appid='.$appid.'">History</a></div>';}?>
-  <?php }
-  else
-  { // no apps found
-   echo 'Application not found';
-  }?>
-     </div>
-<?php
-include('/var/www/html/includes/footer.php');
-?>
+                    <?php switch($app['status']){case 0:?>
+                    App is Active <input type="submit" name="submit" value="Delete"/> <input type="submit" name="submit" value="Hide"/>
+                    <?php break; case 1:?>
+                    App is Deleted <input type="submit" name="submit" value="Undelete"/>
+                    <?php break; case 2:?>
+                    App is Hidden <input type="submit" name="submit" value="Unhide"/> <input type="submit" name="submit" value="Delete"/>
+                    <?php break; default:?>
+                    App status is invalid  <input type="submit" name="submit" value="Undelete"/>
+                    <?php }?></td></tr>
 
+                 </table>
+                </div>
+                <?php if(count($history)){echo '<div><a href="./appHistory.php?appid='.$appid.'">History</a></div>';}?>
+                <?php }
+                else
+                { // no apps found
+                 echo 'Application not found';
+                }?>
+            </div> <!-- End Main Content -->
+
+            <div class="contentRight"></div>
+        </div> <!-- End Wrapper -->
+                
+        <!-- Footer -->
+        <?php include('/var/www/html/includes/footer.php'); ?>
+    </body>
+</html>

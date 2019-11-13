@@ -32,40 +32,58 @@ foreach ($makes as $make) {
         $groupnumber++;
     }
 }
-include('/var/www/html/includes/header.php');
-?>
 
-<div class="wrapper">
-    <h1>Applications</h1>
-    <?php
-    echo '<div style="padding:15px;">';
-    foreach ($groupedmakes[0] as $make) {
-        echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-    } echo '</div>';
-    echo '<div style="padding:15px;">';
-    foreach ($groupedmakes[1] as $make) {
-        echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-    } echo '</div>';
-    echo '<div style="padding:15px;">';
-    foreach ($groupedmakes[2] as $make) {
-        echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-    } echo '</div>';
-    echo '<div style="padding:15px;">';
-    foreach ($groupedmakes[3] as $make) {
-        echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-    } echo '</div>';
-    echo '<div style="padding:15px;">';
-    foreach ($groupedmakes[4] as $make) {
-        echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-    } echo '</div>';
-    echo '<div style="padding:15px;">';
-    foreach ($groupedmakes[5] as $make) {
-        echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-    } echo '</div>';
-    echo '<div style="clear:both;"></div>';
-    ?>
-</div>
-<?php
-include('/var/www/html/includes/footer.php');
 ?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php include('topnav.php'); ?>
+        
+        <!-- Header -->
+        <h1>Applications</h1>
+        
+        <div class="wrapper">
+            <div class="contentLeft"></div>
 
+            <!-- Main Content -->
+            <div class="contentMain">
+            <?php
+                echo '<div style="padding:15px;">';
+                foreach ($groupedmakes[0] as $make) {
+                    echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
+                } echo '</div>';
+                echo '<div style="padding:15px;">';
+                foreach ($groupedmakes[1] as $make) {
+                    echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
+                } echo '</div>';
+                echo '<div style="padding:15px;">';
+                foreach ($groupedmakes[2] as $make) {
+                    echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
+                } echo '</div>';
+                echo '<div style="padding:15px;">';
+                foreach ($groupedmakes[3] as $make) {
+                    echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
+                } echo '</div>';
+                echo '<div style="padding:15px;">';
+                foreach ($groupedmakes[4] as $make) {
+                    echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
+                } echo '</div>';
+                echo '<div style="padding:15px;">';
+                foreach ($groupedmakes[5] as $make) {
+                    echo '<div style="padding:4px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
+                } echo '</div>';
+                echo '<div style="clear:both;"></div>';
+            ?>
+            </div>
+
+            <div class="contentRight"></div>
+        </div>
+                
+        <!-- Footer -->
+        <?php include('/var/www/html/includes/footer.php'); ?>
+    </body>
+</html>

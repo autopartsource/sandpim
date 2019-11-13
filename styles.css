@@ -48,27 +48,30 @@ ul.topnav li.right {float: right;}
 html {
     height: 100%;
     margin: auto;
+    font-family: 'Lato', sans-serif;    
 }
 
 body { text-align: center;}
 
 .wrapper {
     display: flex;
-    flex-flow: row wrap;
+    flex-direction: row;
     justify-content: center;
+    align-content: center;
     text-align: center;
     min-height: 100%;
     padding-bottom: 2.5rem;    /* Footer height */
 }
 
-.contentLeft { outline: dotted; flex-grow: 1; }
-
-.contentRight {
+.contentMain {
     display: flex;
-    outline: dotted; 
-    flex-grow: 2; 
+    flex-direction: row;
     justify-content: center;
+    align-self: center;
+    flex-grow: 2;
 }
+
+.contentLeft, .contentRight { flex-grow: 1; }
 
 h1 {text-align: center;}
 

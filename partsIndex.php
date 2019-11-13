@@ -23,33 +23,52 @@ if (isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) {
     $limit = 30;
     $parts = $pim->getParts($partnumber, $searchtype, $limit);
 }
-
-include('/var/www/html/includes/header.php');
 ?>
 
-<div class="wrapper">
-    <h1>Parts</h1>
-    <div style="padding:10px;">
-        <form method="get" action="partsIndex.php">
-            Show part numbers <select name="searchtype"><option value="equals">that are exactly</opton><option value="startswith">that starts with</opton><option value="contains">contains</opton></select> 
-            <input type="text" name="partnumber" />
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php include('topnav.php'); ?>
 
-            in category <select name="partcategory"><option value="any">-- Any --</opton></select> 
+        <!-- Header -->
+        <h1>Parts</h1>
 
-            <input type="submit" name="submit" value="Search"/>
-        </form>
+        <div class="wrapper">
+            <div class="contentLeft"></div>
 
-<?php if (count($parts) > 0) { ?>
-            <div style="padding-top:10px;">
-                <table border="1">
-                    <tr><th>Part Number</th><th>Type</th><th>Category</th><th>Status</th></tr>
-        <?php foreach ($parts as $part) {
-            echo '<tr><td><a href="showPart.php?partnumber=' . $part['partnumber'] . '">' . $part['partnumber'] . '</a></td><td>' . $pcdb->parttypeName($part['parttypeid']) . '</td><td>' . $part['partcategoryname'] . '</td><td>' . $part['lifecyclestatus'] . '</td><tr>';
-        } ?>
-                </table>
+            <!-- Main Content -->
+            <div class="contentMain" style="flex-direction: column;">
+                <form method="get" action="partsIndex.php">
+                    Show part numbers <select name="searchtype"><option value="equals">that are exactly</opton><option value="startswith">that starts with</opton><option value="contains">contains</opton></select> 
+                    <input type="text" name="partnumber" />
+
+                    in category <select name="partcategory"><option value="any">-- Any --</opton></select> 
+
+                    <input type="submit" name="submit" value="Search"/>
+                </form>
+
+                <?php if (count($parts) > 0) { ?>
+                    <div style="padding-top:10px;">
+                        <table border="1">
+                            <tr><th>Part Number</th><th>Type</th><th>Category</th><th>Status</th></tr>
+                            <?php
+                            foreach ($parts as $part) {
+                                echo '<tr><td><a href="showPart.php?partnumber=' . $part['partnumber'] . '">' . $part['partnumber'] . '</a></td><td>' . $pcdb->parttypeName($part['parttypeid']) . '</td><td>' . $part['partcategoryname'] . '</td><td>' . $part['lifecyclestatus'] . '</td><tr>';
+                            }
+                            ?>
+                        </table>
+                    </div>
+                <?php } ?>
             </div>
-<?php } ?>
-    </div>
-<?php
-include('/var/www/html/includes/footer.php');
-?>
+
+            <div class="contentRight"></div>
+        </div>
+
+        <!-- Footer -->
+        <?php include('/var/www/html/includes/footer.php'); ?>
+    </body>
+</html>

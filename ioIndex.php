@@ -12,15 +12,31 @@ $pim=new pim;
 ?>
 <!DOCTYPE html>
 <html>
- <head>
-  <link rel="stylesheet" type="text/css" href="styles.css">
- </head>
- <body>
- <?php include('topnav.php');?>
-  <h1>Imoprt/Export</h1>
-  <div style="padding:10px;"><a href="importACESsnippet.php">Import Small ACES xml text</a></div>
-  <div style="padding:10px;"><a href="importACESupload.php">Upload & import ACES xml file</a></div>
-  <div style="padding:10px;"><a href="importPartData.php">Import Part data from structured text</a></div>
-  <div style="padding:10px;"><a href="exportPIESselect.php">Export PIES xml file</a></div>
- </body>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php include('topnav.php'); ?>
+        
+        <!-- Header -->
+        <h1>Import/Export</h1>
+        
+        <div class="wrapper">
+            <div class="contentLeft"></div>
+
+            <!-- Main Content -->
+            <div class="contentMain" style="flex-direction: column;">
+                <div style="padding:10px;"><a href="importACESsnippet.php">Import Small ACES xml text</a></div>
+                <div style="padding:10px;"><a href="importACESupload.php">Upload & import ACES xml file</a></div>
+                <div style="padding:10px;"><a href="importPartData.php">Import Part data from structured text</a></div>
+                <div style="padding:10px;"><a href="exportPIESselect.php">Export PIES xml file</a></div>
+            </div>
+
+            <div class="contentRight"></div>
+        </div>
+                
+        <!-- Footer -->
+        <?php include('/var/www/html/includes/footer.php'); ?>
+    </body>
 </html>

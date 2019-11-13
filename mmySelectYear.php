@@ -35,23 +35,41 @@ foreach($years as $year)
  $i++; if($i>$groupsize){$i=0; $groupnumber++;}
 }
 
-include('/var/www/html/includes/header.php');
 ?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="styles.css" />
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php include('topnav.php'); ?>
+        
+        <!-- Header -->
+        <h1>Applications (<?php echo $vcdb->makeName($makeid).' '.$vcdb->modelName($modelid);?>)</h1>
+        
+        <div class="wrapper">
+            <div class="contentLeft"></div>
 
-<div class="wrapper">
-  <h1>Applications (<?php echo $vcdb->makeName($makeid).' '.$vcdb->modelName($modelid);?>)</h1>
-  <?php
-  echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[0] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';
-  if(isset($groupedyears[1])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[1] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-  if(isset($groupedyears[2])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[2] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-  if(isset($groupedyears[3])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[3] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-  if(isset($groupedyears[4])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[4] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-  if(isset($groupedyears[5])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[5] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-  if(isset($groupedyears[6])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[6] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-  if(isset($groupedyears[7])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[7] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-  echo '<div style="clear:both;"></div>';?>
-</div>
+            <!-- Main Content -->
+            <div class="contentMain">
+            <?php
+                echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[0] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';
+                if(isset($groupedyears[1])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[1] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[2])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[2] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[3])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[3] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[4])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[4] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[5])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[5] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[6])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[6] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[7])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[7] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                echo '<div style="clear:both;"></div>';
+            ?>
+            </div>
 
-<?php
-include('/var/www/html/includes/footer.php');
-?>
+            <div class="contentRight"></div>
+        </div>
+                
+        <!-- Footer -->
+        <?php include('/var/www/html/includes/footer.php'); ?>
+    </body>
+</html>
