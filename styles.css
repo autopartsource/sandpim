@@ -8,6 +8,14 @@ and open the template in the editor.
     Author     : palma
 */
 
+html {
+    height: 100%;
+    margin: auto;
+    font-family: 'Lato', sans-serif;    
+}
+
+body { text-align: center;}
+
 .apppart {padding: 1px; border: 1px solid #808080; margin: 0px; background-color:#d0f0c0;}
 .apppart-cosmetic {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#33FFD7;}
 .apppart-hidden {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FFD433;}
@@ -24,12 +32,14 @@ table, th, td {border: 1px solid black;}
 ul.topnav {
     list-style-type: none;
     margin: 0;
+    background-color: #333;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+    display: flex;
+    justify-content: flex-start;
 }
 
-ul.topnav li {float: left;}
+/*ul.topnav li {float: left;}*/
 
 ul.topnav li a {
     display: block;
@@ -43,24 +53,46 @@ ul.topnav li a:hover:not(.navActive) {background-color: #111;}
 
 ul.topnav li a.navActive {background-color: #1469a9}
 
-ul.topnav li.right {float: right;}
-
-html {
-    height: 100%;
-    margin: auto;
-    font-family: 'Lato', sans-serif;    
-}
-
-body { text-align: center;}
-
 .wrapper {
     display: flex;
-    flex-direction: row;
+    flex-direction: row wrap;
     justify-content: center;
     align-content: center;
     text-align: center;
     min-height: 100%;
     padding-bottom: 2.5rem;    /* Footer height */
+}
+
+.wrapper > * {
+    padding: 10px;
+    flex: 1 100%;
+}
+
+@media all and (min-width: 801px) {
+    .contentMain { flex: 5;}
+    .contentLeft, .contentRight { flex: 1;}
+}
+
+@media all and (max-width: 800px) {
+    ul.topnav {
+        flex-wrap: wrap;
+        justify-content: space-around;}
+    
+    .wrapper { flex-flow: row wrap; }
+    .contentMain { flex: 2; }
+    .contentLeft { order: 3; }
+    .contentMain { order: 1; }
+    .contentRight { order: 2; }
+    .footer { order: 4; }
+}
+
+@media all and (max-width: 600px) {
+    ul.topnav {
+        flex-flow: column wrap;
+        padding: 0;}
+    .wrapper {flex-flow: column wrap;}
+    .contentLeft {flex: 1 auto;}
+    .contentRight, .navio, .navutilities, .navassets {display: none;}
 }
 
 .contentMain {
@@ -71,7 +103,7 @@ body { text-align: center;}
     flex-grow: 2;
 }
 
-.contentLeft, .contentRight { flex-grow: 1; }
+.contentLeft, .contentRight { flex-grow: 1; outline: dotted; }
 
 h1 {text-align: center;}
 

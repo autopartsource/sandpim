@@ -18,8 +18,9 @@ $valid_upload=false;
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Create') 
 {
+    $assetid=$_POST['assetid'];
     $filename=base64_decode($_POST['filename']);
-    $uri=base64_decode($_POST['uri']);
+    $uri=$_POST['uri'];
     $orientationviewcode=$_POST['orientationviewcode'];
     $colormodecode=$_POST['colormodecode'];
     $assetheight=intval($_POST['assetheight']);
@@ -47,7 +48,6 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Upload') 
 {
-    $assetid=intval($_POST['assetrecordid']);
     $target_dir = '/var/www/html/ACESuploads/';
     $destinationpath = $target_dir . basename($_FILES['fileToUpload']['name']);
 
@@ -71,6 +71,12 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                 $filename=$pathparts['filename'];
                 $filehash = md5_file($destinationpath);
                 $filesize= filesize($destinationpath);
+                $public=1;
+                $description='Photo of '.$filename;
+                $background='WHI';
+                $uri='http://';
+                $orientationviewcode='FRONT';
+                
             }
             else { // not a supported image type
                 $error_msg = 'Not a supported image type';
@@ -115,16 +121,11 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                     <?php if($valid_upload){?>
                     <form method="post">
                         <input type="hidden" name="filename" value="<?php echo base64_encode($filename);?>"/>
-                        <input type="hidden" name="uri" value="<?php echo base64_encode($uri);?>"/>
-                        <input type="hidden" name="orientationviewcode" value="<?php echo $orientationviewcode;?>"/>
                         <input type="hidden" name="colormodecode" value="<?php echo $colormodecode;?>"/>
                         <input type="hidden" name="assetheight" value="<?php echo $assetheight;?>"/>
                         <input type="hidden" name="assetwidth" value="<?php echo $assetwidth;?>"/>
                         <input type="hidden" name="dimensionUOM" value="<?php echo $dimensionUOM;?>"/>
-                        <input type="hidden" name="background" value="<?php echo background;?>"/>
-                        <input type="hidden" name="filetype" value="<?php echo filetype;?>"/>
-                        <input type="hidden" name="public" value="<?php echo $public;?>"/>
-                        <input type="hidden" name="description" value="<?php echo $description;?>"/>
+                        <input type="hidden" name="filetype" value="<?php echo $filetype;?>"/>
                         <input type="hidden" name="filehash" value="<?php echo $filehash;?>"/>
                         <input type="hidden" name="filesize" value="<?php echo $filesize;?>"/>
 
@@ -133,11 +134,11 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                         <div style="padding:10px;">Width: <?php echo $imagedims[1];?></div>
                         <div style="padding:10px;">Height: <?php echo $imagedims[0];?></div>
                         <div style="padding:10px;">AssetID: <input type="text" name="assetid" value="<?php echo $filename;?>"/></div>
-                        <div style="padding:10px;">Background: <input type="text" name="background" value="<?php echo $background;?>"/></div>
-			<div style="padding:10px;">Description <input name="description" type="text"/></div>
-			<div style="padding:10px;">Orientation <input name="orientation" type="text"/></div>
-			<div style="padding:10px;">Background <input name="background" type="text"/></div>
-			<div style="padding:10px;">Public <input name="public" type="text"/></div>
+			<div style="padding:10px;">Description <input name="description" type="text" value="<?php echo $description;?>"/></div>
+			<div style="padding:10px;">Orientation <input name="orientationviewcode" type="text" value="<?php echo $orientationviewcode;?>"/></div>
+			<div style="padding:10px;">Background <input name="background" type="text" value="<?php echo $background;?>"/></div>
+			<div style="padding:10px;">Public <input name="public" type="text" value="<?php echo $public;?>"/></div>
+                        <div style="padding:10px;">URI <input name="uri" value="<?php echo $uri;?>"/></div>
                         <div style="padding:10px;"><input name="submit" type="submit" value="Create"/></div>
                     </form>
                     <?php }?>

@@ -12,6 +12,8 @@ $asset = new asset;
 
 $assets = $asset->getRecentAssets(20);
 
+$error_msg = '';
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -39,6 +41,9 @@ $assets = $asset->getRecentAssets(20);
                         <div style="padding:10px;"><input name="submit" type="submit" value="Upload"/></div>
                     </form>
                 </div>
+            </div>
+
+            <div class="contentRight">
                 <div>
                     <?php
                     if (count($assets)) {
@@ -49,11 +54,8 @@ $assets = $asset->getRecentAssets(20);
                         echo '</table>';
                     }
                     ?>
-                </div>                </div>
-
+                </div>
             </div>
-
-            <div class="contentRight"></div>
         </div>
 
         <!-- Footer -->
