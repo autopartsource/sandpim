@@ -34,12 +34,8 @@ $assets = $asset->getRecentAssets(20);
                 <?php if ($error_msg) {
                     echo $error_msg;
                 } ?>
-                    <form method="post" enctype="multipart/form-data" action="">
+                    <form method="post" enctype="multipart/form-data" action="assetCreate.php">
                         <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
-			<div style="padding:10px;"><input name="Description" type="text"/></div>
-			<div style="padding:10px;"><input name="orientation" type="text"/></div>
-			<div style="padding:10px;"><input name="background" type="text"/></div>
-			<div style="padding:10px;"><input name="public" type="text"/></div>
                         <div style="padding:10px;"><input name="submit" type="submit" value="Upload"/></div>
                     </form>
                 </div>

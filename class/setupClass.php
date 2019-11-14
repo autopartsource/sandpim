@@ -310,6 +310,7 @@ class setup
         description text not null,
         oid varchar(255) not null,
         fileHashMD5 varchar(255) not null,
+        filesize int unsigned not null,
         PRIMARY KEY (id),
         INDEX idx_assetid (assetid),
         INDEX idx_oid (oid),

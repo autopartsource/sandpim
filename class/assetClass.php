@@ -4,14 +4,14 @@ include_once("mysqlClass.php");
 class asset
 {
 
- function addAsset($assetid,$filename,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5)
+ function addAsset($assetid,$filename,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize)
  {
   $id=false;
   $db=new mysql; 
   $db->connect();
-  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,background,fileType,createdDate,public,approved,description,oid,fileHashMD5) values(null,?,?,?,?,?,?,?,?,?,?,date(now()),?,?,?,?,?)'))
+  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,background,fileType,createdDate,public,approved,description,oid,fileHashMD5,filesize) values(null,?,?,?,?,?,?,?,?,?,?,date(now()),?,?,?,?,?,?)'))
   {
-   $stmt->bind_param('sssssiisssiisss',$assetid,$filename,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5);
+   $stmt->bind_param('sssssiisssiisssi',$assetid,$filename,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize);
    $stmt->execute();
    $id=$db->conn->insert_id;
   }
@@ -32,7 +32,7 @@ class asset
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-       $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5']);
+       $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize']);
    }
   }
   $db->close();
@@ -46,14 +46,14 @@ class asset
   $db=new mysql; 
   $db->connect();
   
-  if($stmt=$db->conn->prepare('select * from asset order by createdDate desc limit ?'))
+  if($stmt=$db->conn->prepare('select * from asset order by id desc limit ?'))
   {
    $stmt->bind_param('i',$limit);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5']);
+       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize']);
    }
   }
   $db->close();

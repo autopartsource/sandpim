@@ -4,7 +4,8 @@ include_once('/var/www/html/class/assetClass.php');
 $navCategory = 'assets';
 
 session_start();
-if (!isset($_SESSION['userid'])) {
+if (!isset($_SESSION['userid'])) 
+{
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
     exit;
 }
@@ -13,37 +14,65 @@ $asset = new asset;
 $pim = new pim;
 $error_msg = false;
 
+$valid_upload=false;
 
-if (isset($_POST['submit']) && $_POST['submit'] == 'Upload' && isset($_POST['assetrecordid'])) {
+if (isset($_POST['submit']) && $_POST['submit'] == 'Create') 
+{
+    $filename=base64_decode($_POST['filename']);
+    $uri=base64_decode($_POST['uri']);
+    $orientationviewcode=$_POST['orientationviewcode'];
+    $colormodecode=$_POST['colormodecode'];
+    $assetheight=intval($_POST['assetheight']);
+    $assetwidth=intval($_POST['assetwidth']);
+    $dimensionUOM=$_POST['dimensionUOM'];
+    $background=$_POST['background'];
+    $filetype=$_POST['filetype'];
+    $public=intval($_POST['public']);
+    $approved=1;
+    $description=$_POST['description'];
+    $oid = $pim->newoid();
+    $filehash=$_POST['filehash'];
+    $filesize=intval($_POST['filesize']);
+        
+    if($id = $asset->addAsset($assetid, $filename, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize))
+    {
+        $error_msg = 'Asset id ' . $id . ' was created.';
+    }
+    else 
+    { // asset not created
+        $error_msg = 'Error creating asset';
+    }
+}
+
+
+if (isset($_POST['submit']) && $_POST['submit'] == 'Upload') 
+{
+    $assetid=intval($_POST['assetrecordid']);
     $target_dir = '/var/www/html/ACESuploads/';
-    $target_file = $target_dir . basename($_FILES['fileToUpload']['name']);
+    $destinationpath = $target_dir . basename($_FILES['fileToUpload']['name']);
 
-    if (!file_exists($target_file)) {
-        if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_file)) {
+    if (!file_exists($destinationpath))
+    {
+        if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $destinationpath))
+        {
             $pathparts = pathinfo($_FILES['fileToUpload']['name']);
 
-            if ($exiftype = exif_imagetype($target_file)) {
-                $filesize = getimagesize($target_file);
-
-                $orientationViewCode = 'front';
-                $colorModeCode = 'RBG';
-                $assetHeight = $filesize[0];
-                $assetWidth = $filesize[1];
+            if($exiftype = exif_imagetype($destinationpath))
+            {
+                $valid_upload=true;
+                $imagedims = getimagesize($destinationpath);
+                $colormodecode = 'RBG';
+                $assetheight = $imagedims[0];
+                $assetwidth = $imagedims[1];
                 $dimensionUOM = 'PX';
-                $background = 'WHI';
-                $fileType = $exiftype;
-                $public = 1;
+                $filetype = $exiftype;
                 $approved = 1;
-                $description = 'some descriptive text';
-                $oid = $pim->newoid();
-                $fileHashMD5 = md5_file($target_file);
-
-                if ($id = $asset->addAsset($pathparts['filename'], $pathparts['basename'], 'http://', $orientationViewCode, $colorModeCode, $assetHeight, $assetWidth, $dimensionUOM, $background, $fileType, $public, $approved, $description, $oid, $fileHashMD5)) {
-                    $error_msg = 'Asset id ' . $id . ' was created.';
-                } else { // asset not created
-                    $error_msg = 'Error creating asset';
-                }
-            } else { // not a supported image type
+                $filepath=$destinationpath;
+                $filename=$pathparts['filename'];
+                $filehash = md5_file($destinationpath);
+                $filesize= filesize($destinationpath);
+            }
+            else { // not a supported image type
                 $error_msg = 'Not a supported image type';
             }
         } else {
@@ -54,7 +83,11 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload' && isset($_POST['ass
     }
 }
 
-$assets = $asset->getRecentAssets(20);
+
+
+
+
+
 
 ?>
 <!DOCTYPE html>
@@ -78,25 +111,38 @@ $assets = $asset->getRecentAssets(20);
                 <?php if ($error_msg) {
                     echo $error_msg;
                 } ?>
-                    <form method="post" enctype="multipart/form-data">
-                        <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
-                        <div style="padding:10px;"><input name="submit" type="submit" value="Upload"/></div>
+                    
+                    <?php if($valid_upload){?>
+                    <form method="post">
+                        <input type="hidden" name="filename" value="<?php echo base64_encode($filename);?>"/>
+                        <input type="hidden" name="uri" value="<?php echo base64_encode($uri);?>"/>
+                        <input type="hidden" name="orientationviewcode" value="<?php echo $orientationviewcode;?>"/>
+                        <input type="hidden" name="colormodecode" value="<?php echo $colormodecode;?>"/>
+                        <input type="hidden" name="assetheight" value="<?php echo $assetheight;?>"/>
+                        <input type="hidden" name="assetwidth" value="<?php echo $assetwidth;?>"/>
+                        <input type="hidden" name="dimensionUOM" value="<?php echo $dimensionUOM;?>"/>
+                        <input type="hidden" name="background" value="<?php echo background;?>"/>
+                        <input type="hidden" name="filetype" value="<?php echo filetype;?>"/>
+                        <input type="hidden" name="public" value="<?php echo $public;?>"/>
+                        <input type="hidden" name="description" value="<?php echo $description;?>"/>
+                        <input type="hidden" name="filehash" value="<?php echo $filehash;?>"/>
+                        <input type="hidden" name="filesize" value="<?php echo $filesize;?>"/>
+
+                        <div style="padding:10px;">File Type: <?php echo $filetype;?></div>
+                        <div style="padding:10px;">File Size: <?php echo $filesize;?></div>
+                        <div style="padding:10px;">Width: <?php echo $imagedims[1];?></div>
+                        <div style="padding:10px;">Height: <?php echo $imagedims[0];?></div>
+                        <div style="padding:10px;">AssetID: <input type="text" name="assetid" value="<?php echo $filename;?>"/></div>
+                        <div style="padding:10px;">Background: <input type="text" name="background" value="<?php echo $background;?>"/></div>
+			<div style="padding:10px;">Description <input name="description" type="text"/></div>
+			<div style="padding:10px;">Orientation <input name="orientation" type="text"/></div>
+			<div style="padding:10px;">Background <input name="background" type="text"/></div>
+			<div style="padding:10px;">Public <input name="public" type="text"/></div>
+                        <div style="padding:10px;"><input name="submit" type="submit" value="Create"/></div>
                     </form>
+                    <?php }?>
                 </div>
-                <div>
-                    <?php
-                    if (count($assets)) {
-                        echo '<table><tr><th>AssetID</th><th>Filename</th><th>Description</th><th>File Attributes</th></tr>';
-                        foreach ($assets as $record) {
-                            echo '<tr><td>' . $record['assetid'] . '</td><td>' . $record['filename'] . '</td><td>' . $record['description'] . '</td><td>' . $record['fileType'] . ', ' . $record['assetHeight'] . ' x ' . $record['assetWidth'] . '</td></tr>';
-                        }
-                        echo '</table>';
-                    }
-                    ?>
-                </div>                </div>
-
             </div>
-
             <div class="contentRight"></div>
         </div>
 
