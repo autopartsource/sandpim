@@ -69,7 +69,7 @@ ul.topnav li a.navActive {background-color: #1469a9}
 }
 
 @media all and (min-width: 801px) {
-    .contentMain { flex: 5;}
+    .contentMain { flex: 50%;}
     .contentLeft, .contentRight { flex: 1;}
 }
 

@@ -8,4 +8,4 @@
   <li class="navsettomgs"><a <?php if ($navCategory == 'settings') {echo 'class="navActive"';} ?>href="settings.php">Settings</a></li>
   <li class="navio"><a <?php if ($navCategory == 'import/export') {echo 'class="navActive"';} ?>href="ioIndex.php">Import/Export</a></li>
   <li class="navlogout"><a href="logout.php">Logout (<?php echo $_SESSION['name'];?>)</a></li>
- </ul>
+</ul>
