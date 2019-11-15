@@ -19,7 +19,7 @@ $valid_upload=false;
 if (isset($_POST['submit']) && $_POST['submit'] == 'Create') 
 {
     $assetid=$_POST['assetid'];
-    $filename=base64_decode($_POST['filename']);
+    $filename=$_POST['filename'];
     $uri=$_POST['uri'];
     $orientationviewcode=$_POST['orientationviewcode'];
     $colormodecode=$_POST['colormodecode'];
@@ -43,6 +43,11 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     { // asset not created
         $error_msg = 'Error creating asset';
     }
+    if(isset($_POST['discardlocal']))
+    { // torch local copy that was brought down from uri
+        unlink($_POST['localfilepath']);
+    }
+    
 }
 
 
@@ -106,7 +111,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
         <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h1>Upload Asset File</h1>
+        <h1>Create image asset</h1>
 
         <div class="wrapper">
             <div class="contentLeft"></div>
@@ -120,7 +125,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                     
                     <?php if($valid_upload){?>
                     <form method="post">
-                        <input type="hidden" name="filename" value="<?php echo base64_encode($filename);?>"/>
+                        <input type="hidden" name="filename" value="<?php echo $filename;?>"/>
                         <input type="hidden" name="colormodecode" value="<?php echo $colormodecode;?>"/>
                         <input type="hidden" name="assetheight" value="<?php echo $assetheight;?>"/>
                         <input type="hidden" name="assetwidth" value="<?php echo $assetwidth;?>"/>
