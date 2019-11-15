@@ -34,7 +34,7 @@ foreach($models as $model)
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <?php include('/var/www/html/includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -47,7 +47,7 @@ foreach($models as $model)
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
-            <div class="contentMain">
+            <div class="contentMain button">
             <?php
                 echo '<div style="float:left;padding:10px;">'; foreach($groupedmodels[0] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';
                 if(isset($groupedmodels[1])){echo '<div style="float:left;padding:10px;">'; foreach($groupedmodels[1] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}

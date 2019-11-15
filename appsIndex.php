@@ -37,7 +37,7 @@ foreach ($makes as $make) {
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <?php include('/var/www/html/includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -50,7 +50,7 @@ foreach ($makes as $make) {
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
-            <div class="contentMain">
+            <div class="contentMain button">
             <?php
                 echo '<div style="padding:15px;">';
                 foreach ($groupedmakes[0] as $make) {

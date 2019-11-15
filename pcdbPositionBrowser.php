@@ -38,7 +38,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <?php include('/var/www/html/includes/header.php'); ?>
         <script>
             function addRemovePosition(positioneid)
             {

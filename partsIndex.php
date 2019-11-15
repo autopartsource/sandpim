@@ -28,7 +28,7 @@ if (isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) {
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <?php include('/var/www/html/includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -43,10 +43,10 @@ if (isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) {
             <!-- Main Content -->
             <div class="contentMain" style="flex-direction: column;">
                 <form method="get" action="partsIndex.php">
-                    Show part numbers <select name="searchtype"><option value="equals">that are exactly</opton><option value="startswith">that starts with</opton><option value="contains">contains</opton></select> 
+                    Show part numbers <select name="searchtype"><option value="equals">that are exactly</option><option value="startswith">that starts with</option><option value="contains">contains</option></select> 
                     <input type="text" name="partnumber" />
 
-                    in category <select name="partcategory"><option value="any">-- Any --</opton></select> 
+                    in category <select name="partcategory"><option value="any">-- Any --</option></select> 
 
                     <input type="submit" name="submit" value="Search"/>
                 </form>

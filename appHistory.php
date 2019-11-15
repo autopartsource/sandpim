@@ -21,11 +21,11 @@ $history = $pim->getHistoryEventsForApp($appid, 1000);
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <?php include('/var/www/html/includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
-<?php include('topnav.php'); ?>
+        <?php include('topnav.php'); ?>
 
         <!-- Header -->
         <h1>Applications</h1>

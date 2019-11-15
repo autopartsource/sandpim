@@ -26,6 +26,25 @@ a:visited {color: blue; text-decoration: none;}
 a:hover {color: gray; text-decoration: none;}
 a:active {color: blue; text-decoration: none;}
 
+.button a:link, .button a:visited {
+    color: black; 
+    text-decoration: none;
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: center;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    padding-bottom: 0.1em;
+    padding-top: 0.1em;
+    margin: 0;
+    outline: black solid 1px;
+}
+
+.button a:hover, .button a:active {
+    background-color: #111;
+    color: white;
+}
+
 table {border-collapse: collapse;}
 table, th, td {border: 1px solid black;}
 
@@ -73,33 +92,20 @@ table, th, td {border: 1px solid black;}
     flex: 1 100%;
 }
 
-@media all and (min-width: 801px) {
-    .contentMain { flex: 50%;}
-    .contentLeft, .contentRight { flex: 1;}
-}
-
-@media all and (max-width: 800px) {
-  /*  ul.topnav {
-        flex-wrap: wrap;
-        justify-content: space-around;}
-*/
-    .wrapper { flex-flow: row wrap; }
-    .contentMain { flex: 2; }
-    .contentLeft { order: 3; }
-    .contentMain { order: 1; }
-    .contentRight { order: 2; }
-    .footer { order: 4; }
-}
-
 @media all and (max-width: 600px) {
     .topnav a:not(:first-child) {display: none;}
     .topnav a.icon {
         float: right;
         display: block;
     }
-    .wrapper {flex-flow: column wrap;}
-    .contentLeft {flex: 1 auto;}
-    .contentRight {display: none;}
+    .wrapper { flex-direction:column wrap; }
+    .contentMain { 
+        display: flex; 
+        flex-direction: column;
+        justify-content: center; 
+        flex: 1 auto; 
+    }
+    .contentRight { display: none; }
 }
 
 @media all and (max-width: 600px) {
@@ -116,22 +122,64 @@ table, th, td {border: 1px solid black;}
     }
 }
 
+@media all and (max-width: 800px) {
+    .wrapper { flex-flow: row wrap; }
+    .contentMain { flex: 2; }
+    .contentLeft { order: 3; }
+    .contentMain { order: 1; }
+    .contentRight { order: 2; }
+    .footer { order: 4; }
+}
+
 @media screen and (min-width: 601px) and (max-width: 800px) {
     .topnav {
         display: flex;
-        justify-content: space-around;}
+        flex-flow: row wrap;
+        justify-content: space-around;
+    }
+    .contentMain { 
+         display: flex; 
+         flex-direction: row;
+         flex-flow: wrap;
+         justify-content: center; 
+         flex: 1 auto; 
+    }
+    .contentLeft, .contentRight {
+        display: flex;
+        outline: dotted whitesmoke; 
+        display: flex;
+        justify-content: center;
+    }
 }
 
+@media all and (min-width: 801px) {
+    .contentMain { 
+        display: flex;
+        flex-direction: column wrap;
+        justify-content: center;
+        align-self: center;
+        flex: 2 auto;
+    }
+    .contentLeft { flex: 1 auto;}
+    .contentRight { flex: 1 auto;}
+    .contentLeft, .contentRight {
+        display: flex;
+        outline: dotted whitesmoke; 
+        display: flex;
+        justify-content: center;
+    }
+}
+
+
+/*
 .contentMain {
     display: flex;
-    flex-direction: row;
+    flex-direction: column wrap;
     justify-content: center;
     align-self: center;
     flex-grow: 2;
 }
-
-.contentLeft, .contentRight { flex-grow: 1; outline: dotted; }
-
+*/
 h1 {text-align: center;}
 
 .footer {

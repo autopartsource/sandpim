@@ -39,7 +39,7 @@ foreach($years as $year)
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <?php include('/var/www/html/includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -52,7 +52,7 @@ foreach($years as $year)
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
-            <div class="contentMain">
+            <div class="contentMain button">
             <?php
                 echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[0] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';
                 if(isset($groupedyears[1])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[1] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}

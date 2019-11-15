@@ -21,8 +21,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <?php include('/var/www/html/includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -32,7 +31,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
         <h1>Dashboard</h1>
         
         <div class="wrapper">
-            <div class="contentLeft">1</div>
+            <div class="contentLeft">L</div>
 
             <!-- Main Content -->
             <div class="contentMain">
@@ -51,7 +50,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                 ?>
             </div>
 
-            <div class="contentRight">2</div>
+            <div class="contentRight">R</div>
         </div>
                 
         <!-- Footer -->

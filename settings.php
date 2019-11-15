@@ -11,7 +11,7 @@ $pim=new pim;
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="styles.css" />
+        <?php include('/var/www/html/includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -24,13 +24,11 @@ $pim=new pim;
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
-            <div class="contentMain" style="flex-direction: column;">
-                <div style="padding-left:10px;">
-                    <div><a href="./users.php">User Maintenance</a></div>
-                    <div><a href="./config.php">Configuration Parameters</a></div>
-                    <div><a href="./pcdbTypeBrowser.php">Manage PCdb favorite parttypes</a></div>
-                    <div><a href="./pcdbPositionBrowser.php">Manage PCdb favorite positions</a></div>
-                </div>
+            <div class="contentMain button" style="flex-direction: column;">
+                <div style="padding:10px;"><a href="./users.php">User Maintenance</a></div>
+                <div style="padding:10px;"><a href="./config.php">Configuration Parameters</a></div>
+                <div style="padding:10px;"><a href="./pcdbTypeBrowser.php">Manage PCdb favorite parttypes</a></div>
+                <div style="padding:10px;"><a href="./pcdbPositionBrowser.php">Manage PCdb favorite positions</a></div>
             </div>
 
             <div class="contentRight"></div>
