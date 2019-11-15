@@ -143,7 +143,8 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
 			<div style="padding:10px;">Orientation <input name="orientationviewcode" type="text" value="<?php echo $orientationviewcode;?>"/></div>
 			<div style="padding:10px;">Background <input name="background" type="text" value="<?php echo $background;?>"/></div>
 			<div style="padding:10px;">Public <input name="public" type="text" value="<?php echo $public;?>"/></div>
-                        <div style="padding:10px;">URI <input name="uri" value="<?php echo $uri;?>"/></div>
+                        <div style="padding:10px;">URI <input name="uri" type="text" value="<?php echo $uri;?>"/></div>
+			<div style="padding:10px;"><label><input type="checkbox" id="uripublic" name="uripublic"/>URI is for public consumption</label></div>
                         <div style="padding:10px;"><input name="submit" type="submit" value="Create"/></div>
                     </form>
                     <?php }?>

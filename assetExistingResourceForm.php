@@ -94,6 +94,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
 			<div style="padding:10px;">Color Mode Code<input name="colormodecode" type="text" value="<?php echo $colormodecode;?>"/></div>
                         <div style="padding:10px;">Public <input name="public" type="text" value="<?php echo $public;?>"/></div>
                         <div style="padding:10px;">URI <input name="uri" value="<?php echo $uri;?>"/></div>
+			<div style="padding:10px;"><label><input type="checkbox" id="uripublic" name="uripublic"/>URI is for public consumption</label></div>
                         <div style="padding:10px;"><input type="checkbox" name="discardlocal"/>Discard local copy</div>
                         <div style="padding:10px;"><input name="submit" type="submit" value="Create"/></div>
                     </form>
