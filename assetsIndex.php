@@ -50,7 +50,7 @@ $assets = $asset->getRecentAssets(20);
                     echo '<div style="padding:5px;border: 1px solid;margin:3px;">Recent Assets ';
                     echo '<table><tr><th>AssetID</th><th>Description</th></tr>';
                     foreach ($assets as $record) {
-                        echo '<tr><td>' . $record['assetid'] . '</td><td>' . $record['description'] . '</td></tr>';
+                        echo '<tr><td><a href="showAssetRecord.php?id='.$record['id'].'">' . $record['assetid'] . '</a></td><td>' . $record['description'] . '</td></tr>';
                     }
                     echo '</table></div>';
                 }

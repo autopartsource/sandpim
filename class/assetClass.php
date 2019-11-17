@@ -19,15 +19,36 @@ class asset
   return $id;
  }
 
- function getAssetByAssetid($assetid)
+ function getAssetRecordsByAssetid($assetid)
  {
-  $asset=false;
+  $records=false;
   $db=new mysql; 
   $db->connect();
   
   if($stmt=$db->conn->prepare('select * from asset where assetid=?'))
   {
    $stmt->bind_param('s',$assetid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $records[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize']);
+   }
+  }
+  $db->close();
+  return $records;   
+ }
+ 
+
+ function getAssetById($id)
+ {
+  $asset=false;
+  $db=new mysql; 
+  $db->connect();
+  
+  if($stmt=$db->conn->prepare('select * from asset where id=?'))
+  {
+   $stmt->bind_param('i',$id);
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
@@ -39,7 +60,6 @@ class asset
   return $asset;   
  }
  
-
  function getRecentAssets($limit)
  {
   $assets=array();
