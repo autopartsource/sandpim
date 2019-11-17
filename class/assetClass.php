@@ -60,6 +60,80 @@ class asset
   return $asset;   
  }
  
+ function connectPartToAsset($part,$assetid,$assettypecode,$sequence)
+ {
+  $id=false;
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into part_asset (id,partnumber,assetid,assettypecode,sequence) values(null,?,?,?,?)'))
+  {   
+   $stmt->bind_param('sssi',);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;   
+ }
+ 
+ function disconnectPartFromAsset($part,$assetid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from part_asset where part=? and assetid=?'))
+  {
+   $stmt->bind_param('ss',$part,$assetid);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+ 
+ function deleteAssetRecord($id)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from asset where id=?'))
+  {
+   $stmt->bind_param('i',$id);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+  
+  // need to delete (unlink) local file if it exists
+  
+ }
+ 
+ function setAssetDescription($assetid,$description)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set description=? where assetid=?'))
+  {
+   $encodednotes=base64_encode($internalnotes);
+   $stmt->bind_param('ss', $encodednotes,$assetid);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+ 
+ function toggleAssetPublic($assetid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set public=public XOR 1 where assetid=?'))
+  {
+   $stmt->bind_param('s', $assetid);
+   $stmt->execute();
+  } //else{print_r($db->conn->error);}
+  $db->close();
+ }
+ 
+ function toggleAssetUriPublic($assetid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set uripublic=uripublic XOR 1 where assetid=?'))
+  {
+   $stmt->bind_param('s', $assetid);
+   $stmt->execute();
+  } //else{print_r($db->conn->error);}
+  $db->close();
+ }
+
+
  function getRecentAssets($limit)
  {
   $assets=array();
