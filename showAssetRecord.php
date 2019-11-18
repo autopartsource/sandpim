@@ -47,21 +47,22 @@ $assetrecord=$asset->getAssetById($id);
                     <table>
                         <tr><th>AssetID</th><td><a href="showAsset.php?assetid=<?php echo $assetrecord['assetid'];?>"><?php echo $assetrecord['assetid'];?></a></td></tr>
                         <tr><th>Description</th><td><?php echo $assetrecord['description'];?></td></tr>
-                        <tr><th>File Type</th><td><?php echo $assetrecord['fileType'];?></td></tr>
+                        <tr><th>File Type</th><td><?php echo $asset->niceExifTypeName($assetrecord['fileType']);?></td></tr>
                         <tr><th>Filename</th><td><?php echo $assetrecord['filename'];?></td></tr>
                         <tr><th>Height x Width (<?php echo $assetrecord['dimensionUOM'];?>)</th><td><?php echo $assetrecord['assetHeight'].' x '.$assetrecord['assetWidth'];?></td></tr>
                         <tr><th>Background</th><td><?php echo $assetrecord['background'];?></td></tr>
                         <tr><th>File Size</th><td><?php echo $assetrecord['filesize'];?></td></tr>
                         <tr><th>URI</th><td><?php echo $assetrecord['uri'];?></td></tr>
+                        <tr><th>Local Path</th><td><?php echo $assetrecord['localpath'];?></td></tr>
                         <tr><th>Orientation</th><td><?php echo $assetrecord['orientationViewCode'];?></td></tr>
                         <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode'];?></td></tr>
                         <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate'];?></td></tr>
-                        <tr><th>Public</th><td><?php echo $assetrecord['public'];?></td></tr>
+                        <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'],'Public','Private');?></td></tr>
                         <tr><th>File Hash</th><td><?php echo $assetrecord['fileHashMD5'];?></td></tr>
                     </table>
                    </div>
                 <div>
-                    <div><img width="250" src="<?php echo $assetrecord['uri'];?>"/></div>
+                    <div><img width="200" src="<?php echo $assetrecord['uri'];?>"/></div>
                 </div>
             </div>
 

@@ -4,17 +4,21 @@ include_once("mysqlClass.php");
 class asset
 {
 
- function addAsset($assetid,$filename,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize)
+ function addAsset($assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic)
  {
   $id=false;
   $db=new mysql; 
   $db->connect();
-  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,background,fileType,createdDate,public,approved,description,oid,fileHashMD5,filesize) values(null,?,?,?,?,?,?,?,?,?,?,date(now()),?,?,?,?,?,?)'))
+  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,localpath,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,background,fileType,createdDate,public,approved,description,oid,fileHashMD5,filesize,uripublic) values(null,?,?,?,?,?,?,?,?,?,?,?,date(now()),?,?,?,?,?,?,?)'))
   {
-   $stmt->bind_param('sssssiisssiisssi',$assetid,$filename,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize);
-   $stmt->execute();
-   $id=$db->conn->insert_id;
-  }
+   if($stmt->bind_param('ssssssiisssiisssii',$assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+    }else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+   }else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
   return $id;
  }
@@ -32,7 +36,7 @@ class asset
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $records[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize']);
+       $records[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize']);
    }
   }
   $db->close();
@@ -43,8 +47,7 @@ class asset
  function getAssetById($id)
  {
   $asset=false;
-  $db=new mysql; 
-  $db->connect();
+  $db=new mysql; $db->connect();
   
   if($stmt=$db->conn->prepare('select * from asset where id=?'))
   {
@@ -53,7 +56,7 @@ class asset
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-       $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize']);
+       $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize']);
    }
   }
   $db->close();
@@ -111,12 +114,12 @@ class asset
   $db->close();
  }
  
- function toggleAssetPublic($assetid)
+ function toggleAssetPublic($id)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set public=public XOR 1 where assetid=?'))
+  if($stmt=$db->conn->prepare('update asset set public=public XOR 1 where id=?'))
   {
-   $stmt->bind_param('s', $assetid);
+   $stmt->bind_param('i', $id);
    $stmt->execute();
   } //else{print_r($db->conn->error);}
   $db->close();
@@ -147,11 +150,88 @@ class asset
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize']);
+       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize']);
    }
   }
   $db->close();
   return $assets;   
  }
 
+ function niceBoolText($value,$textiftrue,$textiffalse)
+ {
+    $nicevalue=$textiffalse;
+    if($value==true)
+    {
+        $nicevalue=$textiftrue;        
+    }
+    return $nicevalue;
+ }
+
+ function niceExifTypeName($type)
+ {
+    switch($type)
+    {
+        case 1:
+            $name='GIF';
+            break;
+        case 2:
+            $name='JPEG';
+            break;
+        case 3:
+            $name='PNG';
+            break;
+        case 4:
+            $name='SWF';
+            break;
+        case 5:
+            $name='PSD';
+            break;
+        case 6:
+            $name='BMP';
+            break;
+        case 7:
+            $name='TIFF_II (intel byte order)';
+            break;
+        case 8:
+            $name='TIFF_MM (motorola byte order)';
+            break;
+        case 9:
+            $name='JPC';
+            break;
+        case 10:
+            $name='JP2';
+            break;
+        case 11:
+            $name='JPX';
+            break;
+        case 12:
+            $name='JB2';
+            break;
+        case 13:
+            $name='SWC';
+            break;
+        case 14:
+            $name='IFF';
+            break;
+        case 15:
+            $name='WBMP';
+            break;
+        case 16:
+            $name='XBM';
+            break;
+        case 17:
+            $name='ICO';
+            break;
+        case 18:
+            $name='WEBP';
+            break;
+        default:
+            $name='unknown EXIF type';
+            break;
+    } 
+    return $name;
+ }
+ 
+ 
+ 
 }?>

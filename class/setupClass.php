@@ -297,6 +297,7 @@ class setup
         assetid varchar(255) NOT NULL,
         filename varchar(255) NOT NULL,
         uri text not null,
+        localpath varchar(255) NOT NULL,
         orientationViewCode varchar(255) not null,
         colorModeCode varchar(255) not null,
         assetHeight int unsigned not null,

@@ -1,10 +1,11 @@
 <?php
 include_once('/var/www/html/class/pimClass.php');
+include_once('/var/www/html/class/assetClass.php');
 session_start();
 $pim= new pim;
 $asset=new asset;
 
-//$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true)).'*'; fclose($fp);
+$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true)).'*'; fclose($fp);
 
 if(isset($_SESSION['userid']) && isset($_GET['assetid']) && isset($_GET['elementid']) && isset($_GET['value']))
 {

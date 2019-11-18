@@ -20,6 +20,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
 {
     $assetid=$_POST['assetid'];
     $filename=$_POST['filename'];
+    $localpath=$_POST['localpath'];
     $uri=$_POST['uri'];
     $orientationviewcode=$_POST['orientationviewcode'];
     $colormodecode=$_POST['colormodecode'];
@@ -34,8 +35,9 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     $oid = $pim->newoid();
     $filehash=$_POST['filehash'];
     $filesize=intval($_POST['filesize']);
+    $uripublic=intval($_POST['uripublic']);
         
-    if($id = $asset->addAsset($assetid, $filename, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize))
+    if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic))
     {
         $error_msg = 'Asset id ' . $id . ' was created.';
     }
@@ -77,9 +79,11 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                 $filehash = md5_file($destinationpath);
                 $filesize= filesize($destinationpath);
                 $public=1;
+                $uripublic=1;
                 $description='Photo of '.$filename;
                 $background='WHI';
                 $uri='http://';
+                $localpath=$destinationpath;
                 $orientationviewcode='FRONT';
                 
             }
@@ -126,6 +130,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                     <?php if($valid_upload){?>
                     <form method="post">
                         <input type="hidden" name="filename" value="<?php echo $filename;?>"/>
+                        <input type="hidden" name="localpath" value="<?php echo $localpath;?>"/>
                         <input type="hidden" name="colormodecode" value="<?php echo $colormodecode;?>"/>
                         <input type="hidden" name="assetheight" value="<?php echo $assetheight;?>"/>
                         <input type="hidden" name="assetwidth" value="<?php echo $assetwidth;?>"/>
