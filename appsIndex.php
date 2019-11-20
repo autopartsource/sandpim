@@ -50,7 +50,7 @@ foreach ($makes as $make) {
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
-            <div class="contentMain button">
+            <div class="contentMain button showRow">
             <?php
                 echo '<div style="padding:15px;">';
                 foreach ($groupedmakes[0] as $make) {

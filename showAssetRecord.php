@@ -46,7 +46,9 @@ $assetrecord=$asset->getAssetById($id);
                 <div>
                     <div style="text-align: left;padding-bottom:20px;">Records for Asset: <?php echo $assetrecord['assetid'];?></div>
                     <table>
-                        <tr><th>Description</th><td><?php echo $assetrecord['description'];?></td></tr>
+                        <tr><th>Description</th>
+                            <td><?php echo $assetrecord['description'];?></td>
+                            <td class="mobile" rowspan="13"><img width="300" src="<?php echo $assetrecord['uri'];?>"/></td></tr>
                         <tr><th>File Type</th><td><?php echo $asset->niceExifTypeName($assetrecord['fileType']);?></td></tr>
                         <tr><th>Filename</th><td><?php echo $assetrecord['filename'];?></td></tr>
                         <tr><th>Height x Width (<?php echo $assetrecord['dimensionUOM'];?>)</th><td><?php echo $assetrecord['assetHeight'].' x '.$assetrecord['assetWidth'];?></td></tr>
@@ -60,10 +62,12 @@ $assetrecord=$asset->getAssetById($id);
                         <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'],'Public','Private');?></td></tr>
                         <tr><th>File Hash</th><td><?php echo $assetrecord['fileHashMD5'];?></td></tr>
                     </table>
-                   </div>
+                </div>
+                <!--
                 <div>
                     <div style="padding:10px;"><img width="300" src="<?php echo $assetrecord['uri'];?>"/></div>
                 </div>
+                -->
             </div>
 
             <div class="contentRight">

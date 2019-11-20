@@ -79,7 +79,8 @@ table, th, td {border: 1px solid black;}
 
 .wrapper {
     display: flex;
-    flex-direction: row wrap;
+    flex-direction: row;
+    flex-wrap: nowrap;
     justify-content: center;
     align-content: center;
     text-align: center;
@@ -98,14 +99,22 @@ table, th, td {border: 1px solid black;}
         float: right;
         display: block;
     }
-    .wrapper { flex-direction:column wrap; }
-    .contentMain { 
+    .wrapper { flex-direction: column; }
+    
+    .contentMain .showRow { 
         display: flex; 
         flex-direction: column;
+        flex-wrap: wrap;
         justify-content: center; 
-        flex: 1 auto; 
+        flex: 1 auto;
     }
     .contentRight { display: none; }
+    .button a:link, .button a:visited {
+        font-size: 2.25em;
+    }
+    .mobile {
+        display: none; 
+    }
 }
 
 @media all and (max-width: 600px) {
@@ -155,21 +164,21 @@ table, th, td {border: 1px solid black;}
 @media all and (min-width: 801px) {
     .contentMain { 
         display: flex;
-        flex-direction: column wrap;
+        flex-direction: column;
         justify-content: center;
-        align-self: center;
         flex: 2 auto;
+    }
+    .contentLeft, .contentRight {
+        display: flex;
+        flex-direction: column;
+        outline: dotted whitesmoke;
+        justify-content: flex-start;
     }
     .contentLeft { flex: 1 auto;}
     .contentRight { flex: 1 auto;}
-    .contentLeft, .contentRight {
-        display: flex;
-        outline: dotted whitesmoke; 
-        display: flex;
-        justify-content: center;
-    }
 }
 
+.showRow {flex-direction: row;}
 
 /*
 .contentMain {

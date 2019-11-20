@@ -52,16 +52,16 @@ foreach($years as $year)
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
-            <div class="contentMain button">
+            <div class="contentMain button showRow">
             <?php
-                echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[0] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';
-                if(isset($groupedyears[1])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[1] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[2])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[2] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[3])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[3] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[4])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[4] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[5])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[5] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[6])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[6] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[7])){echo '<div style="float:left;padding:10px;">'; foreach($groupedyears[7] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                echo '<div style="padding:10px;">'; foreach($groupedyears[0] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';
+                if(isset($groupedyears[1])){echo '<div style="padding:10px;">'; foreach($groupedyears[1] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[2])){echo '<div style="padding:10px;">'; foreach($groupedyears[2] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[3])){echo '<div style="padding:10px;">'; foreach($groupedyears[3] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[4])){echo '<div style="padding:10px;">'; foreach($groupedyears[4] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[5])){echo '<div style="padding:10px;">'; foreach($groupedyears[5] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[6])){echo '<div style="padding:10px;">'; foreach($groupedyears[6] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
+                if(isset($groupedyears[7])){echo '<div style="padding:10px;">'; foreach($groupedyears[7] as $year){echo '<div style="padding:3px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'">'.$year['id'].'</a></div>';} echo '</div>';}
                 echo '<div style="clear:both;"></div>';
             ?>
             </div>
