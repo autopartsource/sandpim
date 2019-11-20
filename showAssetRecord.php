@@ -44,8 +44,8 @@ $assetrecord=$asset->getAssetById($id);
             <!-- Main Content -->
             <div class="contentMain">
                 <div>
+                    <div style="text-align: left;padding-bottom:20px;">Records for Asset: <?php echo $assetrecord['assetid'];?></div>
                     <table>
-                        <tr><th>AssetID</th><td><a href="showAsset.php?assetid=<?php echo $assetrecord['assetid'];?>"><?php echo $assetrecord['assetid'];?></a></td></tr>
                         <tr><th>Description</th><td><?php echo $assetrecord['description'];?></td></tr>
                         <tr><th>File Type</th><td><?php echo $asset->niceExifTypeName($assetrecord['fileType']);?></td></tr>
                         <tr><th>Filename</th><td><?php echo $assetrecord['filename'];?></td></tr>
@@ -62,11 +62,20 @@ $assetrecord=$asset->getAssetById($id);
                     </table>
                    </div>
                 <div>
-                    <div><img width="200" src="<?php echo $assetrecord['uri'];?>"/></div>
+                    <div style="padding:10px;"><img width="300" src="<?php echo $assetrecord['uri'];?>"/></div>
                 </div>
             </div>
 
-            <div class="contentRight"></div>
+            <div class="contentRight">
+                Connected Parts
+                <table>
+                    <tr><td>PartX</td><td>Primary</td></tr>
+                    <tr><td>PartY</td><td>Primary</td></tr>
+                    <tr><td>PartZ</td><td>Primary</td></tr>
+                </table>
+                
+                
+            </div>
         </div>
                 
         <!-- Footer -->

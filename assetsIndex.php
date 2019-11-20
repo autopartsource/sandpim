@@ -38,7 +38,7 @@ $assets = $asset->getRecentAssets(20);
                 <div style="padding:5px;border: 1px solid;margin:3px;">
                     <form action="assetExistingResourceForm.php" method="post">
                         <div>Create image asset from uri <input type="text" name="uri"/></div>
-                        <div>Save as filename <input type="text" name="filename"/></div>
+                        <div>Save as filename <input type="text" name="basename"/></div>
                         <div><input type="submit" name="submit" value="Retrieve"/></div>
                     </form>
                 </div>

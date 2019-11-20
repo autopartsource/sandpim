@@ -13,7 +13,9 @@ $error_msg = '';
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve') 
 {
-    $destinationpath = '/var/www/html/ACESuploads/'.$_POST['filename'];
+    $destinationpath = '/var/www/html/ACESuploads/'.$_POST['basename'];
+    $pathparts = pathinfo($destinationpath);
+
     $filesize=file_put_contents($destinationpath, fopen($_POST['uri'], 'r'));
     
     if($filesize)
@@ -29,6 +31,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
             $filetype = $exiftype;
             $approved = 1;
             $filepath=$destinationpath;
+            $basename=$_POST['basename'];
             $filename=$pathparts['filename'];
             $filehash = md5_file($destinationpath);
             $filesize= filesize($destinationpath);
@@ -74,9 +77,9 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
                 } ?>
                     
                     <form method="post" action="assetCreate.php">
-                        <input type="hidden" name="assetid" value="<?php echo $filename;?>"/>
                         <input type="hidden" name="filename" value="<?php echo $filename;?>"/>
-                        <input type="hidden" name="localfilepath" value="<?php echo $destinationpath;?>"/>
+                        <input type="hidden" name="basename" value="<?php echo $basename;?>"/>
+                        <input type="hidden" name="localpath" value="<?php echo $destinationpath;?>"/>
                         <input type="hidden" name="dimensionUOM" value="<?php echo $dimensionUOM;?>"/>
                         <input type="hidden" name="filehash" value="<?php echo $filehash;?>"/>
                         <div style="padding:10px;">File Type: <?php echo $filetype;?></div>

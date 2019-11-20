@@ -62,7 +62,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
     {
         if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $destinationpath))
         {
-            $pathparts = pathinfo($_FILES['fileToUpload']['name']);
+            $pathparts = pathinfo($destinationpath);
 
             if($exiftype = exif_imagetype($destinationpath))
             {
@@ -76,6 +76,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                 $approved = 1;
                 $filepath=$destinationpath;
                 $filename=$pathparts['filename'];
+                $basename=$pathparts['basename'];
                 $filehash = md5_file($destinationpath);
                 $filesize= filesize($destinationpath);
                 $public=1;
@@ -130,6 +131,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                     <?php if($valid_upload){?>
                     <form method="post">
                         <input type="hidden" name="filename" value="<?php echo $filename;?>"/>
+                        <input type="hidden" name="basename" value="<?php echo $basename;?>"/>
                         <input type="hidden" name="localpath" value="<?php echo $localpath;?>"/>
                         <input type="hidden" name="colormodecode" value="<?php echo $colormodecode;?>"/>
                         <input type="hidden" name="assetheight" value="<?php echo $assetheight;?>"/>
