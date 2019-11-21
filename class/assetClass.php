@@ -69,10 +69,10 @@ class asset
   $db=new mysql; $db->connect();
   if($stmt=$db->conn->prepare('insert into part_asset (id,partnumber,assetid,assettypecode,sequence) values(null,?,?,?,?)'))
   {   
-   $stmt->bind_param('sssi',);
+   $stmt->bind_param('sssi',$part,$assetid,$assettypecode,$sequence);
    $stmt->execute();
    $id=$db->conn->insert_id;
-  }
+  }else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
   return $id;   
  }
@@ -87,6 +87,48 @@ class asset
   } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
  }
+ 
+ function getPartsConnectedToAsset($assetid)
+ {
+  $connections=false;
+  $db=new mysql; $db->connect();
+  
+  if($stmt=$db->conn->prepare('select * from part_asset where assetid=? order by partnumber'))
+  {
+   $stmt->bind_param('s',$assetid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $connections[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence']);
+   }
+  }
+  $db->close();
+  return $connections;   
+ }
+ 
+ function getAssetsConnectedToPart($partnumber)
+ {
+  $connections=false;
+  $db=new mysql; $db->connect();
+  
+  if($stmt=$db->conn->prepare('select * from part_asset where partnumber=? order by sequence'))
+  {
+   $stmt->bind_param('s',$partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $connections[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence']);
+   }
+  }
+  $db->close();
+  return $connections;   
+ }
+
+
+ 
+ 
  
  function deleteAssetRecord($id)
  {

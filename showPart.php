@@ -2,6 +2,7 @@
 include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/assetClass.php');
 $navCategory = 'applications';
 
 session_start();
@@ -13,6 +14,7 @@ if (!isset($_SESSION['userid'])) {
 $vcdb = new vcdb;
 $pcdb = new pcdb;
 $pim = new pim;
+$asset = new asset;
 
 function niceAppAttributes($appattributes) {
     $vcdb = new vcdb;
@@ -48,6 +50,8 @@ $apps = $pim->getAppsByPartnumber($partnumber);
 $attributes = $pim->getPartAttributes($partnumber);
 $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
+$connectedassets=$asset->getAssetsConnectedToPart($partnumber);
+
 
 ?>
 <!DOCTYPE html>
@@ -85,6 +89,8 @@ $partcategories = $pim->getPartCategories();
                          <tr><th bgcolor="#c0c0c0" align="left">Attributes</th><td><table><?php foreach ($attributes as $attribute) {
                         echo '<tr><td>' . $attribute['name'] . '</td><td align="right">' . $attribute['value'] . '</td><td>' . $attribute['uom'] . '</td></tr>';
                     } ?></table></td></tr>
+
+                         <tr><th bgcolor="#c0c0c0" align="left">Connected Assets</th><td><?php foreach($connectedassets as $connectedasset){echo '<div><a href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>';};?></td><tr>
                          <tr><th bgcolor="#c0c0c0" align="left">IDs</th><td>SandpiperOID: <?php echo $part['oid']; ?></td><tr>
                          <tr><th bgcolor="#c0c0c0" align="left">Status</th><td><?php echo $part['lifecyclestatus']; ?></td><tr/>
                          <tr><th></th><td align="right"><input type="submit" name="submit" value="Save"/></td></tr>
