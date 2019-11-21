@@ -47,17 +47,17 @@ foreach($models as $model)
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
-            <div class="contentMain button showRow">
+            <div class="contentMain button showRow" style="justify-content:center;">
             <?php
                 echo '<div style="padding:10px;">'; 
-                foreach($groupedmodels[0] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';
-                if(isset($groupedmodels[1])){echo '<div style="padding:10px;">'; foreach($groupedmodels[1] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[2])){echo '<div style="padding:10px;">'; foreach($groupedmodels[2] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[3])){echo '<div style="padding:10px;">'; foreach($groupedmodels[3] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[4])){echo '<div style="padding:10px;">'; foreach($groupedmodels[4] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[5])){echo '<div style="padding:10px;">'; foreach($groupedmodels[5] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[6])){echo '<div style="padding:10px;">'; foreach($groupedmodels[6] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[7])){echo '<div style="padding:10px;">'; foreach($groupedmodels[7] as $model){echo '<div style="padding:3px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
+                foreach($groupedmodels[0] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';
+                if(isset($groupedmodels[1])){echo '<div style="padding:10px;">'; foreach($groupedmodels[1] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
+                if(isset($groupedmodels[2])){echo '<div style="padding:10px;">'; foreach($groupedmodels[2] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
+                if(isset($groupedmodels[3])){echo '<div style="padding:10px;">'; foreach($groupedmodels[3] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
+                if(isset($groupedmodels[4])){echo '<div style="padding:10px;">'; foreach($groupedmodels[4] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
+                if(isset($groupedmodels[5])){echo '<div style="padding:10px;">'; foreach($groupedmodels[5] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
+                if(isset($groupedmodels[6])){echo '<div style="padding:10px;">'; foreach($groupedmodels[6] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
+                if(isset($groupedmodels[7])){echo '<div style="padding:10px;">'; foreach($groupedmodels[7] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
                 echo '<div style="clear:both;"></div>';
             ?>
             </div>

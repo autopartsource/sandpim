@@ -34,15 +34,26 @@ a:active {color: blue; text-decoration: none;}
     justify-content: center;
     padding-left: 0.5em;
     padding-right: 0.5em;
-    padding-bottom: 0.1em;
-    padding-top: 0.1em;
+    padding-bottom: 0.3em;
+    padding-top: 0.3em;
     margin: 0;
-    outline: black solid 1px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: lightgrey;
+    transition-duration: 0.25s;
+    box-shadow: 0 4px #999;
+    padding: 8px 12px;
 }
 
 .button a:hover, .button a:active {
     background-color: #111;
     color: white;
+}
+
+.button a:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(2px);
 }
 
 table {border-collapse: collapse;}
@@ -93,6 +104,7 @@ table, th, td {border: 1px solid black;}
     flex: 1 100%;
 }
 
+/*    Mobile View    */
 @media all and (max-width: 600px) {
     .topnav a:not(:first-child) {display: none;}
     .topnav a.icon {
@@ -108,7 +120,23 @@ table, th, td {border: 1px solid black;}
         justify-content: center; 
         flex: 1 auto;
     }
-    .contentRight { display: none; }
+    /*.contentRight { display: none; }*/
+    .contentRight {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+    
+    .contentRight .scrolling-wrapper-flexbox {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+
+        .card {
+          flex: 0 0 auto;
+        }
+    }
+    
     .button a:link, .button a:visited {
         font-size: 2.25em;
     }
@@ -131,6 +159,7 @@ table, th, td {border: 1px solid black;}
     }
 }
 
+/*    Tablet View     */
 @media all and (max-width: 800px) {
     .wrapper { flex-flow: row wrap; }
     .contentMain { flex: 2; }
@@ -150,22 +179,23 @@ table, th, td {border: 1px solid black;}
          display: flex; 
          flex-direction: row;
          flex-flow: wrap;
-         justify-content: center; 
+         justify-content: flex-start; 
          flex: 1 auto; 
     }
     .contentLeft, .contentRight {
         display: flex;
-        outline: dotted whitesmoke; 
-        display: flex;
+        flex-direction: column;
+        outline: dotted whitesmoke;
         justify-content: center;
     }
 }
 
+/*    Desktop View   */
 @media all and (min-width: 801px) {
     .contentMain { 
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-between;
         flex: 2 auto;
     }
     .contentLeft, .contentRight {
@@ -173,9 +203,9 @@ table, th, td {border: 1px solid black;}
         flex-direction: column;
         outline: dotted whitesmoke;
         justify-content: flex-start;
+        flex: 1 auto;
+        align-items: center;
     }
-    .contentLeft { flex: 1 auto;}
-    .contentRight { flex: 1 auto;}
 }
 
 .showRow {flex-direction: row;}
