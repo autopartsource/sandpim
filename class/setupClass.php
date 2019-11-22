@@ -338,6 +338,36 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - application_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - application_history ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE asset_history (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        assetid varchar(255) not null,
+        eventdatetime datetime not null,
+        userid int unsigned null,
+        description text not null,
+        new_oid varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_assetid (assetid),
+        INDEX idx_eventdatetime (eventdatetime),
+        INDEX idx_userid (userid),
+        INDEX idx_new_oid (new_oid)       
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - asset_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - asset_history ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE part_history (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(255) not null,
+        eventdatetime datetime not null,
+        userid int unsigned null,
+        description text not null,
+        new_oid varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber),
+        INDEX idx_eventdatetime (eventdatetime),
+        INDEX idx_userid (userid),
+        INDEX idx_new_oid (new_oid)       
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_history ('.$db->conn->error.')';}
+
         $sql="CREATE TABLE oidmaster (
         oid varchar(255) not null,
         objecttype varchar(255) not null,

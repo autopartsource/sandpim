@@ -2,9 +2,12 @@
 include_once('/var/www/html/class/pimClass.php');
 include_once('/var/www/html/class/userClass.php');
 include_once('/var/www/html/class/configGetClass.php');
+include_once('/var/www/html/class/assetClass.php');
+
 $navCategory = 'dashboard';
 
 $user = new user;
+$asset=new asset;
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -14,7 +17,9 @@ if (!isset($_SESSION['userid'])) {
 
 $pim = new pim;
 $configGet = new configGet;
-$history = $pim->getHistoryEvents(20);
+$appshistory = $pim->getHistoryEvents(20);
+$assetshistory = $asset->getHistoryEvents(20);
+
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
@@ -36,17 +41,34 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
             <!-- Main Content -->
             <div class="contentMain">
                 <?php
-                if (count($history)) {
-                    echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th></tr>';
-                    foreach ($history as $record) {
+                if (count($appshistory)) 
+                {
+                    echo '<div style="padding:10px;">Apps History</div><table><tr><th>Date/Time</th><th>User</th><th>AppID</th><th>Change Description</th></tr>';
+                    foreach ($appshistory as $record) {
                         $nicedescription = $record['description'];
                         if (strlen($nicedescription) > $logpreviewlength) {
                             $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
                         }
-                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $nicedescription . '</td></tr>';
+                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showApp.php?appid='.$record['applicationid'].'">'.$record['applicationid'].'</a></td><td>' . $nicedescription . '</td></tr>';
                     }
                     echo '</table>';
                 }
+
+                if (count($assetshistory)) 
+                {
+                    echo '<div style="padding:10px;">Assets History</div><table><tr><th>Date/Time</th><th>User</th><th>AssetID</th><th>Change Description</th></tr>';
+                    foreach ($assetshistory as $record) {
+                        $nicedescription = $record['description'];
+                        if (strlen($nicedescription) > $logpreviewlength) {
+                            $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                        }
+                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showAsset.php?assetid='.$record['assetid'].'">'.$record['assetid'].'</a></td><td>' . $nicedescription . '</td></tr>';
+                    }
+                    echo '</table>';
+                }
+
+
+
                 ?>
             </div>
 

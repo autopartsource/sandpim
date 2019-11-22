@@ -74,6 +74,7 @@ class asset
    $id=$db->conn->insert_id;
   }else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
+  
   return $id;   
  }
  
@@ -181,8 +182,7 @@ class asset
 
  function getRecentAssets($limit)
  {
-  $assets=array();
-  $db=new mysql; 
+  $assets=array(); $db=new mysql; 
   $db->connect();
   
   if($stmt=$db->conn->prepare('select * from asset order by id desc limit ?'))
@@ -199,6 +199,55 @@ class asset
   return $assets;   
  }
 
+ function logHistoryEvent($assetid,$userid,$description,$newoid)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into asset_history (id,assetid,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
+  {
+   $stmt->bind_param('siss', $assetid,$userid,$description,$newoid);
+   $stmt->execute();
+  } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+
+ function getHistoryEventsForAsset($assetid,$limit)
+ {
+  $db=new mysql; $db->connect();
+  $events=array();
+  if($stmt=$db->conn->prepare('select * from asset_history where assetid=? order by eventdatetime desc limit ?'))
+  {
+   $stmt->bind_param('si', $assetid,$limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $events[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'eventdatetime'=>$row['eventdatetime'],'userid'=>$row['userid'],'description'=>$row['description'],'new_oid'=>$row['new_oid']);
+   }
+  }
+  $db->close();
+  return $events;
+ }
+
+ function getHistoryEvents($limit)
+ {
+  $db=new mysql; $db->connect();
+  $events=array();
+  if($stmt=$db->conn->prepare('select * from asset_history order by eventdatetime desc limit ?'))
+  {
+   $stmt->bind_param('i',$limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $events[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'eventdatetime'=>$row['eventdatetime'],'userid'=>$row['userid'],'description'=>$row['description'],'new_oid'=>$row['new_oid']);
+   }
+  }
+  $db->close();
+  return $events;
+ }
+
+ 
+ 
  function niceBoolText($value,$textiftrue,$textiffalse)
  {
     $nicevalue=$textiffalse;
@@ -274,6 +323,21 @@ class asset
     return $name;
  }
  
- 
+ function niceFileSize($size)
+ {
+     $nicevalue= number_format($size/1000,0).'KB';
+     if($size>1000000)
+     {
+         $nicevalue= number_format($size/100000,1,',','.').'MB';
+     }
+     if($size>10000000)
+     {
+         $nicevalue= number_format($size/1000000,0,',','.').'MB';
+     }
+     
+     
+          
+     return $nicevalue;
+ }
  
 }?>

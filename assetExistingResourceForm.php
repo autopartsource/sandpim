@@ -25,8 +25,8 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
             $valid_upload=true;
             $imagedims = getimagesize($destinationpath);
             $colormodecode = 'RBG';
-            $assetheight = $imagedims[0];
-            $assetwidth = $imagedims[1];
+            $assetwidth = $imagedims[0];
+            $assetheight = $imagedims[1];
             $dimensionUOM = 'PX';
             $filetype = $exiftype;
             $approved = 1;
@@ -64,7 +64,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
         <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h1>Create image asset from uri</h1>
+        <h1>Create image asset from existing uri</h1>
 
         <div class="wrapper">
             <div class="contentLeft"></div>
@@ -79,16 +79,16 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
                     <form method="post" action="assetCreate.php">
                         <input type="hidden" name="filename" value="<?php echo $filename;?>"/>
                         <input type="hidden" name="basename" value="<?php echo $basename;?>"/>
-                        <input type="hidden" name="localpath" value="<?php echo $destinationpath;?>"/>
+                        <input type="hidden" name="localpath" value="<?php echo $basename;;?>"/>
                         <input type="hidden" name="dimensionUOM" value="<?php echo $dimensionUOM;?>"/>
                         <input type="hidden" name="filehash" value="<?php echo $filehash;?>"/>
-                        <div style="padding:10px;">File Type: <?php echo $filetype;?></div>
+                        <div style="padding:10px;">File Type: <?php echo $asset->niceExifTypeName($filetype);?></div>
                         <input type="hidden" name="filetype" value="<?php echo $filetype;?>" />
-                        <div style="padding:10px;">File Size: <?php echo $filesize;?></div>
+                        <div style="padding:10px;">File Size: <?php echo $asset->niceFileSize($filesize);?></div>
                         <input type="hidden" name="filesize" value="<?php echo $filesize;?>"/>
-                        <div style="padding:10px;">Width: <?php echo $imagedims[1];?></div>
+                        <div style="padding:10px;">Width: <?php echo $imagedims[0];?></div>
                         <input type="hidden" name="assetheight" value="<?php echo $assetheight;?>"/>
-                        <div style="padding:10px;">Height: <?php echo $imagedims[0];?></div>
+                        <div style="padding:10px;">Height: <?php echo $imagedims[1];?></div>
                         <input type="hidden" name="assetwidth" value="<?php echo $assetwidth;?>"/>
                         <div style="padding:10px;">AssetID: <input type="text" name="assetid" value="<?php echo $filename;?>"/></div>
 			<div style="padding:10px;">Description <input name="description" type="text" value="<?php echo $description;?>"/></div>

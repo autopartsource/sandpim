@@ -40,6 +40,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic))
     {
         $error_msg = 'Asset id ' . $id . ' was created.';
+        $asset->logHistoryEvent($assetid, $_SESSION['userid'], 'Asset created' , '');
     }
     else 
     { // asset not created
@@ -69,8 +70,8 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                 $valid_upload=true;
                 $imagedims = getimagesize($destinationpath);
                 $colormodecode = 'RBG';
-                $assetheight = $imagedims[0];
-                $assetwidth = $imagedims[1];
+                $assetheight = $imagedims[1];
+                $assetwidth = $imagedims[0];
                 $dimensionUOM = 'PX';
                 $filetype = $exiftype;
                 $approved = 1;
@@ -83,7 +84,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                 $uripublic=1;
                 $description='Photo of '.$filename;
                 $background='WHI';
-                $uri='http://';
+                $uri='';
                 $localpath=$destinationpath;
                 $orientationviewcode='FRONT';
                 
