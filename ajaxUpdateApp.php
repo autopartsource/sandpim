@@ -27,7 +27,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['elementid
   {
    $pim->setAppParttype($appid,intval($_GET['value']),true);
    $oid=$pim->getOIDofApp($appid);
-   $pim->logHistoryEvent($appid,$userid,'parttype changed to:'.intval($_GET['value']),$oid);
+   $pim->logAppEvent($appid,$userid,'parttype changed to:'.intval($_GET['value']),$oid);
   }
   break;
 
@@ -36,7 +36,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['elementid
   {
    $pim->setAppPosition($appid,intval($_GET['value']),true);
    $oid=$pim->getOIDofApp($appid);
-   $pim->logHistoryEvent($appid,$userid,'position changed to:'.intval($_GET['value']),$oid);
+   $pim->logAppEvent($appid,$userid,'position changed to:'.intval($_GET['value']),$oid);
   }
   break;
 
@@ -45,26 +45,26 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['elementid
   {
    $pim->setAppQuantity($appid,intval($_GET['value']),true);
    $oid=$pim->getOIDofApp($appid);
-   $pim->logHistoryEvent($appid,$userid,'quantity changed to:'.intval($_GET['value']),$oid);
+   $pim->logAppEvent($appid,$userid,'quantity changed to:'.intval($_GET['value']),$oid);
   }
   break;
 
   case 'cosmetic':
   $pim->toggleAppCosmetic($appid);
-  $pim->logHistoryEvent($appid,$userid,'cosmetic toggled',$oid);
+  $pim->logAppEvent($appid,$userid,'cosmetic toggled',$oid);
   break;
 
   case 'appcategory':
   if($app['appcategory']!=$_GET['value'])
   {
    $pim->setAppCategory($appid,intval($_GET['value']));
-   $pim->logHistoryEvent($appid,$userid,'category changed to:'.intval($_GET['value']),$oid);
+   $pim->logAppEvent($appid,$userid,'category changed to:'.intval($_GET['value']),$oid);
   }
   break;
 
   case 'internalnotes':
    $pim->setAppInternalnotes($appid,$_GET['value']);
-   $pim->logHistoryEvent($appid,$userid,'internal notes updated',$oid);
+   $pim->logAppEvent($appid,$userid,'internal notes updated',$oid);
   break;
 
   default:

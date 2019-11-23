@@ -3,7 +3,7 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
-$navCategory = 'applications';
+$navCategory = 'parts';
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -51,6 +51,7 @@ $attributes = $pim->getPartAttributes($partnumber);
 $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
 $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
+$favoriteparttypes=$pim->getFavoriteParttypes();
 
 
 ?>
@@ -76,7 +77,7 @@ $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
                     <form method="post" action="showPart.php?partnumber=<?php echo $partnumber; ?>">
                         <table border="1" cellpadding="5">
                             <tr><th bgcolor="#c0c0c0" align="left">Partnumber</th><td align="left"><?php echo $part['partnumber']; ?></td></tr>
-                            <tr><th bgcolor="#c0c0c0" align="left">Part Type</th><td align="left"><?php echo $pcdb->parttypeName($part['parttypeid']); ?></td></tr>
+                            <tr><th bgcolor="#c0c0c0" align="left">Part Type</th><td align="left"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart(<?php echo $partnumber;?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
                             <tr><th bgcolor="#c0c0c0" align="left">Part Category</th><td align="left"><?php echo $pim->partCategoryName($part['partcategory']); ?></td></tr>
                             <tr><th bgcolor="#c0c0c0" align="left">Category</th><td align="right"><select name="partcategory"> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
                             <tr><th bgcolor="#c0c0c0" align="left">Internal<br/>Notes</th><td><textarea name="comments" cols="50"></textarea></td><tr>

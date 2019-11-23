@@ -21,7 +21,7 @@ if(isset($_SESSION['userid']) && isset($_GET['id']) && isset($_GET['elementid'])
                 $asset->toggleAssetPublic($id);
                 $returnval=$asset->niceBoolText($asset->getAssetById($id)['public'],'Public','Private');
             }
-            //  $pim->logHistoryEvent($appid,$userid,'cosmetic toggled',$oid);
+            //  $pim->logAppEvent($appid,$userid,'cosmetic toggled',$oid);
             break;
 
         case 'uripublic':
@@ -29,7 +29,7 @@ if(isset($_SESSION['userid']) && isset($_GET['id']) && isset($_GET['elementid'])
             {
                 $asset->toggleAssetUriPublic($id);
             }
-            //$pim->logHistoryEvent($appid,$userid,'cosmetic toggled',$oid);
+            //$pim->logAppEvent($appid,$userid,'cosmetic toggled',$oid);
             break;
 
 

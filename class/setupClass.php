@@ -411,6 +411,8 @@ class setup
         parttypeid int unsigned not null,
         replacedby varchar(20) not null,
         lifecyclestatus varchar(255) not null,
+        internalnotes text not null,
+        description varchar(255) not null,
         oid varchar(255) not null,
         PRIMARY KEY (partnumber),
         INDEX idx_partcategory (partcategory),

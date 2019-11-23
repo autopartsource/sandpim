@@ -18,19 +18,19 @@ if(isset($_SESSION['userid']) && isset($_GET['assetid']) && isset($_GET['element
   if(isset($_GET['description']))
   {
    $asset->setAssetDescription($assetid,$_GET['description']);
-  // $pim->logHistoryEvent($appid,$userid,'parttype changed to:'.intval($_GET['value']),$oid);
+  // $pim->logAppEvent($appid,$userid,'parttype changed to:'.intval($_GET['value']),$oid);
   }
   break;
 
   case 'public':
   $asset->toggleAssetPublic($assetid);
       
-//  $pim->logHistoryEvent($appid,$userid,'cosmetic toggled',$oid);
+//  $pim->logAppEvent($appid,$userid,'cosmetic toggled',$oid);
   break;
 
   case 'uripublic':
   $asset->toggleAssetUriPublic($assetid);
-  //$pim->logHistoryEvent($appid,$userid,'cosmetic toggled',$oid);
+  //$pim->logAppEvent($appid,$userid,'cosmetic toggled',$oid);
   break;
 
 

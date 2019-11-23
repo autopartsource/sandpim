@@ -435,6 +435,65 @@ class pim
   $db->close();
   return $oid;
  }
+ 
+ function setPartParttype($partnumber,$parttypeid,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set parttypeid=? where partnumber=?'))
+  {
+   $stmt->bind_param('is',$parttypeid,$partnumber);
+   $stmt->execute();
+   if($updateoid){$this->updatePartOID($partnumber);}
+  }
+  $db->close();
+ }
+ 
+ function setPartLifecyclestatus($partnumber,$lifecyclestatus,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set lifecyclestatus=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss',$lifecyclestatus,$partnumber);
+   $stmt->execute();
+   if($updateoid){$this->updatePartOID($partnumber);}
+  }
+  $db->close();
+ }
+ 
+ function setPartCategory($partnumber,$partcategory,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set partcategory=? where partnumber=?'))
+  {
+   $stmt->bind_param('is',$partcategory,$partnumber);
+   $stmt->execute();
+   if($updateoid){$this->updatePartOID($partnumber);}
+  }
+  $db->close();
+ }
+ 
+ function setPartInternalnotes($partnumber,$internalnotes)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set internalnotes=? where partnumber=?'))
+  {
+   $encodednotes=base64_encode($internalnotes);
+   $stmt->bind_param('ss', $encodednotes,$partnumber);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+ 
+ function setPartDescription($partnumber,$description)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set description=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $description,$partnumber);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
 
 
  function getAppCategories()
@@ -949,7 +1008,7 @@ class pim
   if($copycategory && $refapp['appcategory']!=$app['appcategory']){$this->setAppCategory($appid,$refapp['appcategory']); $historytext.='; changed appcategory from:'.$app['appcategory'].' to '.$refapp['appcategory'];}
   if($neednewOID){$OID=$this->updateAppOID($appid);}
   $userid=0;
-  $this->logHistoryEvent($appid,$userid,$historytext,$OID);
+  $this->logAppEvent($appid,$userid,$historytext,$OID);
  }
 
 
@@ -997,7 +1056,7 @@ class pim
   return $applicationid;
  }
 
- function logHistoryEvent($applicationid,$userid,$description,$newoid)
+ function logAppEvent($applicationid,$userid,$description,$newoid)
  {
   $db=new mysql; 
   //$db->dbname='pim';
@@ -1010,7 +1069,7 @@ class pim
   $db->close();
  }
 
- function getHistoryEventsForApp($applicationid,$limit)
+ function getAppEvents($applicationid,$limit)
  {
   $db=new mysql; 
   //$db->dbname='pim'; 
@@ -1030,7 +1089,7 @@ class pim
   return $events;
  }
 
- function getHistoryEvents($limit)
+ function getAppsEvents($limit)
  {
   $db=new mysql; 
   //$db->dbname='pim';
@@ -1052,6 +1111,22 @@ class pim
 
 
 
+ 
+ function logPartEvent($partnumber,$userid,$description,$newoid)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into part_history (id,partnumber,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
+  {
+   $stmt->bind_param('siss', $partnumber,$userid,$description,$newoid);
+   $stmt->execute();
+  } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+
+ 
+ 
+ 
+ 
 
  function createAppFromACESsnippet($xml,$appcategory)
  {

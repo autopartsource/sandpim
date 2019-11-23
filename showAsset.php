@@ -20,14 +20,14 @@ $configGet= new configGet;
 if (isset($_POST['submit']) && $_POST['submit'] == 'Connect') {
 
     $asset->connectPartToAsset($_POST['partnumber'],$_POST['assetid'],$_POST['assettypecode'],0);
-    $asset->logHistoryEvent($_POST['assetid'], $_SESSION['userid'], $_POST['partnumber'].' connected to asset '.$_POST['assetid'].' as type '.$_POST['assettypecode'] , '');
+    $asset->logAppEvent($_POST['assetid'], $_SESSION['userid'], $_POST['partnumber'].' connected to asset '.$_POST['assetid'].' as type '.$_POST['assettypecode'] , '');
 //    $pim->updatePartOID($partnumber);
 }
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Delete') {
 
     $asset->deleteAssetRecord($_POST['id']);
-    $asset->logHistoryEvent($_GET['assetid'], $_SESSION['userid'], 'Asset record ('.$_POST['id'].') deleted' , '');
+    $asset->logAppEvent($_GET['assetid'], $_SESSION['userid'], 'Asset record ('.$_POST['id'].') deleted' , '');
 //    $pim->updatePartOID($partnumber);
 }
 

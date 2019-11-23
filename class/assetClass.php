@@ -199,7 +199,7 @@ class asset
   return $assets;   
  }
 
- function logHistoryEvent($assetid,$userid,$description,$newoid)
+ function logAppEvent($assetid,$userid,$description,$newoid)
  {
   $db=new mysql; $db->connect();
   if($stmt=$db->conn->prepare('insert into asset_history (id,assetid,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
@@ -228,7 +228,7 @@ class asset
   return $events;
  }
 
- function getHistoryEvents($limit)
+ function getAppsEvents($limit)
  {
   $db=new mysql; $db->connect();
   $events=array();

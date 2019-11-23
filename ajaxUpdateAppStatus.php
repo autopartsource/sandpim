@@ -11,5 +11,5 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['status'])
  if($_GET['status']=='trash'){$newstatus=1;}
  if($_GET['status']=='hide'){$newstatus=2;}
  $pim->setAppStatus(intval($_GET['appid']),$newstatus);
- $pim->logHistoryEvent(intval($_GET['appid']),$userid,'status changed to '.$newstatus,'');
+ $pim->logAppEvent(intval($_GET['appid']),$userid,'status changed to '.$newstatus,'');
 }?>

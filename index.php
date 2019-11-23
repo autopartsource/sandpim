@@ -17,8 +17,8 @@ if (!isset($_SESSION['userid'])) {
 
 $pim = new pim;
 $configGet = new configGet;
-$appshistory = $pim->getHistoryEvents(20);
-$assetshistory = $asset->getHistoryEvents(20);
+$appshistory = $pim->getAppsEvents(20);
+$assetshistory = $asset->getAppsEvents(20);
 
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));

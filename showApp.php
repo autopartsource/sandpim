@@ -19,22 +19,22 @@ if(isset($_POST))
  if(isset($_POST['submit']) && $_POST['submit']=='Undelete')
  {
   $pim->setAppStatus($appid,0);
-  $pim->logHistoryEvent($appid,$userid,'app was un-deleted','');
+  $pim->logAppEvent($appid,$userid,'app was un-deleted','');
  }
  if(isset($_POST['submit']) && $_POST['submit']=='Unhide')
  {
   $pim->setAppStatus($appid,0);
-  $pim->logHistoryEvent($appid,$userid,'app was un-hidden','');
+  $pim->logAppEvent($appid,$userid,'app was un-hidden','');
  }
  if(isset($_POST['submit']) && $_POST['submit']=='Delete')
  {
   $pim->setAppStatus($appid,1);
-  $pim->logHistoryEvent($appid,$userid,'app was deleted','');
+  $pim->logAppEvent($appid,$userid,'app was deleted','');
  }
  if(isset($_POST['submit']) && $_POST['submit']=='Hide')
  {
   $pim->setAppStatus($appid,2);
-  $pim->logHistoryEvent($appid,$userid,'app was hidden','');
+  $pim->logAppEvent($appid,$userid,'app was hidden','');
  }
 
 
@@ -47,7 +47,7 @@ if(isset($_POST))
    $topsequence=$pim->highestAppAttributeSequence($appid);
    $pim->addVCdbAttributeToApp($appid,$vcdbattributename,$vcdbattributevalue,$topsequence+1,$cosmetic);
    $pim->cleansequenceAppAttributes($appid);
-   $pim->logHistoryEvent($appid,$userid,'VCdb attribute added '.$vcdbattributename.'='.$vcdbattributevalue,'');
+   $pim->logAppEvent($appid,$userid,'VCdb attribute added '.$vcdbattributename.'='.$vcdbattributevalue,'');
   }
  }
 
@@ -59,7 +59,7 @@ if(isset($_POST))
    $topsequence=$pim->highestAppAttributeSequence($appid);
    $pim->addNoteAttributeToApp($appid,trim($_POST['note']),$topsequence,$cosmetic);
    $pim->cleansequenceAppAttributes($appid);
-   $pim->logHistoryEvent($appid,$userid,'Fitment note added: '.trim($_POST['note']),'');
+   $pim->logAppEvent($appid,$userid,'Fitment note added: '.trim($_POST['note']),'');
   }
  }
 
@@ -115,7 +115,7 @@ $favoritepositions=$pim->getFavoritePositions();
 $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
 $pcdbversion=$pcdb->version();
 $historylimit=10;
-$history=$pim->getHistoryEventsForApp($appid,$historylimit);
+$history=$pim->getAppEvents($appid,$historylimit);
 
 ?>
 <!DOCTYPE html>

@@ -6,5 +6,5 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']))
 {
  $userid=$_SESSION['userid'];
  $pim->toggleAppCosmetic(intval($_GET['appid']));
- $pim->logHistoryEvent(intval($_GET['appid']),$userid,'cosmetic toggled by drag','');
+ $pim->logAppEvent(intval($_GET['appid']),$userid,'cosmetic toggled by drag','');
 }?>

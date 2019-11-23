@@ -42,7 +42,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['fitment']
   if($neednewoid)
   {
    $OID=$pim->updateAppOID($appid);
-   $pim->logHistoryEvent($appid,$userid,$description,$OID);
+   $pim->logAppEvent($appid,$userid,$description,$OID);
   }
  }
 }?>

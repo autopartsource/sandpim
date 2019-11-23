@@ -16,7 +16,7 @@ $pim = new pim;
 
 $appid = intval($_GET['appid']);
 $app = $pim->getApp($appid);
-$history = $pim->getHistoryEventsForApp($appid, 1000);
+$history = $pim->getAppEvents($appid, 1000);
 ?>
 <!DOCTYPE html>
 <html>
