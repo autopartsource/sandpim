@@ -3,7 +3,7 @@ include_once('/var/www/html/class/pimClass.php');
 session_start();
 $pim= new pim;
 
-//$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true)).'*'; fclose($fp);
+//$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true).'*'); fclose($fp);
 
 if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elementid']) && isset($_GET['value']))
 {
@@ -20,7 +20,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   if($part['parttypeid']!=$_GET['value'])
   {
    $pim->setPartParttype($partnumber,intval($_GET['value']),true);
-   $oid=$pim->getOIDofPart($partnumber);
+   //$oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'parttype changed to:'.intval($_GET['value']),$oid);
   }
   break;

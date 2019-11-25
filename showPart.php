@@ -59,6 +59,33 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
 <html>
     <head>
         <?php include('/var/www/html/includes/header.php'); ?>
+        
+        <script>
+            function updatePart(partnumber,elementtype,elementid)
+            {
+             var value='';
+             if(elementtype=='text'){value=document.getElementById(elementid).value;}
+             if(elementtype=='select')
+             {
+              var e=document.getElementById(elementid);
+              value=e.options[e.selectedIndex].value;
+             }
+
+             console.log(partnumber+'; '+elementtype + '; '+elementid+'; '+value);
+             document.getElementById("sandpiperoid").innerHTML='';
+
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdatePart.php?partnumber='+partnumber+'&elementid='+elementid+'&value='+encodeURI(value));
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+              console.log('r:'+response);
+              document.getElementById("sandpiperoid").innerHTML=response;
+             };
+             xhr.send();
+            }
+        </script>
+        
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -77,13 +104,13 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                     <form method="post" action="showPart.php?partnumber=<?php echo $partnumber; ?>">
                         <table border="1" cellpadding="5">
                             <tr><th bgcolor="#c0c0c0" align="left">Partnumber</th><td align="left"><?php echo $part['partnumber']; ?></td></tr>
-                            <tr><th bgcolor="#c0c0c0" align="left">Part Type</th><td align="left"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart(<?php echo $partnumber;?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
+                            <tr><th bgcolor="#c0c0c0" align="left">Part Type</th><td align="left"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
                             <tr><th bgcolor="#c0c0c0" align="left">Part Category</th><td align="left"><?php echo $pim->partCategoryName($part['partcategory']); ?></td></tr>
                             <tr><th bgcolor="#c0c0c0" align="left">Category</th><td align="right"><select name="partcategory"> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
                             <tr><th bgcolor="#c0c0c0" align="left">Internal<br/>Notes</th><td><textarea name="comments" cols="50"></textarea></td><tr>
                             <tr><th bgcolor="#c0c0c0" align="left">Attributes</th><td><table><?php foreach ($attributes as $attribute) {echo '<tr><td>' . $attribute['name'] . '</td><td align="right">' . $attribute['value'] . '</td><td>' . $attribute['uom'] . '</td></tr>';} ?></table></td></tr>
                             <tr><th bgcolor="#c0c0c0" align="left">Connected Assets</th><td><?php foreach($connectedassets as $connectedasset){echo '<div><a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>';};?></td><tr>
-                            <tr><th bgcolor="#c0c0c0" align="left">IDs</th><td>SandpiperOID: <?php echo $part['oid']; ?></td><tr>
+                            <tr><th bgcolor="#c0c0c0" align="left">Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
                             <tr><th bgcolor="#c0c0c0" align="left">Status</th><td><?php echo $part['lifecyclestatus']; ?></td><tr/>
                             <tr><th></th><td align="right"><input type="submit" name="submit" value="Save"/></td></tr>
                         </table>
