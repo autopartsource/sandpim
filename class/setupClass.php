@@ -417,6 +417,7 @@ class setup
         PRIMARY KEY (partnumber),
         INDEX idx_partcategory (partcategory),
         INDEX idx_parttypeid (parttypeid),
+        INDEX idx_replacedby (replacedby),
         INDEX idx_oid (oid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part ('.$db->conn->error.')';}
 

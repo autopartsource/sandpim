@@ -19,7 +19,7 @@ $pim = new pim;
 $configGet = new configGet;
 $appshistory = $pim->getAppsEvents(20);
 $assetshistory = $asset->getAppsEvents(20);
-
+$partshistory = $pim->getPartsEvents(20);
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
@@ -67,6 +67,18 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                     echo '</table>';
                 }
 
+                if (count($partshistory)) 
+                {
+                    echo '<div style="padding:10px;">Parts History</div><table><tr><th>Date/Time</th><th>User</th><th>Partnumber</th><th>Change Description</th></tr>';
+                    foreach ($partshistory as $record) {
+                        $nicedescription = $record['description'];
+                        if (strlen  ($nicedescription) > $logpreviewlength) {
+                            $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                        }
+                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showPart.php?partnumber='.$record['partnumber'].'">'.$record['partnumber'].'</a></td><td>' . $nicedescription . '</td></tr>';
+                    }
+                    echo '</table>';
+                }
 
 
                 ?>

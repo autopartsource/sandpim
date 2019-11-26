@@ -35,9 +35,9 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   break;
 
   case 'partcategory':
-  if($app['partcategory']!=$_GET['value'])
+  if($part['partcategory']!=$_GET['value'])
   {
-   $pim->setPartCategory($partnumber,intval($_GET['value']));
+   $pim->setPartCategory($partnumber,intval($_GET['value']),false);
    $pim->logPartEvent($partnumber,$userid,'category changed to:'.intval($_GET['value']),$oid);
   }
   break;

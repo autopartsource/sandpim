@@ -292,7 +292,7 @@ class pim
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $part=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'replacedby'=>$row['replacedby']);
+    $part=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'replacedby'=>$row['replacedby'],'internalnotes'=> base64_decode($row['internalnotes']),'description'=>$row['description']);
    }
   }
   $db->close();
@@ -480,7 +480,7 @@ class pim
    $encodednotes=base64_encode($internalnotes);
    $stmt->bind_param('ss', $encodednotes,$partnumber);
    $stmt->execute();
-  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
  }
  
@@ -1123,7 +1123,24 @@ class pim
   $db->close();
  }
 
- 
+ function getPartsEvents($limit)
+ {
+  $db=new mysql; $db->connect();
+  $events=array();
+  if($stmt=$db->conn->prepare('select * from part_history order by eventdatetime desc limit ?'))
+  {
+   $stmt->bind_param('i',$limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $events[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'eventdatetime'=>$row['eventdatetime'],'userid'=>$row['userid'],'description'=>$row['description'],'new_oid'=>$row['new_oid']);
+   }
+  }
+  $db->close();
+  return $events;
+ }
+
  
  
  
