@@ -20,7 +20,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   if($part['parttypeid']!=$_GET['value'])
   {
    $pim->setPartParttype($partnumber,intval($_GET['value']),true);
-   //$oid=$pim->getOIDofPart($partnumber);
+   $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'parttype changed to:'.intval($_GET['value']),$oid);
   }
   break;

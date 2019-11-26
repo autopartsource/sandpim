@@ -25,10 +25,11 @@ $pim=new pim;
 
             <!-- Main Content -->
             <div class="contentMain button" style="flex-direction: column;">
-                <div style="padding:10px;"><a href="./users.php">User Maintenance</a></div>
-                <div style="padding:10px;"><a href="./config.php">Configuration Parameters</a></div>
-                <div style="padding:10px;"><a href="./pcdbTypeBrowser.php">Manage PCdb favorite parttypes</a></div>
-                <div style="padding:10px;"><a href="./pcdbPositionBrowser.php">Manage PCdb favorite positions</a></div>
+                <div style="padding:10px;"><a href="./users.php">Users</a></div>
+                <div style="padding:10px;"><a href="./config.php">Configuration</a></div>
+                <div style="padding:10px;"><a href="./pcdbTypeBrowser.php">Favorite PCdb parttypes</a></div>
+                <div style="padding:10px;"><a href="./pcdbPositionBrowser.php">Favorite PCdb positions</a></div>
+                <div style="padding:10px;"><a href="./partCategories.php">Part Categories</a></div>
             </div>
 
             <div class="contentRight"></div>

@@ -420,6 +420,24 @@ class pim
   return $oid;
  }
 
+  function getOIDofPart($partnumber)
+ {
+  $db = new mysql; $db->connect();
+  $oid='';
+  if($stmt=$db->conn->prepare('select oid from part where partnumber=?'))
+  {
+   $stmt->bind_param('s', $partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $oid=$row['oid'];
+   }
+  }
+  $db->close();
+  return $oid;
+ }
+
 
  function updatePartOID($partnumber)
  {
@@ -574,14 +592,46 @@ class pim
   return $id;
  }
 
-
+ 
+ 
+ 
+ 
+ function createPartcategory($name,$partcategory)
+ {
+  $db=new mysql; $db->connect();
+  $success=false;
+  if(!$this->validPartcategoryid($partcategory) && !$this->existingPartcategoryName($name))
+  {
+   if($partcategory=='')
+   {
+    if($stmt=$db->conn->prepare('insert into partcategory (id,name) values(null,?)'))
+    {
+     if($stmt->bind_param('s', $name))
+     {
+      $success=$stmt->execute();
+     } // else{echo 'problem with bind';}
+    } // else{echo 'problem with prepare';}
+   }
+   else
+   {
+    if($stmt=$db->conn->prepare('insert into partcategory (id,name) values(?,?)'))
+    {
+     if($stmt->bind_param('is', $partcategory, $name))
+     {
+      $success=$stmt->execute();
+     } // else{echo 'problem with bind';}
+    } // else{echo 'problem with prepare';}
+   }
+  } // else{echo 'already exists';}
+  $db->close();
+  return $success;
+     
+ }
 
  function getPartCategories()
  {
   $categories=array();
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
+  $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('select id,`name` from partcategory order by name'))
   {
    $stmt->execute();
@@ -617,6 +667,8 @@ class pim
   return $name;
  }
 
+ 
+ 
  function partCategoryName($partcategoryid)
  {
   $name='('.$partcategoryid.') Not Found';
@@ -637,8 +689,46 @@ class pim
   return $name;
  }
 
+ function validPartcategoryid($partcategoryid)
+ {
+  $returnval=false;
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select name from partcategory where id=?'))
+  {
+   $stmt->bind_param('i', $partcategoryid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $returnval=true;
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
 
+ function existingPartcategoryName($name)
+ {
+  $returnval=false;
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select id from partcategory where `name`=?'))
+  {
+   $stmt->bind_param('s', $name);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $returnval=true;
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
 
+ 
+ 
+ 
+ 
  function getBackgroundjobs($jobtype,$status)
  {
   $db = new mysql; 
