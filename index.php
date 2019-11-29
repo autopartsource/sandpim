@@ -3,11 +3,10 @@ include_once('/var/www/html/class/pimClass.php');
 include_once('/var/www/html/class/userClass.php');
 include_once('/var/www/html/class/configGetClass.php');
 include_once('/var/www/html/class/assetClass.php');
+include_once('/var/www/html/class/logsClass.php');
 
 $navCategory = 'dashboard';
 
-$user = new user;
-$asset=new asset;
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -15,11 +14,15 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
+$user = new user;
+$asset=new asset;
 $pim = new pim;
+$logs = new logs;
+
 $configGet = new configGet;
-$appshistory = $pim->getAppsEvents(20);
-$assetshistory = $asset->getAppsEvents(20);
-$partshistory = $pim->getPartsEvents(20);
+$appshistory = $logs->getAppsEvents(10);
+$assetshistory = $logs->getAssetsEvents(10);
+$partshistory = $logs->getPartsEvents(10);
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>

@@ -228,26 +228,6 @@ class asset
   return $events;
  }
 
- function getAppsEvents($limit)
- {
-  $db=new mysql; $db->connect();
-  $events=array();
-  if($stmt=$db->conn->prepare('select * from asset_history order by eventdatetime desc limit ?'))
-  {
-   $stmt->bind_param('i',$limit);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
-   {
-    $events[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'eventdatetime'=>$row['eventdatetime'],'userid'=>$row['userid'],'description'=>$row['description'],'new_oid'=>$row['new_oid']);
-   }
-  }
-  $db->close();
-  return $events;
- }
-
- 
- 
  function niceBoolText($value,$textiftrue,$textiffalse)
  {
     $nicevalue=$textiffalse;
