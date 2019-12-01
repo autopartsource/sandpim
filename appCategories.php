@@ -22,18 +22,18 @@ if (isset($_POST['submit']) && $_POST['submit']=='Add' && isset($_POST['category
 {
     $name = $_POST['categoryname'];
     $id = $_POST['categoryid'];
-    $pim->createPartcategory($name,$id);
-    $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$name.' was created');
+    $pim->createAppCategory($name,$id);
+    $logs->logSystemEvent('appcategorychange', $_SESSION['userid'], 'App Category '.$name.' was created');
 }
 
 if (isset($_POST['submit']) && $_POST['submit']=='Delete') 
 {
-    $name=$pim->partCategoryName(intval($_POST['categoryid']));
-    $pim->deletePartcategory(intval($_POST['categoryid']));
-    $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$name.' was deleted');
+    $name=$pim->appCategoryName(intval($_POST['categoryid']));
+    $pim->deleteAppcategory(intval($_POST['categoryid']));
+    $logs->logSystemEvent('appcategorychange', $_SESSION['userid'], 'App Category '.$name.' was deleteted');
 }
 
-$partcategories = $pim->getPartCategories();
+$appcategories = $pim->getAppCategories();
 
 ?>
 
@@ -47,7 +47,7 @@ $partcategories = $pim->getPartCategories();
         <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h3>Part Categories</h3>
+        <h3>Application Categories</h3>
 
         <div class="wrapper">
             <div class="contentLeft"></div>
@@ -55,17 +55,25 @@ $partcategories = $pim->getPartCategories();
             <!-- Main Content -->
             <div class="contentMain">
                 <table>
-                    <tr><th>Name</th><th>ID</th><th>Part Count</th><th>Action</th></tr>
+                    <tr><th>Name</th><th>ID</th><th>App Count</th><th>Action</th></tr>
                     <?php
-                    foreach ($partcategories as $partcategory) 
+                    foreach ($appcategories as $appcategory)
                     {
-                        $count=$pim->countPartsByPartcategory($partcategory['id']);
-                        echo '<tr><td>' . $partcategory['name'] . '</td><td>' . $partcategory['id'] . '</td><td>'.$count.'</td><td>';
-                        if(!$count){echo '<form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form>';}
+                        $count=$pim->countAppsByAppcategory($appcategory['id']);
+                        echo '<tr><td>' . $appcategory['name'] . '</td><td>' . $appcategory['id'] . '</td><td>'.$count.'</td><td>';
+                        if(!$count){echo '<form method="post"><input type="hidden" name="categoryid" value="'.$appcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form>';}
                         echo '</td></tr>';
                     }
                     ?>
-                    <tr><form method="post"><td><input type="text" name="categoryname" size="30"/></td><td><input type="text" name="categoryid" size="50"/><input type="submit" name="submit" value="Add"/></td><td></td><td></td></form></tr>
+                    <tr>
+                    <form method="post">
+                        <td><input type="text" name="categoryname" size="30"/></td>
+                        <td><input type="text" name="categoryid" size="50"/></td>
+                        <td></td>
+                        <td><input type="submit" name="submit" value="Add"/></td>
+                    </form>
+                </tr>
+                
                 </table>
             </div>
 

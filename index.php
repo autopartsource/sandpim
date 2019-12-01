@@ -23,6 +23,7 @@ $configGet = new configGet;
 $appshistory = $logs->getAppsEvents(10);
 $assetshistory = $logs->getAssetsEvents(10);
 $partshistory = $logs->getPartsEvents(10);
+$systemhistory = $logs->getSystemEvents('%', false, 10);
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
@@ -84,6 +85,19 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                 }
 
 
+                if(count($systemhistory))
+                {
+                    echo '<div style="padding:10px;">System History</div><table><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Change Description</th></tr>';
+                    foreach ($systemhistory as $record) {
+                        $nicedescription = $record['description'];
+                        if (strlen  ($nicedescription) > $logpreviewlength) {
+                            $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                        }
+                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td>' . $nicedescription . '</td></tr>';
+                    }
+                    echo '</table>';
+                }
+                
                 ?>
             </div>
 

@@ -27,11 +27,11 @@ class logs
 
   if($userid)
   {
-   $sql='select * from system_history where eventtype=? and userid=? order eventdatetime desc limit ?';
+   $sql='select * from system_history where eventtype like ? and userid=? order by eventdatetime desc limit ?';
   }
   else
   {
-   $sql='select * from system_history where eventtype=? order eventdatetime desc limit ?';
+   $sql='select * from system_history where eventtype like ? order by eventdatetime desc limit ?';
   }
 
   if($stmt=$db->conn->prepare($sql))

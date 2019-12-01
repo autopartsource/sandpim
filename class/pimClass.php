@@ -625,9 +625,83 @@ class pim
   } // else{echo 'already exists';}
   $db->close();
   return $success;
-     
  }
 
+ function deletePartcategory($partcategory)
+ {
+  $db=new mysql; $db->connect();
+  $success=false;
+  if(!$this->countPartsByPartcategory($partcategory))
+  {
+    if($stmt=$db->conn->prepare('delete from partcategory where id=?'))
+    {
+     if($stmt->bind_param('i', $partcategory))
+     {
+      $success=$stmt->execute();
+     }  //else{echo 'problem with bind';}
+    }  //else{echo 'problem with prepare';}
+  }  //else{echo 'already exists';}
+  $db->close();
+  return $success;
+ }
+
+ 
+ 
+ 
+ 
+ function createAppCategory($name,$appcategory)
+ {
+  $db=new mysql; $db->connect();
+  $success=false;
+  if(!$this->validAppcategoryid($appcategory) && !$this->existingAppcategoryName($name))
+  {
+   if($appcategory=='')
+   {
+    if($stmt=$db->conn->prepare('insert into appcategory (id,name) values(null,?)'))
+    {
+     if($stmt->bind_param('s', $name))
+     {
+      $success=$stmt->execute();
+     } // else{echo 'problem with bind';}
+    } // else{echo 'problem with prepare';}
+   }
+   else
+   {
+    if($stmt=$db->conn->prepare('insert into appcategory (id,name) values(?,?)'))
+    {
+     if($stmt->bind_param('is', $appcategory, $name))
+     {
+      $success=$stmt->execute();
+     } // else{echo 'problem with bind';}
+    } // else{echo 'problem with prepare';}
+   }
+  } // else{echo 'already exists';}
+  $db->close();
+  return $success;
+ }
+
+ //xxx
+  function deleteAppcategory($appcategory)
+ {
+  $db=new mysql; $db->connect();
+  $success=false;
+  if(!$this->countAppsByAppcategory($appcategory))
+  {
+    if($stmt=$db->conn->prepare('delete from appcategory where id=?'))
+    {
+     if($stmt->bind_param('i', $appcategory))
+     {
+      $success=$stmt->execute();
+     } // else{echo 'problem with bind';}
+    }  //else{echo 'problem with prepare';}
+  }  //else{echo 'already exists';}
+  $db->close();
+  return $success;
+ }
+
+ 
+ 
+ 
  function getPartCategories()
  {
   $categories=array();
@@ -667,7 +741,53 @@ class pim
   return $name;
  }
 
+ function countAppsByAppcategory($appcategoryid)
+ {
+  $db=new mysql; $db->connect();
+  $count=0;
+  if($stmt=$db->conn->prepare('select count(*) as appcount from application where appcategory=?'))
+  {
+   if($stmt->bind_param('i', $appcategoryid))
+   {
+    if($result=$stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $count=intval($row['appcount']);
+     }
+    } // else{echo 'problem with execute';}
+   } // else{echo 'problem with bind';}
+  } // else{echo 'problem with prepare';}
+  $db->close();
+  return $count;
+ }
  
+
+ function countPartsByPartcategory($partcategory)
+ {
+  $db=new mysql; $db->connect();
+  $count=0;
+  if($stmt=$db->conn->prepare('select count(*) as partcount from part where partcategory=?'))
+  {
+   if($stmt->bind_param('i', $partcategory))
+   {
+    if($result=$stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $count=intval($row['partcount']);
+     }
+    } // else{echo 'problem with execute';}
+   } // else{echo 'problem with bind';}
+  } // else{echo 'problem with prepare';}
+  $db->close();
+  return $count;
+ }
+
+
+
  
  function partCategoryName($partcategoryid)
  {
@@ -724,6 +844,43 @@ class pim
   $db->close();
   return $returnval;
  }
+
+ function validAppcategoryid($appcategoryid)
+ {
+  $returnval=false;
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select name from appcategory where id=?'))
+  {
+   $stmt->bind_param('i', $appcategoryid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $returnval=true;
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
+
+ function existingAppcategoryName($name)
+ {
+  $returnval=false;
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select id from appcategory where `name`=?'))
+  {
+   $stmt->bind_param('s', $name);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $returnval=true;
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
+
 
  
  
