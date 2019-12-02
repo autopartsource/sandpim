@@ -48,7 +48,7 @@ $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
 $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
 $favoriteparttypes=$pim->getFavoriteParttypes();
-
+$lifecyclestatuses=$pcdb->getLifeCycleCodes();
 
 ?>
 <!DOCTYPE html>
@@ -105,7 +105,7 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                         <tr><th bgcolor="#c0c0c0" align="left">Attributes</th><td><table><?php foreach ($attributes as $attribute) {echo '<tr><td>' . $attribute['name'] . '</td><td align="right">' . $attribute['value'] . '</td><td>' . $attribute['uom'] . '</td></tr>';} ?></table></td></tr>
                         <tr><th bgcolor="#c0c0c0" align="left">Connected Assets</th><td><?php foreach($connectedassets as $connectedasset){echo '<div><a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>';};?></td><tr>
                         <tr><th bgcolor="#c0c0c0" align="left">Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
-                        <tr><th bgcolor="#c0c0c0" align="left">Status</th><td><?php echo $part['lifecyclestatus']; ?></td><tr/>
+                        <tr><th bgcolor="#c0c0c0" align="left">Status</th><td><select id="lifecyclestatus" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
                     </table>
                 </div>
                 <?php

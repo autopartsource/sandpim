@@ -28,9 +28,9 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   case 'lifecyclestatus':
   if($part['lifecyclestatus']!=$_GET['value'])
   {
-   $pim->setPartLifecyclestatus($partnumber,intval($_GET['value']),true);
+   $pim->setPartLifecyclestatus($partnumber,$_GET['value'],true);
    $oid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber,$userid,'position changed to:'.intval($_GET['value']),$oid);
+   $pim->logPartEvent($partnumber,$userid,'lifecycle status changed to:'.$_GET['value'],$oid);
   }
   break;
 

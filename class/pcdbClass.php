@@ -94,7 +94,41 @@ class pcdb
   return $positions;
  }
  
- 
+ function getLifeCycleCodes()
+ {
+  $codes=array();
+  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESReferenceFieldCode.PIESFieldId=93 order by CodeDescription'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+   }
+  }
+  $db->close();
+  return $codes;    
+ }
 
+ function lifeCycleCodeDescription($code)
+ {
+  if(trim($code)==''){return 'not set (blank)';}
+  $description='not found';
+  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  if($stmt=$db->conn->prepare('select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=93 and CodeValue=?'))
+  {
+   $stmt->bind_param('s', $code);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $description=$row['CodeDescription'];
+   }
+  }
+  $db->close();
+  return $description;    
+ }
+ 
 }
 ?>

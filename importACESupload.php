@@ -1,6 +1,7 @@
 <?php
 include_once('/var/www/html/class/vcdbClass.php');
 include_once('/var/www/html/class/pimClass.php');
+include_once('/var/www/html/class/logsClass.php');
 $navCategory = 'import/export';
 
 session_start();
@@ -8,13 +9,22 @@ if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equi
 
 $v=new vcdb;
 $pim= new pim;
+$logs = new logs;
 $error_msg=false;
 
 
 if(isset($_POST['submit']) && intval($_POST['jobid'])>0)
 {
- if($_POST['submit']=='Start'){$pim->updateBackgroundjob(intval($_POST['jobid']),'started','starting process',0,'0000-00-00 00:00:00');}
- if($_POST['submit']=='Cancel'){$pim->updateBackgroundjob(intval($_POST['jobid']),'canceled','canceled by user',0,'0000-00-00 00:00:00');}
+ if($_POST['submit']=='Start')
+ {
+  $pim->updateBackgroundjob(intval($_POST['jobid']),'started','starting process',0,'0000-00-00 00:00:00');
+  $logs->logSystemEvent('acesimport', isset($_SESSION['userid']), 'import job '.intval($_POST['jobid']).' started');
+ }
+ if($_POST['submit']=='Cancel')
+ {
+  $pim->updateBackgroundjob(intval($_POST['jobid']),'canceled','canceled by user',0,'0000-00-00 00:00:00');
+  $logs->logSystemEvent('acesimport', isset($_SESSION['userid']), 'import job '.intval($_POST['jobid']).' canceled');
+ }
  if($_POST['submit']=='Hide'){$pim->hideBackgroundjob(intval($_POST['jobid']));}
 }
 
@@ -31,6 +41,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Import')
    $userid=0; $outputfile=''; $parameters='appcategory:'.$_POST['appcategory'].';'; $datetimetostart=date('Y-m-d H:i:s');
    $jobid=$pim->createBackgroundjob('ACESxmlImport','uploaded',$userid,$target_file,$outputfile,$parameters,$datetimetostart);
    $error_msg='The file ['. basename( $_FILES['fileToUpload']['name']). '] has been uploaded and is ready to import (job id:'.$jobid.')';
+   $logs->logSystemEvent('acesimport', isset($_SESSION['userid']), 'The file ['. basename( $_FILES['fileToUpload']['name']). '] has been uploaded and is ready to import (job id:'.$jobid.')');
   }
   else
   {

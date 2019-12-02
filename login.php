@@ -1,8 +1,10 @@
 <?php
 include_once('/var/www/html/class/userClass.php');
+include_once('/var/www/html/class/logsClass.php');
 include_once('/var/www/html/class/configGetClass.php');
 session_start();
 $user = new user;
+$logs = new logs;
 $configGet = new configGet;
 
 $installationtate = $user->installationState();
@@ -20,14 +22,20 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         if (password_verify($pwd_peppered, $user->hash)) { // valid user and password
             $_SESSION['userid'] = $user->id; // sessionize the use id and name
             $_SESSION['name'] = $user->name; // sessionize the use id and name
-
+            
+            // log the login event
+            $logs->logSystemEvent('login', $user->id, $user->name.' logged in from '.$_SERVER['REMOTE_ADDR']);
+            // re-direct client to index page
             echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./index.php'\" /></head><body></body></html>";
             exit;
         } else {
             $error = 'Invalid username or password';
+            // log the login event
+            $logs->logSystemEvent('loginfailure', $userid, 'failed login from '.$_SERVER['REMOTE_ADDR']);
         }
     } else { // unknown user
         $error = 'Invalid username or password';
+        $logs->logSystemEvent('loginfailure', 0, 'unknow user ('.$username.') from '.$_SERVER['REMOTE_ADDR']);
     }
 }
 ?>
