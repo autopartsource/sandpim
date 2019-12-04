@@ -133,7 +133,7 @@ $history=$pim->getAppEvents($appid,$historylimit);
               value=e.options[e.selectedIndex].value;
              }
 
-             // console.log(appid);
+//              console.log(appid);
 
 
              document.getElementById("sandpiperoid").innerHTML='';
@@ -212,18 +212,7 @@ $history=$pim->getAppEvents($appid,$historylimit);
                    </div></td></tr>
                    <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Internal<br/>Notes</th><td><textarea id="internalnotes" cols="60" rows="5"><?php echo $app['internalnotes'];?></textarea><div><button onclick='updateApp(<?php echo $appid;?>,"text","internalnotes");'>Save</button></div></td><tr>
                    <tr><th bgcolor="<?php echo $appcolor;?>" align="left">IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id'];?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid'];?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid'];?></div><div style="clear:both;"></div></td><tr>
-                   <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Status</th><td align="right">
-
-                    <?php switch($app['status']){case 0:?>
-                    App is Active <input type="submit" name="submit" value="Delete"/> <input type="submit" name="submit" value="Hide"/>
-                    <?php break; case 1:?>
-                    App is Deleted <input type="submit" name="submit" value="Undelete"/>
-                    <?php break; case 2:?>
-                    App is Hidden <input type="submit" name="submit" value="Unhide"/> <input type="submit" name="submit" value="Delete"/>
-                    <?php break; default:?>
-                    App status is invalid  <input type="submit" name="submit" value="Undelete"/>
-                    <?php }?></td></tr>
-
+                   <tr><th bgcolor="<?php echo $appcolor;?>" align="left">Status</th><td align="right"><select id="status" onchange="updateApp(<?php echo $appid;?>,'select','status');"><option value="0">Active</option><option value="1"<?php if($app['status']==1){echo ' selected';}?>>Deleted</option><option value="2"<?php if($app['status']==2){echo ' selected';}?>>Hidden</option></select></td></tr>
                  </table>
                 </div>
                 <?php if(count($history)){echo '<div><a href="./appHistory.php?appid='.$appid.'">History</a></div>';}?>

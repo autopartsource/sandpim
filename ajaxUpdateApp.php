@@ -8,7 +8,6 @@ $pim= new pim;
 if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['elementid']) && isset($_GET['value']))
 {
  $appid=intval($_GET['appid']);
- $elementid=intval($_GET['elementid']);
  $userid=$_SESSION['userid'];
  $app=$pim->getApp($appid);
  $oid=$app['oid'];
@@ -16,11 +15,10 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['elementid
  switch($_GET['elementid'])
  {
   case 'status':
-  if(isset($_GET['status']))
-  {
-   $pim->setAppStatus($appid,intval($_GET['status']));
-  }
-  break;
+   $pim->setAppStatus($appid,intval($_GET['value']));
+   $oid=$pim->getOIDofApp($appid);
+   $pim->logAppEvent($appid,$userid,'status changed to:'.intval($_GET['value']),$oid);
+   break;
 
   case 'parttypeid':
   if($app['parttypeid']!=$_GET['value'])
