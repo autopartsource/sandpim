@@ -21,6 +21,12 @@ body { text-align: center;}
 .apppart-hidden {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FFD433;}
 .apppart-deleted { padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FF5533;}
 
+.appstatus-active {background-color:#FFFFFF;}
+.appstatus-deleted {background-color:#FF5533;}
+.appstatus-hidden {background-color:#FFD433;}
+.appcosmetic-noncosmetic {background-color:#FFFFFF;}
+.appcosmetic-cosmetic {background-color:#33FFD7;}
+
 a:link {color: blue; text-decoration: none;}
 a:visited {color: blue; text-decoration: none;}
 a:hover {color: gray; text-decoration: none;}
