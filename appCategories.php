@@ -55,12 +55,12 @@ $appcategories = $pim->getAppCategories();
             <!-- Main Content -->
             <div class="contentMain">
                 <table>
-                    <tr><th>Name</th><th>ID</th><th>App Count</th><th>Action</th></tr>
+                    <tr><th>Name</th><th>ID</th><th>App Count</th><th>Logo URI</th><th>Action</th></tr>
                     <?php
                     foreach ($appcategories as $appcategory)
                     {
                         $count=$pim->countAppsByAppcategory($appcategory['id']);
-                        echo '<tr><td>' . $appcategory['name'] . '</td><td>' . $appcategory['id'] . '</td><td>'.$count.'</td><td>';
+                        echo '<tr><td>' . $appcategory['name'] . '</td><td>' . $appcategory['id'] . '</td><td>'.$count.'</td><td><form method="update"><input type="text" name="logouri" value="'.$appcategory['logouri'].'"/><input type="submit" name="update" value="Update"></form></td><td>';
                         if(!$count){echo '<form method="post"><input type="hidden" name="categoryid" value="'.$appcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form>';}
                         echo '</td></tr>';
                     }
@@ -69,6 +69,7 @@ $appcategories = $pim->getAppCategories();
                     <form method="post">
                         <td><input type="text" name="categoryname" size="30"/></td>
                         <td><input type="text" name="categoryid" size="50"/></td>
+                        <td></td>
                         <td></td>
                         <td><input type="submit" name="submit" value="Add"/></td>
                     </form>

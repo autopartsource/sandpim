@@ -485,6 +485,7 @@ class setup
         $sql="CREATE TABLE appcategory (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         `name` varchar(255) not null,
+        `logouri` varchar(255) not null,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - appcategory ('.$db->conn->error.')';}
 

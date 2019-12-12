@@ -85,7 +85,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                 $description='Photo of '.$filename;
                 $background='WHI';
                 $uri='';
-                $localpath=$destinationpath;
+                $localpath=$pathparts['basename'];
                 $orientationviewcode='FRONT';
                 
             }

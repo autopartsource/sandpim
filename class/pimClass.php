@@ -520,13 +520,13 @@ class pim
   $db = new mysql; 
   //$db->dbname='pim'; 
   $db->connect();
-  if($stmt=$db->conn->prepare('select id,name from appcategory order by name'))
+  if($stmt=$db->conn->prepare('select id,name,logouri from appcategory order by name'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $categories[]=array('id'=>$row['id'],'name'=>$row['name']);
+    $categories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri']);
    }
   }
   $db->close();

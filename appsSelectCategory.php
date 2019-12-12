@@ -42,7 +42,7 @@ $appcategories=$user->getUserVisibleAppcategories($userid);
             <div class="contentMain">
                 <form action="showAppsByBasevehicle.php">
                     <div style="padding:20px;">
-                     <?php foreach($appcategories as $appcategory){echo '<div><input type="checkbox" id="appcategory_'.$appcategory['id'].'" name="appcategory_'.$appcategory['id'].'" checked><label for="appcategory_'.$appcategory['id'].'">'.$appcategory['name'].'</label></div>';}?>
+                     <?php foreach($appcategories as $appcategory){echo '<div style="padding:5px"><input type="checkbox" id="appcategory_'.$appcategory['id'].'" name="appcategory_'.$appcategory['id'].'" checked><label style="padding:5px;border: 1px solid;margin:3px; border-radius:5px"for="appcategory_'.$appcategory['id'].'">'.$appcategory['name'].'<img style="padding:0px 5px 0px" height="17px" src="'.$appcategory['logouri'].'"></label></div>';}?>
                      <input type="hidden" name="makeid" value="<?php echo $makeid;?>"/>
                      <?php if(isset($modelid)){echo '<input type="hidden" name="modelid" value="'.$modelid.'"/>';}
                      if(isset($yearid)){echo '<input type="hidden" name="yearid" value="'.$yearid.'"/>';}

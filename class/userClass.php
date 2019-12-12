@@ -156,14 +156,14 @@ class user
   $db = new mysql; 
   //$db->dbname='pim'; 
   $db->connect();
-  if($stmt=$db->conn->prepare("select appcategory as id,`name` from user_appcategory,appcategory where user_appcategory.appcategory=appcategory.id and permissionname='canView' and userid=? order by `name`"))
+  if($stmt=$db->conn->prepare("select appcategory as id,`name`,logouri from user_appcategory,appcategory where user_appcategory.appcategory=appcategory.id and permissionname='canView' and userid=? order by `name`"))
   {
    $stmt->bind_param('i',$userid);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $appcategories[]=array('id'=>$row['id'],'name'=>$row['name']);
+    $appcategories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri']);
    }
   }
   $db->close();
