@@ -1,5 +1,6 @@
 <?php
 include_once('./class/vcdbClass.php');
+include_once('./class/padbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
@@ -12,6 +13,7 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $vcdb = new vcdb;
+$padb = new padb;
 $pcdb = new pcdb;
 $pim = new pim;
 $asset = new asset;
@@ -44,6 +46,7 @@ if (strlen($partnumber) > 20) {
 $part = $pim->getPart($partnumber);
 $apps = $pim->getAppsByPartnumber($partnumber);
 $attributes = $pim->getPartAttributes($partnumber);
+$validpadbattributes=$padb->getAttributesForParttype($part['parttypeid']);
 $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
 $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
@@ -66,8 +69,6 @@ $lifecyclestatuses=$pcdb->getLifeCycleCodes();
               var e=document.getElementById(elementid);
               value=e.options[e.selectedIndex].value;
              }
-
-             console.log(partnumber+'; '+elementtype + '; '+elementid+'; '+value);
              document.getElementById("sandpiperoid").innerHTML='';
 
              var xhr = new XMLHttpRequest();
@@ -75,15 +76,51 @@ $lifecyclestatuses=$pcdb->getLifeCycleCodes();
              xhr.onload = function()
              {
               var response=xhr.responseText;
-              console.log('r:'+response);
               document.getElementById("sandpiperoid").innerHTML=response;
+              setStatusColor();
              };
              xhr.send();
             }
+            
+            function setStatusColor()
+            {
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxGetPart.php?partnumber=<?php echo $partnumber;?>');
+             xhr.onload = function()
+             {
+              var part=JSON.parse(xhr.responseText);
+              var statusClassName="partstatus-available";
+              if(part.lifecyclestatus==0){statusClassName="partstatus-proposed";}
+              if(part.lifecyclestatus==1){statusClassName="partstatus-released";}
+              if(part.lifecyclestatus==4){statusClassName="partstatus-announced";}
+              if(part.lifecyclestatus==7){statusClassName="partstatus-superseded";}
+              if(part.lifecyclestatus==8){statusClassName="partstatus-discontinued";}
+              if(part.lifecyclestatus==9){statusClassName="partstatus-obsolete";}
+              
+              document.getElementById("label-status").className=statusClassName;
+              document.getElementById("value-status").className=statusClassName;
+
+             };
+             xhr.send();
+            }
+            
+            
+            function addAttribute(PAID)
+            {
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddAttributeToPart.php?partnumber=<?php echo $partnumber;?>&attribute='+PAID);
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+              console.log(response);
+             };
+             xhr.send();
+            }
+            
         </script>
         
     </head>
-    <body>
+    <body onload="setStatusColor()">
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
@@ -98,14 +135,35 @@ $lifecyclestatuses=$pcdb->getLifeCycleCodes();
                 <?php if ($part) {; ?>
                 <div style="padding:10px;">
                     <table border="1" cellpadding="5">
-                        <tr><th bgcolor="#c0c0c0" align="left">Partnumber</th><td align="left"><?php echo $part['partnumber']; ?></td></tr>
-                        <tr><th bgcolor="#c0c0c0" align="left">Part Type</th><td align="left"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
-                        <tr><th bgcolor="#c0c0c0" align="left">Category</th><td align="right"><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
-                        <tr><th bgcolor="#c0c0c0" align="left">Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Save</button></div></td><tr>
-                        <tr><th bgcolor="#c0c0c0" align="left">Attributes</th><td><table><?php foreach ($attributes as $attribute) {echo '<tr><td>' . $attribute['name'] . '</td><td align="right">' . $attribute['value'] . '</td><td>' . $attribute['uom'] . '</td></tr>';} ?></table></td></tr>
-                        <tr><th bgcolor="#c0c0c0" align="left">Connected Assets</th><td><?php foreach($connectedassets as $connectedasset){echo '<div><a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>';};?></td><tr>
-                        <tr><th bgcolor="#c0c0c0" align="left">Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
-                        <tr><th bgcolor="#c0c0c0" align="left">Status</th><td><select id="lifecyclestatus" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
+                        <tr><th>Partnumber</th><td><?php echo $part['partnumber']; ?></td></tr>
+                        <tr><th>Part Type</th><td><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
+                        <tr><th>Category</th><td><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
+                        <tr><th>Description</th><td><input type="text" id="description" value="<?php echo $part['description']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','description');">Update</button></div></td><tr>
+                        <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
+                        <tr><th>Attributes</th>
+                            <td>
+                                <table>
+                                    <?php foreach ($attributes as $attribute) 
+                                    {
+                                        if($attribute['PAID']==0)
+                                        {
+                                            echo '<tr><td>' . $attribute['name'] . '</td><td>' . $attribute['value'] . '</td><td>' . $attribute['uom'] . '</td></tr>';
+                                        }
+                                        else
+                                        {
+                                            
+                                        }
+                                        
+                                    } ?>
+                                </table>
+                                <table>
+                                    <?php foreach ($validpadbattributes as $attribute) {echo '<tr><td><div onclick="addAttribute('.$attribute['PAID'].')">' . $attribute['name'] . '</div></td><td>' . $attribute['validvalues'] . '</td><td>' . $attribute['uomlist'] . '</td></tr>';} ?>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr><th>Connected Assets</th><td><?php foreach($connectedassets as $connectedasset){echo '<a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> ';};?></td><tr>
+                        <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
+                        <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
                     </table>
                 </div>
                 <?php
