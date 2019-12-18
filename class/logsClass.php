@@ -107,6 +107,35 @@ class logs
   return $sorted;
  }
 
+ function getPartEvents($partnumber,$limit)
+ {
+  $db=new mysql; $db->connect();
+  $events=array();
+  if($stmt=$db->conn->prepare('select * from part_history where partnumber=? order by eventdatetime desc limit ?'))
+  {
+   $stmt->bind_param('si',$partnumber,$limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $events[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'eventdatetime'=>$row['eventdatetime'],'userid'=>$row['userid'],'description'=>$row['description'],'new_oid'=>$row['new_oid']);
+   }
+  }
+  
+  // sort the results ascending
+  $sorted=array();
+  for($i=count($events)-1; $i>=0; $i--)
+  {
+   $sorted[]=$events[$i];
+  }
+  $db->close();
+  return $sorted;
+ }
+
+ 
+ 
+ 
+ 
  function getAssetsEvents($limit)
  {
   $db=new mysql; $db->connect();

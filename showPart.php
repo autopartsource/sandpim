@@ -4,6 +4,7 @@ include_once('./class/padbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/logsClass.php');
 $navCategory = 'parts';
 
 session_start();
@@ -17,6 +18,7 @@ $padb = new padb;
 $pcdb = new pcdb;
 $pim = new pim;
 $asset = new asset;
+$logs=new logs;
 
 function niceAppAttributes($appattributes) {
     $vcdb = new vcdb;
@@ -52,6 +54,7 @@ $partcategories = $pim->getPartCategories();
 $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $lifecyclestatuses=$pcdb->getLifeCycleCodes();
+$history=$logs->getPartsEvents(50);
 
 ?>
 <!DOCTYPE html>
@@ -166,13 +169,13 @@ $lifecyclestatuses=$pcdb->getLifeCycleCodes();
                         <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
                     </table>
                 </div>
+                <?php if(count($history)){echo '<div><a href="./partHistory.php?partnumber='.$partnumber.'">History</a></div>';}?>
                 <?php
                 } else {
-                    echo 'Part not found';
+                    echo 'Part ('.$partnumber.') not found';
                 }
                 ?>
             </div>
-
             <div class="contentRight">
                 <h3 class="mobile">Applications</h3>
                 <div class="scrolling-wrapper-flexbox">
