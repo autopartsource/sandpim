@@ -305,7 +305,7 @@ class pim
   //$db->dbname='pim';
   $db->connect();
   $parts=array();
-  $sql='select part.*,partcategory.name from part left join partcategory on part.parttypeid=partcategory.id where partnumber like ? order by partnumber limit ?';
+  $sql='select part.*,partcategory.name as partcategoryname from part left join partcategory on part.partcategory=partcategory.id where partnumber like ? order by partnumber limit ?';
 
   if($stmt=$db->conn->prepare($sql))
   {
@@ -318,9 +318,9 @@ class pim
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $parts[]=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['name'],'replacedby'=>$row['replacedby']);
+    $parts[]=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
    }
-  }else{echo 'prepare';}
+  }//else{echo 'prepare';}
   $db->close();
   return $parts;
  }
@@ -502,7 +502,7 @@ class pim
   $db->close();
  }
  
- function setPartDescription($partnumber,$description)
+ function setPartDescription($partnumber,$description,$updateoid)
  {
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('update part set description=? where partnumber=?'))
@@ -510,6 +510,7 @@ class pim
    $stmt->bind_param('ss', $description,$partnumber);
    $stmt->execute();
   } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  if($updateoid){$this->updatePartOID($partnumber);}
   $db->close();
  }
 
@@ -533,7 +534,7 @@ class pim
   return $categories;
  }
 
-
+ 
  function getPartAttribute($partnumber,$PAID,$attributename)
  {
   $attributes=false;
@@ -592,10 +593,18 @@ class pim
   return $id;
  }
 
- 
- 
- 
- 
+ function deletePartAttribute($attributeid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from part_attribute where id=?'))
+  {
+   $stmt->bind_param('i',$attributeid);
+   $stmt->execute();
+  } // else{print_r($db->conn->error);}
+  $db->close();
+ }
+
+  
  function createPartcategory($name,$partcategory)
  {
   $db=new mysql; $db->connect();

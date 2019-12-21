@@ -150,6 +150,64 @@ class user
  }
 
 
+ 
+ function userHasSelectedAppcategory($userid,$appcategory)
+ {
+  $returnval=false;
+  $db = new mysql;  $db->connect();
+  if($stmt=$db->conn->prepare("select * from user_selected_appcategory where userid=? and appcategory=?"))
+  {
+   $stmt->bind_param('ii',$userid,$appcategory);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+       $returnval=true;
+   }
+  }
+  $db->close();
+  return $returnval; 
+ }
+ 
+ function userSelectAppcategory($userid,$appcategory)
+ {
+  $db = new mysql;  $db->connect();
+  if($stmt=$db->conn->prepare("select * from user_selected_appcategory where userid=? and appcategory=?"))
+  {
+   $stmt->bind_param('ii',$userid,$appcategory);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   { // record alredy exists
+
+   }
+   else
+   {// record does not already exist
+    if($stmt=$db->conn->prepare("insert into user_selected_appcategory (id,userid,appcategory) values(null,?,?)"))
+    {
+     $stmt->bind_param('ii',$userid,$appcategory);
+     $stmt->execute();
+    }
+   }
+  }
+  $db->close();
+ }
+
+ function userUnselectAppcategory($userid,$appcategory)
+ {
+  $db = new mysql;  $db->connect();
+  if($stmt=$db->conn->prepare("delete from user_selected_appcategory where userid=? and appcategory=?"))
+  {
+   $stmt->bind_param('ii',$userid,$appcategory);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+ 
+ 
+ 
+ 
  function getUserVisibleAppcategories($userid)
  {
   $appcategories=array();
@@ -163,7 +221,8 @@ class user
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $appcategories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri']);
+    $selected= $this->userHasSelectedAppcategory($userid, $row['id']);   
+    $appcategories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri'],'selected'=>$selected);
    }
   }
   $db->close();

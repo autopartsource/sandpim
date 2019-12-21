@@ -48,7 +48,8 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   break;
 
   case 'description':
-   $pim->setPartDescription($partnumber,$_GET['value']);
+   $pim->setPartDescription($partnumber,$_GET['value'],true);
+   $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'description updated to:'.$_GET['value'],$oid);
   break;
 

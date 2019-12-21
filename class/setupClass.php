@@ -544,6 +544,15 @@ class setup
         key idx_userid(userid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_appcategory ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE user_selected_appcategory (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        userid int UNSIGNED NOT NULL,
+        appcategory int unsigned not null,
+        PRIMARY KEY (id),
+        key idx_userid(userid),
+        key idx_appcategory(appcategory))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_selected_appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_selected_appcategory ('.$db->conn->error.')';}
+        
         $sql="CREATE TABLE user_permission (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         userid int UNSIGNED NOT NULL,
@@ -571,6 +580,41 @@ class setup
         INDEX idx_userid (userid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - system_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - system_history ('.$db->conn->error.')';}
 
+        
+        $sql="CREATE TABLE alert (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        alertdatetime datetime not null,
+        alerttype varchar(255) not null,
+        description text not null,
+        PRIMARY KEY (id),
+        INDEX idx_alertdatetime (alertdatetime),
+        INDEX idx_alerttype (alerttype))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - alert ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - alert ('.$db->conn->error.')';}
+        
+        
+        $sql="CREATE TABLE alert_application (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        applicationid int unsigned not null,
+        PRIMARY KEY (id),
+        INDEX idx_applicationid (applicationid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - alert_application ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - alert_application ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE alert_part (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - alert_part ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - alert_part ('.$db->conn->error.')';}
+        
+        $sql="CREATE TABLE alert_asset (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        assetid varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_assetid (assetid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - alert_asset ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - alert_asset ('.$db->conn->error.')';}
+        
+        
+        
         $db->close();
         return $returnvalue;
     }

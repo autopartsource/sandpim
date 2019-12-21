@@ -108,10 +108,31 @@ $history=$logs->getPartsEvents(50);
             }
             
             
-            function addAttribute(PAID)
+            function addPAdbAttribute(PAID)
             {
              var xhr = new XMLHttpRequest();
              xhr.open('GET', 'ajaxAddAttributeToPart.php?partnumber=<?php echo $partnumber;?>&attribute='+PAID);
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              //console.log(response);
+              if(response.success)
+              {
+               var container=document.getElementById('appliedattributes');
+               container.innerHTML+='<div style="border:1px solid;" id="appliedattribute_'+response.id+'" onclick="deleteAttribute('+response.id+')">'+response.name+'</x`div>';
+              }
+             };
+             xhr.send();
+            }
+
+            function deleteAttribute(attributeid)
+            {
+             console.log(attributeid);
+             var appliedattributediv = document.getElementById('appliedattribute_'+attributeid);
+             appliedattributediv.parentNode.removeChild(appliedattributediv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeletePartAttribute.php?attributeid='+attributeid);
              xhr.onload = function()
              {
               var response=xhr.responseText;
@@ -119,7 +140,8 @@ $history=$logs->getPartsEvents(50);
              };
              xhr.send();
             }
-            
+
+
         </script>
         
     </head>
@@ -145,23 +167,27 @@ $history=$logs->getPartsEvents(50);
                         <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
                         <tr><th>Attributes</th>
                             <td>
-                                <table>
+                                <div id="appliedattributes" style="padding:5px;">
                                     <?php foreach ($attributes as $attribute) 
                                     {
                                         if($attribute['PAID']==0)
                                         {
-                                            echo '<tr><td>' . $attribute['name'] . '</td><td>' . $attribute['value'] . '</td><td>' . $attribute['uom'] . '</td></tr>';
+                                            //echo '<tr><td>' . $attribute['name'] . '</td><td>' . $attribute['value'] . '</td><td>' . $attribute['id'] . '</td></tr>';
                                         }
                                         else
                                         {
-                                            
+                                            //echo '<tr id="attribute_'.$attribute['id'].'" onclick="deleteAttribute('.$attribute['id'].')"><td>' . $padb->PAIDname($attribute['PAID']) . '</td><td>' . $attribute['value'] . '</td><td>' . $attribute['uom']. '</td></tr>';
+                                            echo '<div style="border:1px solid;" id="appliedattribute_'.$attribute['id'].'" onclick="deleteAttribute('.$attribute['id'].')">' . $padb->PAIDname($attribute['PAID']) . '</div>';
                                         }
-                                        
                                     } ?>
-                                </table>
-                                <table>
-                                    <?php foreach ($validpadbattributes as $attribute) {echo '<tr><td><div onclick="addAttribute('.$attribute['PAID'].')">' . $attribute['name'] . '</div></td><td>' . $attribute['validvalues'] . '</td><td>' . $attribute['uomlist'] . '</td></tr>';} ?>
-                                </table>
+                                </div>
+
+                                <div id="unappliedattributes" style="padding:5px;">
+                                        <?php foreach ($validpadbattributes as $attribute) {
+//                                            echo '<tr><td><div onclick="addAttribute('.$attribute['PAID'].')">' . $attribute['name'] . '</div></td><td>' . $attribute['validvalues'] . '</td><td>' . $attribute['uomlist'] . '</td></tr>';} 
+                                            echo '<div id="unappliedattribute_'.$attribute['PAID'].'" onclick="addPAdbAttribute('.$attribute['PAID'].')">' . $attribute['name'] . '</div>';} 
+                                            ?>
+                                </div>
                             </td>
                         </tr>
                         <tr><th>Connected Assets</th><td><?php foreach($connectedassets as $connectedasset){echo '<a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> ';};?></td><tr>

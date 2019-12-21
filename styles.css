@@ -27,6 +27,19 @@ body { text-align: center;}
 .appcosmetic-noncosmetic {background-color:#FFFFFF;}
 .appcosmetic-cosmetic {background-color:#33FFD7;}
 
+.partstatus-announced {background-color:#3399FF;}
+.partstatus-released {background-color:#66FF99;}
+.partstatus-available {background-color:#FFFFFF;}
+.partstatus-discontinued {background-color:#FF9900;}
+.partstatus-obsolete {background-color:#FF3300;}
+.partstatus-superseded {background-color:#FF00FF;}
+.partstatus-proposed {background-color:#999966;}
+
+
+
+
+
+
 a:link {color: blue; text-decoration: none;}
 a:visited {color: blue; text-decoration: none;}
 a:hover {color: gray; text-decoration: none;}
