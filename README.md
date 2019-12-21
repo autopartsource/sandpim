@@ -25,9 +25,10 @@ contributing in any way (even just offering opinions!), please don't hesitate to
 
 ## To-Do list
 
-- Make user's appcategory selection sticky (appsSelectCategory.php)
 - PAdb attribute display/edit in showPart.php
-- qdb fitmet in showApp.php
+- note selection bank maintenance
+- migrate notes from free-form to selection
+- qdb fitmet attribute support in showApp.php
 - vcdb-validation an app on the fly (uppon change)
 - Part search by PAdb attribute
 - copy-forward to next model-year on apps grid (showAppsByBasevehicle.php)
