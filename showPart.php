@@ -102,41 +102,65 @@ $history=$logs->getPartsEvents(50);
               
               document.getElementById("label-status").className=statusClassName;
               document.getElementById("value-status").className=statusClassName;
-
              };
              xhr.send();
             }
             
-            
             function addPAdbAttribute(PAID)
             {
              var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxAddAttributeToPart.php?partnumber=<?php echo $partnumber;?>&attribute='+PAID);
+             xhr.open('GET', 'ajaxUpdateAttributeOfPart.php?partnumber=<?php echo $partnumber;?>&attribute='+PAID+'&value=&uom=');
              xhr.onload = function()
              {
               var response=JSON.parse(xhr.responseText);
-              //console.log(response);
               if(response.success)
-              {
+              { //add attribute to "applied" list
                var container=document.getElementById('appliedattributes');
-               container.innerHTML+='<div style="border:1px solid;" id="appliedattribute_'+response.id+'" onclick="deleteAttribute('+response.id+')">'+response.name+'</x`div>';
+               container.innerHTML+='<div id="appliedattribute_'+response.id+'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('+response.id+','+response.PAID+',\''+response.name+'\')">-</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'+response.name+'<input type="text"/></div><div style="clear:both;"></div></div>';
+               
+               //remove PAdb form "unapplied" list
+               var unappliedattributediv = document.getElementById('unappliedattribute_'+PAID);
+               unappliedattributediv.parentNode.removeChild(unappliedattributediv);
+               
+               // show new oid
+               document.getElementById("sandpiperoid").innerHTML=response.oid;
               }
              };
              xhr.send();
             }
 
-            function deleteAttribute(attributeid)
+            function updatePAdbAttribute(PAID)
             {
-             console.log(attributeid);
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdateAttributeOfPart.php?partnumber=<?php echo $partnumber;?>&attribute='+PAID+'&value=&uom=');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              if(response.success)
+              {
+               document.getElementById("sandpiperoid").innerHTML=response.oid;
+              }
+             };
+             xhr.send();
+            }
+
+
+            function deleteAttribute(attributeid,PAID,name)
+            {
              var appliedattributediv = document.getElementById('appliedattribute_'+attributeid);
              appliedattributediv.parentNode.removeChild(appliedattributediv);
                 
              var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxDeletePartAttribute.php?attributeid='+attributeid);
+             xhr.open('GET', 'ajaxDeletePartAttribute.php?attributeid='+attributeid+'&partnumber=<?php echo $partnumber;?>');
              xhr.onload = function()
              {
-              var response=xhr.responseText;
-              console.log(response);
+              var response=JSON.parse(xhr.responseText);
+              
+              // add it back to the "unnapplied" list
+              var container=document.getElementById('unappliedattributes');
+              container.innerHTML+='<div id="unappliedattribute_'+PAID+'"><div style="width:2em;float:left;"><button onclick="addPAdbAttribute('+PAID+')">+</button></div><div style="float:left;">'+name+'</div><div style="clear:both;"></div></div>';
+
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
              };
              xhr.send();
             }
@@ -176,21 +200,19 @@ $history=$logs->getPartsEvents(50);
                                         }
                                         else
                                         {
-                                            //echo '<tr id="attribute_'.$attribute['id'].'" onclick="deleteAttribute('.$attribute['id'].')"><td>' . $padb->PAIDname($attribute['PAID']) . '</td><td>' . $attribute['value'] . '</td><td>' . $attribute['uom']. '</td></tr>';
-                                            echo '<div style="border:1px solid;" id="appliedattribute_'.$attribute['id'].'" onclick="deleteAttribute('.$attribute['id'].')">' . $padb->PAIDname($attribute['PAID']) . '</div>';
+                                            echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">-</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).'<input type="text"/></div><div style="clear:both;"></div></div>';
                                         }
                                     } ?>
                                 </div>
 
                                 <div id="unappliedattributes" style="padding:5px;">
-                                        <?php foreach ($validpadbattributes as $attribute) {
-//                                            echo '<tr><td><div onclick="addAttribute('.$attribute['PAID'].')">' . $attribute['name'] . '</div></td><td>' . $attribute['validvalues'] . '</td><td>' . $attribute['uomlist'] . '</td></tr>';} 
-                                            echo '<div id="unappliedattribute_'.$attribute['PAID'].'" onclick="addPAdbAttribute('.$attribute['PAID'].')">' . $attribute['name'] . '</div>';} 
-                                            ?>
+                                        <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
+                                            echo '<div id="unappliedattribute_'.$attribute['PAID'].'"><div style="width:2em;    float:left;"> <button onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div><div style="float:left;">' . $attribute['name'] . '</div><div style="clear:both;"></div></div>';
+                                        }?>
                                 </div>
                             </td>
                         </tr>
-                        <tr><th>Connected Assets</th><td><?php foreach($connectedassets as $connectedasset){echo '<a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> ';};?></td><tr>
+                        <tr><th>Connected Assets</th><td><?php if($connectedassets){foreach($connectedassets as $connectedasset){echo '<a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> ';}};?></td><tr>
                         <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
                         <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
                     </table>

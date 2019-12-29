@@ -6,7 +6,7 @@ $pim= new pim;
 $padb= new padb;
 //$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_REQUEST,true)); fclose($fp);
 
-if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['attribute']))
+if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['attribute']) && isset($_GET['value']))
 {
  $userid=$_SESSION['userid'];
  $partnumber=$_GET['partnumber'];
@@ -28,14 +28,17 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['attr
    { // valid PAdb id
      if(!$pim->getPartAttribute($partnumber,$PAID,''))
      {
-      $eventtext=' PAdb attribute ['.$PAname.']'.$value.$uom.' was added';
-      $oid=$pim->updatePartOID($partnumber);
+      $eventtext='PAdb attribute ['.$PAname.']'.$value.$uom.' was added';
       $id=$pim->writePartAttribute($partnumber, $PAID, $attributename, $value, $uom);
+      $oid=$pim->updatePartOID($partnumber);
       $success=true;
      }
      else
-     { // Attribute ID is alread applied to part
-      $eventtext=' PAdb attribute ['.$PAname.'] is already applied. No action taken';
+     { // Attribute ID is alread applied to part - update it
+      $id=$pim->updatePartAttribute($partnumber, $PAID, $attributename, $value, $uom);
+      $eventtext='PAdb attribute ['.$PAname.'] updated to: '.$value.$uom;
+      $oid=$pim->updatePartOID($partnumber);
+      $success=true;
      }
      $pim->logPartEvent($partnumber,$userid, $eventtext ,$oid);
    }
@@ -43,13 +46,21 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['attr
   else
   {// this is a user-defined attribute
    $attributename=$_GET['attribute'];
-   $eventtext='user-defined attribute['.$attributename.']'.$value.$uom.' was added';
+   if(!$pim->getPartAttribute($partnumber,0,$attributename))
+   {
+    $eventtext='user-defined attribute['.$attributename.']='.$value.$uom.' was added';
+    $pim->writePartAttribute($partnumber, $PAID, $attributename, $value, $uom);
+   }
+   else
+   {// user-defined attribute exists from this part - update it
+    $eventtext='user-defined attribute['.$attributename.'] was updated to: '.$value.$uom;
+    $pim->updatePartAttribute($partnumber, 0, $attributename, $value, $uom);
+   }
    $oid=$pim->updatePartOID($partnumber);
-   $pim->writePartAttribute($partnumber, $PAID, $attributename, $value, $uom);
    $pim->logPartEvent($partnumber,$userid, $eventtext ,$oid);
    $success=true;
   }
-  $result=array('success'=>$success, 'id'=>$id, 'PAID'=>$PAID, 'name'=>$PAname, 'value'=>$value, 'uom'=>$uom);
+  $result=array('success'=>$success, 'id'=>$id, 'PAID'=>$PAID, 'name'=>$PAname, 'value'=>$value, 'uom'=>$uom,'oid'=>$oid);
   echo json_encode($result);
  }
 }

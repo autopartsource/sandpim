@@ -613,6 +613,12 @@ class setup
         INDEX idx_assetid (assetid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - alert_asset ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - alert_asset ('.$db->conn->error.')';}
         
+        $sql="CREATE TABLE fitmentnote (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        note varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_note (note))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - fitmentnote ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - fitmentnote ('.$db->conn->error.')';}
         
         
         $db->close();

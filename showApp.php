@@ -2,6 +2,7 @@
 include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/qdbClass.php');
 $navCategory = 'applications';
 
 session_start();
@@ -10,6 +11,7 @@ if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equi
 $vcdb=new vcdb;
 $pcdb=new pcdb;
 $pim=new pim;
+$qdb=new qdb;
 $userid=$_SESSION['userid'];
 
 $appid=intval($_GET['appid']);
@@ -184,7 +186,6 @@ $history=$pim->getAppEvents($appid,$historylimit);
         
         <div class="wrapper">
             <div class="contentLeft"></div>
-
             <!-- Main Content -->
             <div class="contentMain">
                 <?php if($app) {;?>

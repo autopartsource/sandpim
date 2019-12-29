@@ -541,7 +541,7 @@ class pim
   $db = new mysql; 
   //$db->dbname='pim'; 
   $db->connect();
-  if($stmt=$db->conn->prepare('select id,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=? and PAID=? and userDefinedAttributeName=?'))
+  if($stmt=$db->conn->prepare('select id,PAID,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=? and PAID=? and userDefinedAttributeName=?'))
   {
    $stmt->bind_param('sis',$partnumber,$PAID,$attributename);
    $stmt->execute();
@@ -555,6 +555,28 @@ class pim
   return $attributes;
  }
 
+ function getPartAttributeById($attributeid)
+ {
+  $db = new mysql; $db->connect();
+  $attribute=false;
+  if($stmt=$db->conn->prepare('select id,partnumber,PAID,userDefinedAttributeName,`value`,uom from part_attribute where id=?'))
+  {
+   $stmt->bind_param('i',$attributeid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $attribute=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'name'=>$row['userDefinedAttributeName'],'PAID'=>$row['PAID'],'value'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
+   }
+  }
+  $db->close();
+  return $attribute;
+ }
+
+ 
+ 
+ 
+ 
  function getPartAttributes($partnumber)
  {
   $attributes=false;
@@ -592,6 +614,27 @@ class pim
   $db->close();
   return $id;
  }
+
+ function updatePartAttribute($partnumber,$PAID,$attributename,$attributevalue,$uom)
+ { // PAID of 0 implies a user-defned attribute 
+  $id=false;
+  $db = new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
+  if($stmt=$db->conn->prepare('update part_attribute set `value`=?,uom=? where partnumber=? and PAID=? and userDefinedAttributeName=?'))
+  {
+   $stmt->bind_param('sssis',$attributevalue,$uom,$partnumber,$PAID,$attributename);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  } // else{print_r($db->conn->error);}
+
+  $db->close();
+  return $id;
+ }
+
+
+
+
 
  function deletePartAttribute($attributeid)
  {
