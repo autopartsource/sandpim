@@ -54,7 +54,6 @@ if (isset($_POST['input'])) {
                     <div style="padding:10px;"><div>Paste three or four columns (tab delimited) data: part, name, value [, UoM])</div>
                         <textarea name="input" rows="20" cols="100"></textarea>
                     </div>
-                    <div style="padding:10px;"><select name="attributetype"><option value="weight">Weight</option></select></div>
                     <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                 </form>
             </div>

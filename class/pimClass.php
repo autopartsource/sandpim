@@ -1493,6 +1493,97 @@ class pim
  }
 
  
+ //----
+ 
+ function createAppsFromText($data)
+ {
+  $db=new mysql; 
+  //$db->dbname='pim';
+  $db->connect();
+  $app_count=0;
+
+  // validate that the txt has the proper number of tab-delimited columns
+  $rows= explode("\r\n", $data);
+  foreach($rows as $row)
+  {
+   $fields=explode("\t",$row);
+   if(count($fields)==10)
+   {// row has the correct number of fields
+    if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic,appcategory) values(null,?,?,0,0,?,?,?,?,0,0,?)'))
+    {
+     $oid=$this->newoid();
+     $stmt->bind_param('siiiisi', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$appcategory);
+     $appcategory=intval($fields[0]);
+     $cosmetic=intval($fields[1]); 
+     $basevehicleid=intval($fields[2]); 
+     $partnumber=trim(strtoupper($fields[3]));
+     $parttypeid=intval($fields[4]); 
+     $positionid=intval($fields[5]); 
+     $quantityperapp=intval($fields[6]); 
+
+     $stmt->execute(); // insert the application record
+     $applicationid=$db->conn->insert_id;
+     
+     //insert attribute records
+     //vcdbattributes (name|value|sequence|cosmetic)
+     // example: "FrontBrakeType|5|1|0;SubModel|20|3|1;"
+
+     $attributes=array();
+     
+     if(strlen($fields[7]))
+     {// VCdb attributes are present. parse them.
+      $attributestrings=explode(';',$fields[7]);
+      foreach($attributestrings as $attributestring)
+      {
+       $attributechunks=explode('|',$attributestring);
+       if(count($attributechunks)==4)
+       {// FrontBrakeType|5|1|0   (Disc, sequence 1, non-cosmetic)
+        $attributes[]=array('type'=>'vcdb','name'=>$attributechunks[0], 'value'=>intval($attributechunks[1]),'cosmetic'=>intval($attributechunks[3]),'sequence'=>intval($attributechunks[2]));
+       }
+      }
+     }
+
+     if(strlen($fields[9]))
+     {// notes are present.
+      $notechunks=explode('|',$fields[9]);
+      if(count($notechunks)==3)
+      {// Some more Notes|2|1  (notetext, sequence 2, cosmetic)
+        $attributes[]=array('type'=>'note','name'=>'note','value'=>$notechunks[0],'cosmetic'=>intval($notechunks[2]),'sequence'=>intval($notechunks[1]));
+      }
+     }     
+
+     if(strlen($fields[8]))
+     {// Qdb is present.
+      $params=array();
+      //foreach($qual->param as $param){$params[]=(string)$param['value'].':'.(string)$param['uom'];}
+      //$attributes[]=array('type'=>'qdb','name'=>(string)$qual['id'],'value'=>implode(';',$params));
+     }
+     
+
+     if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
+     {
+      $sequence=0;
+      $stmt->bind_param('isssii', $applicationid,$attribute_name,$attribute_value,$attribute_type,$sequence,$cosmetic);
+      foreach($attributes as $attribute)
+      {
+       $sequence=$attribute['sequence']; $attribute_name=$attribute['name']; $attribute_value=$attribute['value']; $attribute_type=$attribute['type']; $cosmetic=$attribute['cosmetic'];
+       $stmt->execute(); // insert the application record
+      }
+     }
+     
+     $app_count++;
+     $this->createPart($partnumber,0,$parttypeid);
+    }
+   }
+  }
+  
+  $db->close();
+  return $app_count;
+ }
+
+ //----
+ 
+ 
  function addFavoriteParttype($parttypeid,$myname)
  {
   $db = new mysql; 

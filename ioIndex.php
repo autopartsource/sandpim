@@ -27,9 +27,10 @@ $pim=new pim;
 
             <!-- Main Content -->
             <div class="contentMain button" style="flex-direction: column;">
-                <div style="padding:10px;"><a href="importACESsnippet.php">Import Small ACES xml text</a></div>
+                <div style="padding:10px;"><a href="importACESsnippet.php">Import small ACES xml text</a></div>
                 <div style="padding:10px;"><a href="importACESupload.php">Upload & import ACES xml file</a></div>
-                <div style="padding:10px;"><a href="importPartData.php">Import Part data from structured text</a></div>
+                <div style="padding:10px;"><a href="importACEStext.php">Import applications from structured text</a></div>
+                <div style="padding:10px;"><a href="importPartData.php">Import part data from structured text</a></div>
                 <div style="padding:10px;"><a href="exportACESselect.php">Export ACES xml file</a></div>
                 <div style="padding:10px;"><a href="exportPIESselect.php">Export PIES xml file</a></div>
                 <div style="padding:10px;"><a href="exportFlatAppsSelect.php">Export flattened applications files</a></div>
