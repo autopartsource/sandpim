@@ -40,7 +40,33 @@ class PIESgenerator
   if(array_key_exists('ContactEmail', $header)){$ContactEmailElement = new DOMElement('ContactEmail',$header['ContactEmail']); $headerElement->appendChild($ContactEmailElement);}
   if(array_key_exists('PCdbVersionDate',$header)){$PCdbVersionDateElement=new DOMElement('PCdbVersionDate',$header['PCdbVersionDate']);  $headerElement->appendChild($PCdbVersionDateElement);}
   if(array_key_exists('PAdbVersionDate',$header)){$PAdbVersionDateElement=new DOMElement('PAdbVersionDate',$header['PAdbVersionDate']);  $headerElement->appendChild($PAdbVersionDateElement);}
- 
+
+  //----------------------- price sheets ---------------
+  
+   if(count($item['prices']))
+   {
+    $PricesElement = $doc->createElement('Prices');
+    
+    $pricesheetnumber=''; $currencycode=''; $effectivedate=''; $expirationdate='';
+    
+    
+    foreach($item['prices'] as $price)
+    {
+       // if($price[''])
+        
+    }
+    
+    $PriceSheetsElement=$doc->createElement('PriceSheets');
+    $PriceSheetElement=$doc->createElement('PriceSheet');
+    $PriceSheetsElement->appendChild($PriceSheetElement);
+    $PriceSheetElement->setAttribute('MaintenanceType', 'A');
+    $PriceSheetNumberElement=$doc->createElement('PriceSheetNumber',$pricesheetnumber); $PriceSheetElement->appendChild($PriceSheetNumberElement);
+    $CurrencyCodeElement=$doc->createElement('CurrencyCode',$currencycode); $PriceSheetElement->appendChild($CurrencyCodeElement);
+    $EffectiveDateElement=$doc->createElement('EffectiveDate',$effectivedate); $PriceSheetElement->appendChild($EffectiveDateElement);
+    $ExpirationDateElement=$doc->createElement('ExpirationDate',$expirationdate); $PriceSheetElement->appendChild($ExpirationDateElement);
+    $root->appendChild($PriceSheetsElement);
+   }
+  
   //----------------------- marketing copy -----------------------
   if(count($marketingcopys))
   {      

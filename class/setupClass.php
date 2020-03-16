@@ -303,6 +303,7 @@ class setup
         assetHeight int unsigned not null,
         assetWidth int unsigned not null,
         dimensionUOM varchar(255) not null,
+        resolution int unsigned not null,
         background varchar(255) not null,
         fileType varchar(255) not null,
         createdDate date not null,
@@ -413,6 +414,11 @@ class setup
         lifecyclestatus varchar(255) not null,
         internalnotes text not null,
         description varchar(255) not null,
+        GTIN varchar(255) not null,
+        UNSPC varchar(255) not null,
+        createdDate date not null,
+        firststockedDate date not null,
+        discontinuedDate date not null,
         oid varchar(255) not null,
         PRIMARY KEY (partnumber),
         INDEX idx_partcategory (partcategory),
@@ -441,12 +447,82 @@ class setup
         assetid varchar(255) NOT NULL,
         assettypecode varchar(255) not null,
         sequence int unsigned not null,
+        representation varchar(255) not null,
         PRIMARY KEY (id),
         INDEX idx_partnumber (partnumber),
         INDEX idx_assetid (assetid)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_asset ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_asset ('.$db->conn->error.')';}
+        
+        $sql="CREATE TABLE part_description (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(20) NOT NULL,
+        description varchar(255) NOT NULL,
+        descriptioncode varchar(255) NOT NULL,
+        sequence int unsigned NOT NULL,
+        languagecode varchar(255) NOT NULL,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber),
+        INDEX idx_descriptioncode_partnumber (descriptioncode, partnumber)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_description ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_description ('.$db->conn->error.')';}
+                
+        $sql="CREATE TABLE price (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(20) NOT NULL,
+        pricesheetnumber varchar(255) NOT NULL,
+        amount decimal(10,4) not null,
+        currency varchar(3) NOT NULL,
+        priceuom varchar(3) NOT NULL,	
+        pricetype varchar(3) NOT NULL, 
+        effectivedate date not null,
+        expirationdate date not null,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber),
+        INDEX idx_pricesheetnumber_partnumber (pricesheetnumber, partnumber),
+        INDEX idx_effectivedate (effectivedate),
+        INDEX idx_expirationdate (expirationdate)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - price ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - price ('.$db->conn->error.')';}
+        
+        $sql="CREATE TABLE package (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(20) NOT NULL,
+        packageuom varchar(255) NOT NULL,
+        quantityofeaches decimal(8,3) not null,
+        innerquantity decimal(8,3) not null,
+        innerquantityuom varchar(255) NOT NULL,
+        weight decimal(8,3) not null,
+        weightsuom varchar(255) NOT NULL,
+        packagelevelGTIN varchar(255) NOT NULL,
+        packagebarcodecharacters varchar(255) NOT NULL,
+        shippingheight decimal(6,2) not null,
+        shippingwidth decimal(6,2) not null,
+        shippinglength decimal(6,2) not null,
+        dimensionsuom varchar(255) NOT NULL,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - packages ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - packages ('.$db->conn->error.')';}
 
+
+        $sql="CREATE TABLE interchange (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(20) NOT NULL,
+        competitorpartnumber varchar(20) NOT NULL,
+        brandAAIAID varchar(255) NOT NULL,
+        interchangequantity decimal(8,3) not null,
+        uom varchar(255) NOT NULL,
+        interchangenotes text not null,
+        internalnotes text not null,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber),
+        INDEX idx_brandAAIAID_partnumber (brandAAIAID, partnumber),
+        INDEX idx_competitorpartnumber (competitorpartnumber)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - interchange ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - interchange ('.$db->conn->error.')';}
+
+        
         $sql="CREATE TABLE slice (
         sliceid varchar(255) NOT NULL,
         slicename varchar(255) NOT NULL,

@@ -12,7 +12,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
  $part=$pim->getPart($partnumber);
  $oid=$part['oid'];
 
- //'parttypeid','lifecyclestatus','partcategory','replacedby'
+ //'parttypeid','lifecyclestatus','partcategory','replacedby','gtin','unspc'
  
  switch($_GET['elementid'])
  {
@@ -51,6 +51,18 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
    $pim->setPartDescription($partnumber,$_GET['value'],true);
    $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'description updated to:'.$_GET['value'],$oid);
+  break;
+
+  case 'gtin':
+   $pim->setPartGTIN($partnumber,$_GET['value'],true);
+   $oid=$pim->getOIDofPart($partnumber);
+   $pim->logPartEvent($partnumber,$userid,'GTIN updated to:'.$_GET['value'],$oid);
+  break;
+
+  case 'unspc':
+   $pim->setPartUNSPC($partnumber,$_GET['value'],true);
+   $oid=$pim->getOIDofPart($partnumber);
+   $pim->logPartEvent($partnumber,$userid,'UNSPC updated to:'.$_GET['value'],$oid);
   break;
 
 

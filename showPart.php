@@ -4,6 +4,9 @@ include_once('./class/padbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/pricingClass.php');
+include_once('./class/interchangeClass.php');
+include_once('./class/packagingClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'parts';
 
@@ -18,6 +21,9 @@ $padb = new padb;
 $pcdb = new pcdb;
 $pim = new pim;
 $asset = new asset;
+$pricing = new pricing;
+$interchange = new interchange;
+$packaging = new packaging;
 $logs=new logs;
 
 function niceAppAttributes($appattributes) {
@@ -52,6 +58,9 @@ $validpadbattributes=$padb->getAttributesForParttype($part['parttypeid']);
 $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
 $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
+$prices=$pricing->getPricesByPartnumber($partnumber);
+$competitors=$interchange->getInterchangeByPartnumber($partnumber);
+$packages=$packaging->getPackagesByPartnumber($partnumber);
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $lifecyclestatuses=$pcdb->getLifeCycleCodes();
 $history=$logs->getPartsEvents(50);
@@ -187,8 +196,13 @@ $history=$logs->getPartsEvents(50);
                         <tr><th>Partnumber</th><td><?php echo $part['partnumber']; ?></td></tr>
                         <tr><th>Part Type</th><td><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
                         <tr><th>Category</th><td><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
-                        <tr><th>Description</th><td><input type="text" id="description" value="<?php echo $part['description']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','description');">Update</button></div></td><tr>
+                        <tr><th>Descriptions</th><td><input type="text" id="description" value="<?php echo $part['description']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','description');">Update</button></div></td><tr>
+                        <tr><th>GTIN</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></div></td><tr>
+                        <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></div></td><tr>
                         <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
+                        <tr><th>Competitor<br/>Interchange</th></th><td><?php foreach($competitors as $competitor){;?><div><?php echo $competitor['brandAAIAID'].': '.$competitor['competitorpartnumber'];?></div><?php }?></td><tr>
+                        <tr><th>Packages</th><td><?php foreach($packages as $package){;?><div><?php echo $package['weight'].' '.$package['weightsuom'];?></div><?php }?></td><tr>
+                        <tr><th>Prices</th><td><?php foreach($prices as $price){;?><div><?php echo $price['pricetype'].': '.$price['amount'];?></div><?php }?></td><tr>
                         <tr><th>Attributes</th>
                             <td>
                                 <div id="appliedattributes" style="padding:5px;">

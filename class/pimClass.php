@@ -285,14 +285,24 @@ class pim
   //$db->dbname='pim';
   $db->connect();
   $part=false;
-  if($stmt=$db->conn->prepare('select * from part where partnumber=?'))
+  if($stmt=$db->conn->prepare('select part.*,partcategory.name,partcategory.brandID from part left join partcategory on part.partcategory=partcategory.id where partnumber=?'))
   {
    $stmt->bind_param('s', $partnumber);
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $part=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'replacedby'=>$row['replacedby'],'internalnotes'=> base64_decode($row['internalnotes']),'description'=>$row['description']);
+    $part=array('partnumber'=>$row['partnumber'],
+        'oid'=>$row['oid'],
+        'parttypeid'=>$row['parttypeid'],
+        'lifecyclestatus'=>$row['lifecyclestatus'],
+        'partcategory'=>$row['partcategory'],
+        'replacedby'=>$row['replacedby'],
+        'internalnotes'=> base64_decode($row['internalnotes']),
+        'description'=>$row['description'],'GTIN'=>$row['GTIN'],'UNSPC'=>$row['UNSPC'],
+        'brandid'=>$row['brandID']
+            );
+    
    }
   }
   $db->close();
@@ -514,7 +524,31 @@ class pim
   $db->close();
  }
 
+ function setPartGTIN($partnumber,$gtin,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set GTIN=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $gtin,$partnumber);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+ }
 
+ function setPartUNSPC($partnumber,$unspc,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set UNSPC=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $unspc,$partnumber);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+ }
+
+ 
  function getAppCategories()
  {
   $categories=array();
