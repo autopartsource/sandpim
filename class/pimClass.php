@@ -685,30 +685,30 @@ class pim
  function createPartcategory($name,$partcategory)
  {
   $db=new mysql; $db->connect();
-  $success=false;
+  $success=false; $brandid='';
   if(!$this->validPartcategoryid($partcategory) && !$this->existingPartcategoryName($name))
   {
    if($partcategory=='')
    {
-    if($stmt=$db->conn->prepare('insert into partcategory (id,name) values(null,?)'))
+    if($stmt=$db->conn->prepare('insert into partcategory (id,name,brandID) values(null,?,?)'))
     {
-     if($stmt->bind_param('s', $name))
+     if($stmt->bind_param('ss', $name, $brandid))
      {
       $success=$stmt->execute();
-     } // else{echo 'problem with bind';}
-    } // else{echo 'problem with prepare';}
+     }//  else{echo 'problem with bind';}
+    }//  else{echo 'problem with prepare';}
    }
    else
    {
-    if($stmt=$db->conn->prepare('insert into partcategory (id,name) values(?,?)'))
+    if($stmt=$db->conn->prepare('insert into partcategory (id,name,brandID) values(?,?,?)'))
     {
-     if($stmt->bind_param('is', $partcategory, $name))
+     if($stmt->bind_param('iss', $partcategory, $name, $brandid))
      {
       $success=$stmt->execute();
-     } // else{echo 'problem with bind';}
-    } // else{echo 'problem with prepare';}
+     }//  else{echo 'problem with bind';}
+    }//  else{echo 'problem with prepare';}
    }
-  } // else{echo 'already exists';}
+  }//  else{echo 'already exists';}
   $db->close();
   return $success;
  }
@@ -731,8 +731,29 @@ class pim
   return $success;
  }
 
+ function updatePartcategoryName($partcategory,$name)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update partcategory set `name`=? where id=?'))
+  {
+   $stmt->bind_param('si', $name,$partcategory);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
  
- 
+ function updatePartcategoryBrandID($partcategory,$brandID)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update partcategory set `brandID`=? where id=?'))
+  {
+   $stmt->bind_param('si', $brandID,$partcategory);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+
+
  
  
  function createAppCategory($name,$appcategory)
@@ -805,7 +826,27 @@ class pim
   return $categories;
  }
 
+ function getPartCategory($id)
+ {
+  $category=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from partcategory where id=?'))
+  {
+   if($stmt->bind_param('i', $id))
+   {
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID']);
+    }
+   }
+  }
+  $db->close();
+  return $category;
+ }
 
+ 
 
  function appCategoryName($appcategoryid)
  {
@@ -1646,6 +1687,72 @@ class pim
   $db->close();
  }
  
+
+
+ function getReceiverprofiles()
+ {
+  $profiles=false; $status=0;
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
+  if($stmt=$db->conn->prepare('select * from receiverprofile where status=?'))
+  {
+   $stmt->bind_param('i',$status);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $profiles[]=array('id'=>$row['id'],'name'=>$row['name'],'data'=>$row['data'],'status'=>$row['status'],'intervaldays'=>$row['intervaldays'],'lastexport'=>$row['lastexport'],'notes'=>$row['notes']);
+   }
+  }
+  $db->close();
+  return $profiles;
+ }
+
+ function getReceiverprofileById($id)
+ {
+  $profile=false; $status=0;
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
+  if($stmt=$db->conn->prepare('select * from receiverprofile where id=?'))
+  {
+   $stmt->bind_param('i',$id);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $profile=array('id'=>$row['id'],'name'=>$row['name'],'data'=>$row['data'],'status'=>$row['status'],'intervaldays'=>$row['intervaldays'],'lastexport'=>$row['lastexport'],'notes'=>$row['notes']);
+   }
+  }
+  $db->close();
+  return $profile;
+ }
+
+ function getMarketingcopyByReceiverprofileId($receiverprofileid)
+ {
+  $marketingcopy=false;
+  $db = new mysql; 
+  //$db->dbname='pim'; 
+  $db->connect();
+  if($stmt=$db->conn->prepare('select * from receiverprofile_marketingcopy where receiverprofileid=?'))
+  {
+   $stmt->bind_param('i',$receiverprofileid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $marketingcopy[]=array('id'=>$row['id'],'receiverprofileid'=>$row['receiverprofileid'],'marketcopycontent'=>$row['marketcopycontent'],'marketcopycode'=>$row['marketcopycode'],'marketcopyreference'=>$row['marketcopyreference'],'marketcopytype'=>$row['marketcopytype'],'recordsequence'=>$row['recordsequence'],'languagecode'=>$row['languagecode']);
+   }
+  }
+  $db->close();
+  return $marketingcopy;
+ }
+
+
+
+
+
  
 
 }?>

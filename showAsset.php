@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/pcdbClass.php');
 include_once('./class/configGetClass.php');
 
 
@@ -14,12 +15,14 @@ if (!isset($_SESSION['userid'])) {
 
 $pim = new pim;
 $asset = new asset;
+$pcdb = new pcdb;
 $configGet= new configGet;
 
+$allassettypes=$pcdb->getAssetTypeCodes();
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Connect') {
 
-    $asset->connectPartToAsset($_POST['partnumber'],$_POST['assetid'],$_POST['assettypecode'],0);
+    $asset->connectPartToAsset($_POST['partnumber'],$_POST['assetid'],$_POST['assettypecode'],0,$_POST['representation']);
     $asset->logAppEvent($_POST['assetid'], $_SESSION['userid'], $_POST['partnumber'].' connected to asset '.$_POST['assetid'].' as type '.$_POST['assettypecode'] , '');
 //    $pim->updatePartOID($partnumber);
 }
@@ -91,14 +94,15 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 Connected Parts
                 <table>
                     <?php foreach($connectedparts as $connectedpart){?>
-                    <tr><td><a href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a></td><td><?php echo $connectedpart['assettypecode'];?></td></tr>
+                    <tr><td><a href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a></td><td><?php echo $pcdb->assetTypeCodeDescription($connectedpart['assettypecode']);?></td></tr>
                     <?php }?>
                 </table>
                 <form method="post" action="showAsset.php?assetid=<?php echo $assetid;?>">
                     <div>
                         <input type="hidden" name="assetid" value="<?php echo $assetid;?>"/>
                         <input type="text" name="partnumber" size="8"/> 
-                        <select name="assettypecode"><option value="P04">Primary</option></select>
+                        <select name="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
+                        <select name="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
                         <input type="submit" name="submit" value="Connect"/>
                     </div>
                 </form>

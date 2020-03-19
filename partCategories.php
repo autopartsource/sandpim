@@ -60,7 +60,7 @@ $partcategories = $pim->getPartCategories();
                     foreach ($partcategories as $partcategory) 
                     {
                         $count=$pim->countPartsByPartcategory($partcategory['id']);
-                        echo '<tr><td>' . $partcategory['name'] . '</td><td>' . $partcategory['id'] . '</td><td>'.$count.'</td><td>';
+                        echo '<tr><td><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a></td><td>' . $partcategory['id'] . '</td><td>'.$count.'</td><td>';
                         if(!$count){echo '<form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form>';}
                         echo '</td></tr>';
                     }

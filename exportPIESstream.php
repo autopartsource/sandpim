@@ -3,12 +3,14 @@ include_once('/var/www/html/class/vcdbClass.php');
 include_once('/var/www/html/class/pimClass.php');
 include_once('/var/www/html/class/pricingClass.php');
 include_once('/var/www/html/class/assetClass.php');
+include_once('/var/www/html/class/packagingClass.php');
 include_once('/var/www/html/class/PIESgeneratorClass.php');
 
 $vcdb = new vcdb;
 $pim = new pim;
 $pricing = new pricing;
 $assets = new asset;
+$packaging=new packaging;
 $PIESgenerator=new PIESgenerator();
 
 
@@ -26,7 +28,6 @@ $PIESgenerator=new PIESgenerator();
 //receiver profile will hold CSS-style elements to convey into the PIES xml
 //
 /*
- 
  * 
  * 
  * 
@@ -36,7 +37,29 @@ $PIESgenerator=new PIESgenerator();
  */
 
 $header=array();
-$profiledata='ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
+$marketingcopys=array();
+
+$profile=$pim->getReceiverprofileById(intval($_POST['receiverprofile']));
+$profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
+
+$marketingcopyrecords=$pim->getMarketingcopyByReceiverprofileId($profile['id']);
+
+foreach($marketingcopyrecords as $marketingcopyrecord)
+{
+ $marketingcopy=array();
+ $marketingcopy['MarketCopyContent']=$marketingcopyrecord['marketcopycontent'];
+ $marketingcopy['MarketCopyCode']=$marketingcopyrecord['marketcopycode'];
+ $marketingcopy['MarketCopyReference']=$marketingcopyrecord['marketcopyreference'];
+ //$marketingcopy['MarketCopySubCode']=$marketingcopyrecord[''];
+ //$marketingcopy['MarketCopySubCodeReference']=$marketingcopyrecord[''];
+ $marketingcopy['MarketCopyType']=$marketingcopyrecord['marketcopytype'];
+ $marketingcopy['RecordSequence']=$marketingcopyrecord['recordsequence'];
+ $marketingcopy['LanguageCode']=$marketingcopyrecord['languagecode'];
+ $marketingcopys[]=$marketingcopy;
+}
+
+//print_r($marketingcopyrecords);
+
 $elements=explode(';',$profiledata);
 foreach($elements as $element)
 {
@@ -49,7 +72,6 @@ foreach($elements as $element)
 $header['BlanketEffectiveDate']= date('Y-m-d');
 $header['PAdbVersionDate']=date('Y-m-d');
 $header['PCdbVersionDate']=date('Y-m-d');
-
 
 $logicerrors=array();
 
@@ -103,7 +125,7 @@ foreach($partnumbers as $partnumber)
 
 //--------------------- prices -------------------------------    
     $prices=$pricing->getPricesByPartnumber($partnumber);
-    if(count($prices))
+    if($prices && count($prices))
     {
      foreach($prices as $pricerecord)
      {
@@ -121,9 +143,37 @@ foreach($partnumbers as $partnumber)
  //--------------------- EXPI -------------------------------    
 
  //--------------------- attributes -------------------------------    
-
+    $partattributes=$pim->getPartAttributes($partnumber);
+    if($partattributes && count($partattributes)>0)
+    {
+     foreach($partattributes as $partattribute)
+     {
+      $attribute['PADBAttribute']='N';
+      $attribute['AttributeID']=$partattribute['name'];
+      $attribute['AttributeValue']=$partattribute['value'];
+ 
+      if($partattribute['PAID']>0)
+      {
+       $attribute['PADBAttribute']='Y';
+       $attribute['AttributeID']=$partattribute['PAID'];
+      }
+      //$attribute['StyleID']=$partattributes[''];
+      $attribute['AttributeUOM']=$partattribute['uom'];
+      //$attribute['MultiValueQuantity']=$partattributes[''];
+      //$attribute['MultiValueSequence']=$partattributes[''];
+      //$attribute['LanguageCode']=$partattributes[''];
+      //$attribute['RecordNumber']=$partattributes[''];
+      if(trim($partattribute['value'])!=''){$item['attributes'][]=$attribute;}
+     }
+    }
+    
  //--------------------- packages -------------------------------    
-
+ $packages=$packaging->getPackagesByPartnumber($partnumber);
+ print_r($packages);
+    
+    
+    
+    
  //--------------------- kits -------------------------------    
  
  //--------------------- interchanges -------------------------------    
@@ -131,8 +181,7 @@ foreach($partnumbers as $partnumber)
  //--------------------- assets -------------------------------    
     
     $digialassetconnections=$assets->getAssetsConnectedToPart($partnumber);
-//print_r($digialassetconnections);
-    if(count($digialassetconnections))
+    if($digialassetconnections && count($digialassetconnections))
     {
      foreach($digialassetconnections as $digitalassetconnection)
      {
@@ -209,9 +258,8 @@ if(!$doc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
  libxml_clear_errors();
 }
 
-
  
-if(count($schemaresults)>0)
+if(isset($schemaresults) && count($schemaresults)>0)
 {
  echo '<div style="margin:10px; background-color:#ffc0c0;"><div style="font-size:1.5em;font-weight:bold;">Scheama (XSD) problems</div>';
  foreach($schemaresults as $result)

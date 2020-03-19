@@ -43,7 +43,7 @@ class PIESgenerator
 
   //----------------------- price sheets ---------------
   
-   if(count($item['prices']))
+   if(isset($item['prices']) && count($item['prices']))
    {
     $PricesElement = $doc->createElement('Prices');
     
@@ -120,7 +120,7 @@ class PIESgenerator
    $PartTerminologyIDelement= $doc->createElement('PartTerminologyID',$item['PartTerminologyID']);
    $ItemElement->appendChild($PartTerminologyIDelement);
 
-   if(count($item['descriptions']))
+   if(isset($item['descriptions']) && count($item['descriptions']))
    {
     $DescriptionsElement = $doc->createElement('Descriptions');
     foreach($item['descriptions'] as $description)
@@ -136,7 +136,7 @@ class PIESgenerator
    }
    //---------------------- prices ---------------------------------
    
-   if(count($item['prices']))
+   if(isset($item['prices']) && count($item['prices']))
    {
     $PricesElement = $doc->createElement('Prices');
     foreach($item['prices'] as $price)
@@ -159,7 +159,7 @@ class PIESgenerator
    
    
    //----------------------- attributes ----------------------------
-   if(count($item['attributes']))
+   if(isset($item['attributes']) && count($item['attributes']))
    {
     $ProductAttributesElement = $doc->createElement('ProductAttributes');
 
@@ -169,16 +169,16 @@ class PIESgenerator
      $ProductAttributeElement->setAttribute('MaintenanceType','A');
      if(intval($attribute['AttributeID'])>0){$ProductAttributeElement->setAttribute('PADBAttribute','Y');}else{$ProductAttributeElement->setAttribute('PADBAttribute','N');}
      $ProductAttributeElement->setAttribute('AttributeID',$attribute['AttributeID']);
-     if(array_key_exists('AttributeUOM',$attribute)){$ProductAttributeElement->setAttribute('AttributeUOM',$attribute['AttributeUOM']);}
-     if(array_key_exists('StyleID',$attribute)){$ProductAttributeElement->setAttribute('StyleID',$attribute['StyleID']);}
-     if(array_key_exists('RecordNumber',$attribute)){$ProductAttributeElement->setAttribute('RecordNumber',$attribute['RecordNumber']);}
-     if(array_key_exists('LanguageCode',$attribute)){$ProductAttributeElement->setAttribute('LanguageCode',$attribute['LanguageCode']);}
+     if(array_key_exists('AttributeUOM',$attribute) && trim($attribute['AttributeUOM'])!=''){$ProductAttributeElement->setAttribute('AttributeUOM',$attribute['AttributeUOM']);}
+     if(array_key_exists('StyleID',$attribute) && trim($attribute['StyleID'])!=''){$ProductAttributeElement->setAttribute('StyleID',$attribute['StyleID']);}
+     if(array_key_exists('RecordNumber',$attribute) && trim($attribute['RecordNumber'])!=''){$ProductAttributeElement->setAttribute('RecordNumber',$attribute['RecordNumber']);}
+     if(array_key_exists('LanguageCode',$attribute) && trim($attribute['LanguageCode'])!=''){$ProductAttributeElement->setAttribute('LanguageCode',$attribute['LanguageCode']);}
      $ProductAttributesElement->appendChild($ProductAttributeElement);
     }
     $ItemElement->appendChild($ProductAttributesElement);
    }
  
-   if(count($item['packages']))
+   if(isset($item['packages']) && count($item['packages']))
    {       
     $PackagesElement=$doc->createElement('Packages');
     foreach($item['packages'] as $package)
@@ -255,7 +255,7 @@ class PIESgenerator
    
    
    
-   if(count($item['interchanges']))
+   if(isset($item['interchanges']) && count($item['interchanges']))
    {
     $PartInterchangeInfoElement=$doc->createElement('PartInterchangeInfo');
     foreach($item['interchanges'] as $interchange)
@@ -295,7 +295,7 @@ class PIESgenerator
    
    
  
-   if(count($item['assets']))
+   if(isset($item['assets']) && count($item['assets']))
    {
     $DigitalAssetsElement=$doc->createElement('DigitalAssets');
     foreach($item['assets'] as $asset)

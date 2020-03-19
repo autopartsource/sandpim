@@ -27,6 +27,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     $assetheight=intval($_POST['assetheight']);
     $assetwidth=intval($_POST['assetwidth']);
     $dimensionUOM=$_POST['dimensionUOM'];
+    $resolution=intval($_POST['resolution']);
     $background=$_POST['background'];
     $filetype=$_POST['filetype'];
     $public=intval($_POST['public']);
@@ -37,7 +38,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     $filesize=intval($_POST['filesize']);
     $uripublic=intval($_POST['uripublic']);
         
-    if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic))
+    if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic))
     {
         $error_msg = 'Asset id ' . $id . ' was created.';
         $asset->logAppEvent($assetid, $_SESSION['userid'], 'Asset created' , '');
@@ -67,13 +68,23 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
 
             if($exiftype = exif_imagetype($destinationpath))
             {
+                switch($exiftype)
+                {
+                    case 1:  $filetype ='GIF'; break;
+                    case 2:  $filetype ='JPG'; break;
+                    case 3:  $filetype ='PNG'; break;
+                    case 6:  $filetype ='BMP'; break;
+                    case 7:  $filetype ='TIF'; break;
+                    case 8:  $filetype ='TIF'; break;
+                    default : $filetype =''; break;
+                }
+                
                 $valid_upload=true;
                 $imagedims = getimagesize($destinationpath);
                 $colormodecode = 'RBG';
                 $assetheight = $imagedims[1];
                 $assetwidth = $imagedims[0];
                 $dimensionUOM = 'PX';
-                $filetype = $exiftype;
                 $approved = 1;
                 $filepath=$destinationpath;
                 $filename=$pathparts['filename'];
@@ -86,7 +97,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                 $background='WHI';
                 $uri='';
                 $localpath=$pathparts['basename'];
-                $orientationviewcode='FRONT';
+                $orientationviewcode='FRO';
                 
             }
             else { // not a supported image type
@@ -149,6 +160,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                         <div style="padding:10px;">AssetID: <input type="text" name="assetid" value="<?php echo $filename;?>"/></div>
 			<div style="padding:10px;">Description <input name="description" type="text" value="<?php echo $description;?>"/></div>
 			<div style="padding:10px;">Orientation <input name="orientationviewcode" type="text" value="<?php echo $orientationviewcode;?>"/></div>
+			<div style="padding:10px;">Resolution (DPI) <input name="resolution" type="text" value="<?php echo $resolution;?>"/></div>
 			<div style="padding:10px;">Background <input name="background" type="text" value="<?php echo $background;?>"/></div>
 			<div style="padding:10px;">Public <input name="public" type="text" value="<?php echo $public;?>"/></div>
                         <div style="padding:10px;">URI <input name="uri" type="text" value="<?php echo $uri;?>"/></div>

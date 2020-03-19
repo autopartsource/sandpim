@@ -696,6 +696,32 @@ class setup
         INDEX idx_note (note))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - fitmentnote ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - fitmentnote ('.$db->conn->error.')';}
         
+   
+        $sql="CREATE TABLE receiverprofile (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        status tinyint unsigned not null,
+        `name` varchar(255) not null,
+        `data` text not null,
+        intervaldays int unsigned not null,
+        lastexport date not null,
+        notes text not null,
+        PRIMARY KEY (id),
+        INDEX idx_name (`name`))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile ('.$db->conn->error.')';}
+
+        
+        $sql="CREATE TABLE receiverprofile_marketingcopy (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        marketcopycontent text not null,
+        marketcopycode varchar(255) not null,
+        marketcopyreference varchar(255) not null,
+        marketcopytype varchar(255) not null,
+        recordsequence tinyint unsigned not null,
+        languagecode varchar(255) not null,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}
+   
         
         $db->close();
         return $returnvalue;
