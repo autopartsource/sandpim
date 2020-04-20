@@ -13,7 +13,7 @@ curl_setopt_array($curl, array(
 	CURLOPT_CUSTOMREQUEST => "GET",
 	CURLOPT_HTTPHEADER => array(
 		"x-rapidapi-host: product-data1.p.rapidapi.com",
-		"x-rapidapi-key: 2eb67acfe8msh352f22a18322944p1b4203jsn357daa999018"
+		"x-rapidapi-key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 	),
 ));
 
