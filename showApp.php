@@ -119,6 +119,22 @@ $pcdbversion=$pcdb->version();
 $historylimit=10;
 $history=$pim->getAppEvents($appid,$historylimit);
 
+
+$selectedcategories=array(); $selectedcategoriesurlvars=array();
+if(isset($_GET['categories']))
+{
+    $categoryparts=explode(',',urldecode($_GET['categories']));
+    foreach($categoryparts as $categorypart)
+    {
+        if(intval($categorypart)>0)
+        {
+            $selectedcategories[]=intval($categorypart);
+            $selectedcategoriesurlvars[]='appcategory_'.intval($categorypart).'=on';
+        }
+    }
+}
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -197,7 +213,7 @@ $history=$pim->getAppEvents($appid,$historylimit);
                  ?>
 
                  <table border="1" cellpadding="5">
-                  <tr><th>Base Vehicle</th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
+                     <tr><th><a href="./showAppsByBasevehicle.php?<?php echo implode('&',$selectedcategoriesurlvars);?>&makeid=<?php echo $mmy['MakeID'];?>&modelid=<?php echo $mmy['ModelID'];?>&yearid=<?php echo $mmy['year'];?>&submit=Show+Applications">Base Vehicle</a></th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
                   <tr><th>Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber'];?>"><?php echo $app['partnumber'];?></a></td></tr>
                   <tr><th>Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$app['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
                   <tr><th>Position</th><td align="right"><select id="positionid"  onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','positionid');"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select></td></tr>

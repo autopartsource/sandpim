@@ -56,7 +56,7 @@ $profiles = $pim->getReceiverprofiles();
                         echo '</tr>';
                     }
                     ?>
-                    <tr><form method="post"><td><input type="text" name="profilename" /></td><td><textarea name="profiledata" style="width:95%;"/></textarea><input type="submit" name="submit" value="Add"/></td></form></tr>
+                    <tr><form method="post"><td><input type="text" name="profilename" /></td><td><textarea name="profiledata" style="width:95%;"/></textarea><div><input type="submit" name="submit" value="Add"/></div></td></form></tr>
                 </table>
             </div>
 

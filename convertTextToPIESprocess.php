@@ -11,10 +11,79 @@ if (!isset($_SESSION['userid'])) {
 
 $pim = new pim;
 $PIESgenerator=new PIESgenerator();
+$piesxml='';
 
 if(isset($_POST['submit']) && $_POST['submit']=='Next') 
 {
- $parseerrors=array(); $warnings=array(); $schemaresults=array();
+ $errors=array(); $warnings=array(); $schemaresults=array(); $header=array();
+ 
+ $headerlines = explode("\r\n", $_POST['header']);
+   
+ foreach($headerlines as $record)
+ {
+  $fields=explode("\t",$record);
+  if(count($fields)>=2)
+  {
+   if($fields[0]=='BlanketEffectiveDate' && trim($fields[1]!='')){$header['BlanketEffectiveDate']=trim($fields[1]);}
+   if($fields[0]=='ChangesSinceDate' && trim($fields[1]!='')){$header['ChangesSinceDate']=trim($fields[1]);}
+   if($fields[0]=='ParentDUNSNumber' && trim($fields[1]!='')){$header['ParentDUNSNumber']=trim($fields[1]);}
+   if($fields[0]=='ParentGLN' && trim($fields[1]!='')){$header['ParentGLN']=trim($fields[1]);}
+   if($fields[0]=='ParentVMRSID' && trim($fields[1]!='')){$header['ParentVMRSID']=trim($fields[1]);}
+   if($fields[0]=='ParentAAIAID' && trim($fields[1]!='')){$header['ParentAAIAID']=trim($fields[1]);}
+   if($fields[0]=='BrandOwnerDUNS' && trim($fields[1]!='')){$header['BrandOwnerDUNS'] = trim($fields[1]);}
+   if($fields[0]=='BrandOwnerGLN' && trim($fields[1]!='')){$header['BrandOwnerGLN']=trim($fields[1]);}
+   if($fields[0]=='BrandOwnerVMRSID' && trim($fields[1]!='')){$header['BrandOwnerVMRSID']=trim($fields[1]);}
+   if($fields[0]=='BrandOwnerAAIAID' && trim($fields[1]!='')){$header['BrandOwnerAAIAID']=trim($fields[1]);}   
+   if($fields[0]=='BuyerDuns' && trim($fields[1]!='')){$header['BuyerDuns']=trim($fields[1]);}   
+   if($fields[0]=='CurrencyCode' && trim($fields[1]!='')){$header['CurrencyCode']=trim($fields[1]);}
+   if($fields[0]=='LanguageCode' && trim($fields[1]!='')){$header['LanguageCode']=trim($fields[1]);}
+   if($fields[0]=='TechnicalContact' && trim($fields[1]!='')){$header['TechnicalContact']=trim($fields[1]);}
+   if($fields[0]=='ContactEmail' && trim($fields[1]!='')){$header['ContactEmail']=trim($fields[1]);}
+   if($fields[0]=='PAdbVersionDate' && trim($fields[1]!='')){$header['PAdbVersionDate']=trim($fields[1]);}
+   if($fields[0]=='PCdbVersionDate' && trim($fields[1]!='')){$header['PCdbVersionDate']=trim($fields[1]);}
+  }
+ }
+ 
+//----------------------- marketing copy -----------------------
+ 
+$marketingcopyrecords = explode("\r\n", $_POST['marketingcopy']);
+$headerfields=explode("\t",$marketingcopyrecords[0]);
+
+$marketingcopys=array();
+
+$fieldnumber=0;
+$MarketCopyTypeFieldIndex=-1; $LanguageCodeFieldIndex=-1; $MarketCopyCodeFieldIndex=-1; $MarketCopyReferenceFieldIndex=-1; $MarketCopySubCodeFieldIndex=-1; $MarketCopySubCodeReferenceFieldIndex=-1; $RecordSequenceFieldIndex=-1; $MarketCopyFieldIndex=-1;
+
+for($i=0; $i<=count($headerfields)-1; $i++)
+{
+ if($headerfields[$i]=='MarketCopyContent'){$MarketCopyFieldIndex=$i;}
+ if($headerfields[$i]=='MarketCopyCode'){$MarketCopyCodeFieldIndex=$i;}
+ if($headerfields[$i]=='MarketCopyReference'){$MarketCopyReferenceFieldIndex=$i;}
+ if($headerfields[$i]=='MarketCopySubCode'){$MarketCopySubCodeFieldIndex=$i;}
+ if($headerfields[$i]=='MarketCopySubCodeReference'){$MarketCopySubCodeReferenceFieldIndex=$i;}
+ if($headerfields[$i]=='MarketCopyType'){$MarketCopyTypeFieldIndex=$i;}
+ if($headerfields[$i]=='RecordSequence'){$RecordSequenceFieldIndex=$i;}
+ if($headerfields[$i]=='LanguageCode'){$LanguageCodeFieldIndex=$i;}
+} 
+  
+$recordnumber=0;
+foreach($marketingcopyrecords as $record)
+{
+ $fields = explode("\t",$record);
+ if(count($fields)==1){continue;} // empty row
+ if($recordnumber==0){$recordnumber++;continue;}
+ $marketcopy=array();
+ if($MarketCopyFieldIndex>=0 && trim($fields[$MarketCopyFieldIndex])!=''){$marketcopy['MarketCopyContent']=trim($fields[$MarketCopyFieldIndex]);}
+ if($MarketCopyCodeFieldIndex>=0 && trim($fields[$MarketCopyCodeFieldIndex])!=''){ $marketcopy['MarketCopyCode']=trim($fields[$MarketCopyCodeFieldIndex]);}
+ if($MarketCopyReferenceFieldIndex>=0 && trim($fields[$MarketCopyReferenceFieldIndex])!=''){$marketcopy['MarketCopyReference']=trim($fields[$MarketCopyReferenceFieldIndex]);}
+ if($MarketCopySubCodeFieldIndex>=0 && trim($fields[$MarketCopySubCodeFieldIndex])!=''){$marketcopy['MarketCopySubCode']=trim($fields[$MarketCopySubCodeFieldIndex]);}
+ if($MarketCopySubCodeReferenceFieldIndex>=0 && trim($fields[$MarketCopySubCodeReferenceFieldIndex])!=''){$marketcopy['MarketCopySubCodeReference']=trim($fields[$MarketCopySubCodeReferenceFieldIndex]);}
+ if($MarketCopyTypeFieldIndex>=0 && trim($fields[$MarketCopyTypeFieldIndex])!=''){$marketcopy['MarketCopyType']=trim($fields[$MarketCopyTypeFieldIndex]);}
+ if($RecordSequenceFieldIndex>=0 && trim($fields[$RecordSequenceFieldIndex])!=''){$marketcopy['RecordSequence']=trim($fields[$RecordSequenceFieldIndex]);}
+ if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$marketcopy['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
+ $marketingcopys[]=$marketcopy;
+ $recordnumber++;
+}
  
  // --------------------- items ---------------------------------   
  $itemsrecords = explode("\r\n", $_POST['items']);
@@ -82,53 +151,53 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
  else
  { // The header row does not contain: "PartNumber \t PartTerminologyID \t BrandAAIAID"
 
-   $parseerrors[]='First row does not contain the expected column names (PartNumber,PartTerminologyID,BrandAAIAID)';  
+   $errors[]='First row does not contain the expected column names (PartNumber,PartTerminologyID,BrandAAIAID)';  
  }
  
  // --------------------- Descriptions -----------------------
 
- $descriptionsrecords = explode("\r\n", $_POST['descriptions']);
- $headerfields=explode("\t",$descriptionsrecords[0]);
+$descriptionsrecords = explode("\r\n", $_POST['descriptions']);
+$headerfields=explode("\t",$descriptionsrecords[0]);
 
- $descriptions=array();
+$descriptions=array();
 
- $PartNumberFieldIndex=-1; $DescriptionFieldIndex=-1; $DescriptionCodeFieldIndex=-1; $LanguageCodeFieldIndex=-1; $SequenceFieldIndex=-1; 
- for($i=0; $i<=count($headerfields)-1; $i++)
- {
-  if($headerfields[$i]=='PartNumber'){$PartNumberFieldIndex=$i;}
-  if($headerfields[$i]=='Description'){$DescriptionFieldIndex=$i;}
-  if($headerfields[$i]=='DescriptionCode'){$DescriptionCodeFieldIndex=$i;}
-  if($headerfields[$i]=='LanguageCode'){$LanguageCodeFieldIndex=$i;}
-  if($headerfields[$i]=='Sequence'){$SequenceFieldIndex=$i;}
- } 
+$PartNumberFieldIndex=-1; $DescriptionFieldIndex=-1; $DescriptionCodeFieldIndex=-1; $LanguageCodeFieldIndex=-1; $SequenceFieldIndex=-1; 
+for($i=0; $i<=count($headerfields)-1; $i++)
+{
+ if($headerfields[$i]=='PartNumber'){$PartNumberFieldIndex=$i;}
+ if($headerfields[$i]=='Description'){$DescriptionFieldIndex=$i;}
+ if($headerfields[$i]=='DescriptionCode'){$DescriptionCodeFieldIndex=$i;}
+ if($headerfields[$i]=='LanguageCode'){$LanguageCodeFieldIndex=$i;}
+ if($headerfields[$i]=='Sequence'){$SequenceFieldIndex=$i;}
+} 
   
- $recordnumber=0;
- if($PartNumberFieldIndex==0)
+$recordnumber=0;
+if($PartNumberFieldIndex==0)
+{
+ foreach($descriptionsrecords as $record)
  {
-  foreach($descriptionsrecords as $record)
+  $fields = explode("\t",$record);
+  if(count($fields)==1){continue;} // empty row
+  if($recordnumber==0){$recordnumber++;continue;}
+  $description=array();
+  $PartNumber=trim($fields[0]);
+  if($DescriptionFieldIndex>=0){$description['Description']=trim($fields[$DescriptionFieldIndex]);}
+  if($DescriptionCodeFieldIndex>=0){$description['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
+  if($LanguageCodeFieldIndex>=0){$description['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
+  if($SequenceFieldIndex>=0){$description['Sequence']=trim($fields[$SequenceFieldIndex]);}
+  // see if this partnumber was established in the Items list
+  if(array_key_exists($PartNumber,$items))
   {
-   $fields = explode("\t",$record);
-   if(count($fields)==1){continue;} // empty row
-   if($recordnumber==0){$recordnumber++;continue;}
-   $description=array();
-   $PartNumber=trim($fields[0]);
-   if($DescriptionFieldIndex>=0){$description['Description']=trim($fields[$DescriptionFieldIndex]);}
-   if($DescriptionCodeFieldIndex>=0){$description['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
-   if($LanguageCodeFieldIndex>=0){$description['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
-   if($SequenceFieldIndex>=0){$description['Sequence']=trim($fields[$SequenceFieldIndex]);}
-   // see if this partnumber was established in the Items list
-   if(array_key_exists($PartNumber,$items))
-   {
-    $items[$PartNumber]['descriptions'][]=$description;
-   }
-   else
-   {
-    $parseerrors[]='Descriptions contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
-   }
-   $recordnumber++;
-  } 
+   $items[$PartNumber]['descriptions'][]=$description;
+  }
+  else
+  {
+   $errors[]='Descriptions contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
+  }
+  $recordnumber++;
  }
 }
+
  
  
 
@@ -197,7 +266,7 @@ if($PartNumberFieldIndex==0)
   }
   else
   {
-   $parseerrors[]='Prices contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
+   $errors[]='Prices contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
   }
   $recordnumber++;
  }
@@ -256,7 +325,7 @@ if($PartNumberFieldIndex==0)
   }
   else
   {
-   $parseerrors[]='Attributes contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
+   $errors[]='Attributes contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
   }
   $recordnumber++;
  }
@@ -374,7 +443,7 @@ if($PartNumberFieldIndex==0)
   }
   else
   {
-   $parseerrors[]='packages contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
+   $errors[]='packages contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
   }
   $recordnumber++;
  }
@@ -445,7 +514,7 @@ if($PartNumberFieldIndex==0)
   }
   else
   {
-   $parseerrors[]='Interchanges contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
+   $errors[]='Interchanges contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
   }
   $recordnumber++;
  }
@@ -543,16 +612,48 @@ if($PartNumberFieldIndex==0)
   }
   else
   {
-   $parseerrors[]='Assets contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
+   $errors[]='Assets contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
   }
   $recordnumber++;
  }
 }
  
- //-----------------------------------------------------
-$doimport=false; if(isset($_POST['doimport'])){$doimport=true;}
-$importresults=$PIESgenerator->importPIESdata($items,intval($_POST['partcategory']),$doimport);
  
+ //-----------------------------------------------------
+ $doc=$PIESgenerator->createPIESdoc($header,$marketingcopys,$items);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
+ $doc->formatOutput=true;
+ $piesxml=$doc->saveXML();    
+
+
+ $schemavalidated=true;   
+ libxml_use_internal_errors(true);
+ if(!$doc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
+ {
+  $schemavalidated=false;
+  $schemaerrors = libxml_get_errors();
+  foreach ($schemaerrors as $schemaerror)
+  {
+   $errormessage='';
+   switch ($schemaerror->level) 
+   {
+    case LIBXML_ERR_WARNING:
+     //$errormessage .= 'Warning code '. $schemaerror->code;
+     break;
+    case LIBXML_ERR_ERROR:
+     //$errormessage .= 'Error code '.$schemaerror->code;
+     break;
+    case LIBXML_ERR_FATAL:
+     //$errormessage .= 'Fatal Error code '.$schemaerror->code;
+     break;
+   }
+   $errormessage.= trim($schemaerror->message);
+   $schemaresults[]=$errormessage;   
+  }
+  libxml_clear_errors();
+ }
+}
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -564,8 +665,8 @@ $importresults=$PIESgenerator->importPIESdata($items,intval($_POST['partcategory
 <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h1>Import part data from spreadsheet template</h1>
-        <h2>Step 2: Results</h2>
+        <h1>Build PIES xml from structured text</h1>
+        <h2>Step 2: Analyze results and download XML</h2>
 
         <div class="wrapper">
             <div class="contentLeft"></div>
@@ -573,33 +674,33 @@ $importresults=$PIESgenerator->importPIESdata($items,intval($_POST['partcategory
             <!-- Main Content -->
             <div class="contentMain">
                 
-                <?php if(count($parseerrors)>0){?>
+                <?php if(count($schemaresults)>0){?>
+                <div style="padding:10px;">Scheama (XSD) problems</div>
+                <table><?php
+                foreach($schemaresults as $result)
+                { // render each element of schema problems into a table
+                    echo '<tr><td style="text-align:left;">'.$result.'</td></tr>';
+                }
+                ?>
+                </table>
+                <?php }else{?>
+                 <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $piesxml;?></textarea></div>
+                <?php }?>
+                 
+
+
+
+                <?php if(count($errors)>0){?>
                 <div style="padding:10px;">Logic Problems</div>
                 <table><?php
-                foreach($parseerrors as $error)
+                foreach($errors as $error)
                 {
                     echo '<tr><td style="text-align:left;">'.$error.'</td></tr>';
                 }
                 ?>
                 </table>
                 <?php }?>
-
-                
-                
-                <?php if(count($importresults)>0){?>
-                <div style="padding:10px;">Actions</div>
-                <table><?php
-                foreach($importresults as $importresult)
-                {
-                    echo '<tr><td style="text-align:left;">'.$importresult.'</td></tr>';
-                }
-                ?>
-                </table>
-                <?php }?>
-
-                
-                
-                
+                 
             </div>
 
             <div class="contentRight"></div>

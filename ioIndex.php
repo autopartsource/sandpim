@@ -27,20 +27,27 @@ $pim=new pim;
 
             <!-- Main Content -->
             <div class="contentMain button" style="flex-direction: column;">
+                <div style="padding:10px;"><a href="exportACESselect.php">Export ACES xml</a></div>
+                <div style="padding:10px;"><a href="exportPIESselect.php">Export PIES xml</a></div>
+                <div style="padding:10px;"><a href="exportForPrintSelect.php">Export for print publishing</a></div>
+                <div style="padding:10px;"><a href="exportFlatAppsSelect.php">Export flattened applications files</a></div>
+                <div style="padding:10px;"><a href="exportFlatPartsSelect.php">Export flattened parts file</a></div>
                 <div style="padding:10px;"><a href="importACESsnippet.php">Import small ACES xml text</a></div>
                 <div style="padding:10px;"><a href="importACESupload.php">Upload & import ACES xml file</a></div>
                 <div style="padding:10px;"><a href="importACEStext.php">Import applications from structured text</a></div>
-                <div style="padding:10px;"><a href="importPartData.php">Import part data from structured text</a></div>
-                <div style="padding:10px;"><a href="exportACESselect.php">Export ACES xml file</a></div>
-                <div style="padding:10px;"><a href="exportPIESselect.php">Export PIES xml file</a></div>
-                <div style="padding:10px;"><a href="exportFlatAppsSelect.php">Export flattened applications files</a></div>
-                <div style="padding:10px;"><a href="exportFlatPartsSelect.php">Export flattened parts file</a></div>
+                <div style="padding:10px;"><a href="importPartText.php">Import parts from template spreadsheet</a></div>
+                <div style="padding:10px;"><a href="importPartAttributeData.php">Import part attributes from structured text</a></div>
+                <div style="padding:10px;"><a href="importAssetData.php">Import assets from structured text</a></div>
+                <div style="padding:10px;"><a href="convertTextToPIESinput.php">Create PIES xml from template spreadsheet</a></div>
             </div>
 
+            
+            
+            
             <div class="contentRight"></div>
         </div>
                 
         <!-- Footer -->
         <?php include('/var/www/html/includes/footer.php'); ?>
-    </body>
+    </body> 
 </html>

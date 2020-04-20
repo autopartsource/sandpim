@@ -1177,14 +1177,14 @@ class pim
   if(!$this->validPart($partnumber))
   {
    $replacedby=''; $lifecyclestatus='2'; $oid=$this->newoid();
-   if($stmt=$db->conn->prepare('insert into part (partnumber,partcategory,parttypeid,replacedby,lifecyclestatus,oid) values(?,?,?,?,?,?)'))
+   if($stmt=$db->conn->prepare("insert into part (partnumber,partcategory,parttypeid,replacedby,lifecyclestatus,internalnotes,description,GTIN,UNSPC,createdDate,firststockedDate,discontinuedDate,oid) values(?,?,?,?,?,'','','','',now(),'0000-00-00','0000-00-00',?)"))
    {
     if($stmt->bind_param('siisss', $partnumber,$partcategory,$parttypeid,$replacedby,$lifecyclestatus,$oid))
     {
      $success=$stmt->execute();
-    } // else{echo 'problem with bind';}
-   } // else{echo 'problem with prepare';}
-  } // else{echo 'already exists';}
+    }// else{echo 'problem with bind';}
+   }// else{echo 'problem with prepare';}
+  }// else{echo 'already exists';}
   $db->close();
   return $success;
  }

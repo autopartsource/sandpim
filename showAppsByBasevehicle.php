@@ -319,7 +319,7 @@ ksort($fitmentcolumnkeys);
                                         } if ($app['status'] == 1) {
                                             $appstyle = 'apppart-deleted';
                                         }
-                                        echo '<div id="apppart_' . $app['id'] . '" class="' . $appstyle . '" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' . $rowfitmentattributes . '" data-column="' . $positionandparttype . '" data-sourceapp="' . $app['id'] . '" data-basevehicleid="' . $app['basevehicleid'] . '" data-partnumber="' . $app['partnumber'] . '" data-quantityperapp="' . $app['quantityperapp'] . '" data-cosmetic="' . $app['cosmetic'] . '" data-appcategory="' . $app['appcategory'] . '" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' . $app['id'] . '">' . $app['partnumber'] . '</a></div>';
+                                        echo '<div id="apppart_' . $app['id'] . '" class="' . $appstyle . '" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' . $rowfitmentattributes . '" data-column="' . $positionandparttype . '" data-sourceapp="' . $app['id'] . '" data-basevehicleid="' . $app['basevehicleid'] . '" data-partnumber="' . $app['partnumber'] . '" data-quantityperapp="' . $app['quantityperapp'] . '" data-cosmetic="' . $app['cosmetic'] . '" data-appcategory="' . $app['appcategory'] . '" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' . $app['id'] .'&categories='. urlencode(implode(',',$appcategories)).'">' . $app['partnumber'] . '</a></div>';
                                     }
                                 }
                                 echo '</div>';

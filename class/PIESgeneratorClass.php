@@ -1,5 +1,8 @@
 <?php
 include_once("mysqlClass.php");
+include_once("pricingClass.php");
+include_once("assetClass.php");
+include_once("pimClass.php");
 
 class PIESgenerator
 {
@@ -120,6 +123,8 @@ class PIESgenerator
    $PartTerminologyIDelement= $doc->createElement('PartTerminologyID',$item['PartTerminologyID']);
    $ItemElement->appendChild($PartTerminologyIDelement);
 
+   
+   //------------------------- descriptions -----------------------
    if(isset($item['descriptions']) && count($item['descriptions']))
    {
     $DescriptionsElement = $doc->createElement('Descriptions');
@@ -375,7 +380,54 @@ class PIESgenerator
  }
 
     
-    
+ function importPIESdata($items,$partcategory,$doimport)
+ {
+  $pricing = new pricing;
+  $asset = new asset;
+  $pim = new pim;
+  
+  $results=array();  $actiondescription='would have been imported'; if($doimport){$actiondescription='was imported';}
+  foreach($items as $partnumber=>$item)
+  {
+   $results[]='Item '.$partnumber.' '.$actiondescription.' to partcategory '.$partcategory;
+   
+   $partcreateresult=$pim->createPart($partnumber, $partcategory, $item['PartTerminologyID']);
+   
+   if($partcreateresult){echo 'create success';}else{echo 'create failure';}
+   
+   
+   // ----------------- prices --------------------
+   if(isset($item['prices']) && count($item['prices']))
+   {
+    foreach($item['prices'] as $price)
+    {
+     if($doimport){$pricing->addPrice($partnumber, $price['PriceSheetNumber'], $price['Price'], $price['CurrencyCode'], $price['PriceUOM'], $price['PriceType'], $price['EffectiveDate'], $price['ExpirationDate']);}
+     $results[]=$price['PriceType'].' price ('.$price['Price'].') for item '.$partnumber.' '.$actiondescription;
+    }
+   }
+
+   //------------------ assets --------------------
+   if(isset($item['assets']) && count($item['assets']))
+   {
+    $sequence=1;
+    foreach($item['assets'] as $digitalasset)
+    {
+     if($doimport)
+     {
+      $oid=$pim->newoid();   
+      $asset->addAsset($digitalasset['AssetID'], $digitalasset['FileName'], '', $digitalasset['URI'], $digitalasset['OrientationView'], $digitalasset['ColorMode'], $digitalasset['AssetHeight'], $digitalasset['AssetWidth'], $digitalasset['UOM'], $digitalasset['Resolution'], $digitalasset['Background'], $digitalasset['FileType'], 1, 1, $digitalasset['Description'], $oid, '', $digitalasset['FileSize'], 1)  ;
+      $asset->connectPartToAsset($partnumber, $digitalasset['AssetID'], $digitalasset['AssetType'], $sequence, $digitalasset['Representation']);
+      $sequence++;
+     }
+     $results[]=$digitalasset['FileType'].' asset ('.$digitalasset['AssetID'].') for item '.$partnumber.' '.$actiondescription;
+    }
+   }
+ 
+   
+  }
+
+  return $results;   
+ }
     
     
  function parttypeName($parttypeid)

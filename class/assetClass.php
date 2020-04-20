@@ -16,9 +16,9 @@ class asset
     if($stmt->execute())
     {
      $id=$db->conn->insert_id;
-    }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
-   }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
-  }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+    } else{echo 'problem with execute: '.$db->conn->error;}
+   } else{echo 'problem with bind';}
+  } else{echo 'problem with prepare';}
   $db->close();
   return $id;
  }
