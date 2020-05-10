@@ -14,7 +14,7 @@ $userid=$_SESSION['userid'];
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
         <script>
             var searchterm="";
             var termTimers = setInterval(lookForSearchtermChange, 100);
@@ -81,6 +81,6 @@ $userid=$_SESSION['userid'];
         </div> <!-- End Wrapper -->
                 
         <!-- Footer -->
-        <?php include('/var/www/html/includes/footer.php'); ?>
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>

@@ -174,6 +174,6 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
         </div>
 
         <!-- Footer -->
-        <?php include('/var/www/html/includes/footer.php'); ?>
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>

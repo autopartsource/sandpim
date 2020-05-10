@@ -36,7 +36,7 @@ if (isset($_POST['input'])) {
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -62,6 +62,6 @@ if (isset($_POST['input'])) {
         </div>
 
         <!-- Footer -->
-<?php include('/var/www/html/includes/footer.php'); ?>
+<?php include('./includes/footer.php'); ?>
     </body>
 </html>

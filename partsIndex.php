@@ -28,7 +28,7 @@ if (isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) {
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -69,6 +69,6 @@ if (isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) {
         </div>
 
         <!-- Footer -->
-        <?php include('/var/www/html/includes/footer.php'); ?>
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>

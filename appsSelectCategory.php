@@ -26,7 +26,7 @@ $appcategories=$user->getUserVisibleAppcategories($userid);
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
         <script>
             function selectUnselectAppcategory(userid,appcategory)
             {
@@ -80,6 +80,6 @@ $appcategories=$user->getUserVisibleAppcategories($userid);
         </div>
                 
         <!-- Footer -->
-        <?php include('/var/www/html/includes/footer.php'); ?>
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>

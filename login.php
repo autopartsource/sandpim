@@ -42,7 +42,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
     </head>
     <body>
         <div class="wrapper">

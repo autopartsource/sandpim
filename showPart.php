@@ -69,7 +69,7 @@ $history=$logs->getPartsEvents(50);
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
         
         <script>
             function updatePart(partnumber,elementtype,elementid)
@@ -249,6 +249,6 @@ $history=$logs->getPartsEvents(50);
         </div>
                 
         <!-- Footer -->
-        <?php include('/var/www/html/includes/footer.php'); ?>
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>

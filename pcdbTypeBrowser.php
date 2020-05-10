@@ -37,7 +37,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
         <script>
             function addRemoveType(parttypeid)
             {
@@ -109,6 +109,6 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
         </div>
                 
         <!-- Footer -->
-        <?php include('/var/www/html/includes/footer.php'); ?>
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>

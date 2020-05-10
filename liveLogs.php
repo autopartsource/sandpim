@@ -11,7 +11,7 @@ if (!isset($_SESSION['userid'])) {
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
         <script>
@@ -231,6 +231,6 @@ if (!isset($_SESSION['userid'])) {
         </div>
                 
         <!-- Footer -->
-        <?php include('/var/www/html/includes/footer.php'); ?>
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>

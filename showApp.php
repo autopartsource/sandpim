@@ -139,7 +139,7 @@ if(isset($_GET['categories']))
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
         <script>
             function updateApp(appid,elementtype,elementid)
             {
@@ -266,6 +266,6 @@ if(isset($_GET['categories']))
         </div> <!-- End Wrapper -->
                 
         <!-- Footer -->
-        <?php include('/var/www/html/includes/footer.php'); ?>
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>

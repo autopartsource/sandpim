@@ -8,7 +8,7 @@ $partcategories = $pim->getPartCategories();
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -68,6 +68,6 @@ $partcategories = $pim->getPartCategories();
         </div>
 
         <!-- Footer -->
-<?php include('/var/www/html/includes/footer.php'); ?>
+<?php include('./includes/footer.php'); ?>
     </body>
 </html>

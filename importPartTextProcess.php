@@ -557,7 +557,7 @@ $importresults=$PIESgenerator->importPIESdata($items,intval($_POST['partcategory
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -606,6 +606,6 @@ $importresults=$PIESgenerator->importPIESdata($items,intval($_POST['partcategory
         </div>
 
         <!-- Footer -->
-<?php include('/var/www/html/includes/footer.php'); ?>
+<?php include('./includes/footer.php'); ?>
     </body>
 </html>

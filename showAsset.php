@@ -44,7 +44,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('/var/www/html/includes/header.php'); ?>
+        <?php include('./includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -110,6 +110,6 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
         </div>
                 
         <!-- Footer -->
-        <?php include('/var/www/html/includes/footer.php'); ?>
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>
