@@ -1,5 +1,5 @@
 <?php
-include_once('/var/www/html/class/logsClass.php');
+include_once('./class/logsClass.php');
 session_start();
 $logs= new logs;
 $events=array();

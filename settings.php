@@ -1,5 +1,5 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
+include_once('./class/pimClass.php');
 $navCategory = 'settings';
 
 session_start();

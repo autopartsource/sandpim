@@ -1,6 +1,6 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
-include_once('/var/www/html/class/assetClass.php');
+include_once('./class/pimClass.php');
+include_once('./class/assetClass.php');
 session_start();
 $pim= new pim;
 $asset=new asset;

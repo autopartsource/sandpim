@@ -1,9 +1,9 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
-include_once('/var/www/html/class/userClass.php');
-include_once('/var/www/html/class/configGetClass.php');
-include_once('/var/www/html/class/assetClass.php');
-include_once('/var/www/html/class/logsClass.php');
+include_once('./class/pimClass.php');
+include_once('./class/userClass.php');
+include_once('./class/configGetClass.php');
+include_once('./class/assetClass.php');
+include_once('./class/logsClass.php');
 
 $navCategory = 'dashboard';
 

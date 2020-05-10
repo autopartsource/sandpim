@@ -1,6 +1,6 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
-include_once('/var/www/html/class/padbClass.php');
+include_once('./class/pimClass.php');
+include_once('./class/padbClass.php');
 session_start();
 $pim= new pim;
 $padb= new padb;

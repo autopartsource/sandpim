@@ -1,6 +1,6 @@
 <?php
-include_once('/var/www/html/class/bookClass.php');
-include_once('/var/www/html/class/pimClass.php');
+include_once('./class/bookClass.php');
+include_once('./class/pimClass.php');
 
 
 session_start();

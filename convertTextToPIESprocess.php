@@ -1,6 +1,6 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
-include_once('/var/www/html/class/PIESgeneratorClass.php');
+include_once('./class/pimClass.php');
+include_once('./class/PIESgeneratorClass.php');
 $navCategory = 'import/export';
 
 session_start();

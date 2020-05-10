@@ -1,7 +1,7 @@
 <?php
-include_once('/var/www/html/class/vcdbClass.php');
-include_once('/var/www/html/class/pcdbClass.php');
-include_once('/var/www/html/class/pimClass.php');
+include_once('./class/vcdbClass.php');
+include_once('./class/pcdbClass.php');
+include_once('./class/pimClass.php');
 $navCategory = 'parts';
 
 session_start();

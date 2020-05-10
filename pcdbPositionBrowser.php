@@ -1,6 +1,6 @@
 <?php
-include_once('/var/www/html/class/pcdbClass.php');
-include_once('/var/www/html/class/pimClass.php');
+include_once('./class/pcdbClass.php');
+include_once('./class/pimClass.php');
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}

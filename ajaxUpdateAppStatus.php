@@ -1,5 +1,5 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
+include_once('./class/pimClass.php');
 session_start();
 $pim= new pim;
 //$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_REQUEST,true)); fclose($fp);

@@ -1,5 +1,7 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
+include_once('./class/pimClass.php');
+$navCategory = 'import/export';
+session_start();
 
 ?>
 <!DOCTYPE html>

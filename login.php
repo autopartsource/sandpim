@@ -1,7 +1,7 @@
 <?php
-include_once('/var/www/html/class/userClass.php');
-include_once('/var/www/html/class/logsClass.php');
-include_once('/var/www/html/class/configGetClass.php');
+include_once('./class/userClass.php');
+include_once('./class/logsClass.php');
+include_once('./class/configGetClass.php');
 session_start();
 $user = new user;
 $logs = new logs;

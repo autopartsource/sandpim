@@ -1,7 +1,7 @@
 <?php
-include_once('/var/www/html/class/userClass.php');
-include_once('/var/www/html/class/configGetClass.php');
-include_once('/var/www/html/class/configSetClass.php');
+include_once('./class/userClass.php');
+include_once('./class/configGetClass.php');
+include_once('./class/configSetClass.php');
 $navCategory = 'settings';
 
 session_start();

@@ -1,5 +1,5 @@
 <?php
-include_once('/var/www/html/class/userClass.php');
+include_once('./class/userClass.php');
 session_start();
 $user= new user;
 

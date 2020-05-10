@@ -1,6 +1,6 @@
 <?php
-include_once('/var/www/html/class/pimClass.php');
-include_once('/var/www/html/class/qdbClass.php');
+include_once('./class/pimClass.php');
+include_once('./class/qdbClass.php');
 session_start();
 $pim= new pim;
 $qdb= new qdb;

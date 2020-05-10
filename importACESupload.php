@@ -1,7 +1,7 @@
 <?php
-include_once('/var/www/html/class/vcdbClass.php');
-include_once('/var/www/html/class/pimClass.php');
-include_once('/var/www/html/class/logsClass.php');
+include_once('./class/vcdbClass.php');
+include_once('./class/pimClass.php');
+include_once('./class/logsClass.php');
 $navCategory = 'import/export';
 
 session_start();

@@ -1,5 +1,5 @@
 <?php
-include_once('/var/www/html/class/setupClass.php');
+include_once('./class/setupClass.php');
 session_start();
 $setup= new setup;
 

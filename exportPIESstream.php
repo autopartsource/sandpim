@@ -1,10 +1,10 @@
 <?php
-include_once('/var/www/html/class/vcdbClass.php');
-include_once('/var/www/html/class/pimClass.php');
-include_once('/var/www/html/class/pricingClass.php');
-include_once('/var/www/html/class/assetClass.php');
-include_once('/var/www/html/class/packagingClass.php');
-include_once('/var/www/html/class/PIESgeneratorClass.php');
+include_once('./class/vcdbClass.php');
+include_once('./class/pimClass.php');
+include_once('./class/pricingClass.php');
+include_once('./class/assetClass.php');
+include_once('./class/packagingClass.php');
+include_once('./class/PIESgeneratorClass.php');
 
 $vcdb = new vcdb;
 $pim = new pim;
