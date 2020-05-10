@@ -664,7 +664,7 @@ if($PartNumberFieldIndex==0)
     </head>
     <body>
         <!-- Navigation Bar -->
-<?php include('topnav.php'); ?>
+        <?php if (isset($_SESSION['userid'])){include('topnav.php');} ?>
 
         <!-- Header -->
         <h1>Build PIES xml from structured text</h1>
