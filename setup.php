@@ -3,7 +3,7 @@ include_once('./class/setupClass.php');
 session_start();
 $setup= new setup;
 
-$dbname='mypim1';
+$dbname='pim';
 
 $results=$setup->createDatebase($dbname);
 if($results=='')
