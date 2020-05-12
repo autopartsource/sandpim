@@ -716,7 +716,7 @@ if($PartNumberFieldIndex==0)
             <!-- Main Content -->
             <div class="contentMain">
                 
-                <?php if(count($schemaresults)>0 && false){?>
+                <?php if(count($schemaresults)>0){?>
                 <div style="padding:10px;">Scheama (XSD) problems</div>
                 <table><?php
                 foreach($schemaresults as $result)

@@ -64,6 +64,7 @@ session_start();
                         <textarea name="assets" rows="6" cols="130"></textarea>
                     </div>
                     <input type="submit" name="submit" value="Next"/>
+                    <input type="checkbox" name="showtext"/>
                     
                    </form>
                
