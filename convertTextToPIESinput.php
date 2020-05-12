@@ -45,7 +45,7 @@ session_start();
                     </div>
 
                     <div style="padding:10px;"><div>EXPI</div>
-                        <textarea name="expi" rows="6" cols="130"></textarea>
+                        <textarea name="expis" rows="6" cols="130"></textarea>
                     </div>
 
                     <div style="padding:10px;"><div>Attributes</div>

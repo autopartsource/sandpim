@@ -279,6 +279,46 @@ if($PartNumberFieldIndex==0)
  
  // --------------------- EXPI -----------------------
  
+$expisrecords = explode("\r\n", $_POST['expis']);
+$headerfields=explode("\t",$expisrecords[0]);
+
+$PartNumberFieldIndex=-1; $EXPICodeFieldIndex=-1; $EXPIValueFieldIndex=-1;  $LanguageCodeFieldIndex=-1; 
+for($i=0; $i<=count($headerfields)-1; $i++)
+{ // identify the named columns' IDs
+ if($headerfields[$i]=='PartNumber'){$PartNumberFieldIndex=$i;}
+ if($headerfields[$i]=='EXPICode'){$EXPICodeFieldIndex=$i;}
+ if($headerfields[$i]=='EXPIValue'){$EXPIValueFieldIndex=$i;}
+ if($headerfields[$i]=='LanguageCode'){$LanguageCodeFieldIndex=$i;}
+} 
+  
+$recordnumber=0;
+if($PartNumberFieldIndex==0)
+{
+ foreach($expisrecords as $record)
+ {
+  $fields = explode("\t",$record);
+  if(count($fields)==1){continue;} // empty row
+  if($recordnumber==0){$recordnumber++;continue;}
+  $expi=array();
+  $PartNumber=trim($fields[0]);
+
+  if($EXPICodeFieldIndex>=0){$expi['EXPICode']=trim($fields[$EXPICodeFieldIndex]);}
+  if($EXPIValueFieldIndex>=0){$expi['EXPIValue']=trim($fields[$EXPIValueFieldIndex]);}
+  if($LanguageCodeFieldIndex>=0){$expi['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
+
+  // see if this partnumber was established in the Items list
+  if(array_key_exists($PartNumber,$items))
+  {
+   $items[$PartNumber]['expis'][]=$expi;
+  }
+  else
+  {
+   $errors[]='EXPI contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
+  }
+  $recordnumber++;
+ }
+}
+
  // --------------------- Attributes -----------------------
 
 $attributesrecords = explode("\r\n", $_POST['attributes']);
@@ -676,7 +716,7 @@ if($PartNumberFieldIndex==0)
             <!-- Main Content -->
             <div class="contentMain">
                 
-                <?php if(count($schemaresults)>0){?>
+                <?php if(count($schemaresults)>0 && false){?>
                 <div style="padding:10px;">Scheama (XSD) problems</div>
                 <table><?php
                 foreach($schemaresults as $result)

@@ -162,6 +162,21 @@ class PIESgenerator
     $ItemElement->appendChild($PricesElement);
    }
    
+   //------------------------ EXPI ---------------------------- 
+   
+   if(isset($item['expis']) && count($item['expis']))
+   {
+    $ExtendedInformationElement = $doc->createElement('ExtendedInformation');
+    foreach($item['expis'] as $expi)
+    {
+     $ExtendedProductInformationElement=$doc->createElement('ExtendedProductInformation',$expi['EXPIValue']);
+     $ExtendedProductInformationElement->setAttribute('MaintenanceType','A');
+     $ExtendedProductInformationElement->setAttribute('EXPICode',$expi['EXPICode']);
+     if(array_key_exists('LanguageCode',$expi)){$ExtendedProductInformationElement->setAttribute('LanguageCode',$expi['LanguageCode']);};
+     $ExtendedInformationElement->appendChild($ExtendedProductInformationElement);
+    }
+    $ItemElement->appendChild($ExtendedInformationElement);
+   }
    
    //----------------------- attributes ----------------------------
    if(isset($item['attributes']) && count($item['attributes']))
