@@ -63,8 +63,9 @@ session_start();
                     <div style="padding:10px;"><div>Digital Assets</div>
                         <textarea name="assets" rows="6" cols="130"></textarea>
                     </div>
-                    <input type="submit" name="submit" value="Next"/>
-                    <input type="checkbox" name="showtext"/>
+                    <input type="submit" name="submit" value="Create PIES file"/>
+                    <div><input type="checkbox" name="showtext"/>Show output in text area</div>
+                    <div><input type="checkbox" name="ignorelogic"/>Ignore logic flaws</div>
                     
                    </form>
                

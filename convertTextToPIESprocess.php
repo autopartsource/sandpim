@@ -15,7 +15,7 @@ $pim = new pim;
 $PIESgenerator=new PIESgenerator();
 $piesxml='';
 
-if(isset($_POST['submit']) && $_POST['submit']=='Next') 
+if(isset($_POST['submit']) && $_POST['submit']=='Create PIES file') 
 {
  $errors=array(); $warnings=array(); $schemaresults=array(); $header=array();
  
@@ -717,11 +717,11 @@ if($PartNumberFieldIndex==0)
             <div class="contentMain">
                 
                 <?php if(count($schemaresults)>0){?>
-                <div style="padding:10px;">Scheama (XSD) problems</div>
+                <div style="padding:10px;background-color:#FF8800;font-size:1.5em;">Your input data causes schema (XSD) problems. Here they are:</div>
                 <table><?php
                 foreach($schemaresults as $result)
                 { // render each element of schema problems into a table
-                    echo '<tr><td style="text-align:left;">'.$result.'</td></tr>';
+                    echo '<tr><td style="text-align:left;background-color:#FF8800;">'.$result.'</td></tr>';
                 }
                 ?>
                 </table>
@@ -733,11 +733,11 @@ if($PartNumberFieldIndex==0)
 
 
                 <?php if(count($errors)>0){?>
-                <div style="padding:10px;">Logic Problems</div>
+                <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
                 <table><?php
                 foreach($errors as $error)
                 {
-                    echo '<tr><td style="text-align:left;">'.$error.'</td></tr>';
+                    echo '<tr><td style="text-align:left;background-color:yellow;">'.$error.'</td></tr>';
                 }
                 ?>
                 </table>
