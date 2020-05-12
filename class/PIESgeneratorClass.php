@@ -319,7 +319,7 @@ class PIESgenerator
      if(array_key_exists('Background',$asset)){$BackgroundElement=$doc->createElement('Background',$asset['Background']); $DigitalFileInformationElement->appendChild($BackgroundElement);}
      if(array_key_exists('OrientationView',$asset)){$OrientationViewElement=$doc->createElement('OrientationView',$asset['OrientationView']); $DigitalFileInformationElement->appendChild($OrientationViewElement);}
      
-     if(array_key_exists('AssetDimensionsUOM',$asset) && array_key_exists('AssetHeight',$asset) && array_key_exists('AssetWidth',$asset))
+     if(array_key_exists('AssetDimensionsUOM',$asset) && array_key_exists('AssetHeight',$asset) && array_key_exists('AssetWidth',$asset) && intval($asset['AssetWidth'])>0 && intval($asset['AssetHeight'])>0)
      {
       $AssetDimensionsElement=$doc->createElement('AssetDimensions'); 
       $AssetDimensionsElement->setAttribute('UOM', $asset['AssetDimensionsUOM']);
