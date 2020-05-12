@@ -371,7 +371,7 @@ class PIESgenerator
   $TrailerElement=new DOMElement('Trailer');
   $root->appendChild($TrailerElement); 
 
-  $TransactionDateElement=new DOMElement('TransactionDate','2020-01-27');
+  $TransactionDateElement=new DOMElement('TransactionDate',date('Y-m-d'));
   $ItemCountElement=new DOMElement('ItemCount',count($items));
   $TrailerElement->appendChild($ItemCountElement);
   $TrailerElement->appendChild($TransactionDateElement);
