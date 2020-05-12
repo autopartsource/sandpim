@@ -15,7 +15,7 @@ session_start();
 
         <!-- Header -->
         <h1>Build PIES xml from spreadsheet template</h1>
-        <h2>Step 1: copy/paste data from each tab in the spreadsheet</h2>
+        <h2>Step 1: copy/paste data from each tab in the <a href="./PIES_7-1_flat_template_2020-05-12.xlsx">spreadsheet</a></h2>
 
         <div class="wrapper">
             <div class="contentLeft"></div>
