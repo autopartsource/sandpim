@@ -15,7 +15,7 @@ session_start();
 
         <!-- Header -->
         <div><img src="./rhubarb.png" width="120"/></div>
-        <h1>Build PIES xml from spreadsheet template</h1>
+        <h1>Build PIES (7.1) xml from spreadsheet template</h1>
         <h2>Step 1: copy/paste data from each tab in the <a href="./PIES_7-1_flat_template_2020-05-13.xlsx">spreadsheet</a></h2>
 
         <div class="wrapper">
@@ -61,10 +61,10 @@ session_start();
                         <textarea name="interchanges" rows="6" cols="130"></textarea>
                     </div>
 
-                    <div style="padding:10px;"><div>Digital Assets</div>
+                    <div style="padding:10px;"><div>DigitalAssets</div>
                         <textarea name="assets" rows="6" cols="130"></textarea>
                     </div>
-                    <input type="submit" name="submit" value="Create PIES file"/>
+                    <input type="submit" name="submit" value="Create PIES xml"/>
                     <div><input type="checkbox" name="showtext"/>Show output in text area</div>
                     <div><input type="checkbox" name="ignorelogic"/>Ignore logic flaws</div>
                     
@@ -76,6 +76,6 @@ session_start();
         </div>
 
         <!-- Footer -->
-<?php include('./includes/footer.php'); ?>
+<?php if (isset($_SESSION['userid'])){include('./includes/footer.php');} ?>
     </body>
 </html>

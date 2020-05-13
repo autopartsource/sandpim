@@ -15,7 +15,7 @@ $pim = new pim;
 $PIESgenerator=new PIESgenerator();
 $piesxml='';
 
-if(isset($_POST['submit']) && $_POST['submit']=='Create PIES file') 
+if(isset($_POST['submit']) && $_POST['submit']=='Create PIES xml') 
 {
  $errors=array(); $warnings=array(); $schemaresults=array(); $header=array();
  
@@ -759,6 +759,6 @@ if($PartNumberFieldIndex==0)
         </div>
 
         <!-- Footer -->
-<?php include('./includes/footer.php'); ?>
+<?php if (isset($_SESSION['userid'])){include('./includes/footer.php');} ?>
     </body>
 </html>
