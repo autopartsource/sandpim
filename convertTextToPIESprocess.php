@@ -75,7 +75,7 @@ foreach($marketingcopyrecords as $record)
  if(count($fields)==1){continue;} // empty row
  if($recordnumber==0){$recordnumber++;continue;}
  $marketcopy=array();
- if($MarketCopyFieldIndex>=0 && trim($fields[$MarketCopyFieldIndex])!=''){$marketcopy['MarketCopyContent']=trim($fields[$MarketCopyFieldIndex]);}
+ if($MarketCopyFieldIndex>=0 && trim($fields[$MarketCopyFieldIndex])!=''){$marketcopy['MarketCopyContent']=htmlspecialchars(trim($fields[$MarketCopyFieldIndex]));}
  if($MarketCopyCodeFieldIndex>=0 && trim($fields[$MarketCopyCodeFieldIndex])!=''){ $marketcopy['MarketCopyCode']=trim($fields[$MarketCopyCodeFieldIndex]);}
  if($MarketCopyReferenceFieldIndex>=0 && trim($fields[$MarketCopyReferenceFieldIndex])!=''){$marketcopy['MarketCopyReference']=trim($fields[$MarketCopyReferenceFieldIndex]);}
  if($MarketCopySubCodeFieldIndex>=0 && trim($fields[$MarketCopySubCodeFieldIndex])!=''){$marketcopy['MarketCopySubCode']=trim($fields[$MarketCopySubCodeFieldIndex]);}
@@ -193,7 +193,7 @@ if($PartNumberFieldIndex==0)
   if($recordnumber==0){$recordnumber++;continue;}
   $description=array();
   $PartNumber=trim($fields[0]);
-  if($DescriptionFieldIndex>=0){$description['Description']=trim($fields[$DescriptionFieldIndex]);}
+  if($DescriptionFieldIndex>=0){$description['Description']= htmlspecialchars(trim($fields[$DescriptionFieldIndex]));}
   if($DescriptionCodeFieldIndex>=0){$description['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
   if($LanguageCodeFieldIndex>=0){$description['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
   if($SequenceFieldIndex>=0){$description['Sequence']=trim($fields[$SequenceFieldIndex]);}
@@ -259,7 +259,7 @@ if($PartNumberFieldIndex==0)
   $price=array();
   $PartNumber=trim($fields[0]);
 
-  if($PriceSheetNumberFieldIndex>=0 && trim($fields[$PriceSheetNumberFieldIndex])!=''){$price['PriceSheetNumber']=trim($fields[$PriceSheetNumberFieldIndex]);}
+  if($PriceSheetNumberFieldIndex>=0 && trim($fields[$PriceSheetNumberFieldIndex])!=''){$price['PriceSheetNumber']= htmlspecialchars(trim($fields[$PriceSheetNumberFieldIndex]));}
   if($CurrencyCodeFieldIndex>=0 && trim($fields[$CurrencyCodeFieldIndex])!=''){$price['CurrencyCode']=trim($fields[$CurrencyCodeFieldIndex]);}
   if($EffectiveDateFieldIndex>=0 && trim($fields[$EffectiveDateFieldIndex])!=''){$price['EffectiveDate']=trim($fields[$EffectiveDateFieldIndex]);}
   if($ExpirationDateFieldIndex>=0 && trim($fields[$ExpirationDateFieldIndex])!=''){$price['ExpirationDate']=trim($fields[$ExpirationDateFieldIndex]);}
@@ -313,7 +313,7 @@ if($PartNumberFieldIndex==0)
   $PartNumber=trim($fields[0]);
 
   if($EXPICodeFieldIndex>=0){$expi['EXPICode']=trim($fields[$EXPICodeFieldIndex]);}
-  if($EXPIValueFieldIndex>=0){$expi['EXPIValue']=trim($fields[$EXPIValueFieldIndex]);}
+  if($EXPIValueFieldIndex>=0){$expi['EXPIValue']= htmlspecialchars(trim($fields[$EXPIValueFieldIndex]));}
   if($LanguageCodeFieldIndex>=0){$expi['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
 
   // see if this partnumber was established in the Items list
@@ -360,9 +360,9 @@ if($PartNumberFieldIndex==0)
   $attribute=array();
   $PartNumber=trim($fields[0]);
 
-  if($AttributeIDFieldIndex>=0){$attribute['AttributeID']=trim($fields[$AttributeIDFieldIndex]);}
+  if($AttributeIDFieldIndex>=0){$attribute['AttributeID']= htmlspecialchars(trim($fields[$AttributeIDFieldIndex]));}
   if($PADBAttributeFieldIndex>=0){$attribute['PADBAttribute']=trim($fields[$PADBAttributeFieldIndex]);}
-  if($AttributeValueFieldIndex>=0){$attribute['AttributeValue']=trim($fields[$AttributeValueFieldIndex]);}
+  if($AttributeValueFieldIndex>=0){$attribute['AttributeValue']=htmlspecialchars(trim($fields[$AttributeValueFieldIndex]));}
   if($StyleIDFieldIndex>=0){$attribute['StyleID']=trim($fields[$StyleIDFieldIndex]);}
   if($AttributeUOMFieldIndex>=0){$attribute['AttributeUOM']=trim($fields[$AttributeUOMFieldIndex]);}
   if($MultiValueQuantityFieldIndex>=0){$attribute['MultiValueQuantity']=trim($fields[$MultiValueQuantityFieldIndex]);}
@@ -548,7 +548,7 @@ if($PartNumberFieldIndex==0)
   if($ReferenceItemFieldIndex>=0 && trim($fields[$ReferenceItemFieldIndex])!=''){$interchange['ReferenceItem']=trim($fields[$ReferenceItemFieldIndex]);}
   if($InterchangeQuantityFieldIndex>=0 && trim($fields[$InterchangeQuantityFieldIndex])!=''){$interchange['InterchangeQuantity']=trim($fields[$InterchangeQuantityFieldIndex]);}
   if($UOMFieldIndex>=0 && trim($fields[$UOMFieldIndex])!=''){$interchange['UOM']=trim($fields[$UOMFieldIndex]);}
-  if($InterchangeNotesFieldIndex>=0 && trim($fields[$InterchangeNotesFieldIndex])!=''){$interchange['InterchangeNotes']=trim($fields[$InterchangeNotesFieldIndex]);}
+  if($InterchangeNotesFieldIndex>=0 && trim($fields[$InterchangeNotesFieldIndex])!=''){$interchange['InterchangeNotes']=htmlspecialchars(trim($fields[$InterchangeNotesFieldIndex]));}
   if($BrandAAIAIDFieldIndex>=0 && trim($fields[$BrandAAIAIDFieldIndex])!=''){$interchange['BrandAAIAID']=trim($fields[$BrandAAIAIDFieldIndex]);}
   if($BrandLabelFieldIndex>=0 && trim($fields[$BrandLabelFieldIndex])!=''){$interchange['BrandLabel']=trim($fields[$BrandLabelFieldIndex]);}
   if($SubBrandAAIAIDFieldIndex>=0 && trim($fields[$SubBrandAAIAIDFieldIndex])!=''){$interchange['SubBrandAAIAID']=trim($fields[$SubBrandAAIAIDFieldIndex]);}
@@ -556,7 +556,7 @@ if($PartNumberFieldIndex==0)
   if($VMRSBrandIDFieldIndex>=0 && trim($fields[$VMRSBrandIDFieldIndex])!=''){$interchange['VMRSBrandID']=trim($fields[$VMRSBrandIDFieldIndex]);}
   if($ItemEquivalentUOMFieldIndex>=0 && trim($fields[$ItemEquivalentUOMFieldIndex])!=''){$interchange['ItemEquivalentUOM']=trim($fields[$ItemEquivalentUOMFieldIndex]);}
   if($QualityGradeLevelFieldIndex>=0 && trim($fields[$QualityGradeLevelFieldIndex])!=''){$interchange['QualityGradeLevel']=trim($fields[$QualityGradeLevelFieldIndex]);}
-  if($InternalNotesFieldIndex>=0 && trim($fields[$InternalNotesFieldIndex])!=''){$interchange['InternalNotes']=trim($fields[$InternalNotesFieldIndex]);}
+  if($InternalNotesFieldIndex>=0 && trim($fields[$InternalNotesFieldIndex])!=''){$interchange['InternalNotes']=htmlspecialchars(trim($fields[$InternalNotesFieldIndex]));}
   if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$interchange['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
   
   // see if this partnumber was established in the Items list
@@ -649,7 +649,7 @@ if($PartNumberFieldIndex==0)
   if($HemisphereFieldIndex>=0 && trim($fields[$HemisphereFieldIndex])!=''){$asset['Hemisphere']=trim($fields[$HemisphereFieldIndex]);}
   if($PlungeFieldIndex>=0 && trim($fields[$PlungeFieldIndex])!=''){$asset['Plunge']=trim($fields[$PlungeFieldIndex]);}
   if($TotalPlanesFieldIndex>=0 && trim($fields[$TotalPlanesFieldIndex])!=''){$asset['TotalPlanes']=trim($fields[$TotalPlanesFieldIndex]);}
-  if($DescriptionFieldIndex>=0 && trim($fields[$DescriptionFieldIndex])!=''){$asset['Description']=trim($fields[$DescriptionFieldIndex]);}
+  if($DescriptionFieldIndex>=0 && trim($fields[$DescriptionFieldIndex])!=''){$asset['Description']=htmlspecialchars(trim($fields[$DescriptionFieldIndex]));}
   if($DescriptionCodeFieldIndex>=0 && trim($fields[$DescriptionCodeFieldIndex])!=''){$asset['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
   if($DescriptionLanguageCodeFieldIndex>=0 && trim($fields[$DescriptionLanguageCodeFieldIndex])!=''){$asset['DescriptionLanguageCode']=trim($fields[$DescriptionLanguageCodeFieldIndex]);}
   if($AssetDateFieldIndex>=0 && trim($fields[$AssetDateFieldIndex])!=''){$asset['AssetDate']=trim($fields[$AssetDateFieldIndex]);}
