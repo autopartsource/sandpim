@@ -113,6 +113,11 @@ foreach($marketingcopyrecords as $record)
    if($headerfields[$i]=='ItemEffectiveDate'){$ItemEffectiveDateFieldIndex=$i;}
    if($headerfields[$i]=='AvailableDate'){$AvailableDateFieldIndex=$i;}
    if($headerfields[$i]=='UNSPSC'){$UNSPSCfieldIndex=$i;}
+   if($headerfields[$i]=='BrandLabel'){$BrandLabelFieldIndex=$i;}
+   if($headerfields[$i]=='VMRSBrandID'){$VMRSBrandIDfieldIndex=$i;}
+   if($headerfields[$i]=='QuantityPerApplication'){$QuantityPerApplicationFieldIndex=$i;}
+   if($headerfields[$i]=='QuantityPerApplicationQualifier'){$QuantityPerApplicationQualifierFieldIndex=$i;}
+   if($headerfields[$i]=='QuantityPerApplicationUOM'){$QuantityPerApplicationUOMfieldIndex=$i;}
    $fieldnumber++;
   }
    
@@ -145,6 +150,14 @@ foreach($marketingcopyrecords as $record)
    if($ItemEffectiveDateFieldIndex && trim($fields[$ItemEffectiveDateFieldIndex])!=''){$item['ItemEffectiveDate']=trim($fields[$ItemEffectiveDateFieldIndex]);}
    if($AvailableDateFieldIndex && trim($fields[$AvailableDateFieldIndex])!=''){$item['AvailableDate']=trim($fields[$AvailableDateFieldIndex]);}
    if($UNSPSCfieldIndex && trim($fields[$UNSPSCfieldIndex])!=''){$item['UNSPSC']=trim($fields[$UNSPSCfieldIndex]);}  
+
+   if($BrandLabelFieldIndex && trim($fields[$BrandLabelFieldIndex])!=''){$item['BrandLabel']=trim($fields[$BrandLabelFieldIndex]);}  
+   if($VMRSBrandIDfieldIndex && trim($fields[$VMRSBrandIDfieldIndex])!=''){$item['VMRSBrandID']=trim($fields[$VMRSBrandIDfieldIndex]);}  
+   if($QuantityPerApplicationFieldIndex && trim($fields[$QuantityPerApplicationFieldIndex])!=''){$item['QuantityPerApplication']=trim($fields[$QuantityPerApplicationFieldIndex]);}  
+   if($QuantityPerApplicationQualifierFieldIndex && trim($fields[$QuantityPerApplicationQualifierFieldIndex])!=''){$item['QuantityPerApplicationQualifier']=trim($fields[$QuantityPerApplicationQualifierFieldIndex]);}  
+   if($QuantityPerApplicationUOMfieldIndex && trim($fields[$QuantityPerApplicationUOMfieldIndex])!=''){$item['QuantityPerApplicationUOM']=trim($fields[$QuantityPerApplicationUOMfieldIndex]);}  
+
+
    
    $items[$PartNumber]=$item;
    $recordnumber++;
