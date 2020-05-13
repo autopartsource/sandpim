@@ -106,27 +106,31 @@ class PIESgenerator
    if(array_key_exists('BaseItemID', $item)){$BaseItemIDelement= $doc->createElement('BaseItemID',$item['BaseItemID']); $ItemElement->appendChild($BaseItemIDelement);}
    if(array_key_exists('ItemLevelGTIN',$item)){$ItemLevelGTINelement= $doc->createElement('ItemLevelGTIN',$item['ItemLevelGTIN']); $ItemElement->appendChild($ItemLevelGTINelement); $ItemLevelGTINelement->setAttribute('GTINQualifier', $item['GTINQualifier']);}
  
-   $PartNumberElement= $doc->createElement('PartNumber',$PartNumber);
-   $ItemElement->appendChild($PartNumberElement);
-
-   $BrandAAIAIDelement= $doc->createElement('BrandAAIAID',$item['BrandAAIAID']);
-   $ItemElement->appendChild($BrandAAIAIDelement);
-
+   $PartNumberElement= $doc->createElement('PartNumber',$PartNumber);  $ItemElement->appendChild($PartNumberElement);
+   $BrandAAIAIDelement= $doc->createElement('BrandAAIAID',$item['BrandAAIAID']); $ItemElement->appendChild($BrandAAIAIDelement);
+   if(array_key_exists('BrandLabel', $item)){$BrandLabelElement= $doc->createElement('BrandLabel',$item['BrandLabel']); $ItemElement->appendChild($BrandLabelElement); }
+   if(array_key_exists('VMRSBrandID', $item)){$VMRSBrandIDelement= $doc->createElement('VMRSBrandID',$item['VMRSBrandID']); $ItemElement->appendChild($VMRSBrandIDelement); }
    if(array_key_exists('ACESApplications', $item)){$ACESApplicationsElement= $doc->createElement('ACESApplications',$item['ACESApplications']); $ItemElement->appendChild($ACESApplicationsElement);}
    if(array_key_exists('ItemQuantitySize', $item) && array_key_exists('ItemQuantitySizeUOM', $item)){$ItemQuantitySizeElement= $doc->createElement('ItemQuantitySize',$item['ItemQuantitySize']); $ItemQuantitySizeElement->setAttribute('UOM', $item['ItemQuantitySizeUOM']); $ItemElement->appendChild($ItemQuantitySizeElement);}
    if(array_key_exists('ContainerType', $item)){$ContainerTypeElement= $doc->createElement('ContainerType',$item['ContainerType']); $ItemElement->appendChild($ContainerTypeElement);}
+
+   if(array_key_exists('QuantityPerApplication', $item))
+   {
+    $QuantityPerApplicationElement= $doc->createElement('QuantityPerApplication',$item['QuantityPerApplication']);
+    if(array_key_exists('QuantityPerApplicationQualifier', $item)){$QuantityPerApplicationElement->setAttribute('Qualifier',$item['QuantityPerApplicationQualifier']);}
+    if(array_key_exists('QuantityPerApplicationUOM', $item)){$QuantityPerApplicationElement->setAttribute('UOM',$item['QuantityPerApplicationUOM']);}
+    $ItemElement->appendChild($QuantityPerApplicationElement);
+   }
+   
    if(array_key_exists('ItemEffectiveDate', $item)){$ItemEffectiveDateElement= $doc->createElement('ItemEffectiveDate',$item['ItemEffectiveDate']); $ItemElement->appendChild($ItemEffectiveDateElement);}
    if(array_key_exists('AvailableDate', $item)){$AvailableDateElement= $doc->createElement('AvailableDate',$item['AvailableDate']); $ItemElement->appendChild($AvailableDateElement);}
    if(array_key_exists('MinimumOrderQuantity', $item) && array_key_exists('MinimumOrderQuantityUOM', $item)){$MinimumOrderQuantityElement= $doc->createElement('MinimumOrderQuantity',$item['MinimumOrderQuantity']); $ItemElement->appendChild($MinimumOrderQuantityElement);  $MinimumOrderQuantityElement->setAttribute('UOM', $item['MinimumOrderQuantityUOM']);  }
    if(array_key_exists('UNSPSC', $item)){$UNSPSCElement= $doc->createElement('UNSPSC',$item['UNSPSC']); $ItemElement->appendChild($UNSPSCElement); }
-   if(array_key_exists('VMRSBrandID', $item)){$VMRSBrandIDelement= $doc->createElement('VMRSBrandID',$item['VMRSBrandID']); $ItemElement->appendChild($VMRSBrandIDelement); }
-   if(array_key_exists('BrandLabel', $item)){$BrandLabelElement= $doc->createElement('BrandLabel',$item['BrandLabel']); $ItemElement->appendChild($BrandLabelElement); }
-   if(array_key_exists('QuantityPerApplication', $item)){$QuantityPerApplicationElement= $doc->createElement('QuantityPerApplication',$item['QuantityPerApplication']); $ItemElement->appendChild($QuantityPerApplicationElement); }
-   if(array_key_exists('QuantityPerApplicationQualifier', $item)){$QuantityPerApplicationQualifierElement= $doc->createElement('QuantityPerApplicationQualifier',$item['QuantityPerApplicationQualifier']); $ItemElement->appendChild($QuantityPerApplicationQualifierElement); }
-   if(array_key_exists('QuantityPerApplicationUOM', $item)){$QuantityPerApplicationUOMelement= $doc->createElement('QuantityPerApplicationUOM',$item['QuantityPerApplicationUOM']); $ItemElement->appendChild($QuantityPerApplicationUOMelement); }
 
-   $PartTerminologyIDelement= $doc->createElement('PartTerminologyID',$item['PartTerminologyID']);
-   $ItemElement->appendChild($PartTerminologyIDelement);
+   $PartTerminologyIDelement= $doc->createElement('PartTerminologyID',$item['PartTerminologyID']); $ItemElement->appendChild($PartTerminologyIDelement);
+   
+   
+   
 
    
    //------------------------- descriptions -----------------------

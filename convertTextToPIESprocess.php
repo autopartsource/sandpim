@@ -97,7 +97,7 @@ foreach($marketingcopyrecords as $record)
  
  // examine the header to map the optional elements that we care about
   $fieldnumber=0;
-  $ItemLevelGTINfieldIndex=0; $GTINQualifierFieldIndex=0; $MinimumOrderQuantityFieldIndex=0; $MinimumOrderQuantityUOMfieldIndex=0;
+  $ItemLevelGTINfieldIndex=-1; $GTINQualifierFieldIndex=-1; $MinimumOrderQuantityFieldIndex=-1; $MinimumOrderQuantityUOMfieldIndex=-1;  $HazardousMaterialCodeFieldIndex=-1; $BaseItemIDfieldIndex=-1; $ACESApplicationsFieldIndex=-1; $ItemQuantitySizeFieldIndex=-1;  $ItemQuantitySizeUOMfieldIndex=-1; $ContainerTypeFieldIndex=-1; $ItemEffectiveDateFieldIndex=-1; $AvailableDateFieldIndex=-1;  $UNSPSCfieldIndex=-1; $BrandLabelFieldIndex=-1; $VMRSBrandIDfieldIndex=-1; $QuantityPerApplicationFieldIndex=-1;  $QuantityPerApplicationQualifierFieldIndex=-1; $QuantityPerApplicationUOMfieldIndex=-1;
   for($i=0; $i<=count($headerfields)-1; $i++)
   {
    if($headerfields[$i]=='ItemLevelGTIN'){$ItemLevelGTINfieldIndex=$i;}
@@ -137,27 +137,24 @@ foreach($marketingcopyrecords as $record)
    $item['PartTerminologyID']=trim($fields[1]);
    $item['BrandAAIAID']=trim($fields[2]);
    
-   if($ItemLevelGTINfieldIndex && trim($fields[$ItemLevelGTINfieldIndex])!=''){$item['ItemLevelGTIN']=trim($fields[$ItemLevelGTINfieldIndex]);}
-   if($GTINQualifierFieldIndex && trim($fields[$GTINQualifierFieldIndex])!=''){$item['GTINQualifier']=trim($fields[$GTINQualifierFieldIndex]);}
-   if($MinimumOrderQuantityFieldIndex && trim($fields[$MinimumOrderQuantityFieldIndex])!=''){$item['MinimumOrderQuantity']=trim($fields[$MinimumOrderQuantityFieldIndex]);}
-   if($MinimumOrderQuantityUOMfieldIndex && trim($fields[$MinimumOrderQuantityUOMfieldIndex])!=''){$item['MinimumOrderQuantityUOM']=trim($fields[$MinimumOrderQuantityUOMfieldIndex]);}
-   if($HazardousMaterialCodeFieldIndex && trim($fields[$HazardousMaterialCodeFieldIndex])!=''){$item['HazardousMaterialCode']=trim($fields[$HazardousMaterialCodeFieldIndex]);}
-   if($BaseItemIDfieldIndex && trim($fields[$BaseItemIDfieldIndex])!=''){$item['BaseItemID']=trim($fields[$BaseItemIDfieldIndex]);}
-   if($ACESApplicationsFieldIndex && trim($fields[$ACESApplicationsFieldIndex])!=''){$item['ACESApplications']=trim($fields[$ACESApplicationsFieldIndex]);}
-   if($ItemQuantitySizeFieldIndex && trim($fields[$ItemQuantitySizeFieldIndex])!=''){$item['ItemQuantitySize']=trim($fields[$ItemQuantitySizeFieldIndex]);}
-   if($ItemQuantitySizeUOMfieldIndex && trim($fields[$ItemQuantitySizeUOMfieldIndex])!=''){$item['ItemQuantitySizeUOM']=trim($fields[$ItemQuantitySizeUOMfieldIndex]);}
-   if($ContainerTypeFieldIndex && trim($fields[$ContainerTypeFieldIndex])!=''){$item['ContainerType']=trim($fields[$ContainerTypeFieldIndex]);}
-   if($ItemEffectiveDateFieldIndex && trim($fields[$ItemEffectiveDateFieldIndex])!=''){$item['ItemEffectiveDate']=trim($fields[$ItemEffectiveDateFieldIndex]);}
-   if($AvailableDateFieldIndex && trim($fields[$AvailableDateFieldIndex])!=''){$item['AvailableDate']=trim($fields[$AvailableDateFieldIndex]);}
-   if($UNSPSCfieldIndex && trim($fields[$UNSPSCfieldIndex])!=''){$item['UNSPSC']=trim($fields[$UNSPSCfieldIndex]);}  
-
-   if($BrandLabelFieldIndex && trim($fields[$BrandLabelFieldIndex])!=''){$item['BrandLabel']=trim($fields[$BrandLabelFieldIndex]);}  
-   if($VMRSBrandIDfieldIndex && trim($fields[$VMRSBrandIDfieldIndex])!=''){$item['VMRSBrandID']=trim($fields[$VMRSBrandIDfieldIndex]);}  
-   if($QuantityPerApplicationFieldIndex && trim($fields[$QuantityPerApplicationFieldIndex])!=''){$item['QuantityPerApplication']=trim($fields[$QuantityPerApplicationFieldIndex]);}  
-   if($QuantityPerApplicationQualifierFieldIndex && trim($fields[$QuantityPerApplicationQualifierFieldIndex])!=''){$item['QuantityPerApplicationQualifier']=trim($fields[$QuantityPerApplicationQualifierFieldIndex]);}  
-   if($QuantityPerApplicationUOMfieldIndex && trim($fields[$QuantityPerApplicationUOMfieldIndex])!=''){$item['QuantityPerApplicationUOM']=trim($fields[$QuantityPerApplicationUOMfieldIndex]);}  
-
-
+   if($ItemLevelGTINfieldIndex >=0 && trim($fields[$ItemLevelGTINfieldIndex])!=''){$item['ItemLevelGTIN']=trim($fields[$ItemLevelGTINfieldIndex]);}
+   if($GTINQualifierFieldIndex >=0 && trim($fields[$GTINQualifierFieldIndex])!=''){$item['GTINQualifier']=trim($fields[$GTINQualifierFieldIndex]);}
+   if($MinimumOrderQuantityFieldIndex >=0 && trim($fields[$MinimumOrderQuantityFieldIndex])!=''){$item['MinimumOrderQuantity']=trim($fields[$MinimumOrderQuantityFieldIndex]);}
+   if($MinimumOrderQuantityUOMfieldIndex >=0 && trim($fields[$MinimumOrderQuantityUOMfieldIndex])!=''){$item['MinimumOrderQuantityUOM']=trim($fields[$MinimumOrderQuantityUOMfieldIndex]);}
+   if($HazardousMaterialCodeFieldIndex >=0 && trim($fields[$HazardousMaterialCodeFieldIndex])!=''){$item['HazardousMaterialCode']=trim($fields[$HazardousMaterialCodeFieldIndex]);}
+   if($BaseItemIDfieldIndex >=0 && trim($fields[$BaseItemIDfieldIndex])!=''){$item['BaseItemID']=trim($fields[$BaseItemIDfieldIndex]);}
+   if($ACESApplicationsFieldIndex >=0 && trim($fields[$ACESApplicationsFieldIndex])!=''){$item['ACESApplications']=trim($fields[$ACESApplicationsFieldIndex]);}
+   if($ItemQuantitySizeFieldIndex >=0 && trim($fields[$ItemQuantitySizeFieldIndex])!=''){$item['ItemQuantitySize']=trim($fields[$ItemQuantitySizeFieldIndex]);}
+   if($ItemQuantitySizeUOMfieldIndex >=0 && trim($fields[$ItemQuantitySizeUOMfieldIndex])!=''){$item['ItemQuantitySizeUOM']=trim($fields[$ItemQuantitySizeUOMfieldIndex]);}
+   if($ContainerTypeFieldIndex >=0 && trim($fields[$ContainerTypeFieldIndex])!=''){$item['ContainerType']=trim($fields[$ContainerTypeFieldIndex]);}
+   if($ItemEffectiveDateFieldIndex >=0 && trim($fields[$ItemEffectiveDateFieldIndex])!=''){$item['ItemEffectiveDate']=trim($fields[$ItemEffectiveDateFieldIndex]);}
+   if($AvailableDateFieldIndex >=0 && trim($fields[$AvailableDateFieldIndex])!=''){$item['AvailableDate']=trim($fields[$AvailableDateFieldIndex]);}
+   if($UNSPSCfieldIndex >=0 && trim($fields[$UNSPSCfieldIndex])!=''){$item['UNSPSC']=trim($fields[$UNSPSCfieldIndex]);}  
+   if($BrandLabelFieldIndex >=0 && trim($fields[$BrandLabelFieldIndex])!=''){$item['BrandLabel']=trim($fields[$BrandLabelFieldIndex]);}  
+   if($VMRSBrandIDfieldIndex >=0 && trim($fields[$VMRSBrandIDfieldIndex])!=''){$item['VMRSBrandID']=trim($fields[$VMRSBrandIDfieldIndex]);}  
+   if($QuantityPerApplicationFieldIndex >=0 && trim($fields[$QuantityPerApplicationFieldIndex])!=''){$item['QuantityPerApplication']=trim($fields[$QuantityPerApplicationFieldIndex]);}  
+   if($QuantityPerApplicationQualifierFieldIndex >=0 && trim($fields[$QuantityPerApplicationQualifierFieldIndex])!=''){$item['QuantityPerApplicationQualifier']=trim($fields[$QuantityPerApplicationQualifierFieldIndex]);}  
+   if($QuantityPerApplicationUOMfieldIndex >=0 && trim($fields[$QuantityPerApplicationUOMfieldIndex])!=''){$item['QuantityPerApplicationUOM']=trim($fields[$QuantityPerApplicationUOMfieldIndex]);}  
    
    $items[$PartNumber]=$item;
    $recordnumber++;
