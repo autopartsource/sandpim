@@ -38,7 +38,7 @@ $pim=new pim;
                 <div style="padding:10px;"><a href="importPartText.php">Import parts from template spreadsheet</a></div>
                 <div style="padding:10px;"><a href="importPartAttributeData.php">Import part attributes from structured text</a></div>
                 <div style="padding:10px;"><a href="importAssetData.php">Import assets from structured text</a></div>
-                <div style="padding:10px;"><a href="convertTextToPIESinput.php">Create PIES xml from template spreadsheet</a></div>
+                <div style="padding:10px;"><a href="convertTextToPIES7_1upload.php">Create PIES xml from template spreadsheet</a></div>
             </div>
 
             
