@@ -44,3 +44,5 @@ contributing in any way (even just offering opinions!), please don't hesitate to
 - API service to expose sandpiper objects
 - API client features to consume sandpiper objects
 
+## Installation notes
+- SELinux allow uploads chcon unconfined_u:object_r:httpd_sys_rw_content_t:s0 PIESuploads/

@@ -1,0 +1,39 @@
+<?php
+include_once('./class/pimClass.php');
+$navCategory = 'import/export';
+session_start();
+
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <?php include('./includes/header.php'); ?>
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <?php if (isset($_SESSION['userid'])){include('topnav.php');} ?>
+
+        <!-- Header -->
+        <div style="padding:5px;"><img src="./rhubarb.png" width="120"/></div>
+        <h1>Build PIES (7.1) xml from <a title="This is the template spreadsheet (Excel .xlsx) to use as a guide. Fill in your own product data and upload it using the form on this page. There is sample data in the spreadsheet that can be deleted." href="./PIES_7-1_flat_template_2020-05-13.xlsx">spreadsheet</a> of flat product data</h1>
+
+        <div class="wrapper">
+            <div class="contentLeft"></div>
+
+            <!-- Main Content -->
+            <div class="contentMain">
+                <form method="post" action="convertTextToPIES7_1process.php" enctype="multipart/form-data">
+                    <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" /></div>
+                    <div style="padding:5px;text-align: left;"><input type="checkbox" id="showtext" name="showtext"/><label for="showtext">Show output xml in text area for manual copy/paste</label></div>
+                    <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
+                    <div style="padding:5px;"><input name="submit" type="submit" value="Generate PIES xml"/></div>
+
+                </form>
+            </div>
+            <div class="contentRight"></div>
+        </div>
+
+        <!-- Footer -->
+<?php if (isset($_SESSION['userid'])){include('./includes/footer.php');} ?>
+    </body>
+</html>
