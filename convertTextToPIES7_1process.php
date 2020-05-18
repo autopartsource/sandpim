@@ -22,7 +22,6 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
  {
   if($_FILES['fileToUpload']['size']<100000 || isset($_SESSION['userid']))   
   {     
-   echo 'size:'. $_FILES['fileToUpload']['size'];
    
    $xlsx = new XLSXReader($_FILES['fileToUpload']['tmp_name']);
    $sheetNames = $xlsx->getSheetNames();
