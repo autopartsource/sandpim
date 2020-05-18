@@ -7,7 +7,7 @@ class pcdb
  function positionName($positionid)
  {
   $name='not found';
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select Position from Positions where PositionID=?'))
   {
    $stmt->bind_param('i', $positionid);
@@ -25,7 +25,7 @@ class pcdb
  function parttypeName($parttypeid)
  {
   $name='not found';
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select PartTerminologyName from Parts where PartTerminologyID=?'))
   {
    $stmt->bind_param('i', $parttypeid);
@@ -43,7 +43,7 @@ class pcdb
  function version()
  {
   $versiondate='not found';
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select VersionDate from Version'))
   {
    $stmt->execute();
@@ -61,7 +61,7 @@ class pcdb
  function getPartTypes($searchstring)
  {
   $types=array();
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select PartTerminologyID, PartTerminologyName from Parts where PartTerminologyName like ? order by PartTerminologyName'))
   {
    $stmt->bind_param('s', $searchstring);
@@ -79,7 +79,7 @@ class pcdb
  function getPositions($searchstring)
  {
   $positions=array();
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select PositionID, Position from Positions where Position like ? order by Position'))
   {
    $stmt->bind_param('s', $searchstring);
@@ -97,7 +97,7 @@ class pcdb
  function getLifeCycleCodes()
  {
   $codes=array();
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESReferenceFieldCode.PIESFieldId=93 order by CodeDescription'))
   {
    $stmt->execute();
@@ -115,7 +115,7 @@ class pcdb
  {
   if(trim($code)==''){return 'not set (blank)';}
   $description='not found';
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=93 and CodeValue=?'))
   {
    $stmt->bind_param('s', $code);
@@ -129,11 +129,29 @@ class pcdb
   $db->close();
   return $description;    
  }
+
+ function getItemDescriptionCodes()
+ {
+  $codes=array();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=39 order by CodeValue'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+   }
+  }
+  $db->close();
+  return $codes;    
+ }
+
  
  function getAssetTypeCodes()
  {
   $codes=array();
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=32 order by CodeValue'))
   {
    $stmt->execute();
@@ -151,7 +169,7 @@ class pcdb
  {
   if(trim($code)==''){return 'not set (blank)';}
   $description='not found';
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=32 and CodeValue=?'))
   {
    $stmt->bind_param('s', $code);
@@ -169,7 +187,7 @@ class pcdb
  function getPartDescriptionTypeCodes()
  {
   $codes=array();
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=60 order by CodeValue'))
   {
    $stmt->execute();
@@ -187,7 +205,7 @@ class pcdb
  {
   if(trim($code)==''){return 'not set (blank)';}
   $description='invalid code ('.$code.')';
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=60 and CodeValue=?'))
   {
    $stmt->bind_param('s', $code);
@@ -203,6 +221,22 @@ class pcdb
  }
  
  
+ function getAllEXPIcodes()
+ {
+  $codes=array();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
+  if($stmt=$db->conn->prepare('select ExpiCode,CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode,PIESExpiCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESExpiCodeId=PIESExpiCode.PIESExpiCodeId order by ExpiCode,CodeValue'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $codes[$row['ExpiCode']][$row['CodeValue']]=$row['CodeDescription'];
+   }
+  }
+  $db->close();
+  return $codes;
+ }
  
  
  

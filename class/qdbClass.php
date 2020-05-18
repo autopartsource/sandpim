@@ -7,7 +7,7 @@ class qdb
  function qualifierText($qualifierid)
  {
   $text='not found';
-  $db = new mysql; $db->dbname='qdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->qdbname; $db->connect();
   if($stmt=$db->conn->prepare('select QualifierText from Qualifier where QualifierID=?'))
   {
    $stmt->bind_param('i', $qualifierid);
@@ -28,7 +28,7 @@ class qdb
   $findtags=array('&','<','>','"');
   $replacetags=array('&amp','&lt;','&gt;','&quot;');
   
-  $db = new mysql; $db->dbname='qdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->qdbname; $db->connect();
  // if($stmt=$db->conn->prepare('select QualifierID,QualifierText,QualifierTypeID,ExampleText from Qualifier where QualifierText like ?'))
   
   if($stmt=$db->conn->prepare('select QualifierID,QualifierText,QualifierTypeID,ExampleText from Qualifier WHERE match(QualifierText) against(? IN BOOLEAN MODE)'))
@@ -49,7 +49,7 @@ class qdb
  function version()
  {
   $versiondate='not found';
-  $db = new mysql; $db->dbname='qdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->qdbname; $db->connect();
   if($stmt=$db->conn->prepare('select VersionDate from Version'))
   {
    $stmt->execute();

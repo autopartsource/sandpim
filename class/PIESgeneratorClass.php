@@ -457,7 +457,7 @@ class PIESgenerator
  function parttypeName($parttypeid)
  {
   $name='not found';
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select PartTerminologyName from Parts where PartTerminologyID=?'))
   {
    $stmt->bind_param('i', $parttypeid);
@@ -476,7 +476,7 @@ class PIESgenerator
  function getLifeCycleCodes()
  {
   $codes=array();
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESReferenceFieldCode.PIESFieldId=93 order by CodeDescription'))
   {
    $stmt->execute();
@@ -494,7 +494,7 @@ class PIESgenerator
  {
   if(trim($code)==''){return 'not set (blank)';}
   $description='not found';
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
   if($stmt=$db->conn->prepare('select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=93 and CodeValue=?'))
   {
    $stmt->bind_param('s', $code);

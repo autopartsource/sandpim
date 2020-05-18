@@ -1,17 +1,22 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/pcdbClass.php');
 include_once('./class/PIESgeneratorClass.php');
 include_once('./class/XLSXReaderClass.php');
-
 $navCategory = 'import/export';
-$streamXML=true;
 
 session_start();
 
 $pim = new pim;
 $PIESgenerator=new PIESgenerator();
-$piesxml='';
+$pcdb = new pcdb();
 
+$validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
+$validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
+$validEXPIcodes=$pcdb->getAllEXPIcodes();
+
+$piesxml='';
+$streamXML=true;
 
 $validUpload=false;
 $inputFileLog=array();
@@ -228,6 +233,11 @@ if($validUpload)
     {
      $errors[]='Descriptions contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
     }
+    
+    if(!array_key_exists($description['DescriptionCode'], $validDescriptionCodes))
+    {
+     $errors[]='Descriptions contains an invalid code ('.$description['DescriptionCode'].') for partnumber ('.$PartNumber.')';  
+    }
     $recordnumber++;
    }
   }
@@ -327,6 +337,15 @@ if($validUpload)
     {
      $errors[]='EXPI contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
     }
+    
+    // validate code/value combinations
+    if(!isset($validEXPIcodes[$expi['EXPICode']][$expi['EXPIValue']]))
+    {
+     $errors[]='EXPI contains invalid code/value combination ('.$expi['EXPICode'].'/'.$expi['EXPIValue'].') for a partnumber ('.$PartNumber.')';  
+    }
+    
+    
+    
     $recordnumber++;
    }
   }
@@ -625,7 +644,14 @@ if($validUpload)
 
     if($FileNameFieldIndex>=0 && trim($fields[$FileNameFieldIndex])!=''){$asset['FileName']=trim($fields[$FileNameFieldIndex]);}
     if($AssetIDFieldIndex>=0 && trim($fields[$AssetIDFieldIndex])!=''){$asset['AssetID']=trim($fields[$AssetIDFieldIndex]);}
-    if($AssetTypeFieldIndex>=0 && trim($fields[$AssetTypeFieldIndex])!=''){$asset['AssetType']=trim($fields[$AssetTypeFieldIndex]);}
+    if($AssetTypeFieldIndex>=0 && trim($fields[$AssetTypeFieldIndex])!='')
+    {
+     $asset['AssetType']=trim($fields[$AssetTypeFieldIndex]);
+     if(!array_key_exists($asset['AssetType'], $validAssetTypes))
+     {
+      $errors[]='Asset type ('.$asset['AssetType'].') for partnumber ('.$PartNumber.') is not found in the PCdb';  
+     }
+    }
     if($FileTypeFieldIndex>=0 && trim($fields[$FileTypeFieldIndex])!=''){$asset['FileType']=trim($fields[$FileTypeFieldIndex]);}
     if($RepresentationFieldIndex>=0 && trim($fields[$RepresentationFieldIndex])!=''){$asset['Representation']=trim($fields[$RepresentationFieldIndex]);}
     if($FileSizeFieldIndex>=0 && trim($fields[$FileSizeFieldIndex])!=''){$asset['FileSize']=trim($fields[$FileSizeFieldIndex]);}

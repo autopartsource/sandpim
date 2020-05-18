@@ -6,7 +6,7 @@ class padb
  function getAttributesForParttype($parttypeid)
  {
   $attributes=array();
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->padbname; $db->connect();
   if($stmt=$db->conn->prepare('select PartAttributeAssignment.PAID,PAName,UoMList,ValidValues from PartAttributeAssignment,PartAttributes where PartAttributeAssignment.PAID=PartAttributes.PAID and PartTerminologyID=?'))
   {
    $stmt->bind_param('i', $parttypeid);
@@ -24,7 +24,7 @@ class padb
 function PAIDname($PAID)
 {
   $name=false;
-  $db = new mysql; $db->dbname='pcadb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->padbname; $db->connect();
   if($stmt=$db->conn->prepare('select PAName from PartAttributes where PAID=?'))
   {
    $stmt->bind_param('i', $PAID);

@@ -24,7 +24,7 @@ session_start();
             <div class="contentMain">
                 <form method="post" action="convertTextToPIES7_1process.php" enctype="multipart/form-data">
                     <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" /></div>
-                    <div style="padding:5px;text-align: left;"><input type="checkbox" id="showtext" name="showtext"/><label for="showtext">Show output xml in text area for manual copy/paste</label></div>
+                    <div style="padding:5px;text-align: left;"><input type="checkbox" id="showtext" name="showtext"/><label for="showtext">Show output xml in text area (un-check to auto download PIES xml file)</label></div>
                     <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
                     <div style="padding:5px;"><input name="submit" type="submit" value="Generate PIES xml"/></div>
 

@@ -6,7 +6,7 @@ class vcdb
 
  function getMakes()
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $db->sql = "SELECT MakeID,MakeName FROM Make order by MakeName";
   $db->result = $db->conn->query($db->sql);
   $makes=array();
@@ -20,7 +20,7 @@ class vcdb
 
  function getModels($makeid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $models=array();
   if($stmt=$db->conn->prepare('select distinct ModelName, Model.ModelID from BaseVehicle,Make,Model where BaseVehicle.MakeID = Make.MakeID and BaseVehicle.ModelID = Model.ModelID and Make.MakeID = ? and Model.VehicleTypeID in(5,6,7,2187) ORDER BY Modelname'))
   {
@@ -40,7 +40,7 @@ class vcdb
 
  function getYears($makeid,$modelid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $years=array();
   if($stmt=$db->conn->prepare('select distinct YearID from BaseVehicle,Make,Model where BaseVehicle.MakeID = Make.MakeID and BaseVehicle.ModelID = Model.ModelID and Make.MakeID = ? and Model.ModelID = ? order by YearID DESC'))
   {
@@ -58,7 +58,7 @@ class vcdb
 
  function makeName($makeid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $name='not found';
   if($stmt=$db->conn->prepare('select MakeName from Make where MakeID=?'))
   {
@@ -76,7 +76,7 @@ class vcdb
 
  function modelName($modelid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $name='not found';
   if($stmt=$db->conn->prepare('select ModelName from Model where ModelID=?'))
   {
@@ -94,7 +94,7 @@ class vcdb
 
  function niceMMYofBasevid($basevehicelid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $nice='not found';
   if($stmt=$db->conn->prepare('select MakeName,ModelName,YearID from BaseVehicle,Make,Model where Make.MakeID=BaseVehicle.MakeID and Model.ModelID=BaseVehicle.ModelID and BaseVehicle.BaseVehicleID=? order by MakeName, ModelName, YearID'))
   {
@@ -114,7 +114,7 @@ class vcdb
 
  function getVehiclesForBaseVehicleid($basevehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $vehicles=array();
   if($stmt=$db->conn->prepare('select Vehicle.VehicleID,Vehicle.SubModelID,SubModelName,Vehicle.RegionID, RegionName from Vehicle,SubModel,Region where Vehicle.SubModelID=SubModel.SubModelID and Vehicle.RegionID=Region.RegionID AND BaseVehicleID=? ORDER BY SubModelName, Vehicle.RegionID'))
   {
@@ -132,7 +132,7 @@ class vcdb
 
  function getBasevehicleidForMidMidYid($makeid,$modelid,$yearid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $id=false;
   if($stmt=$db->conn->prepare('SELECT BaseVehicleID FROM BaseVehicle WHERE MakeID=? and ModelID=? and YearID=?'))
   {
@@ -150,7 +150,7 @@ class vcdb
 
  function getBasevehicleidForMMY($make,$model,$year)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $id=false;
   if($stmt=$db->conn->prepare('SELECT BaseVehicle.BaseVehicleID FROM BaseVehicle,Make,Model WHERE BaseVehicle.MakeID=Make.MakeID  AND BaseVehicle.ModelID=Model.ModelID AND MakeName = ? AND ModelName = ? AND YearID = ?'))
   {
@@ -169,7 +169,7 @@ class vcdb
 
  function getVehicelMMY($vehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $returnval=false;
   if($stmt=$db->conn->prepare('select MakeName,ModelName,YearID,SubModelName, RegionName from Vehicle, BaseVehicle, Make, Model, SubModel, Region where Vehicle.BaseVehicleID = BaseVehicle.BaseVehicleID and BaseVehicle.MakeID = Make.MakeID and BaseVehicle.ModelID = Model.ModelID and Vehicle.SubModelID = SubModel.SubModelID and Vehicle.RegionID = Region.RegionID and Vehicle.VehicleID = ?'))
   {
@@ -188,7 +188,7 @@ class vcdb
 
  function getMMYforBasevehicleid($basevehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $mmy=false;
   if($stmt=$db->conn->prepare('SELECT  BaseVehicle.MakeID, BaseVehicle.ModelID, MakeName, ModelName,YearID FROM BaseVehicle,Make,Model WHERE BaseVehicle.MakeID=Make.MakeID AND BaseVehicle.ModelID=Model.ModelID AND BaseVehicle.BaseVehicleID = ?'))
   {
@@ -206,7 +206,7 @@ class vcdb
 
  function niceVCdbAttributePair($attributePair)
  {
-  $db=new mysql; $db->dbname='vcdb'; $db->connect(); $value=$attributePair['value'];
+  $db=new mysql; $db->dbname=$db->vcdbname; $db->connect(); $value=$attributePair['value'];
   $nicevalue='unknown - '.$attributePair['name'].'='.$attributePair['value'];
 
   if($attributePair['name'] == 'SubModel')
@@ -682,7 +682,7 @@ class vcdb
 
  function getEnginesForVehicleid($vehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $engines=array();
   if($stmt=$db->conn->prepare('SELECT EngineConfig.EngineBaseID, EngineConfig.EngineDesignationID, EngineConfig.EngineVINID, EngineConfig.EngineVersionID, EngineConfig.EngineMfrID, FuelDeliveryConfig.FuelDeliveryTypeID, FuelDeliveryConfig.FuelDeliverySubTypeID, FuelDeliveryConfig.FuelSystemControlTypeID, FuelDeliveryConfig.FuelSystemDesignID, EngineConfig.AspirationID, EngineConfig.CylinderHeadTypeID, EngineConfig.FuelTypeID, EngineConfig.IgnitionSystemTypeID, EngineConfig.ValvesID, Liter, cc, cid, Cylinders, BlockType, EngBoreIn, EngBoreMetric, EngStrokeIn, EngStrokeMetric, EngineDesignationName, EngineVINName, EngineVersion, MfrName, FuelDeliveryTypeName, FuelDeliverySubTypeName, FuelSystemControlTypeName, FuelSystemDesignName, AspirationName, CylinderHeadTypeName, FuelTypeName, IgnitionSystemTypeName, ValvesPerEngine FROM Vehicle, VehicleToEngineConfig, EngineConfig, EngineBase, EngineVIN, Aspiration, CylinderHeadType, EngineVersion, EngineDesignation, FuelDeliveryConfig, FuelType, FuelDeliveryType, FuelDeliverySubType, FuelSystemControlType, FuelSystemDesign, IgnitionSystemType, Mfr, Valves WHERE Vehicle.VehicleID = VehicleToEngineConfig.VehicleID AND VehicleToEngineConfig.EngineConfigID = EngineConfig.EngineConfigID AND EngineConfig.EnginebaseID = EngineBase.EnginebaseID AND EngineConfig.EngineVINID = EngineVIN.EngineVINID AND EngineConfig.AspirationID=Aspiration.AspirationID AND EngineConfig.CylinderHeadTypeID = CylinderHeadType.CylinderHeadTypeID AND EngineConfig.EngineVersionID = EngineVersion.EngineVersionID AND EngineConfig.EngineDesignationID = EngineDesignation.EngineDesignationID AND EngineConfig.FuelTypeID = FuelType.FuelTypeID AND EngineConfig.IgnitionSystemTypeID = IgnitionSystemType.IgnitionSystemTypeID AND EngineConfig.EngineMfrID = Mfr.mfrID AND EngineConfig.FuelDeliveryConfigID = FuelDeliveryConfig.FuelDeliveryConfigID AND FuelDeliveryConfig.FuelDeliveryTypeID = FuelDeliveryType.FuelDeliveryTypeID AND FuelDeliveryConfig.FuelDeliverySubTypeID = FuelDeliverySubType.FuelDeliverySubTypeID AND FuelDeliveryConfig.FuelSystemControlTypeID = FuelSystemControlType.FuelSystemControlTypeID AND FuelDeliveryConfig.FuelsyStemDesignID = FuelSystemDesign.FuelSystemDesignID AND EngineConfig.ValvesID = Valves.ValvesID AND Vehicle.VehicleID = ?'))
   {
@@ -703,7 +703,7 @@ class vcdb
  function getDriveTypesForVehicleid($vehicleid)
  {
 
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $drivetypes=array();
 
   if($stmt=$db->conn->prepare('SELECT DriveType.DriveTypeID, DriveTypeName FROM Vehicle, VehicleToDriveType, DriveType where Vehicle.VehicleID=VehicleToDriveType.VehicleID and VehicleToDriveType.DriveTypeID = DriveType.DriveTypeID AND Vehicle.VehicleID=?'))
@@ -723,7 +723,7 @@ class vcdb
 
 function getBrakeConfigsForVehicleid($vehicleid)
 {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $brakeconfigs=array();
 
   if($stmt=$db->conn->prepare('SELECT BrakeConfig.BrakeSystemID, BrakeSystem.BrakeSystemName, BrakeConfig.BrakeABSID, BrakeABS.BrakeABSName, BrakeConfig.FrontBrakeTypeID, BrakeType.BrakeTypeName as FrontBrakeTypeName, BrakeConfig.RearBrakeTypeID, BrakeTypeAgain.BrakeTypeName as RearBrakeTypeName FROM Vehicle join VehicleToBrakeConfig on Vehicle.VehicleID=VehicleToBrakeConfig.VehicleID join BrakeConfig on VehicleToBrakeConfig.BrakeConfigID=BrakeConfig.BrakeConfigID join BrakeSystem on BrakeConfig.BrakeSystemID=BrakeSystem.BrakeSystemID  join BrakeABS on BrakeConfig.BrakeABSID=BrakeABS.BrakeABSID join BrakeType on BrakeConfig.FrontBrakeTypeID=BrakeType.BrakeTypeID join BrakeType BrakeTypeAgain on BrakeConfig.RearBrakeTypeID=BrakeTypeAgain.BrakeTypeID  WHERE Vehicle.VehicleID=?'))
@@ -743,7 +743,7 @@ function getBrakeConfigsForVehicleid($vehicleid)
 
  function getBodyStylesForVehicleid($vehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $bodystyles=array();
   if($stmt=$db->conn->prepare('SELECT BodyType.BodyTypeID,BodyNumDoors.BodyNumDoorsID,BodyTypeName,BodyNumDoors FROM Vehicle,VehicleToBodyStyleConfig,BodyStyleConfig,BodyNumDoors,BodyType WHERE Vehicle.VehicleID=VehicleToBodyStyleConfig.VehicleID AND VehicleToBodyStyleConfig.BodyStyleConfigID=BodyStyleConfig.BodyStyleConfigID AND BodyStyleConfig.BodyNumDoorsID=BodyNumDoors.BodyNumDoorsID AND BodyStyleConfig.BodyTypeID=BodyType.BodyTypeID AND Vehicle.VehicleID=?'))
   {
@@ -761,7 +761,7 @@ function getBrakeConfigsForVehicleid($vehicleid)
 
  function getBodyCodesForVehicleid($vehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $bodycodes=array();
 
   if($stmt=$db->conn->prepare('SELECT MfrBodyCodeName, MfrBodyCode.MfrBodyCodeID  FROM Vehicle,VehicleToMfrBodyCode,MfrBodyCode WHERE Vehicle.VehicleID=VehicleToMfrBodyCode.VehicleID AND VehicleToMfrBodyCode.MfrBodyCodeID=MfrBodyCode.MfrBodyCodeID AND Vehicle.VehicleID=?'))
@@ -780,7 +780,7 @@ function getBrakeConfigsForVehicleid($vehicleid)
 
  function getWheelbasesForVehicleid($vehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $wheelbases=array();
   if($stmt=$db->conn->prepare('SELECT VehicleToWheelbase.WheelbaseID,Wheelbase FROM  Vehicle,VehicleToWheelbase,WheelBase WHERE Vehicle.VehicleID=VehicleToWheelbase.VehicleID  AND VehicleToWheelbase.WheelbaseID=WheelBase.WheelbaseID AND Vehicle.VehicleID=?'))
   {
@@ -798,7 +798,7 @@ function getBrakeConfigsForVehicleid($vehicleid)
 
  function getSteeringsForVehicleid($vehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $steerings=array();
   if($stmt=$db->conn->prepare('SELECT SteeringConfig.SteeringTypeID, SteeringType.SteeringTypeName, SteeringConfig.SteeringSystemID, SteeringSystem.SteeringSystemName FROM Vehicle,VehicleToSteeringConfig,SteeringConfig,SteeringType,SteeringSystem WHERE Vehicle.VehicleID=VehicleToSteeringConfig.VehicleID AND VehicleToSteeringConfig.SteeringConfigID=SteeringConfig.SteeringConfigID AND SteeringConfig.SteeringTypeID=SteeringType.SteeringTypeID AND SteeringConfig.SteeringSystemID=SteeringSystem.SteeringSystemID AND Vehicle.VehicleID=?'))
   {
@@ -816,7 +816,7 @@ function getBrakeConfigsForVehicleid($vehicleid)
 
  function getBedsForVehicleid($vehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $beds=array();
   if($stmt=$db->conn->prepare('SELECT BedConfig.BedTypeID,BedType.BedTypeName,BedConfig.BedLengthID,BedLength.BedLength FROM Vehicle,VehicleToBedConfig,BedConfig,BedLength,BedType WHERE Vehicle.VehicleID=VehicleToBedConfig.VehicleID AND VehicleToBedConfig.BedConfigID=BedConfig.BedConfigID AND BedConfig.BedLengthID=BedLength.BedLengthID AND BedConfig.BedTypeID=BedType.BedTypeID AND Vehicle.VehicleID=?'))
   {
@@ -834,7 +834,7 @@ function getBrakeConfigsForVehicleid($vehicleid)
 
  function getSpringsForVehicleid($vehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $springs=array();
   if($stmt=$db->conn->prepare('SELECT SpringTypeConfig.FrontSpringTypeID,FrontSpringType.SpringTypeName as FrontSpringTypeName,SpringTypeConfig.RearSpringTypeID,RearSpringType.SpringTypeName as RearSpringTypeName FROM Vehicle join VehicleToSpringTypeConfig on Vehicle.VehicleID=VehicleToSpringTypeConfig.VehicleID join SpringTypeConfig on VehicleToSpringTypeConfig.SpringTypeConfigID=SpringTypeConfig.SpringTypeConfigID join SpringType FrontSpringType on SpringTypeConfig.FrontSpringTypeID=FrontSpringType.SpringTypeID join SpringType RearSpringType on SpringTypeConfig.RearSpringTypeID=RearSpringType.SpringTypeID WHERE Vehicle.VehicleID=?'))
   {
@@ -852,7 +852,7 @@ function getBrakeConfigsForVehicleid($vehicleid)
 
  function getTransmissionsForVehicleid($vehicleid)
  {
-  $db = new mysql; $db->dbname='vcdb'; $db->connect();
+  $db = new mysql; $db->dbname=$db->vcdbname; $db->connect();
   $transmissions=array();
   if($stmt=$db->conn->prepare('SELECT TransmissionBase.TransmissionBaseID, TransmissionBase.TransmissionNumSpeedsID, TransmissionNumSpeeds.TransmissionNumSpeeds, TransmissionBase.TransmissionControlTypeID, TransmissionControlType.TransmissionControlTypeName, TransmissionBase.TransmissionTypeID, TransmissionType.TransmissionTypeName, Transmission.TransmissionMfrCodeID, TransmissionMfrCode.TransmissionMfrCode  FROM Vehicle,VehicleToTransmission,Transmission,TransmissionBase,TransmissionControlType,TransmissionMfrCode,TransmissionNumSpeeds, TransmissionType WHERE Vehicle.VehicleID=VehicleToTransmission.VehicleID AND VehicleToTransmission.TransmissionID=Transmission.TransmissionID AND Transmission.TransmissionBaseID=TransmissionBase.TransmissionBaseID AND Transmission.TransmissionMfrCodeID=TransmissionMfrCode.TransmissionMfrCodeID AND TransmissionBase.TransmissionTypeID=TransmissionType.TransmissionTypeID AND TransmissionBase.TransmissionNumSpeedsID=TransmissionNumSpeeds.TransmissionNumSpeedsID AND TransmissionBase.TransmissionControlTypeID=TransmissionControlType.TransmissionControlTypeID AND Vehicle.VehicleID=?'))
   {
