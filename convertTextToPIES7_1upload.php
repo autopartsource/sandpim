@@ -42,6 +42,7 @@ if (isset($_SESSION['userid']))
 else
 {
 ?><div style="font-size: .75em; font-style: italic; color: #808080;"><?php  
+ $logs->logSystemEvent('rhubarb', 0, 'upload page load by:'.$_SERVER['REMOTE_ADDR']);
  include('./includes/storageDisclaimer.php');
 ?></div><?php  
 }
