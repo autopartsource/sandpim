@@ -1,7 +1,11 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/logsClass.php');
+
 $navCategory = 'import/export';
 session_start();
+
+$logs=new logs();
 
 ?>
 <!DOCTYPE html>
