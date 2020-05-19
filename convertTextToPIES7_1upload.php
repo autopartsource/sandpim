@@ -34,6 +34,17 @@ session_start();
         </div>
 
         <!-- Footer -->
-<?php if (isset($_SESSION['userid'])){include('./includes/footer.php');} ?>
+<?php 
+if (isset($_SESSION['userid']))
+{
+ include('./includes/footer.php');
+}
+else
+{
+?><div style="font-size: .75em; font-style: italic; color: #808080;"><?php  
+ include('./includes/storageDisclaimer.php');
+?></div><?php  
+}
+?>
     </body>
 </html>

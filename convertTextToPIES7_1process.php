@@ -669,7 +669,7 @@ if($validUpload)
     if($AssetWidthFieldIndex>=0 && trim($fields[$AssetWidthFieldIndex])!=''){$asset['AssetWidth']=trim($fields[$AssetWidthFieldIndex]);}
     if($UOMFieldIndex>=0 && trim($fields[$UOMFieldIndex])!=''){$asset['AssetDimensionsUOM']=trim($fields[$UOMFieldIndex]);}
     if($FilePathFieldIndex>=0 && trim($fields[$FilePathFieldIndex])!=''){$asset['FilePath']=trim($fields[$FilePathFieldIndex]);}
-    if($URIFieldIndex>=0 && trim($fields[$URIFieldIndex])!=''){$asset['URI']=trim($fields[$URIFieldIndex]);}
+    if($URIFieldIndex>=0 && trim($fields[$URIFieldIndex])!=''){$asset['URI']=htmlspecialchars(trim($fields[$URIFieldIndex]));}
     if($DurationFieldIndex>=0 && trim($fields[$DurationFieldIndex])!=''){$asset['Duration']=trim($fields[$DurationFieldIndex]);}
     if($DurationUOMFieldIndex>=0 && trim($fields[$DurationUOMFieldIndex])!=''){$asset['DurationUOM']=trim($fields[$DurationUOMFieldIndex]);}
     if($FrameFieldIndex>=0 && trim($fields[$FrameFieldIndex])!=''){$asset['Frame']=trim($fields[$FrameFieldIndex]);}
@@ -793,7 +793,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
 
 
 
-                <?php if(count($errors)>0){?>
+                <?php if(count($errors)>0 && !isset($_POST['ignorelogic'])){?>
                 <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
                 <table><?php
                 foreach($errors as $error)
