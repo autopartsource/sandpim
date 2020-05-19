@@ -1,5 +1,6 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/PIESgeneratorClass.php');
 include_once('./class/XLSXReaderClass.php');
@@ -10,6 +11,8 @@ session_start();
 $pim = new pim;
 $PIESgenerator=new PIESgenerator();
 $pcdb = new pcdb();
+$logs=new logs();
+
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
@@ -19,6 +22,7 @@ $validPartTypes=array(); $partTypes=$pcdb->getPartTypes('%'); foreach($partTypes
 $piesxml='';
 $streamXML=true;
 
+$originalFilename='';
 $validUpload=false;
 $inputFileLog=array();
 
@@ -31,6 +35,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
    
    $xlsx = new XLSXReader($_FILES['fileToUpload']['tmp_name']);
    $sheetNames = $xlsx->getSheetNames();
+   $originalFilename= basename($_FILES['fileToUpload']['name']);
 
    if(in_array('Items',$sheetNames) && in_array('Header',$sheetNames))
    {
@@ -44,31 +49,46 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
     
      if(array_key_exists('TechnicalContact' ,$headerElementsList) && $headerElementsList['TechnicalContact']!='' && array_key_exists('ContactEmail' ,$headerElementsList) && $headerElementsList['ContactEmail']!='' && array_key_exists('PCdbVersionDate' ,$headerElementsList) && $headerElementsList['PCdbVersionDate']!='')
      {
-     }else{$validUpload=false; $inputFileLog[]='Header is missing TechnicalContact, ContactEmail or PCdbVersionDate';}
+     }
+     else
+     {
+      $validUpload=false; 
+      $inputFileLog[]='Header is missing TechnicalContact, ContactEmail or PCdbVersionDate';
+      $logs->logSystemEvent('rhubarb', 0, 'Header is missing TechnicalContact, ContactEmail or PCdbVersionDate');
+     }
     
      if(isset($itemsSheet[0][0]) && $itemsSheet[0][0]=='PartNumber' && isset($itemsSheet[0][1]) && $itemsSheet[0][1]=='PartTerminologyID' && isset($itemsSheet[0][2]) && $itemsSheet[0][2]=='BrandAAIAID')
      {
-     }else{$validUpload=false; $inputFileLog[]='First row of Items sheet must start with these three columns: PartNumber, PartTerminologyID, BrandAAIAID';}
-    
+     }
+     else
+     {
+      $validUpload=false;
+      $inputFileLog[]='First row of Items sheet must start with these three columns: PartNumber, PartTerminologyID, BrandAAIAID';
+      $logs->logSystemEvent('rhubarb', 0, 'First row of Items sheet must start with these three columns: PartNumber, PartTerminologyID, BrandAAIAID');
+     }
     }
     else
     {
      $inputFileLog[]='Header did not countain proper rhubarb tag';
+     $logs->logSystemEvent('rhubarb', 0, 'Header did not countain proper rhubarb tag');
     }
    }
    else
    { // Header or Items sheets are not present
     $inputFileLog[]='Uploaded workbook does not contain required worksheets: Header and Items'; 
+    $logs->logSystemEvent('rhubarb', 0, 'Uploaded workbook does not contain required worksheets: Header and Items');
    }
   }
   else
   {
    $inputFileLog[]='Input file was too big (500K limit for anonymous users)';
+   $logs->logSystemEvent('rhubarb', 0, 'Input file was too big (500K limit for anonymous users');
   }
  }
  else
  {
   $inputFileLog[]='Error uploading file - un-supported file format (must be a valid xlsx file)';
+  $logs->logSystemEvent('rhubarb', 0, 'Error uploading file - un-supported file format');
  }
 }
 
@@ -782,16 +802,13 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
                 <table><?php
                 foreach($schemaresults as $result)
                 { // render each element of schema problems into a table
-                    echo '<tr><td style="text-align:left;background-color:#FF8800;">'.$result.'</td></tr>';
+                 echo '<tr><td style="text-align:left;background-color:#FF8800;">'.$result.'</td></tr>';
                 }
                 ?>
                 </table>
                 <?php }else{if(strlen($piesxml)>0){?>
                  <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $piesxml;?></textarea></div>
                 <?php }}?>
-                 
-
-
 
                 <?php if(count($errors)>0 && !isset($_POST['ignorelogic'])){?>
                 <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
@@ -802,7 +819,10 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
                 }
                 ?>
                 </table>
-                <?php }?>
+                <?php }
+                
+                $logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors));
+                ?>
                  
             </div>
 
