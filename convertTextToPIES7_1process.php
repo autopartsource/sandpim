@@ -14,6 +14,7 @@ $pcdb = new pcdb();
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
 $validEXPIcodes=$pcdb->getAllEXPIcodes();
+$validPartTypes=array(); $partTypes=$pcdb->getPartTypes('%'); foreach($partTypes as $partType){$validPartTypes[$partType['id']]=$partType['name'];}
 
 $piesxml='';
 $streamXML=true;
@@ -25,7 +26,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
 {
  if($_FILES['fileToUpload']['type']=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
  {
-  if($_FILES['fileToUpload']['size']<100000 || isset($_SESSION['userid']))   
+  if($_FILES['fileToUpload']['size']<500000 || isset($_SESSION['userid']))   
   {     
    
    $xlsx = new XLSXReader($_FILES['fileToUpload']['tmp_name']);
@@ -62,7 +63,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
   }
   else
   {
-   $inputFileLog[]='Input file was too big (100K limit for anonymous users)';
+   $inputFileLog[]='Input file was too big (500K limit for anonymous users)';
   }
  }
  else
@@ -192,6 +193,11 @@ if($validUpload)
   if($QuantityPerApplicationQualifierFieldIndex >=0 && trim($fields[$QuantityPerApplicationQualifierFieldIndex])!=''){$item['QuantityPerApplicationQualifier']=trim($fields[$QuantityPerApplicationQualifierFieldIndex]);}  
   if($QuantityPerApplicationUOMfieldIndex >=0 && trim($fields[$QuantityPerApplicationUOMfieldIndex])!=''){$item['QuantityPerApplicationUOM']=trim($fields[$QuantityPerApplicationUOMfieldIndex]);}  
    
+  if(!array_key_exists($item['PartTerminologyID'],$validPartTypes))
+  {
+   $errors[]='Partnumber ('.$PartNumber.') has in invalid PartTerminologyID ('.$item['PartTerminologyID'].')';  
+  }
+  
   $items[$PartNumber]=$item;
   $recordnumber++;
  }
