@@ -19,7 +19,7 @@ $logs=new logs();
 
         <!-- Header -->
         <div style="padding:5px;"><img src="./rhubarb.png" width="120"/></div>
-        <h1>Build PIES (7.1) xml from <a title="This is the template spreadsheet (Excel .xlsx) to use as a guide. Fill in your own product data and upload it using the form on this page. There is sample data in the spreadsheet that can be deleted." href="./PIES_7-1_flat_template_2020-05-18.xlsx">spreadsheet</a> of flat product data</h1>
+        <h1>Build PIES (7.1) xml from <a title="This is the template spreadsheet (Excel .xlsx) to use as a guide. Fill in your own product data and upload it using the form on this page. There is sample data in the spreadsheet that can be deleted." href="./Rhubarb_7_1_A.xlsx">spreadsheet</a> of flat product data</h1>
 
         <div class="wrapper">
             <div class="contentLeft"></div>

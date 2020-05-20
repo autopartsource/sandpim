@@ -821,7 +821,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
                 </table>
                 <?php }
                 
-                $logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors));
+                $logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
                 ?>
                  
             </div>
