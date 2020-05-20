@@ -189,7 +189,7 @@ if($validUpload)
  foreach($itemsSheet as $fields)
  {
   if($recordnumber==0){$recordnumber++;continue;}
-  $item=array('descriptions'=>array(), 'attributes'=>array(),'interchanges'=>array(),'assets'=>array(),'expis'=>array(),'packages'=>array());
+  $item=array('descriptions'=>array(), 'attributes'=>array(),'interchanges'=>array(),'assets'=>array(),'expis'=>array(),'kits'=>array(), 'packages'=>array());
    
   $PartNumber=trim($fields[0]);
   if($PartTerminologyIDfieldIndex >=0 && trim($fields[$PartTerminologyIDfieldIndex])!=''){$item['PartTerminologyID']=trim($fields[$PartTerminologyIDfieldIndex]);}
@@ -548,9 +548,67 @@ if($validUpload)
  }
 
  // --------------------- Kits -----------------------
+  if(in_array('Kits',$sheetNames))
+ {
+  $kitsSheet=$xlsx->getSheetData('Kits');
+
+  $PartNumberFieldIndex=-1; $DescriptionFieldIndex=-1; $DescriptionCodeFieldIndex=-1; $QuantityInKitFieldIndex=-1; $QuantityInKitUOMfieldIndex=-1; $LanguageCodeFieldIndex=-1; $ComponentPartTerminologyIDfieldIndex=-1; $SoldSeparatelyFieldIndex=-1; $SequenceCodeFieldIndex=-1; $ComponentPartNumberFieldIndex=-1; $ComponentBrandFieldIndex=-1; $ComponentBrandLabelFieldIndex=-1; $ComponentSubBrandFieldIndex=-1; $ComponentSubBrandLabelFieldIndex=-1;
+  for($i=0; $i<=count($kitsSheet[0])-1; $i++)
+  { // identify the named columns' IDs
+   if($kitsSheet[0][$i]=='PartNumber'){$PartNumberFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='Description'){$DescriptionFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='DescriptionCode'){$DescriptionCodeFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='QuantityInKit'){$QuantityInKitFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='QuantityInKitUOM'){$QuantityInKitUOMfieldIndex=$i;}
+   if($kitsSheet[0][$i]=='LanguageCode'){$LanguageCodeFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='ComponentPartTerminologyID'){$ComponentPartTerminologyIDfieldIndex=$i;}
+   if($kitsSheet[0][$i]=='SoldSeparately'){$SoldSeparatelyFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='SequenceCode'){$SequenceCodeFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='ComponentPartNumber'){$ComponentPartNumberFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='ComponentBrand'){$ComponentBrandFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='ComponentBrandLabel'){$ComponentBrandLabelFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='ComponentSubBrand'){$ComponentSubBrandFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='ComponentSubBrandLabel'){$ComponentSubBrandLabelFieldIndex=$i;}
+  } 
+  
+  $recordnumber=0;
+  if($PartNumberFieldIndex==0)
+  {
+   foreach($kitsSheet as $fields)
+   {
+    if($recordnumber==0){$recordnumber++;continue;}
+    $kit=array();
+    $PartNumber=trim($fields[0]);
+
+    if($DescriptionFieldIndex>=0){$kit['Description']= htmlspecialchars(trim($fields[$DescriptionFieldIndex]));}
+    if($DescriptionCodeFieldIndex>=0){$kit['DescriptionCode']= trim($fields[$DescriptionCodeFieldIndex]);}
+    if($QuantityInKitFieldIndex>=0){$kit['QuantityInKit']=trim($fields[$QuantityInKitFieldIndex]);}
+    if($QuantityInKitUOMfieldIndex>=0){$kit['QuantityInKitUOM']=trim($fields[$QuantityInKitUOMfieldIndex]);}
+    if($LanguageCodeFieldIndex>=0){$kit['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
+    if($ComponentPartTerminologyIDfieldIndex>=0){$kit['ComponentPartTerminologyID']=trim($fields[$ComponentPartTerminologyIDfieldIndex]);}
+    if($SoldSeparatelyFieldIndex>=0){$kit['SoldSeparately']=trim($fields[$SoldSeparatelyFieldIndex]);}
+    if($SequenceCodeFieldIndex>=0){$kit['SequenceCode']=trim($fields[$SequenceCodeFieldIndex]);}
+    if($ComponentPartNumberFieldIndex>=0){$kit['ComponentPartNumber']=trim($fields[$ComponentPartNumberFieldIndex]);}
+    if($ComponentBrandFieldIndex>=0){$kit['ComponentBrand']=trim($fields[$ComponentBrandFieldIndex]);}
+    if($ComponentBrandLabelFieldIndex>=0){$kit['ComponentBrandLabel']=trim($fields[$ComponentBrandLabelFieldIndex]);}
+    if($ComponentSubBrandFieldIndex>=0){$kit['ComponentSubBrand']=trim($fields[$ComponentSubBrandFieldIndex]);}
+    if($ComponentSubBrandLabelFieldIndex>=0){$kit['ComponentSubBrandLabel']=trim($fields[$ComponentSubBrandLabelFieldIndex]);}
+    
+    // see if this partnumber was established in the Items list
+    if(array_key_exists($PartNumber,$items))
+    {
+     $items[$PartNumber]['kits'][]=$kit;
+    }
+    else
+    {
+     $errors[]='Kits contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
+    }
+    $recordnumber++;
+   }
+  }
+ }
  
-
-
+ 
  // --------------------- Interchanges -----------------------
  if(in_array('Interchanges',$sheetNames))
  {

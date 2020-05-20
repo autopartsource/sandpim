@@ -207,6 +207,7 @@ class PIESgenerator
     $ItemElement->appendChild($ProductAttributesElement);
    }
  
+   //----------------------- packages ----------------------------
    if(isset($item['packages']) && count($item['packages']))
    {       
     $PackagesElement=$doc->createElement('Packages');
@@ -278,12 +279,91 @@ class PIESgenerator
     }  
     $ItemElement->appendChild($PackagesElement);
    }
-  
+   //----------------------- kits ----------------------------
+ 
+   if(isset($item['kits']) && count($item['kits']))
+   {
+    $KitsElement = $doc->createElement('Kits');
+
+    foreach($item['kits'] as $kit)
+    {
+     $KitComponentElement=$doc->createElement('KitComponent');
+     if(array_key_exists('ComponentPartNumber',$kit) && trim($kit['ComponentPartNumber'])!='')
+     {
+      $ComponentPartNumberElement=$doc->createElement('ComponentPartNumber',$kit['ComponentPartNumber']);
+      if(array_key_exists('IDQualifier',$kit) && trim($kit['IDQualifier'])!=''){$ComponentPartNumberElement->setAttribute('IDQualifier',$kit['IDQualifier']);}
+      $KitComponentElement->appendChild($ComponentPartNumberElement);
+     }
+     
+     if(array_key_exists('ComponentBrand',$kit) && trim($kit['ComponentBrand'])!='')
+     {
+      $ComponentBrandElement=$doc->createElement('ComponentBrand',$kit['ComponentBrand']);
+      $KitComponentElement->appendChild($ComponentBrandElement);
+     }     
+
+     if(array_key_exists('ComponentBrandLabel',$kit) && trim($kit['ComponentBrandLabel'])!='')
+     {
+      $ComponentBrandLabelElement=$doc->createElement('ComponentBrandLabel',$kit['ComponentBrandLabel']);
+      $KitComponentElement->appendChild($ComponentBrandLabelElement);
+     }     
+
+     if(array_key_exists('ComponentSubBrand',$kit) && trim($kit['ComponentSubBrand'])!='')
+     {
+      $ComponentSubBrandElement=$doc->createElement('ComponentSubBrand',$kit['ComponentSubBrand']);
+      $KitComponentElement->appendChild($ComponentSubBrandElement);
+     }     
+
+     if(array_key_exists('ComponentSubBrandLabel',$kit) && trim($kit['ComponentSubBrandLabel'])!='')
+     {
+      $ComponentSubBrandLabelElement=$doc->createElement('ComponentSubBrandLabel',$kit['ComponentSubBrandLabel']);
+      $KitComponentElement->appendChild($ComponentSubBrandLabelElement);
+     }     
+     
+     if(array_key_exists('Description',$kit) && trim($kit['Description'])!='')
+     {
+      $DescriptionElement=$doc->createElement('Description',$kit['Description']);
+      $DescriptionElement->setAttribute('DescriptionCode', $kit['DescriptionCode']);
+      if(array_key_exists('LanguageCode',$kit) && trim($kit['LanguageCode'])!='')
+      {$DescriptionElement->setAttribute('LanguageCode',$kit['LanguageCode']);}
+      $KitComponentElement->appendChild($DescriptionElement);
+     }     
+     
+     if(array_key_exists('ComponentPartTerminologyID',$kit) && trim($kit['ComponentPartTerminologyID'])!='')
+     {
+      $ComponentPartTerminologyIDElement=$doc->createElement('ComponentPartTerminologyID',$kit['ComponentPartTerminologyID']);
+      $KitComponentElement->appendChild($ComponentPartTerminologyIDElement);
+     }     
+     
+     if(array_key_exists('QuantityInKit',$kit) && trim($kit['QuantityInKit'])!='')
+     {
+      $QuantityInKitElement=$doc->createElement('QuantityInKit',$kit['QuantityInKit']);
+      $QuantityInKitElement->setAttribute('UOM', $kit['QuantityInKitUOM']);
+      $KitComponentElement->appendChild($QuantityInKitElement);
+     }     
+     
+     if(array_key_exists('SequenceCode',$kit) && trim($kit['SequenceCode'])!='')
+     {
+      $SequenceCodeElement=$doc->createElement('SequenceCode',$kit['SequenceCode']);
+      $KitComponentElement->appendChild($SequenceCodeElement);
+     }     
+     
+     if(array_key_exists('SoldSeparately',$kit) && trim($kit['SoldSeparately'])!='')
+     {
+      $SoldSeparatelyElement=$doc->createElement('SoldSeparately',$kit['SoldSeparately']);
+      $KitComponentElement->appendChild($SoldSeparatelyElement);
+     }     
+          
+     $KitComponentElement->setAttribute('MaintenanceType','A');
+     $KitsElement->appendChild($KitComponentElement);
+    }
+    $ItemElement->appendChild($KitsElement);
+   }
    
    
    
    
-   
+   //----------------------- interchanges ----------------------------
+ 
    if(isset($item['interchanges']) && count($item['interchanges']))
    {
     $PartInterchangeInfoElement=$doc->createElement('PartInterchangeInfo');
@@ -315,14 +395,9 @@ class PIESgenerator
     }  
     $ItemElement->appendChild($PartInterchangeInfoElement);
    }
+     
    
-   
-   
-   
-   
-   
-   
-   
+   //----------------------- assets ----------------------------
  
    if(isset($item['assets']) && count($item['assets']))
    {
