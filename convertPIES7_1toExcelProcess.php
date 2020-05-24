@@ -85,6 +85,24 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
 
 if($validUpload)
 {
+ // ---------- header ---------------
+
+ $header=array('BlanketEffectiveDate'=>'','ChangesSinceDate'=>'','ParentDUNSNumber'=>'','ParentGLN'=>'','ParentVMRSID'=>'','ParentAAIAID'=>'','BrandOwnerDUNS'=>'','BrandOwnerGLN'=>'','BrandOwnerVMRSID'=>'','BrandOwnerAAIAID'=>'','BuyerDuns'=>'','CurrencyCode'=>'','LanguageCode'=>'','TechnicalContact'=>'','ContactEmail'=>'','PCdbVersionDate'=>'','PAdbVersionDate'=>'');
+
+ $headerElement=$doc->getElementsByTagName('Header');
+ if(count($headerElement))
+ {
+  $blanketeffectivedateElement=$headerElement[0]->getElementsByTagName('BlanketEffectiveDate');
+  if(count($blanketeffectivedateElement)){$header['BlanketEffectiveDate']=$blanketeffectivedateElement[0]->nodeValue;}
+
+  $changessincedateElement=$headerElement[0]->getElementsByTagName('ChangesSinceDate');
+  if(count($changessincedateElement)){$header['ChangesSinceDate']=$changessincedateElement[0]->nodeValue;}
+  
+ }
+    
+    
+    
+    
  $items=array();
  $itemElements=$doc->getElementsByTagName('Item');
  foreach ($itemElements AS $itemElement) 
@@ -156,14 +174,34 @@ if($validUpload)
   
   $descriptions=array();
   
-  
-  
+  $descriptionText=''; $descriptionCode=''; $languageCode=''; $sequence=1;
+  $descriptionsElement=$itemElement->getElementsByTagName('Descriptions');
+  if(count($descriptionsElement))
+  {
+   $descriptionElements=$itemElement->getElementsByTagName('Description');
+   foreach($descriptionElements as $descriptionElement)
+   {
+    $descriptionText= $descriptionElement->nodeValue;
+    $descriptionCode= $descriptionElement->getAttribute('DescriptionCode');
+    $languageCode= $descriptionElement->getAttribute('LanguageCode');
+    $sequence=$descriptionElement->getAttribute('Sequence');
+    $descriptions[]=array('Description'=>$descriptionText,'DescriptionCode'=>$descriptionCode,'LanguageCode'=>$languageCode,'Sequence'=>$sequence);
+   }
+  }
   
   $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSbrandid,'UNSPSC'=>$UNSPSC,'descriptions'=>$descriptions);
  } // item element foreach
   
  $writer = new XLSXWriter();
  $writer->setAuthor('SandPIM'); 
+ 
+ 
+ //$writer->writeSheetHeader('Header', array('RhubarbTemplate'=>'string','7.1'=>'string'),array(['fill'=>'#ff0000']));
+ $row=array('RhubarbTemplate','7.1',); $writer->writeSheetRow('Header', $row);
+ $row=array('BlanketEffectiveDate',$header['BlanketEffectiveDate'],); $writer->writeSheetRow('Header', $row);
+ $row=array('ChangesSinceDate',$header['ChangesSinceDate'],); $writer->writeSheetRow('Header', $row);
+ 
+ 
  $writer->writeSheetHeader('Items', array('PartNumber'=>'string','PartTerminologyID'=>'integer','BrandAAIAID'=>'string','ItemLevelGTIN'=>'string','GTINQualifier'=>'string','MinimumOrderQuantity'=>'integer','MinimumOrderQuantityUOM'=>'string','HazardousMaterialCode'=>'string','BaseItemID'=>'string','ItemEffectiveDate'=>'date','AvailableDate'=>'date','ACESApplications'=>'string','ItemQuantitySize'=>'integer','ItemQuantitySizeUOM'=>'string','ContainerType'=>'string','QuantityPerApplication'=>'integer','QuantityPerApplicationUOM'=>'string','BrandLabel'=>'string','VMRSBrandID'=>'string','UNSPC'=>'string'),        array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],            ['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
  foreach($items as $partnumber=>$item)
  {
@@ -181,6 +219,12 @@ if($validUpload)
   }
  }
   
+ 
+ 
+ 
+ 
+ 
+ 
  $xlsxdata=$writer->writeToString();
  $streamXLSX=true; 
 }

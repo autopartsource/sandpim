@@ -868,7 +868,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
                 } ?>
                 </table>
                 <?php }else{if(strlen($piesxmlstring)>0){?>
-                 <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $piesxmlstring;?></textarea></div>
+                <div style="padding:10px;"><textarea><?php echo $piesxmlstring;?></textarea></div>
                 <?php }}?>
 
                 <?php if(count($errors)>0 && !isset($_POST['ignorelogic'])){?>
