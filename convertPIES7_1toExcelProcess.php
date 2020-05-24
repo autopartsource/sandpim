@@ -146,24 +146,24 @@ if($validUpload)
   $brandlabel=''; $brandlabelElement=$itemElement->getElementsByTagName('BrandLabel');
   if(count($brandlabelElement)){$brandlabel = $brandlabelElement[0]->nodeValue;}
   
-  $VRMSbrandid=''; $VRMSbrandidElement=$itemElement->getElementsByTagName('VRMSBrandID');
-  if(count($VRMSbrandidElement)){$VRMSbrandid = $VRMSbrandidElement[0]->nodeValue;}
+  $VMRSbrandid=''; $VMRSbrandidElement=$itemElement->getElementsByTagName('VMRSBrandID');
+  if(count($VMRSbrandidElement)){$VMRSbrandid = $VMRSbrandidElement[0]->nodeValue;}
   
-  $UNSPC=''; $UNSPCElement=$itemElement->getElementsByTagName('UNSPC');
-  if(count($UNSPCElement)){$UNSPC = $UNSPCElement[0]->nodeValue;}
+  $UNSPSC=''; $UNSPSCElement=$itemElement->getElementsByTagName('UNSPSC');
+  if(count($UNSPSCElement)){$UNSPSC = $UNSPSCElement[0]->nodeValue;}
   
   
   //UNSPC
 
   
-  $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VRMSBrandID'=>$VRMSbrandid,'UNSPC'=>$UNSPC,'descriptions'=>array());
+  $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSSbrandid,'UNSPSC'=>$UNSPC,'descriptions'=>array());
 
   $writer = new XLSXWriter();
   $writer->setAuthor('SandPIM'); 
-  $writer->writeSheetHeader('Items', array('PartNumber'=>'string','PartTerminologyID'=>'integer','BrandAAIAID'=>'string','ItemLevelGTIN'=>'string','GTINQualifier'=>'string','MinimumOrderQuantity'=>'integer','MinimumOrderQuantityUOM'=>'string','HazardousMaterialCode'=>'string','BaseItemID'=>'string','ItemEffectiveDate'=>'date','AvailableDate'=>'date','ACESApplications'=>'string','ItemQuantitySize'=>'integer','ItemQuantitySizeUOM'=>'string','ContainerType'=>'string','QuantityPerApplication'=>'integer','QuantityPerApplicationUOM'=>'string','BrandLabel'=>'string','VRMSBrandID'=>'string','UNSPC'=>'string'),        array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],            ['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
+  $writer->writeSheetHeader('Items', array('PartNumber'=>'string','PartTerminologyID'=>'integer','BrandAAIAID'=>'string','ItemLevelGTIN'=>'string','GTINQualifier'=>'string','MinimumOrderQuantity'=>'integer','MinimumOrderQuantityUOM'=>'string','HazardousMaterialCode'=>'string','BaseItemID'=>'string','ItemEffectiveDate'=>'date','AvailableDate'=>'date','ACESApplications'=>'string','ItemQuantitySize'=>'integer','ItemQuantitySizeUOM'=>'string','ContainerType'=>'string','QuantityPerApplication'=>'integer','QuantityPerApplicationUOM'=>'string','BrandLabel'=>'string','VMRSBrandID'=>'string','UNSPC'=>'string'),        array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],            ['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
   foreach($items as $partnumber=>$item)
   {
-   $row=array($partnumber,$item['PartTerminologyID'],$item['BrandAAIAID'],$item['ItemLevelGTIN'],$item['GTINQualifier'],$item['MinimumOrderQuantity'],$item['MinimumOrderQuantityUOM'],$item['HazardousMaterialCode'],$item['BaseItemID'],$item['ItemEffectiveDate'],$item['AvailableDate'],$item['ACESApplications'],$item['ItemQuantitySize'],$item['ItemQuantitySizeUOM'],$item['ContainerType'],$item['QuantityPerApplication'],$item['QuantityPerApplicationUOM'],$item['BrandLabel'],$item['VRMSBrandID'],$item['UNSPC']);
+   $row=array($partnumber,$item['PartTerminologyID'],$item['BrandAAIAID'],$item['ItemLevelGTIN'],$item['GTINQualifier'],$item['MinimumOrderQuantity'],$item['MinimumOrderQuantityUOM'],$item['HazardousMaterialCode'],$item['BaseItemID'],$item['ItemEffectiveDate'],$item['AvailableDate'],$item['ACESApplications'],$item['ItemQuantitySize'],$item['ItemQuantitySizeUOM'],$item['ContainerType'],$item['QuantityPerApplication'],$item['QuantityPerApplicationUOM'],$item['BrandLabel'],$item['VMRSBrandID'],$item['UNSPC']);
    $writer->writeSheetRow('Items', $row);
   }
 
@@ -179,26 +179,7 @@ if($validUpload)
   
   $xlsxdata=$writer->writeToString();
   $streamXLSX=true;
-  
-  /*  
-  $items=array(
-    'AQ1150'=>array('PartTerminologyID'=>6832,'BrandAAIAID'=>'BQMC','ItemLevelGTIN'=>'00734776282468','GTINQualifier'=>'UP',
-        'descriptions'=>array(
-            array('Description'=>'Cabin Air Filter (1150) - with more description','DescriptionCode'=>'LNG','Sequence'=>2,'LanguageCode'=>'EN'),
-            array('Description'=>'Cabin Air Filter (1150)','DescriptionCode'=>'SHO','Sequence'=>1,'LanguageCode'=>'EN'))
-        ),
-    'AQ1151'=>array('PartTerminologyID'=>6832,'BrandAAIAID'=>'BQMC','ItemLevelGTIN'=>'00734776282471','GTINQualifier'=>'UP',
-        'descriptions'=>array(
-            array('Description'=>'Cabin Air Filter (1151)- with more description','DescriptionCode'=>'LNG','Sequence'=>2,'LanguageCode'=>'EN'),
-            array('Description'=>'Cabin Air Filter (1151)','DescriptionCode'=>'SHO','Sequence'=>1,'LanguageCode'=>'EN'))
-        ),
-    'AQ1152'=>array('PartTerminologyID'=>6832,'BrandAAIAID'=>'BQMC','ItemLevelGTIN'=>'00734776282419','GTINQualifier'=>'UP',
-        'descriptions'=>array(
-            array('Description'=>'Cabin Air Filter (1152)- with more description','DescriptionCode'=>'LNG','Sequence'=>2,'LanguageCode'=>'EN'),
-            array('Description'=>'Cabin Air Filter (1152)','DescriptionCode'=>'SHO','Sequence'=>1,'LanguageCode'=>'EN'))
-        )
-    );  */
- }
+  }
 }
 
 
