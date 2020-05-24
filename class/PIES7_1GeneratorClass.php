@@ -11,7 +11,14 @@ class PIESgenerator
  {
   $doc = new DOMDocument('1.0', 'UTF-8');
   $root = $doc->createElementNS('http://www.autocare.org', 'PIES');
+  
+  
   $root = $doc->appendChild($root);
+  $root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:xs' ,'http://www.w3.org/2001/XMLSchema');
+
+  
+  
+  
   
   $TestFileElement=new DOMElement('TestFile','false');
   $root->appendChild($TestFileElement);

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSpy v2016 (http://www.altova.com) by Auto Care Association (Auto Care Association) -->
-<!-- <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.autocare.org" targetNamespace="http://www.autocare.org" elementFormDefault="qualified" version="7.1"> -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.autocare.org" targetNamespace="http://www.autocare.org">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.autocare.org" targetNamespace="http://www.autocare.org" elementFormDefault="qualified" version="7.1">
 	<xs:element name="PIES">
 		<xs:annotation>
 			<xs:documentation>Document Root Element</xs:documentation>

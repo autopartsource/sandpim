@@ -18,19 +18,18 @@ $logs=new logs();
         <?php if (isset($_SESSION['userid'])){include('topnav.php');} ?>
 
         <!-- Header -->
-        <div style="padding:5px;"><img src="./rhubarb.png" width="120"/></div>
-        <h1>Build PIES (7.1) xml from <a title="This is the template spreadsheet (Excel .xlsx) to use as a guide. Fill in your own product data and upload it using the form on this page. There is sample data in the spreadsheet that can be deleted." href="./Rhubarb_7_1_A.xlsx">spreadsheet</a> of flat product data</h1>
+        <div style="padding:5px;"><img src="./rhubarb_from_pies.png" width="120"/></div>
+        <h1>Flatten PIES (7.1) xml file to an Excel spreadsheet</h1>
 
         <div class="wrapper">
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
             <div class="contentMain">
-                <form method="post" action="convertTextToPIES7_1process.php" enctype="multipart/form-data">
-                    <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" /></div>
-                    <div style="padding:5px;text-align: left;"><input type="checkbox" id="showtext" name="showtext"/><label for="showtext">Show output xml in text area (un-check to auto download PIES xml file)</label></div>
+                <form method="post" action="convertPIES7_1toExcelProcess.php" enctype="multipart/form-data">
+                    <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" accept=".xml"/></div>
                     <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
-                    <div style="padding:5px;"><input name="submit" type="submit" value="Generate PIES xml"/></div>
+                    <div style="padding:5px;"><input name="submit" type="submit" value="Generate Excel file"/></div>
 
                 </form>
             </div>
@@ -46,7 +45,7 @@ if (isset($_SESSION['userid']))
 else
 {
 ?><div style="font-size: .75em; font-style: italic; color: #808080;"><?php  
- $logs->logSystemEvent('rhubarb', 0, 'upload page load by:'.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('keylime', 0, 'upload page load by:'.$_SERVER['REMOTE_ADDR']);
  include('./includes/storageDisclaimer.php');
 ?></div><?php  
 }

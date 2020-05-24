@@ -2,7 +2,7 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
-include_once('./class/PIESgeneratorClass.php');
+include_once('./class/PIES7_1GeneratorClass.php');
 include_once('./class/XLSXReaderClass.php');
 $navCategory = 'import/export';
 
@@ -12,14 +12,14 @@ $pim = new pim;
 $PIESgenerator=new PIESgenerator();
 $pcdb = new pcdb();
 $logs=new logs();
-
+$pcdbVersion=$pcdb->version();
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
 $validEXPIcodes=$pcdb->getAllEXPIcodes();
 $validPartTypes=array(); $partTypes=$pcdb->getPartTypes('%'); foreach($partTypes as $partType){$validPartTypes[$partType['id']]=$partType['name'];}
 
-$piesxml='';
+$piesxmlstring='';
 $streamXML=true;
 
 $originalFilename='';
@@ -215,7 +215,7 @@ if($validUpload)
    
   if(!array_key_exists($item['PartTerminologyID'],$validPartTypes))
   {
-   $errors[]='Partnumber ('.$PartNumber.') has in invalid PartTerminologyID ('.$item['PartTerminologyID'].')';  
+   $errors[]='Partnumber ('.$PartNumber.') has an invalid PartTerminologyID ('.$item['PartTerminologyID'].')';  
   }
   
   $items[$PartNumber]=$item;
@@ -548,7 +548,7 @@ if($validUpload)
  }
 
  // --------------------- Kits -----------------------
-  if(in_array('Kits',$sheetNames))
+ if(in_array('Kits',$sheetNames))
  {
   $kitsSheet=$xlsx->getSheetData('Kits');
 
@@ -781,12 +781,19 @@ if($validUpload)
  //-----------------------------------------------------
  $doc=$PIESgenerator->createPIESdoc($header,$marketingcopys,$items);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
  $doc->formatOutput=true;
- $piesxml=$doc->saveXML();    
+ $piesxmlstring=$doc->saveXML();    
 
-
+ $newdoc=new DOMDocument();
+ $newdoc->loadXML($piesxmlstring); 
+ // I do realize that this extra step seems redundant. Running the schema validation 
+ // directly on the original object failed because of namespace problems that 
+ // I could not resolve (or understand). Exporting the original object's xml 
+ // to a text string and then re-importing it to a new DOM object was the
+ // work-around that I found.
+ 
  $schemavalidated=true;   
  libxml_use_internal_errors(true);
- if(!$doc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
+ if(!$newdoc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
  {
   $schemavalidated=false;
   $schemaerrors = libxml_get_errors();
@@ -832,7 +839,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
         <!-- Header -->
         <h1>Build PIES xml from structured text</h1>
         <h2>Step 2: Analyze results and download XML</h2>
-
+        <div style="font-style: italic;">Validation done against PCdb version: <?php echo $pcdbVersion;?></div>
         <div class="wrapper">
             <div class="contentLeft"></div>
 
@@ -850,10 +857,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
                 }
                 ?>
                 </table>
-                
                 <?php }?>
-
-
                 
                 <?php if(count($schemaresults)>0){?>
                 <div style="padding:10px;background-color:#FF8800;font-size:1.5em;">Your input data causes schema (XSD) problems. Here they are:</div>
@@ -861,11 +865,10 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
                 foreach($schemaresults as $result)
                 { // render each element of schema problems into a table
                  echo '<tr><td style="text-align:left;background-color:#FF8800;">'.$result.'</td></tr>';
-                }
-                ?>
+                } ?>
                 </table>
-                <?php }else{if(strlen($piesxml)>0){?>
-                 <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $piesxml;?></textarea></div>
+                <?php }else{if(strlen($piesxmlstring)>0){?>
+                 <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $piesxmlstring;?></textarea></div>
                 <?php }}?>
 
                 <?php if(count($errors)>0 && !isset($_POST['ignorelogic'])){?>
@@ -898,9 +901,7 @@ if($streamXML && $validUpload)
 $filename='PIES_7_1_FULL_'.date('Y-m-d').'.xml';
 header('Content-Disposition: attachment; filename="'.$filename.'"');
 header('Content-Type: application/octet-stream');
-header('Content-Length: ' . strlen($piesxml));
+header('Content-Length: ' . strlen($piesxmlstring));
 header('Connection: close');    
-echo $piesxml;
-}
-
-?>
+echo $piesxmlstring;
+}?>
