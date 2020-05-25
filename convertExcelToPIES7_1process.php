@@ -159,7 +159,7 @@ if($validUpload)
  
  // --------------------- items ---------------------------------   
  $items=array(); 
- $PartTerminologyIDfieldIndex=-1; $BrandAAIAIDfieldIndex=-1; $ItemLevelGTINfieldIndex=-1; $GTINQualifierFieldIndex=-1; $MinimumOrderQuantityFieldIndex=-1; $MinimumOrderQuantityUOMfieldIndex=-1;  $HazardousMaterialCodeFieldIndex=-1; $BaseItemIDfieldIndex=-1; $ACESApplicationsFieldIndex=-1; $ItemQuantitySizeFieldIndex=-1;  $ItemQuantitySizeUOMfieldIndex=-1; $ContainerTypeFieldIndex=-1; $ItemEffectiveDateFieldIndex=-1; $AvailableDateFieldIndex=-1;  $UNSPSCfieldIndex=-1; $BrandLabelFieldIndex=-1; $VMRSBrandIDfieldIndex=-1; $QuantityPerApplicationFieldIndex=-1;  $QuantityPerApplicationQualifierFieldIndex=-1; $QuantityPerApplicationUOMfieldIndex=-1;
+ $PartTerminologyIDfieldIndex=-1; $BrandAAIAIDfieldIndex=-1; $ItemLevelGTINfieldIndex=-1; $GTINQualifierFieldIndex=-1; $MinimumOrderQuantityFieldIndex=-1; $MinimumOrderQuantityUOMfieldIndex=-1;  $HazardousMaterialCodeFieldIndex=-1; $BaseItemIDfieldIndex=-1; $ACESApplicationsFieldIndex=-1; $ItemQuantitySizeFieldIndex=-1;  $ItemQuantitySizeUOMfieldIndex=-1; $ContainerTypeFieldIndex=-1; $ItemEffectiveDateFieldIndex=-1; $AvailableDateFieldIndex=-1;  $UNSPSCfieldIndex=-1; $BrandLabelFieldIndex=-1; $VMRSBrandIDfieldIndex=-1; $QuantityPerApplicationFieldIndex=-1;  $QuantityPerApplicationQualifierFieldIndex=-1; $QuantityPerApplicationUOMfieldIndex=-1; $ManufacturerProductCodeGroupFieldIndex=-1; $ManufacturerProductCodeSubGroupFieldIndex=-1; $AAIAProductCategoryCodeFieldIndex=-1;
  for($i=0; $i<=count($itemsSheet[0])-1; $i++)
  {
   if($itemsSheet[0][$i]=='PartTerminologyID'){$PartTerminologyIDfieldIndex=$i;}
@@ -182,8 +182,11 @@ if($validUpload)
   if($itemsSheet[0][$i]=='QuantityPerApplication'){$QuantityPerApplicationFieldIndex=$i;}
   if($itemsSheet[0][$i]=='QuantityPerApplicationQualifier'){$QuantityPerApplicationQualifierFieldIndex=$i;}
   if($itemsSheet[0][$i]=='QuantityPerApplicationUOM'){$QuantityPerApplicationUOMfieldIndex=$i;}
+  if($itemsSheet[0][$i]=='ManufacturerProductCodeGroup'){$ManufacturerProductCodeGroupFieldIndex=$i;}
+  if($itemsSheet[0][$i]=='ManufacturerProductCodeSubGroup'){$ManufacturerProductCodeSubGroupFieldIndex=$i;}
+  if($itemsSheet[0][$i]=='AAIAProductCategoryCode'){$AAIAProductCategoryCodeFieldIndex=$i;}
  }
- 
+
   // main items list. parse the text-area input lines
  $recordnumber=0;
  foreach($itemsSheet as $fields)
@@ -212,7 +215,9 @@ if($validUpload)
   if($QuantityPerApplicationFieldIndex >=0 && trim($fields[$QuantityPerApplicationFieldIndex])!=''){$item['QuantityPerApplication']=trim($fields[$QuantityPerApplicationFieldIndex]);}  
   if($QuantityPerApplicationQualifierFieldIndex >=0 && trim($fields[$QuantityPerApplicationQualifierFieldIndex])!=''){$item['QuantityPerApplicationQualifier']=trim($fields[$QuantityPerApplicationQualifierFieldIndex]);}  
   if($QuantityPerApplicationUOMfieldIndex >=0 && trim($fields[$QuantityPerApplicationUOMfieldIndex])!=''){$item['QuantityPerApplicationUOM']=trim($fields[$QuantityPerApplicationUOMfieldIndex]);}  
-   
+  if($ManufacturerProductCodeGroupFieldIndex >=0 && trim($fields[$ManufacturerProductCodeGroupFieldIndex])!=''){$item['ManufacturerProductCodeGroup']=trim($fields[$ManufacturerProductCodeGroupFieldIndex]);}  
+  if($ManufacturerProductCodeSubGroupFieldIndex >=0 && trim($fields[$ManufacturerProductCodeSubGroupFieldIndex])!=''){$item['ManufacturerProductCodeSubGroup']=trim($fields[$ManufacturerProductCodeSubGroupFieldIndex]);}  
+  if($AAIAProductCategoryCodeFieldIndex >=0 && trim($fields[$AAIAProductCategoryCodeFieldIndex])!=''){$item['AAIAProductCategoryCode']=trim($fields[$AAIAProductCategoryCodeFieldIndex]);}  
   if(!array_key_exists($item['PartTerminologyID'],$validPartTypes))
   {
    $errors[]='Partnumber ('.$PartNumber.') has an invalid PartTerminologyID ('.$item['PartTerminologyID'].')';  
@@ -868,7 +873,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
                 } ?>
                 </table>
                 <?php }else{if(strlen($piesxmlstring)>0){?>
-                <div style="padding:10px;"><textarea><?php echo $piesxmlstring;?></textarea></div>
+                <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $piesxmlstring;?></textarea></div>
                 <?php }}?>
 
                 <?php if(count($errors)>0 && !isset($_POST['ignorelogic'])){?>

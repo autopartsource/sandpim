@@ -127,12 +127,19 @@ class PIESgenerator
    if(array_key_exists('ItemEffectiveDate', $item)){$ItemEffectiveDateElement= $doc->createElement('ItemEffectiveDate',$item['ItemEffectiveDate']); $ItemElement->appendChild($ItemEffectiveDateElement);}
    if(array_key_exists('AvailableDate', $item)){$AvailableDateElement= $doc->createElement('AvailableDate',$item['AvailableDate']); $ItemElement->appendChild($AvailableDateElement);}
    if(array_key_exists('MinimumOrderQuantity', $item) && array_key_exists('MinimumOrderQuantityUOM', $item)){$MinimumOrderQuantityElement= $doc->createElement('MinimumOrderQuantity',$item['MinimumOrderQuantity']); $ItemElement->appendChild($MinimumOrderQuantityElement);  $MinimumOrderQuantityElement->setAttribute('UOM', $item['MinimumOrderQuantityUOM']);  }
+   
+   if(array_key_exists('ManufacturerProductCodeGroup', $item) || array_key_exists('ManufacturerProductCodeSubGroup', $item))
+   {
+    $ManufacturerProductCodesElement= $doc->createElement('ManufacturerProductCodes');
+    if(array_key_exists('ManufacturerProductCodeGroup', $item)){$ManufacturerProductCodeGroup= $doc->createElement('Group',$item['ManufacturerProductCodeGroup']); $ManufacturerProductCodesElement->appendChild($ManufacturerProductCodeGroup);}
+    if(array_key_exists('ManufacturerProductCodeSubGroup', $item)){$ManufacturerProductCodeSubGroup= $doc->createElement('SubGroup',$item['ManufacturerProductCodeSubGroup']); $ManufacturerProductCodesElement->appendChild($ManufacturerProductCodeSubGroup);}
+    $ItemElement->appendChild($ManufacturerProductCodesElement);
+   }
+   
+   if(array_key_exists('AAIAProductCategoryCode', $item)){$AAIAProductCategoryCodeElement= $doc->createElement('AAIAProductCategoryCode',$item['AAIAProductCategoryCode']); $ItemElement->appendChild($AAIAProductCategoryCodeElement); }
    if(array_key_exists('UNSPSC', $item)){$UNSPSCElement= $doc->createElement('UNSPSC',$item['UNSPSC']); $ItemElement->appendChild($UNSPSCElement); }
 
    $PartTerminologyIDelement= $doc->createElement('PartTerminologyID',$item['PartTerminologyID']); $ItemElement->appendChild($PartTerminologyIDelement);
-   
-   
-   
 
    
    //------------------------- descriptions -----------------------

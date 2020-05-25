@@ -14,7 +14,6 @@ $pcdb = new pcdb();
 $pcdbVersion=$pcdb->version();
 
 
-
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
 $validEXPIcodes=$pcdb->getAllEXPIcodes();
@@ -28,7 +27,6 @@ $validUpload=false;
 $schemaresults=array();
 $inputFileLog=array();
 $errors=array(); 
-$warnings=array();
 
 if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
 {
@@ -155,6 +153,10 @@ if($validUpload)
  {
   $partnumber=$itemElement->getElementsByTagName('PartNumber')[0]->nodeValue;
   $partterminologyid=$itemElement->getElementsByTagName('PartTerminologyID')[0]->nodeValue;
+  
+  $niceparttypename=$pcdb->parttypeName($partterminologyid);
+  if($niceparttypename=='not found'){$errors[]="Ref:PartTerminologyID\t".$partnumber." has unknown part type (".$partterminologyid.')';}
+  
   $brandaaiaid=$itemElement->getElementsByTagName('BrandAAIAID')[0]->nodeValue;
   
   $itemlevelgtin=''; $gtinqualifier='';
@@ -173,20 +175,11 @@ if($validUpload)
    $minimumorderquantityuom=$itemElement->getElementsByTagName('MinimumOrderQuantity')[0]->getAttribute('UOM');
   }
 
-  $hazardousmaterialcode=''; $hazardousmaterialcodeElement=$itemElement->getElementsByTagName('HazardousMaterialCode');
-  if(count($hazardousmaterialcodeElement)){$hazardousmaterialcode = $hazardousmaterialcodeElement[0]->nodeValue;}
-
-  $baseitemid=''; $baseitemidElement=$itemElement->getElementsByTagName('BaseItemID');
-  if(count($baseitemidElement)){$baseitemid = $baseitemidElement[0]->nodeValue;}
-  
-  $itemeffectivedate=''; $itemeffectivedateElement=$itemElement->getElementsByTagName('ItemEffectiveDate');
-  if(count($itemeffectivedateElement)){$itemeffectivedate = $itemeffectivedateElement[0]->nodeValue;}
-
-  $availabledate=''; $availabledateElement=$itemElement->getElementsByTagName('AvailableDate');
-  if(count($availabledateElement)){$availabledate = $availabledateElement[0]->nodeValue;}
-  
-  $ACESapplications=''; $ACESapplicationsElement=$itemElement->getElementsByTagName('ACESApplications');
-  if(count($ACESapplicationsElement)){$ACESapplications = $ACESapplicationsElement[0]->nodeValue;}
+  $hazardousmaterialcode=''; $hazardousmaterialcodeElement=$itemElement->getElementsByTagName('HazardousMaterialCode'); if(count($hazardousmaterialcodeElement)){$hazardousmaterialcode = $hazardousmaterialcodeElement[0]->nodeValue;}
+  $baseitemid=''; $baseitemidElement=$itemElement->getElementsByTagName('BaseItemID'); if(count($baseitemidElement)){$baseitemid = $baseitemidElement[0]->nodeValue;}
+  $itemeffectivedate=''; $itemeffectivedateElement=$itemElement->getElementsByTagName('ItemEffectiveDate'); if(count($itemeffectivedateElement)){$itemeffectivedate = $itemeffectivedateElement[0]->nodeValue;}
+  $availabledate=''; $availabledateElement=$itemElement->getElementsByTagName('AvailableDate'); if(count($availabledateElement)){$availabledate = $availabledateElement[0]->nodeValue;}
+  $ACESapplications=''; $ACESapplicationsElement=$itemElement->getElementsByTagName('ACESApplications');if(count($ACESapplicationsElement)){$ACESapplications = $ACESapplicationsElement[0]->nodeValue;}
   
   $itemquantitysize=''; $itemquantitysizeuom='';
   $itemquantitysizeElement=$itemElement->getElementsByTagName('ItemQuantitySize');
@@ -196,8 +189,7 @@ if($validUpload)
    $itemquantitysizeuom=$itemElement->getElementsByTagName('ItemQuantitySize')[0]->getAttribute('UOM');
   }
 
-  $containertype=''; $containertypeElement=$itemElement->getElementsByTagName('ContainerType');
-  if(count($containertypeElement)){$containertype = $containertypeElement[0]->nodeValue;}
+  $containertype=''; $containertypeElement=$itemElement->getElementsByTagName('ContainerType'); if(count($containertypeElement)){$containertype = $containertypeElement[0]->nodeValue;}
 
   $quantityperapplication=''; $quantityperapplicationuom='';
   $quantityperapplicationElement=$itemElement->getElementsByTagName('QuantityPerApplication');
@@ -207,19 +199,12 @@ if($validUpload)
    $quantityperapplicationuom=$itemElement->getElementsByTagName('QuantityPerApplication')[0]->getAttribute('UOM');
   }
 
-  $brandlabel=''; $brandlabelElement=$itemElement->getElementsByTagName('BrandLabel');
-  if(count($brandlabelElement)){$brandlabel = $brandlabelElement[0]->nodeValue;}
-  
-  $VMRSbrandid=''; $VMRSbrandidElement=$itemElement->getElementsByTagName('VMRSBrandID');
-  if(count($VMRSbrandidElement)){$VMRSbrandid = $VMRSbrandidElement[0]->nodeValue;}
-  
-  $UNSPSC=''; $UNSPSCElement=$itemElement->getElementsByTagName('UNSPSC');
-  if(count($UNSPSCElement)){$UNSPSC = $UNSPSCElement[0]->nodeValue;}
+  $brandlabel=''; $brandlabelElement=$itemElement->getElementsByTagName('BrandLabel'); if(count($brandlabelElement)){$brandlabel = $brandlabelElement[0]->nodeValue;}
+  $VMRSbrandid=''; $VMRSbrandidElement=$itemElement->getElementsByTagName('VMRSBrandID'); if(count($VMRSbrandidElement)){$VMRSbrandid = $VMRSbrandidElement[0]->nodeValue;}
+  $UNSPSC=''; $UNSPSCElement=$itemElement->getElementsByTagName('UNSPSC'); if(count($UNSPSCElement)){$UNSPSC = $UNSPSCElement[0]->nodeValue;}
   
   //----------- descriptions -----------
-  
   $descriptions=array();
-  
   $descriptionText=''; $descriptionCode=''; $languageCode=''; $sequence=1;
   $descriptionsElement=$itemElement->getElementsByTagName('Descriptions');
   if(count($descriptionsElement))
@@ -236,44 +221,23 @@ if($validUpload)
   }
  
   //--------------- prices --------------------
-  
   $prices=array();
-  
-
   $pricesElement=$itemElement->getElementsByTagName('Prices');
   if(count($pricesElement))
   {
    $pricingElements=$pricesElement[0]->getElementsByTagName('Pricing');
    foreach($pricingElements as $pricingElement)
    {
-    $pricesheetnumber=''; $price=''; $priceuom=''; $pricetype=''; $currencycode=''; $effectivedate=''; $expirationdate=''; $pricetypedescription=''; $pricebreak=''; $pricebreakuom=''; $pricemultiplier='';
-    $pricetype=$pricingElement->getAttribute('PriceType');
-    
-    $pricesheetnumberElement=$pricingElement->getElementsByTagName('PriceSheetNumber');
-    if(count($pricesheetnumberElement)){$pricesheetnumber = $pricesheetnumberElement[0]->nodeValue;}
-    
-    $priceElement=$pricingElement->getElementsByTagName('Price');
-    if(count($priceElement)){$price = $priceElement[0]->nodeValue; $priceuom=$priceElement[0]->getAttribute('UOM');}
-    
-    $currencycodeElement=$pricingElement->getElementsByTagName('CurrencyCode');
-    if(count($currencycodeElement)){$currencycode = $currencycodeElement[0]->nodeValue;}
-      
-    $effectivedateElement=$pricingElement->getElementsByTagName('EffectiveDate');
-    if(count($effectivedateElement)){$effectivedate = $effectivedateElement[0]->nodeValue;}
-
-    $expirationdateElement=$pricingElement->getElementsByTagName('ExpirationDate');
-    if(count($expirationdateElement)){$expirationdate = $expirationdateElement[0]->nodeValue;}
-
-    $pricetypedescriptionElement=$pricingElement->getElementsByTagName('PriceTypeDescription');
-    if(count($pricetypedescriptionElement)){$pricetypedescription = $pricetypedescriptionElement[0]->nodeValue;}
-
-    $pricebreakElement=$pricingElement->getElementsByTagName('PriceBreak');
-    if(count($pricebreakElement)){$pricebreak = $pricebreakElement[0]->nodeValue; $pricebreakuom=$pricebreakElement[0]->getAttribute('UOM');}
-    
+    $pricesheetnumber=''; $price=''; $priceuom=''; $pricetype=''; $currencycode=''; $effectivedate=''; $expirationdate=''; $pricetypedescription=''; $pricebreak=''; $pricebreakuom=''; $pricemultiplier='';   $pricetype=$pricingElement->getAttribute('PriceType');
+    $pricesheetnumberElement=$pricingElement->getElementsByTagName('PriceSheetNumber'); if(count($pricesheetnumberElement)){$pricesheetnumber = $pricesheetnumberElement[0]->nodeValue;}
+    $priceElement=$pricingElement->getElementsByTagName('Price'); if(count($priceElement)){$price = $priceElement[0]->nodeValue; $priceuom=$priceElement[0]->getAttribute('UOM');}
+    $currencycodeElement=$pricingElement->getElementsByTagName('CurrencyCode'); if(count($currencycodeElement)){$currencycode = $currencycodeElement[0]->nodeValue;}
+    $effectivedateElement=$pricingElement->getElementsByTagName('EffectiveDate'); if(count($effectivedateElement)){$effectivedate = $effectivedateElement[0]->nodeValue;}
+    $expirationdateElement=$pricingElement->getElementsByTagName('ExpirationDate'); if(count($expirationdateElement)){$expirationdate = $expirationdateElement[0]->nodeValue;}
+    $pricetypedescriptionElement=$pricingElement->getElementsByTagName('PriceTypeDescription'); if(count($pricetypedescriptionElement)){$pricetypedescription = $pricetypedescriptionElement[0]->nodeValue;}
+    $pricebreakElement=$pricingElement->getElementsByTagName('PriceBreak'); if(count($pricebreakElement)){$pricebreak = $pricebreakElement[0]->nodeValue; $pricebreakuom=$pricebreakElement[0]->getAttribute('UOM');}
     $pricemultiplierElement=$pricingElement->getElementsByTagName('PriceMultiplier');
     if(count($pricemultiplierElement)){$pricemultiplier = $pricemultiplierElement[0]->nodeValue;}
-    
-    
     $prices[]=array('PriceSheetNumber'=>$pricesheetnumber,'Price'=>$price,'PriceUOM'=>$priceuom,'PriceType'=>$pricetype,'CurrencyCode'=>$currencycode,'EffectiveDate'=>$effectivedate,'ExpirationDate'=>$expirationdate,'PriceTypeDescription'=>$pricetypedescription,'PriceBreak'=>$pricebreak,'PriceBreakUOM'=>$pricebreakuom,'PriceMultiplier'=>$pricemultiplier);
    }
   }
@@ -334,12 +298,25 @@ if($validUpload)
   }
  }
 
+ //-------- errors ------------
+ 
+ if(count($errors))
+ {
+  $writer->writeSheetHeader('Errors', array('Error Type'=>'string','Description'=>'string'), array('freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+  foreach($errors as $error)
+  {
+   $row=explode("\t",$error);
+   $writer->writeSheetRow('Errors', $row);
+  }
+ }
+ 
+ 
  
  $xlsxdata=$writer->writeToString();
  $streamXLSX=true; 
 }
 
-if(count($errors)>0 || count($schemaresults)>0 || !$validUpload)
+if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>0 || !$validUpload)
 {
  $streamXLSX=false; ?>
 <!DOCTYPE html>
