@@ -5,6 +5,7 @@ include_once('./class/pcdbClass.php');
 include_once('./class/XLSXWriterClass.php');
 $navCategory = 'import/export';
 
+$anonSizeLimit=5000000;
 session_start();
 
 $pim = new pim();
@@ -33,7 +34,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
 {
  if($_FILES['fileToUpload']['type']=='text/xml')
  {
-  if($_FILES['fileToUpload']['size']<500000 || isset($_SESSION['userid']))   
+  if($_FILES['fileToUpload']['size']<$anonSizeLimit || isset($_SESSION['userid']))   
   {     
    $originalFilename= basename($_FILES['fileToUpload']['name']);
    $doc = new DOMDocument('1.0', 'UTF-8');
@@ -72,14 +73,14 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
   }
   else
   {
-   $inputFileLog[]='Input file was too big (500K limit for anonymous users)';
-   //$logs->logSystemEvent('rhubarb', 0, 'Input file was too big (500K limit for anonymous users');
+   $inputFileLog[]='Input file was too big ('.round($anonSizeLimit/1000000,1).'Mb limit for anonymous users)';
+   $logs->logSystemEvent('rhubarb', 0, 'Input file was too big ('.round($anonSizeLimit/1000000,1).'Mb limit for anonymous users)');
   }
  }
  else
  {
   echo 'Error uploading file - un-supported file format ('.$_FILES['fileToUpload']['type'].'). Must be a valid xml file';
-  //$logs->logSystemEvent('rhubarb', 0, 'Error uploading file - un-supported file format');
+  $logs->logSystemEvent('rhubarb', 0, 'Error uploading file - un-supported file format');
  }
 }
 
@@ -97,6 +98,51 @@ if($validUpload)
 
   $changessincedateElement=$headerElement[0]->getElementsByTagName('ChangesSinceDate');
   if(count($changessincedateElement)){$header['ChangesSinceDate']=$changessincedateElement[0]->nodeValue;}
+  
+  $parentDUNSNumberElement=$headerElement[0]->getElementsByTagName('ParentDUNSNumber');
+  if(count($parentDUNSNumberElement)){$header['ParentDUNSNumber']=$parentDUNSNumberElement[0]->nodeValue;}
+  
+  $parentGLNelement=$headerElement[0]->getElementsByTagName('ParentGLN');
+  if(count($parentGLNelement)){$header['ParentGLN']=$parentGLNelement[0]->nodeValue;}
+  
+  $parentVMRSIDelement=$headerElement[0]->getElementsByTagName('ParentVMRSID');
+  if(count($parentVMRSIDelement)){$header['ParentVMRSID']=$parentVMRSIDelement[0]->nodeValue;}
+  
+  $parentAAIAIDelement=$headerElement[0]->getElementsByTagName('ParentAAIAID');
+  if(count($parentAAIAIDelement)){$header['ParentAAIAID']=$parentAAIAIDelement[0]->nodeValue;}
+  
+  $brandOwnerDUNSelement=$headerElement[0]->getElementsByTagName('BrandOwnerDUNS');
+  if(count($brandOwnerDUNSelement)){$header['BrandOwnerDUNS']=$brandOwnerDUNSelement[0]->nodeValue;}
+  
+  $brandOwnerGLNelement=$headerElement[0]->getElementsByTagName('BrandOwnerGLN');
+  if(count($brandOwnerGLNelement)){$header['BrandOwnerGLN']=$brandOwnerGLNelement[0]->nodeValue;}
+  
+  $brandOwnerVMRSIDelement=$headerElement[0]->getElementsByTagName('BrandOwnerVMRSID');
+  if(count($brandOwnerVMRSIDelement)){$header['BrandOwnerVMRSID']=$brandOwnerVMRSIDelement[0]->nodeValue;}
+  
+  $brandownerAAIAIDelement=$headerElement[0]->getElementsByTagName('BrandOwnerAAIAID');
+  if(count($brandownerAAIAIDelement)){$header['BrandOwnerAAIAID']=$brandownerAAIAIDelement[0]->nodeValue;}
+  
+  $buyerDunsElement=$headerElement[0]->getElementsByTagName('BuyerDuns');
+  if(count($buyerDunsElement)){$header['BuyerDuns']=$buyerDunsElement[0]->nodeValue;}
+  
+  $currencycodeElement=$headerElement[0]->getElementsByTagName('CurrencyCode');
+  if(count($currencycodeElement)){$header['CurrencyCode']=$currencycodeElement[0]->nodeValue;}
+  
+  $languagecodeElement=$headerElement[0]->getElementsByTagName('LanguageCode');
+  if(count($languagecodeElement)){$header['LanguageCode']=$languagecodeElement[0]->nodeValue;}
+  
+  $technicalcontactElement=$headerElement[0]->getElementsByTagName('TechnicalContact');
+  if(count($technicalcontactElement)){$header['TechnicalContact']=$technicalcontactElement[0]->nodeValue;}
+  
+  $contactemailElement=$headerElement[0]->getElementsByTagName('ContactEmail');
+  if(count($contactemailElement)){$header['ContactEmail']=$contactemailElement[0]->nodeValue;}
+  
+  $pcdbversiondateElement=$headerElement[0]->getElementsByTagName('PCdbVersionDate');
+  if(count($pcdbversiondateElement)){$header['PCdbVersionDate']=$pcdbversiondateElement[0]->nodeValue;}
+  
+  $padbversiondateElement=$headerElement[0]->getElementsByTagName('PAdbVersionDate');
+  if(count($padbversiondateElement)){$header['PAdbVersionDate']=$padbversiondateElement[0]->nodeValue;}
   
  }
     
@@ -188,18 +234,76 @@ if($validUpload)
     $descriptions[]=array('Description'=>$descriptionText,'DescriptionCode'=>$descriptionCode,'LanguageCode'=>$languageCode,'Sequence'=>$sequence);
    }
   }
+ 
+  //--------------- prices --------------------
   
-  $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSbrandid,'UNSPSC'=>$UNSPSC,'descriptions'=>$descriptions);
+  $prices=array();
+  
+
+  $pricesElement=$itemElement->getElementsByTagName('Prices');
+  if(count($pricesElement))
+  {
+   $pricingElements=$pricesElement[0]->getElementsByTagName('Pricing');
+   foreach($pricingElements as $pricingElement)
+   {
+    $pricesheetnumber=''; $price=''; $priceuom=''; $pricetype=''; $currencycode=''; $effectivedate=''; $expirationdate=''; $pricetypedescription=''; $pricebreak=''; $pricebreakuom=''; $pricemultiplier='';
+    $pricetype=$pricingElement->getAttribute('PriceType');
+    
+    $pricesheetnumberElement=$pricingElement->getElementsByTagName('PriceSheetNumber');
+    if(count($pricesheetnumberElement)){$pricesheetnumber = $pricesheetnumberElement[0]->nodeValue;}
+    
+    $priceElement=$pricingElement->getElementsByTagName('Price');
+    if(count($priceElement)){$price = $priceElement[0]->nodeValue; $priceuom=$priceElement[0]->getAttribute('UOM');}
+    
+    $currencycodeElement=$pricingElement->getElementsByTagName('CurrencyCode');
+    if(count($currencycodeElement)){$currencycode = $currencycodeElement[0]->nodeValue;}
+      
+    $effectivedateElement=$pricingElement->getElementsByTagName('EffectiveDate');
+    if(count($effectivedateElement)){$effectivedate = $effectivedateElement[0]->nodeValue;}
+
+    $expirationdateElement=$pricingElement->getElementsByTagName('ExpirationDate');
+    if(count($expirationdateElement)){$expirationdate = $expirationdateElement[0]->nodeValue;}
+
+    $pricetypedescriptionElement=$pricingElement->getElementsByTagName('PriceTypeDescription');
+    if(count($pricetypedescriptionElement)){$pricetypedescription = $pricetypedescriptionElement[0]->nodeValue;}
+
+    $pricebreakElement=$pricingElement->getElementsByTagName('PriceBreak');
+    if(count($pricebreakElement)){$pricebreak = $pricebreakElement[0]->nodeValue; $pricebreakuom=$pricebreakElement[0]->getAttribute('UOM');}
+    
+    $pricemultiplierElement=$pricingElement->getElementsByTagName('PriceMultiplier');
+    if(count($pricemultiplierElement)){$pricemultiplier = $pricemultiplierElement[0]->nodeValue;}
+    
+    
+    $prices[]=array('PriceSheetNumber'=>$pricesheetnumber,'Price'=>$price,'PriceUOM'=>$priceuom,'PriceType'=>$pricetype,'CurrencyCode'=>$currencycode,'EffectiveDate'=>$effectivedate,'ExpirationDate'=>$expirationdate,'PriceTypeDescription'=>$pricetypedescription,'PriceBreak'=>$pricebreak,'PriceBreakUOM'=>$pricebreakuom,'PriceMultiplier'=>$pricemultiplier);
+   }
+  }
+  
+  
+  $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSbrandid,'UNSPSC'=>$UNSPSC,'descriptions'=>$descriptions,'prices'=>$prices);
  } // item element foreach
   
  $writer = new XLSXWriter();
  $writer->setAuthor('SandPIM'); 
  
- 
  //$writer->writeSheetHeader('Header', array('RhubarbTemplate'=>'string','7.1'=>'string'),array(['fill'=>'#ff0000']));
- $row=array('RhubarbTemplate','7.1',); $writer->writeSheetRow('Header', $row);
- $row=array('BlanketEffectiveDate',$header['BlanketEffectiveDate'],); $writer->writeSheetRow('Header', $row);
- $row=array('ChangesSinceDate',$header['ChangesSinceDate'],); $writer->writeSheetRow('Header', $row);
+ $row=array('RhubarbTemplate','7.1'); $writer->writeSheetRow('Header', $row);
+ $row=array('BlanketEffectiveDate',$header['BlanketEffectiveDate']); $writer->writeSheetRow('Header', $row);
+ $row=array('ChangesSinceDate',$header['ChangesSinceDate']); $writer->writeSheetRow('Header', $row);
+ $row=array('ParentDUNSNumber',$header['ParentDUNSNumber']); $writer->writeSheetRow('Header', $row);
+ $row=array('ParentGLN',$header['ParentGLN']); $writer->writeSheetRow('Header', $row);
+ $row=array('ParentVMRSID',$header['ParentVMRSID']); $writer->writeSheetRow('Header', $row);
+ $row=array('ParentAAIAID',$header['ParentAAIAID']); $writer->writeSheetRow('Header', $row);
+ $row=array('BrandOwnerDUNS',$header['BrandOwnerDUNS']); $writer->writeSheetRow('Header', $row);
+ $row=array('BrandOwnerGLN',$header['BrandOwnerGLN']); $writer->writeSheetRow('Header', $row);
+ $row=array('BrandOwnerVMRSID',$header['BrandOwnerVMRSID']); $writer->writeSheetRow('Header', $row);
+ $row=array('BrandOwnerAAIAID',$header['BrandOwnerAAIAID']); $writer->writeSheetRow('Header', $row);
+ $row=array('BuyerDuns',$header['BuyerDuns']); $writer->writeSheetRow('Header', $row);
+ $row=array('CurrencyCode',$header['CurrencyCode']); $writer->writeSheetRow('Header', $row);
+ $row=array('LanguageCode',$header['LanguageCode']); $writer->writeSheetRow('Header', $row);
+ $row=array('TechnicalContact',$header['TechnicalContact']); $writer->writeSheetRow('Header', $row);
+ $row=array('ContactEmail',$header['ContactEmail']); $writer->writeSheetRow('Header', $row);
+ $row=array('PCdbVersionDate',$header['PCdbVersionDate']); $writer->writeSheetRow('Header', $row);
+ $row=array('PAdbVersionDate',$header['PAdbVersionDate']); $writer->writeSheetRow('Header', $row);
  
  
  $writer->writeSheetHeader('Items', array('PartNumber'=>'string','PartTerminologyID'=>'integer','BrandAAIAID'=>'string','ItemLevelGTIN'=>'string','GTINQualifier'=>'string','MinimumOrderQuantity'=>'integer','MinimumOrderQuantityUOM'=>'string','HazardousMaterialCode'=>'string','BaseItemID'=>'string','ItemEffectiveDate'=>'date','AvailableDate'=>'date','ACESApplications'=>'string','ItemQuantitySize'=>'integer','ItemQuantitySizeUOM'=>'string','ContainerType'=>'string','QuantityPerApplication'=>'integer','QuantityPerApplicationUOM'=>'string','BrandLabel'=>'string','VMRSBrandID'=>'string','UNSPC'=>'string'),        array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],            ['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
@@ -219,11 +323,17 @@ if($validUpload)
   }
  }
   
- 
- 
- 
- 
- 
+//-------- prices ---------
+ $writer->writeSheetHeader('Prices', array('PartNumber'=>'string','PriceSheetNumber'=>'string','Price'=>'number','PriceUOM'=>'string','PriceType'=>'string','CurrencyCode'=>'string','EffectiveDate'=>'string','ExpirationDate'=>'string','PriceTypeDescription'=>'string','PriceBreak'=>'integer','PriceBreakUOM'=>'string','PriceMultiplier'=>'integer'), array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff']));
+ foreach($items as $partnumber=>$item)
+ {
+  foreach($item['prices'] as $price)
+  {
+   $row=array($partnumber,$price['PriceSheetNumber'],$price['Price'],$price['PriceUOM'],$price['PriceType'],$price['CurrencyCode'],$price['EffectiveDate'],$price['ExpirationDate'],$price['PriceTypeDescription'],$price['PriceBreak'],$price['PriceBreakUOM'],$price['PriceMultiplier']);
+   $writer->writeSheetRow('Prices', $row);
+  }
+ }
+
  
  $xlsxdata=$writer->writeToString();
  $streamXLSX=true; 
