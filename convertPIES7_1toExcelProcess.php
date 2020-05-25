@@ -30,7 +30,7 @@ $errors=array();
 
 if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
 {
- if($_FILES['fileToUpload']['type']=='text/xml')
+ if($_FILES['fileToUpload']['type']=='text/xml' || $_FILES['fileToUpload']['type']=='')
  {
   if($_FILES['fileToUpload']['size']<$anonSizeLimit || isset($_SESSION['userid']))   
   {     
