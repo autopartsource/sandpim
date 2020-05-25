@@ -1,4 +1,5 @@
 <?php
+include_once('./class/logsClass.php');
 $navCategory = 'import/export';
 session_start();
 ?>
