@@ -71,7 +71,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
    else
    {
     $inputFileLog[]='schema validation failed.'.implode('. ',$schemaresults);
-    $logs->logSystemEvent('rhubarb', 0, 'Input file was too big ('.round($anonSizeLimit/1000000,1).'Mb limit for anonymous users)');
+    $logs->logSystemEvent('rhubarb', 0, 'schema validation failed.'.implode('. ',$schemaresults));
    }
   }
   else
@@ -347,18 +347,15 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
                 <?php
                 if(!$validUpload){?>
                 <div style="padding:10px;background-color:#FF0000;font-size:1.5em;">Your input file has problems:</div>
-                <table><?php
+                <table>
+                <?php
                 foreach($inputFileLog as $result)
                 { // render each element of schema problems into a table
                     echo '<tr><td style="text-align:left;background-color:#FF0000;">'.$result.'</td></tr>';
-                }
-
-                ?>
+                }?>
                 </table>
                 
                 <?php }?>
-
-
                 
                 <?php if(count($schemaresults)>0){?>
                 <div style="padding:10px;background-color:#FF8800;font-size:1.5em;">Your input data causes schema (XSD) problems. Here they are:</div>
@@ -369,9 +366,7 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
                 }
                 ?>
                 </table>
-                <?php }else
-                {
-                }
+                <?php }
                 
                 if(count($errors)>0 && !isset($_POST['ignorelogic'])){?>
                 <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
@@ -394,8 +389,8 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
     </body>
 </html>
 <?php 
-$logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
 }
+$logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
 
 if($streamXLSX)
 {   

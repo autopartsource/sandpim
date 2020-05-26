@@ -81,8 +81,8 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
   }
   else
   {
-   $inputFileLog[]='Input file was too big (500K limit for anonymous users)';
-   $logs->logSystemEvent('rhubarb', 0, 'Input file was too big (500K limit for anonymous users');
+   $inputFileLog[]='Input file was too big (5M limit for anonymous users)';
+   $logs->logSystemEvent('rhubarb', 0, 'Input file was too big (5M limit for anonymous users');
   }
  }
  else
@@ -885,10 +885,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
                 }
                 ?>
                 </table>
-                <?php }
-                
-                $logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
-                ?>
+                <?php }?>
                  
             </div>
 
@@ -900,6 +897,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
     </body>
 </html>
 <?php }
+$logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
 
 if($streamXML && $validUpload)
 {
