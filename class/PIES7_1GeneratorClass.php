@@ -210,6 +210,9 @@ class PIESgenerator
      if(array_key_exists('AttributeUOM',$attribute) && trim($attribute['AttributeUOM'])!=''){$ProductAttributeElement->setAttribute('AttributeUOM',$attribute['AttributeUOM']);}
      if(array_key_exists('StyleID',$attribute) && trim($attribute['StyleID'])!=''){$ProductAttributeElement->setAttribute('StyleID',$attribute['StyleID']);}
      if(array_key_exists('RecordNumber',$attribute) && trim($attribute['RecordNumber'])!=''){$ProductAttributeElement->setAttribute('RecordNumber',$attribute['RecordNumber']);}
+     if(array_key_exists('StyleID',$attribute) && trim($attribute['StyleID'])!=''){$ProductAttributeElement->setAttribute('StyleID',$attribute['StyleID']);}
+     if(array_key_exists('MultiValueQuantity',$attribute) && trim($attribute['MultiValueQuantity'])!=''){$ProductAttributeElement->setAttribute('MultiValueQuantity',$attribute['MultiValueQuantity']);}
+     if(array_key_exists('MultiValueSequence',$attribute) && trim($attribute['MultiValueSequence'])!=''){$ProductAttributeElement->setAttribute('StyleID',$attribute['MultiValueSequence']);}
      if(array_key_exists('LanguageCode',$attribute) && trim($attribute['LanguageCode'])!=''){$ProductAttributeElement->setAttribute('LanguageCode',$attribute['LanguageCode']);}
      $ProductAttributesElement->appendChild($ProductAttributeElement);
     }
