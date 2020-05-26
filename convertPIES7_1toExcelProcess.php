@@ -281,7 +281,7 @@ if($validUpload)
     $multivaluequantity=$atttributeElement->getAttribute('MultiValueQuantity');
     $multivaluesequence=$atttributeElement->getAttribute('MultiValueSequence');
     $languageCode=$atttributeElement->getAttribute('LanguageCode');
-    $attributes[]=array('AttributeID'=>$expicode, 'AttributeValue'=>$attributevalue,'AttributeUOM'=>$attributeuom,'RecordNumber'=>$recordnumber,'PADBAttribute'=>$padbattribute,'StyleID'=>$styleid,'MultiValueQuantity'=>$multivaluequantity,'MultiValueSequence'=>$multivaluesequence,'LanguageCode'=>$languageCode);
+    $attributes[]=array('AttributeID'=>$attributeid, 'AttributeValue'=>$attributevalue,'AttributeUOM'=>$attributeuom,'RecordNumber'=>$recordnumber,'PADBAttribute'=>$padbattribute,'StyleID'=>$styleid,'MultiValueQuantity'=>$multivaluequantity,'MultiValueSequence'=>$multivaluesequence,'LanguageCode'=>$languageCode);
    }
   }
   
