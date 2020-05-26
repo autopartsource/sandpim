@@ -5,7 +5,7 @@ include_once('./class/pcdbClass.php');
 include_once('./class/XLSXWriterClass.php');
 $navCategory = 'import/export';
 
-$anonSizeLimit=5000000;
+$anonSizeLimit=15000000;
 session_start();
 
 $pim = new pim();
@@ -68,6 +68,11 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
    {
        $validUpload=true;
    }
+   else
+   {
+    $inputFileLog[]='schema validation failed.'.implode('. ',$schemaresults);
+    $logs->logSystemEvent('rhubarb', 0, 'Input file was too big ('.round($anonSizeLimit/1000000,1).'Mb limit for anonymous users)');
+   }
   }
   else
   {
@@ -77,7 +82,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
  }
  else
  {
-  echo 'Error uploading file - un-supported file format ('.$_FILES['fileToUpload']['type'].'). Must be a valid xml file';
+  $inputFileLog[]='Error uploading file - un-supported file format ('.$_FILES['fileToUpload']['type'].'). Must be a valid xml file';
   $logs->logSystemEvent('rhubarb', 0, 'Error uploading file - un-supported file format');
  }
 }
@@ -347,6 +352,7 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
                 { // render each element of schema problems into a table
                     echo '<tr><td style="text-align:left;background-color:#FF0000;">'.$result.'</td></tr>';
                 }
+
                 ?>
                 </table>
                 
@@ -376,10 +382,7 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
                 }
                 ?>
                 </table>
-                <?php }
-                
-                $logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
-                ?>
+                <?php }?>
                  
             </div>
 
@@ -390,7 +393,9 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
        <?php if (isset($_SESSION['userid'])){include('./includes/footer.php');} ?>
     </body>
 </html>
-<?php }
+<?php 
+$logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
+}
 
 if($streamXLSX)
 {   
