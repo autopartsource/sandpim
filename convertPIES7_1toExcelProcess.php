@@ -209,7 +209,7 @@ if($validUpload)
   $descriptionsElement=$itemElement->getElementsByTagName('Descriptions');
   if(count($descriptionsElement))
   {
-   $descriptionElements=$itemElement->getElementsByTagName('Description');
+   $descriptionElements=$descriptionsElement[0]->getElementsByTagName('Description');
    foreach($descriptionElements as $descriptionElement)
    {
     $descriptionText= $descriptionElement->nodeValue;
