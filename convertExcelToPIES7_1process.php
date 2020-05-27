@@ -159,7 +159,7 @@ if($validUpload)
  
  // --------------------- items ---------------------------------   
  $items=array(); 
- $PartTerminologyIDfieldIndex=-1; $BrandAAIAIDfieldIndex=-1; $ItemLevelGTINfieldIndex=-1; $GTINQualifierFieldIndex=-1; $MinimumOrderQuantityFieldIndex=-1; $MinimumOrderQuantityUOMfieldIndex=-1;  $HazardousMaterialCodeFieldIndex=-1; $BaseItemIDfieldIndex=-1; $ACESApplicationsFieldIndex=-1; $ItemQuantitySizeFieldIndex=-1;  $ItemQuantitySizeUOMfieldIndex=-1; $ContainerTypeFieldIndex=-1; $ItemEffectiveDateFieldIndex=-1; $AvailableDateFieldIndex=-1;  $UNSPSCfieldIndex=-1; $BrandLabelFieldIndex=-1; $VMRSBrandIDfieldIndex=-1; $QuantityPerApplicationFieldIndex=-1;  $QuantityPerApplicationQualifierFieldIndex=-1; $QuantityPerApplicationUOMfieldIndex=-1; $ManufacturerProductCodeGroupFieldIndex=-1; $ManufacturerProductCodeSubGroupFieldIndex=-1; $AAIAProductCategoryCodeFieldIndex=-1;
+ $PartTerminologyIDfieldIndex=-1; $BrandAAIAIDfieldIndex=-1; $ItemLevelGTINfieldIndex=-1; $GTINQualifierFieldIndex=-1; $MinimumOrderQuantityFieldIndex=-1; $MinimumOrderQuantityUOMfieldIndex=-1;  $HazardousMaterialCodeFieldIndex=-1; $BaseItemIDfieldIndex=-1; $ACESApplicationsFieldIndex=-1; $ItemQuantitySizeFieldIndex=-1;  $ItemQuantitySizeUOMfieldIndex=-1; $ContainerTypeFieldIndex=-1; $ItemEffectiveDateFieldIndex=-1; $AvailableDateFieldIndex=-1;  $UNSPSCfieldIndex=-1; $BrandLabelFieldIndex=-1; $VMRSBrandIDfieldIndex=-1; $VMRSCodeFieldIndex=-1; $QuantityPerApplicationFieldIndex=-1;  $QuantityPerApplicationQualifierFieldIndex=-1; $QuantityPerApplicationUOMfieldIndex=-1; $ManufacturerProductCodeGroupFieldIndex=-1; $ManufacturerProductCodeSubGroupFieldIndex=-1; $AAIAProductCategoryCodeFieldIndex=-1;
  for($i=0; $i<=count($itemsSheet[0])-1; $i++)
  {
   if($itemsSheet[0][$i]=='PartTerminologyID'){$PartTerminologyIDfieldIndex=$i;}
@@ -179,6 +179,7 @@ if($validUpload)
   if($itemsSheet[0][$i]=='UNSPSC'){$UNSPSCfieldIndex=$i;}
   if($itemsSheet[0][$i]=='BrandLabel'){$BrandLabelFieldIndex=$i;}
   if($itemsSheet[0][$i]=='VMRSBrandID'){$VMRSBrandIDfieldIndex=$i;}
+  if($itemsSheet[0][$i]=='VMRSCode'){$VMRSCodeFieldIndex=$i;}
   if($itemsSheet[0][$i]=='QuantityPerApplication'){$QuantityPerApplicationFieldIndex=$i;}
   if($itemsSheet[0][$i]=='QuantityPerApplicationQualifier'){$QuantityPerApplicationQualifierFieldIndex=$i;}
   if($itemsSheet[0][$i]=='QuantityPerApplicationUOM'){$QuantityPerApplicationUOMfieldIndex=$i;}
@@ -212,6 +213,7 @@ if($validUpload)
   if($UNSPSCfieldIndex >=0 && trim($fields[$UNSPSCfieldIndex])!=''){$item['UNSPSC']=trim($fields[$UNSPSCfieldIndex]);}  
   if($BrandLabelFieldIndex >=0 && trim($fields[$BrandLabelFieldIndex])!=''){$item['BrandLabel']=trim($fields[$BrandLabelFieldIndex]);}  
   if($VMRSBrandIDfieldIndex >=0 && trim($fields[$VMRSBrandIDfieldIndex])!=''){$item['VMRSBrandID']=trim($fields[$VMRSBrandIDfieldIndex]);}  
+  if($VMRSCodeFieldIndex >=0 && trim($fields[$VMRSCodeFieldIndex])!=''){$item['VMRSCode']=trim($fields[$VMRSCodeFieldIndex]);}  
   if($QuantityPerApplicationFieldIndex >=0 && trim($fields[$QuantityPerApplicationFieldIndex])!=''){$item['QuantityPerApplication']=trim($fields[$QuantityPerApplicationFieldIndex]);}  
   if($QuantityPerApplicationQualifierFieldIndex >=0 && trim($fields[$QuantityPerApplicationQualifierFieldIndex])!=''){$item['QuantityPerApplicationQualifier']=trim($fields[$QuantityPerApplicationQualifierFieldIndex]);}  
   if($QuantityPerApplicationUOMfieldIndex >=0 && trim($fields[$QuantityPerApplicationUOMfieldIndex])!=''){$item['QuantityPerApplicationUOM']=trim($fields[$QuantityPerApplicationUOMfieldIndex]);}  
@@ -252,10 +254,10 @@ if($validUpload)
     if($recordnumber==0){$recordnumber++;continue;}
     $description=array();
     $PartNumber=trim($fields[0]);
-    if($DescriptionFieldIndex>=0){$description['Description']= htmlspecialchars(trim($fields[$DescriptionFieldIndex]));}
-    if($DescriptionCodeFieldIndex>=0){$description['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
-    if($LanguageCodeFieldIndex>=0){$description['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
-    if($SequenceFieldIndex>=0){$description['Sequence']=trim($fields[$SequenceFieldIndex]);}
+    if($DescriptionFieldIndex>=0 && trim($fields[$DescriptionFieldIndex])!=''){$description['Description']= htmlspecialchars(trim($fields[$DescriptionFieldIndex]));}
+    if($DescriptionCodeFieldIndex>=0 && trim($fields[$DescriptionCodeFieldIndex])!=''){$description['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
+    if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$description['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
+    if($SequenceFieldIndex>=0 && trim($fields[$SequenceFieldIndex])!=''){$description['Sequence']=trim($fields[$SequenceFieldIndex]);}
     if(array_key_exists($PartNumber,$items))
     {
      $items[$PartNumber]['descriptions'][]=$description;

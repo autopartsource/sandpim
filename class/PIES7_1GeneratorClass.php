@@ -141,6 +141,9 @@ class PIESgenerator
 
    $PartTerminologyIDelement= $doc->createElement('PartTerminologyID',$item['PartTerminologyID']); $ItemElement->appendChild($PartTerminologyIDelement);
 
+   if(array_key_exists('VMRSCode', $item)){$VMRSCodeElement= $doc->createElement('VMRSCode',$item['VMRSCode']); $ItemElement->appendChild($VMRSCodeElement); }
+   
+   
    
    //------------------------- descriptions -----------------------
    if(isset($item['descriptions']) && count($item['descriptions']))
