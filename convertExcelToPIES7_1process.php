@@ -252,20 +252,26 @@ if($validUpload)
    foreach($descriptionsSheet as $fields)
    {
     if($recordnumber==0){$recordnumber++;continue;}
-    $description=array();
     $PartNumber=trim($fields[0]);
-    if($DescriptionFieldIndex>=0 && trim($fields[$DescriptionFieldIndex])!=''){$description['Description']= htmlspecialchars(trim($fields[$DescriptionFieldIndex]));}
-    if($DescriptionCodeFieldIndex>=0 && trim($fields[$DescriptionCodeFieldIndex])!=''){$description['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
-    if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$description['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
-    if($SequenceFieldIndex>=0 && trim($fields[$SequenceFieldIndex])!=''){$description['Sequence']=trim($fields[$SequenceFieldIndex]);}
-    if(array_key_exists($PartNumber,$items))
+    
+    if($DescriptionFieldIndex>=0 && trim($fields[$DescriptionFieldIndex])!='')
     {
-     $items[$PartNumber]['descriptions'][]=$description;
+     $description=array();
+     $description['Description']= htmlspecialchars(trim($fields[$DescriptionFieldIndex]));
+     if($DescriptionCodeFieldIndex>=0 && trim($fields[$DescriptionCodeFieldIndex])!=''){$description['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
+     if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$description['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
+     if($SequenceFieldIndex>=0 && trim($fields[$SequenceFieldIndex])!=''){$description['Sequence']=trim($fields[$SequenceFieldIndex]);}
+    
+     if(array_key_exists($PartNumber,$items))
+     {
+      $items[$PartNumber]['descriptions'][]=$description;
+     }
+     else
+     {
+      $errors[]='Descriptions contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
+     }
     }
-    else
-    {
-     $errors[]='Descriptions contains a partnumber ('.$PartNumber.') that is not found in the main Items list';  
-    }
+    
     
     if(!array_key_exists($description['DescriptionCode'], $validDescriptionCodes))
     {
