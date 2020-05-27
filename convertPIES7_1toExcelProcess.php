@@ -188,7 +188,7 @@ if($validUpload)
     
     if(array_key_exists($itemlevelgtin, $gtinmasterlist))
     {
-     $errors[]="GTIN:duplicate\t".$partnumber.','.$gtinmasterlist[$itemlevelgtin].' share the same GTIN ('.$itemlevelgtin.')';
+     $errors[]="GTIN:duplicate\t".$partnumber.','.$gtinmasterlist[$itemlevelgtin].' share the same item-level GTIN ('.$itemlevelgtin.')';
     }
     else
     {
@@ -240,13 +240,13 @@ if($validUpload)
   
   //----------- descriptions -----------
   $descriptions=array();
-  $descriptionText=''; $descriptionCode=''; $languageCode=''; $sequence=1;
   $descriptionsElement=$itemElement->getElementsByTagName('Descriptions');
   if(count($descriptionsElement))
   {
    $descriptionElements=$descriptionsElement[0]->getElementsByTagName('Description');
    foreach($descriptionElements as $descriptionElement)
    {
+    $descriptionText=''; $descriptionCode=''; $languageCode=''; $sequence=1;
     $descriptionText= $descriptionElement->nodeValue;
     $descriptionCode= $descriptionElement->getAttribute('DescriptionCode');
     $languageCode= $descriptionElement->getAttribute('LanguageCode');
@@ -279,13 +279,13 @@ if($validUpload)
 
   //----------- expi -----------
   $expis=array();
-  $expicode=''; $expivalue=''; $languageCode=''; 
   $expisElement=$itemElement->getElementsByTagName('ExtendedInformation');
   if(count($expisElement))
   {
    $expiElements=$expisElement[0]->getElementsByTagName('ExtendedProductInformation');
    foreach($expiElements as $expiElement)
    {
+    $expicode=''; $expivalue=''; $languageCode=''; 
     $expivalue=$expiElement->nodeValue;
     $expicode=$expiElement->getAttribute('EXPICode');
     $languageCode=$expiElement->getAttribute('LanguageCode');
@@ -295,13 +295,13 @@ if($validUpload)
 
   //----------- attributes -----------
   $attributes=array();
-  $attributeid=''; $attributevalue=''; $padbattribute=''; $languageCode=''; 
   $attributesElement=$itemElement->getElementsByTagName('ProductAttributes');
   if(count($attributesElement))
   {
    $atttributeElements=$attributesElement[0]->getElementsByTagName('ProductAttribute');
    foreach($atttributeElements as $atttributeElement)
    {
+    $attributeid=''; $attributevalue=''; $padbattribute=''; $languageCode=''; $multivaluesequence=''; $multivaluequantity=''; $styleid='';
     $attributevalue=$atttributeElement->nodeValue;
     $attributeid=$atttributeElement->getAttribute('AttributeID');
     $attributeuom=$atttributeElement->getAttribute('AttributeUOM');
@@ -315,7 +315,55 @@ if($validUpload)
    }
   }
   
-  $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSbrandid,'UNSPSC'=>$UNSPSC,'NicePartTerminologyName'=>$niceparttypename,'descriptions'=>$descriptions,'prices'=>$prices,'expis'=>$expis,'attributes'=>$attributes);
+  //------------ packages -----------------------
+  
+  $packages=array();
+  $packagesElement=$itemElement->getElementsByTagName('Packages');
+  if(count($packagesElement))
+  {
+   $packageElements=$packagesElement[0]->getElementsByTagName('Package');
+   foreach($packageElements as $packageElement)
+   {
+    $packagelevelgtin=''; $packagelevelgtinElement=$packageElement->getElementsByTagName('PackageLevelGTIN');   
+    if(count($packagelevelgtinElement)){$packagelevelgtin=$packagelevelgtinElement[0]->nodeValue;}
+
+    $packageuom=''; $packageuomElement=$packageElement->getElementsByTagName('PackageUOM');   
+    if(count($packageuomElement)){$packageuom=$packageuomElement[0]->nodeValue;}
+    
+    $quantityofeaches=''; $quantityofeachesElement=$packageElement->getElementsByTagName('QuantityofEaches');   
+    if(count($quantityofeachesElement)){$quantityofeaches=$quantityofeachesElement[0]->nodeValue;}
+    
+    $innerquantity=''; $innerquantityuom='';
+    $innerquantityElement=$packageElement->getElementsByTagName('InnerQuantity');
+    if(count($innerquantityElement))
+    {
+     $innerquantity=$innerquantityElement[0]->nodeValue;
+     $innerquantityuom=$innerquantityElement[0]->getAttribute('InnerQuantityUOM');
+    }
+    
+    $weight=''; $weightsuom='';
+    $weightsElement=$packageElement->getElementsByTagName('Weights');
+    if(count($weightsElement))
+    {
+     $weightsuom=$weightsElement[0]->getAttribute('UOM'); 
+     $weightElement=$weightsElement[0]->getElementsByTagName('Weight');
+     if(count($weightElement))
+     {
+      $weight=$weightElement[0]->nodeValue;
+     }
+    }
+    
+
+    $packages[]=array('PackageLevelGTIN'=>$packagelevelgtin,'PackageUOM'=>$packageuom,'QuantityofEaches'=>$quantityofeaches,'InnerQuantity'=>$innerquantity,'InnerQuantityUOM'=>$innerquantityuom,'Weight'=>$weight,'WeightsUOM'=>$weightsuom);
+   }
+  }
+  
+  
+  
+  
+  
+  
+  $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSbrandid,'UNSPSC'=>$UNSPSC,'NicePartTerminologyName'=>$niceparttypename,'descriptions'=>$descriptions,'prices'=>$prices,'expis'=>$expis,'attributes'=>$attributes,'packages'=>$packages);
  } // item element foreach
   
  $writer = new XLSXWriter();
@@ -382,17 +430,7 @@ if($validUpload)
  }
  
  //-------------- attributes ---------
- $writer->writeSheetHeader('Attributes', 
-         array('PartNumber'=>'string',
-             'AttributeID'=>'string',
-             'AttributeValue'=>'string',
-             'AttributeUOM'=>'string',
-             'PADBAttribute'=>'string',
-             'RecordNumber'=>'integer',
-             'StyleID'=>'integer',
-             'MultiValueQuantity'=>'integer',
-             'MultiValueSequence'=>'integer',
-             'LanguageCode'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1, ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'], ['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
+ $writer->writeSheetHeader('Attributes', array('PartNumber'=>'string', 'AttributeID'=>'string', 'AttributeValue'=>'string',             'AttributeUOM'=>'string',             'PADBAttribute'=>'string', 'RecordNumber'=>'integer', 'StyleID'=>'integer', 'MultiValueQuantity'=>'integer', 'MultiValueSequence'=>'integer','LanguageCode'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1, ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'], ['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['attributes'] as $attribute)
@@ -402,9 +440,20 @@ if($validUpload)
   }
  }
  
+//-------------- packages ---------
+ $writer->writeSheetHeader('Packages', array('PartNumber'=>'string','PackageUOM'=>'string','QuantityofEaches'=>'integer','InnerQuantity'=>'integer','InnerQuantityUOM'=>'string','Weight'=>'integer','WeightsUOM'=>'string','PackageLevelGTIN'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1,    ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00']));
+ foreach($items as $partnumber=>$item)
+ {
+  foreach($item['packages'] as $package)
+  {
+   $row=array($partnumber,$package['PackageUOM'],$package['QuantityofEaches'],$package['InnerQuantity'],$package['InnerQuantityUOM'],$package['Weight'],$package['WeightsUOM'],$package['PackageLevelGTIN']);
+   $writer->writeSheetRow('Packages', $row);
+  }
+ }
  
  
-
+ 
+ 
  //-------- errors ------------
  
  if(count($errors))
