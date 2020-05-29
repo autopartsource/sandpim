@@ -42,7 +42,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
     $headerSheet=$xlsx->getSheetData('Header');
     $itemsSheet=$xlsx->getSheetData('Items');
    
-    if(isset($headerSheet[0][0]) && isset($headerSheet[0][0]) && isset($headerSheet[0][1]) && $headerSheet[0][1]=='7.1')
+    if(true) //isset($headerSheet[0][0]) && isset($headerSheet[0][0]) && isset($headerSheet[0][1]) && $headerSheet[0][1]=='7.1')
     {
      $validUpload=true;
      $headerElementsList=array(); foreach($headerSheet as $row){$headerElementsList[$row[0]]=$row[1];}
