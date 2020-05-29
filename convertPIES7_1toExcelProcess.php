@@ -16,8 +16,9 @@ $pcdbVersion=$pcdb->version();
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
-$validEXPIcodes=$pcdb->getAllEXPIcodes();
+//$validEXPIcodes=$pcdb->getAllEXPIcodes();
 //$validPartTypes=array(); $partTypes=$pcdb->getPartTypes('%'); foreach($partTypes as $partType){$validPartTypes[$partType['id']]=$partType['name'];}
+
 
 $streamXLSX=false;
 $xlsxdata='';
@@ -282,6 +283,7 @@ if($validUpload)
   $expisElement=$itemElement->getElementsByTagName('ExtendedInformation');
   if(count($expisElement))
   {
+
    $expiElements=$expisElement[0]->getElementsByTagName('ExtendedProductInformation');
    foreach($expiElements as $expiElement)
    {
@@ -290,6 +292,27 @@ if($validUpload)
     $expicode=$expiElement->getAttribute('EXPICode');
     $languageCode=$expiElement->getAttribute('LanguageCode');
     $expis[]=array('EXPICode'=>$expicode, 'EXPIValue'=>$expivalue,'LanguageCode'=>$languageCode);
+
+/*    
+    
+    if(count($validcodes)==0)
+    {// invalid code
+        
+        $errors[]="EXPI:invalid code\t".$partnumber.','.$expicode.'='.$expivalue;
+    }
+    else
+    {// options count is 1 or more
+        if(count($validcodes)==1 && $validcodes[0]['code']=='*')
+        {//special case - no valid values exist in the pcdb. this implies free-form text is valid
+            
+        }
+        else
+        {// there are prescribed valid values for this expi code
+         $found=false; $nicelist=array(); foreach($validcodes as $validcode){$nicelist[]=$validcode['code']; if($validcode['code']==$expivalue){$found=true;break;}}
+         if(!$found){$errors[]="EXPI:invalid value\t".$partnumber.','.$expicode.':'.$expivalue.'; valid options:'.implode(',',$nicelist);}
+        }
+    }
+ */
    }
   }
 
@@ -327,6 +350,9 @@ if($validUpload)
     $packagelevelgtin=''; $packagelevelgtinElement=$packageElement->getElementsByTagName('PackageLevelGTIN');   
     if(count($packagelevelgtinElement)){$packagelevelgtin=$packagelevelgtinElement[0]->nodeValue;}
 
+    $electronicproductcode=''; $electronicproductcodeElement=$packageElement->getElementsByTagName('ElectronicProductCode');   
+    if(count($electronicproductcodeElement)){$electronicproductcode=$electronicproductcodeElement[0]->nodeValue;}
+    
     $packageuom=''; $packageuomElement=$packageElement->getElementsByTagName('PackageUOM');   
     if(count($packageuomElement)){$packageuom=$packageuomElement[0]->nodeValue;}
     
@@ -341,20 +367,121 @@ if($validUpload)
      $innerquantityuom=$innerquantityElement[0]->getAttribute('InnerQuantityUOM');
     }
     
-    $weight=''; $weightsuom='';
+    $weight=''; $weightsuom=''; $dimensionalweight='';
     $weightsElement=$packageElement->getElementsByTagName('Weights');
     if(count($weightsElement))
     {
      $weightsuom=$weightsElement[0]->getAttribute('UOM'); 
      $weightElement=$weightsElement[0]->getElementsByTagName('Weight');
-     if(count($weightElement))
-     {
-      $weight=$weightElement[0]->nodeValue;
-     }
+     if(count($weightElement)){$weight=$weightElement[0]->nodeValue;}
+     $dimensionalweightElement=$weightsElement[0]->getElementsByTagName('DimensionalWeight');
+     if(count($dimensionalweightElement)){$dimensionalweight=$weightElement[0]->nodeValue;}
+    }
+
+    $packagebarcodecharacters=''; $packagebarcodecharactersElement=$packageElement->getElementsByTagName('PackageBarCodeCharacters');   
+    if(count($packagebarcodecharactersElement)){$packagebarcodecharacters=$packagebarcodecharactersElement[0]->nodeValue;}
+
+    $weightvariance=''; $weightvarianceElement=$packageElement->getElementsByTagName('WeightVariance');   
+    if(count($weightvarianceElement)){$weightvariance=$weightvarianceElement[0]->nodeValue;}
+
+    $stackingfactor=''; $stackingfactorElement=$packageElement->getElementsByTagName('StackingFactor');   
+    if(count($stackingfactorElement)){$stackingfactor=$stackingfactorElement[0]->nodeValue;}
+    
+        
+
+    $dimensionsuom=''; $merchandisingheight='';$merchandisingwidth=''; $merchandisinglength=''; $shippingheight=''; $shippingwidth=''; $shippinglength='';
+    $dimensionsElement=$packageElement->getElementsByTagName('Dimensions');
+    if(count($dimensionsElement))
+    {
+     $dimensionsuom=$dimensionsElement[0]->getAttribute('UOM'); 
+     
+     $merchandisingheightElement=$dimensionsElement[0]->getElementsByTagName('MerchandisingHeight');
+     if(count($merchandisingheightElement)){$merchandisingheight=$merchandisingheightElement[0]->nodeValue;}
+
+     $merchandisingwidthElement=$dimensionsElement[0]->getElementsByTagName('MerchandisingWidth');
+     if(count($merchandisingwidthElement)){$merchandisingwidth=$merchandisingwidthElement[0]->nodeValue;}
+
+     $merchandisinglengthElement=$dimensionsElement[0]->getElementsByTagName('MerchandisingLength');
+     if(count($merchandisinglengthElement)){$merchandisinglength=$merchandisinglengthElement[0]->nodeValue;}
+     
+     $shippingheightElement=$dimensionsElement[0]->getElementsByTagName('ShippingHeight');
+     if(count($shippingheightElement)){$shippingheight=$shippingheightElement[0]->nodeValue;}
+
+     $shippingwidthElement=$dimensionsElement[0]->getElementsByTagName('ShippingWidth');
+     if(count($shippingwidthElement)){$shippingwidth=$shippingwidthElement[0]->nodeValue;}
+
+     $shippinglengthElement=$dimensionsElement[0]->getElementsByTagName('ShippingLength');
+     if(count($shippinglengthElement)){$shippinglength=$shippinglengthElement[0]->nodeValue;}
+    }
+
+    $languagecode=''; $shippingscope=''; $bulk=''; $regulatingcountry=''; $transportmethod='';
+    $regulated=''; $description=''; $hazardousmaterialcodequalifier=''; $hazardousmaterialdescription='';
+    $hazardousmateriallabelcode=''; $shippingname=''; $UNNAIDcode='';$hazardousplacardnotation='';
+    $outerpackagelabel=''; $textmessage=''; $regulationsexemptioncode=''; $packinggroupcode='';
+    $WHMISfreetext=''; $WHMIScode='';
+    $hazardousmaterialElement=$packageElement->getElementsByTagName('HazardousMaterial');
+    if(count($hazardousmaterialElement))
+    {
+     $languagecode=$hazardousmaterialElement[0]->getAttribute('LanguageCode'); 
+     
+     $shippingscopeElement=$hazardousmaterialElement[0]->getElementsByTagName('ShippingScope');
+     if(count($shippingscopeElement)){$shippingscope=$shippingscopeElement[0]->nodeValue;}
+     
+     $bulkElement=$hazardousmaterialElement[0]->getElementsByTagName('Bulk');
+     if(count($bulkElement)){$bulk=$bulkElement[0]->nodeValue;}
+
+     $regulatingcountryElement=$hazardousmaterialElement[0]->getElementsByTagName('RegulatingCountry');
+     if(count($regulatingcountryElement)){$regulatingcountry=$regulatingcountryElement[0]->nodeValue;}
+     
+     $transportmethodElement=$hazardousmaterialElement[0]->getElementsByTagName('TransportMethod');
+     if(count($transportmethodElement)){$transportmethod=$transportmethodElement[0]->nodeValue;}
+
+     $regulatedElement=$hazardousmaterialElement[0]->getElementsByTagName('Regulated');
+     if(count($regulatedElement)){$regulated=$regulatedElement[0]->nodeValue;}
+
+     $descriptionElement=$hazardousmaterialElement[0]->getElementsByTagName('Description');
+     if(count($descriptionElement)){$description=$descriptionElement[0]->nodeValue;}
+
+     $hazardousmaterialcodequalifierElement=$hazardousmaterialElement[0]->getElementsByTagName('HazardousMaterialCodeQualifier');
+     if(count($hazardousmaterialcodequalifierElement)){$hazardousmaterialcodequalifier=$hazardousmaterialcodequalifierElement[0]->nodeValue;}
+
+     $hazardousmaterialdescriptionElement=$hazardousmaterialElement[0]->getElementsByTagName('HazardousMaterialDescription');
+     if(count($hazardousmaterialdescriptionElement)){$hazardousmaterialdescription=$hazardousmaterialdescriptionElement[0]->nodeValue;}
+     
+     $hazardousmateriallabelcodeElement=$hazardousmaterialElement[0]->getElementsByTagName('HazardousMaterialLabelCode');
+     if(count($hazardousmateriallabelcodeElement)){$hazardousmateriallabelcode=$hazardousmateriallabelcodeElement[0]->nodeValue;}
+
+     $shippingnameElement=$hazardousmaterialElement[0]->getElementsByTagName('ShippingName');
+     if(count($shippingnameElement)){$shippingname=$shippingnameElement[0]->nodeValue;}
+
+     $UNNAIDcodeElement=$hazardousmaterialElement[0]->getElementsByTagName('UNNAIDCode');
+     if(count($UNNAIDcodeElement)){$UNNAIDcode=$UNNAIDcodeElement[0]->nodeValue;}
+     
+     $hazardousplacardnotationElement=$hazardousmaterialElement[0]->getElementsByTagName('HazardousPlacardNotation');
+     if(count($hazardousplacardnotationElement)){$hazardousplacardnotation=$hazardousplacardnotationElement[0]->nodeValue;}
+     
+     $WHMIScodeElement=$hazardousmaterialElement[0]->getElementsByTagName('WHMISCode');
+     if(count($WHMIScodeElement)){$WHMIScode=$WHMIScodeElement[0]->nodeValue;}
+
+     $WHMISfreetextElement=$hazardousmaterialElement[0]->getElementsByTagName('WHMISFreeText');
+     if(count($WHMISfreetextElement)){$WHMISfreetext=$WHMISfreetextElement[0]->nodeValue;}
+
+     $packinggroupcodeElement=$hazardousmaterialElement[0]->getElementsByTagName('PackingGroupCode');
+     if(count($packinggroupcodeElement)){$packinggroupcode=$packinggroupcodeElement[0]->nodeValue;}
+
+     $regulationsexemptioncodeElement=$hazardousmaterialElement[0]->getElementsByTagName('RegulationsExemptionCode');
+     if(count($regulationsexemptioncodeElement)){$regulationsexemptioncode=$regulationsexemptioncodeElement[0]->nodeValue;}
+
+     $textmessageElement=$hazardousmaterialElement[0]->getElementsByTagName('TextMessage');
+     if(count($textmessageElement)){$textmessage=$textmessageElement[0]->nodeValue;}
+
+     $outerpackagelabelElement=$hazardousmaterialElement[0]->getElementsByTagName('OuterPackageLabel');
+     if(count($outerpackagelabelElement)){$outerpackagelabel=$outerpackagelabelElement[0]->nodeValue;}
+     
     }
     
-
-    $packages[]=array('PackageLevelGTIN'=>$packagelevelgtin,'PackageUOM'=>$packageuom,'QuantityofEaches'=>$quantityofeaches,'InnerQuantity'=>$innerquantity,'InnerQuantityUOM'=>$innerquantityuom,'Weight'=>$weight,'WeightsUOM'=>$weightsuom);
+    
+    $packages[]=array('PackageLevelGTIN'=>$packagelevelgtin,'ElectronicProductCode'=>$electronicproductcode,'PackageUOM'=>$packageuom,'QuantityofEaches'=>$quantityofeaches,'InnerQuantity'=>$innerquantity,'InnerQuantityUOM'=>$innerquantityuom,'Weight'=>$weight,'DimensionalWeight'=>$dimensionalweight,'WeightsUOM'=>$weightsuom,'PackageBarCodeCharacters'=>$packagebarcodecharacters,'WeightVariance'=>$weightvariance,'StackingFactor'=>$stackingfactor,'DimensionsUOM'=>$dimensionsuom, 'MerchandisingHeight'=>$merchandisingheight,'MerchandisingWidth'=>$merchandisingwidth, 'MerchandisingLength'=>$merchandisinglength, 'ShippingHeight'=>$shippingheight, 'ShippingWidth'=>$shippingwidth,'ShippingLength'=>$shippinglength, 'LanguageCode'=>$languagecode, 'ShippingScope'=>$shippingscope, 'Bulk'=>$bulk, 'RegulatingCountry'=>$regulatingcountry, 'TransportMethod'=>$transportmethod,'Regulated'=>$regulated, 'Description'=>$description, 'HazardousMaterialCodeQualifier'=>$hazardousmaterialcodequalifier, 'HazardousMaterialDescription'=>$hazardousmaterialdescription,    'HazardousMaterialLabelCode'=>$hazardousmateriallabelcode, 'ShippingName'=>$shippingname, 'UNNAIDCode'=>$UNNAIDcode, 'HazardousPlacardNotation'=>$hazardousplacardnotation,'OuterPackageLabel'=>$outerpackagelabel, 'TextMessage'=>$textmessage,'RegulationsExemptionCode'=>$regulationsexemptioncode, 'PackingGroupCode'=>$packinggroupcode,'WHMISFreeText'=>$WHMISfreetext, 'WHMISCode'=>$WHMIScode);
    }
   }
   
@@ -408,7 +535,7 @@ if($validUpload)
  }
   
 //-------- prices ---------
- $writer->writeSheetHeader('Prices', array('PartNumber'=>'string','PriceSheetNumber'=>'string','Price'=>'number','PriceUOM'=>'string','PriceType'=>'string','CurrencyCode'=>'string','EffectiveDate'=>'string','ExpirationDate'=>'string','PriceTypeDescription'=>'string','PriceBreak'=>'integer','PriceBreakUOM'=>'string','PriceMultiplier'=>'integer'), array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff']));
+ $writer->writeSheetHeader('Prices', array('PartNumber'=>'string','PriceSheetNumber'=>'string','Price'=>'0.00','PriceUOM'=>'string','PriceType'=>'string','CurrencyCode'=>'string','EffectiveDate'=>'string','ExpirationDate'=>'string','PriceTypeDescription'=>'string','PriceBreak'=>'integer','PriceBreakUOM'=>'string','PriceMultiplier'=>'0.000'), array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['prices'] as $price)
@@ -441,12 +568,72 @@ if($validUpload)
  }
  
 //-------------- packages ---------
- $writer->writeSheetHeader('Packages', array('PartNumber'=>'string','PackageUOM'=>'string','QuantityofEaches'=>'integer','InnerQuantity'=>'integer','InnerQuantityUOM'=>'string','Weight'=>'0.00','WeightsUOM'=>'string','PackageLevelGTIN'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1,    ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00']));
+ $writer->writeSheetHeader('Packages', array(
+     'PartNumber'=>'string','PackageUOM'=>'string','QuantityofEaches'=>'integer','InnerQuantity'=>'integer',
+     'InnerQuantityUOM'=>'string','Weight'=>'0.00','WeightsUOM'=>'string','PackageLevelGTIN'=>'string','PackageBarCodeCharacters'=>'string',
+     'ShippingHeight'=>'0.00','ShippingWidth'=>'0.00','ShippingLength'=>'0.00','DimensionsUOM'=>'string',
+       'DimensionalWeight'=>'0.00','WeightVariance'=>'0.00','StackingFactor'=>'0.00','ElectronicProductCode'=>'string', 
+       'MerchandisingHeight'=>'0.00','MerchandisingWidth'=>'0.00','MerchandisingLength'=>'0.00','ShippingScope'=>'string',
+       'Bulk'=>'string','RegulatingCountry'=>'string','TransportMethod'=>'string','Regulated'=>'string','Description'=>'string',
+       'HazardousMaterialCodeQualifier'=>'string','HazardousMaterialDescription'=>'string','HazardousMaterialLabelCode'=>'string',
+       'ShippingName'=>'string','UNNAIDCode'=>'string','HazardousPlacardNotation'=>'string','OuterPackageLabel'=>'string',
+       'TextMessage'=>'string','RegulationsExemptionCode'=>'string','PackingGroupCode'=>'string','WHMISFreeText'=>'string',
+       'WHMISCode'=>'string','LanguageCode'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1,    
+             ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],
+             ['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],
+             ['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],
+             ['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],
+             ['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],
+             ['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],
+             ['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],
+             ['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],
+           ['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],
+           ['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['packages'] as $package)
   {
-   $row=array($partnumber,$package['PackageUOM'],$package['QuantityofEaches'],$package['InnerQuantity'],$package['InnerQuantityUOM'],$package['Weight'],$package['WeightsUOM'],$package['PackageLevelGTIN']);
+   $row=array($partnumber,
+       $package['PackageUOM'],
+       $package['QuantityofEaches'],
+       $package['InnerQuantity'],
+       $package['InnerQuantityUOM'],
+       $package['Weight'],
+       $package['WeightsUOM'],
+       $package['PackageLevelGTIN'],
+       $package['PackageBarCodeCharacters'],
+       $package['ShippingHeight'],
+       $package['ShippingWidth'],
+       $package['ShippingLength'],
+       $package['DimensionsUOM'],
+       $package['DimensionalWeight'],
+       $package['WeightVariance'],
+       $package['StackingFactor'], 
+       $package['ElectronicProductCode'], 
+       $package['MerchandisingHeight'],
+       $package['MerchandisingWidth'],
+       $package['MerchandisingLength'],
+       $package['ShippingScope'],
+       $package['Bulk'],
+       $package['RegulatingCountry'],
+       $package['TransportMethod'],
+       $package['Regulated'],
+       $package['Description'],
+       $package['HazardousMaterialCodeQualifier'],
+       $package['HazardousMaterialDescription'],
+       $package['HazardousMaterialLabelCode'],
+       $package['ShippingName'],
+       $package['UNNAIDCode'],
+       $package['HazardousPlacardNotation'],
+       $package['OuterPackageLabel'],
+       $package['TextMessage'],
+       $package['RegulationsExemptionCode'],
+       $package['PackingGroupCode'],
+       $package['WHMISFreeText'],
+       $package['WHMISCode'],
+       $package['LanguageCode']);
+
+
    $writer->writeSheetRow('Packages', $row);
   }
  }
@@ -545,7 +732,7 @@ $logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($i
 
 if($streamXLSX)
 {   
- $filename='Rhubarb_7_1_A_'.date('Y-m-d').'.xlsx';
+ $filename='Rhubarb_7_1_C_'.date('Y-m-d').'.xlsx';
  header('Content-Disposition: attachment; filename="'.$filename.'"');
  header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
  header('Content-Length: ' . strlen($xlsxdata));

@@ -239,6 +239,41 @@ class pcdb
  }
  
  
+function getValidEXPIvalues($code)
+ {
+  $options=array();
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect();
+  if($stmt=$db->conn->prepare('select ExpiCode,CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode,PIESExpiCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESExpiCodeId=PIESExpiCode.PIESExpiCodeId and ExpiCode=? order by ExpiCode,CodeValue'))
+  {
+   $stmt->bind_param('s', $code);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $options[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+   }
+  }
+  
+  if(count($options)==0)
+  {// no valid value optioions exist for this EXPI code - see if the code itself is valid
+   if($stmt=$db->conn->prepare('select ExpiCode,ExpiCodeDescription from PIESExpiCode where ExpiCode=?'))
+   {
+    $stmt->bind_param('s', $code);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+      $options[]=array('code'=>'*','description'=>'*');
+    }
+   }
+  }
+  $db->close();
+  return $options;
+ }
+ 
+ 
+ 
+ 
  
 }
 ?>
