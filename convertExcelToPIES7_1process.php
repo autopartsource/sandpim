@@ -30,7 +30,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
 {
  if($_FILES['fileToUpload']['type']=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
  {
-  if($_FILES['fileToUpload']['size']<500000 || isset($_SESSION['userid']))   
+  if($_FILES['fileToUpload']['size']<1000000 || isset($_SESSION['userid']))   
   {     
    
    $xlsx = new XLSXReader($_FILES['fileToUpload']['tmp_name']);
@@ -82,7 +82,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
   else
   {
    $inputFileLog[]='Input file was too big (5M limit for anonymous users)';
-   $logs->logSystemEvent('rhubarb', 0, 'Input file was too big (5M limit for anonymous users');
+   $logs->logSystemEvent('rhubarb', 0, 'Input file was too big (1M limit for anonymous users');
   }
  }
  else
