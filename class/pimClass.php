@@ -1784,6 +1784,25 @@ class pim
   return ($check == ($sum_rounded_up - $sum));
  }
 
+ function getAutocareDatabaseList($type)
+ {
+  $db=new mysql; $db->connect();
+  $events=array();
+  if($stmt=$db->conn->prepare('select * from autocare_databases where databasetype like ? order by versiondate desc'))
+  {
+   $stmt->bind_param('s',$type);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $databases[]=array('name'=>$row['databasename'],'type'=>$row['databasetype'],'versiondate'=>$row['versiondate']);
+   }
+  }
+  $db->close();
+  return $databases;
+ }
+ 
+ 
 
  
 

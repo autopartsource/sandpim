@@ -10,7 +10,7 @@ session_start();
 
 $pim = new pim;
 $PIESgenerator=new PIESgenerator();
-$pcdb = new pcdb();
+$pcdb = new pcdb($_POST['pcdbversion']);
 $logs=new logs();
 $pcdbVersion=$pcdb->version();
 
@@ -885,7 +885,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
                 <?php }}?>
 
                 <?php if(count($errors)>0 && !isset($_POST['ignorelogic'])){?>
-                <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
+                <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was (or could be) produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
                 <table><?php
                 foreach($errors as $error)
                 {

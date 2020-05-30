@@ -721,7 +721,17 @@ class setup
         languagecode varchar(255) not null,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}
-   
+
+        
+        $sql="CREATE TABLE autocare_databases (
+        databasename varchar(255) not null,
+        databasetype varchar(255) not null,
+        versiondate date not null,
+        PRIMARY KEY (databasename))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - autocare_databases ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - autocare_databases ('.$db->conn->error.')';}
+
+        
+        
         
         $db->close();
         return $returnvalue;

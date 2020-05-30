@@ -10,9 +10,8 @@ session_start();
 
 $pim = new pim();
 $logs=new logs();
-$pcdb = new pcdb();
+$pcdb = new pcdb($_POST['pcdbversion']);
 $pcdbVersion=$pcdb->version();
-
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
