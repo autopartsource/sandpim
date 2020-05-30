@@ -365,7 +365,7 @@ if($validUpload)
 
     if($EXPICodeFieldIndex>=0){$expi['EXPICode']=trim($fields[$EXPICodeFieldIndex]);}
     if($EXPIValueFieldIndex>=0){$expi['EXPIValue']= htmlspecialchars(trim($fields[$EXPIValueFieldIndex]));}
-    if($LanguageCodeFieldIndex>=0){$expi['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
+    if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$expi['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
 
     // see if this partnumber was established in the Items list
     if(array_key_exists($PartNumber,$items))
