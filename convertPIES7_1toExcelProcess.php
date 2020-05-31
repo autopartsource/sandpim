@@ -568,14 +568,22 @@ if($validUpload)
  $row=array('ParentVMRSID',$header['ParentVMRSID']); $writer->writeSheetRow('Header', $row);
  
  
- $writer->writeSheetHeader('Items', array('PartNumber'=>'string','PartTerminologyID'=>'integer','BrandAAIAID'=>'string','PartTerminologyName'=>'string','ItemLevelGTIN'=>'string','GTINQualifier'=>'string','MinimumOrderQuantity'=>'integer','MinimumOrderQuantityUOM'=>'string','HazardousMaterialCode'=>'string','BaseItemID'=>'string','ItemEffectiveDate'=>'string','AvailableDate'=>'string','ACESApplications'=>'string','ItemQuantitySize'=>'integer','ItemQuantitySizeUOM'=>'string','ContainerType'=>'string','QuantityPerApplication'=>'integer','QuantityPerApplicationUOM'=>'string','BrandLabel'=>'string','VMRSBrandID'=>'string','UNSPC'=>'string'),        array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#c0c0c0'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
+ //------- marketingcopy -----
+ //MarketCopyContent	MarketCopyCode	MarketCopyReference	MarketCopyType	RecordSequence	LanguageCode	MarketCopySubCode	MarketCopySubCodeReference
+ 
+ 
+ 
+ 
+ //---------------- items -----------------
+ $writer->writeSheetHeader('Items', array('PartNumber'=>'string','PartTerminologyID'=>'integer','BrandAAIAID'=>'string','PartTerminologyName'=>'string','ItemLevelGTIN'=>'string','GTINQualifier'=>'string','MinimumOrderQuantity'=>'integer','MinimumOrderQuantityUOM'=>'string','HazardousMaterialCode'=>'string','BaseItemID'=>'string','ItemEffectiveDate'=>'string','AvailableDate'=>'string','ACESApplications'=>'string','ItemQuantitySize'=>'integer','ItemQuantitySizeUOM'=>'string','ContainerType'=>'string','QuantityPerApplication'=>'integer','QuantityPerApplicationUOM'=>'string','BrandLabel'=>'string','VMRSBrandID'=>'string','UNSPC'=>'string'),        array('widths'=>array(12,16,12,29,15,12,20,25,21,12,15,15,16,15,20,13,20,24,10,13,9),'freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#c0c0c0'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
  foreach($items as $partnumber=>$item)
  {
   $row=array($partnumber,$item['PartTerminologyID'],$item['BrandAAIAID'],$item['NicePartTerminologyName'],$item['ItemLevelGTIN'],$item['GTINQualifier'],$item['MinimumOrderQuantity'],$item['MinimumOrderQuantityUOM'],$item['HazardousMaterialCode'],$item['BaseItemID'],$item['ItemEffectiveDate'],$item['AvailableDate'],$item['ACESApplications'],$item['ItemQuantitySize'],$item['ItemQuantitySizeUOM'],$item['ContainerType'],$item['QuantityPerApplication'],$item['QuantityPerApplicationUOM'],$item['BrandLabel'],$item['VMRSBrandID'],$item['UNSPSC']);
   $writer->writeSheetRow('Items', $row);
  }
 
- $writer->writeSheetHeader('Descriptions', array('PartNumber'=>'string','Description'=>'string','DescriptionCode'=>'string','Sequence'=>'integer','LanguageCode'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00']));
+//----------- descriptions ---------------
+ $writer->writeSheetHeader('Descriptions', array('PartNumber'=>'string','Description'=>'string','DescriptionCode'=>'string','Sequence'=>'integer','LanguageCode'=>'string'), array('widths'=>array(12,56,14,9,13),'freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['descriptions'] as $description)
@@ -585,13 +593,9 @@ if($validUpload)
   }
  }
 
- //------- marketingcopy -----
- //MarketCopyContent	MarketCopyCode	MarketCopyReference	MarketCopyType	RecordSequence	LanguageCode	MarketCopySubCode	MarketCopySubCodeReference
-
- 
  
 //-------- prices ---------
- $writer->writeSheetHeader('Prices', array('PartNumber'=>'string','PriceSheetNumber'=>'string','Price'=>'0.00','PriceUOM'=>'string','PriceType'=>'string','CurrencyCode'=>'string','EffectiveDate'=>'string','ExpirationDate'=>'string','PriceTypeDescription'=>'string','PriceBreak'=>'integer','PriceBreakUOM'=>'string','PriceMultiplier'=>'0.000'), array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff']));
+ $writer->writeSheetHeader('Prices', array('PartNumber'=>'string','PriceSheetNumber'=>'string','Price'=>'0.00','PriceUOM'=>'string','PriceType'=>'string','CurrencyCode'=>'string','EffectiveDate'=>'string','ExpirationDate'=>'string','PriceTypeDescription'=>'string','PriceBreak'=>'integer','PriceBreakUOM'=>'string','PriceMultiplier'=>'0.000'), array('widths'=>array(11,16,5.00,9,9,12,11,13,19,10,14,12),'freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['prices'] as $price)
@@ -602,7 +606,7 @@ if($validUpload)
  }
  
  //-------------- expi ---------
- $writer->writeSheetHeader('EXPI', array('PartNumber'=>'string','EXPICode'=>'string','EXPIValue'=>'string','LanguageCode'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1,    ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00']));
+ $writer->writeSheetHeader('EXPI', array('PartNumber'=>'string','EXPICode'=>'string','EXPIValue'=>'string','LanguageCode'=>'string'), array('widths'=>array(13,10,20,14),'freeze_rows'=>1, 'freeze_columns'=>1,    ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['expis'] as $expi)
@@ -613,7 +617,7 @@ if($validUpload)
  }
  
  //-------------- attributes ---------
- $writer->writeSheetHeader('Attributes', array('PartNumber'=>'string', 'AttributeID'=>'string', 'AttributeValue'=>'string',             'AttributeUOM'=>'string',             'PADBAttribute'=>'string', 'RecordNumber'=>'integer', 'StyleID'=>'integer', 'MultiValueQuantity'=>'integer', 'MultiValueSequence'=>'integer','LanguageCode'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1, ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'], ['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
+ $writer->writeSheetHeader('Attributes', array('PartNumber'=>'string', 'AttributeID'=>'string', 'AttributeValue'=>'string',             'AttributeUOM'=>'string',             'PADBAttribute'=>'string', 'RecordNumber'=>'integer', 'StyleID'=>'integer', 'MultiValueQuantity'=>'integer', 'MultiValueSequence'=>'integer','LanguageCode'=>'string'), array('widths'=>array(11,26,27,13,14,14,7,17,19,14),'freeze_rows'=>1, 'freeze_columns'=>1, ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'], ['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['attributes'] as $attribute)
@@ -624,7 +628,7 @@ if($validUpload)
  }
  
 //-------------- packages ---------
- $writer->writeSheetHeader('Packages', array('PartNumber'=>'string','PackageUOM'=>'string','QuantityofEaches'=>'integer','InnerQuantity'=>'integer',     'InnerQuantityUOM'=>'string','Weight'=>'0.00','WeightsUOM'=>'string','PackageLevelGTIN'=>'string','PackageBarCodeCharacters'=>'string','ShippingHeight'=>'0.00','ShippingWidth'=>'0.00','ShippingLength'=>'0.00','DimensionsUOM'=>'string','DimensionalWeight'=>'0.00','WeightVariance'=>'0.00','StackingFactor'=>'0.00','ElectronicProductCode'=>'string','MerchandisingHeight'=>'0.00','MerchandisingWidth'=>'0.00','MerchandisingLength'=>'0.00','ShippingScope'=>'string',       'Bulk'=>'string','RegulatingCountry'=>'string','TransportMethod'=>'string','Regulated'=>'string','Description'=>'string','HazardousMaterialCodeQualifier'=>'string','HazardousMaterialDescription'=>'string','HazardousMaterialLabelCode'=>'string',       'ShippingName'=>'string','UNNAIDCode'=>'string','HazardousPlacardNotation'=>'string','OuterPackageLabel'=>'string','TextMessage'=>'string','RegulationsExemptionCode'=>'string','PackingGroupCode'=>'string','WHMISFreeText'=>'string',       'WHMISCode'=>'string','LanguageCode'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],             ['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
+ $writer->writeSheetHeader('Packages', array('PartNumber'=>'string','PackageUOM'=>'string','QuantityofEaches'=>'integer','InnerQuantity'=>'integer',     'InnerQuantityUOM'=>'string','Weight'=>'0.00','WeightsUOM'=>'string','PackageLevelGTIN'=>'string','PackageBarCodeCharacters'=>'string','ShippingHeight'=>'0.00','ShippingWidth'=>'0.00','ShippingLength'=>'0.00','DimensionsUOM'=>'string','DimensionalWeight'=>'0.00','WeightVariance'=>'0.00','StackingFactor'=>'0.00','ElectronicProductCode'=>'string','MerchandisingHeight'=>'0.00','MerchandisingWidth'=>'0.00','MerchandisingLength'=>'0.00','ShippingScope'=>'string',       'Bulk'=>'string','RegulatingCountry'=>'string','TransportMethod'=>'string','Regulated'=>'string','Description'=>'string','HazardousMaterialCodeQualifier'=>'string','HazardousMaterialDescription'=>'string','HazardousMaterialLabelCode'=>'string',       'ShippingName'=>'string','UNNAIDCode'=>'string','HazardousPlacardNotation'=>'string','OuterPackageLabel'=>'string','TextMessage'=>'string','RegulationsExemptionCode'=>'string','PackingGroupCode'=>'string','WHMISFreeText'=>'string',       'WHMISCode'=>'string','LanguageCode'=>'string'), array('widths'=>array(13,13,16,12,17,7,13,17,25,14,14,14,16,18,15,14,29,19,19,19,14,5,17,15,10,15,28,27,26,14,13,24,18,13,25,18,31,12,14),'freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],             ['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['packages'] as $package)
@@ -635,7 +639,7 @@ if($validUpload)
  }
 
 //------------- kits ----------------
- $writer->writeSheetHeader('Kits', array('PartNumber'=>'string','Description'=>'string','DescriptionCode'=>'string','QuantityInKit'=>'integer','QuantityInKitUOM'=>'string','SoldSeparately'=>'string','LanguageCode'=>'string','ComponentPartTerminologyID'=>'integer','SequenceCode'=>'integer','ComponentPartNumber'=>'string','ComponentBrand'=>'string','ComponentBrandLabel'=>'string','ComponentSubBrand'=>'string','ComponentSubBrandLabel'=>'string'), array('freeze_rows'=>1, 'freeze_columns'=>1, ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
+ $writer->writeSheetHeader('Kits', array('PartNumber'=>'string','Description'=>'string','DescriptionCode'=>'string','QuantityInKit'=>'integer','QuantityInKitUOM'=>'string','SoldSeparately'=>'string','LanguageCode'=>'string','ComponentPartTerminologyID'=>'integer','SequenceCode'=>'integer','ComponentPartNumber'=>'string','ComponentBrand'=>'string','ComponentBrandLabel'=>'string','ComponentSubBrand'=>'string','ComponentSubBrandLabel'=>'string'), array('widths'=>array(11,41,15,12,17,14,14,27,14,21,16,20,19,24),'freeze_rows'=>1, 'freeze_columns'=>1, ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['kits'] as $kit)
@@ -646,10 +650,15 @@ if($validUpload)
  }
  
  //------------- interchnges ---------
-
-// PartNumber	CompetitorPartNumber	BrandAAIAID	InterchangeQuantity	UOM	ReferenceItem	InterchangeNotes	BrandLabel	ItemEquivalentUOM	LanguageCode	SubBrandAAIAID	SubBrandLabel	VMRSBrandID	QualityGradeLevel	InternalNotes
-
- 
+ $writer->writeSheetHeader('Interchanges', array('PartNumber'=>'string','CompetitorPartNumber'=>'string','BrandAAIAID'=>'string','InterchangeQuantity'=>'integer','UOM'=>'string','ReferenceItem'=>'string','InterchangeNotes'=>'string','BrandLabel'=>'string','ItemEquivalentUOM'=>'string','LanguageCode'=>'string','SubBrandAAIAID'=>'string','SubBrandLabel'=>'string','VMRSBrandID'=>'string','QualityGradeLevel'=>'string','InternalNotes'=>'string'), array('widths'=>array(12,21,12,18,6,13,16,11,18,14,16,14,14,17,12),'freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
+ foreach($items as $partnumber=>$item)
+ {
+  foreach($item['interchanges'] as $interchange)
+  {
+   $row=array($partnumber,$interchange['CompetitorPartNumber'],$interchange['BrandAAIAID'],$interchange['InterchangeQuantity']);
+   $writer->writeSheetRow('Interchanges', $row);
+  }
+ }
  
  //-------------- digitalassets ----------
 
@@ -661,7 +670,7 @@ if($validUpload)
  
  if(count($errors))
  {
-  $writer->writeSheetHeader('Errors', array('Error Type'=>'string','Description'=>'string'), array('freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+  $writer->writeSheetHeader('Errors', array('Error Type'=>'string','Description'=>'string'), array('widths'=>array(37,100),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
   foreach($errors as $error)
   {
    $row=explode("\t",$error);
