@@ -15,8 +15,9 @@ $logs = new logs;
 
 if (isset($_POST['submit']) && $_POST['submit']=='Add') 
 {
-    //$pim->createReceiverprofile($name,$data);
-    //$logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$name.' was created');
+    
+ $pim->createReceiverprofile($_POST['profilename'],$_POST['profiledata']);
+ $logs->logSystemEvent('SETTINGS', $_SESSION['userid'], 'Receiver Profice '.$_POST['profilename'].' was created');
 }
 
 if (isset($_POST['submit']) && $_POST['submit']=='Delete') 

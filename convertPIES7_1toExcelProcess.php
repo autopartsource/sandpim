@@ -594,9 +594,89 @@ if($validUpload)
    }
   }
   
+
+  //----------- digitalassets -----------
+  $digitalassets=array();
+  $digitalassetsElement=$itemElement->getElementsByTagName('DigitalAssets');
+  if(count($digitalassetsElement))
+  {
+   $digitalfileinformationElements=$digitalassetsElement[0]->getElementsByTagName('DigitalFileInformation');
+   foreach($digitalfileinformationElements as $digitalfileinformationElement)
+   {
+    $filename=''; $assettype=''; $filetype=''; $representation=''; $background=''; $orientationview=''; $uri=''; $country=''; $filesize=''; $resolution=''; $colormode=''; $filepath=''; $frame=''; $totalframes=''; $plane=''; $hemisphere=''; $plunge=''; $totalplanes='';
+    
+    
+    $assetid=$digitalfileinformationElement->getAttribute('AssetID');
+    $languagecode=$digitalfileinformationElement->getAttribute('LanguageCode');
+
+    $filenameElement=$digitalfileinformationElement->getElementsByTagName('FileName');
+    if(count($filenameElement)){$filename=$filenameElement[0]->nodeValue;}
+
+    $assettypeElement=$digitalfileinformationElement->getElementsByTagName('AssetType');
+    if(count($assettypeElement)){$assettype=$assettypeElement[0]->nodeValue;}
+    
+    $filetypeElement=$digitalfileinformationElement->getElementsByTagName('FileType');
+    if(count($filetypeElement)){$filetype=$filetypeElement[0]->nodeValue;}
+
+    $representationElement=$digitalfileinformationElement->getElementsByTagName('Representation');
+    if(count($representationElement)){$representation=$representationElement[0]->nodeValue;}
+    
+    $backgroundElement=$digitalfileinformationElement->getElementsByTagName('Background');
+    if(count($backgroundElement)){$background=$backgroundElement[0]->nodeValue;}
+    
+    $orientationviewElement=$digitalfileinformationElement->getElementsByTagName('OrientationView');
+    if(count($orientationviewElement)){$orientationview=$orientationviewElement[0]->nodeValue;}
+    
+    $uriElement=$digitalfileinformationElement->getElementsByTagName('URI');
+    if(count($uriElement)){$uri=$uriElement[0]->nodeValue;}
+    
+    $countryElement=$digitalfileinformationElement->getElementsByTagName('Country');
+    if(count($countryElement)){$country=$countryElement[0]->nodeValue;}
+    
+    $filesizeElement=$digitalfileinformationElement->getElementsByTagName('FileSize');
+    if(count($filesizeElement)){$filesize=$filesizeElement[0]->nodeValue;}
+
+    $resolutionElement=$digitalfileinformationElement->getElementsByTagName('Resolution');
+    if(count($resolutionElement)){$resolution=$resolutionElement[0]->nodeValue;}
+		
+    $colormodeElement=$digitalfileinformationElement->getElementsByTagName('ColorMode');
+    if(count($colormodeElement)){$colormode=$colormodeElement[0]->nodeValue;}
+
+    $filepathElement=$digitalfileinformationElement->getElementsByTagName('FilePath');
+    if(count($filepathElement)){$filepath=$filepathElement[0]->nodeValue;}
+
+    $frameElement=$digitalfileinformationElement->getElementsByTagName('Frame');
+    if(count($frameElement)){$frame=$frameElement[0]->nodeValue;}
+
+    $totalframesElement=$digitalfileinformationElement->getElementsByTagName('TotalFrames');
+    if(count($totalframesElement)){$totalframes=$totalframesElement[0]->nodeValue;}
+    
+    $planeElement=$digitalfileinformationElement->getElementsByTagName('Plane');
+    if(count($planeElement)){$plane=$planeElement[0]->nodeValue;}
+    
+    $hemisphereElement=$digitalfileinformationElement->getElementsByTagName('Hemisphere');
+    if(count($hemisphereElement)){$hemisphere=$hemisphereElement[0]->nodeValue;}
+    
+    $plungeElement=$digitalfileinformationElement->getElementsByTagName('Plunge');
+    if(count($plungeElement)){$plunge=$plungeElement[0]->nodeValue;}
+    
+    $totalplanesElement=$digitalfileinformationElement->getElementsByTagName('TotalPlanes');
+    if(count($totalplanesElement)){$totalplanes=$totalplanesElement[0]->nodeValue;}
+    
+    $digitalassets[]=array('FileName'=>$filename, 'AssetType'=>$assettype,'AssetID'=>$assetid, 'FileType'=>$filetype, 'Representation'=>$representation, 'Background'=>$background, 'OrientationView'=>$orientationview, 'URI'=>$uri, 'Country'=>$country, 'LanguageCode'=>$languagecode,'FileSize'=>$filesize,'Resolution'=>$resolution,'ColorMode'=>$colormode,'FilePath'=>$filepath,'Frame'=>$frame,'TotalFrames'=>$totalframes,'Plane'=>$plane,'Hemisphere'=>$hemisphere,'Plunge'=>$plunge,'TotalPlanes'=>$totalplanes);
+   }
+  }
+
+
+
+
+
+
+
+
   
   //----- jam all the segments into the items array
-  $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSbrandid,'UNSPSC'=>$UNSPSC,'NicePartTerminologyName'=>$niceparttypename,'descriptions'=>$descriptions,'prices'=>$prices,'expis'=>$expis,'attributes'=>$attributes,'packages'=>$packages,'kits'=>$kits,'interchanges'=>$interchanges);
+  $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSbrandid,'UNSPSC'=>$UNSPSC,'NicePartTerminologyName'=>$niceparttypename,'descriptions'=>$descriptions,'prices'=>$prices,'expis'=>$expis,'attributes'=>$attributes,'packages'=>$packages,'kits'=>$kits,'interchanges'=>$interchanges,'digitalassets'=>$digitalassets);
  } // item element foreach
   
  $writer = new XLSXWriter();
@@ -761,7 +841,37 @@ if($validUpload)
  {
   foreach($item['digitalassets'] as $digitalasset)
   {
-   $row=array($partnumber,);
+   $row=array($partnumber,
+$digitalasset['FileName'],
+$digitalasset['AssetType'],
+$digitalasset['AssetID'],
+$digitalasset['FileType'],
+$digitalasset['Representation'],
+$digitalasset['FileSize'],
+$digitalasset['Resolution'],
+$digitalasset['ColorMode'],
+$digitalasset['Background'],
+$digitalasset['OrientationView'],
+$digitalasset['AssetHeight'],
+$digitalasset['AssetWidth'],
+$digitalasset['UOM'],
+$digitalasset['FilePath'],
+$digitalasset['AssetDate'],
+$digitalasset['AssetDateType'],
+$digitalasset['Country'],
+$digitalasset['LanguageCode'],
+$digitalasset['URI'],
+$digitalasset['Duration'],
+$digitalasset['DurationUOM'],
+$digitalasset['Frame'],
+$digitalasset['TotalFrames'],
+$digitalasset['Plane'],
+$digitalasset['Hemisphere'],
+$digitalasset['Plunge'],
+$digitalasset['TotalPlanes'],
+$digitalasset['Description'],
+$digitalasset['DescriptionCode'],
+$digitalasset['DescriptionLanguageCode']);
    $writer->writeSheetRow('DigitalAssets', $row);
   }
  }

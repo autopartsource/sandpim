@@ -32,6 +32,27 @@ class pim
   return $apps;
  }
 
+ function getAppsByAppcategories($appcategories)
+ {
+  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  $db = new mysql; 
+//  $db->dbname='pim';
+  $db->connect();
+  $apps=array();
+  if($stmt=$db->conn->prepare('select * from application where appcategory in('.$categorylist.') order by partnumber'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $attributes=$this->getAppAttributes($row['id']);
+    $attributeshash=$this->appAttributesHash($attributes);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
+   }
+  }
+  $db->close();
+  return $apps;
+ }
 
  function getAppsByPartnumber($partnumber)
  {
@@ -787,7 +808,6 @@ class pim
   return $success;
  }
 
- //xxx
   function deleteAppcategory($appcategory)
  {
   $db=new mysql; $db->connect();
@@ -885,6 +905,26 @@ class pim
      }
     } // else{echo 'problem with execute';}
    } // else{echo 'problem with bind';}
+  } // else{echo 'problem with prepare';}
+  $db->close();
+  return $count;
+ }
+
+ function countAppsByAppcategories($appcategories)
+ {
+  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  $db=new mysql; $db->connect();
+  $count=0;
+  if($stmt=$db->conn->prepare('select count(*) as appcount from application where in('.$categorylist.')'))
+  {
+   if($result=$stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $count=intval($row['appcount']);
+    }
+   } // else{echo 'problem with execute';}
   } // else{echo 'problem with prepare';}
   $db->close();
   return $count;
@@ -1729,6 +1769,42 @@ class pim
   return $profile;
  }
 
+ function createReceiverprofile($name, $data)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare("insert into receiverprofile values(null,0,?,?,30,'0000-00-00','')"))
+  {
+   $stmt->bind_param('ss',$name,$data);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ function updateReceiverprofile($id, $name, $data)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update receiverprofile set `name`=?, `data`=? where id=?'))
+  {
+   $stmt->bind_param('ssi',$name,$data,$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+ function deleteReceiverprofile($id)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update receiverprofile set status=1 where id=?'))
+  {
+   $stmt->bind_param('i',$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+
+ 
+ 
  function getMarketingcopyByReceiverprofileId($receiverprofileid)
  {
   $marketingcopy=false;

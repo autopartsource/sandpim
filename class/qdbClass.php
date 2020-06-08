@@ -50,13 +50,13 @@ class qdb
  {
   $versiondate='not found';
   $db = new mysql; $db->dbname=$db->qdbname; $db->connect();
-  if($stmt=$db->conn->prepare('select VersionDate from Version'))
+  if($stmt=$db->conn->prepare('select date(VersionDate) as qdbversion from Version'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $versiondate=$row['VersionDate'];
+    $versiondate=$row['qdbversion'];
    }
   }
   $db->close();

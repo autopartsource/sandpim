@@ -722,15 +722,27 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}
 
-        
+
+        $sql="CREATE TABLE receiverprofile_appcategory (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        appcategory int unsigned not null default 0,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_appcategory ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE receiverprofile_parttype (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        parttypeid int unsigned not null default 0,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_parttype ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_parttype ('.$db->conn->error.')';}
+
         $sql="CREATE TABLE autocare_databases (
         databasename varchar(255) not null,
         databasetype varchar(255) not null,
         versiondate date not null,
         PRIMARY KEY (databasename))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - autocare_databases ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - autocare_databases ('.$db->conn->error.')';}
-
-        
         
         
         $db->close();
