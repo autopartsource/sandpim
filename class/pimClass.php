@@ -915,7 +915,7 @@ class pim
   $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
   $db=new mysql; $db->connect();
   $count=0;
-  if($stmt=$db->conn->prepare('select count(*) as appcount from application where in('.$categorylist.')'))
+  if($stmt=$db->conn->prepare('select count(*) as appcount from application where appcategory in('.$categorylist.')'))
   {
    if($result=$stmt->execute())
    {
@@ -925,7 +925,7 @@ class pim
      $count=intval($row['appcount']);
     }
    } // else{echo 'problem with execute';}
-  } // else{echo 'problem with prepare';}
+  } // else{echo 'problem with prepare ['.$categorylist.']';}
   $db->close();
   return $count;
  }
@@ -1048,32 +1048,91 @@ class pim
   return $returnval;
  }
 
-
- 
- 
- 
- 
  function getBackgroundjobs($jobtype,$status)
  {
   $db = new mysql; 
   //$db->dbname='pim';
   $db->connect();
   $jobs=false;
-  if($stmt=$db->conn->prepare('select * from backgroundjob where jobtype=? and status like ? order by datetimecreated'))
+  if($stmt=$db->conn->prepare('select * from backgroundjob where jobtype like ? and status like ? order by datetimecreated'))
   {
-   $stmt->bind_param('ss', $jobtype,$status);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($stmt->bind_param('ss', $jobtype,$status))
    {
-    if($row['status']=='hidden'){continue;}
-    $jobs[]=array('id'=>$row['id'],'jobtype'=>$row['jobtype'],'status'=>$row['status'],'userid'=>$row['userid'],'inputfile'=>$row['inputfile'],'outputfile'=>$row['outputfile'],'parameters'=>$row['parameters'],'datetimecreated'=>$row['datetimecreated'],'datetimetostart'=>$row['datetimetostart'],'datetimestarted'=>$row['datetimestarted'],'datetimeended'=>$row['datetimeended'],'percentage'=>$row['percentage']);
-   }
-  }
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      if($row['status']=='hidden'){continue;}
+      $jobs[]=array('id'=>$row['id'],'jobtype'=>$row['jobtype'],'status'=>$row['status'],'userid'=>$row['userid'],'inputfile'=>$row['inputfile'],'outputfile'=>$row['outputfile'],'parameters'=>$row['parameters'],'datetimecreated'=>$row['datetimecreated'],'datetimetostart'=>$row['datetimetostart'],'datetimestarted'=>$row['datetimestarted'],'datetimeended'=>$row['datetimeended'],'percentage'=>$row['percentage']);
+     }
+    }// else {echo 'problem with execute';}
+   }// else{echo 'problem with bind';}
+  }// else{echo 'problem with prepare';}
   $db->close();
   return $jobs;
  }
 
+ function getBackgroundjob($id)
+ {
+  $db = new mysql; $db->connect(); 
+  $job=false;
+  if($stmt=$db->conn->prepare('select * from backgroundjob where id=?'))
+  {
+   if($stmt->bind_param('i', $id))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $job=array('id'=>$row['id'],'jobtype'=>$row['jobtype'],'status'=>$row['status'],'userid'=>$row['userid'],'inputfile'=>$row['inputfile'],'outputfile'=>$row['outputfile'],'parameters'=>$row['parameters'],'datetimecreated'=>$row['datetimecreated'],'datetimetostart'=>$row['datetimetostart'],'datetimestarted'=>$row['datetimestarted'],'datetimeended'=>$row['datetimeended'],'percentage'=>$row['percentage']);
+     }
+    }// else {echo 'problem with execute';}
+   }// else{echo 'problem with bind';}
+  }// else{echo 'problem with prepare';}
+  $db->close();
+  return $job;
+ }
+
+ function getBackgroundjobByToken($token)
+ {
+  $db = new mysql; $db->connect(); 
+  $job=false;
+  if($stmt=$db->conn->prepare('select * from backgroundjob where token=?'))
+  {
+   if($stmt->bind_param('s', $token))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $job=array('id'=>$row['id'],'jobtype'=>$row['jobtype'],'status'=>$row['status'],'userid'=>$row['userid'],'inputfile'=>$row['inputfile'],'outputfile'=>$row['outputfile'],'parameters'=>$row['parameters'],'datetimecreated'=>$row['datetimecreated'],'datetimetostart'=>$row['datetimetostart'],'datetimestarted'=>$row['datetimestarted'],'datetimeended'=>$row['datetimeended'],'percentage'=>$row['percentage']);
+     }
+    }// else {echo 'problem with execute';}
+   }// else{echo 'problem with bind';}
+  }// else{echo 'problem with prepare';}
+  $db->close();
+  return $job;
+ }
+
+ 
+ function deleteBackgroundjob($id)
+ {
+  $db = new mysql; $db->connect(); 
+  if($stmt=$db->conn->prepare('delete from backgroundjob where id=?'))
+  {
+   if($stmt->bind_param('i', $id))
+   {
+    $stmt->execute();
+   }// else{echo 'problem with bind';}
+  }// else{echo 'problem with prepare';}
+  $db->close();
+ }
+ 
+ 
+ 
  function getBackgroundjob_log($jobid)
  {
   $db = new mysql; 
@@ -1769,6 +1828,26 @@ class pim
   return $profile;
  }
 
+ 
+ function getReceiverprofileAppcategories($receiverprofileid)
+ {  // return and array of appcategory id's for a given receiverprofile
+  $appcategories=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select appcategory from receiverprofile_appcategory where receiverprofileid=?'))
+  {
+   $stmt->bind_param('i',$receiverprofileid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $appcategories[]=$row['appcategory'];
+   }
+  }
+  $db->close();
+  return $appcategories;
+ }
+ 
+ 
  function createReceiverprofile($name, $data)
  {
   $db = new mysql; $db->connect();

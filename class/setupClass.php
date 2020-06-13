@@ -1,6 +1,6 @@
 <?php
 include_once("mysqlClass.php");
-
+//GRANT create ON *.* TO webservice@'localhost';
 class setup
 {
 
@@ -393,6 +393,8 @@ class setup
         datetimestarted datetime not null,
         datetimeended datetime not null,
         percentage decimal(4,1) not null,
+        clientfilename varchar(255) not null,
+        token varchar(255) not null,
         PRIMARY KEY (id),
         INDEX idx_status (status))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - backgroundjob ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - backgroundjob ('.$db->conn->error.')';}

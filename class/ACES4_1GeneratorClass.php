@@ -1,5 +1,5 @@
 <?php
-include_once("mysqlClass.php");
+include_once(__DIR__.'/mysqlClass.php');
  
 class ACESgenerator
 {
