@@ -10,22 +10,43 @@ $logs = new logs;
 $job = $pim->getBackgroundjobByToken($_GET['token']);
 if($job)
 {
- if($contents=file_get_contents($job['outputfile']))
+ // make sure job is complete
+ if($job['status']=='complete')
  {
-  header('Content-Disposition: attachment; filename="'.$job['clientfilename'].'"');
-  header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  header('Content-Length: ' . strlen($contents));
-  header('Content-Transfer-Encoding: binary');
-  header('Cache-Control: must-revalidate');
-  header('Pragma: public');
-  echo $contents;
-  $logs->logSystemEvent('backgroundjob', $userid, 'exported file was downloaded from job: '.$job['id']);
+  if($contents=file_get_contents($job['outputfile']))
+  {
+   header('Content-Disposition: attachment; filename="'.$job['clientfilename'].'"');
+   header('Content-Type: '.$job['contenttype']);
+   header('Content-Length: ' . strlen($contents));
+   header('Content-Transfer-Encoding: binary');
+   header('Cache-Control: must-revalidate');
+   header('Pragma: public');
+   echo $contents;
+   $logs->logSystemEvent('backgroundjob', $userid, 'exported file was downloaded from job: '.$job['id']);
+  }
+  else
+  {  // local file open failed
+   echo 'file open failed'; 
+   $logs->logSystemEvent('backgroundjob', $userid, 'exported file-open ['.$job['outputfile'].'] failed');
+  }
  }
- else
- {  // local file open failed
-  echo 'file open failed'; 
-  $logs->logSystemEvent('backgroundjob', $userid, 'exported file-open ['.$job['outputfile'].'] failed');
+ 
+ if($job['status']=='started')
+ {
+  echo 'File export has been queued for processing. Check back (refresh this page) for download of '.$job['clientfilename'];      
  }
+
+ if($job['status']=='running')
+ {
+  echo 'File export is running. Check back (refresh this page) for download of '.$job['clientfilename'];      
+ }
+ 
+ if($job['status']=='failed')
+ {
+  echo 'An error was encountered while processing '.$job['clientfilename'];      
+ }
+ 
+ echo '<br/><br/><a href="./ioIndex.php">Back to Import/Export menu</a>';
 }
 else
 {

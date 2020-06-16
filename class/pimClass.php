@@ -1086,7 +1086,7 @@ class pim
      $db->result = $stmt->get_result();
      if($row = $db->result->fetch_assoc())
      {
-      $job=array('id'=>$row['id'],'jobtype'=>$row['jobtype'],'status'=>$row['status'],'userid'=>$row['userid'],'inputfile'=>$row['inputfile'],'outputfile'=>$row['outputfile'],'parameters'=>$row['parameters'],'datetimecreated'=>$row['datetimecreated'],'datetimetostart'=>$row['datetimetostart'],'datetimestarted'=>$row['datetimestarted'],'datetimeended'=>$row['datetimeended'],'percentage'=>$row['percentage']);
+      $job=array('id'=>$row['id'],'jobtype'=>$row['jobtype'],'status'=>$row['status'],'userid'=>$row['userid'],'inputfile'=>$row['inputfile'],'outputfile'=>$row['outputfile'],'parameters'=>$row['parameters'],'datetimecreated'=>$row['datetimecreated'],'datetimetostart'=>$row['datetimetostart'],'datetimestarted'=>$row['datetimestarted'],'datetimeended'=>$row['datetimeended'],'percentage'=>$row['percentage'],'contenttype'=>$row['contenttype'],'clientfilename'=>$row['clientfilename'],'token'=>$row['token']);
      }
     }// else {echo 'problem with execute';}
    }// else{echo 'problem with bind';}
@@ -1108,7 +1108,7 @@ class pim
      $db->result = $stmt->get_result();
      if($row = $db->result->fetch_assoc())
      {
-      $job=array('id'=>$row['id'],'jobtype'=>$row['jobtype'],'status'=>$row['status'],'userid'=>$row['userid'],'inputfile'=>$row['inputfile'],'outputfile'=>$row['outputfile'],'parameters'=>$row['parameters'],'datetimecreated'=>$row['datetimecreated'],'datetimetostart'=>$row['datetimetostart'],'datetimestarted'=>$row['datetimestarted'],'datetimeended'=>$row['datetimeended'],'percentage'=>$row['percentage']);
+      $job=array('id'=>$row['id'],'jobtype'=>$row['jobtype'],'status'=>$row['status'],'userid'=>$row['userid'],'inputfile'=>$row['inputfile'],'outputfile'=>$row['outputfile'],'parameters'=>$row['parameters'],'datetimecreated'=>$row['datetimecreated'],'datetimetostart'=>$row['datetimetostart'],'datetimestarted'=>$row['datetimestarted'],'datetimeended'=>$row['datetimeended'],'percentage'=>$row['percentage'],'contenttype'=>$row['contenttype'],'clientfilename'=>$row['clientfilename'],'token'=>$row['token']);
      }
     }// else {echo 'problem with execute';}
    }// else{echo 'problem with bind';}
@@ -1121,6 +1121,25 @@ class pim
  function deleteBackgroundjob($id)
  {
   $db = new mysql; $db->connect(); 
+ 
+  if($stmt=$db->conn->prepare('select outputfile from backgroundjob where id=?'))
+  {
+   if($stmt->bind_param('i', $id))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      if(trim($row['outputfile'])!='' && file_exists($row['outputfile']))
+      {
+          unlink($row['outputfile']);
+      }
+     }
+    }    
+   }
+  }
+  
   if($stmt=$db->conn->prepare('delete from backgroundjob where id=?'))
   {
    if($stmt->bind_param('i', $id))
@@ -1135,10 +1154,7 @@ class pim
  
  function getBackgroundjob_log($jobid)
  {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
-  $events=false;
+  $db = new mysql; $db->connect(); $events=array();
   if($stmt=$db->conn->prepare('select * from backgroundjob_log where jobid=? order by timestamp'))
   {
    $stmt->bind_param('i', $jobid);
@@ -1154,24 +1170,58 @@ class pim
  }
 
 
- function updateBackgroundjob($jobid,$status,$currenttask,$percentage,$datetimeended)
+ function updateBackgroundjobStatus($jobid,$status,$percentage)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update backgroundjob set status=?,percentage=? where id=?'))
+  {
+   if($stmt->bind_param('sii', $status,$percentage,$jobid))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+
+ function updateBackgroundjobRunning($jobid,$datetimestarted)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare("update backgroundjob set status='running', datetimestarted=? where id=?"))
+  {
+   if($stmt->bind_param('si', $datetimestarted,$jobid))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+
+ function updateBackgroundjobDone($jobid,$status,$datetimeended)
  {
   $db = new mysql; 
   //$db->dbname='pim';
   $db->connect();
-  if($stmt=$db->conn->prepare('update backgroundjob set status=?,percentage=?,datetimeended=? where id=?'))
+  if($stmt=$db->conn->prepare('update backgroundjob set status=?,percentage=1,datetimeended=? where id=?'))
   {
-   if($stmt->bind_param('sisi', $status,$percentage,$datetimeended,$jobid))
+   if($stmt->bind_param('ssi', $status,$datetimeended,$jobid))
    {
     $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+ 
+ 
 
-    if($stmt=$db->conn->prepare('insert into backgroundjob_log (id,jobid,eventtext,timestamp) values(null,?,?,now())'))
-    {
-     if($stmt->bind_param('is',$jobid,$currenttask))
-     {
-      $stmt->execute();
-     }
-    }
+ function logBackgroundjobEvent($jobid,$text)
+ {
+  $db = new mysql; $db->connect();
+
+  if($stmt=$db->conn->prepare('insert into backgroundjob_log (id,jobid,eventtext,timestamp) values(null,?,?,now())'))
+  {
+   if($stmt->bind_param('is',$jobid,$text))
+   {
+    $stmt->execute();
    }
   }
   $db->close();
@@ -1207,28 +1257,24 @@ class pim
 
 
 
- function createBackgroundjob($jobtype,$status,$userid,$inputfile,$outputfile,$parameters,$datetimetostart)
+ function createBackgroundjob($jobtype,$status,$userid,$inputfile,$outputfile,$parameters,$datetimetostart,$contenttype,$clientfilename)
  {
-  $jobid=false;
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
-
-  if($stmt=$db->conn->prepare('insert into backgroundjob (id,jobtype,status,userid,inputfile,outputfile,parameters,datetimecreated,datetimetostart,datetimestarted,datetimeended,percentage) values(null,?,?,?,?,?,?,now(),?,0,0,0)'))
+  $db = new mysql; $db->connect(); $jobid=false; $token=$this->newoid();
+  if($stmt=$db->conn->prepare('insert into backgroundjob (id,jobtype,status,userid,inputfile,outputfile,parameters,datetimecreated,datetimetostart,datetimestarted,datetimeended,percentage,contenttype,clientfilename,token) values(null,?,?,?,?,?,?,now(),?,0,0,0,?,?,?)'))
   {
-   $stmt->bind_param('ssissss',$jobtype,$status,$userid,$inputfile,$outputfile,$parameters,$datetimetostart,);
+   $stmt->bind_param('ssisssssss',$jobtype,$status,$userid,$inputfile,$outputfile,$parameters,$datetimetostart,$contenttype,$clientfilename,$token);
    $stmt->execute();
    $jobid=$db->conn->insert_id;
-  }else{print_r($db->conn->error);}
+  }//else{print_r($db->conn->error);}
 
   $currenttask='job created';
   if($stmt=$db->conn->prepare('insert into backgroundjob_log (id,jobid,eventtext,timestamp) values(null,?,?,now())'))
   {
    $stmt->bind_param('is',$jobid,$currenttask);
    $stmt->execute();
-  }else{print_r($db->conn->error);}
+  }//else{print_r($db->conn->error);}
   $db->close();
-  return $jobid;
+  return $token;
  }
 
  function newoid()
@@ -1957,8 +2003,6 @@ class pim
   return $databases;
  }
  
- 
 
- 
 
 }?>

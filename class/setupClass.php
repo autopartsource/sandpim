@@ -393,6 +393,7 @@ class setup
         datetimestarted datetime not null,
         datetimeended datetime not null,
         percentage decimal(4,1) not null,
+        contenttype varchar(255) not null,
         clientfilename varchar(255) not null,
         token varchar(255) not null,
         PRIMARY KEY (id),

@@ -46,7 +46,12 @@ class ACESgenerator
   foreach($apps as $app)
   {
    if($includecosmeticapps==false && $app['cosmetic']==1){continue;}
-  
+   
+   if($app['parttypeid']==0 || $app['positionid']==0 || $app['quantityperapp']==0)
+   { // major app problems that would cause an XSD violation 
+    continue;
+   }
+   
    $appElement=new DOMElement('App');
    $root->appendChild($appElement);
 
@@ -60,29 +65,53 @@ class ACESgenerator
    
    
    // get sorted copy of the attributes
-   
+   $vcdbattributes=array();
    foreach($app['attributes'] as $attribute)
    {
     if($includecosmeticattributes==false && $attribute['cosmetic']==1){continue;}
-    
-    if($attribute['type']=='vcdb')
+    if($attribute['type']=='vcdb' && $attribute['value']!=0)
     {
-     $vcdbElement=new DOMElement($attribute['name']);
-     $appElement->appendChild($vcdbElement);
-     $vcdbElement->setAttribute('id', $attribute['value']);
-    }       
-    
-    if($attribute['type']=='qdb')
-    {
-    }       
-
-    if($attribute['type']=='note')
-    {
-     $noteElement=new DOMElement('Note',$attribute['value']);
-     $appElement->appendChild($noteElement);
+     $vcdbattributes[]=$attribute;
     }
    }
    
+   usort($vcdbattributes, function($a,$b) 
+   {
+    $reflist=array('SubModel'=>1,'MfrBodyCode'=>2,'BodyNumDoors'=>3,'BodyType'=>4,'DriveType'=>5,'EngineBase'=>6,'EngineBlock'=>7,'EngineBoreStroke'=>8,'EngineDesignation'=>9,'EngineVIN'=>10,'EngineVersion'=>11,'EngineMfr'=>12,'PowerOutput'=>13,'ValvesPerEngine'=>14,'FuelDeliveryType'=>15,'FuelDeliverySubType'=>16,'FuelSystemControlType'=>17,'FuelSystemDesign'=>18,'Aspiration'=>19,'CylinderHeadType'=>20,'FuelType'=>21,'IgnitionSystemType'=>22,'TransmissionMfrCode'=>23,'TransmissionBase'=>24,'TransmissionType'=>25,'TransmissionControlType'=>26,'TransmissionNumSpeeds'=>27,'TransElecControlled'=>28,'TransmissionMfr'=>29,'BedLength'=>30,'BedType'=>31,'WheelBase'=>32,'BrakeSystem'=>33,'FrontBrakeType'=>34,'RearBrakeType'=>35,'BrakeABS'=>36,'FrontSpringType'=>37,'RearSpringType'=>38,'SteeringSystem'=>39,'SteeringType'=>40,'Region'=>41);
+    if(array_key_exists($a['name'], $reflist) && array_key_exists($b['name'], $reflist))
+    {
+    if($reflist[$a['name']]==$reflist[$b['name']]){return 0;}
+    if(intval($reflist[$a['name']]) > intval($reflist[$b['name']])){return 1;}else{return -1;}
+   }
+   else
+   { // one (or both) of the attribute names is not valid. return "=" (0)
+    return 0;
+   }});
+   
+   foreach($vcdbattributes as $attribute)
+   {
+     $vcdbElement=new DOMElement($attribute['name']);
+     $appElement->appendChild($vcdbElement);
+     $vcdbElement->setAttribute('id', $attribute['value']);
+   }
+
+   foreach($app['attributes'] as $attribute)
+   {
+    if($includecosmeticattributes==false && $attribute['cosmetic']==1){continue;}
+    if($attribute['type']=='qdb')
+    {
+    }       
+   }   
+
+   foreach($app['attributes'] as $attribute)
+   {
+    if($includecosmeticattributes==false && $attribute['cosmetic']==1){continue;}
+    if($attribute['type']=='note')
+    {
+     $noteElement=new DOMElement('Note', htmlspecialchars($attribute['value'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+     $appElement->appendChild($noteElement);
+    }
+   }
    
    $qtyElement=new DOMElement('Qty',$app['quantityperapp']);
    $appElement->appendChild($qtyElement);
@@ -90,13 +119,13 @@ class ACESgenerator
    $parttypeElement=new DOMElement('PartType');
    $appElement->appendChild($parttypeElement);
    $parttypeElement->setAttribute('id', $app['parttypeid']);
-   
+
    if(array_key_exists('mfrlabel', $app)){$mfrlabelElement=new DOMElement('MfrLabel',$app['mfrlabel']); $appElement->appendChild($mfrlabelElement);}
 
    $positionElement=new DOMElement('Position');
    $appElement->appendChild($positionElement);
    $positionElement->setAttribute('id', $app['positionid']);
-
+   
    $partElement=new DOMElement('Part',$app['partnumber']);
    $appElement->appendChild($partElement);
    
@@ -111,37 +140,5 @@ class ACESgenerator
  }
 
 
- function sortVCdbAttributes($attributes)
- {
-     // the ACES XSD requires that VCdb-coded attributes of an app be sequenced in a specific order
-     // IMHO this is utter bullshit. This removes the author's abilty to communicate 
-     // their intended order of qualifiers to the end consumer.
-     // we (this PIM system) very specifically sequeces the attributes tied to an application, and then
-     
-  if(count($attributes)<=1){return $attributes;}
-  $reflist=array('MfrBodyCode'=>1,'BodyNumDoors'=>2,'BodyType'=>3,'DriveType'=>4,'EngineBase'=>5,'EngineBlock'=>6,'EngineBoreStroke'=>7,'EngineDesignation'=>8,'EngineVIN'=>9,'EngineVersion'=>10,'EngineMfr'=>11,'PowerOutput'=>12,'ValvesPerEngine'=>13,'FuelDeliveryType'=>14,'FuelDeliverySubType'=>15,'FuelSystemControlType'=>16,'FuelSystemDesign'=>17,'Aspiration'=>18,'CylinderHeadType'=>19,'FuelType'=>20,'IgnitionSystemType'=>21,'TransmissionMfrCode'=>22,'TransmissionBase'=>23,'TransmissionType'=>24,'TransmissionControlType'=>25,'TransmissionNumSpeeds'=>26,'TransElecControlled'=>27,'TransmissionMfr'=>28,'BedLength'=>29,'BedType'=>30,'WheelBase'=>31,'BrakeSystem'=>32,'FrontBrakeType'=>33,'RearBrakeType'=>34,'BrakeABS'=>35,'FrontSpringType'=>36,'RearSpringType'=>37,'SteeringSystem'=>38,'SteeringType'=>39,'Region'=>40);
-  
-  $key=array(); $sequence=0;
-  foreach($attributes as $elementnumber=>$attribute)
-  {
-   if($attribute['type']=='vcdb')
-   {
-    if(array_key_exists($attribute['name'], $reflist))
-    {
-     $key[$elementnumber]=$reflist[$attribute['name']];
-    }
-    else
-    { //  
-     $key[$elementnumber]=$sequence;
-    }
-   }
-   if($attribute['type']=='qdb'){$key[$elementnumber]=100+$sequence;}      
-   if($attribute['type']=='note'){$key[$elementnumber]=200+$sequence;}      
-   $sequence++;
-  }
-  return array_multisort($key,'SORT_ASC',$attributes);
  }
- 
- 
-}
 ?>

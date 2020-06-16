@@ -31,28 +31,36 @@ $errors=array();
 $receiverprofileid=intval($_POST['receiverprofile']);
 $profile=$pim->getReceiverprofileById($receiverprofileid);
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
+
+$profileelements=explode(';',$profiledata);
+$keyedprofile=array();
+foreach($profileelements as $profileelement)
+{
+ $bits=explode(':',$profileelement);
+ if(count($bits)==2){$keyedprofile[$bits[0]]=$bits[1];}
+}
+
+
+
 $appcategories=$pim->getReceiverprofileAppcategories($receiverprofileid);
 $appscount=$pim->countAppsByAppcategories($appcategories);
 
 if($appscount>5000)
-{ // dataset is too big - this export will be handled by the housekeeper (cron "wget") and written to a temp directory for download
+{ // dataset is too big - this export will be handled by the housekeeper (cron) and written to a temp directory for download
  $streamXML=false;
- $filename=__DIR__.'/ACESexports/ACES_4_1_'.$pim->newoid().'_FULL_'.date('Y-m-d').'.xml';
- echo 'This export will contain '.$appscount.' apps. It will be processed by the houskeeper and be available at: '.$filename;
- $pim->createBackgroundjob('ACESxmlExport','started',$_SESSION['userid'],'',$filename,'receiverprofile:'.$receiverprofileid.';',date('Y-m-d H:i:s'));
- $logs->logSystemEvent('Export', 0, 'ACES file ['.$filename.'] export setup for houskeeper; apps:'.count($apps).' by:'.$_SERVER['REMOTE_ADDR']);
+ 
+ $randomstring=$pim->newoid();
+ $clientfilename='ACES_4_1_'.$keyedprofile['DocumentTitle'].'_'.$randomstring.'_FULL_'.date('Y-m-d').'.xml';
+ $localfilename=__DIR__.'/ACESexports/'.$randomstring;
+ $token=$pim->createBackgroundjob('ACESxmlExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text/xml',$clientfilename);
+ $logs->logSystemEvent('Export', 0, 'ACES file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
+ echo 'This export will contain '.$appscount.' apps. It will be processed by the houskeeper and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
+ echo '<br/><br/><a href="./ioIndex.php">Back to Import/Export menu</a>';
 }
 else
 {// dataset is small enough to stream it on-the-fly without kicking-off background processing
  $apps=$pim->getAppsByAppcategories($appcategories);
  $filename='ACES_4_1_FULL_'.date('Y-m-d').'.xml';
- $profileelements=explode(';',$profiledata);
- $keyedprofile=array();
- foreach($profileelements as $profileelement)
- {
-  $bits=explode(':',$profileelement);
-  if(count($bits)==2){$keyedprofile[$bits[0]]=$bits[1];}
- }
 
  $header=array('Company'=>'not set in profile ['.$profile['name'].']','SenderName'=>'not set in profile ['.$profile['name'].']', 'SenderPhone'=>'not set in profile ['.$profile['name'].']','BrandAAIAID'=>'XXXX','DocumentTitle'=>'not set in profile ['.$profile['name'].']','TransferDate'=>date('Y-m-d'),'EffectiveDate'=>date('Y-m-d'),'SubmissionType'=>'FULL','VcdbVersionDate'=>$vcdb->version(),'QdbVersionDate'=>$qdb->version(),'PcdbVersionDate'=>$pcdb->version());
  if(array_key_exists('Company', $keyedprofile)){$header['Company']=$keyedprofile['Company'];}
@@ -115,7 +123,7 @@ if($streamXML)
  $logs->logSystemEvent('Export', 0, 'ACES file ['.$filename.'] exported; apps:'.count($apps).' by:'.$_SERVER['REMOTE_ADDR']);
 
  header('Content-Disposition: attachment; filename="'.$filename.'"');
- header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+ header('Content-Type: text/xml');
  header('Content-Length: ' . strlen($acesxml));
  header('Content-Transfer-Encoding: binary');
  header('Cache-Control: must-revalidate');

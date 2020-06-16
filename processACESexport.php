@@ -35,9 +35,9 @@ if($jobs)
 
  $file_name=$jobs[0]['outputfile'];
  $jobid=$jobs[0]['id'];
- $parameters=array();
+ $pim->updateBackgroundjobRunning($jobid, date('Y-m-d H:i:s'));
  
-
+ $parameters=array();
  $parameterbits=explode(';',$jobs[0]['parameters']);
  foreach($parameterbits as $parameterbit)
  {
@@ -98,8 +98,11 @@ if($jobs)
   libxml_clear_errors();
 
   //echo 'schema validations failed';
-  foreach($schemaresults as $schemaresult){echo $schemaresult.'<br/>';}   
-  $pim->updateBackgroundjob($jobid,'failed','export failed (schema violation)' ,1,'0000-00-00 00:00:00');
+  foreach($schemaresults as $schemaresult)
+  {
+      $pim->logBackgroundjobEvent($jobid, $schemaresult);
+  }   
+  $pim->updateBackgroundjobDone($jobid,'failed',date('Y-m-d H:i:s'));
   $logs->logSystemEvent('Export', 0, 'ACES file ['.$filename.'] (jobid:'.$jobid.') export failed (schema violation) during houskeeper processing; apps:'.count($apps));
  }
  else
@@ -110,13 +113,15 @@ if($jobs)
   if($writeresult)
   {
    //echo 'output file created ('.$writeresult.' bytes)';
-   $pim->updateBackgroundjob($jobid,'complete','ACES file ['.$filename.'] created containing '.count($apps).' apps' ,1,'0000-00-00 00:00:00');
+   $pim->updateBackgroundjobDone($jobid,'complete',date('Y-m-d H:i:s'));
+   $pim->logBackgroundjobEvent($jobid, 'ACES file ['.$filename.'] created containing '.count($apps).' apps');
    $logs->logSystemEvent('Export', 0, 'ACES file ['.$filename.'] (jobid:'.$jobid.') exported by houskeeper; apps:'.count($apps));
   }
   else
   {  // writing the output xml file failed
    //echo 'output file write failed';
-   $pim->updateBackgroundjob($jobid,'failed','file write failed ['.$filename.']' ,1,'0000-00-00 00:00:00');
+   $pim->updateBackgroundjobDone($jobid,'failed',date('Y-m-d H:i:s'));
+   $pim->logBackgroundjobEvent($jobid, 'file write failed ['.$filename.']' );
    $logs->logSystemEvent('Export', 0, 'ACES file ['.$filename.'] (jobid:'.$jobid.') export failed (write permission denied) during houskeeper processing; apps:'.count($apps));
   }
  }
