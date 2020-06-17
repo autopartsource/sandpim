@@ -39,7 +39,8 @@ class pim
 //  $db->dbname='pim';
   $db->connect();
   $apps=array();
-  if($stmt=$db->conn->prepare('select * from application where appcategory in('.$categorylist.') order by partnumber'))
+  //if($stmt=$db->conn->prepare('select * from application where appcategory in('.$categorylist.') order by partnumber'))
+  if($stmt=$db->conn->prepare('select application.*,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where appcategory in('.$categorylist.') order by partnumber'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -47,13 +48,31 @@ class pim
    {
     $attributes=$this->getAppAttributes($row['id']);
     $attributeshash=$this->appAttributesHash($attributes);
-    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'mfrlabel'=>$row['mfrlabel'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
    }
   }
   $db->close();
   return $apps;
  }
 
+ function getAppPartsByAppcategories($appcategories)
+ {
+  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  $db = new mysql; $db->connect(); $partnumbers=array();
+  if($stmt=$db->conn->prepare('select distinct partnumber from application where appcategory in('.$categorylist.') order by partnumber'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $partnumbers[]=$row['partnumber'];
+   }
+  }
+  $db->close();
+  return $partnumbers;
+ }
+ 
+ 
  function getAppsByPartnumber($partnumber)
  {
   $db = new mysql; 
@@ -302,9 +321,7 @@ class pim
 
  function getPart($partnumber)
  {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db = new mysql; $db->connect();
   $part=false;
   if($stmt=$db->conn->prepare('select part.*,partcategory.name,partcategory.brandID from part left join partcategory on part.partcategory=partcategory.id where partnumber=?'))
   {
@@ -774,7 +791,27 @@ class pim
   $db->close();
  }
 
+ function updatePartcategorySubbrandID($partcategory,$subbrandID)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update partcategory set `subbrandID`=? where id=?'))
+  {
+   $stmt->bind_param('si', $subbrandID,$partcategory);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
 
+ function updatePartcategoryMfrlabel($partcategory,$mfrlabel)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update partcategory set `mfrlabel`=? where id=?'))
+  {
+   $stmt->bind_param('si', $mfrlabel,$partcategory);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
  
  
  function createAppCategory($name,$appcategory)
@@ -848,7 +885,7 @@ class pim
 
  function getPartCategory($id)
  {
-  $category=array();
+  $category=false;
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('select * from partcategory where id=?'))
   {
@@ -856,9 +893,9 @@ class pim
    {
     $stmt->execute();
     $db->result = $stmt->get_result();
-    while($row = $db->result->fetch_assoc())
+    if($row = $db->result->fetch_assoc())
     {
-     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID']);
+     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID'],'subbrandID'=>$row['subbrandID'],'mfrlabel'=>$row['mfrlabel']);
     }
    }
   }

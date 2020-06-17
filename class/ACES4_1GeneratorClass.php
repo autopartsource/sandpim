@@ -1,6 +1,4 @@
 <?php
-include_once(__DIR__.'/mysqlClass.php');
- 
 class ACESgenerator
 {
     
@@ -120,7 +118,7 @@ class ACESgenerator
    $appElement->appendChild($parttypeElement);
    $parttypeElement->setAttribute('id', $app['parttypeid']);
 
-   if(array_key_exists('mfrlabel', $app)){$mfrlabelElement=new DOMElement('MfrLabel',$app['mfrlabel']); $appElement->appendChild($mfrlabelElement);}
+   if(array_key_exists('mfrlabel', $app) && trim($app['mfrlabel'])!=''){$mfrlabelElement=new DOMElement('MfrLabel',$app['mfrlabel']); $appElement->appendChild($mfrlabelElement);}
 
    $positionElement=new DOMElement('Position');
    $appElement->appendChild($positionElement);
@@ -134,7 +132,7 @@ class ACESgenerator
   
   $footerElement=new DOMElement('Footer');
   $root->appendChild($footerElement);
-  $recordcountElement=new DOMElement('RecordCount',$appnumber);
+  $recordcountElement=new DOMElement('RecordCount',($appnumber-1));
   $footerElement->appendChild($recordcountElement);
   return $doc;
  }
