@@ -22,8 +22,8 @@ if(isset($_SESSION['userid']) && isset($_GET['parttypeid']) && isset($_GET['acti
   break;
 
   case 'remove':
-  // $user->removeAppcategoryFromUser($userid,$appcategory,$permissionname);
-  // $logs->logSystemEvent('favoriteparttype',$_SESSION['userid'],'parttype:'.$parttypeid.' removed to favorites');
+   $user->removeFavoriteParttype($parttypeid,$parttypename);
+   $logs->logSystemEvent('favoriteparttype',$_SESSION['userid'],'parttype:'.$parttypeid.' removed from favorites');
   break;
 
   default:

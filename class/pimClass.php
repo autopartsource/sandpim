@@ -8,15 +8,13 @@ include_once("mysqlClass.php");
 class pim
 {
 
-
- function getAppsByBasevehicleid($basevehicleid,$appcategories)
+ function getAppsByBasevehicleid($basevehicleid,$partcategories)
  {
-  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
-  $db = new mysql; 
-//  $db->dbname='pim';
-  $db->connect();
+  $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  $db = new mysql; $db->connect();
   $apps=array();
-  if($stmt=$db->conn->prepare('select * from application where basevehicleid=? and appcategory in('.$categorylist.') order by partnumber'))
+  
+  if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where part.partcategory in('.$categorylist.') and basevehicleid=? order by partnumber'))
   {
    $stmt->bind_param('i', $basevehicleid);
    $stmt->execute();
@@ -25,22 +23,19 @@ class pim
    {
     $attributes=$this->getAppAttributes($row['id']);
     $attributeshash=$this->appAttributesHash($attributes);
-    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
    }
   }
   $db->close();
   return $apps;
  }
 
- function getAppsByAppcategories($appcategories)
+ function getAppsByPartcategories($partcategories)
  {
-  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
-  $db = new mysql; 
-//  $db->dbname='pim';
-  $db->connect();
+  $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  $db = new mysql;  $db->connect();
   $apps=array();
-  //if($stmt=$db->conn->prepare('select * from application where appcategory in('.$categorylist.') order by partnumber'))
-  if($stmt=$db->conn->prepare('select application.*,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where appcategory in('.$categorylist.') order by partnumber'))
+  if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where part.partcategory in('.$categorylist.') order by partnumber'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -48,30 +43,32 @@ class pim
    {
     $attributes=$this->getAppAttributes($row['id']);
     $attributeshash=$this->appAttributesHash($attributes);
-    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'mfrlabel'=>$row['mfrlabel'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'partcategory'=>$row['partcategory'],'mfrlabel'=>$row['mfrlabel'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
    }
   }
   $db->close();
   return $apps;
  }
 
- function getAppPartsByAppcategories($appcategories)
- {
-  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
-  $db = new mysql; $db->connect(); $partnumbers=array();
-  if($stmt=$db->conn->prepare('select distinct partnumber from application where appcategory in('.$categorylist.') order by partnumber'))
+function countAppsByPartcategories($partcategories)
+{
+  $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  $db = new mysql;  $db->connect();
+  $count=0;
+  if($stmt=$db->conn->prepare('select count(*) as appcount from application left join part on application.partnumber=part.partnumber where part.partcategory in('.$categorylist.')'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($row = $db->result->fetch_assoc())
    {
-    $partnumbers[]=$row['partnumber'];
+    $count=$row['appcount'];
    }
   }
   $db->close();
-  return $partnumbers;
- }
- 
+  return $count;
+}
+
+
  
  function getAppsByPartnumber($partnumber)
  {
@@ -87,7 +84,7 @@ class pim
    while($row = $db->result->fetch_assoc())
    {
     $attributes=$this->getAppAttributes($row['id']);
-    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes);
    }
   }
   $db->close();
@@ -167,7 +164,7 @@ class pim
    {
     $attributes=$this->getAppAttributes($appid);
     $attributeshash=$this->appAttributesHash($attributes);
-    $app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>base64_decode($row['internalnotes']),'cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
+    $app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>base64_decode($row['internalnotes']),'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
    }
   }
   $db->close();
@@ -338,7 +335,7 @@ class pim
         'replacedby'=>$row['replacedby'],
         'internalnotes'=> base64_decode($row['internalnotes']),
         'description'=>$row['description'],'GTIN'=>$row['GTIN'],'UNSPC'=>$row['UNSPC'],
-        'brandid'=>$row['brandID']
+        'brandid'=>$row['brandID'],'createdDate'=>$row['createdDate'],'firststockedDate'=>$row['firststockedDate'],'discontinuedDate'=>$row['discontinuedDate']
             );
     
    }
@@ -347,32 +344,60 @@ class pim
   return $part;
  }
 
- function getParts($partnumber,$matchtype,$limit)
+ function getParts($partnumber,$matchtype,$partcategory,$parttypeid,$lifecyclestatus,$limit)
  {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db = new mysql; $db->connect();
   $parts=array();
-  $sql='select part.*,partcategory.name as partcategoryname from part left join partcategory on part.partcategory=partcategory.id where partnumber like ? order by partnumber limit ?';
+  
+  if($partcategory=='any'){$partcategoryclause='';}else{$partcategoryclause=' and partcategory='.intval($partcategory);}
+  if($parttypeid=='any'){$parttypeclause='';}else{$parttypeclause=' and parttypeid='.intval($parttypeid);}
+
+  $sql='select part.*,partcategory.name as partcategoryname from part left join partcategory on part.partcategory=partcategory.id where partnumber like ? '.$partcategoryclause.$parttypeclause.' and lifecyclestatus like ? order by partnumber limit ?';
 
   if($stmt=$db->conn->prepare($sql))
   {
    $searchstring=$partnumber;
    if($matchtype=='contains'){$searchstring='%'.$partnumber.'%';}
    if($matchtype=='startswith'){$searchstring=$partnumber.'%';}
+   if($matchtype=='endswith'){$searchstring='%'.$partnumber;}
+   if($lifecyclestatus=='any'){$lifecyclestatus='%';}
 
-   $stmt->bind_param('si', $searchstring, $limit);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($stmt->bind_param('ssi', $searchstring, $lifecyclestatus, $limit))
    {
-    $parts[]=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $parts[]=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
+     }
+    }
    }
-  }//else{echo 'prepare';}
+  }
   $db->close();
   return $parts;
  }
 
+ //ccc
+ function getPartnumbersByPartcategories($partcategories)
+ {
+  $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  $db = new mysql; $db->connect(); $partnumbers=array();
+  if($stmt=$db->conn->prepare('select partnumber from part where partcategory in('.$categorylist.') order by partnumber'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $partnumbers[]=$row['partnumber'];
+   }
+  }
+  $db->close();
+  return $partnumbers;
+ }
+ 
+ 
+ 
 
  function getOIDdata($oid)
  {
@@ -419,45 +444,10 @@ class pim
   return $data;
  }
 
- function getOIDsInSlice($sliceid,$limit)
- {
-  $oids=array();
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
-
-  // consult slice table to get a list of appcategories to query the application table for 
-
-  $appcategories=array(0=>17);
-  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
-
-
-  if($stmt=$db->conn->prepare('select oid from application where status=0 and appcategory in('.$categorylist.') limit ?'))
-  {
-   $stmt->bind_param('i', $limit);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
-   {
-    $oids[]=$row['oid'];
-   }
-  }
-
-  // consult slice table to get a list of assetcategories to query the asset table for 
-
-
-
-
-  $db->close();
-  return $oids;
- }
-
 
  function updateAppOID($appid)
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
+  $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('update application set oid=? where id=?'))
   {
    $oid=$this->newoid();
@@ -585,27 +575,6 @@ class pim
   if($updateoid){$this->updatePartOID($partnumber);}
   $db->close();
  }
-
- 
- function getAppCategories()
- {
-  $categories=array();
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
-  if($stmt=$db->conn->prepare('select id,name,logouri from appcategory order by name'))
-  {
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
-   {
-    $categories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri']);
-   }
-  }
-  $db->close();
-  return $categories;
- }
-
  
  function getPartAttribute($partnumber,$PAID,$attributename)
  {
@@ -651,7 +620,7 @@ class pim
  
  function getPartAttributes($partnumber)
  {
-  $attributes=false;
+  $attributes=array();
   $db = new mysql; 
   //$db->dbname='pim'; 
   $db->connect();
@@ -813,70 +782,17 @@ class pim
   $db->close();
  }
  
- 
- function createAppCategory($name,$appcategory)
- {
-  $db=new mysql; $db->connect();
-  $success=false;
-  if(!$this->validAppcategoryid($appcategory) && !$this->existingAppcategoryName($name))
-  {
-   if($appcategory=='')
-   {
-    if($stmt=$db->conn->prepare('insert into appcategory (id,name) values(null,?)'))
-    {
-     if($stmt->bind_param('s', $name))
-     {
-      $success=$stmt->execute();
-     } // else{echo 'problem with bind';}
-    } // else{echo 'problem with prepare';}
-   }
-   else
-   {
-    if($stmt=$db->conn->prepare('insert into appcategory (id,name) values(?,?)'))
-    {
-     if($stmt->bind_param('is', $appcategory, $name))
-     {
-      $success=$stmt->execute();
-     } // else{echo 'problem with bind';}
-    } // else{echo 'problem with prepare';}
-   }
-  } // else{echo 'already exists';}
-  $db->close();
-  return $success;
- }
-
-  function deleteAppcategory($appcategory)
- {
-  $db=new mysql; $db->connect();
-  $success=false;
-  if(!$this->countAppsByAppcategory($appcategory))
-  {
-    if($stmt=$db->conn->prepare('delete from appcategory where id=?'))
-    {
-     if($stmt->bind_param('i', $appcategory))
-     {
-      $success=$stmt->execute();
-     } // else{echo 'problem with bind';}
-    }  //else{echo 'problem with prepare';}
-  }  //else{echo 'already exists';}
-  $db->close();
-  return $success;
- }
-
- 
- 
- 
  function getPartCategories()
  {
   $categories=array();
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('select id,`name` from partcategory order by name'))
+  if($stmt=$db->conn->prepare('select id,`name`,logouri from partcategory order by name'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $categories[]=array('id'=>$row['id'],'name'=>$row['name']);
+    $categories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri']);
    }
   }
   $db->close();
@@ -902,71 +818,6 @@ class pim
   $db->close();
   return $category;
  }
-
- 
-
- function appCategoryName($appcategoryid)
- {
-  $name='not found';
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
-  if($stmt=$db->conn->prepare('select name from appcategory where id=?'))
-  {
-   $stmt->bind_param('i', $appcategoryid);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
-   {
-    $name=$row['name'];
-   }
-  }
-  $db->close();
-  return $name;
- }
-
- function countAppsByAppcategory($appcategoryid)
- {
-  $db=new mysql; $db->connect();
-  $count=0;
-  if($stmt=$db->conn->prepare('select count(*) as appcount from application where appcategory=?'))
-  {
-   if($stmt->bind_param('i', $appcategoryid))
-   {
-    if($result=$stmt->execute())
-    {
-     $db->result = $stmt->get_result();
-     if($row = $db->result->fetch_assoc())
-     {
-      $count=intval($row['appcount']);
-     }
-    } // else{echo 'problem with execute';}
-   } // else{echo 'problem with bind';}
-  } // else{echo 'problem with prepare';}
-  $db->close();
-  return $count;
- }
-
- function countAppsByAppcategories($appcategories)
- {
-  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
-  $db=new mysql; $db->connect();
-  $count=0;
-  if($stmt=$db->conn->prepare('select count(*) as appcount from application where appcategory in('.$categorylist.')'))
-  {
-   if($result=$stmt->execute())
-   {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
-    {
-     $count=intval($row['appcount']);
-    }
-   } // else{echo 'problem with execute';}
-  } // else{echo 'problem with prepare ['.$categorylist.']';}
-  $db->close();
-  return $count;
- }
- 
 
  function countPartsByPartcategory($partcategory)
  {
@@ -1036,42 +887,6 @@ class pim
   $returnval=false;
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('select id from partcategory where `name`=?'))
-  {
-   $stmt->bind_param('s', $name);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   if($row = $db->result->fetch_assoc())
-   {
-    $returnval=true;
-   }
-  }
-  $db->close();
-  return $returnval;
- }
-
- function validAppcategoryid($appcategoryid)
- {
-  $returnval=false;
-  $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('select name from appcategory where id=?'))
-  {
-   $stmt->bind_param('i', $appcategoryid);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   if($row = $db->result->fetch_assoc())
-   {
-    $returnval=true;
-   }
-  }
-  $db->close();
-  return $returnval;
- }
-
- function existingAppcategoryName($name)
- {
-  $returnval=false;
-  $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('select id from appcategory where `name`=?'))
   {
    $stmt->bind_param('s', $name);
    $stmt->execute();
@@ -1352,9 +1167,7 @@ class pim
 
  function createPart($partnumber,$partcategory,$parttypeid)
  {
-  $db=new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db=new mysql; $db->connect();
   $success=false;
   if(!$this->validPart($partnumber))
   {
@@ -1433,19 +1246,6 @@ class pim
   if($stmt=$db->conn->prepare('update application set status=? where id=?'))
   {
    $stmt->bind_param('ii',$status,$applicationid);
-   $stmt->execute();
-  }
-  $db->close();
- }
-
- function setAppCategory($applicationid,$appcategory)
- {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
-  if($stmt=$db->conn->prepare('update application set appcategory=? where id=?'))
-  {
-   $stmt->bind_param('ii',$appcategory,$applicationid);
    $stmt->execute();
   }
   $db->close();
@@ -1531,8 +1331,6 @@ class pim
   $app=$this->getApp($appid);
   $OID=$app['oid'];
   $neednewOID=false; $historytext='conformApp using reference app:'.$refappid;
-//$app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>'','cosmetic'=>$row['cosmetic'],'appcategory'=>$row['appcategory'],'attributes'=>array());
-//$attributes[]=array('id'=>$row['id'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
   if($copyfitment && $refapp['attributeshash']!=$refapp['attributeshash'])
   {
    $neednewOID=true;
@@ -1561,7 +1359,6 @@ class pim
 
   if($copyposition && $refapp['positionid']!=$app['positionid']){$this->setAppPosition($appid,$refapp['positionid'],false); $neednewOID=true; $historytext.='; changed position from:'.$app['positionid'].' to '.$refapp['positionid'];}
   if($copyparttype && $refapp['parttypeid']!=$app['parttypeid']){$this->setAppParttype($appid,$refapp['parttypeid'],false); $neednewOID=true; $historytext.='; changed parttype from:'.$app['parttypeid'].' to '.$refapp['parttypeid'];}
-  if($copycategory && $refapp['appcategory']!=$app['appcategory']){$this->setAppCategory($appid,$refapp['appcategory']); $historytext.='; changed appcategory from:'.$app['appcategory'].' to '.$refapp['appcategory'];}
   if($neednewOID){$OID=$this->updateAppOID($appid);}
   $userid=0;
   $this->logAppEvent($appid,$userid,$historytext,$OID);
@@ -1590,16 +1387,16 @@ class pim
   if($updateoid){$this->updateAppOID($appid);}
  }
 
- function newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$appcategory,$cosmetic,$attributes)
+ function newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$attributes)
  {
   $db = new mysql; 
   //$db->dbname='pim';
   $db->connect();
   $applicationid=false;
-  if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic,appcategory) values(null,?,?,0,0,?,?,?,?,0,?,?)'))
+  if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic) values(null,?,?,0,0,?,?,?,?,0,?)'))
   {
    $oid=$this->newoid();
-   $stmt->bind_param('siiiisii', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$appcategory);
+   $stmt->bind_param('siiiisi', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic);
    $stmt->execute();
    $applicationid=$db->conn->insert_id;
 
@@ -1663,19 +1460,17 @@ class pim
  
  
 
- function createAppFromACESsnippet($xml,$appcategory)
+ function createAppFromACESsnippet($xml)
  {
-  $db=new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db=new mysql;  $db->connect();
   $app_count=0;
 
   foreach($xml->App as $app)
   {
-   if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic,appcategory) values(null,?,?,0,0,?,?,?,?,0,0,?)'))
+   if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic) values(null,?,?,0,0,?,?,?,?,0,0)'))
    {
     $oid=$this->newoid();
-    $stmt->bind_param('siiiisi', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$appcategory);
+    $stmt->bind_param('siiiis', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber);
     $cosmetic=0; $sequence=0; $basevehicleid=intval($app->BaseVehicle['id']); $quantityperapp=intval($app->Qty); $parttypeid=intval($app->PartType['id']); $positionid=intval($app->Position['id']); $partnumber=(string)$app->Part;
     $stmt->execute(); // insert the application record
     $applicationid=$db->conn->insert_id;
@@ -1752,11 +1547,9 @@ class pim
  
  //----
  
- function createAppsFromText($data)
+ function createAppsFromText($data,$partcatagory)
  {
-  $db=new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db=new mysql; $db->connect();
   $app_count=0;
 
   // validate that the txt has the proper number of tab-delimited columns
@@ -1764,21 +1557,22 @@ class pim
   foreach($rows as $row)
   {
    $fields=explode("\t",$row);
-   if(count($fields)==10)
+   if(count($fields)==9)
    {// row has the correct number of fields
-    if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic,appcategory) values(null,?,?,0,0,?,?,?,?,0,0,?)'))
+    if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic) values(null,?,?,0,0,?,?,?,?,0,0)'))
     {
      $oid=$this->newoid();
-     $stmt->bind_param('siiiisi', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$appcategory);
-     $appcategory=intval($fields[0]);
-     $cosmetic=intval($fields[1]); 
-     $basevehicleid=intval($fields[2]); 
-     $partnumber=trim(strtoupper($fields[3]));
-     $parttypeid=intval($fields[4]); 
-     $positionid=intval($fields[5]); 
-     $quantityperapp=intval($fields[6]); 
+     $stmt->bind_param('siiiis', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber);
+     
+     $cosmetic=intval($fields[0]); 
+     $basevehicleid=intval($fields[1]); 
+     $partnumber=trim(strtoupper($fields[2]));
+     $parttypeid=intval($fields[3]); 
+     $positionid=intval($fields[4]); 
+     $quantityperapp=intval($fields[5]); 
 
-     $stmt->execute(); // insert the application record
+     $stmt->execute();
+     
      $applicationid=$db->conn->insert_id;
      
      //insert attribute records
@@ -1787,9 +1581,9 @@ class pim
 
      $attributes=array();
      
-     if(strlen($fields[7]))
+     if(strlen($fields[6]))
      {// VCdb attributes are present. parse them.
-      $attributestrings=explode(';',$fields[7]);
+      $attributestrings=explode(';',$fields[6]);
       foreach($attributestrings as $attributestring)
       {
        $attributechunks=explode('|',$attributestring);
@@ -1800,7 +1594,14 @@ class pim
       }
      }
 
-     if(strlen($fields[9]))
+     if(strlen($fields[7]))
+     {// Qdb is present.
+      $params=array();
+      //foreach($qual->param as $param){$params[]=(string)$param['value'].':'.(string)$param['uom'];}
+      //$attributes[]=array('type'=>'qdb','name'=>(string)$qual['id'],'value'=>implode(';',$params));
+     }
+     
+     if(strlen($fields[8]))
      {// notes are present.
       $notechunks=explode('|',$fields[9]);
       if(count($notechunks)==3)
@@ -1808,14 +1609,6 @@ class pim
         $attributes[]=array('type'=>'note','name'=>'note','value'=>$notechunks[0],'cosmetic'=>intval($notechunks[2]),'sequence'=>intval($notechunks[1]));
       }
      }     
-
-     if(strlen($fields[8]))
-     {// Qdb is present.
-      $params=array();
-      //foreach($qual->param as $param){$params[]=(string)$param['value'].':'.(string)$param['uom'];}
-      //$attributes[]=array('type'=>'qdb','name'=>(string)$qual['id'],'value'=>implode(';',$params));
-     }
-     
 
      if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
      {
@@ -1829,7 +1622,7 @@ class pim
      }
      
      $app_count++;
-     $this->createPart($partnumber,0,$parttypeid);
+     if($partcatagory>0){$this->createPart($partnumber,$partcatagory,$parttypeid);}
     }
    }
   }
@@ -1911,25 +1704,23 @@ class pim
   return $profile;
  }
 
- 
- function getReceiverprofileAppcategories($receiverprofileid)
- {  // return and array of appcategory id's for a given receiverprofile
-  $appcategories=array();
+ function getReceiverprofilePartcategories($receiverprofileid)
+ {  // return and array of partcategory id's for a given receiverprofile
+  $partcategories=array();
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('select appcategory from receiverprofile_appcategory where receiverprofileid=?'))
+  if($stmt=$db->conn->prepare('select partcategory from receiverprofile_partcategory where receiverprofileid=?'))
   {
    $stmt->bind_param('i',$receiverprofileid);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $appcategories[]=$row['appcategory'];
+    $partcategories[]=$row['partcategory'];
    }
   }
   $db->close();
-  return $appcategories;
+  return $partcategories;
  }
- 
  
  function createReceiverprofile($name, $data)
  {

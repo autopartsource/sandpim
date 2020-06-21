@@ -25,18 +25,21 @@ class interchange
 
  function getInterchangeById($interchangeid)
  {
-  $records=false;
-  $db=new mysql; 
-  $db->connect();
+  $db=new mysql; $db->connect();
+  $records=array();
   
   if($stmt=$db->conn->prepare('select * from interchange where id=?'))
   {
-   $stmt->bind_param('i',$interchangeid);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($stmt->bind_param('i',$interchangeid))
    {
-       $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'referenceitem'=>$row['referenceitem'],'interchangenotes'=>$row['interchangenotes'],'internalnotes'=>$row['internalnotes']);
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'referenceitem'=>$row['referenceitem'],'interchangenotes'=>$row['interchangenotes'],'internalnotes'=>$row['internalnotes']);
+     }
+    }
    }
   }
   $db->close();
@@ -45,24 +48,27 @@ class interchange
 
  function deleteInterchangeById($interchangeid)
  {
-  $records=false;
-  $db=new mysql; 
-  $db->connect();
+  $db=new mysql; $db->connect();
+  $result=false;
   
   if($stmt=$db->conn->prepare('delete from interchange where id=?'))
   {
-   $stmt->bind_param('i',$interchangeid);
-   $stmt->execute();
+   if($stmt->bind_param('i',$interchangeid))
+   {
+    if($stmt->execute())
+    {
+     $result=true;
+    }
+   }
   }
   $db->close();
-  return $records;   
+  return $result;
  }
  
  function getInterchangeByPartnumber($partnumber)
  {
-  $records=false;
-  $db=new mysql; 
-  $db->connect();
+  $db=new mysql; $db->connect();
+  $records=array();
   
   if($stmt=$db->conn->prepare('select * from interchange where partnumber=?'))
   {

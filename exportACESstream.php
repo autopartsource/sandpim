@@ -42,8 +42,8 @@ foreach($profileelements as $profileelement)
 
 
 
-$appcategories=$pim->getReceiverprofileAppcategories($receiverprofileid);
-$appscount=$pim->countAppsByAppcategories($appcategories);
+$partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
+$appscount=$pim->countAppsByPartcategories($partcategories);
 
 if($appscount>5000)
 { // dataset is too big - this export will be handled by the housekeeper (cron) and written to a temp directory for download
@@ -59,7 +59,7 @@ if($appscount>5000)
 }
 else
 {// dataset is small enough to stream it on-the-fly without kicking-off background processing
- $apps=$pim->getAppsByAppcategories($appcategories);
+ $apps=$pim->getAppsByPartcategories($partcategories);
  $filename='ACES_4_1_FULL_'.date('Y-m-d').'.xml';
 
  $header=array('Company'=>'not set in profile ['.$profile['name'].']','SenderName'=>'not set in profile ['.$profile['name'].']', 'SenderPhone'=>'not set in profile ['.$profile['name'].']','BrandAAIAID'=>'XXXX','DocumentTitle'=>'not set in profile ['.$profile['name'].']','TransferDate'=>date('Y-m-d'),'EffectiveDate'=>date('Y-m-d'),'SubmissionType'=>'FULL','VcdbVersionDate'=>$vcdb->version(),'QdbVersionDate'=>$qdb->version(),'PcdbVersionDate'=>$pcdb->version());

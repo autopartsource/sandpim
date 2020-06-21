@@ -56,15 +56,6 @@ $receiverprofiles=$pim->getReceiverprofiles();
                <input type="submit" name="submit" value="Export"/>
            </div>
           </form>
-          <form action="exportPIESstream.php" method="post">
-           <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
-               Export data for parts found in applications that have these application category id's (header elements are pulled from the "Global" Receiver template)
-               <div><textarea style="width: 95%;height:100px;" name="appcategories"/></textarea></div>
-               <input type="submit" name="submit" value="Export"/>
-           </div>
-          </form>
-             
-             
          </div>
          <div class="contentRight"></div>
         </div>

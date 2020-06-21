@@ -13,9 +13,9 @@ class book
     
     
     
- function getContent($appcategories)
+ function getContent($partcategories)
  {
-  $categoryarray=array(); foreach($appcategories as $appcategory){$categoryarray[]=intval($appcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
   $db = new mysql; 
   
   $vcdb=new vcdb;  
@@ -24,7 +24,7 @@ class book
   
   $db->connect();
   $data=array();
-  if($stmt=$db->conn->prepare('select * from application where appcategory in('.$categorylist.') '))
+  if($stmt=$db->conn->prepare('select application.* from application left join part on application.partnumber=part.partnumber where part.partcategory in('.$categorylist.') '))
   {
    //$stmt->bind_param('i', $basevehicleid);
    $stmt->execute();

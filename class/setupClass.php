@@ -257,15 +257,13 @@ class setup
         internalnotes text not null default '',
         status tinyint unsigned not null default 0,
         cosmetic tinyint unsigned not null default 0,
-        appcategory int unsigned not null default 0,
         PRIMARY KEY (id),
         INDEX idx_oid (oid),
         INDEX idx_partnumber (partnumber),
-        INDEX idx_basevehicleid (basevehicleid),
-        INDEX idx_appcategory (appcategory)
+        INDEX idx_basevehicleid (basevehicleid)
         )";
 
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed ('.$db->conn->error.')';}
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - application ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed ('.$db->conn->error.')';}
 
         $sql="CREATE TABLE application_attribute (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -546,13 +544,6 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - slice_parttype ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - slice_parttype ('.$db->conn->error.')';}
 
-        $sql="CREATE TABLE slice_appcategory (
-        id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        sliceid varchar(255) NOT NULL,
-        appcategoryid int unsigned not null,
-        PRIMARY KEY (id))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - slice_appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - slice_appcategory ('.$db->conn->error.')';}
-
         $sql="CREATE TABLE slice_partalias (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         sliceid varchar(255) NOT NULL,
@@ -561,19 +552,13 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - slice_partalias ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - slice_partalias ('.$db->conn->error.')';}
 
-        $sql="CREATE TABLE appcategory (
-        id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        `name` varchar(255) not null,
-        `logouri` varchar(255) not null,
-        PRIMARY KEY (id))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - appcategory ('.$db->conn->error.')';}
-
         $sql="CREATE TABLE partcategory (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         `name` varchar(255) not null,
         brandID varchar(255) not null,
         subbrandID varchar(255) not null,
         mfrlabel varchar(255) not null,
+        logouri varchar(255) not null,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - partcategory ('.$db->conn->error.')';}
 
@@ -615,25 +600,6 @@ class setup
         unique key idx_username(username))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user ('.$db->conn->error.')';}
 
-        $sql="CREATE TABLE user_appcategory (
-        id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        userid int UNSIGNED NOT NULL,
-        appcategory int unsigned not null,
-        `permissionname` varchar(255) not null,
-        `permissionvalue` tinyint unsigned not null,
-        PRIMARY KEY (id),
-        key idx_userid(userid))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_appcategory ('.$db->conn->error.')';}
-
-        $sql="CREATE TABLE user_selected_appcategory (
-        id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        userid int UNSIGNED NOT NULL,
-        appcategory int unsigned not null,
-        PRIMARY KEY (id),
-        key idx_userid(userid),
-        key idx_appcategory(appcategory))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_selected_appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_selected_appcategory ('.$db->conn->error.')';}
-        
         $sql="CREATE TABLE user_permission (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         userid int UNSIGNED NOT NULL,
@@ -727,21 +693,22 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}
 
-
-        $sql="CREATE TABLE receiverprofile_appcategory (
+        $sql="CREATE TABLE receiverprofile_partcategory (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         receiverprofileid int UNSIGNED NOT NULL,
-        appcategory int unsigned not null default 0,
-        PRIMARY KEY (id))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_appcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_appcategory ('.$db->conn->error.')';}
-
-        $sql="CREATE TABLE receiverprofile_parttype (
-        id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        receiverprofileid int UNSIGNED NOT NULL,
-        parttypeid int unsigned not null default 0,
+        partcategory int unsigned not null default 0,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_parttype ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_parttype ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE user_partcategory (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        userid int UNSIGNED NOT NULL,
+        partcategory int UNSIGNED NOT NULL,
+        `permissionname` varchar(255) not null,
+        `permissionvalue` tinyint unsigned not null,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_partcategory ('.$db->conn->error.')';}
+        
         $sql="CREATE TABLE autocare_databases (
         databasename varchar(255) not null,
         databasetype varchar(255) not null,

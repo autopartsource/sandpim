@@ -50,7 +50,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
               //xhr.send();
              }
              else
-             { // appcategory has been clocked off
+             { // has been clocked off
               console.log('remove:'+positionid);
 
              //var xhr = new XMLHttpRequest();

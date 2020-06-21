@@ -111,7 +111,6 @@ $allattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid']); //
 
 $assets=array();
 $assets_linked_to_item=array();
-$appcategories=$pim->getAppCategories();
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $favoritepositions=$pim->getFavoritePositions();
 $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
@@ -129,7 +128,7 @@ if(isset($_GET['categories']))
         if(intval($categorypart)>0)
         {
             $selectedcategories[]=intval($categorypart);
-            $selectedcategoriesurlvars[]='appcategory_'.intval($categorypart).'=on';
+            $selectedcategoriesurlvars[]='partcategory_'.intval($categorypart).'=on';
         }
     }
 }
@@ -232,10 +231,7 @@ if(isset($_GET['categories']))
                      </form>
                     </td>
                    </tr>
-
                    <tr><th>Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp'];?>"/><button onclick='updateApp(<?php echo $appid;?>,"text","quantityperapp");'>Update Qty</button></td></tr>
-                   <tr><th>App Category</th><td align="right"><select id="appcategory" onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','appcategory');"   > <?php foreach($appcategories as $appcategory){?> <option value="<?php echo $appcategory['id'];?>"<?php if($appcategory['id']==$app['appcategory']){echo ' selected';}?>><?php echo $appcategory['name'];?></option><?php }?></select></td></tr>
-
                    <tr><th>Fitment<br/>Assets</th><td align="right"><?php if(count($assets)){foreach($assets as $asset) { echo '<div><a title="view this asset in new browser window" href="'.$asset['uri'].'" target="_blank">'.$asset['assetId'].'</a> (representation:'.$asset['representation'].', sequence: '.$asset['assetItemOrder'].') <a title="remove this asset from the application" href="./showAdminApplication.php?id='.intval($_GET['id']).'&removeasset='.$asset['id'].'">x</a><div>'; }}?>
                    <div>Asset <select name="assetid"><option value=""></option>
                    <?php

@@ -7,14 +7,10 @@ session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
 
 $vcdb=new vcdb;
-//$pim= new pim;
-
 
 $makeid=intval($_GET['makeid']);
 $modelid=intval($_GET['modelid']);
 $years=$vcdb->getYears($makeid,$modelid);
-
-
 
 $groupcount=5;
 $yearcount=count($years);

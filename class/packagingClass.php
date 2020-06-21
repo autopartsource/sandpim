@@ -60,18 +60,21 @@ class packaging
  
  function getPackagesByPartnumber($partnumber)
  {
-  $records=false;
-  $db=new mysql; 
-  $db->connect();
+  $db=new mysql; $db->connect();
+  $records=array();
   
   if($stmt=$db->conn->prepare('select * from package where partnumber=?'))
   {
-   $stmt->bind_param('s',$partnumber);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($stmt->bind_param('s',$partnumber))
    {
-       $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$row['innerquantity'],'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$row['weight'],'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$row['shippingheight'],'shippingwidth'=>$row['shippingwidth'],'shippinglength'=>$row['shippinglength'],'dimensionsuom'=>$row['dimensionsuom']);
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$row['innerquantity'],'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$row['weight'],'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$row['shippingheight'],'shippingwidth'=>$row['shippingwidth'],'shippinglength'=>$row['shippinglength'],'dimensionsuom'=>$row['dimensionsuom']);
+     }
+    }
    }
   }
   $db->close();

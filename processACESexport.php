@@ -47,8 +47,8 @@ if($jobs)
  $receiverprofileid=intval($parameters['receiverprofile']);
  $profile=$pim->getReceiverprofileById($receiverprofileid);
  $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
- $appcategories=$pim->getReceiverprofileAppcategories($receiverprofileid);
- $apps=$pim->getAppsByAppcategories($appcategories);
+ $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
+ $apps=$pim->getAppsByPartcategories($partcategories);
 
  $filename=$jobs[0]['outputfile'];
  $profileelements=explode(';',$profiledata);

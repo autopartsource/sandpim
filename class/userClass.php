@@ -151,13 +151,13 @@ class user
 
 
  
- function userHasSelectedAppcategory($userid,$appcategory)
+ function userHasSelectedPartcategory($userid,$partcategory)
  {
   $returnval=false;
   $db = new mysql;  $db->connect();
-  if($stmt=$db->conn->prepare("select * from user_selected_appcategory where userid=? and appcategory=?"))
+  if($stmt=$db->conn->prepare("select * from user_selected_partcategory where userid=? and partcategory=?"))
   {
-   $stmt->bind_param('ii',$userid,$appcategory);
+   $stmt->bind_param('ii',$userid,$partcategory);
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
@@ -169,12 +169,12 @@ class user
   return $returnval; 
  }
  
- function userSelectAppcategory($userid,$appcategory)
+ function userSelectPartcategory($userid,$partcategory)
  {
   $db = new mysql;  $db->connect();
-  if($stmt=$db->conn->prepare("select * from user_selected_appcategory where userid=? and appcategory=?"))
+  if($stmt=$db->conn->prepare("select * from user_selected_partcategory where userid=? and partcategory=?"))
   {
-   $stmt->bind_param('ii',$userid,$appcategory);
+   $stmt->bind_param('ii',$userid,$partcategory);
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
@@ -183,9 +183,9 @@ class user
    }
    else
    {// record does not already exist
-    if($stmt=$db->conn->prepare("insert into user_selected_appcategory (id,userid,appcategory) values(null,?,?)"))
+    if($stmt=$db->conn->prepare("insert into user_selected_partcategory (id,userid,partcategory) values(null,?,?)"))
     {
-     $stmt->bind_param('ii',$userid,$appcategory);
+     $stmt->bind_param('ii',$userid,$partcategory);
      $stmt->execute();
     }
    }
@@ -193,57 +193,50 @@ class user
   $db->close();
  }
 
- function userUnselectAppcategory($userid,$appcategory)
+ function userUnselectPartcategory($userid,$partcategory)
  {
   $db = new mysql;  $db->connect();
-  if($stmt=$db->conn->prepare("delete from user_selected_appcategory where userid=? and appcategory=?"))
+  if($stmt=$db->conn->prepare("delete from user_selected_partcategory where userid=? and partcategory=?"))
   {
-   $stmt->bind_param('ii',$userid,$appcategory);
+   $stmt->bind_param('ii',$userid,$partcategory);
    $stmt->execute();
   }
   $db->close();
  }
-
  
  
- 
- 
- function getUserVisibleAppcategories($userid)
+ function getUserVisiblePartcategories($userid)
  {
-  $appcategories=array();
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
-  if($stmt=$db->conn->prepare("select appcategory as id,`name`,logouri from user_appcategory,appcategory where user_appcategory.appcategory=appcategory.id and permissionname='canView' and userid=? order by `name`"))
+  $partcategories=array();
+  $db = new mysql;  $db->connect();
+  if($stmt=$db->conn->prepare("select partcategory as id,`name`,logouri from user_partcategory,partcategory where user_partcategory.partcategory=partcategory.id and permissionname='canView' and userid=? order by `name`"))
   {
    $stmt->bind_param('i',$userid);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $selected= $this->userHasSelectedAppcategory($userid, $row['id']);   
-    $appcategories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri'],'selected'=>$selected);
+    $selected= $this->userHasSelectedPartcategory($userid, $row['id']);   
+    $partcategories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri'],'selected'=>$selected);
    }
   }
   $db->close();
-  return $appcategories;
+  return $partcategories;
  }
 
- function setUserVisibleAppcategories($userid,$appcategories)
+ function setUserVisiblePartcategories($userid,$partcategories)
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
-  if($stmt=$db->conn->prepare("delete from user_appcategory where permissionname='canView' and userid=?"))
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare("delete from user_partcategory where permissionname='canView' and userid=?"))
   {
    $stmt->bind_param('i',$userid);
    $stmt->execute();
 
-   if($stmt=$db->conn->prepare("insert into user_appcategory values(null,?,?,'canView',0)"))
+   if($stmt=$db->conn->prepare("insert into user_partcategory values(null,?,?,'canView',0)"))
    {
     $category=0;
     $stmt->bind_param('ii',$userid,$category);
-    foreach($appcategories as $cat)
+    foreach($partcategories as $cat)
     {
      $category=$cat;
      $stmt->execute();
@@ -254,28 +247,26 @@ class user
  }
 
 
- function addAppcategoryToUser($userid,$appcategory,$permissionname)
+ function addPartcategoryToUser($userid,$partcategory,$permissionname)
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
-  if($stmt=$db->conn->prepare("insert into user_appcategory (id,userid,appcategory,permissionname,permissionvalue) values(null,?,?,?,0)"))
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare("insert into user_partcategory (id,userid,partcategory,permissionname,permissionvalue) values(null,?,?,?,0)"))
   {
-//   $fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $userid.','.$appcategory.','.$permissionname."\n");fclose($fp);
-   $stmt->bind_param('iis',$userid,$appcategory,$permissionname);
+//   $fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $userid.','.$permissionname."\n");fclose($fp);
+   $stmt->bind_param('iis',$userid,$partcategory,$permissionname);
    $stmt->execute();
   }
   $db->close();
  }
 
- function removeAppcategoryFromUser($userid,$appcategory,$permissionname)
+ function removePartcategoryFromUser($userid,$partcategory,$permissionname)
  {
   $db = new mysql; 
   //$db->dbname='pim'; 
   $db->connect();
-  if($stmt=$db->conn->prepare("delete from user_appcategory where userid=? and appcategory=? and permissionname=?"))
+  if($stmt=$db->conn->prepare("delete from user_partcategory where userid=? and partcategory=? and permissionname=?"))
   {
-   $stmt->bind_param('iis',$userid,$appcategory,$permissionname);
+   $stmt->bind_param('iis',$userid,$partcategory,$permissionname);
    $stmt->execute();
   }
   $db->close();

@@ -25,18 +25,21 @@ class pricing
 
  function getPriceById($priceid)
  {
-  $records=false;
-  $db=new mysql; 
-  $db->connect();
+  $db=new mysql; $db->connect();
+  $records=array();
   
   if($stmt=$db->conn->prepare('select * from price where id=?'))
   {
-   $stmt->bind_param('i',$priceid);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($stmt->bind_param('i',$priceid))
    {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
        $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'pricesheetnumber'=>$row['pricesheetnumber'],'amount'=>$row['amount'],'currency'=>$row['currency'],'priceuom'=>$row['priceuom'],'pricetype'=>$row['pricetype'],'effectivedate'=>$row['effectivedate'],'expirationdate'=>$row['expirationdate']);
+     }
+    }
    }
   }
   $db->close();
@@ -45,33 +48,40 @@ class pricing
 
  function deletePriceById($priceid)
  {
-  $records=false;
-  $db=new mysql; 
-  $db->connect();
+  $db=new mysql; $db->connect();
+  $result=false;
   
   if($stmt=$db->conn->prepare('delete from price where id=?'))
   {
-   $stmt->bind_param('i',$priceid);
-   $stmt->execute();
+   if($stmt->bind_param('i',$priceid))
+   {
+    if($stmt->execute())
+    {
+     $result=true;
+    }
+   }
   }
   $db->close();
-  return $records;   
+  return $result;   
  }
  
  function getPricesByPartnumber($partnumber)
  {
-  $records=false;
-  $db=new mysql; 
-  $db->connect();
-  
+  $db=new mysql; $db->connect();
+  $records=array();
+
   if($stmt=$db->conn->prepare('select * from price where partnumber=?'))
   {
-   $stmt->bind_param('s',$partnumber);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($stmt->bind_param('s',$partnumber))
    {
-       $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'pricesheetnumber'=>$row['pricesheetnumber'],'amount'=>$row['amount'],'currency'=>$row['currency'],'priceuom'=>$row['priceuom'],'pricetype'=>$row['pricetype'],'effectivedate'=>$row['effectivedate'],'expirationdate'=>$row['expirationdate']);
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'pricesheetnumber'=>$row['pricesheetnumber'],'amount'=>$row['amount'],'currency'=>$row['currency'],'priceuom'=>$row['priceuom'],'pricetype'=>$row['pricetype'],'effectivedate'=>$row['effectivedate'],'expirationdate'=>$row['expirationdate']);
+     }
+    }
    }
   }
   $db->close();

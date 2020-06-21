@@ -8,14 +8,6 @@ if($jobs)
 {
  $file_name=$jobs[0]['inputfile'];
  $jobid=$jobs[0]['id'];
- $parameters=array('appcategory'=>1);
-
- $parameterbits=explode(';',$jobs[0]['parameters']);
- foreach($parameterbits as $parameterbit)
- {
-  $temp=explode(':',$parameterbit); if(count($temp)==2){$parameters[$temp[0]]=$temp[1];}
- }
-
 
  //load XML file
  if(file_exists($file_name))
@@ -24,7 +16,7 @@ if($jobs)
   $app_count=count($xml->App);
 
   $pim->updateBackgroundjob($jobid,'processing','loaded xml - containing '.$app_count.' apps',1,'0000-00-00 00:00:00');
-  $imported_app_count=$pim->createAppFromACESsnippet($xml,$parameters['appcategory']);
+  $imported_app_count=$pim->createAppFromACESsnippet($xml);
 
   if(unlink($file_name))
   { // successful delete of ACES xml file

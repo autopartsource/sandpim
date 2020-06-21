@@ -38,7 +38,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Import')
  {
   if(move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_file))
   {
-   $userid=0; $outputfile=''; $parameters='appcategory:'.$_POST['appcategory'].';'; $datetimetostart=date('Y-m-d H:i:s');
+   $userid=0; $outputfile=''; $parameters=''; $datetimetostart=date('Y-m-d H:i:s');
    $jobid=$pim->createBackgroundjob('ACESxmlImport','uploaded',$userid,$target_file,$outputfile,$parameters,$datetimetostart);
    $error_msg='The file ['. basename( $_FILES['fileToUpload']['name']). '] has been uploaded and is ready to import (job id:'.$jobid.')';
    $logs->logSystemEvent('acesimport', isset($_SESSION['userid']), 'The file ['. basename( $_FILES['fileToUpload']['name']). '] has been uploaded and is ready to import (job id:'.$jobid.')');
@@ -54,9 +54,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Import')
  }
 }
 
-$appcategories=$pim->getAppCategories();
 $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -90,7 +88,6 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
                <?php if($error_msg){echo $error_msg;}?>
                <form method="post" enctype="multipart/form-data">
                 <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
-                <div style="padding:10px;">App Category <select name="appcategory"><?php foreach($appcategories as $appcategory){?> <option value="<?php echo $appcategory['id'];?>"><?php echo $appcategory['name'];?></option><?php }?></select></div>
                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                </form>
               </div>

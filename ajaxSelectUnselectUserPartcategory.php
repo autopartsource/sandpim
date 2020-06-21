@@ -5,19 +5,19 @@ $user= new user;
 
 //$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true)).'*'; fclose($fp);
 
-if(isset($_SESSION['userid']) && isset($_GET['userid']) && isset($_GET['appcategory']) && isset($_GET['action']))
+if(isset($_SESSION['userid']) && isset($_GET['userid']) && isset($_GET['partcategory']) && isset($_GET['action']))
 {
  $userid=intval($_GET['userid']);
- $appcategory=intval($_GET['appcategory']);
+ $partcategory=intval($_GET['partcategory']);
 
  switch($_GET['action'])
  {
   case 'select':
-   $user->userSelectAppcategory($userid,$appcategory);
+   $user->userSelectPartcategory($userid,$partcategory);
   break;
 
   case 'unselect':
-   $user->userUnselectAppcategory($userid,$appcategory);
+   $user->userUnselectPartcategory($userid,$partcategory);
   break;
 
   default:

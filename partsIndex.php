@@ -14,15 +14,32 @@ $vcdb = new vcdb;
 $pcdb = new pcdb;
 $pim = new pim;
 
-if (isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) {
-    $searchtype = 'equals';
-    if (isset($_GET['searchtype']) && ($_GET['searchtype'] == 'contains' || $_GET['searchtype'] == 'startswith')) {
-        $searchtype = $_GET['searchtype'];
-    }
-    $partnumber = strtoupper($_GET['partnumber']);
-    $limit = 30;
-    $parts = $pim->getParts($partnumber, $searchtype, $limit);
+$parts =array();
+
+$lifecyclestatuses=$pcdb->getLifeCycleCodes();
+$validlifecyclestatuscodes=array(); foreach ($lifecyclestatuses as $lifecyclestatus) {$validlifecyclestatuscodes[]=$lifecyclestatus['code'];}
+
+$partcategories = $pim->getPartCategories();
+$validpartcategoryids=array(); foreach ($partcategories as $partcategory) {$validpartcategoryids[]=$partcategory['id'];}
+
+$favoriteparttypes=$pim->getFavoriteParttypes();
+
+if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) 
+{
+ $searchtype = 'equals'; if (isset($_GET['searchtype']) && ($_GET['searchtype'] == 'contains' || $_GET['searchtype'] == 'startswith' || $_GET['searchtype'] == 'endswith')) {$searchtype = $_GET['searchtype'];}
+ $partnumber = strtoupper($_GET['partnumber']);
+
+ $limit = 10; if(isset($_GET['limit']) && intval($_GET['limit'])>0){$limit=intval($_GET['limit']);}
+ 
+ $lifecyclestatus=$_GET['lifecyclestatus']; if(!in_array($_GET['lifecyclestatus'], $validlifecyclestatuscodes)){$lifecyclestatus='any';} 
+ $partcategory=$_GET['partcategory']; if(!in_array($_GET['partcategory'], $validpartcategoryids)){$partcategory='any';} 
+ $parttypeid='any'; if(intval($_GET['parttypeid'])>0){$parttypeid=intval($_GET['parttypeid']);}
+        
+ $parts = $pim->getParts($partnumber, $searchtype, $partcategory, $parttypeid, $lifecyclestatus, $limit);
 }
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -42,14 +59,16 @@ if (isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) {
 
             <!-- Main Content -->
             <div class="contentMain" style="flex-direction: column;">
-                <form method="get" action="partsIndex.php">
-                    Show part numbers <select name="searchtype"><option value="equals">that are exactly</option><option value="startswith">that starts with</option><option value="contains">contains</option></select> 
-                    <input type="text" name="partnumber" />
-
-                    in category <select name="partcategory"><option value="any">-- Any --</option></select> 
-
-                    <input type="submit" name="submit" value="Search"/>
-                </form>
+                <div style="text-align: left;">
+                    <form method="get" action="partsIndex.php">
+                        <div style="padding:3px;">Show parts <select name="searchtype"><option value="startswith">starting with</option><option value="contains">containing</option><option value="endswith">ending with</option><option value="equals">exactly equal to</option></select> <input type="text" name="partnumber" value="<?php echo substr(strtoupper(trim($_GET['partnumber'])),0,20) ;?>"/></div>
+                        <div style="padding:3px;">In <select name="partcategory"><option value="any">Any Category</option><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>" <?php if($_GET['partcategory']==$partcategory['id']){echo ' selected';}?>><?php echo $partcategory['name']; ?></option><?php } ?> </select></div>
+                        <div style="padding:3px;">With <select name="parttypeid"><option value="any">Any Part Type</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>" <?php if($_GET['parttypeid']==$parttype['id']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div>
+                        <div style="padding:3px;">With <select name="lifecyclestatus"><option value="any">Any Status</option><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>" <?php if($_GET['lifecyclestatus']==$lifecyclestatus['code']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></div>
+                        <div style="padding:3px;">Limit results to <select name="limit"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option><option value="500">500</option></select></div>
+                        <div style="padding:3px;"><input type="submit" name="submit" value="Search"/></div>
+                    </form>
+                </div>
 
                 <?php if (count($parts) > 0) { ?>
                     <div style="padding-top:10px;">

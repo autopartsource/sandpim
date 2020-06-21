@@ -52,14 +52,6 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['elementid
   $pim->logAppEvent($appid,$userid,'cosmetic toggled',$oid);
   break;
 
-  case 'appcategory':
-  if($app['appcategory']!=$_GET['value'])
-  {
-   $pim->setAppCategory($appid,intval($_GET['value']));
-   $pim->logAppEvent($appid,$userid,'category changed to:'.intval($_GET['value']),$oid);
-  }
-  break;
-
   case 'internalnotes':
    $pim->setAppInternalnotes($appid,$_GET['value']);
    $pim->logAppEvent($appid,$userid,'internal notes updated',$oid);

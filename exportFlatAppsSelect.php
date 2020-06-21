@@ -23,14 +23,14 @@ $receiverprofiles=$pim->getReceiverprofiles();
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h1>Export parts to a spreadsheet</h1>
+        <h1>Export applications to a spreadsheet</h1>
         
         <div class="wrapper">
          <div class="contentLeft"></div>
 
          <!-- Main Content -->
          <div class="contentMain">
-          <form action="exportFlatPartsStream.php" method="get">
+          <form action="exportFlatAppsStream.php" method="get">
            <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
             <div style="padding: 10px;">Receiver Profile</div>
             <select name="receiverprofile"><?php foreach($receiverprofiles as $receiverprofile){?><option value="<?php echo $receiverprofile['id'];?>"><?php echo $receiverprofile['name'];?></option><?php }?></select>

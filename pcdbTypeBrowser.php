@@ -49,7 +49,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
               //xhr.send();
              }
              else
-             { // appcategory has been clocked off
+             { // has been clocked off
               console.log('remove:'+parttypeid);
 
              //var xhr = new XMLHttpRequest();
@@ -88,7 +88,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                       {
                          $checked=''; if(array_key_exists($type['id'], $idkeyedmytypes)){$checked=' checked';}
                           echo '<tr><td>'.$type['name'].'</td><td>'.$type['id'].'</td>';
-                          echo '<td align="center"><input type="checkbox" id="parttypeid_'.$type['id'].'" name="parttypeid_'.$type['id'].'" onclick="addRemoveType(\''.$type['id'].'\')" name="appcategory_'.$appcategory['id'].'"  '.$checked.'></td>';
+                          echo '<td align="center"><input type="checkbox" id="parttypeid_'.$type['id'].'" name="parttypeid_'.$type['id'].'" onclick="addRemoveType(\''.$type['id'].'\')" name="partcategory_'.$partcategory['id'].'"  '.$checked.'></td>';
                           echo '</tr>';
                       }
                      }

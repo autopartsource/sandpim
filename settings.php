@@ -30,7 +30,6 @@ $pim=new pim;
                 <div style="padding:10px;"><a href="./pcdbTypeBrowser.php">Favorite PCdb parttypes</a></div>
                 <div style="padding:10px;"><a href="./pcdbPositionBrowser.php">Favorite PCdb positions</a></div>
                 <div style="padding:10px;"><a href="./partCategories.php">Part Categories</a></div>
-                <div style="padding:10px;"><a href="./appCategories.php">Application Categories</a></div>
                 <div style="padding:10px;"><a href="./receiverProfiles.php">Receiver Profiles</a></div>
             </div>
 

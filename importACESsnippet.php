@@ -45,12 +45,9 @@ $pim = new pim;
 
 if (isset($_POST['input'])) {
     $xml = simplexml_load_string($_POST['input']);
-    $app_count = $pim->createAppFromACESsnippet($xml, intval($_POST['appcategory']));
+    $app_count = $pim->createAppFromACESsnippet($xml);
     echo $app_count . ' apps created';
-}
-
-$appcategories = $pim->getAppCategories();
-?>
+}?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -72,7 +69,6 @@ $appcategories = $pim->getAppCategories();
                     <div style="padding:10px;"><div>Paste ACES XML text to import</div>
                         <textarea name="input" rows="20" cols="100"></textarea>
                     </div>
-                    <div style="padding:10px;">App Category <select name="appcategory"><?php foreach ($appcategories as $appcategory) { ?> <option value="<?php echo $appcategory['id']; ?>"><?php echo $appcategory['name']; ?></option><?php } ?></select></div>
                     <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                 </form>
             </div>

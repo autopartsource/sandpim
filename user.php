@@ -66,9 +66,9 @@ if(isset($_POST['submit']) && $_POST['submit']=='Update Name')
  }
 }
 
-$allowedappcategories=$user->getUserVisibleAppcategories($userid);
-$idkeyedallowlist=array(); foreach($allowedappcategories as $allowed){$idkeyedallowlist[$allowed['id']]='';}
-$appcategories=$pim->getAppCategories();
+$allowedpartcategories=$user->getUserVisiblePartcategories($userid);
+$idkeyedallowlist=array(); foreach($allowedpartcategories as $allowed){$idkeyedallowlist[$allowed['id']]='';}
+$partcategories=$pim->getPartCategories();
 $user->getUserByID($userid);
 
 ?>
@@ -77,19 +77,19 @@ $user->getUserByID($userid);
     <head>
         <?php include('./includes/header.php'); ?>
         <script>
-            function addRemoveAppcategory(userid,appcategory)
+            function addRemovePartcategory(userid,partcategory)
             {
-             if(document.getElementById('appcategory_'+appcategory).checked) 
-             { // appcategory has been clocked on 
-         //     console.log(appcategory);
+             if(document.getElementById('partcategory_'+partcategory).checked) 
+             { // category has been clicked on 
+         //     console.log(partcategory);
               var xhr = new XMLHttpRequest();
-              xhr.open('GET', 'ajaxAddRemoveUserAppcateory.php?userid='+userid+'&appcategory='+appcategory+'&permissionname=canView&action=add');
+              xhr.open('GET', 'ajaxAddRemoveUserPartcateory.php?userid='+userid+'&partcategory='+partcategory+'&permissionname=canView&action=add');
               xhr.send();
              }
              else
-             { // appcategory has been clocked off
+             { // category has been clicked off
               var xhr = new XMLHttpRequest();
-              xhr.open('GET', 'ajaxAddRemoveUserAppcateory.php?userid='+userid+'&appcategory='+appcategory+'&permissionname=canView&action=remove');
+              xhr.open('GET', 'ajaxAddRemoveUserPartcateory.php?userid='+userid+'&partcategory='+partcategory+'&permissionname=canView&action=remove');
               xhr.send();
              }
             }
@@ -131,7 +131,7 @@ $user->getUserByID($userid);
                 <div>
                     <h3>Application Category Permissions</h3>
                     <div style="padding:20px;">
-                        <?php foreach($appcategories as $appcategory){$checked=''; if(array_key_exists($appcategory['id'],$idkeyedallowlist)){$checked='checked';} echo '<div><input type="checkbox" id="appcategory_'.$appcategory['id'].'" onclick="addRemoveAppcategory(\''.$userid.'\',\''.$appcategory['id'].'\')" name="appcategory_'.$appcategory['id'].'" '.$checked.'><label for="appcategory_'.$appcategory['id'].'">'.$appcategory['name'].'</label></div>';}?>
+                        <?php foreach($partcategories as $partcategory){$checked=''; if(array_key_exists($partcategory['id'],$idkeyedallowlist)){$checked='checked';} echo '<div><input type="checkbox" id="partcategory_'.$partcategory['id'].'" onclick="addRemovePartcategory(\''.$userid.'\',\''.$partcategory['id'].'\')" name="partcategory_'.$partcategory['id'].'" '.$checked.'><label for="partcategory_'.$partcategory['id'].'">'.$partcategory['name'].'</label></div>';}?>
                     </div>
                 </div>
             </div> <!-- End Main Content -->
