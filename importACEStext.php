@@ -19,7 +19,7 @@ $partcategories = $pim->getPartCategories();
 
 /*
 cosmetic	basevid	item	parttypeid	position	qty	vcdbattributes (name|value|sequence|cosmetic)	qdbqualifiers (id|p1|UoM1|p2|UoM2…)	notes (text|sequence|cosmetic)
-0	144067	ITM20200619	1896	22	1	FrontBrakeType|5|3|1;SubModel|20|2|0;		Some more nice notes|1|1
+0	144067	ITM20200619	1896	22	1	FrontBrakeType|5|3|1~SubModel|20|2|0~		Some nice notes|1|0~Additional Cosmetic notes|2|1~
 
 
 
@@ -52,9 +52,9 @@ if (isset($_POST['input'])) {
                     </div>
                     <div>Category for part creation <select name="partcategory"><option value="0">Do not create parts</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
                     <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
-                    <div>VCdb Attributes format: name|value|sequence|cosmetic</div>
-                    <div>Qdb Qualifiers format: id|p1|UoM1|p2|UoM2…</div>
-                    <div>Notes Format: text|sequence|cosmetic</div>
+                    <div>VCdb Attributes format: name|value|sequence|cosmetic~name|value|sequence|cosmetic~...</div>
+                    <div>Qdb Qualifiers format: id|p1|UoM1|p2|UoM2…~id|p1|UoM1|p2|UoM2…~</div>
+                    <div>Notes Format: text|sequence|cosmetic~text|sequence|cosmetic~</div>
                 </form>
             </div>
 

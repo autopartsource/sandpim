@@ -708,6 +708,18 @@ class setup
         `permissionvalue` tinyint unsigned not null,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_partcategory ('.$db->conn->error.')';}
+
+        
+        $sql="CREATE TABLE brand (
+        BrandID varchar(255) not null,
+        BrandName varchar(255) not null,
+        BrandOwnerID varchar(255) not null,
+        BrandOwner varchar(255) not null,
+        ParentID varchar(255) not null,
+        ParentCompany varchar(255) not null,
+        PRIMARY KEY (BrandID))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - brand ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - brand ('.$db->conn->error.')';}
+
         
         $sql="CREATE TABLE autocare_databases (
         databasename varchar(255) not null,

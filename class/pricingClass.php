@@ -7,8 +7,16 @@ class pricing
  function addPrice($partnumber,$pricesheetnumber,$amount,$currency,$priceuom,$pricetype,$effectivedate,$expirationdate)
  {
   $id=false;
-  $db=new mysql; 
-  $db->connect();
+  $db=new mysql; $db->connect();
+  
+  if($stmt=$db->conn->prepare('delete from price where partnumber=? and pricesheetnumber=? and currency=? and priceuom=? and pricetype=?'))
+  {
+   if($stmt->bind_param('sssss',$partnumber, $pricesheetnumber, $currency, $priceuom, $pricetype))
+   {
+    $stmt->execute();
+   }// else{print_r($db->conn->error);}
+  }// else{print_r($db->conn->error);}
+  
   if($stmt=$db->conn->prepare('insert into price (id,partnumber,pricesheetnumber,amount,currency,priceuom,pricetype,effectivedate,expirationdate) values(null,?,?,?,?,?,?,?,?)'))
   {
    if($stmt->bind_param('ssisssss',$partnumber,$pricesheetnumber,$amount,$currency,$priceuom,$pricetype,$effectivedate,$expirationdate))
@@ -23,6 +31,7 @@ class pricing
   return $id;
  }
 
+ 
  function getPriceById($priceid)
  {
   $db=new mysql; $db->connect();

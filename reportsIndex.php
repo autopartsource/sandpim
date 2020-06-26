@@ -26,8 +26,13 @@ $pim=new pim;
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
-            <div class="contentMain">
-            
+            <div class="contentMain button" style="flex-direction: column;">
+                <div style="padding:10px;"><a href="partReferencesReportForm.php">Part PCdb Validation</a></div>
+                <div style="padding:10px;"><a href="missingProductDataReportForm.php">Part Missing Product Data</a></div>
+                <div style="padding:10px;"><a href="applicationReferencesReportForm.php">Application VCdb validation</a></div>
+                <div style="padding:10px;"><a href="applicationHolesReportForm.php">Application Holes</a></div>
+                <div style="padding:10px;"><a href="applicationOverlapsReportForm.php">Application Overlaps</a></div>
+                <div style="padding:10px;"><a href="applicationNotesReportForm.php">Application Note Usage</a></div>
             </div>
 
             <div class="contentRight"></div>

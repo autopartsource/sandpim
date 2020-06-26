@@ -36,15 +36,15 @@ $pim=new pim;
                 <div style="padding:10px;"><a href="importACESupload.php">Upload & import ACES xml file</a></div>
                 <div style="padding:10px;"><a href="importACEStext.php">Import applications from structured text</a></div>
                 <div style="padding:10px;"><a href="importPartText.php">Import parts from template spreadsheet</a></div>
-                <div style="padding:10px;"><a href="importPartAttributeData.php">Import part attributes from structured text</a></div>
+                <div style="padding:10px;"><a href="importPricesText.php">Import prices from structured text</a></div>
+                <div style="padding:10px;"><a href="importPartAttributeText.php">Import part attributes from structured text</a></div>
                 <div style="padding:10px;"><a href="importAssetData.php">Import assets from structured text</a></div>
+                <div style="padding:10px;"><a href="importInterchangeText.php">Import Competitor Interchange from structured text</a></div>
+                <div style="padding:10px;"><a href="importBrandTableText.php">Import Brand Table text</a></div>
+                <div style="padding:10px;"><a href="exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a></div>
                 <div style="padding:10px;"><a href="backgroundJobs.php">Background import/export jobs</a></div>
                 <div style="padding:10px;"><a href="rhubarb7_1Index.php">Rhubarb 7.1</a></div>
             </div>
-
-            
-            
-            
             <div class="contentRight"></div>
         </div>
                 

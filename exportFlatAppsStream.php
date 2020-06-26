@@ -41,9 +41,9 @@ if($appscount>5000)
 { // dataset is too big - this export will be handled by the housekeeper (cron) and written to a temp directory for download
  
  $localfilename=__DIR__.'/ACESexports/'.$randomstring;
- $token=$pim->createBackgroundjob('ACESxmlExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text/xml',$clientfilename);
+ $token=$pim->createBackgroundjob('ACESflatExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text',$clientfilename);
  $logs->logSystemEvent('Export', 0, 'Flat apps file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
- echo 'This export will contain '.$appscount.' apps. It will be processed by the houskeeper and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
+ echo 'This export will contain '.$appscount.' apps. It will be processed by the houskeeper (CLI execution of processFlatAppsExport.php by cron) and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
  echo '<br/><br/><a href="./ioIndex.php">Back to Import/Export menu</a>';
 }
 else
@@ -54,6 +54,25 @@ else
  foreach($apps as $app)
  {
   $vcdbattributesstring=''; $qdbattributesstring=''; $notesstring='';
+     foreach($app['attributes'] as $attribute)
+   {
+       switch ($attribute['type']) {
+           case 'vcdb':
+               $vcdbattributesstring.=$attribute['name'].'|'.$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~';
+               break;
+
+           case 'qdb':
+               break;
+
+           case 'note':
+               $notesstring.=$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~';
+               break;
+
+           default:
+               break;
+       } 
+   }
+
   $filecontent.=$app['cosmetic']."\t".$app['basevehicleid']."\t".$app['partnumber']."\t".$app['parttypeid']."\t".$app['positionid']."\t".$app['positionid']."\t".$app['quantityperapp']."\t".$app['partnumber']."\t".$vcdbattributesstring."\t".$qdbattributesstring."\t".$notesstring."\r\n";
  }
  

@@ -15,7 +15,7 @@
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 $pim = new pim();
-$jobs=$pim->getBackgroundjobs('ACESxmlExport','started');
+$jobs=$pim->getBackgroundjobs('ACESflatExport','started');
 
 
 if($jobs)
@@ -63,7 +63,28 @@ if($jobs)
  {
   foreach($apps as $app)
   {
-   $record=$app['cosmetic']."\t".$app['basevehicleid']."\t".$app['partnumber']."\t".$app['parttypeid']."\t".$app['positionid']."\t".$app['positionid']."\t".$app['quantityperapp']."\t".$app['partnumber']."\t".$vcdbattributesstring."\t".          $qdbattributesstring."\t".$notesstring."\r\n";
+   $vcdbattributesstring=''; $qdbattributesstring=''; $notesstring='';
+   
+   foreach($app['attributes'] as $attribute)
+   {
+       switch ($attribute['type']) {
+           case 'vcdb':
+               $vcdbattributesstring.=$attribute['name'].'|'.$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].';';
+               break;
+
+           case 'qdb':
+               break;
+
+           case 'note':
+               $notesstring.=$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].';';
+               break;
+
+           default:
+               break;
+       } 
+   }
+   
+   $record=$app['cosmetic']."\t".$app['basevehicleid']."\t".$app['partnumber']."\t".$app['parttypeid']."\t".$app['positionid']."\t".$app['quantityperapp']."\t".$app['partnumber']."\t".$vcdbattributesstring."\t".$qdbattributesstring."\t".$notesstring."\r\n";
    $writeresult=fwrite($fh, $record);
   }
   fclose($filename);
@@ -77,7 +98,7 @@ if($jobs)
   $logs->logSystemEvent('Export', 0, 'Flat applications file ['.$filename.'] (jobid:'.$jobid.') exported by houskeeper; apps:'.count($apps));
  }
  else
- {  // writing the output xml file failed
+ {  // writing the output file failed
   $pim->updateBackgroundjobDone($jobid,'failed',date('Y-m-d H:i:s'));
   $pim->logBackgroundjobEvent($jobid, 'file write failed ['.$filename.']' );
   $logs->logSystemEvent('Export', 0, 'Flat applications file ['.$filename.'] (jobid:'.$jobid.') export failed (write permission denied) during houskeeper processing; apps:'.count($apps));

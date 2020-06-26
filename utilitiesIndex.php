@@ -26,8 +26,10 @@ $pim= new pim;
             <div class="contentLeft"></div>
 
             <!-- Main Content -->
-            <div class="contentMain">
-            
+            <div class="contentMain button" style="flex-direction: column;">
+                <div style="padding:10px;"><a href="buyersGuideBuilderInput.php">Buyers Guide Builder</a></div>
+                <div style="padding:10px;"><a href="basevidsToMMYinput.php">Convert BaseVehicleIDs to Makes/Models/Years</a></div>
+                <div style="padding:10px;"><a href="MMYtoBasevidsInput.php">Convert Makes/Models/Years to BaseVehicleIDs</a></div>
             </div>
 
             <div class="contentRight"></div>

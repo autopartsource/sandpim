@@ -194,9 +194,7 @@ function countAppsByPartcategories($partcategories)
 
  function getAppAttributes($appid)
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
+  $db = new mysql; $db->connect();
   $attributes=array();
   if($stmt=$db->conn->prepare('select * from application_attribute where applicationid=? order by sequence'))
   {
@@ -205,7 +203,7 @@ function countAppsByPartcategories($partcategories)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $pairtemp=array('name'=>$row['name'],'value'=>$row['value']);
+    //$pairtemp=array('name'=>$row['name'],'value'=>$row['value']);
     $attributes[]=array('id'=>$row['id'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
    }
   }
@@ -673,10 +671,6 @@ function countAppsByPartcategories($partcategories)
   return $id;
  }
 
-
-
-
-
  function deletePartAttribute($attributeid)
  {
   $db = new mysql; $db->connect();
@@ -688,7 +682,7 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
-  
+
  function createPartcategory($name,$partcategory)
  {
   $db=new mysql; $db->connect();
@@ -1583,7 +1577,7 @@ function countAppsByPartcategories($partcategories)
      
      if(strlen($fields[6]))
      {// VCdb attributes are present. parse them.
-      $attributestrings=explode(';',$fields[6]);
+      $attributestrings=explode('~',$fields[6]);
       foreach($attributestrings as $attributestring)
       {
        $attributechunks=explode('|',$attributestring);
@@ -1603,11 +1597,15 @@ function countAppsByPartcategories($partcategories)
      
      if(strlen($fields[8]))
      {// notes are present.
-      $notechunks=explode('|',$fields[9]);
-      if(count($notechunks)==3)
-      {// Some more Notes|2|1  (notetext, sequence 2, cosmetic)
+      $notestrings=explode('~',$fields[8]);
+      foreach($notestrings as $notestring)
+      {
+       $notechunks=explode('|',$notestring);
+       if(count($notechunks)==3)
+       {// Some more Notes|2|1  (notetext, sequence 2, cosmetic)
         $attributes[]=array('type'=>'note','name'=>'note','value'=>$notechunks[0],'cosmetic'=>intval($notechunks[2]),'sequence'=>intval($notechunks[1]));
-      }
+       }
+      }      
      }     
 
      if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
