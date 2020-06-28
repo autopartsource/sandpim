@@ -2,6 +2,9 @@
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 
+$navCategory = 'settings';
+
+
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
 
@@ -66,7 +69,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h1>PCdb positions</h1>
+        <h1>Favorite PCdb Positions</h1>
         
         <div class="wrapper">
             <div class="contentLeft"></div>

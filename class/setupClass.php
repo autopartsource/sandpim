@@ -717,7 +717,8 @@ class setup
         BrandOwner varchar(255) not null,
         ParentID varchar(255) not null,
         ParentCompany varchar(255) not null,
-        PRIMARY KEY (BrandID))";
+        PRIMARY KEY (BrandID),
+        INDEX idx_BrandName (BrandName))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - brand ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - brand ('.$db->conn->error.')';}
 
         $sql="CREATE TABLE competitivebrand (

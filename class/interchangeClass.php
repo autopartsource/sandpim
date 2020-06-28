@@ -156,6 +156,26 @@ class interchange
   return $name;   
  }
 
+ function getBrands($searchstring)
+ {
+  $db = new mysql; $db->connect();
+  $brands=array();
+  
+  if($stmt=$db->conn->prepare('select * from brand where BrandName like ? order by BrandName'))
+  {
+   $stmt->bind_param('s', $searchstring);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $brands[]=array('BrandID'=>$row['BrandID'],'BrandName'=>$row['BrandName'],'BrandOwnerID'=>$row['BrandOwnerID'],'BrandOwner'=>$row['BrandOwner'],'ParentID'=>$row['ParentID'],'ParentCompany'=>$row['ParentCompany']);
+   }
+  }
+  $db->close();
+  return $brands;
+ }
+
+ 
  function getCompetitivebrands()
  {
   $db=new mysql; $db->connect();
@@ -173,7 +193,35 @@ class interchange
   return $brands;   
  }
 
-
+ function addCompetitiveBrand($brandAAIAID,$description)
+ {
+  $db=new mysql; $db->connect();
+  $success=false;
+  if($stmt=$db->conn->prepare('insert into competitivebrand values(?,?)'))
+  {
+   if($stmt->bind_param('ss',$brandAAIAID,$description))
+   {
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;
+ }
+ 
+ function removeCompetitiveBrand($brandAAIAID)
+ {
+  $db=new mysql; $db->connect();
+  $success=false;
+  if($stmt=$db->conn->prepare('delete from competitivebrand where brandAAIAID=?'))
+  {
+   if($stmt->bind_param('s',$brandAAIAID))
+   {
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;
+ }
  
  function importBrandTable($data)
  {
