@@ -197,7 +197,13 @@ if($validUpload)
   $PartNumber=trim($fields[0]);
   if($PartTerminologyIDfieldIndex >=0 && trim($fields[$PartTerminologyIDfieldIndex])!=''){$item['PartTerminologyID']=trim($fields[$PartTerminologyIDfieldIndex]);}
   if($BrandAAIAIDfieldIndex >=0 && trim($fields[$BrandAAIAIDfieldIndex])!=''){$item['BrandAAIAID']=trim($fields[$BrandAAIAIDfieldIndex]);}
-  if($ItemLevelGTINfieldIndex >=0 && trim($fields[$ItemLevelGTINfieldIndex])!=''){$item['ItemLevelGTIN']=trim($fields[$ItemLevelGTINfieldIndex]);}
+  
+  if($ItemLevelGTINfieldIndex >=0 && trim($fields[$ItemLevelGTINfieldIndex])!='')
+  {
+      $item['ItemLevelGTIN']=trim($fields[$ItemLevelGTINfieldIndex]);
+      if(strlen($item['ItemLevelGTIN'])==12){$item['ItemLevelGTIN']='00'.$item['ItemLevelGTIN'];}
+  }
+  
   if($GTINQualifierFieldIndex >=0 && trim($fields[$GTINQualifierFieldIndex])!=''){$item['GTINQualifier']=trim($fields[$GTINQualifierFieldIndex]);}
   if($MinimumOrderQuantityFieldIndex >=0 && trim($fields[$MinimumOrderQuantityFieldIndex])!=''){$item['MinimumOrderQuantity']=trim($fields[$MinimumOrderQuantityFieldIndex]);}
   if($MinimumOrderQuantityUOMfieldIndex >=0 && trim($fields[$MinimumOrderQuantityUOMfieldIndex])!=''){$item['MinimumOrderQuantityUOM']=trim($fields[$MinimumOrderQuantityUOMfieldIndex]);}
@@ -529,7 +535,12 @@ if($validUpload)
     $PartNumber=trim($fields[0]);
 
     if($PartNumberFieldIndex>=0){$package['PartNumber']=trim($fields[$PartNumberFieldIndex]);}
-    if($PackageLevelGTINFieldIndex>=0&&trim($fields[$PackageLevelGTINFieldIndex])!=''){$package['PackageLevelGTIN']=trim($fields[$PackageLevelGTINFieldIndex]);}
+    if($PackageLevelGTINFieldIndex>=0&&trim($fields[$PackageLevelGTINFieldIndex])!='')
+    {
+        $package['PackageLevelGTIN']=trim($fields[$PackageLevelGTINFieldIndex]);
+        if(strlen($package['PackageLevelGTIN'])==12){$package['PackageLevelGTIN']='00'.$package['PackageLevelGTIN'];}
+    }
+    
     if($ElectronicProductCodeFieldIndex>=0&&trim($fields[$ElectronicProductCodeFieldIndex])!=''){$package['ElectronicProductCode']=trim($fields[$ElectronicProductCodeFieldIndex]);}
     if($PackageBarCodeCharactersFieldIndex>=0&&trim($fields[$PackageBarCodeCharactersFieldIndex])!=''){$package['PackageBarCodeCharacters']=trim($fields[$PackageBarCodeCharactersFieldIndex]);}
     if($PackageUOMFieldIndex>=0){$package['PackageUOM']=trim($fields[$PackageUOMFieldIndex]);}
