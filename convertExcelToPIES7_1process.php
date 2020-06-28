@@ -16,7 +16,6 @@ $pcdbVersion=$pcdb->version();
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
-$validEXPIcodes=$pcdb->getAllEXPIcodes();
 $validPartTypes=array(); $partTypes=$pcdb->getPartTypes('%'); foreach($partTypes as $partType){$validPartTypes[$partType['id']]=$partType['name'];}
 
 $piesxmlstring='';
@@ -30,7 +29,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate PIES xml')
 {
  if($_FILES['fileToUpload']['type']=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
  {
-  if($_FILES['fileToUpload']['size']<1000000 || isset($_SESSION['userid']))   
+  if($_FILES['fileToUpload']['size']<5000000 || isset($_SESSION['userid']))   
   {     
    
    $xlsx = new XLSXReader($_FILES['fileToUpload']['tmp_name']);
@@ -378,12 +377,36 @@ if($validUpload)
     }
     
     // validate code/value combinations
-    if(!isset($validEXPIcodes[$expi['EXPICode']][$expi['EXPIValue']]))
+    
+    $validCodes=$pcdb->getValidEXPIvalues($expi['EXPICode']);
+    $EXPIvalidaded=false;
+    foreach($validCodes as $validCode)
     {
-     $errors[]='EXPI contains invalid code/value combination ('.$expi['EXPICode'].'/'.$expi['EXPIValue'].') for a partnumber ('.$PartNumber.')';  
+     if($validCode['code']==$expi['EXPIValue'] || $validCode['code']=='*')
+     {
+      $EXPIvalidaded=true; break;
+     }
     }
     
+    // not a valid code/value combo. warranty codes have pcdb records that imply wildcard-status
+    if($expi['EXPICode']=='WS1' || $expi['EXPICode']=='WS2')
+    {
+     $EXPIvalidaded=true;
+    }
     
+       
+    if(!$EXPIvalidaded)
+    {
+     $errors[]='EXPI contains invalid code/value combination ('.$expi['EXPICode'].'/'.$expi['EXPIValue'].') for a partnumber ('.$PartNumber.')';
+    }
+    
+//    if(!isset($validEXPIcodes[$expi['EXPICode']][$expi['EXPIValue']]))
+   // {
+  //   $errors[]='EXPI contains invalid code/value combination ('.$expi['EXPICode'].'/'.$expi['EXPIValue'].') for a partnumber ('.$PartNumber.')';  
+   // }
+        //courtney
+        
+   
     
     $recordnumber++;
    }
