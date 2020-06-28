@@ -720,7 +720,12 @@ class setup
         PRIMARY KEY (BrandID))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - brand ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - brand ('.$db->conn->error.')';}
 
-        
+        $sql="CREATE TABLE competitivebrand (
+        brandAAIAID varchar(255) not null,
+        description varchar(255) not null,
+        PRIMARY KEY (brandAAIAID))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - competitivebrand ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - competitivebrand ('.$db->conn->error.')';}
+
         $sql="CREATE TABLE autocare_databases (
         databasename varchar(255) not null,
         databasetype varchar(255) not null,

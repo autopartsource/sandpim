@@ -4,7 +4,9 @@ session_start();
 $pim= new pim;
 
 //$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true).'*'); fclose($fp);
-
+// used for setting scalar values of parts ('parttypeid','lifecyclestatus','partcategory','replacedby','gtin','unspc', etc)
+// not used for adding/removing one-to-many things like prices,interchanges,packages,assets,attributes.
+ 
 if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elementid']) && isset($_GET['value']))
 {
  $partnumber=($_GET['partnumber']);
@@ -12,7 +14,6 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
  $part=$pim->getPart($partnumber);
  $oid=$part['oid'];
 
- //'parttypeid','lifecyclestatus','partcategory','replacedby','gtin','unspc'
  
  switch($_GET['elementid'])
  {

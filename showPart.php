@@ -26,6 +26,10 @@ $interchange = new interchange;
 $packaging = new packaging;
 $logs=new logs;
 
+
+
+
+
 function niceAppAttributes($appattributes) {
     $vcdb = new vcdb;
     $niceattributes = array();
@@ -59,7 +63,8 @@ $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
 $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
 $prices=$pricing->getPricesByPartnumber($partnumber);
-$competitors=$interchange->getInterchangeByPartnumber($partnumber);
+$competitorparts=$interchange->getInterchangeByPartnumber($partnumber);
+$competitivebrands=$interchange->getCompetitivebrands();
 $packages=$packaging->getPackagesByPartnumber($partnumber);
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $lifecyclestatuses=$pcdb->getLifeCycleCodes();
@@ -125,7 +130,7 @@ $history=$logs->getPartsEvents(50);
               if(response.success)
               { //add attribute to "applied" list
                var container=document.getElementById('appliedattributes');
-               container.innerHTML+='<div id="appliedattribute_'+response.id+'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('+response.id+','+response.PAID+',\''+response.name+'\')">-</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'+response.name+'<input type="text"/></div><div style="clear:both;"></div></div>';
+               container.innerHTML+='<div id="appliedattribute_'+response.id+'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('+response.id+','+response.PAID+',\''+response.name+'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'+response.name+'<input type="text"/></div><div style="clear:both;"></div></div>';
                
                //remove PAdb form "unapplied" list
                var unappliedattributediv = document.getElementById('unappliedattribute_'+PAID);
@@ -174,6 +179,42 @@ $history=$logs->getPartsEvents(50);
              xhr.send();
             }
 
+            function deleteInterchange(interchangeid)
+            {
+             var interchangediv = document.getElementById('interchangeid_'+interchangeid);
+             interchangediv.parentNode.removeChild(interchangediv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeleteInterchange.php?id='+interchangeid+'&partnumber=<?php echo $partnumber;?>');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
+             };
+             xhr.send();
+            }
+            
+            
+            function addInterchange()
+            {
+             var competitivepartnumber = document.getElementById("competitivepartnumber").value;
+             var brand = document.getElementById("competitivebrand").value;
+             if(competitivepartnumber.trim().length>0)
+             {
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddInterchange.php?brand='+brand+'&competitivepartnumber='+competitivepartnumber+'&partnumber=<?php echo $partnumber;?>');
+              xhr.onload = function()
+              {
+               var response=JSON.parse(xhr.responseText);
+               document.getElementById("sandpiperoid").innerHTML=response.oid;
+
+               var container=document.getElementById('interchanges');
+               container.innerHTML+='<div id="interchangeid_'+response.id+'" style="font-size: 80%;">'+response.brandname+':'+competitivepartnumber+' <button onclick="deleteInterchange('+response.id+')">x</button></div></div>';
+              };
+              xhr.send();
+             }
+            }
+            
 
         </script>
         
@@ -200,7 +241,15 @@ $history=$logs->getPartsEvents(50);
                         <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></div></td><tr>
                         <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></div></td><tr>
                         <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
-                        <tr><th>Competitor<br/>Interchange</th></th><td><?php foreach($competitors as $competitor){;?><div><?php echo $competitor['brandAAIAID'].': '.$competitor['competitorpartnumber'];?></div><?php }?></td><tr>
+                        <tr>
+                            <th>Competitor<br/>Interchange</th>
+                            <td>
+                                <div id="interchanges">
+                                <?php foreach($competitorparts as $competitorpart){;?><div id="interchangeid_<?php echo $competitorpart['id'];?>" style="font-size: 80%;"><?php echo $interchange->brandName($competitorpart['brandAAIAID']).': '.$competitorpart['competitorpartnumber'].' <button onclick="deleteInterchange(\''.$competitorpart['id'].'\')">x</button>';?></div><?php }?>
+                                </div>
+                                <div><select id="competitivebrand"><?php foreach($competitivebrands as $competitivebrand){echo '<option value="'.$competitivebrand['brandAAIAID'].'">'.$competitivebrand['description'].'</option>';}?></select><input type="text" id="competitivepartnumber" size="10"/><button id="addinterchange" onclick="addInterchange()">+</button></div>
+                            </td>
+                        <tr>
                         <tr><th>Packages</th><td><?php foreach($packages as $package){;?><div><?php echo $package['weight'].' '.$package['weightsuom'];?></div><?php }?></td><tr>
                         <tr><th>Prices</th><td><?php foreach($prices as $price){;?><div><?php echo $price['pricetype'].': '.$price['amount'];?></div><?php }?></td><tr>
                         <tr><th>Attributes</th>
@@ -214,14 +263,14 @@ $history=$logs->getPartsEvents(50);
                                         }
                                         else
                                         {
-                                            echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">-</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).'<input type="text"/></div><div style="clear:both;"></div></div>';
+                                            echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).'<input type="text"/></div><div style="clear:both;"></div></div>';
                                         }
                                     } ?>
                                 </div>
 
                                 <div id="unappliedattributes" style="padding:5px;">
                                         <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
-                                            echo '<div id="unappliedattribute_'.$attribute['PAID'].'"><div style="width:2em;    float:left;"> <button onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div><div style="float:left;">' . $attribute['name'] . '</div><div style="clear:both;"></div></div>';
+                                            echo '<div id="unappliedattribute_'.$attribute['PAID'].'"><div style="width:2em;float:left;"> <button onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div><div style="float:left;">' . $attribute['name'] . '</div><div style="clear:both;"></div></div>';
                                         }?>
                                 </div>
                             </td>

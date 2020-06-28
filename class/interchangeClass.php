@@ -3,23 +3,26 @@ include_once("mysqlClass.php");
 
 class interchange
 {
-
- function addInterchange($partnumber,$competitorpartnumber,$brandAAIAID,$interchangequantity,$uom,$interchangenotes,$internalnotes)
+ function addInterchange($partnumber,$competitorpartnumber,$brandAAIAID,$interchangequantity,$uom,$interchangenotes,$internalnotes,$deleteexisting=false)
  {
   $id=false;
   $db=new mysql; $db->connect();
 
-  if($stmt=$db->conn->prepare('delete from interchange where partnumber=? and brandAAIAID=? and interchangequantity=? and uom=?'))
+  if($deleteexisting)
   {
-   if($stmt->bind_param('ssis',$partnumber,$brandAAIAID,$interchangequantity,$uom))
+   if($stmt=$db->conn->prepare('delete from interchange where partnumber=? and brandAAIAID=? and interchangequantity=? and uom=?'))
    {
-    $stmt->execute();
-   }
-  }   
-    
+    if($stmt->bind_param('ssis',$partnumber,$brandAAIAID,$interchangequantity,$uom))
+    {
+     $stmt->execute();
+    }
+   }  
+  }
+   
+  $internalnotesencoded=base64_encode($internalnotes); $interchangenotesencoded=base64_encode($interchangenotes);
   if($stmt=$db->conn->prepare('insert into interchange (id,partnumber,competitorpartnumber,brandAAIAID,interchangequantity,uom,interchangenotes,internalnotes) values(null,?,?,?,?,?,?,?)'))
   {
-   if($stmt->bind_param('sssisss',$partnumber,$competitorpartnumber,$brandAAIAID,$interchangequantity,$uom,$interchangenotes,$internalnotes))
+   if($stmt->bind_param('sssisss',$partnumber,$competitorpartnumber,$brandAAIAID,$interchangequantity,$uom,$interchangenotesencoded,$internalnotesencoded))
    {
     if($stmt->execute())
     {
@@ -31,37 +34,37 @@ class interchange
   return $id;
  }
 
- function getInterchangeById($interchangeid)
+ function getInterchangeById($id)
  {
   $db=new mysql; $db->connect();
-  $records=array();
+  $interchange=false;
   
   if($stmt=$db->conn->prepare('select * from interchange where id=?'))
   {
-   if($stmt->bind_param('i',$interchangeid))
+   if($stmt->bind_param('i',$id))
    {
     if($stmt->execute())
     {
      $db->result = $stmt->get_result();
-     while($row = $db->result->fetch_assoc())
+     if($row = $db->result->fetch_assoc())
      {
-      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'referenceitem'=>$row['referenceitem'],'interchangenotes'=>$row['interchangenotes'],'internalnotes'=>$row['internalnotes']);
+      $interchange=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'interchangenotes'=>base64_decode($row['interchangenotes']),'internalnotes'=>base64_decode($row['internalnotes']));
      }
     }
    }
   }
   $db->close();
-  return $records;   
+  return $interchange;   
  }
 
- function deleteInterchangeById($interchangeid)
+ function deleteInterchangeById($id)
  {
   $db=new mysql; $db->connect();
   $result=false;
   
   if($stmt=$db->conn->prepare('delete from interchange where id=?'))
   {
-   if($stmt->bind_param('i',$interchangeid))
+   if($stmt->bind_param('i',$id))
    {
     if($stmt->execute())
     {
@@ -71,6 +74,24 @@ class interchange
   }
   $db->close();
   return $result;
+ }
+
+ function getInterchangesByCompetitorBrand($brandAAIAID)
+ {
+  $db=new mysql; $db->connect();
+  $interchanges=array();
+  if($stmt=$db->conn->prepare('select * from interchange where brandAAIAID=?'))
+  {
+   $stmt->bind_param('s',$brandAAIAID);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $interchanges[]=array('partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'interchangenotes'=>base64_decode($row['interchangenotes']),'internalnotes'=>base64_decode($row['internalnotes']));
+   }
+  }
+  $db->close();
+  return $interchanges;   
  }
  
  function getInterchangeByPartnumber($partnumber)
@@ -85,7 +106,7 @@ class interchange
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'interchangenotes'=>$row['interchangenotes'],'internalnotes'=>$row['internalnotes']);
+    $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'interchangenotes'=>base64_decode($row['interchangenotes']),'internalnotes'=>base64_decode($row['internalnotes']));
    }
   }
   $db->close();
@@ -105,7 +126,7 @@ class interchange
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $records[]=array('brandAAIAID'=>$row['brandAAIAID'],'name'=>$this->brandName($row['brandAAIAID']));
+    $records[]=array('brandAAIAID'=>$row['brandAAIAID'],'name'=>$this->brandName($row['brandAAIAID']));
    }
   }
   $db->close();
@@ -134,7 +155,25 @@ class interchange
   $db->close();
   return $name;   
  }
- 
+
+ function getCompetitivebrands()
+ {
+  $db=new mysql; $db->connect();
+  $brands=array();
+  if($stmt=$db->conn->prepare('select * from competitivebrand order by description'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $brands[]=array('brandAAIAID'=>$row['brandAAIAID'],'description'=>$row['description']);
+   }
+  }
+  $db->close();
+  return $brands;   
+ }
+
+
  
  function importBrandTable($data)
  {
@@ -150,10 +189,6 @@ class interchange
    }
   }
   $db->close(); 
- }
- 
-  
- 
- 
+ } 
  
 }?>

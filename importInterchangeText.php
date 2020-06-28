@@ -59,7 +59,7 @@ if (isset($_POST['input']))
    $errors[]='Field count was wrong (expected exactly 7 tab-delimited columns)';
   }
  }
- $finalresultmessage='Imported '.$importcount.' price records';
+ $finalresultmessage='Imported '.$importcount.' interchange records';
  if($invalidcount>0){$finalresultmessage.='. '.$invalidcount.' records were ignored because of invalid data.';};
  $errors[]=$finalresultmessage;
 }

@@ -1,40 +1,75 @@
 <?php
 include_once('./class/pimClass.php');
-include_once('./class/logsClass.php');
+include_once('./class/interchangeClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/logsClass.php');
 include_once('./class/XLSXWriterClass.php');
 $navCategory = 'import/export';
 
 session_start();
 
 $pim = new pim();
+$interchange=new interchange;
 $logs=new logs();
 $pcdb = new pcdb();
 $writer = new XLSXWriter();
-$pcdbVersion=$pcdb->version();
+//$pcdbVersion=$pcdb->version();
 
-$competitorBrandAAIAID=intval($_GET['competitorBrandAAIAID']);
+$competitorBrandAAIAID=$_GET['competitorBrandAAIAID'];
+$competitorBrandName=$interchange->brandName($competitorBrandAAIAID);
+$interchanges=$interchange->getInterchangesByCompetitorBrand($competitorBrandAAIAID);
 
 $streamXLSX=false;
 $xlsxdata='';
 
-$writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Part Category'=>'string','Competitor Partnumber(s)'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string'), array('widths'=>array(12,30,22,15,11),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+$writer->writeSheetHeader('Raw Data', array(
+    'Partnumber'=>'string',
+    'Part Type'=>'string',
+    'Part Category'=>'string',
+    $competitorBrandName.' Part'=>'string',
+    'Lifecycle Status'=>'string',
+    'Item-Level GTIN'=>'string',
+    'Replaced By'=>'string','Internal Notes'=>'string','Public Comments'=>'string'), array('widths'=>array(12,30,30,30,22,15,11,40,40),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
        
-foreach($partnumbers as $partnumber)
+foreach($interchanges as $interchange)
+{
+ $part=$pim->getPart($interchange['partnumber']);
+ if($part)
+ {
+  $row=array($interchange['partnumber'],
+      $pcdb->parttypeName($part['parttypeid']),
+      $pim->partCategoryName($part['partcategory']),
+      $interchange['competitorpartnumber'],
+      $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']), 
+      $part['GTIN'],
+      $part['replacedby'],$interchange['internalnotes'],$interchange['interchangenotes']);
+ }
+ $writer->writeSheetRow('Raw Data', $row);
+}
+
+//-------------- create the second sheet (Consolidated) ----------------------
+$consolidated=array();
+
+foreach($interchanges as $interchange)
+{
+ $consolidated[$interchange['partnumber']][]=$interchange['competitorpartnumber'];   
+}
+
+$writer->writeSheetHeader('Consolidated', array('Partnumber'=>'string', $competitorBrandName.' Part(s)'=>'string'), array('widths'=>array(12,30),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+       
+foreach($consolidated as $partnumber=>$competitorparts)
 {
  $part=$pim->getPart($partnumber);
  if($part)
  {
-     
-  $row=array($partnumber,$pcdb->parttypeName($part['parttypeid']),$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']), $part['GTIN'],$part['replacedby'],$pim->partCategoryName($part['partcategory']),$part['createdDate'],$part['firststockedDate'],$part['discontinuedDate']);
+  $row=array($partnumber, implode(',',$competitorparts));
  }
- else
- { // part is not in the part master list
-  $row=array($partnumber,'');
- }
- 
- $writer->writeSheetRow('Sheet1', $row);
+ $writer->writeSheetRow('Consolidated', $row);
 }
+
+//--------------------------------
+
+
 
 $writer->setAuthor('SandPIM'); 
 $xlsxdata=$writer->writeToString();
