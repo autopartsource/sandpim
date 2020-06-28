@@ -240,6 +240,7 @@ $history=$logs->getPartsEvents(50);
                         <tr><th>Descriptions</th><td><input type="text" id="description" value="<?php echo $part['description']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','description');">Update</button></div></td><tr>
                         <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></div></td><tr>
                         <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></div></td><tr>
+                        <tr><th>Replaced By</th><td><input type="text" id="replacedby" value="<?php echo $part['replacedby']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></div></td><tr>
                         <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
                         <tr>
                             <th>Competitor<br/>Interchange</th>

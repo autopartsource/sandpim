@@ -66,6 +66,13 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
    $pim->logPartEvent($partnumber,$userid,'UNSPC updated to:'.$_GET['value'],$oid);
   break;
 
+  case 'replacedby':
+   $pim->setPartReplacedby($partnumber,$_GET['value'],true);
+   $pim->setPartLifecyclestatus($partnumber,'7',false);
+
+   $oid=$pim->getOIDofPart($partnumber);
+   $pim->logPartEvent($partnumber,$userid,'Replaced By updated to:'.$_GET['value'].' and set lifecycle status to 7',$oid);
+  break;
 
   default:
    break;

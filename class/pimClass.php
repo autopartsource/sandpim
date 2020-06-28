@@ -574,6 +574,18 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
  
+ function setPartReplacedby($partnumber,$replacedby,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set replacedby=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $replacedby,$partnumber);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+ }
+  
  function getPartAttribute($partnumber,$PAID,$attributename)
  {
   $attributes=false;
