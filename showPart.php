@@ -62,13 +62,27 @@ $validpadbattributes=$padb->getAttributesForParttype($part['parttypeid']);
 $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
 $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
+$descriptions=$pim->getPartDescriptions($partnumber);
 $prices=$pricing->getPricesByPartnumber($partnumber);
 $competitorparts=$interchange->getInterchangeByPartnumber($partnumber);
 $competitivebrands=$interchange->getCompetitivebrands();
 $packages=$packaging->getPackagesByPartnumber($partnumber);
+$innerqtyuoms=$pcdb->getUoMsForPackaging('Inner Quantity');
+$orderablepackageuoms=$pcdb->getUoMsForPackaging('Orderable Package');
+$dimensionsuoms=$pcdb->getUoMsForPackaging('UOM for Dimensions');
+$weightsuoms=$pcdb->getUoMsForPackaging('UOM for Weight');
+$packageuoms=$pcdb->getUoMsForPackaging('Package UOM');
+$priceuoms=$pcdb->getUoMsForPrice();
+$pricetypes=$pcdb->getPriceTypeCodes();
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $lifecyclestatuses=$pcdb->getLifeCycleCodes();
+$descriptioncodes=$pcdb->getPartDescriptionTypeCodes();
+$descriptionlanguagecodes=$pcdb->getPartDescriptionLanguageCodes();
+$pricesheets=$pricing->getPricesheets();
 $history=$logs->getPartsEvents(50);
+
+
+
 
 ?>
 <!DOCTYPE html>
@@ -120,6 +134,45 @@ $history=$logs->getPartsEvents(50);
              xhr.send();
             }
             
+
+            function addDescription()
+            {
+             var descriptiontext = document.getElementById("descriptiontext").value;
+             var descriptioncode = document.getElementById("descriptioncode").value;
+             var languagecode = document.getElementById("descriptionlanguagecode").value;
+             if(descriptiontext.trim().length>0)
+             {
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddDescription.php?descriptiontext='+descriptiontext+'&descriptioncode='+descriptioncode+'&languagecode='+languagecode+'&partnumber=<?php echo $partnumber;?>');
+              
+              xhr.onload = function()
+              {
+               var response=JSON.parse(xhr.responseText);
+               document.getElementById("sandpiperoid").innerHTML=response.oid;
+
+               var container=document.getElementById('descriptions');
+               container.innerHTML+='<div id="descriptionid_'+response.id+'" style="font-size: 80%;">'+response.descriptioncode+': '+descriptiontext+' <button onclick="deleteDescription('+response.id+')">x</button></div>';
+              };
+              xhr.send();
+             }
+            }
+
+            function deleteDescription(descriptionid)
+            {
+             var descriptionsdiv = document.getElementById('descriptionid_'+descriptionid);
+             descriptionsdiv.parentNode.removeChild(descriptionsdiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeleteDescription.php?id='+descriptionid+'&partnumber=<?php echo $partnumber;?>');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
+             };
+             xhr.send();
+            }
+
+
             function addPAdbAttribute(PAID)
             {
              var xhr = new XMLHttpRequest();
@@ -209,12 +262,186 @@ $history=$logs->getPartsEvents(50);
                document.getElementById("sandpiperoid").innerHTML=response.oid;
 
                var container=document.getElementById('interchanges');
-               container.innerHTML+='<div id="interchangeid_'+response.id+'" style="font-size: 80%;">'+response.brandname+':'+competitivepartnumber+' <button onclick="deleteInterchange('+response.id+')">x</button></div></div>';
+               container.innerHTML+='<div id="interchangeid_'+response.id+'" style="font-size: 80%;">'+response.brandname+':'+competitivepartnumber+' <button onclick="deleteInterchange('+response.id+')">x</button></div>';
               };
               xhr.send();
              }
             }
-            
+
+            function addPackage()
+            {
+                
+             var packagebarcodecharacters='';
+             var packageuom = document.getElementById("packageuom").value;
+             var packagelevelgtin = document.getElementById("packagelevelgtin").value;
+             var quantityofeaches = document.getElementById("quantityofeaches").value;
+             var innerquantity = document.getElementById("innerquantity").value;
+             var innerquantityuom = document.getElementById("innerquantityuom").value;
+             var weight = document.getElementById("weight").value;
+             var weightsuom = document.getElementById("weightsuom").value;
+             var shippinglength = document.getElementById("shippinglength").value;
+             var shippingwidth = document.getElementById("shippingwidth").value;
+             var shippingheight = document.getElementById("shippingheight").value;
+             var dimensionsuom = document.getElementById("dimensionsuom").value;
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddPackage.php?packagebarcodecharacters='+packagebarcodecharacters+'&packageuom='+packageuom+'&packagelevelgtin='+packagelevelgtin+'&quantityofeaches='+quantityofeaches+'&innerquantity='+innerquantity+'&innerquantityuom='+innerquantityuom+'&weight='+weight+'&weightsuom='+weightsuom+'&shippinglength='+shippinglength+'&shippingwidth='+shippingwidth+'&shippingheight='+shippingheight+'&dimensionsuom='+dimensionsuom+'&partnumber=<?php echo $partnumber;?>');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
+
+              var container=document.getElementById('packages');
+              container.innerHTML+='<div id="packageid_'+response.id+'" style="background-color:#cd9f61; font-size: 80%; border:2px solid #808080;margin: 2px;">'+response.nicepackage+' <button onclick="deletePackage('+response.id+')">x</button></div>';
+             };
+             xhr.send();
+            }
+
+            function deletePackage(packageid)
+            {
+             var packagesdiv = document.getElementById('packageid_'+packageid);
+             packagesdiv.parentNode.removeChild(packagesdiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeletePackage.php?id='+packageid+'&partnumber=<?php echo $partnumber;?>');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
+             };
+             xhr.send();
+            }
+
+            function addPrice()
+            {
+             var amount = document.getElementById("priceamount").value;
+             var pricetype = document.getElementById("newpricetype").getAttribute("data-pricetype");
+             var pricesheetnumber = document.getElementById("pricesheetnumber").value;
+             var currency = document.getElementById("newpricecurrency").getAttribute("data-currency");
+             var priceuom = document.getElementById("priceuom").value;
+             
+             if(amount>0)
+             {
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddPrice.php?pricesheetnumber='+pricesheetnumber+'&amount='+amount+'&currency='+currency+'&priceuom='+priceuom+'&pricetype='+pricetype+'&partnumber=<?php echo $partnumber;?>');
+              
+              xhr.onload = function()
+              {
+               var response=JSON.parse(xhr.responseText);
+               document.getElementById("sandpiperoid").innerHTML=response.oid;
+
+               var container=document.getElementById('prices');
+               container.innerHTML+='<div id="priceid_'+response.id+'" style="background-color:#85bb65; font-size: 80%; border:2px solid #808080;margin: 2px;">'+response.niceprice+' <button onclick="deletePrice('+response.id+')">x</button></div>';
+              };
+              xhr.send();
+             }
+            }
+
+            function deletePrice(priceid)
+            {
+             var pricesdiv = document.getElementById('priceid_'+priceid);
+             pricesdiv.parentNode.removeChild(pricesdiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeletePrice.php?id='+priceid+'&partnumber=<?php echo $partnumber;?>');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
+             };
+             xhr.send();
+            }
+
+            function showSlectedPricesheetCurrency()
+            {
+             var e = document.getElementById("pricesheetnumber");
+             var selectedpricesheetnumber = e.options[e.selectedIndex].value;
+
+             console.log(selectedpricesheetnumber);
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxPricesheetCurrency.php?pricesheetnumber='+selectedpricesheetnumber);
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("newpricecurrency").innerHTML=response.currencycode
+              document.getElementById("newpricecurrency").setAttribute("data-currency",response.currencycode);
+              document.getElementById("newpricetype").innerHTML=response.pricetypename;
+              document.getElementById("newpricetype").setAttribute("data-pricetype",response.pricetype);
+              document.getElementById("priceamount").disabled=false;
+              document.getElementById("addprice").disabled=false;
+             };
+             xhr.send();
+            }
+
+
+            function showhideNewDescription()
+            {
+             var x = document.getElementById("newdescription");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+
+            function showhideNewInterchange()
+            {
+             var x = document.getElementById("newinterchange");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+
+            function showhideNewpackage()
+            {
+             var x = document.getElementById("newpackage");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+
+            function showhideNewPrice()
+            {
+             var x = document.getElementById("newprice");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+
+
+            function showhideUnappliedAttributes()
+            {
+             var x = document.getElementById("unappliedattributes");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+
+
+
+
 
         </script>
         
@@ -237,7 +464,20 @@ $history=$logs->getPartsEvents(50);
                         <tr><th>Partnumber</th><td><?php echo $part['partnumber']; ?></td></tr>
                         <tr><th>Part Type</th><td><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
                         <tr><th>Part Category</th><td><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
-                        <tr><th>Descriptions</th><td><input type="text" id="description" value="<?php echo $part['description']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','description');">Update</button></div></td><tr>
+                        <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
+                        <tr>
+                            <th>Descriptions</th>
+                            <td>
+                                <div id="descriptions">
+                                <?php foreach($descriptions as $description){;?><div id="descriptionid_<?php echo $description['id'];?>" style="font-size: 80%;"><?php echo $description['descriptioncode'].': '.$description['description'].' <button onclick="deleteDescription(\''.$description['id'].'\')">x</button>';?></div><?php }?>
+                                </div>
+                                <div onclick="showhideNewDescription()">...</div>
+                                <div id="newdescription" style="display:none; padding-top: 10px;">
+                                    <select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){echo '<option value="'.$descriptioncode['code'].'">'.$descriptioncode['description'].'</option>';}?></select>
+                                    <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){echo '<option value="'.$descriptionlanguagecode['code'].'">'.$descriptionlanguagecode['description'].'</option>';}?></select>
+                                    <input type="text" id="descriptiontext" size="20"/><button id="adddescrption" onclick="addDescription()">+</button></div>
+                            </td>
+                        <tr>
                         <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></div></td><tr>
                         <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></div></td><tr>
                         <tr><th>Replaced By</th><td><input type="text" id="replacedby" value="<?php echo $part['replacedby']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></div></td><tr>
@@ -248,11 +488,42 @@ $history=$logs->getPartsEvents(50);
                                 <div id="interchanges">
                                 <?php foreach($competitorparts as $competitorpart){;?><div id="interchangeid_<?php echo $competitorpart['id'];?>" style="font-size: 80%;"><?php echo $interchange->brandName($competitorpart['brandAAIAID']).': '.$competitorpart['competitorpartnumber'].' <button onclick="deleteInterchange(\''.$competitorpart['id'].'\')">x</button>';?></div><?php }?>
                                 </div>
-                                <div><select id="competitivebrand"><?php foreach($competitivebrands as $competitivebrand){echo '<option value="'.$competitivebrand['brandAAIAID'].'">'.$competitivebrand['description'].'</option>';}?></select><input type="text" id="competitivepartnumber" size="10"/><button id="addinterchange" onclick="addInterchange()">+</button></div>
+                                <div onclick="showhideNewInterchange()">...</div>
+                                <div id="newinterchange" style="display:none; padding-top: 10px;"><div style="float:left;padding-right: 10px;"><a href="./competitiveBbrandBrowser.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="float:left;"><select id="competitivebrand"><?php foreach($competitivebrands as $competitivebrand){echo '<option value="'.$competitivebrand['brandAAIAID'].'">'.$competitivebrand['description'].'</option>';}?></select><input type="text" id="competitivepartnumber" size="10"/><button id="addinterchange" onclick="addInterchange()">+</button></div><div style="clear:both;"></div></div>
                             </td>
                         <tr>
-                        <tr><th>Packages</th><td><?php foreach($packages as $package){;?><div><?php echo $package['weight'].' '.$package['weightsuom'];?></div><?php }?></td><tr>
-                        <tr><th>Prices</th><td><?php foreach($prices as $price){;?><div><?php echo $price['pricetype'].': '.$price['amount'];?></div><?php }?></td><tr>
+                        <tr>
+                            <th>Packages</th>
+                            <td>
+                                <div id="packages"> 
+                                <?php foreach($packages as $package){;?><div style="background-color:#cd9f61; font-size: 80%; border:2px solid #808080;margin: 2px;" id="packageid_<?php echo $package['id'];?>" style="font-size: 80%;"><?php echo $package['nicepackage'];?>  <button onclick="deletePackage(<?php echo $package['id'];?>)">x</button></div><?php }?>
+                                </div>
+                                <div onclick="showhideNewpackage()">...</div>
+                                <div id="newpackage" style="display: none; padding-top: 10px; text-align:left;">
+                                    <div style="padding-top:3px;">Package UoM <select id="packageuom"><?php foreach($packageuoms as $packageuom){$selected=''; if($packageuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$packageuom['code'].'"'.$selected.'>'.$packageuom['description'].'</option>';}?></select></div>
+                                    <div style="padding-top:3px;">Package-Level GTIN <input type="text" id="packagelevelgtin" size="12"/></div>
+                                    <div style="padding-top:3px;">Qty of Eaches <input type="text" id="quantityofeaches" size="2" value="1" style="text-align:right;"/></div>
+                                    <div style="padding-top:3px;">Inner Qty <input type="text" id="innerquantity" size="2" value="1" style="text-align:right;"/><select id="innerquantityuom"><?php foreach($innerqtyuoms as $innerqtyuom){$selected=''; if($innerqtyuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$innerqtyuom['code'].'"'.$selected.'>'.$innerqtyuom['description'].'</option>';}?></select></div>
+                                    <div style="padding-top:3px;">Weight <input type="text" id="weight" size="2" style="text-align:right;"/><select id="weightsuom"><?php foreach($weightsuoms as $weightsuom){echo '<option value="'.$weightsuom['code'].'">'.$weightsuom['description'].'</option>';}?></select></div>
+                                    <div style="padding-top:3px;">L / W / H <input type="text" id="shippinglength" size="2" style="text-align:right;"/><input type="text" id="shippingwidth" size="2" style="text-align:right;"/><input type="text" id="shippingheight" size="2" style="text-align:right;"/><select id="dimensionsuom"><?php foreach($dimensionsuoms as $dimensionsuom){echo '<option value="'.$dimensionsuom['code'].'">'.$dimensionsuom['description'].'</option>';}?></select></div>
+                                    <div><button id="addpackage" onclick="addPackage()">Create</button></div>
+                                </div>
+                            </td>
+                        <tr>
+                        <tr><th>Prices</th>
+                            <td>
+                                <div id="prices">
+                                <?php foreach($prices as $price){;?><div id="priceid_<?php echo $price['id'];?>" style="background-color:#85bb65; font-size: 80%; border:2px solid #808080;margin: 2px;"><?php echo $price['niceprice'];?> <button onclick="deletePrice(<?php echo $price['id'];?>)">x</button></div><?php }?>
+                                </div>
+                                <div onclick="showhideNewPrice()">...</div>
+                                <div id="newprice" style="display:none; text-align: left; padding-top: 10px;">
+                                    <div style="padding-top:3px;"><div style="float:left;">Price Sheet Number <select id="pricesheetnumber" name="pricesheet" onchange="showSlectedPricesheetCurrency()"><option value="">select...</option><?php foreach($pricesheets as $pricesheet){echo '<option value="'.$pricesheet['number'].'">'.$pricesheet['description'].'</option>';}?></select></div><div style="float:left;padding-left: 5px;"><a href="./priceSheets.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> </div>
+                                    <div style="padding-top:3px;">Unit of Measure <select id="priceuom" name="priceuom"><?php foreach($priceuoms as $priceuom){$selected =''; if($priceuom['code']=='PE'){$selected=' selected';} echo '<option value="'.$priceuom['code'].'"'.$selected.'>'.$priceuom['description'].'</option>';}?></select></div>
+                                    <div style="padding-top:3px;"><div style="float:left;">Price Type: </div><div id="newpricetype" data-pricetype="" style="float:left;padding-top:1px;padding-right:5px;"></div><div style="clear:both;"></div> </div>
+                                    <div style="padding-top:3px;"><div style="float:left;">Amount <input disabled style="text-align:right;" type="text" id="priceamount" size="4"/></div> <div id="newpricecurrency" data-currency="" style="float:left;padding-top:3px;padding-right:5px;"></div> <button id="addprice" disabled onclick="addPrice()">+</button><div style="clear:both;"></div></div>
+                                </div>
+                            </td>
+                        </tr>
                         <tr><th>Attributes</th>
                             <td>
                                 <div id="appliedattributes" style="padding:5px;">
@@ -264,12 +535,12 @@ $history=$logs->getPartsEvents(50);
                                         }
                                         else
                                         {
-                                            echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).'<input type="text"/></div><div style="clear:both;"></div></div>';
+                                            echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).' <input type="text"/></div><div style="clear:both;"></div></div>';
                                         }
                                     } ?>
                                 </div>
-
-                                <div id="unappliedattributes" style="padding:5px;">
+                                <div onclick="showhideUnappliedAttributes()">...</div>
+                                <div id="unappliedattributes" style="display:none; padding:5px;">
                                         <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
                                             echo '<div id="unappliedattribute_'.$attribute['PAID'].'"><div style="width:2em;float:left;"> <button onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div><div style="float:left;">' . $attribute['name'] . '</div><div style="clear:both;"></div></div>';
                                         }?>
@@ -278,7 +549,6 @@ $history=$logs->getPartsEvents(50);
                         </tr>
                         <tr><th>Connected Assets</th><td><?php if($connectedassets){foreach($connectedassets as $connectedasset){echo '<a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> ';}};?></td><tr>
                         <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
-                        <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
                     </table>
                 </div>
                 <?php if(count($history)){echo '<div><a href="./partHistory.php?partnumber='.$partnumber.'">History</a></div>';}?>

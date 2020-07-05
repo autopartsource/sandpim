@@ -6,12 +6,11 @@ class packaging
 
  function addPackage($partnumber,$packageuom,$quantityofeaches,$innerquantity,$innerquantityuom,$weight,$weightsuom,$packagelevelGTIN,$packagebarcodecharacters,$shippingheight,$shippingwidth,$shippinglength,$dimensionsuom)
  {
+  $db=new mysql; $db->connect();
   $id=false;
-  $db=new mysql; 
-  $db->connect();
-  if($stmt=$db->conn->prepare('insert into packages (id,partnumber,packageuom,quantityofeaches,innerquantity,innerquantityuom,weight,weightsuom,packagelevelGTIN,packagebarcodecharacters,shippingheight,shippingwidth,shippinglength,dimensionsuom) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?)'))
+  if($stmt=$db->conn->prepare('insert into package (id,partnumber,packageuom,quantityofeaches,innerquantity,innerquantityuom,weight,weightsuom,packagelevelGTIN,packagebarcodecharacters,shippingheight,shippingwidth,shippinglength,dimensionsuom) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?)'))
   {
-   if($stmt->bind_param('ssiisisssiiis',$partnumber,$packageuom,$quantityofeaches,$innerquantity,$innerquantityuom,$weight,$weightsuom,$packagelevelGTIN,$packagebarcodecharacters,$shippingheight,$shippingwidth,$shippinglength,$dimensionsuom))
+   if($stmt->bind_param('ssddsdsssddds',$partnumber,$packageuom,$quantityofeaches,$innerquantity,$innerquantityuom,$weight,$weightsuom,$packagelevelGTIN,$packagebarcodecharacters,$shippingheight,$shippingwidth,$shippinglength,$dimensionsuom))
    {
     if($stmt->execute())
     {
@@ -25,38 +24,62 @@ class packaging
 
  function getPackageById($packageid)
  {
-  $records=false;
-  $db=new mysql; 
-  $db->connect();
-  
+  $db=new mysql; $db->connect();
+  $package=false;
   if($stmt=$db->conn->prepare('select * from package where id=?'))
   {
-   $stmt->bind_param('i',$packageid);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($stmt->bind_param('i',$packageid))
    {
-       $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$row['innerquantity'],'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$row['weight'],'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$row['shippingheight'],'shippingwidth'=>$row['shippingwidth'],'shippinglength'=>$row['shippinglength'],'dimensionsuom'=>$row['dimensionsuom']);
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $innerquantity=$this->decimalsFormat($row['innerquantity']); 
+      $weight=$this->decimalsFormat($row['weight']);
+      $shippinglength=$this->decimalsFormat($row['shippinglength']);
+      $shippingwidth=$this->decimalsFormat($row['shippingwidth']);
+      $shippingheight=$this->decimalsFormat($row['shippingheight']);
+      $nicedims=''; if($shippinglength+$shippingwidth+$shippingheight>0){$nicedims=', L/W/H ('.$row['dimensionsuom'].'): '.$shippinglength.' x '.$shippingwidth.' x '.$shippingheight;}
+      $nicepackage=$row['packageuom'].' '.$innerquantity.', '.$weight.' '.$row['weightsuom'].$nicedims;
+      $package=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$innerquantity,'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$weight,'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$shippingheight,'shippingwidth'=>$shippingwidth,'shippinglength'=>$shippinglength,'dimensionsuom'=>$row['dimensionsuom'],'nicepackage'=>$nicepackage);
+     }
+    }
    }
   }
   $db->close();
-  return $records;   
+  return $package;
  }
 
  function deletePackageById($packageid)
  {
-  $records=false;
-  $db=new mysql; 
-  $db->connect();
-  
+  $db=new mysql; $db->connect();
+  $result=array();
   if($stmt=$db->conn->prepare('delete from package where id=?'))
   {
-   $stmt->bind_param('i',$packageid);
-   $stmt->execute();
+   if($stmt->bind_param('i',$packageid))
+   {
+    $result=$stmt->execute();
+   }
   }
   $db->close();
-  return $records;   
+  return $result;   
  }
+ 
+ function decimalsFormat($input)
+ {
+  $output=$input;
+  while(true)
+  {
+   if(round($input,1)==$input){$output=round($input,1); break;}
+   if(round($input,2)==$input){$output=round($input,2); break;}
+   if(round($input,3)==$input){$output=round($input,3); break;}
+   if(round($input,4)==$input){$output=round($input,4); break;}
+   break;
+  }
+  return $output;
+ }
+ 
  
  function getPackagesByPartnumber($partnumber)
  {
@@ -72,13 +95,30 @@ class packaging
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$row['innerquantity'],'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$row['weight'],'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$row['shippingheight'],'shippingwidth'=>$row['shippingwidth'],'shippinglength'=>$row['shippinglength'],'dimensionsuom'=>$row['dimensionsuom']);
+      $innerquantity=$this->decimalsFormat($row['innerquantity']); 
+      $weight=$this->decimalsFormat($row['weight']);
+      $shippinglength=$this->decimalsFormat($row['shippinglength']);
+      $shippingwidth=$this->decimalsFormat($row['shippingwidth']);
+      $shippingheight=$this->decimalsFormat($row['shippingheight']);
+      $nicedims=''; if($shippinglength+$shippingwidth+$shippingheight>0){$nicedims=', L/W/H ('.$row['dimensionsuom'].'): '.$shippinglength.' x '.$shippingwidth.' x '.$shippingheight;}
+      $nicepackage=$row['packageuom'].' '.$innerquantity.', '.$weight.' '.$row['weightsuom'].$nicedims;
+      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$innerquantity,'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$weight,'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$shippingheight,'shippingwidth'=>$shippingwidth,'shippinglength'=>$shippinglength,'dimensionsuom'=>$row['dimensionsuom'],'nicepackage'=>$nicepackage);
      }
     }
    }
   }
   $db->close();
   return $records;   
+ }
+ 
+ function nicePackageStringByID($packageid)
+ {
+  $returnval='';
+  if($package=$this->getPackageById($packageid))
+  {
+   $returnval=$package['nicepackage'];
+  }
+  return $returnval;
  }
  
  

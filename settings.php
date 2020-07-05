@@ -32,6 +32,7 @@ $pim=new pim;
                 <div style="padding:10px;"><a href="./competitiveBbrandBrowser.php">Competitive Brands</a></div>
                 <div style="padding:10px;"><a href="./partCategories.php">Part Categories</a></div>
                 <div style="padding:10px;"><a href="./receiverProfiles.php">Receiver Profiles</a></div>
+                <div style="padding:10px;"><a href="./priceSheets.php">Price Sheets</a></div>
             </div>
 
             <div class="contentRight"></div>

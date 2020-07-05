@@ -624,10 +624,93 @@ function countAppsByPartcategories($partcategories)
   return $attribute;
  }
 
+ function getPartDescriptions($partnumber)
+ {
+  $descriptions=array(); 
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from part_description where partnumber=?'))
+  {
+   if($stmt->bind_param('s',$partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $descriptions[]=array('id'=>$row['id'],'description'=>$row['description'],'descriptioncode'=>$row['descriptioncode'],'sequence'=>$row['sequence'],'languagecode'=>$row['languagecode']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $descriptions;
+ }
+
+ function addPartDescription($partnumber,$description,$descriptioncode,$sequence,$languagecode)
+ {
+  $id=false;
+  $db=new mysql; $db->connect();
+  
+  if($stmt=$db->conn->prepare('insert into part_description (id,partnumber,description,descriptioncode,sequence,languagecode) values(null,?,?,?,?,?)'))
+  {
+   if($stmt->bind_param('sssis',$partnumber,$description,$descriptioncode,$sequence,$languagecode))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+    }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+   }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+  return $id;
+ }
+
+ function getPartDescriptionByID($descriptionid)
+ {
+  $description=false; 
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from part_description where id=?'))
+  {
+   if($stmt->bind_param('d',$descriptionid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $description=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'description'=>$row['description'],'descriptioncode'=>$row['descriptioncode'],'sequence'=>$row['sequence'],'languagecode'=>$row['languagecode']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $description;
+ }
+
+ 
+ function deletePartDescriptionById($descriptionid)
+ {
+  $db=new mysql; $db->connect();
+  $result=false;
+  
+  if($stmt=$db->conn->prepare('delete from part_description where id=?'))
+  {
+   if($stmt->bind_param('i',$descriptionid))
+   {
+    if($stmt->execute())
+    {
+     $result=true;
+    }
+   }
+  }
+  $db->close();
+  return $result;   
+ }
  
  
  
  
+
  function getPartAttributes($partnumber)
  {
   $attributes=array();

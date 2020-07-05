@@ -157,13 +157,13 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=39 order by CodeValue'))
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=39 order by CodeValue'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription'],'format'=>$row['FieldFormat']);
    }
   }
   $db->close();
@@ -217,7 +217,7 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=60 order by CodeValue'))
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=60 order by CodeDescription'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -229,6 +229,26 @@ class pcdb
   $db->close();
   return $codes;    
  }
+
+ function getPartDescriptionLanguageCodes()
+ {
+  $codes=array();
+  $db = new mysql; $db->dbname=$db->pcdbname;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect();
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=31 order by CodeDescription'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+   }
+  }
+  $db->close();
+  return $codes;    
+ }
+
  
  function partDescriptionTypeCodeDescription($code)
  {
@@ -305,6 +325,111 @@ function getValidEXPIvalues($code)
   $db->close();
   return $options;
  }
+
+ function getUoMsForPackaging($typename)
+ {
+/*
+|26 | Inner Quantity UOM                                        | H22                  |            10 |
+|25 | Orderable Package                                         | H24                  |            10 |
+|24 | UOM for Dimensions                                        | H40                  |            10 |
+|23 | UOM for Weight                                            | H46                  |            10 |
+|27 | Package UOM                                               | H15                  |            10 |
+*/
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect(); 
+  $records=array();
+  $type=0;
   
+  switch ($typename)
+  {
+   case 'Inner Quantity': $type=26; break;
+   case 'Orderable Package': $type=25; break;
+   case 'UOM for Dimensions': $type=24; break;
+   case 'UOM for Weight': $type=23; break;
+   case 'Package UOM': $type=27; break;
+   default : break;
+  }
+  
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=? order by CodeDescription'))
+  {
+   if($stmt->bind_param('i',$type))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $records[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $records;     
+ }
+
+ 
+ function getUoMsForPrice()
+ {
+  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect(); 
+  $records=array();
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=34 order by CodeDescription'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $records[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+    }
+   }
+  }
+  $db->close();
+  return $records;     
+ }
+ 
+ function getPriceTypeCodes()
+ {
+  $codes=array();
+  $db = new mysql; $db->dbname=$db->pcdbname;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect();
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=47 order by CodeValue'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+   }
+  }
+  $db->close();
+  return $codes;    
+ }
+
+ function priceTypeDescription($pricetype)
+ {
+  $description='not found';
+  $db = new mysql; $db->dbname=$db->pcdbname;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect();
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=47 and CodeValue=? order by CodeDescription'))
+  {
+   if($stmt->bind_param('s',$pricetype))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $description=$row['CodeDescription'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $description;
+ }
+          
+ 
 }
 ?>

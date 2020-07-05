@@ -485,6 +485,18 @@ class setup
         INDEX idx_expirationdate (expirationdate)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - price ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - price ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE pricesheet (
+        pricesheetnumber varchar(255) NOT NULL,
+        description varchar(255) NOT NULL,
+        pricetype varchar(255) NOT NULL,
+        currency varchar(3) NOT NULL,
+        effectivedate date not null,
+        expirationdate date not null,
+        PRIMARY KEY (pricesheetnumber))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - pricesheet ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - pricesheet ('.$db->conn->error.')';}
+
+
         
         $sql="CREATE TABLE package (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
