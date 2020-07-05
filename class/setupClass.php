@@ -627,6 +627,19 @@ class setup
         PRIMARY KEY (configname))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - config ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - config ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE config_options (
+        configname varchar(255) not null,
+        format varchar(255) not null,
+        validvalues text not null,
+        defaultvalue varchar(255) not null,
+        description text not null,
+        PRIMARY KEY (configname))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - config_options ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - config_options ('.$db->conn->error.')';}
+        
+        
+        
+        
+        
         $sql="CREATE TABLE system_history (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         eventdatetime datetime not null,

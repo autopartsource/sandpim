@@ -143,7 +143,7 @@ $history=$logs->getPartsEvents(50);
              if(descriptiontext.trim().length>0)
              {
               var xhr = new XMLHttpRequest();
-              xhr.open('GET', 'ajaxAddDescription.php?descriptiontext='+descriptiontext+'&descriptioncode='+descriptioncode+'&languagecode='+languagecode+'&partnumber=<?php echo $partnumber;?>');
+              xhr.open('GET', 'ajaxAddDescription.php?descriptiontext='+btoa(descriptiontext)+'&descriptioncode='+descriptioncode+'&languagecode='+languagecode+'&partnumber=<?php echo $partnumber;?>');
               
               xhr.onload = function()
               {
@@ -355,8 +355,6 @@ $history=$logs->getPartsEvents(50);
             {
              var e = document.getElementById("pricesheetnumber");
              var selectedpricesheetnumber = e.options[e.selectedIndex].value;
-
-             console.log(selectedpricesheetnumber);
              var xhr = new XMLHttpRequest();
              xhr.open('GET', 'ajaxPricesheetCurrency.php?pricesheetnumber='+selectedpricesheetnumber);
              xhr.onload = function()
@@ -462,8 +460,8 @@ $history=$logs->getPartsEvents(50);
                 <div style="padding:10px;">
                     <table border="1" cellpadding="5">
                         <tr><th>Partnumber</th><td><?php echo $part['partnumber']; ?></td></tr>
-                        <tr><th>Part Type</th><td><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
-                        <tr><th>Part Category</th><td><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
+                        <tr><th>Part Type</th><td><div style="float:left;"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div><div style="float:left;padding-left:10px;"><a href="./pcdbTypeBrowser.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
+                        <tr><th>Category</th><td><div style="float:left;"><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></div><div style="float:left;padding-left:10px;"><a href="./partCategories.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
                         <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
                         <tr>
                             <th>Descriptions</th>
@@ -473,17 +471,17 @@ $history=$logs->getPartsEvents(50);
                                 </div>
                                 <div onclick="showhideNewDescription()">...</div>
                                 <div id="newdescription" style="display:none; padding-top: 10px;">
-                                    <select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){echo '<option value="'.$descriptioncode['code'].'">'.$descriptioncode['description'].'</option>';}?></select>
-                                    <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){echo '<option value="'.$descriptionlanguagecode['code'].'">'.$descriptionlanguagecode['description'].'</option>';}?></select>
-                                    <input type="text" id="descriptiontext" size="20"/><button id="adddescrption" onclick="addDescription()">+</button></div>
+                                    <div style="padding:5px;"><input type="text" id="descriptiontext" size="40"/><button id="adddescrption" onclick="addDescription()">Add</button></div>
+                                    <div><select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){echo '<option value="'.$descriptioncode['code'].'">'.$descriptioncode['description'].'</option>';}?></select>                                       <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){echo '<option value="'.$descriptionlanguagecode['code'].'">'.$descriptionlanguagecode['description'].'</option>';}?></select></div>
+                                </div>
                             </td>
                         <tr>
-                        <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></div></td><tr>
-                        <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></div></td><tr>
-                        <tr><th>Replaced By</th><td><input type="text" id="replacedby" value="<?php echo $part['replacedby']?>"/><div><button onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></div></td><tr>
+                        <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></td><tr>
+                        <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></td><tr>
+                        <tr><th>Replaced By</th><td><input type="text" id="replacedby" value="<?php echo $part['replacedby']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></td><tr>
                         <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
                         <tr>
-                            <th>Competitor<br/>Interchange</th>
+                            <th>Interchange</th>
                             <td>
                                 <div id="interchanges">
                                 <?php foreach($competitorparts as $competitorpart){;?><div id="interchangeid_<?php echo $competitorpart['id'];?>" style="font-size: 80%;"><?php echo $interchange->brandName($competitorpart['brandAAIAID']).': '.$competitorpart['competitorpartnumber'].' <button onclick="deleteInterchange(\''.$competitorpart['id'].'\')">x</button>';?></div><?php }?>
@@ -547,7 +545,7 @@ $history=$logs->getPartsEvents(50);
                                 </div>
                             </td>
                         </tr>
-                        <tr><th>Connected Assets</th><td><?php if($connectedassets){foreach($connectedassets as $connectedasset){echo '<a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> ';}};?></td><tr>
+                        <tr><th>Assets</th><td><?php if($connectedassets){foreach($connectedassets as $connectedasset){echo '<a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> ';}};?></td><tr>
                         <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
                     </table>
                 </div>

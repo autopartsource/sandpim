@@ -8,7 +8,7 @@ $result=array('success'=>false,'id'=>0,'oid'=>'','descriptiontext'=>'???','descr
 if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['descriptiontext']) && isset($_GET['descriptioncode']) && isset($_GET['languagecode']))
 {
  $partnumber=$_GET['partnumber'];
- $descriptiontext=$_GET['descriptiontext'];
+ $descriptiontext=base64_decode($_GET['descriptiontext']);
  $descriptioncode=$_GET['descriptioncode'];
  $languagecode=$_GET['languagecode'];
  $userid=$_SESSION['userid'];
