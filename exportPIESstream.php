@@ -4,7 +4,7 @@ include_once('./class/pimClass.php');
 include_once('./class/pricingClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/packagingClass.php');
-include_once('./class/PIESgeneratorClass.php');
+include_once('./class/PIES7_1GeneratorClass.php');
 
 $vcdb = new vcdb;
 $pim = new pim;

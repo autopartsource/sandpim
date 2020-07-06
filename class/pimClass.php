@@ -1853,10 +1853,8 @@ function countAppsByPartcategories($partcategories)
  
  function getMarketingcopyByReceiverprofileId($receiverprofileid)
  {
-  $marketingcopy=false;
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
+  $marketingcopy=array();$db = new mysql; $db->connect();
+  
   if($stmt=$db->conn->prepare('select * from receiverprofile_marketingcopy where receiverprofileid=?'))
   {
    $stmt->bind_param('i',$receiverprofileid);
