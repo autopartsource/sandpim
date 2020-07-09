@@ -82,7 +82,7 @@ if (isset($_POST['input']))
                 
                 <?php foreach($errors as $error){echo '<div style="color:red;">'.$error.'</div>';}?>
                 <form method="post">
-                    <div style="padding:10px;"><div>Paste tab-delimited data:<br/>Partnumber, Pricesheet Number, Amount, Currency Code, UoM, Price Type,  Effective Date, Expiration Date</div>
+                    <div style="padding:10px;"><div>Paste tab-delimited data:<br/>Partnumber, <a href="./priceSheets.php">Pricesheet Number</a>, Amount, Currency Code, UoM, Price Type,  Effective Date, Expiration Date</div>
                         <textarea name="input" rows="20" cols="100"></textarea>
                     </div>
                     <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>

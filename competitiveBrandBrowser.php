@@ -13,9 +13,9 @@ $pim=new pim;
 $allbrands=array();
 $competitivebrands=$interchange->getCompetitivebrands();
 $brandAAIAIDkeyedcompetitivebrands=array(); foreach($competitivebrands as $competitivebrand){$brandAAIAIDkeyedcompetitivebrands[$competitivebrand['brandAAIAID']]=$competitivebrand['description'];}
-
+$showowners=true;
 $searchtype='';
-if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchterm']) && $_GET['searchterm']!='')
+if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchterm']))
 {
     $searchtype=$_GET['searchtype'];
     $searchterm=$_GET['searchterm'];
@@ -31,7 +31,14 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
         case 'ends':
             $allbrands=$interchange->getBrands('%'.$searchterm);
             break;
-        
+        case 'selected':
+            $showowners=false; // we are not storing the owner codes in our local favorite brands table, we cant display owners when we show the favorites list
+            foreach($competitivebrands as $competitivebrand)
+            {
+             $allbrands[]=array('BrandID'=>$competitivebrand['brandAAIAID'],'BrandName'=>$competitivebrand['description'],'BrandOwner'=>'');
+            }
+            break;         
+            
         default :break;
     }
 }
@@ -84,12 +91,16 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                     <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
                     <input name="submit" type="submit" value="Search"/>
                  <div style="padding:15px;">
-                     <?php if(count($allbrands)){?>
-                     <table><tr><th>Name</th><th>ID</th><th>Owner</th><th>Selected</th></tr>
+                     <?php if(count($allbrands)){
+                         $brandownercolumn=''; if($showowners){$brandownercolumn='<th>Owner</th>';}
+                         ?>
+                     <table><tr><th>Name</th><th>ID</th><?php echo $brandownercolumn;?><th>Selected</th></tr>
                      <?php foreach ($allbrands as $brand)
                       {
                          $checked=''; if(array_key_exists($brand['BrandID'], $brandAAIAIDkeyedcompetitivebrands)){$checked=' checked';}
-                          echo '<tr><td>'.$brand['BrandName'].'</td><td>'.$brand['BrandID'].'</td><td>'.$brand['BrandOwner'].'</td>';
+                         $brandownercolumn=''; if($showowners){$brandownercolumn='<td>'.$brand['BrandOwner'].'</td>';}
+        
+                          echo '<tr><td>'.$brand['BrandName'].'</td><td>'.$brand['BrandID'].'</td>'.$brandownercolumn;
                           echo '<td align="center"><input type="checkbox" id="brand_'.$brand['BrandID'].'" name="brand_'.$brand['BrandID'].'" onclick="addRemoveBrand(\''.$brand['BrandID'].'\')" name="brand_'.$brand['BrandID'].'"  '.$checked.'></td>';
                           echo '</tr>';
                       }
@@ -105,6 +116,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                   </table>
                  </div>
                 </form>
+                <a href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search">Show brands that are already in the our competitor list</a>
             </div>
 
             <div class="contentRight"></div>

@@ -6,9 +6,7 @@ class configGet
 
  function getAllConfigValues()
  {
-  $db=new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
+  $db=new mysql; $db->connect();
   $configs=array();
   if($stmt=$db->conn->prepare('select * from config order by configname'))
   {
@@ -23,8 +21,27 @@ class configGet
   return $configs;
  }
 
-function getConfigValue($configname,$defaultvalue=false)
-{
+ function getConfigOptions()
+ {   
+  $db=new mysql; $db->connect();
+  $configs=array();
+  if($stmt=$db->conn->prepare('select * from config_options order by configname'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $configs[]=array('configname'=>$row['configname'],'validvalues'=>$row['validvalues'],'format'=>$row['format'],'defaultvalue'=>$row['defaultvalue'],''=>$row['description']);
+    }
+   }
+  }
+  $db->close();
+  return $configs;
+ }
+ 
+ function getConfigValue($configname,$defaultvalue=false)
+ {
  // if name is not found, and $defaultvalue is not false, write a new config record with the $defaultvalue
     $db=new mysql; 
     //$db->dbname='pim'; 
@@ -58,5 +75,5 @@ function getConfigValue($configname,$defaultvalue=false)
     }
     $db->close();
     return $value;
-}
+ }
 }?>

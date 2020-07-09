@@ -7,6 +7,7 @@ include_once('./class/assetClass.php');
 include_once('./class/pricingClass.php');
 include_once('./class/interchangeClass.php');
 include_once('./class/packagingClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'parts';
 
@@ -24,6 +25,7 @@ $asset = new asset;
 $pricing = new pricing;
 $interchange = new interchange;
 $packaging = new packaging;
+$configGet = new configGet;
 $logs=new logs;
 
 
@@ -81,8 +83,8 @@ $descriptionlanguagecodes=$pcdb->getPartDescriptionLanguageCodes();
 $pricesheets=$pricing->getPricesheets();
 $history=$logs->getPartsEvents(50);
 
-
-
+$defaultdescriptionlanguagecode=$configGet->getConfigValue('defaultDescriptionLanguageCode','EN');
+$defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCode');
 
 ?>
 <!DOCTYPE html>
@@ -460,7 +462,7 @@ $history=$logs->getPartsEvents(50);
                 <div style="padding:10px;">
                     <table border="1" cellpadding="5">
                         <tr><th>Partnumber</th><td><?php echo $part['partnumber']; ?></td></tr>
-                        <tr><th>Part Type</th><td><div style="float:left;"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div><div style="float:left;padding-left:10px;"><a href="./pcdbTypeBrowser.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
+                        <tr><th>Part Type</th><td><div style="float:left;"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div><div style="float:left;padding-left:10px;"><a href="./pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
                         <tr><th>Category</th><td><div style="float:left;"><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></div><div style="float:left;padding-left:10px;"><a href="./partCategories.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
                         <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
                         <tr>
@@ -472,7 +474,7 @@ $history=$logs->getPartsEvents(50);
                                 <div onclick="showhideNewDescription()">...</div>
                                 <div id="newdescription" style="display:none; padding-top: 10px;">
                                     <div style="padding:5px;"><input type="text" id="descriptiontext" size="40"/><button id="adddescrption" onclick="addDescription()">Add</button></div>
-                                    <div><select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){echo '<option value="'.$descriptioncode['code'].'">'.$descriptioncode['description'].'</option>';}?></select>                                       <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){echo '<option value="'.$descriptionlanguagecode['code'].'">'.$descriptionlanguagecode['description'].'</option>';}?></select></div>
+                                    <div><select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){$selected=''; if($descriptioncode['code']==$defaultdescriptiontypecode){$selected=' selected';} echo '<option value="'.$descriptioncode['code'].'"'.$selected.'>'.$descriptioncode['description'].'</option>';}?></select> <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){$selected=''; if($descriptionlanguagecode['code']==$defaultdescriptionlanguagecode){$selected=' selected';} echo '<option value="'.$descriptionlanguagecode['code'].'"'.$selected.'>'.$descriptionlanguagecode['description'].'</option>';}?></select></div>
                                 </div>
                             </td>
                         <tr>
@@ -487,7 +489,7 @@ $history=$logs->getPartsEvents(50);
                                 <?php foreach($competitorparts as $competitorpart){;?><div id="interchangeid_<?php echo $competitorpart['id'];?>" style="font-size: 80%;"><?php echo $interchange->brandName($competitorpart['brandAAIAID']).': '.$competitorpart['competitorpartnumber'].' <button onclick="deleteInterchange(\''.$competitorpart['id'].'\')">x</button>';?></div><?php }?>
                                 </div>
                                 <div onclick="showhideNewInterchange()">...</div>
-                                <div id="newinterchange" style="display:none; padding-top: 10px;"><div style="float:left;padding-right: 10px;"><a href="./competitiveBbrandBrowser.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="float:left;"><select id="competitivebrand"><?php foreach($competitivebrands as $competitivebrand){echo '<option value="'.$competitivebrand['brandAAIAID'].'">'.$competitivebrand['description'].'</option>';}?></select><input type="text" id="competitivepartnumber" size="10"/><button id="addinterchange" onclick="addInterchange()">+</button></div><div style="clear:both;"></div></div>
+                                <div id="newinterchange" style="display:none; padding-top: 10px;"><div style="float:left;padding-right: 10px;"><a href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="float:left;"><select id="competitivebrand"><?php foreach($competitivebrands as $competitivebrand){echo '<option value="'.$competitivebrand['brandAAIAID'].'">'.$competitivebrand['description'].'</option>';}?></select><input type="text" id="competitivepartnumber" size="10"/><button id="addinterchange" onclick="addInterchange()">+</button></div><div style="clear:both;"></div></div>
                             </td>
                         <tr>
                         <tr>

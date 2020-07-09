@@ -18,7 +18,41 @@ if(isset($_GET['modelid'])){$modelid=intval($_GET['modelid']);}
 if(isset($_GET['yearid'])){$yearid=intval($_GET['yearid']);}
 if(isset($_GET['equipmentid'])){$equipmentid=intval($_GET['equipmentid']);}
 
+if(isset($_GET['submit']) && $_GET['submit']=='Create' )
+{
+ $makeid=intval($_GET['makeid']);
+ $modelid=intval($_GET['modelid']);
+ $yearid=intval($_GET['yearid']);
+ $partnumber=trim(strtoupper($_GET['partnumber']));
+ $parttypeid=intval($_GET['parttypeid']);
+ $positionid=intval($_GET['positionid']);
+ $quantityperapp=intval($_GET['quantityperapp']);
+ 
+ $cosmetic=0;
+ $attributes=array();
+ 
+ if($pim->validPart($partnumber))
+ {
+  if($basevehicleid=$vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid))
+  {
+   if($appid=$pim->newApp($basevehicleid, $parttypeid, $positionid, $quantityperapp, $partnumber, $cosmetic, $attributes))
+   {
+     $appoid=$pim->getOIDofApp($appid);
+     $pim->logAppEvent($appid, $userid, 'app created with appsSelectCategory.php form', $appoid);
+     
+     $partoid=$pim->getOIDofPart($partnumber);
+     $pim->logPartEvent($partnumber, $userid, 'app id '.$appid.' was created connecting ['.$vcdb->niceMMYofBasevid($basevehicleid).'] to part', $partoid);
+     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./showApp.php?appid=".$appid."'\" /></head><body></body></html>"; exit;
+   }
+  }
+ }
+}
+
+
+
 $partcategories=$user->getUserVisiblePartcategories($userid);
+$favoritepositions=$pim->getFavoritePositions();
+$favoriteparttypes=$pim->getFavoriteParttypes();
 
 ?>
 <!DOCTYPE html>
@@ -32,7 +66,7 @@ $partcategories=$user->getUserVisiblePartcategories($userid);
              { // category has been clocked on 
               console.log(partcategory);
               var xhr = new XMLHttpRequest();
-              xhr.open('GET', 'ajaxSelectUnselectUserPartcateory.php?userid='+userid+'&partcategory='+partcategory+'&action=select');
+              xhr.open('GET', 'ajaxSelectUnselectUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&action=select');
               xhr.send();
              }
              else
@@ -40,10 +74,74 @@ $partcategories=$user->getUserVisiblePartcategories($userid);
               var xhr = new XMLHttpRequest();
               console.log(partcategory);
 
-              xhr.open('GET', 'ajaxSelectUnselectUserPartcateory.php?userid='+userid+'&partcategory='+partcategory+'&action=unselect');
+              xhr.open('GET', 'ajaxSelectUnselectUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&action=unselect');
               xhr.send();
              }
             }
+            
+            
+            function showhideNewApp()
+            {
+             var x = document.getElementById("newapp");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+            
+            function validateCreate(source)
+            {
+             var partnumber = document.getElementById("partnumber").value;
+             var position = document.getElementById("positionid").value;
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxGetPart.php?partnumber='+partnumber);
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+
+        
+              if(response!==false)
+              {// valid part number
+               // use the part's typeid to set the parttypeid selector
+
+               if(source=='partnumber')
+               {// event that got us here was keying activity in partnumber box
+                document.getElementById('parttypeid').value=response.parttypeid;
+                document.getElementById('positionid').value=response.typicalposition;
+                position=response.typicalposition;
+                document.getElementById('quantityperapp').value=response.typicalqtyperapp;
+               } 
+                  
+               if(position!=0)
+               {
+                document.getElementById("createapp").disabled=false;
+               }
+               else
+               {
+                document.getElementById("createapp").disabled=true;
+               }
+              }
+              else
+              {// the content of the partnumber input is not a valid item
+                  
+               if(source=='partnumber')
+               {// event that got us here was keying activity in partnumber box
+                document.getElementById("createapp").disabled=true;
+                document.getElementById('parttypeid').value=0;
+                document.getElementById('positionid').value=0;
+                document.getElementById('quantityperapp').value='';
+               }
+              }
+             };
+             xhr.send();
+            }
+
+
+            
         </script>
     </head>
     <body>
@@ -58,8 +156,8 @@ $partcategories=$user->getUserVisiblePartcategories($userid);
 
             <!-- Main Content -->
             <div class="contentMain">
-                <form action="showAppsByBasevehicle.php">
-                    <div style="padding:20px;">
+                <div style="padding:20px;">
+                    <form action="showAppsByBasevehicle.php">
                      <?php foreach($partcategories as $partcategory)
                      {
                          $checked=''; if($partcategory['selected']){$checked=' checked';}
@@ -70,6 +168,18 @@ $partcategories=$user->getUserVisiblePartcategories($userid);
                      if(isset($yearid)){echo '<input type="hidden" name="yearid" value="'.$yearid.'"/>';}
                      if(isset($equipmentid)){echo '<input type="hidden" name="equipmentid" value="'.$equipmentid.'"/>';} ?>
                      <div style="padding-top:10px;"><input type="submit" name="submit" value="Show Applications"/></div>
+                    </form>
+                </div>
+                <div onclick="showhideNewApp()">...</div>
+
+                <form action="appsSelectCategory.php">
+                    <div id="newapp" style="display:none; padding:5px;">
+                        <div style="text-align: left;padding:3px;font-weight: bold;">Create new app to this vehicle</div>
+                        <div style="text-align: left;padding:5px;">Part Number <input type="text" id="partnumber" name="partnumber" size="15" onkeyup="validateCreate('partnumber')"/></div>
+                        <div style="text-align: left;padding:5px;">Position <select id="positionid" name="positionid" onchange="validateCreate('positionid')"><option value="0">--- Select ---</option><?php foreach($favoritepositions as $position){?><option value="<?php echo $position['id'];?>"><?php echo $position['name'];?></option><?php }?></select></div>
+                        <div style="float:left; text-align: left; padding:5px;">Part Type <select id="parttypeid" name="parttypeid" onchange="validateCreate('parttypeid')"><option value="0">--- Select ---</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"><?php echo $parttype['name'];?></option><?php }?></select></div><div style="float:left;padding-left:10px;"><a href="./pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> 
+                        <div style="text-align: left;padding:5px;">Quantity <input style="text-align: right;" type="text" id="quantityperapp" name="quantityperapp" size="2"/> <input type="submit" name="submit" value="Create" id="createapp" /></div>
+                        <input type="hidden" name="makeid" value="<?php echo $makeid;?>"/><input type="hidden" name="modelid" value="<?php echo $modelid;?>"/><input type="hidden" name="yearid" value="<?php echo $yearid;?>"/>
                     </div>
                 </form>
             </div>

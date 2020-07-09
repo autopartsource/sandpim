@@ -42,7 +42,7 @@ $pim=new pim;
                 <div style="padding:10px;"><a href="importInterchangeText.php">Import Competitor Interchange from structured text</a></div>
                 <div style="padding:10px;"><a href="importBrandTableText.php">Import Brand Table text</a></div>
                 <div style="padding:10px;"><a href="exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a></div>
-                <div style="padding:10px;"><a href="backgroundJobs.php">Background import/export jobs</a></div>
+                <div style="padding:10px;"><a href="backgroundJobs.php">Manage background import/export jobs</a></div>
                 <div style="padding:10px;"><a href="rhubarb7_1Index.php">Rhubarb 7.1</a></div>
             </div>
             <div class="contentRight"></div>

@@ -77,9 +77,11 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname; 
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select PartTerminologyID, PartTerminologyName from Parts where PartTerminologyName like ? order by PartTerminologyName'))
+  $limit=1000;
+  
+  if($stmt=$db->conn->prepare('select PartTerminologyID, PartTerminologyName from Parts where PartTerminologyName like ? order by PartTerminologyName limit ?'))
   {
-   $stmt->bind_param('s', $searchstring);
+   $stmt->bind_param('si', $searchstring,$limit);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())

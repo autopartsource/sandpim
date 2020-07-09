@@ -15,7 +15,7 @@ $pim=new pim;
  $mytypes=$pim->getFavoriteParttypes(); $idkeyedmytypes=array(); foreach($mytypes as $mytype){$idkeyedmytypes[$mytype['id']]=$mytype['name'];}
 
 $searchtype='';
-if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchterm']) && $_GET['searchterm']!='')
+if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchterm']))
 {
     $searchtype=$_GET['searchtype'];
     $searchterm=$_GET['searchterm'];
@@ -30,6 +30,9 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
             break;
         case 'ends':
             $alltypes=$pcdb->getPartTypes('%'.$searchterm);
+            break;
+        case 'selected':
+            $alltypes=$mytypes;
             break;
         
         default :break;
@@ -46,18 +49,17 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
             {
              if(document.getElementById('parttypeid_'+parttypeid).checked) 
              { // parttype has been clicked on 
-              console.log('add:'+parttypeid);
-              //var xhr = new XMLHttpRequest();
-              //xhr.open('GET', 'ajaxAddRemoveFavoriteParttype.php?parttypeid='+parttypeid+'&action=add');
-              //xhr.send();
+              //console.log('add:'+parttypeid);
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddRemoveFavoriteParttype.php?parttypeid='+parttypeid+'&action=add');
+              xhr.send();
              }
              else
              { // has been clocked off
-              console.log('remove:'+parttypeid);
-
-             //var xhr = new XMLHttpRequest();
-             // xhr.open('GET', 'ajaxAddRemoveFavoriteParttype.php?parttypeid='+parttypeid+'&action=remove');
-             // xhr.send();
+              //console.log('remove:'+parttypeid);
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddRemoveFavoriteParttype.php?parttypeid='+parttypeid+'&action=remove');
+              xhr.send();
              }
             }
 
@@ -84,13 +86,13 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                     </select>
                     <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
                     <input name="submit" type="submit" value="Search"/>
-                 <div style="padding-left:10px;">
+                 <div style="padding:30px;">
                      <?php if(count($alltypes)){?>
                      <table><tr><th>Name</th><th>ID</th><th>Favorite</th></tr>
                      <?php foreach ($alltypes as $type)
                       {
                          $checked=''; if(array_key_exists($type['id'], $idkeyedmytypes)){$checked=' checked';}
-                          echo '<tr><td>'.$type['name'].'</td><td>'.$type['id'].'</td>';
+                          echo '<tr><td style="text-align:left;">'.$type['name'].'</td><td>'.$type['id'].'</td>';
                           echo '<td align="center"><input type="checkbox" id="parttypeid_'.$type['id'].'" name="parttypeid_'.$type['id'].'" onclick="addRemoveType(\''.$type['id'].'\')" name="partcategory_'.$partcategory['id'].'"  '.$checked.'></td>';
                           echo '</tr>';
                       }
@@ -106,6 +108,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                   </table>
                  </div>
                 </form>
+                <a href="pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search">Show only already selected types</a>
             </div>
 
             <div class="contentRight"></div>

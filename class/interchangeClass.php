@@ -160,10 +160,11 @@ class interchange
  {
   $db = new mysql; $db->connect();
   $brands=array();
+  $limit=1000;
   
-  if($stmt=$db->conn->prepare('select * from brand where BrandName like ? order by BrandName'))
+  if($stmt=$db->conn->prepare('select * from brand where BrandName like ? order by BrandName limit ?'))
   {
-   $stmt->bind_param('s', $searchstring);
+   $stmt->bind_param('si', $searchstring,$limit);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())

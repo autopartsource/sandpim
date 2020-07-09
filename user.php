@@ -83,13 +83,13 @@ $user->getUserByID($userid);
              { // category has been clicked on 
          //     console.log(partcategory);
               var xhr = new XMLHttpRequest();
-              xhr.open('GET', 'ajaxAddRemoveUserPartcateory.php?userid='+userid+'&partcategory='+partcategory+'&permissionname=canView&action=add');
+              xhr.open('GET', 'ajaxAddRemoveUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&permissionname=canView&action=add');
               xhr.send();
              }
              else
              { // category has been clicked off
               var xhr = new XMLHttpRequest();
-              xhr.open('GET', 'ajaxAddRemoveUserPartcateory.php?userid='+userid+'&partcategory='+partcategory+'&permissionname=canView&action=remove');
+              xhr.open('GET', 'ajaxAddRemoveUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&permissionname=canView&action=remove');
               xhr.send();
              }
             }

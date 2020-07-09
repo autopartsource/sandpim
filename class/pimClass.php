@@ -50,6 +50,53 @@ class pim
   return $apps;
  }
 
+ 
+ function typicalAppPosition($partnumber)
+ {
+  $db = new mysql;  $db->connect();
+  $positionid=0;
+  if($stmt=$db->conn->prepare('select positionid, count(*) as hits from application where partnumber=? group by positionid order by hits desc limit 1'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $positionid=$row['positionid'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $positionid;
+ }
+ 
+ function typicalQuantityPerApp($partnumber)
+ {
+  $db = new mysql;  $db->connect();
+  $qty=0;
+  if($stmt=$db->conn->prepare('select quantityperapp, count(*) as hits from application where partnumber=? group by positionid order by hits desc limit 1;'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $qty=$row['quantityperapp'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $qty;
+ }
+
+ 
+ 
 function countAppsByPartcategories($partcategories)
 {
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
@@ -113,9 +160,7 @@ function countAppsByPartcategories($partcategories)
 
  function getFavoriteParttypes()
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
+  $db = new mysql; $db->connect();
   $parttypes=array();
   if($stmt=$db->conn->prepare('select * from parttype order by `name`'))
   {
@@ -132,17 +177,17 @@ function countAppsByPartcategories($partcategories)
  
  function getFavoritePositions()
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
+  $db = new mysql; $db->connect();
   $positions=array();
   if($stmt=$db->conn->prepare('select * from position order by `name`'))
   {
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($stmt->execute())
    {
-    $positions[]=array('id'=>$row['id'],'name'=>$row['name']);
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $positions[]=array('id'=>$row['id'],'name'=>$row['name']);
+    }
    }
   }
   $db->close();
@@ -318,6 +363,9 @@ function countAppsByPartcategories($partcategories)
  {
   $db = new mysql; $db->connect();
   $part=false;
+  $typicalPosition=$this->typicalAppPosition($partnumber);
+  $typicalQty=$this->typicalQuantityPerApp($partnumber);
+  
   if($stmt=$db->conn->prepare('select part.*,partcategory.name,partcategory.brandID from part left join partcategory on part.partcategory=partcategory.id where partnumber=?'))
   {
    $stmt->bind_param('s', $partnumber);
@@ -333,9 +381,12 @@ function countAppsByPartcategories($partcategories)
         'replacedby'=>$row['replacedby'],
         'internalnotes'=> base64_decode($row['internalnotes']),
         'description'=>$row['description'],'GTIN'=>$row['GTIN'],'UNSPC'=>$row['UNSPC'],
-        'brandid'=>$row['brandID'],'createdDate'=>$row['createdDate'],'firststockedDate'=>$row['firststockedDate'],'discontinuedDate'=>$row['discontinuedDate']
-            );
-    
+        'brandid'=>$row['brandID'],
+        'createdDate'=>$row['createdDate'],
+        'firststockedDate'=>$row['firststockedDate'],
+        'discontinuedDate'=>$row['discontinuedDate'],
+        'typicalposition'=>$typicalPosition,
+        'typicalqtyperapp'=>$typicalQty);
    }
   }
   $db->close();
@@ -1478,9 +1529,7 @@ function countAppsByPartcategories($partcategories)
 
  function newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$attributes)
  {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db = new mysql; $db->connect();
   $applicationid=false;
   if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic) values(null,?,?,0,0,?,?,?,?,0,?)'))
   {
@@ -1729,30 +1778,31 @@ function countAppsByPartcategories($partcategories)
  
  function addFavoriteParttype($parttypeid,$myname)
  {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
-  $parttypes=array();
+  $db = new mysql; $db->connect(); $success=false;
   if($stmt=$db->conn->prepare('insert into parttype values(?,?)'))
   {
-   $stmt->bind_param('is', $parttypeid,$myname); 
-   $stmt->execute();
+   if($stmt->bind_param('is', $parttypeid,$myname))
+   {
+    $success=$stmt->execute();
+   }
   }
   $db->close();
+  return $success;
  }
 
  function removeFavoriteParttype($parttypeid)
  {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db = new mysql; $db->connect(); $success=false;
   $parttypes=array();
   if($stmt=$db->conn->prepare('delete from parttype where id=?'))
   {
-   $stmt->bind_param('i', $parttypeid); 
-   $stmt->execute();
+   if($stmt->bind_param('i', $parttypeid))
+   {
+    $success=$stmt->execute();
+   }
   }
   $db->close();
+  return $success;
  }
  
 
