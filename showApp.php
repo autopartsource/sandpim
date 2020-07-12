@@ -189,7 +189,101 @@ if(isset($_GET['categories']))
              };
              xhr.send();
             }
+
+
+            function addAttribute()
+            {
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddAppAttribute.php?type=vcdb&name=SubModel&value=2&cosmetic=1&appid='+<?php echo $appid;?>);
+             xhr.onload = function()
+             {
+              var result=JSON.parse(xhr.responseText);
+              console.log(result);
+             };
+             xhr.send();
+            }
+
+            function searchQdb()
+            {
+             document.getElementById("qdbresultscount").innerHTML="Searching Qdb...";
+             document.getElementById("qdbresults").innerHTML = "";
+             var searchterm=document.getElementById("qdbsearchterm").value;
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxSearchQdb.php?type=1&searchterm='+encodeURIComponent(searchterm));
+             xhr.onload = function()
+             {
+              var results=JSON.parse(xhr.responseText);
+              for(var k in results) 
+              {
+                document.getElementById("qdbresultscount").innerHTML= results.length+" results found";
+                var newOption = new Option(results[k].qualifiertext,results[k].qualifierid);
+                document.getElementById("qdbresults").add(newOption,undefined);
+              }
+              
+             };
+             xhr.send();
+            }
             
+            function selectQdb()
+            {
+             var p;
+             for(p=1; p<=4; p++)
+             {
+              document.getElementById('qdbparm'+p+'block').style.display='none';
+              document.getElementById('qdbparm'+p+'uomblock').style.display='none';
+             }
+             
+
+             var resultSelect = document.getElementById("qdbresults");
+             var selectedQdbText=resultSelect.options[resultSelect.selectedIndex].text;
+             var selectedQdbID=resultSelect.options[resultSelect.selectedIndex].value;
+             
+             // identify embeded parameters in the Qdb String
+             var n = -1;
+             var offset=0;
+             var parmType='';
+             var p;
+             for(p=1; p<=8; p++)
+             {
+              n=selectedQdbText.indexOf(' type="',offset);
+
+              if(n > -1)
+              {// found a parm
+               parmTypeEnd=selectedQdbText.indexOf('"',n+8);
+               
+               if(parmTypeEnd > -1)
+               {// found an ending "
+                parmType=selectedQdbText.substring(n+7,parmTypeEnd);
+                document.getElementById('qdbparm'+p+'title').innerHTML='Parameter '+p+' ('+parmType+') ';
+                document.getElementById('qdbparm'+p+'block').style.display='block';
+                
+                if(parmType=='num' || parmType=='size' || parmType=='weight')
+                {
+                 document.getElementById('qdbparm'+p+'uomblock').style.display='block';
+                }
+                //console.log(p+':'+parmType);
+               }
+               offset=n+1;
+              }
+              else
+              {// no more parms found
+               break;   
+              }
+             }
+             
+
+             
+
+//  var str = '<p1 type="size"/> Bolt, <p2 type="size"/> Thick x <p3 type="size"/> Long x <p4 type="size"/> Wide'; 
+
+
+
+                
+                
+            }
+
+
+
         </script>
     </head>
     <body onload="setStatusColor()">
@@ -212,7 +306,7 @@ if(isset($_GET['categories']))
                  ?>
 
                  <table border="1" cellpadding="5">
-                     <tr><th><a href="./showAppsByBasevehicle.php?<?php echo implode('&',$selectedcategoriesurlvars);?>&makeid=<?php echo $mmy['MakeID'];?>&modelid=<?php echo $mmy['ModelID'];?>&yearid=<?php echo $mmy['year'];?>&submit=Show+Applications">Base Vehicle</a></th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
+                  <tr><th><a href="./showAppsByBasevehicle.php?<?php echo implode('&',$selectedcategoriesurlvars);?>&makeid=<?php echo $mmy['MakeID'];?>&modelid=<?php echo $mmy['ModelID'];?>&yearid=<?php echo $mmy['year'];?>&submit=Show+Applications">Base Vehicle</a></th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
                   <tr><th>Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber'];?>"><?php echo $app['partnumber'];?></a></td></tr>
                   <tr><th>Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$app['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
                   <tr><th>Position</th><td align="right"><select id="positionid"  onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','positionid');"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select></td></tr>
@@ -258,7 +352,112 @@ if(isset($_GET['categories']))
                 }?>
             </div> <!-- End Main Content -->
 
-            <div class="contentRight"></div>
+            <div class="contentRight">
+
+                
+                
+                <div style="padding:3px;">
+                    <div style="float:left;"><input type="text" id="qdbsearchterm"/></div>
+                    <div style="float:left;"><button id="mybutton" onclick="searchQdb()">Search</button></div>
+                    <div style="clear:both;"></div>
+                </div>
+                
+                <div style="padding:3px;font-size: 75%; color: #aaaaaa;" id="qdbresultscount"></div>
+                <select style="width: 400px;" id="qdbresults" multiple size="10" onchange="selectQdb()"></select>
+                
+                <div id="qdbparm1block" style="padding:3px; display:none;">
+                    <div id="qdbparm1title" style="float:left;"></div>
+                    <div style="float:left;">
+                        <input size="10" type="text" id="qdbparm1value"/>
+                    </div>
+                    <div id="qdbparm1uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm1uom" size="2"/>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+                <div id="qdbparm2block" style="padding:3px; display:none;">
+                    <div id="qdbparm2title" style="float:left;"></div>
+                    <div style="float:left;">
+                        <input size="10" type="text" id="qdbparm2value"/>
+                    </div>
+                    <div id="qdbparm2uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm2uom" size="2"/>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+
+                <div id="qdbparm3block" style="padding:3px; display:none;">
+                    <div id="qdbparm3title" style="float:left;"></div>
+                    <div style="float:left;">
+                        <input size="10" type="text" id="qdbparm3value"/>
+                    </div>
+                    <div id="qdbparm3uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm3uom" size="2"/>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+                <div id="qdbparm4block" style="padding:3px; display:none;">
+                    <div id="qdbparm4title" style="float:left;"></div>
+                    <div style="float:left;">
+                        <input size="10" type="text" id="qdbparm4value"/>
+                    </div>
+                    <div id="qdbparm4uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm4uom" size="2"/>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+                <div id="qdbparm5block" style="padding:3px; display:none;">
+                    <div id="qdbparm5title" style="float:left;"></div>
+                    <div style="float:left;">
+                        <input size="10" type="text" id="qdbparm5value"/>
+                    </div>
+                    <div id="qdbparm5uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm5uom" size="2"/>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+                <div id="qdbparm6block" style="padding:3px; display:none;">
+                    <div id="qdbparm6title" style="float:left;"></div>
+                    <div style="float:left;">
+                        <input size="10" type="text" id="qdbparm6value"/>
+                    </div>
+                    <div id="qdbparm6uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm6uom" size="2"/>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+                <div id="qdbparm7block" style="padding:3px; display:none;">
+                    <div id="qdbparm7title" style="float:left;"></div>
+                    <div style="float:left;">
+                        <input size="10" type="text" id="qdbparm7value"/>
+                    </div>
+                    <div id="qdbparm7uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm7uom" size="2"/>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+                <div id="qdbparm8block" style="padding:3px; display:none;">
+                    <div id="qdbparm8title" style="float:left;"></div>
+                    <div style="float:left;">
+                        <input size="10" type="text" id="qdbparm8value"/>
+                    </div>
+                    <div id="qdbparm8uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm8uom" size="2"/>
+                    </div>
+                    <div style="clear:both;"></div>
+                </div>
+
+                
+                <div style="padding: 5px;"><button id="addQdb" onclick="addAttribute()">Add Qdb</button></div>
+                
+            </div>
         </div> <!-- End Wrapper -->
                 
         <!-- Footer -->

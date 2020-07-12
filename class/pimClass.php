@@ -196,9 +196,7 @@ function countAppsByPartcategories($partcategories)
 
  function getApp($appid)
  {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db = new mysql; $db->connect();
   $app=false;
   if($stmt=$db->conn->prepare('select * from application where id=?'))
   {
@@ -1326,49 +1324,76 @@ function countAppsByPartcategories($partcategories)
 
  function addVCdbAttributeToApp($applicationid,$attributename,$attributevalue,$sequence,$cosmetic)
  {
-  $success=true;
-  $db=new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db=new mysql; $db->connect();
+  $id=false;
   if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
   {
    $attributetype='vcdb';
-   $stmt->bind_param('isssii', $applicationid,$attributename,$attributevalue,$attributetype,$sequence,$cosmetic);
-   $stmt->execute();
-   $this->updateAppOID($applicationid);
+   if($stmt->bind_param('isssii', $applicationid,$attributename,$attributevalue,$attributetype,$sequence,$cosmetic))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+     $this->updateAppOID($applicationid);
+    }
+   }
   }
   $db->close();
-  return $success;
+  return $id;
  }
 
  function addNoteAttributeToApp($applicationid,$note,$sequence,$cosmetic)
  {
-  $success=true;
-  $db=new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db=new mysql; $db->connect();
+  $id=false;
   if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
   {
    $attributename='note'; $attributetype='note';
-   $stmt->bind_param('isssii', $applicationid,$attributename,$note,$attributetype,$sequence,$cosmetic);
-   $stmt->execute();
-   $this->updateAppOID($applicationid);
+   if($stmt->bind_param('isssii', $applicationid,$attributename,$note,$attributetype,$sequence,$cosmetic))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+     $this->updateAppOID($applicationid);
+    }
+   }
   }
   $db->close();
-  return $success;
+  return $id;
  }
 
- function addQdbAttributeToApp($applicationid,$qdbid,$attributevalues,$sequence,$cosmetic)
+ function addQdbAttributeToApp($applicationid,$qdbid,$parmsstring,$sequence,$cosmetic)
  {
+     /*
+      * the "name" field in application_attribute will hold the numeric Qdb ID. the "value" 
+      * field will hold parameter/uom pairs delimited by semicolon like this 3-parameter example
+      * 4000,lbs;Bendix,;X7R,;
+      * The second and third parms are unitless
+      */
+    
+  $db=new mysql; $db->connect();
+  $id=false;
   $attributetype='qdb';
+
+  if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
+  {
+   if($stmt->bind_param('isssii', $applicationid,$qdbid,$parmsstring,$attributetype,$sequence,$cosmetic))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+     $this->updateAppOID($applicationid);
+    }
+   }
+  }
+  $db->close();
+  return $id;
  }
 
 
  function removeAllAppAttributes($applicationid,$updateoid)
  {
-  $db=new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db=new mysql; $db->connect();
   if($stmt=$db->conn->prepare('delete from application_attribute where applicationid=?'))
   {
    $stmt->bind_param('i', $applicationid);

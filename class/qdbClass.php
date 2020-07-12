@@ -3,8 +3,13 @@ include_once("mysqlClass.php");
 
 class qdb
 {
-
- function qualifierText($qualifierid)
+    
+//get the human-readable rendering of a specific QdbID. if an array of parm strings
+// is supplied, the placeholders (<p2 type="idlist"/>) will be replaced by the
+// respective elements in the array. If no parms array is given, the placeholders
+// will be left in the string for a human to see
+   
+ function qualifierText($qualifierid,$parms=false)
  {
   $text='not found';
   $db = new mysql; $db->dbname=$db->qdbname; $db->connect();
@@ -16,29 +21,70 @@ class qdb
    if($row = $db->result->fetch_assoc())
    {
     $text=$row['QualifierText'];
+    
+    if($parms)
+    {
+     $parmtypes= $this->parmTypes($text);
+     $translate=array();
+     foreach($parmtypes as $i=>$parmtype)
+     {
+      if(array_key_exists($i, $parms))
+      {
+       $translate['<p'.($i+1).' type="'.$parmtype.'"/>']=$parms[$i];
+      }
+     }
+     $text=strtr($text,$translate);
+    }
    }
   }
+  
   $db->close();
   return $text;
  }
 
- function getQualifiersBySearch($search)
+ 
+ 
+ function parmTypes($text)
+ {
+  // extract a list of parm types from qdb text
+  //<p1 type="name"/> Brake Code <p2 type="idlist"/>
+  //  will result in array('name','idlist');   
+  $parmtypes=array();
+  for($i=1;$i<=9;$i++)
+  {
+   $start=strpos($text,'<p'.$i.' type="');
+   if($start!==false)
+   {
+    $end=strpos($text,'"/>',$start);
+    if($end!==false)
+    {
+     $start+=10;
+     $parmtypes[]= substr($text, $start,($end-$start));
+    }  
+   }
+  }
+  return $parmtypes;
+ }
+    
+  
+ function getQualifiersBySearch($search,$type=false)
  {
   $qualifiers=array();
   $findtags=array('&','<','>','"');
   $replacetags=array('&amp','&lt;','&gt;','&quot;');
+  $typeclause=''; if($type){$typeclause=' and QualifierTypeID='.intval($type);}
   
   $db = new mysql; $db->dbname=$db->qdbname; $db->connect();
  // if($stmt=$db->conn->prepare('select QualifierID,QualifierText,QualifierTypeID,ExampleText from Qualifier where QualifierText like ?'))
   
-  if($stmt=$db->conn->prepare('select QualifierID,QualifierText,QualifierTypeID,ExampleText from Qualifier WHERE match(QualifierText) against(? IN BOOLEAN MODE)'))
+  if($stmt=$db->conn->prepare('select QualifierID,QualifierText,QualifierTypeID,ExampleText from Qualifier WHERE match(QualifierText) against(? IN BOOLEAN MODE) '.$typeclause))
   {
    $stmt->bind_param('s', $search);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $qualifiers[]=array('qualifierid'=>$row['QualifierID'],'qualifiertext'=>$row['QualifierText'],'htmlsafequalifiertext'=> str_replace($findtags,$replacetags,$row['QualifierText']));
+    $qualifiers[]=array('qualifierid'=>$row['QualifierID'],'qualifiertext'=>$row['QualifierText'],'htmlsafequalifiertext'=> str_replace($findtags,$replacetags,$row['QualifierText']),'parmtypes'=>$this->parmTypes($row['QualifierText']));
    }
   }
   $db->close();
