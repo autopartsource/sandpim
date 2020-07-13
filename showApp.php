@@ -233,6 +233,7 @@ if(isset($_GET['categories']))
               document.getElementById('qdbparm'+p+'uomblock').style.display='none';
              }
              
+             document.getElementById('qdbpreview').innerHTML='';
 
              var resultSelect = document.getElementById("qdbresults");
              var selectedQdbText=resultSelect.options[resultSelect.selectedIndex].text;
@@ -257,11 +258,10 @@ if(isset($_GET['categories']))
                 document.getElementById('qdbparm'+p+'title').innerHTML='Parameter '+p+' ('+parmType+') ';
                 document.getElementById('qdbparm'+p+'block').style.display='block';
                 
-                if(parmType=='num' || parmType=='size' || parmType=='weight')
+                if(parmType=='size' || parmType=='weight')
                 {
                  document.getElementById('qdbparm'+p+'uomblock').style.display='block';
                 }
-                //console.log(p+':'+parmType);
                }
                offset=n+1;
               }
@@ -270,17 +270,55 @@ if(isset($_GET['categories']))
                break;   
               }
              }
-             
-
-             
 
 //  var str = '<p1 type="size"/> Bolt, <p2 type="size"/> Thick x <p3 type="size"/> Long x <p4 type="size"/> Wide'; 
 
-
-
-                
-                
+             showQdbPreview();
             }
+
+            function showQdbPreview()
+            {
+             var i;
+             var resultSelect = document.getElementById("qdbresults");
+             var selectedQdbText=resultSelect.options[resultSelect.selectedIndex].text;
+             var selectedQdbID=resultSelect.options[resultSelect.selectedIndex].value;
+             var parms=['-']; // element 0 is filled with trash to allow the element numbers to align with the "p" mumbers
+
+             for(i=1; i<=8; i++)
+             {
+              parms.push(document.getElementById('qdbparm'+i+'value').value + document.getElementById('qdbparm'+i+'uom').value);
+             }
+        
+             var previewText=applyQdbParms(selectedQdbText,parms);
+             document.getElementById('qdbpreview').innerHTML=previewText;
+            }
+
+            function applyQdbParms(text,parms)
+            {
+             var result=text;
+             var startpos=-1;
+             var parmType='';
+             var i=0;
+              
+             for(i=1; i<=8; i++)
+             {
+              startpos=result.indexOf('<p'+i+' type="');
+              if(startpos > -1)
+              {
+               parmTypeEnd=result.indexOf('"',startpos+10);
+               if(parmTypeEnd > -1)
+               {// found an ending "
+                parmType=result.substring(startpos+10,parmTypeEnd);
+                if(parms[i]!='')
+                { // 
+                 result=result.replace('<p'+i+' type="'+parmType+'"/>',parms[i]);
+                }
+               }                  
+              }
+             }
+             return result;
+            }
+
 
 
 
@@ -361,100 +399,23 @@ if(isset($_GET['categories']))
                     <div style="float:left;"><button id="mybutton" onclick="searchQdb()">Search</button></div>
                     <div style="clear:both;"></div>
                 </div>
-                
                 <div style="padding:3px;font-size: 75%; color: #aaaaaa;" id="qdbresultscount"></div>
                 <select style="width: 400px;" id="qdbresults" multiple size="10" onchange="selectQdb()"></select>
                 
-                <div id="qdbparm1block" style="padding:3px; display:none;">
-                    <div id="qdbparm1title" style="float:left;"></div>
+                <?php for($i=1; $i<=8;$i++){?>
+                <div id="qdbparm<?php echo $i;?>block" style="padding:3px; display:none;">
+                    <div id="qdbparm<?php echo $i;?>title" style="float:left;"></div>
                     <div style="float:left;">
-                        <input size="10" type="text" id="qdbparm1value"/>
+                        <input size="8" type="text" id="qdbparm<?php echo $i;?>value" onkeyup="showQdbPreview()"/>
                     </div>
-                    <div id="qdbparm1uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm1uom" size="2"/>
+                    <div id="qdbparm<?php echo $i;?>uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm<?php echo $i;?>uom" size="2" onkeyup="showQdbPreview()"/>
                     </div>
                     <div style="clear:both;"></div>
                 </div>
-
-                <div id="qdbparm2block" style="padding:3px; display:none;">
-                    <div id="qdbparm2title" style="float:left;"></div>
-                    <div style="float:left;">
-                        <input size="10" type="text" id="qdbparm2value"/>
-                    </div>
-                    <div id="qdbparm2uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm2uom" size="2"/>
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>
-
-
-                <div id="qdbparm3block" style="padding:3px; display:none;">
-                    <div id="qdbparm3title" style="float:left;"></div>
-                    <div style="float:left;">
-                        <input size="10" type="text" id="qdbparm3value"/>
-                    </div>
-                    <div id="qdbparm3uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm3uom" size="2"/>
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>
-
-                <div id="qdbparm4block" style="padding:3px; display:none;">
-                    <div id="qdbparm4title" style="float:left;"></div>
-                    <div style="float:left;">
-                        <input size="10" type="text" id="qdbparm4value"/>
-                    </div>
-                    <div id="qdbparm4uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm4uom" size="2"/>
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>
-
-                <div id="qdbparm5block" style="padding:3px; display:none;">
-                    <div id="qdbparm5title" style="float:left;"></div>
-                    <div style="float:left;">
-                        <input size="10" type="text" id="qdbparm5value"/>
-                    </div>
-                    <div id="qdbparm5uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm5uom" size="2"/>
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>
-
-                <div id="qdbparm6block" style="padding:3px; display:none;">
-                    <div id="qdbparm6title" style="float:left;"></div>
-                    <div style="float:left;">
-                        <input size="10" type="text" id="qdbparm6value"/>
-                    </div>
-                    <div id="qdbparm6uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm6uom" size="2"/>
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>
-
-                <div id="qdbparm7block" style="padding:3px; display:none;">
-                    <div id="qdbparm7title" style="float:left;"></div>
-                    <div style="float:left;">
-                        <input size="10" type="text" id="qdbparm7value"/>
-                    </div>
-                    <div id="qdbparm7uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm7uom" size="2"/>
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>
-
-                <div id="qdbparm8block" style="padding:3px; display:none;">
-                    <div id="qdbparm8title" style="float:left;"></div>
-                    <div style="float:left;">
-                        <input size="10" type="text" id="qdbparm8value"/>
-                    </div>
-                    <div id="qdbparm8uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm8uom" size="2"/>
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>
-
+                <?php }?>
                 
+                <div id="qdbpreview" style="background-color: #f0f0f0; border: solid 1px black; padding:3px;margin: 20px;"></div>
                 <div style="padding: 5px;"><button id="addQdb" onclick="addAttribute()">Add Qdb</button></div>
                 
             </div>
