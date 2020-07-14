@@ -191,7 +191,7 @@ if(isset($_GET['categories']))
             }
 
 
-            function addAttribute()
+            function addVCdbAttribute()
             {
              var xhr = new XMLHttpRequest();
              xhr.open('GET', 'ajaxAddAppAttribute.php?type=vcdb&name=SubModel&value=2&cosmetic=1&appid='+<?php echo $appid;?>);
@@ -202,6 +202,24 @@ if(isset($_GET['categories']))
              };
              xhr.send();
             }
+            
+            function addQdb()
+            {
+             var qdbid=document.getElementById("qdbpreview").getAttribute("data-qdbid");
+             var qdbparmsString=document.getElementById("qdbpreview").getAttribute("data-qdbparmstring");
+             var xhr = new XMLHttpRequest();
+             
+             xhr.open('GET', 'ajaxAddAppAttribute.php?type=qdb&name='+qdbid+'&value='+encodeURIComponent(qdbparmsString)+'&cosmetic=1&appid='+<?php echo $appid;?>);
+             xhr.onload = function()
+             {
+              var result=JSON.parse(xhr.responseText);
+              console.log(result);
+             };
+             xhr.send();
+            }
+            
+            
+            
 
             function searchQdb()
             {
@@ -213,9 +231,9 @@ if(isset($_GET['categories']))
              xhr.onload = function()
              {
               var results=JSON.parse(xhr.responseText);
+              document.getElementById("qdbresultscount").innerHTML= results.length+" results found";
               for(var k in results) 
               {
-                document.getElementById("qdbresultscount").innerHTML= results.length+" results found";
                 var newOption = new Option(results[k].qualifiertext,results[k].qualifierid);
                 document.getElementById("qdbresults").add(newOption,undefined);
               }
@@ -227,10 +245,13 @@ if(isset($_GET['categories']))
             function selectQdb()
             {
              var p;
-             for(p=1; p<=4; p++)
+             for(p=1; p<=8; p++)
              {
               document.getElementById('qdbparm'+p+'block').style.display='none';
               document.getElementById('qdbparm'+p+'uomblock').style.display='none';
+              document.getElementById('qdbparm'+p+'value').value='';
+              document.getElementById('qdbparm'+p+'uom').value='';
+
              }
              
              document.getElementById('qdbpreview').innerHTML='';
@@ -282,13 +303,27 @@ if(isset($_GET['categories']))
              var resultSelect = document.getElementById("qdbresults");
              var selectedQdbText=resultSelect.options[resultSelect.selectedIndex].text;
              var selectedQdbID=resultSelect.options[resultSelect.selectedIndex].value;
+             var parmsString='';
+
              var parms=['-']; // element 0 is filled with trash to allow the element numbers to align with the "p" mumbers
+
+
 
              for(i=1; i<=8; i++)
              {
               parms.push(document.getElementById('qdbparm'+i+'value').value + document.getElementById('qdbparm'+i+'uom').value);
+
+                                 //value like "123, ABC, XYZ|~12|mm~4|mm"
+              if(document.getElementById('qdbparm'+i+'value').value !='')
+              {
+               parmsString+=document.getElementById('qdbparm'+i+'value').value+'|'+document.getElementById('qdbparm'+i+'uom').value+'~';
+              }
              }
-        
+
+             document.getElementById("qdbpreview").setAttribute("data-qdbid",selectedQdbID);
+             document.getElementById("qdbpreview").setAttribute("data-qdbparmstring",parmsString);
+
+
              var previewText=applyQdbParms(selectedQdbText,parms);
              document.getElementById('qdbpreview').innerHTML=previewText;
             }
@@ -415,8 +450,8 @@ if(isset($_GET['categories']))
                 </div>
                 <?php }?>
                 
-                <div id="qdbpreview" style="background-color: #f0f0f0; border: solid 1px black; padding:3px;margin: 20px;"></div>
-                <div style="padding: 5px;"><button id="addQdb" onclick="addAttribute()">Add Qdb</button></div>
+                <div id="qdbpreview" data-qdbid="123" data-qdbparmstring="ddd" style="background-color: #f0f0f0; border: solid 1px black; padding:3px;margin: 20px;"></div>
+                <div style="padding: 5px;"><button id="addQdb" onclick="addQdb()">Add Qdb</button></div>
                 
             </div>
         </div> <!-- End Wrapper -->
