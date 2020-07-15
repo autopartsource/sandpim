@@ -101,7 +101,9 @@ $niceattributes=array();
 foreach($app['attributes'] as $appattribute)
 {
  if($appattribute['type']=='vcdb'){$niceattributes[]=array('sequence'=>$appattribute['sequence'],'text'=>$vcdb->niceVCdbAttributePair($appattribute),'cosmetic'=>$appattribute['cosmetic'],'type'=>$appattribute['type'],'id'=>$appattribute['id']);}
+ if($appattribute['type']=='qdb'){$niceattributes[]=array('sequence'=>$appattribute['sequence'],'text'=>$qdb->qualifierText(intval($appattribute['name']), explode('~', str_replace('|', '', $appattribute['value']))),'cosmetic'=>$appattribute['cosmetic'],'type'=>$appattribute['type'],'id'=>$appattribute['id']);}
  if($appattribute['type']=='note'){$niceattributes[]=array('sequence'=>$appattribute['sequence'],'text'=>$appattribute['value'],'cosmetic'=>$appattribute['cosmetic'],'type'=>$appattribute['type'],'id'=>$appattribute['id']);}
+ 
 }
 
 $nicefitmentarray=array(); foreach($niceattributes as $niceattribute){$nicefitmentarray[]=$niceattribute['text'];}
@@ -198,7 +200,7 @@ if(isset($_GET['categories']))
              xhr.onload = function()
              {
               var result=JSON.parse(xhr.responseText);
-              console.log(result);
+              //console.log(result);
              };
              xhr.send();
             }
@@ -209,11 +211,11 @@ if(isset($_GET['categories']))
              var qdbparmsString=document.getElementById("qdbpreview").getAttribute("data-qdbparmstring");
              var xhr = new XMLHttpRequest();
              
-             xhr.open('GET', 'ajaxAddAppAttribute.php?type=qdb&name='+qdbid+'&value='+encodeURIComponent(qdbparmsString)+'&cosmetic=1&appid='+<?php echo $appid;?>);
+             xhr.open('GET', 'ajaxAddAppAttribute.php?type=qdb&name='+qdbid+'&value='+encodeURIComponent(qdbparmsString)+'&cosmetic=0&appid='+<?php echo $appid;?>);
              xhr.onload = function()
              {
               var result=JSON.parse(xhr.responseText);
-              console.log(result);
+              //console.log(result);
              };
              xhr.send();
             }
@@ -324,11 +326,11 @@ if(isset($_GET['categories']))
              document.getElementById("qdbpreview").setAttribute("data-qdbparmstring",parmsString);
 
 
-             var previewText=applyQdbParms(selectedQdbText,parms);
+             var previewText=applyQdbParmsToString(selectedQdbText,parms);
              document.getElementById('qdbpreview').innerHTML=previewText;
             }
 
-            function applyQdbParms(text,parms)
+            function applyQdbParmsToString(text,parms)
             {
              var result=text;
              var startpos=-1;
@@ -355,7 +357,18 @@ if(isset($_GET['categories']))
             }
 
 
-
+            function showhideForm(e)
+            {
+             var x = document.getElementById(e);
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
 
         </script>
     </head>
@@ -389,13 +402,48 @@ if(isset($_GET['categories']))
                      <?php foreach($niceattributes as $niceattribute){$text_decoration=''; if($niceattribute['cosmetic']==1){$text_decoration='text-decoration: line-through;';} echo '<div style="border:solid 1px;margin:5px;'.$text_decoration.'padding:2px;background-color:#'.$attributecolors[$niceattribute['type']].';">'.$nicefitmentarray[]=$niceattribute['text'].' <input type="submit" name="cosmetic_'.$niceattribute['id'].'" value="Cosmetic"/><input type="submit" name="sequenceup_'.$niceattribute['id'].'" value="Down"/><input type="submit" name="remove_'.$niceattribute['id'].'" value="Remove"/></div>';} ?>
                     </form>
 
-                    <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
-                     <div>
-                      <select name="vcdbattribute"><option value="">-- Select a VCdb Attribute --</option> <?php foreach($allattributes as $attributekey=>$allattributename){echo '<option value="'.$attributekey.'">'.$allattributename.'</option>';}?> </select>
-                      <input type="submit" name="submit" value="Add Attribute"/><br/>
-                      <input type="text" name="note"/><input type="submit" name="submit" value="Add Note"/>
+                     <div onclick="showhideForm('newvcdbattributeform')">VCdb Attribute ...</div>
+                       
+                     <div id="newvcdbattributeform" style="display:none;padding: 40px;">
+                      <select id="vcdbattribute" name="vcdbattribute"><option value="">-- Select a VCdb Attribute --</option> <?php foreach($allattributes as $attributekey=>$allattributename){echo '<option value="'.$attributekey.'">'.$allattributename.'</option>';}?> </select>
+                      <button onclick="addVCdb()">Add VCdb Attribute</button>
                      </div>
-                     </form>
+
+                     <div onclick="showhideForm('newnoteform')">Free-form fitment note ...</div>
+                       
+                     <div id="newnoteform" style="display:none;padding: 40px;">
+                      <input type="text" id="fitmentnote"/><button onclick="addNote()">Add Fitment Note</button>
+                     </div>
+
+                       
+                     <div onclick="showhideForm('newqdbattributeform')">Qdb Qualifier ...</div>
+
+                     <div id="newqdbattributeform" style="display:none;padding:40px;">
+                      <div style="padding:3px;">
+                       <div style="float:left;"><input type="text" id="qdbsearchterm"/></div>
+                       <div style="float:left;"><button id="mybutton" onclick="searchQdb()">Search</button></div>
+                       <div style="clear:both;"></div>
+                      </div>
+                      <div style="padding:3px;font-size: 75%; color: #aaaaaa;" id="qdbresultscount"></div>
+                      <select id="qdbresults" multiple onchange="selectQdb()"></select>
+
+                      <?php for($i=1; $i<=8;$i++){?>
+                      <div id="qdbparm<?php echo $i;?>block" style="padding:3px; display:none;">
+                       <div id="qdbparm<?php echo $i;?>title" style="float:left;"></div>
+                       <div style="float:left;">
+                        <input size="8" type="text" id="qdbparm<?php echo $i;?>value" onkeyup="showQdbPreview()"/>
+                       </div>
+                       <div id="qdbparm<?php echo $i;?>uomblock" style="float:left;padding-left:10px; display:none;">UoM
+                        <input type="text" id="qdbparm<?php echo $i;?>uom" size="2" onkeyup="showQdbPreview()"/>
+                       </div>
+                       <div style="clear:both;"></div>
+                      </div>
+                      <?php }?>
+
+                      <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="background-color: #f0f0f0; border: solid 1px black; padding:3px;margin: 20px;"></div>
+                      <div style="padding: 5px;"><button id="addQdb" onclick="addQdb()">Add Qdb Qualifier</button></div>
+                     </div>
+                       
                     </td>
                    </tr>
                    <tr><th>Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp'];?>"/><button onclick='updateApp(<?php echo $appid;?>,"text","quantityperapp");'>Update Qty</button></td></tr>
@@ -427,32 +475,8 @@ if(isset($_GET['categories']))
 
             <div class="contentRight">
 
-                
-                
-                <div style="padding:3px;">
-                    <div style="float:left;"><input type="text" id="qdbsearchterm"/></div>
-                    <div style="float:left;"><button id="mybutton" onclick="searchQdb()">Search</button></div>
-                    <div style="clear:both;"></div>
-                </div>
-                <div style="padding:3px;font-size: 75%; color: #aaaaaa;" id="qdbresultscount"></div>
-                <select style="width: 400px;" id="qdbresults" multiple size="10" onchange="selectQdb()"></select>
-                
-                <?php for($i=1; $i<=8;$i++){?>
-                <div id="qdbparm<?php echo $i;?>block" style="padding:3px; display:none;">
-                    <div id="qdbparm<?php echo $i;?>title" style="float:left;"></div>
-                    <div style="float:left;">
-                        <input size="8" type="text" id="qdbparm<?php echo $i;?>value" onkeyup="showQdbPreview()"/>
-                    </div>
-                    <div id="qdbparm<?php echo $i;?>uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm<?php echo $i;?>uom" size="2" onkeyup="showQdbPreview()"/>
-                    </div>
-                    <div style="clear:both;"></div>
-                </div>
-                <?php }?>
-                
-                <div id="qdbpreview" data-qdbid="123" data-qdbparmstring="ddd" style="background-color: #f0f0f0; border: solid 1px black; padding:3px;margin: 20px;"></div>
-                <div style="padding: 5px;"><button id="addQdb" onclick="addQdb()">Add Qdb</button></div>
-                
+                <button onclick="myFunction()"><img src="./down.png" width="20"></button>
+
             </div>
         </div> <!-- End Wrapper -->
                 
