@@ -193,14 +193,29 @@ if(isset($_GET['categories']))
             }
 
 
-            function addVCdbAttribute()
+            function addVCdb()
             {
+                //ccc
+                
+             var vcdbSelect = document.getElementById("vcdbattribute");
+             var selectedValue=vcdbSelect.options[vcdbSelect.selectedIndex].value;
+             var chunks = selectedValue.split('_');
+                             
+             var name=chunks[0];
+             var value=chunks[1];
+             console.log(name);
+   
+                
+                
              var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxAddAppAttribute.php?type=vcdb&name=SubModel&value=2&cosmetic=1&appid='+<?php echo $appid;?>);
+             xhr.open('GET', 'ajaxAddAppAttribute.php?type=vcdb&name='+name+'&value='+value+'&cosmetic=0&appid='+<?php echo $appid;?>);
              xhr.onload = function()
              {
               var result=JSON.parse(xhr.responseText);
-              //console.log(result);
+              
+              var container=document.getElementById('fitment');
+              container.innerHTML+='<div id="attribute_'+result.id+'" style="border:solid 1px;margin:5px;padding:2px;background-color:#aaaaaa;">'+result.nicetext+'<div style="float:right;"><button onclick="toggleAttributeCosmetic('+result.id+')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button><button onclick="sequenceAttributeUp('+result.id+')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('+result.id+')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div></div>';
+              document.getElementById("sandpiperoid").innerHTML=result.oid;
              };
              xhr.send();
             }
@@ -369,6 +384,22 @@ if(isset($_GET['categories']))
               x.style.display = "none";
              }
             }
+            
+            function removeFitmentAttribute(id)
+            {
+             var div = document.getElementById('attribute_'+id);
+             div.parentNode.removeChild(div);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeleteAppAttribute.php?id='+id+'&appid=<?php echo $appid;?>');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
+             };
+             xhr.send();
+            }
+            
 
         </script>
     </head>
@@ -398,25 +429,31 @@ if(isset($_GET['categories']))
                   <tr><th>Position</th><td align="right"><select id="positionid"  onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','positionid');"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select></td></tr>
                   <tr><th>Fitment<br/>Qualifiers</th>
                    <td align="left">
-                    <form method="post" action="showApp.php?appid=<?php echo $appid;?>">
-                     <?php foreach($niceattributes as $niceattribute){$text_decoration=''; if($niceattribute['cosmetic']==1){$text_decoration='text-decoration: line-through;';} echo '<div style="border:solid 1px;margin:5px;'.$text_decoration.'padding:2px;background-color:#'.$attributecolors[$niceattribute['type']].';">'.$nicefitmentarray[]=$niceattribute['text'].' <input type="submit" name="cosmetic_'.$niceattribute['id'].'" value="Cosmetic"/><input type="submit" name="sequenceup_'.$niceattribute['id'].'" value="Down"/><input type="submit" name="remove_'.$niceattribute['id'].'" value="Remove"/></div>';} ?>
-                    </form>
-
-                     <div onclick="showhideForm('newvcdbattributeform')">VCdb Attribute ...</div>
+                    <div id="fitment">
+                     <?php foreach($niceattributes as $niceattribute){$text_decoration=''; if($niceattribute['cosmetic']==1){$text_decoration='text-decoration: line-through;';} ?>
+                      <div id="attribute_<?php echo $niceattribute['id'];?>" style="border:solid 1px;margin:5px;<?php echo $text_decoration;?> 
+                        padding:2px;background-color:#<?php echo $attributecolors[$niceattribute['type']];?>;">
+                       <?php echo $niceattribute['text'];?>
+                         <div style="float:right;"><button onclick="toggleAttributeCosmetic('<?php echo $niceattribute['id'];?>')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button>
+                        <button onclick="sequenceAttributeUp('<?php echo $niceattribute['id'];?>')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button>
+                        <button onclick="removeFitmentAttribute('<?php echo $niceattribute['id'];?>')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div>
+                       </div><?php }?>
+                      </div>
+                     <div onclick="showhideForm('newvcdbattributeform')">Add VCdb Attribute ...</div>
                        
                      <div id="newvcdbattributeform" style="display:none;padding: 40px;">
                       <select id="vcdbattribute" name="vcdbattribute"><option value="">-- Select a VCdb Attribute --</option> <?php foreach($allattributes as $attributekey=>$allattributename){echo '<option value="'.$attributekey.'">'.$allattributename.'</option>';}?> </select>
                       <button onclick="addVCdb()">Add VCdb Attribute</button>
                      </div>
 
-                     <div onclick="showhideForm('newnoteform')">Free-form fitment note ...</div>
+                     <div onclick="showhideForm('newnoteform')">Add free-form fitment note ...</div>
                        
                      <div id="newnoteform" style="display:none;padding: 40px;">
                       <input type="text" id="fitmentnote"/><button onclick="addNote()">Add Fitment Note</button>
                      </div>
 
                        
-                     <div onclick="showhideForm('newqdbattributeform')">Qdb Qualifier ...</div>
+                     <div onclick="showhideForm('newqdbattributeform')">Add Qdb Qualifier ...</div>
 
                      <div id="newqdbattributeform" style="display:none;padding:40px;">
                       <div style="padding:3px;">
@@ -474,8 +511,6 @@ if(isset($_GET['categories']))
             </div> <!-- End Main Content -->
 
             <div class="contentRight">
-
-                <button onclick="myFunction()"><img src="./down.png" width="20"></button>
 
             </div>
         </div> <!-- End Wrapper -->

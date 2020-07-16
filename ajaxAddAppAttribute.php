@@ -1,5 +1,6 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/vcdbClass.php');
 include_once('./class/qdbClass.php');
 session_start();
 
@@ -17,9 +18,10 @@ session_start();
 if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['type']) && isset($_GET['name']) && isset($_GET['value']) && isset($_GET['cosmetic']))
 {
  $pim= new pim;
+ $vcdb=new vcdb;
  $qdb=new qdb;
  
- $result=array('success'=>false,'id'=>0,'oid'=>'');
+ $result=array('success'=>false,'id'=>0,'oid'=>'','nicetext'=>'asdsadsadsad');
 
  $appid=intval($_GET['appid']);
  $cosmetic= intval($_GET['cosmetic']);
@@ -39,7 +41,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['type']) &
      $pim->cleansequenceAppAttributes($appid);
      $result['oid']=$pim->getOIDofApp($appid);
      $pim->logAppEvent($appid,$userid,'VCdb attribute ['.$name.':'.$value.'] added ',$result['oid']);
-     $result['success']=true; $result['id']=$id;
+     $result['success']=true; $result['id']=$id;$result['nicetext']=$vcdb->niceVCdbAttributePair(array('name'=>$name,'value'=>$value));
     }
     break;
 
@@ -53,7 +55,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['type']) &
       $result['oid']=$pim->getOIDofApp($appid);
       $nicequalifier=$qdb->qualifierText($qdbid, explode('~', str_replace('|','',$value)));
       $pim->logAppEvent($appid,$userid,'Qdb attribute ['.$nicequalifier.'] added ', $result['oid']);
-      $result['success']=true; $result['id']=$id;
+      $result['success']=true; $result['id']=$id; $result['nicetext']=$nicequalifier;
      }
     }
     break;
@@ -64,7 +66,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['type']) &
      $pim->cleansequenceAppAttributes($appid);
      $result['oid']=$pim->getOIDofApp($appid);
      $pim->logAppEvent($appid,$userid,'Fitment note ['.$value.'] added', $result['oid']);
-     $result['success']=true; $result['id']=$id;
+     $result['success']=true; $result['id']=$id; $result['nicetext']=$value;
     }
     break;
 

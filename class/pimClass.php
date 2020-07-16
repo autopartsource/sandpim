@@ -253,6 +253,30 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $attributes;
  }
+ 
+ function getAppAttribute($attributeid)
+ {
+  $db = new mysql; $db->connect();
+  $attribute=false;
+  if($stmt=$db->conn->prepare('select * from application_attribute where id=?'))
+  {
+   if($stmt->bind_param('i', $attributeid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $attribute=array('id'=>$row['id'],'applicationid'=>$row['applicationid'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $attribute;
+ }
+ 
+ 
 
  function appAttributesHash($attributes)
  {
