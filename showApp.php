@@ -195,17 +195,12 @@ if(isset($_GET['categories']))
 
             function addVCdb()
             {
-                //ccc
-                
              var vcdbSelect = document.getElementById("vcdbattribute");
              var selectedValue=vcdbSelect.options[vcdbSelect.selectedIndex].value;
              var chunks = selectedValue.split('_');
                              
              var name=chunks[0];
              var value=chunks[1];
-             console.log(name);
-   
-                
                 
              var xhr = new XMLHttpRequest();
              xhr.open('GET', 'ajaxAddAppAttribute.php?type=vcdb&name='+name+'&value='+value+'&cosmetic=0&appid='+<?php echo $appid;?>);
@@ -214,10 +209,11 @@ if(isset($_GET['categories']))
               var result=JSON.parse(xhr.responseText);
               
               var container=document.getElementById('fitment');
-              container.innerHTML+='<div id="attribute_'+result.id+'" style="border:solid 1px;margin:5px;padding:2px;background-color:#aaaaaa;">'+result.nicetext+'<div style="float:right;"><button onclick="toggleAttributeCosmetic('+result.id+')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button><button onclick="sequenceAttributeUp('+result.id+')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('+result.id+')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div></div>';
+              container.innerHTML+='<div id="attribute_'+result.id+'" style="border:solid 1px;margin:5px;padding:2px;background-color:#52BE80;">'+result.nicetext+'<div style="float:right;"><button onclick="toggleAttributeCosmetic('+result.id+')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button><button onclick="sequenceAttributeUp('+result.id+')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('+result.id+')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div></div>';
               document.getElementById("sandpiperoid").innerHTML=result.oid;
              };
              xhr.send();
+             document.getElementById("newvcdbattributeform").style.display='none';
             }
             
             function addQdb()
@@ -231,10 +227,60 @@ if(isset($_GET['categories']))
              {
               var result=JSON.parse(xhr.responseText);
               //console.log(result);
+              
+              var container=document.getElementById('fitment');
+              container.innerHTML+='<div id="attribute_'+result.id+'" style="border:solid 1px;margin:5px;padding:2px;background-color:#6060F0;">'+result.nicetext+'<div style="float:right;"><button onclick="toggleAttributeCosmetic('+result.id+')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button><button onclick="sequenceAttributeUp('+result.id+')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('+result.id+')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div></div>';
+              document.getElementById("sandpiperoid").innerHTML=result.oid;
+
              };
              xhr.send();
+             document.getElementById('qdbresultscount').style.display='none';
+             document.getElementById('qdbresults').style.display='none';
+             document.getElementById('qdbpreview').style.display='none';             
+             document.getElementById('addqdbqualifierbutton').style.display='none';
+             document.getElementById('newqdbattributeform').style.display='none';
+              
+             resetQdbParms();
+
+            }
+
+            function resetQdbParms()
+            {
+             var p;
+             for(p=1; p<=8; p++)
+             {
+              document.getElementById('qdbparm'+p+'block').style.display='none';
+              document.getElementById('qdbparm'+p+'uomblock').style.display='none';
+              document.getElementById('qdbparm'+p+'value').value='';
+              document.getElementById('qdbparm'+p+'uom').value='';
+             }
             }
             
+
+
+
+            function addNote()
+            {
+             var noteText = document.getElementById("fitmentnote").value;
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddAppAttribute.php?type=note&name=note&value='+encodeURIComponent(noteText)+'&cosmetic=0&appid='+<?php echo $appid;?>);
+             xhr.onload = function()
+             {
+              var result=JSON.parse(xhr.responseText);
+              
+              var container=document.getElementById('fitment');
+              container.innerHTML+='<div id="attribute_'+result.id+'" style="border:solid 1px;margin:5px;padding:2px;background-color:#c0c0c0;">'+result.nicetext+'<div style="float:right;"><button onclick="toggleAttributeCosmetic('+result.id+')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button><button onclick="sequenceAttributeUp('+result.id+')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('+result.id+')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div></div>';
+              document.getElementById("sandpiperoid").innerHTML=result.oid;
+              
+             };
+             xhr.send();
+             document.getElementById("newnoteform").style.display='none';
+            }
+
+
+
+
             
             
 
@@ -253,6 +299,15 @@ if(isset($_GET['categories']))
               {
                 var newOption = new Option(results[k].qualifiertext,results[k].qualifierid);
                 document.getElementById("qdbresults").add(newOption,undefined);
+              }
+              
+              if(results.length>0)
+              {
+               document.getElementById("qdbresults").style.display='block';
+              }
+              else
+              {
+               document.getElementById("qdbresults").style.display='none';
               }
               
              };
@@ -324,12 +379,9 @@ if(isset($_GET['categories']))
 
              var parms=['-']; // element 0 is filled with trash to allow the element numbers to align with the "p" mumbers
 
-
-
              for(i=1; i<=8; i++)
              {
               parms.push(document.getElementById('qdbparm'+i+'value').value + document.getElementById('qdbparm'+i+'uom').value);
-
                                  //value like "123, ABC, XYZ|~12|mm~4|mm"
               if(document.getElementById('qdbparm'+i+'value').value !='')
               {
@@ -339,8 +391,7 @@ if(isset($_GET['categories']))
 
              document.getElementById("qdbpreview").setAttribute("data-qdbid",selectedQdbID);
              document.getElementById("qdbpreview").setAttribute("data-qdbparmstring",parmsString);
-
-
+             
              var previewText=applyQdbParmsToString(selectedQdbText,parms);
              document.getElementById('qdbpreview').innerHTML=previewText;
             }
@@ -372,16 +423,16 @@ if(isset($_GET['categories']))
             }
 
 
-            function showhideForm(e)
+            function showhideForm(elementid)
             {
-             var x = document.getElementById(e);
-             if (x.style.display === "none") 
+             var element = document.getElementById(elementid);
+             if (element.style.display === "none") 
              {
-              x.style.display = "block";
+              element.style.display = "block";
              }
              else
              {
-              x.style.display = "none";
+              element.style.display = "none";
              }
             }
             
@@ -414,78 +465,73 @@ if(isset($_GET['categories']))
             <div class="contentLeft"></div>
             <!-- Main Content -->
             <div class="contentMain">
-                <?php if($app) {;?>
-                <div style="padding:10px;">
+             <?php if($app) {;?>
+             <div style="padding:10px;">
+              <?php
+               if($pcdb->parttypeName($app['parttypeid'])=='not found'){echo '<div style="color:red;">Part Type id '.$app['parttypeid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
+               if($pcdb->positionName($app['positionid'])=='not found'){echo '<div style="color:red;">Position id '.$app['positionid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
+              ?>
 
-                 <?php
-                  if($pcdb->parttypeName($app['parttypeid'])=='not found'){echo '<div style="color:red;">Part Type id '.$app['parttypeid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
-                  if($pcdb->positionName($app['positionid'])=='not found'){echo '<div style="color:red;">Position id '.$app['positionid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
-                 ?>
-
-                 <table border="1" cellpadding="5">
-                  <tr><th><a href="./showAppsByBasevehicle.php?<?php echo implode('&',$selectedcategoriesurlvars);?>&makeid=<?php echo $mmy['MakeID'];?>&modelid=<?php echo $mmy['ModelID'];?>&yearid=<?php echo $mmy['year'];?>&submit=Show+Applications">Base Vehicle</a></th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
-                  <tr><th>Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber'];?>"><?php echo $app['partnumber'];?></a></td></tr>
-                  <tr><th>Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$app['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
-                  <tr><th>Position</th><td align="right"><select id="positionid"  onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','positionid');"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select></td></tr>
-                  <tr><th>Fitment<br/>Qualifiers</th>
-                   <td align="left">
-                    <div id="fitment">
-                     <?php foreach($niceattributes as $niceattribute){$text_decoration=''; if($niceattribute['cosmetic']==1){$text_decoration='text-decoration: line-through;';} ?>
-                      <div id="attribute_<?php echo $niceattribute['id'];?>" style="border:solid 1px;margin:5px;<?php echo $text_decoration;?> 
-                        padding:2px;background-color:#<?php echo $attributecolors[$niceattribute['type']];?>;">
-                       <?php echo $niceattribute['text'];?>
-                         <div style="float:right;"><button onclick="toggleAttributeCosmetic('<?php echo $niceattribute['id'];?>')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button>
-                        <button onclick="sequenceAttributeUp('<?php echo $niceattribute['id'];?>')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button>
-                        <button onclick="removeFitmentAttribute('<?php echo $niceattribute['id'];?>')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div>
-                       </div><?php }?>
-                      </div>
-                     <div onclick="showhideForm('newvcdbattributeform')">Add VCdb Attribute ...</div>
+              <table border="1" cellpadding="5">
+               <tr><th><a href="./showAppsByBasevehicle.php?<?php echo implode('&',$selectedcategoriesurlvars);?>&makeid=<?php echo $mmy['MakeID'];?>&modelid=<?php echo $mmy['ModelID'];?>&yearid=<?php echo $mmy['year'];?>&submit=Show+Applications">Base Vehicle</a></th><td align="left"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($mmy['MakeID']).'</a>  <a href="mmySelectModel.php?makeid='.$mmy['MakeID'].'">'.$vcdb->modelName($mmy['ModelID']).'</a> <a href="mmySelectYear.php?makeid='.$mmy['MakeID'].'&modelid='.$mmy['ModelID'].'">'.$mmy['year'].'</a>';?></td></tr>
+               <tr><th>Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber'];?>"><?php echo $app['partnumber'];?></a></td></tr>
+               <tr><th>Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$app['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
+               <tr><th>Position</th><td align="right"><select id="positionid"  onchange="if (this.selectedIndex) updateApp(<?php echo $appid;?>,'select','positionid');"><option value="0">Undefined</option><?php foreach($favoritepositions as $position){?> <option value="<?php echo $position['id'];?>"<?php if($position['id']==$app['positionid']){echo ' selected';}?>><?php echo $position['name'];?></option><?php }?></select></td></tr>
+               <tr><th>Fitment<br/>Qualifiers</th>
+                <td align="left">
+                 <div id="fitment">
+                  <?php foreach($niceattributes as $niceattribute){$text_decoration=''; if($niceattribute['cosmetic']==1){$text_decoration='text-decoration: line-through;';} ?>
+                  <div id="attribute_<?php echo $niceattribute['id'];?>" style="border:solid 1px;margin:5px;<?php echo $text_decoration;?>                        padding:2px;background-color:#<?php echo $attributecolors[$niceattribute['type']];?>;"><?php echo $niceattribute['text'];?><div style="float:right;"><button onclick="toggleAttributeCosmetic('<?php echo $niceattribute['id'];?>')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button><button onclick="sequenceAttributeUp('<?php echo $niceattribute['id'];?>')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('<?php echo $niceattribute['id'];?>')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div><?php }?>
+                 </div>
+                 <div onclick="showhideForm('newvcdbattributeform'); getElementById('vcdbattribute').focus();">Add VCdb Attribute ...</div>
                        
-                     <div id="newvcdbattributeform" style="display:none;padding: 40px;">
-                      <select id="vcdbattribute" name="vcdbattribute"><option value="">-- Select a VCdb Attribute --</option> <?php foreach($allattributes as $attributekey=>$allattributename){echo '<option value="'.$attributekey.'">'.$allattributename.'</option>';}?> </select>
-                      <button onclick="addVCdb()">Add VCdb Attribute</button>
-                     </div>
+                 <div id="newvcdbattributeform" style="display:none;padding: 30px;">
+                  <select id="vcdbattribute"><option value="">-- Select a VCdb Attribute --</option> <?php foreach($allattributes as $attributekey=>$allattributename){echo '<option value="'.$attributekey.'">'.$allattributename.'</option>';}?> </select>
+                  <button onclick="addVCdb()">Add VCdb Attribute</button>
+                 </div>
 
-                     <div onclick="showhideForm('newnoteform')">Add free-form fitment note ...</div>
+                 <div onclick="showhideForm('newnoteform'); getElementById('fitmentnote').focus();">Add free-form fitment note ...</div>
                        
-                     <div id="newnoteform" style="display:none;padding: 40px;">
-                      <input type="text" id="fitmentnote"/><button onclick="addNote()">Add Fitment Note</button>
-                     </div>
+                 <div id="newnoteform" style="display:none;padding: 30px;">
+                  <input type="text" id="fitmentnote"/> <button onclick="addNote()">Add Fitment Note</button>
+                 </div>
 
                        
-                     <div onclick="showhideForm('newqdbattributeform')">Add Qdb Qualifier ...</div>
+                  <div onclick="showhideForm('newqdbattributeform'); getElementById('qdbsearchterm').focus();">Add Qdb Qualifier ...</div>
+                  <div id="newqdbattributeform" style="display:none;padding:30px;">
+                   <div style="padding:3px;">
+                    <div style="float:left;">
+                     <input type="text" id="qdbsearchterm"/>
+                     <button id="qdbsearch" onclick="searchQdb()">Search</button>
+                    </div>
+                    <div style="clear:both;"></div>
+                   </div>
+                   <div style="padding:3px;font-size: 75%; color: #aaaaaa;" id="qdbresultscount"></div>
+                   <select id="qdbresults" style="display:none;" size="10" multiple onchange="selectQdb(); getElementById('addqdbqualifierbutton').style.display='block';"></select>
 
-                     <div id="newqdbattributeform" style="display:none;padding:40px;">
-                      <div style="padding:3px;">
-                       <div style="float:left;"><input type="text" id="qdbsearchterm"/></div>
-                       <div style="float:left;"><button id="mybutton" onclick="searchQdb()">Search</button></div>
-                       <div style="clear:both;"></div>
-                      </div>
-                      <div style="padding:3px;font-size: 75%; color: #aaaaaa;" id="qdbresultscount"></div>
-                      <select id="qdbresults" multiple onchange="selectQdb()"></select>
+                   <?php for($i=1; $i<=8;$i++){?>
+                   <div id="qdbparm<?php echo $i;?>block" style="padding:3px; display:none;">
+                    <div id="qdbparm<?php echo $i;?>title" style="float:left;"></div>
+                    <div style="float:left;">
+                     <input size="8" type="text" id="qdbparm<?php echo $i;?>value" onkeyup="showQdbPreview()"/>
+                    </div>
+                    <div id="qdbparm<?php echo $i;?>uomblock" style="float:left;padding-left:10px; display:none;">uom
+                     <input type="text" id="qdbparm<?php echo $i;?>uom" size="2" onkeyup="showQdbPreview();"/>
+                    </div>
+                    <div style="clear:both;"></div>
+                   </div>
+                  <?php }?>
 
-                      <?php for($i=1; $i<=8;$i++){?>
-                      <div id="qdbparm<?php echo $i;?>block" style="padding:3px; display:none;">
-                       <div id="qdbparm<?php echo $i;?>title" style="float:left;"></div>
-                       <div style="float:left;">
-                        <input size="8" type="text" id="qdbparm<?php echo $i;?>value" onkeyup="showQdbPreview()"/>
-                       </div>
-                       <div id="qdbparm<?php echo $i;?>uomblock" style="float:left;padding-left:10px; display:none;">UoM
-                        <input type="text" id="qdbparm<?php echo $i;?>uom" size="2" onkeyup="showQdbPreview()"/>
-                       </div>
-                       <div style="clear:both;"></div>
-                      </div>
-                      <?php }?>
-
-                      <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="background-color: #f0f0f0; border: solid 1px black; padding:3px;margin: 20px;"></div>
-                      <div style="padding: 5px;"><button id="addQdb" onclick="addQdb()">Add Qdb Qualifier</button></div>
-                     </div>
+                   <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="display:none; background-color: #f0f0f0; border: solid 1px black; padding:3px;margin: 20px;"></div>
+                   <div id="addqdbqualifierbutton" style="padding: 5px;display:none;"><button id="addQdb" onclick="addQdb();">Add Qdb Qualifier</button></div>
+                  </div>
                        
-                    </td>
-                   </tr>
-                   <tr><th>Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp'];?>"/><button onclick='updateApp(<?php echo $appid;?>,"text","quantityperapp");'>Update Qty</button></td></tr>
-                   <tr><th>Fitment<br/>Assets</th><td align="right"><?php if(count($assets)){foreach($assets as $asset) { echo '<div><a title="view this asset in new browser window" href="'.$asset['uri'].'" target="_blank">'.$asset['assetId'].'</a> (representation:'.$asset['representation'].', sequence: '.$asset['assetItemOrder'].') <a title="remove this asset from the application" href="./showAdminApplication.php?id='.intval($_GET['id']).'&removeasset='.$asset['id'].'">x</a><div>'; }}?>
-                   <div>Asset <select name="assetid"><option value=""></option>
+                 </td>
+                </tr>
+                <tr><th>Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp'];?>"/><button onclick='updateApp(<?php echo $appid;?>,"text","quantityperapp");'>Update Qty</button></td></tr>
+                 <tr><th>Fitment<br/>Assets</th>
+                  <td align="right"><?php if(count($assets)){foreach($assets as $asset) { echo '<div><a title="view this asset in new browser window" href="'.$asset['uri'].'" target="_blank">'.$asset['assetId'].'</a> (representation:'.$asset['representation'].', sequence: '.$asset['assetItemOrder'].') <a title="remove this asset from the application" href="./showAdminApplication.php?id='.intval($_GET['id']).'&removeasset='.$asset['id'].'">x</a><div>'; }}?>
+                  <div>Asset <select name="assetid"><option value=""></option>
                    <?php
                    foreach($assets_linked_to_item as $asset)
                    {
@@ -495,19 +541,21 @@ if(isset($_GET['categories']))
                     </select>
                     Sequence <input type="text" name="assetorder" size="3" value="1"/>
                     <select name="representation"><option value="A">Actual</option><option value="R">Representative</option></select>
-                   </div></td></tr>
-                   <tr><th>Internal<br/>Notes</th><td><textarea id="internalnotes" cols="60" rows="5"><?php echo $app['internalnotes'];?></textarea><div><button onclick='updateApp(<?php echo $appid;?>,"text","internalnotes");'>Save</button></div></td><tr>
-                   <tr><th>IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id'];?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid'];?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid'];?></div><div style="clear:both;"></div></td><tr>
-                   <tr><th id="label-cosmetic" class="appcosmetic-noncosmetic">Cosmetic</th><td id="value-cosmetic" class="appcosmetic-noncosmetic" align="right"><div id="cosmetic-text"></div> <button onclick='updateApp(<?php echo $appid;?>,"button","cosmetic");'>Cosmetic</button></td></tr>
-                   <tr><th id="label-status" class="apppart-active">Status</th><td id="value-status" class="apppart-active" align="right"><select id="status" onchange="updateApp(<?php echo $appid;?>,'select','status');"><option value="0">Active</option><option value="1"<?php if($app['status']==1){echo ' selected';}?>>Deleted</option><option value="2"<?php if($app['status']==2){echo ' selected';}?>>Hidden</option></select></td></tr>
-                 </table>
-                </div>
-                <?php if(count($history)){echo '<div><a href="./appHistory.php?appid='.$appid.'">History</a></div>';}?>
-                <?php }
-                else
-                { // no apps found
-                 echo 'Application not found';
-                }?>
+                   </div>
+                  </td>
+                 </tr>
+                 <tr><th>Internal<br/>Notes</th><td><textarea id="internalnotes" cols="60" rows="5"><?php echo $app['internalnotes'];?></textarea><div><button onclick='updateApp(<?php echo $appid;?>,"text","internalnotes");'>Save</button></div></td><tr>
+                 <tr><th>IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id'];?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid'];?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid'];?></div><div style="clear:both;"></div></td><tr>
+                 <tr><th id="label-cosmetic" class="appcosmetic-noncosmetic">Cosmetic</th><td id="value-cosmetic" class="appcosmetic-noncosmetic" align="right"><div id="cosmetic-text"></div> <button onclick='updateApp(<?php echo $appid;?>,"button","cosmetic");'>Cosmetic</button></td></tr>
+                 <tr><th id="label-status" class="apppart-active">Status</th><td id="value-status" class="apppart-active" align="right"><select id="status" onchange="updateApp(<?php echo $appid;?>,'select','status');"><option value="0">Active</option><option value="1"<?php if($app['status']==1){echo ' selected';}?>>Deleted</option><option value="2"<?php if($app['status']==2){echo ' selected';}?>>Hidden</option></select></td></tr>
+                </table>
+               </div>
+               <?php if(count($history)){echo '<div><a href="./appHistory.php?appid='.$appid.'">History</a></div>';}?>
+               <?php }
+               else
+               { // no apps found
+                echo 'Application not found';
+               }?>
             </div> <!-- End Main Content -->
 
             <div class="contentRight">

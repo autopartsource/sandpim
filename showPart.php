@@ -105,7 +105,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
              document.getElementById("sandpiperoid").innerHTML='';
 
              var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxUpdatePart.php?partnumber='+partnumber+'&elementid='+elementid+'&value='+encodeURI(value));
+             xhr.open('GET', 'ajaxUpdatePart.php?partnumber='+partnumber+'&elementid='+elementid+'&value='+encodeURIComponent(value));
              xhr.onload = function()
              {
               var response=xhr.responseText;
