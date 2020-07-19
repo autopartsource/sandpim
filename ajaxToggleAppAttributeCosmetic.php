@@ -5,7 +5,6 @@ include_once('./class/qdbClass.php');
 session_start();
 
 
-
 if(isset($_SESSION['userid']) && isset($_GET['id']) && isset($_GET['appid']))
 {
  $pim=new pim;
@@ -21,17 +20,24 @@ if(isset($_SESSION['userid']) && isset($_GET['id']) && isset($_GET['appid']))
  {
   if($attribute['applicationid']==$appid)
   {
-   $pim->deleteAppAttribute($appid,$attributeid);
-   $pim->cleansequenceAppAttributes($appid);
-   
-   $result['oid']=$pim->getOIDofApp($appid);
-   
+   $result['oid']=$pim->toggleAppAttributeCosmetic($appid, $attributeid);
+   $action='non-cosmetic';
+
+   if($attribute['cosmetic']==1)
+   {
+       $action='non-cosmetic';
+   }
+   else
+   {
+       $action='cosmetic';
+   }
+
    $niceattribute='';
    if($attribute['type']=='vcdb'){$niceattribute='VCdb attribute ['.$vcdb->niceVCdbAttributePair($attribute);}
    if($attribute['type']=='qdb'){$niceattribute='Qdb attribute ['.$qdb->qualifierText(intval($attribute['name']),explode('~', str_replace('|','',$attribute['value'])));}
    if($attribute['type']=='note'){$niceattribute='Note attribute ['.$attribute['value'];}
 
-   $pim->logAppEvent($appid,$userid, $niceattribute.'] removed',$result['oid']);
+   $pim->logAppEvent($appid,$userid, $niceattribute.'] made '.$action,$result['oid']);
    $result['success']=true;
   }
  }

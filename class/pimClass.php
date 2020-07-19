@@ -246,7 +246,6 @@ function countAppsByPartcategories($partcategories)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    //$pairtemp=array('name'=>$row['name'],'value'=>$row['value']);
     $attributes[]=array('id'=>$row['id'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
    }
   }
@@ -302,14 +301,14 @@ function countAppsByPartcategories($partcategories)
    while($row = $db->result->fetch_assoc()){$attributes[]=$row['id'];}
   }
 
-  $sequence=1;
+  $sequence=10;
   if($stmt=$db->conn->prepare('update application_attribute set sequence=? where id=?'))
   {
    $stmt->bind_param('ii',$sequence,$id);
    foreach($attributes as $id)
    {
     $stmt->execute();
-    $sequence++;
+    $sequence+=10;
    }
   }
   $db->close();
@@ -321,29 +320,30 @@ function countAppsByPartcategories($partcategories)
 
  function toggleAppAttributeCosmetic($appid,$attributeid)
  {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db = new mysql; $db->connect(); $oid=false;
   if($stmt=$db->conn->prepare('update application_attribute set cosmetic=cosmetic XOR 1 where applicationid=? and id=?'))
   {
-   $this->updateAppOID($appid);
-   $stmt->bind_param('ii', $appid,$attributeid);
-   $stmt->execute();
-  } //else{print_r($db->conn->error);}
+   if($stmt->bind_param('ii', $appid,$attributeid))
+   {
+    if($stmt->execute())
+    {
+     $oid=$this->updateAppOID($appid);
+    }
+   } 
+  }
   $db->close();
+  return $oid;
  }
 
  function incAppAttributeSequence($appid,$attributeid)
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
-  if($stmt=$db->conn->prepare('update application_attribute set sequence=sequence+1 where applicationid=? and id=?'))
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update application_attribute set sequence=sequence+15 where applicationid=? and id=?'))
   {
 //   $this->updateAppOID($appid);
    $stmt->bind_param('ii', $appid,$attributeid);
    $stmt->execute();
-  } //else{print_r($db->conn->error);}
+  }
   $db->close();
  }
 
@@ -1484,15 +1484,16 @@ function countAppsByPartcategories($partcategories)
 
  function toggleAppCosmetic($appid)
  {
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $db = new mysql; $db->connect(); $success=false;
   if($stmt=$db->conn->prepare('update application set cosmetic=cosmetic XOR 1 where id=?'))
   {
-   $stmt->bind_param('i', $appid);
-   $stmt->execute();
-  } //else{print_r($db->conn->error);}
+   if($stmt->bind_param('i', $appid))
+   {
+    $success=$stmt->execute();
+   }
+  }
   $db->close();
+  return $success;
  }
 
  function setAppInternalnotes($applicationid,$internalnotes)
@@ -1658,7 +1659,7 @@ function countAppsByPartcategories($partcategories)
    {
     $oid=$this->newoid();
     $stmt->bind_param('siiiis', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber);
-    $cosmetic=0; $sequence=0; $basevehicleid=intval($app->BaseVehicle['id']); $quantityperapp=intval($app->Qty); $parttypeid=intval($app->PartType['id']); $positionid=intval($app->Position['id']); $partnumber=(string)$app->Part;
+    $cosmetic=0; $sequence=10; $basevehicleid=intval($app->BaseVehicle['id']); $quantityperapp=intval($app->Qty); $parttypeid=intval($app->PartType['id']); $positionid=intval($app->Position['id']); $partnumber=(string)$app->Part;
     $stmt->execute(); // insert the application record
     $applicationid=$db->conn->insert_id;
 
@@ -1719,7 +1720,7 @@ function countAppsByPartcategories($partcategories)
      $stmt->bind_param('isssii', $applicationid,$attribute_name,$attribute_value,$attribute_type,$sequence,$cosmetic);
      foreach($attributes as $attribute)
      {
-      $sequence++; $attribute_name=$attribute['name']; $attribute_value=$attribute['value']; $attribute_type=$attribute['type'];
+      $sequence+=10; $attribute_name=$attribute['name']; $attribute_value=$attribute['value']; $attribute_type=$attribute['type'];
       $stmt->execute(); // insert the application record
      }
     }
@@ -1803,7 +1804,7 @@ function countAppsByPartcategories($partcategories)
 
      if($stmt=$db->conn->prepare('insert into application_attribute (id,applicationid,`name`,`value`,`type`,sequence,cosmetic) values(null,?,?,?,?,?,?)'))
      {
-      $sequence=0;
+      $sequence=10;
       $stmt->bind_param('isssii', $applicationid,$attribute_name,$attribute_value,$attribute_type,$sequence,$cosmetic);
       foreach($attributes as $attribute)
       {
