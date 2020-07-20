@@ -274,6 +274,8 @@ class setup
         sequence tinyint unsigned not null,
         cosmetic tinyint unsigned not null,
         PRIMARY KEY (id),
+        INDEX idx_type_value (`type`,`value`),
+        INDEX idx_name_value (`name`,`value`),
         INDEX idx_applicationid (applicationid)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - application_attribute ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - application_attribute ('.$db->conn->error.')';}

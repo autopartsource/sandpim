@@ -30,6 +30,7 @@ $pim= new pim;
                 <div style="padding:10px;"><a href="buyersGuideBuilderInput.php">Buyers Guide Builder</a></div>
                 <div style="padding:10px;"><a href="basevidsToMMYinput.php">Convert BaseVehicleIDs to Makes/Models/Years</a></div>
                 <div style="padding:10px;"><a href="MMYtoBasevidsInput.php">Convert Makes/Models/Years to BaseVehicleIDs</a></div>
+                <div style="padding:10px;"><a href="noteManager.php">Fitment Note Management</a></div>
             </div>
 
             <div class="contentRight"></div>

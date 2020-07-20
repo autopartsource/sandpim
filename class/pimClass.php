@@ -1577,6 +1577,77 @@ function countAppsByPartcategories($partcategories)
   if($updateoid){$this->updateAppOID($appid);}
  }
 
+ function getAllAppNoteAttributes()
+ {
+  $db=new mysql; $db->connect(); $attributes=array();
+  if($stmt=$db->conn->prepare("select * from application_attribute where `type`='note' order by `value`"))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $attributes[]=array('id'=>$row['id'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
+    }
+   }
+  }
+  $db->close();
+  return $attributes;
+ }
+
+ 
+ function getAppNoteAttributeCounts()
+ {
+  $db=new mysql; $db->connect(); $attributes=array();
+  if($stmt=$db->conn->prepare("select `value`, count(*) as notecount from application_attribute where `type`='note' group by `value` order by notecount desc"))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $notes[]=array('note'=>$row['value'],'count'=>$row['notecount']);
+    }
+   }
+  }
+  $db->close();
+  return $notes;
+ }
+
+ // take an array of attribute ID's (that are notes)
+ //and a qdb to convert them to
+ 
+ function convertNotesToQdbs($ids,$qdbid,$qdbvalue)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare("update application_attribute set `type`='qdb',`name`=?,`value`=? where id=?"))
+  {
+   $name=$qdbid;
+   $value=$qdbvalue;
+   $id=0;
+   
+   if($stmt->bind_param('ssi',$name,$value,$id))
+   {
+    foreach($ids as $noteid)
+    {
+     $id=$noteid;
+     $stmt->execute();
+    }
+   }
+  }
+  $db->close();
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  function newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$attributes)
  {
   $db = new mysql; $db->connect();
