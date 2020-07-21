@@ -12,17 +12,22 @@ $pim= new pim;
 $logs = new logs;
 $error_msg=false;
 
+$partcategories=$pim->getPartCategories();
 
 if(isset($_POST['submit']) && intval($_POST['jobid'])>0)
 {
  if($_POST['submit']=='Start')
  {
-  $pim->updateBackgroundjob(intval($_POST['jobid']),'started','starting process',0,'0000-00-00 00:00:00');
+  //$pim->updateBackgroundjob_status(intval($_POST['jobid']),'started','starting process',0,'0000-00-00 00:00:00');
+  $pim->updateBackgroundjobStatus(intval($_POST['jobid']), 'started', 0);
+  
   $logs->logSystemEvent('acesimport', isset($_SESSION['userid']), 'import job '.intval($_POST['jobid']).' started');
  }
  if($_POST['submit']=='Cancel')
  {
-  $pim->updateBackgroundjob(intval($_POST['jobid']),'canceled','canceled by user',0,'0000-00-00 00:00:00');
+  //$pim->updateBackgroundjob(intval($_POST['jobid']),'canceled','canceled by user',0,'0000-00-00 00:00:00');
+  $pim->updateBackgroundjobStatus(intval($_POST['jobid']), 'canceled', 0);
+  
   $logs->logSystemEvent('acesimport', isset($_SESSION['userid']), 'import job '.intval($_POST['jobid']).' canceled');
  }
  if($_POST['submit']=='Hide'){$pim->hideBackgroundjob(intval($_POST['jobid']));}
@@ -38,8 +43,8 @@ if(isset($_POST['submit']) && $_POST['submit']=='Import')
  {
   if(move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_file))
   {
-   $userid=0; $outputfile=''; $parameters=''; $datetimetostart=date('Y-m-d H:i:s');
-   $jobid=$pim->createBackgroundjob('ACESxmlImport','uploaded',$userid,$target_file,$outputfile,$parameters,$datetimetostart);
+   $userid=0; $outputfile=''; $parameters='partcategory:'.intval($_POST['partcategory']).';'; $datetimetostart=date('Y-m-d H:i:s');
+   $jobid=$pim->createBackgroundjob('ACESxmlImport','uploaded',$userid,$target_file,$outputfile,$parameters,$datetimetostart, '', '');
    $error_msg='The file ['. basename( $_FILES['fileToUpload']['name']). '] has been uploaded and is ready to import (job id:'.$jobid.')';
    $logs->logSystemEvent('acesimport', isset($_SESSION['userid']), 'The file ['. basename( $_FILES['fileToUpload']['name']). '] has been uploaded and is ready to import (job id:'.$jobid.')');
   }
@@ -88,6 +93,10 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
                <?php if($error_msg){echo $error_msg;}?>
                <form method="post" enctype="multipart/form-data">
                 <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
+
+                <div>Category for parts created during import: <select name="partcategory" <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select> <a href="./partCategories.php"><img src="./settings.png" width="18" alt="settings"/></a></div>
+                
+                
                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                </form>
               </div>

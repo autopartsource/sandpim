@@ -8,6 +8,21 @@ if($jobs)
 {
  $file_name=$jobs[0]['inputfile'];
  $jobid=$jobs[0]['id'];
+ 
+ $parametersstring=$jobs[0]['parameters'];
+ $parameters=array();
+ $chunks=explode(';',$parametersstring);
+ foreach($chunks as $chunk)
+ {
+  $bits=explode(':',$chunk);
+  if(count($bits)==2)
+  {
+   $parameters[$bits[0]]=$bits[1];     
+  }    
+ }
+     
+ 
+ 
 
  //load XML file
  if(file_exists($file_name))
@@ -15,21 +30,22 @@ if($jobs)
   $xml = simplexml_load_file($file_name);
   $app_count=count($xml->App);
 
-  $pim->updateBackgroundjob($jobid,'processing','loaded xml - containing '.$app_count.' apps',1,'0000-00-00 00:00:00');
-  $imported_app_count=$pim->createAppFromACESsnippet($xml);
+  //$pim->updateBackgroundjob($jobid,'processing','loaded xml - containing '.$app_count.' apps',1,'0000-00-00 00:00:00');
+  $pim->updateBackgroundjobStatus($jobid, 'processing', 0);
+  if(array_key_exists('partcategory', $parameters))
+  {
+   $imported_app_count=$pim->createAppFromACESsnippet($xml,$parameters['partcategory']);
+  }
+  else
+  {
+   $imported_app_count=$pim->createAppFromACESsnippet($xml);
+  }
 
   if(unlink($file_name))
   { // successful delete of ACES xml file
-   $pim->updateBackgroundjob($jobid,'complete','imported '.$imported_app_count.' apps',100,date('Y-m-d H:i:s'));
+   //$pim->updateBackgroundjob($jobid,'complete','imported '.$imported_app_count.' apps',100,date('Y-m-d H:i:s'));
+   $pim->updateBackgroundjobStatus($jobid, 'complete', 100);
   }
-  else
-  { // delete of file failed
-   $pim->updateBackgroundjob($jobid,'complete','imported '.$imported_app_count.' apps - but failed to delete ACES file',100,date('Y-m-d H:i:s'));
-  }
- }
- else
- { // file does not exist
-  $pim->updateBackgroundjob($jobid,'canceled','file ['.$file_name.'] does not exist',0,'0000-00-00 00:00:00');
  }
 }
 ?>

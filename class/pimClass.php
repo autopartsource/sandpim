@@ -1719,11 +1719,13 @@ function countAppsByPartcategories($partcategories)
  
  
 
- function createAppFromACESsnippet($xml)
+ function createAppFromACESsnippet($xml,$partcategory=false)
  {
   $db=new mysql;  $db->connect();
   $app_count=0;
 
+  $partcategoryid=0; if($partcategory){$partcategoryid=intval($partcategory);}
+  
   foreach($xml->App as $app)
   {
    if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic) values(null,?,?,0,0,?,?,?,?,0,0)'))
@@ -1797,7 +1799,7 @@ function countAppsByPartcategories($partcategories)
     }
    }
    $app_count++;
-   $this->createPart($partnumber,0,$parttypeid);
+   $this->createPart($partnumber,$partcategoryid,$parttypeid);
   }
   $db->close();
   return $app_count;
