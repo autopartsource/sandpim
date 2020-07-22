@@ -1614,9 +1614,8 @@ function countAppsByPartcategories($partcategories)
   return $notes;
  }
 
- // take an array of attribute ID's (that are notes)
+ // take an array of application attribute ID's (that are notes)
  //and a qdb to convert them to
- 
  function convertNotesToQdbs($ids,$qdbid,$qdbvalue)
  {
   $db=new mysql; $db->connect();

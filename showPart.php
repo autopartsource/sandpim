@@ -547,7 +547,20 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                                 </div>
                             </td>
                         </tr>
-                        <tr><th>Assets</th><td><?php if($connectedassets){foreach($connectedassets as $connectedasset){echo '<a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> ';}};?></td><tr>
+                        <tr>
+                            <th>Assets</th>
+                            <td>
+                            <?php 
+                            foreach($connectedassets as $connectedasset)
+                            {
+                                if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='')
+                                {
+                                    echo '<div><img src="'.$connectedasset['uri'].'" width="400px"/></div>';
+                                }
+                                echo '<div><a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>';
+                            };
+                            ?></td>
+                        <tr>
                         <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
                     </table>
                 </div>

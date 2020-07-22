@@ -110,17 +110,21 @@ class asset
  
  function getAssetsConnectedToPart($partnumber)
  {
-  $connections=false;
   $db=new mysql; $db->connect();
+  $connections=array();
   
-  if($stmt=$db->conn->prepare('select * from part_asset where partnumber=? order by sequence'))
+  if($stmt=$db->conn->prepare('select * from part_asset,asset where part_asset.assetid=asset.assetid and partnumber=? order by sequence'))
   {
-   $stmt->bind_param('s',$partnumber);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+   if($stmt->bind_param('s',$partnumber))
    {
-       $connections[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation']);
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+       $connections[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri']);
+     }
+    }
    }
   }
   $db->close();

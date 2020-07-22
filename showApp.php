@@ -426,6 +426,7 @@ if(isset($_GET['categories']))
              
              var previewText=applyQdbParmsToString(selectedQdbText,parms);
              document.getElementById('qdbpreview').innerHTML=previewText;
+             document.getElementById('qdbpreview').style.display='block';
             }
 
             function applyQdbParmsToString(text,parms)
@@ -609,7 +610,7 @@ if(isset($_GET['categories']))
                    </div>
                   <?php }?>
 
-                   <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="display:none; background-color: #f0f0f0; border: solid 1px black; padding:3px;margin: 20px;"></div>
+                   <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="display:none; background-color: #6060F0; border: solid 1px black; padding:3px;margin: 20px;"></div>
                    <div id="addqdbqualifierbutton" style="padding: 5px;display:none;"><button id="addQdb" onclick="addQdb();">Add Qdb Qualifier</button></div>
                   </div>
                        
