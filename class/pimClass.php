@@ -1614,27 +1614,40 @@ function countAppsByPartcategories($partcategories)
   return $notes;
  }
 
- // take an array of application attribute ID's (that are notes)
- //and a qdb to convert them to
- function convertNotesToQdbs($ids,$qdbid,$qdbvalue)
+ function getAppAttributesByValue($type,$name,$value)
  {
-  $db=new mysql; $db->connect();
-  if($stmt=$db->conn->prepare("update application_attribute set `type`='qdb',`name`=?,`value`=? where id=?"))
-  {
-   $name=$qdbid;
-   $value=$qdbvalue;
-   $id=0;
-   
-   if($stmt->bind_param('ssi',$name,$value,$id))
-   {
-    foreach($ids as $noteid)
+  $db=new mysql; $db->connect(); $attributes=array();
+  if($stmt=$db->conn->prepare("select * from application_attribute where `type`=? and `name`=? and `value`=?"))
+  {  
+   if($stmt->bind_param('sss', $type,$name,$value))
+   {   
+    if($stmt->execute())
     {
-     $id=$noteid;
-     $stmt->execute();
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $attributes[]=array('id'=>$row['id'],'applicationid'=>$row['applicationid'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
+     }
     }
    }
   }
   $db->close();
+  return $attributes;
+ }
+ 
+ function updateApplicationAttribute($id,$type,$name,$value)
+ {
+  $db=new mysql; $db->connect();
+  $success=false;
+  if($stmt=$db->conn->prepare("update application_attribute set `type`=?,`name`=?,`value`=? where id=?"))
+  {
+   if($stmt->bind_param('sssi',$type,$name,$value,$id))
+   {
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;
  }
  
  

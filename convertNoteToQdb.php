@@ -11,18 +11,11 @@ if (!isset($_SESSION['userid'])) {
 
 $pim = new pim;
 
-//$attributes=$pim->getAllAppNoteAttributes();
-//$notecounts=$pim->getAppNoteAttributeCounts();
-
 $attributeid=intval($_GET['attributeid']);
-
 $attribute=$pim->getAppAttribute($attributeid);
-$usecount=11000;
+$usecount=count($pim->getAppAttributesByValue('note','note',$attribute['value']));
 
 ?>
-
-
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -163,6 +156,24 @@ $usecount=11000;
        }
        return result;
       }
+      
+      function convertNote()
+      {
+       var qdbid=document.getElementById("qdbpreview").getAttribute("data-qdbid");
+       var qdbparms=document.getElementById("qdbpreview").getAttribute("data-qdbparmstring");
+       var note="<?php echo $attribute['value'];?>";
+   
+       var xhr = new XMLHttpRequest();
+       xhr.open('GET', 'ajaxConvertNoteToQdb.php?&note='+encodeURIComponent(note)+'&qdbid='+qdbid+'&qdbparms='+encodeURIComponent(qdbparms));
+       xhr.onload = function()
+       {
+        var results=JSON.parse(xhr.responseText);
+        console.log(results);
+       };
+       xhr.send();
+      }
+      
+      
      </script>
     </head>
     <body>
@@ -216,16 +227,8 @@ $usecount=11000;
 
                    <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="display:none; background-color: #6060F0; border: solid 1px black; padding:3px;margin: 20px;"></div>
                    
-                   <div id="convertNotesButton" style="padding: 5px;display:none;"><button id="convert" onclick="convertNotes();">Convert</button></div>
+                   <div id="convertNotesButton" style="padding: 5px;display:none;"><button id="convert" onclick="convertNote();">Convert</button></div>
                   </div>
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
                  
                 </div>
             </div>

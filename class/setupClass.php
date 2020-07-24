@@ -276,6 +276,7 @@ class setup
         PRIMARY KEY (id),
         INDEX idx_type_value (`type`,`value`),
         INDEX idx_name_value (`name`,`value`),
+        INDEX idx_type_name_value (`type`,`name`,`value`),
         INDEX idx_applicationid (applicationid)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - application_attribute ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - application_attribute ('.$db->conn->error.')';}
