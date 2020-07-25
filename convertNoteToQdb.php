@@ -14,7 +14,7 @@ $pim = new pim;
 $attributeid=intval($_GET['attributeid']);
 $attribute=$pim->getAppAttribute($attributeid);
 $usecount=count($pim->getAppAttributesByValue('note','note',$attribute['value']));
-
+$applicationid=$attribute['applicationid'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -162,13 +162,16 @@ $usecount=count($pim->getAppAttributesByValue('note','note',$attribute['value'])
        var qdbid=document.getElementById("qdbpreview").getAttribute("data-qdbid");
        var qdbparms=document.getElementById("qdbpreview").getAttribute("data-qdbparmstring");
        var note="<?php echo $attribute['value'];?>";
+       document.getElementById('loadinggif').style.display='block';
+
    
        var xhr = new XMLHttpRequest();
        xhr.open('GET', 'ajaxConvertNoteToQdb.php?&note='+encodeURIComponent(note)+'&qdbid='+qdbid+'&qdbparms='+encodeURIComponent(qdbparms));
        xhr.onload = function()
        {
         var results=JSON.parse(xhr.responseText);
-        console.log(results);
+        document.getElementById('loadinggif').style.display='none';
+        location.href="./showApp.php?appid=<?php echo $applicationid;?>";
        };
        xhr.send();
       }
@@ -228,8 +231,8 @@ $usecount=count($pim->getAppAttributesByValue('note','note',$attribute['value'])
                    <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="display:none; background-color: #6060F0; border: solid 1px black; padding:3px;margin: 20px;"></div>
                    
                    <div id="convertNotesButton" style="padding: 5px;display:none;"><button id="convert" onclick="convertNote();">Convert</button></div>
+                   <div id="loadinggif" style="padding: 5px;display:none;"><img src="./loading.gif" width="50"/><div>Converting <?php echo $usecount?> instances of this note (in all applications) to a Qdb qualifiers</div></div>
                   </div>
-                 
                 </div>
             </div>
 

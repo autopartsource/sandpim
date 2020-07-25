@@ -302,7 +302,7 @@ if(isset($_GET['categories']))
               var result=JSON.parse(xhr.responseText);
               
               var container=document.getElementById('fitment');
-              container.innerHTML+='<div id="attribute_'+result.id+'" style="border:solid 1px;margin:5px;padding:2px;background-color:#c0c0c0;">'+result.nicetext+'<div style="float:right;"><button onclick="toggleAttributeCosmetic('+result.id+')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button><button onclick="sequenceAttributeUp('+result.id+')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('+result.id+')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div></div>';
+              container.innerHTML+='<div id="attribute_'+result.id+'" style="border:solid 1px;margin:5px;padding:2px;background-color:#c0c0c0;">'+result.nicetext+'<div style="float:right;"><button onclick="convertNote('+result.id+')" title="Convert this note to a Qdb qualifier"><img src="./toqdb.png" width="25"/></button><button onclick="toggleAttributeCosmetic('+result.id+')" title="Flag this qualifier as cosmetic or non-cosmetic"><img src="./cosmetic.png" width="25"/></button><button onclick="sequenceAttributeUp('+result.id+')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('+result.id+')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div></div>';
               document.getElementById("sandpiperoid").innerHTML=result.oid;
               
              };
@@ -520,6 +520,10 @@ if(isset($_GET['categories']))
              xhr.send();
             }
             
+            function convertNote(id)
+            {
+             location.href='convertNoteToQdb.php?attributeid='+id;
+            }
 
         </script>
     </head>
@@ -549,8 +553,20 @@ if(isset($_GET['categories']))
                <tr><th>Fitment<br/>Qualifiers</th>
                 <td align="left">
                  <div id="fitment">
-                  <?php foreach($niceattributes as $niceattribute){$text_decoration=''; if($niceattribute['cosmetic']==1){$text_decoration='text-decoration: line-through;';} ?>
-                  <div id="attribute_<?php echo $niceattribute['id'];?>" style="border:solid 1px;margin:5px;<?php echo $text_decoration;?> padding:2px;background-color:#<?php echo $attributecolors[$niceattribute['type']];?>;"><?php echo $niceattribute['text'];?><div style="float:right;"><button onclick="toggleAttributeCosmetic('<?php echo $niceattribute['id'];?>')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button><button onclick="sequenceAttributeUp('<?php echo $niceattribute['id'];?>')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('<?php echo $niceattribute['id'];?>')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div><?php }?>
+                  <?php
+                  foreach($niceattributes as $niceattribute)
+                  {
+                   $text_decoration='';
+                   if($niceattribute['cosmetic']==1)
+                   {
+                    $text_decoration='text-decoration: line-through;';
+                   }
+                   ?>
+                  <div id="attribute_<?php echo $niceattribute['id'];?>" style="border:solid 1px;margin:5px;<?php echo $text_decoration;?> padding:2px;background-color:#<?php echo $attributecolors[$niceattribute['type']];?>;">
+                      <?php echo $niceattribute['text'];?><div style="float:right;">
+                          
+                          <?php if($niceattribute['type']=='note'){echo "<button onclick=\"convertNote('".$niceattribute['id']."')\" title=\"Convert this note to a Qdb qualifier\"><img src=\"./toqdb.png\" width=\"25\"/></button>";}?>
+                          <button onclick="toggleAttributeCosmetic('<?php echo $niceattribute['id'];?>')" title="Flag this qualifier as cosmetic or non-cosmetic"/><img src="./cosmetic.png" width="25"></button><button onclick="sequenceAttributeUp('<?php echo $niceattribute['id'];?>')" title="Move this qualifier down in the sequence"><img src="./down.png" width="25"/></button><button onclick="removeFitmentAttribute('<?php echo $niceattribute['id'];?>')" title="Remove this qualifier from the app"><img src="./delete.png" width="25"/></button></div><div style="clear:both;"></div></div><?php }?>
                  </div>
                  <div onclick="showhideForm('newvcdbattributeform'); getElementById('vcdbattribute').focus();">Add VCdb Attribute ...</div>
                        
