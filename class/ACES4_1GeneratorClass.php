@@ -1,4 +1,6 @@
 <?php
+include_once(__DIR__."/qdbClass.php");
+
 class ACESgenerator
 {
     
@@ -9,7 +11,8 @@ class ACESgenerator
       * 'IncludeCosmeticAttributes'  (boolenan)
       * 
       */
-     
+  $qdb=new qdb;
+  
   $includecosmeticattributes=false; if(array_key_exists('IncludeCosmeticAttributes',$options)){$includecosmeticattributes=$options['IncludeCosmeticAttributes'];}
   $includecosmeticapps=false; if(array_key_exists('IncludeCosmeticApps',$options)){$includecosmeticapps=$options['IncludeCosmeticApps'];}
      
@@ -98,6 +101,34 @@ class ACESgenerator
     if($includecosmeticattributes==false && $attribute['cosmetic']==1){continue;}
     if($attribute['type']=='qdb')
     {
+     $qdbtext=$qdb->qualifierText($attribute['name'],explode('~', str_replace('|','',$attribute['value'])));
+     $qualElement=new DOMElement('Qual');
+     $appElement->appendChild($qualElement);
+     $qualElement->setAttribute('id', $attribute['name']);
+     
+     if($attribute['value']!='')
+     {
+      $parms=explode('~',$attribute['value']);
+      foreach($parms as $parm)
+      {
+       if(trim($parm)!='')
+       {
+        $paramElement=new DOMElement('param');
+        $qualElement->appendChild($paramElement);
+      
+        $parmbits=explode('|',$parm);
+        $paramElement->setAttribute('value', $parmbits[0]);
+      
+        if(count($parmbits)==2 && trim($parmbits[1])!='')
+        {// uom is present "288|mm"
+         $paramElement->setAttribute('uom', $parmbits[1]);
+        }
+       }
+      }
+     }
+     
+     $qdbtextElement=new DOMElement('text',$qdbtext);
+     $qualElement->appendChild($qdbtextElement);
     }       
    }   
 

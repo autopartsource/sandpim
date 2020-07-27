@@ -1,6 +1,7 @@
 <?php
 include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/qdbClass.php');
 include_once('./class/pimClass.php');
 $navCategory = 'applications';
 
@@ -26,6 +27,7 @@ function buildModelYearLink($makeid, $modelid, $yearid, $partcategories, $displa
 
 $vcdb = new vcdb;
 $pcdb = new pcdb;
+$qdb = new qdb;
 $pim = new pim;
 
 $makeid = intval($_GET['makeid']);
@@ -58,13 +60,20 @@ $dropzonenumber = 0;
 $prevyearexists = $vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, ($yearid - 1));
 $nextyearexists = $vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, ($yearid + 1));
 
-if (count($apps)) {
-    foreach ($apps as $app) {
+if (count($apps)) 
+{
+    foreach ($apps as $app) 
+    {
         $niceattributes = array();
         foreach ($app['attributes'] as $appattribute) {
             if ($appattribute['type'] == 'vcdb') {
                 $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $vcdb->niceVCdbAttributePair($appattribute), 'cosmetic' => $appattribute['cosmetic']);
             }
+
+            if ($appattribute['type'] == 'qdb') {
+                $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $qdb->qualifierText($appattribute['name'], explode('~', str_replace('|','',$appattribute['value']))), 'cosmetic' => $appattribute['cosmetic']);
+            }
+            
             if ($appattribute['type'] == 'note') {
                 $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $appattribute['value'], 'cosmetic' => $appattribute['cosmetic']);
             }

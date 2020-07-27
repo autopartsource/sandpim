@@ -20,7 +20,7 @@ if(isset($_SESSION['userid']) && isset($_GET['note']) && isset($_GET['qdbid']) &
   {
    $applicationid=$attribute['applicationid'];
    $newoid=$pim->updateAppOID($applicationid);
-   $pim->logAppEvent($applicationid, $userid, 'Note->Qdb conversion ['.$_GET['note'].']->['.$qdb->qualifierText($qdbid).']', $newoid);
+   $pim->logAppEvent($applicationid, $userid, 'Note>Qdb ['.$_GET['note'].']>['.$qdb->qualifierText($qdbid,explode('~', str_replace('|','',$qdbparms))).']', $newoid);
   }
   else
   {
