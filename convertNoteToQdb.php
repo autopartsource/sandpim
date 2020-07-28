@@ -15,6 +15,13 @@ $attributeid=intval($_GET['attributeid']);
 $attribute=$pim->getAppAttribute($attributeid);
 $usecount=count($pim->getAppAttributesByValue('note','note',$attribute['value']));
 $applicationid=$attribute['applicationid'];
+$redirectto='showApp';
+if(isset($_GET['source']) && $_GET['source']=='noteManager')
+{
+ $redirectto='noteManager';
+}
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -157,21 +164,26 @@ $applicationid=$attribute['applicationid'];
        return result;
       }
       
-      function convertNote()
+      function convertNote(redirectto)
       {
        var qdbid=document.getElementById("qdbpreview").getAttribute("data-qdbid");
        var qdbparms=document.getElementById("qdbpreview").getAttribute("data-qdbparmstring");
-       var note="<?php echo $attribute['value'];?>";
        document.getElementById('loadinggif').style.display='block';
 
-   
        var xhr = new XMLHttpRequest();
-       xhr.open('GET', 'ajaxConvertNoteToQdb.php?&note='+encodeURIComponent(note)+'&qdbid='+qdbid+'&qdbparms='+encodeURIComponent(qdbparms));
+       xhr.open('GET', 'ajaxConvertNoteToQdb.php?&note=<?php echo urlencode($attribute['value']);?>&qdbid='+qdbid+'&qdbparms='+encodeURIComponent(qdbparms));
        xhr.onload = function()
        {
         var results=JSON.parse(xhr.responseText);
         document.getElementById('loadinggif').style.display='none';
-        location.href="./showApp.php?appid=<?php echo $applicationid;?>";
+        if(redirectto=='noteManager')
+        {
+         location.href="./noteManager.php";
+        }
+        else
+        {
+         location.href="./showApp.php?appid=<?php echo $applicationid;?>";
+        }
        };
        xhr.send();
       }
@@ -230,7 +242,7 @@ $applicationid=$attribute['applicationid'];
 
                    <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="display:none; background-color: #6060F0; border: solid 1px black; padding:3px;margin: 20px;"></div>
                    
-                   <div id="convertNotesButton" style="padding: 5px;display:none;"><button id="convert" onclick="convertNote();">Convert</button></div>
+                   <div id="convertNotesButton" style="padding: 5px;display:none;"><button id="convert" onclick="convertNote('<?php echo $redirectto;?>');">Convert</button></div>
                    <div id="loadinggif" style="padding: 5px;display:none;"><img src="./loading.gif" width="50"/><div>Converting <?php echo $usecount?> instances of this note (in all applications) to a Qdb qualifiers</div></div>
                   </div>
                 </div>

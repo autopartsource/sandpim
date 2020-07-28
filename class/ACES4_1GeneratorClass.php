@@ -127,7 +127,7 @@ class ACESgenerator
       }
      }
      
-     $qdbtextElement=new DOMElement('text',$qdbtext);
+     $qdbtextElement=new DOMElement('text', htmlspecialchars($qdbtext, ENT_XML1 | ENT_COMPAT, 'UTF-8'));
      $qualElement->appendChild($qdbtextElement);
     }       
    }   

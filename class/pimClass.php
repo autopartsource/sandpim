@@ -1599,14 +1599,14 @@ function countAppsByPartcategories($partcategories)
  function getAppNoteAttributeCounts()
  {
   $db=new mysql; $db->connect(); $attributes=array();
-  if($stmt=$db->conn->prepare("select `value`, count(*) as notecount from application_attribute where `type`='note' group by `value` order by notecount desc"))
+  if($stmt=$db->conn->prepare("select `value`, count(*) as notecount, max(id) as lastid from application_attribute where `type`='note' group by `value` order by notecount desc"))
   {
    if($stmt->execute())
    {
     $db->result = $stmt->get_result();
     while($row = $db->result->fetch_assoc())
     {
-     $notes[]=array('note'=>$row['value'],'count'=>$row['notecount']);
+     $notes[]=array('note'=>$row['value'],'count'=>$row['notecount'],'lastid'=>$row['lastid']);
     }
    }
   }
