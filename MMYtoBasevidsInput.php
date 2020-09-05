@@ -30,22 +30,22 @@ if (isset($_POST['submit']) && strlen($_POST['input'])>0)
   }
  }
  $vcdb = new vcdb($vcdbversion);
-
+ 
  $input = $_POST['input'];
  $records = explode("\r\n", $input);
- $output="BaseVID(".$vcdbversion.")\tMakeName\tModelName\tYear\tMakeID\tModelID\r\n";
+ $output="MakeName\tModelName\tYear\tBaseVID(".$vcdbversion.")\r\n";
 
  foreach ($records as $record) 
  {
   $fields = explode("\t", $record);
-  if($basevehicleid=intval($fields[0]))
+  if(count($fields)>=3 && intval($fields[2])>0)
   {
-   $mmy=$vcdb->getMMYforBasevehicleid($basevehicleid);
-   $output.=$basevehicleid."\t".$mmy['makename']."\t".$mmy['modelname']."\t".$mmy['year']."\t".$mmy['MakeID']."\t".$mmy['ModelID']."\r\n";
+   $basevehicleid=$vcdb->getBasevehicleidForMMY($fields[0],$fields[1],$fields[2]);
+   $output.=$fields[0]."\t".$fields[1]."\t".$fields[2]."\t".$basevehicleid."\r\n";
   }
  }
  
- $logs->logSystemEvent('UTILITIES', $_SESSION['userid'], 'Convert BaseVIDs to MMYs '.count($records).' records, '.$vcdbversion);
+ $logs->logSystemEvent('UTILITIES', $_SESSION['userid'], 'Convert MMYs to BaseVIDs '.count($records).' records, '.$vcdbversion);
 }
 
 ?>
@@ -60,18 +60,15 @@ if (isset($_POST['submit']) && strlen($_POST['input'])>0)
         <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h3>Convert VCdb BaseVehicle IDs to make/model/year text</h3>
+        <h3>Convert make/model/year text to VCdb BaseVehicle IDs</h3>
 
         <div class="wrapper">
             <div class="contentLeft"></div>
-
             <!-- Main Content -->
             <div class="contentMain">
                 <form method="post">
-                    <div>IDs (one per line)</div>
-                    <div><textarea name="input" rows="10" cols="100"><?php echo $output;?></textarea></div>
-
-
+                    <div>MakeName (tab) ModelName (tab) Year</div>
+                    <div><textarea name="input" rows="10" cols="80"><?php echo $output;?></textarea></div>
                     <div style="padding:5px;">Vcdb 
                         <select name="vcdbversion">
                         <?php foreach($databaseversions as $databaseversion){?>
@@ -79,8 +76,6 @@ if (isset($_POST['submit']) && strlen($_POST['input'])>0)
                             <?php }?>
                         </select> <input type="submit" name="submit" value="Convert"/>
                     </div>
-
-
                 </form>
             </div>
 
