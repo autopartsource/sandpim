@@ -138,7 +138,7 @@ function countAppsByPartcategories($partcategories)
   return $apps;
  }
 
-
+ 
  function getFavoriteMakes()
  {
   $db = new mysql; 
