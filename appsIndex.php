@@ -32,7 +32,7 @@ foreach ($makes as $make) {
         $groupnumber++;
     }
 }
-
+$groupedMakesCount = count($groupedmakes);
 ?>
 <!DOCTYPE html>
 <html>
@@ -46,41 +46,29 @@ foreach ($makes as $make) {
         <!-- Header -->
         <h1>Applications</h1>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                </div>
 
-            <!-- Main Content -->
-            <div class="contentMain button showRow" style="justify-content:center;">
-            <?php
-                echo '<div style="padding:15px;">';
-                foreach ($groupedmakes[0] as $make) {
-                    echo '<div style="padding:5px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-                } echo '</div>';
-                echo '<div style="padding:15px;">';
-                foreach ($groupedmakes[1] as $make) {
-                    echo '<div style="padding:5px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-                } echo '</div>';
-                echo '<div style="padding:15px;">';
-                foreach ($groupedmakes[2] as $make) {
-                    echo '<div style="padding:5px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-                } echo '</div>';
-                echo '<div style="padding:15px;">';
-                foreach ($groupedmakes[3] as $make) {
-                    echo '<div style="padding:5px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-                } echo '</div>';
-                echo '<div style="padding:15px;">';
-                foreach ($groupedmakes[4] as $make) {
-                    echo '<div style="padding:5px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-                } echo '</div>';
-                echo '<div style="padding:15px;">';
-                foreach ($groupedmakes[5] as $make) {
-                    echo '<div style="padding:5px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '">' . $make['name'] . '</a></div>';
-                } echo '</div>';
-                echo '<div style="clear:both;"></div>';
-            ?>
+                <!-- Main Content -->
+                <div class="col col-xs-12 col-md-8 my-col colMain">
+                    <div class="row padding my-row groupCol">
+                        <?php
+                            for($y = 0;$y < $groupedMakesCount;$y++) {
+                                echo '<div class="col my-col">';
+                                foreach ($groupedmakes[$y] as $make) {
+                                    echo '<div class="groupButton" style="padding:5px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '"class="btn btn-secondary btn-block my-btn" role="button" aria-disabled="true">' . $make['name'] . '</a></div>';
+                                }   
+                                echo '</div>';
+                            }
+                        ?>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                </div>
             </div>
-
-            <div class="contentRight"></div>
         </div>
                 
         <!-- Footer -->

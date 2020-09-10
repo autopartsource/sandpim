@@ -39,71 +39,73 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
         <!-- Header -->
         <h1>Dashboard</h1>
         
-        <div class="wrapper">
-            <div class="contentLeft">L</div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    Row 1 Col 1
+                </div>
+                <div class="col-xs-12 col-md-8 my-col colMain">
                 <?php
-                if (count($appshistory)) 
-                {
-                    echo '<div style="padding:10px;">Apps History</div><table><tr><th>Date/Time</th><th>User</th><th>AppID</th><th>Change Description</th></tr>';
-                    foreach ($appshistory as $record) {
-                        $nicedescription = $record['description'];
-                        if (strlen($nicedescription) > $logpreviewlength) {
-                            $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                    if (count($appshistory)) 
+                    {
+                        echo '<div style="padding:10px;"><h3>Apps History</h2></div><table><tr><th>Date/Time</th><th>User</th><th>AppID</th><th>Change Description</th></tr>';
+                        foreach ($appshistory as $record) {
+                            $nicedescription = $record['description'];
+                            if (strlen($nicedescription) > $logpreviewlength) {
+                                $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                            }
+                            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showApp.php?appid='.$record['applicationid'].'">'.$record['applicationid'].'</a></td><td>' . $nicedescription . '</td></tr>';
                         }
-                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showApp.php?appid='.$record['applicationid'].'">'.$record['applicationid'].'</a></td><td>' . $nicedescription . '</td></tr>';
+                        echo '</table>';
                     }
-                    echo '</table>';
-                }
 
-                if (count($assetshistory)) 
-                {
-                    echo '<div style="padding:10px;">Assets History</div><table><tr><th>Date/Time</th><th>User</th><th>AssetID</th><th>Change Description</th></tr>';
-                    foreach ($assetshistory as $record) {
-                        $nicedescription = $record['description'];
-                        if (strlen($nicedescription) > $logpreviewlength) {
-                            $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                    if (count($assetshistory)) 
+                    {
+                        echo '<div style="padding:10px;"><h3>Assets History</h3></div><table><tr><th>Date/Time</th><th>User</th><th>AssetID</th><th>Change Description</th></tr>';
+                        foreach ($assetshistory as $record) {
+                            $nicedescription = $record['description'];
+                            if (strlen($nicedescription) > $logpreviewlength) {
+                                $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                            }
+                            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showAsset.php?assetid='.$record['assetid'].'">'.$record['assetid'].'</a></td><td>' . $nicedescription . '</td></tr>';
                         }
-                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showAsset.php?assetid='.$record['assetid'].'">'.$record['assetid'].'</a></td><td>' . $nicedescription . '</td></tr>';
+                        echo '</table>';
                     }
-                    echo '</table>';
-                }
 
-                if (count($partshistory)) 
-                {
-                    echo '<div style="padding:10px;">Parts History</div><table><tr><th>Date/Time</th><th>User</th><th>Partnumber</th><th>Change Description</th></tr>';
-                    foreach ($partshistory as $record) {
-                        $nicedescription = $record['description'];
-                        if (strlen  ($nicedescription) > $logpreviewlength) {
-                            $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                    if (count($partshistory)) 
+                    {
+                        echo '<div style="padding:10px;"><h3>Parts History</h3></div><table><tr><th>Date/Time</th><th>User</th><th>Partnumber</th><th>Change Description</th></tr>';
+                        foreach ($partshistory as $record) {
+                            $nicedescription = $record['description'];
+                            if (strlen  ($nicedescription) > $logpreviewlength) {
+                                $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                            }
+                            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showPart.php?partnumber='.$record['partnumber'].'">'.$record['partnumber'].'</a></td><td>' . $nicedescription . '</td></tr>';
                         }
-                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showPart.php?partnumber='.$record['partnumber'].'">'.$record['partnumber'].'</a></td><td>' . $nicedescription . '</td></tr>';
+                        echo '</table>';
                     }
-                    echo '</table>';
-                }
 
 
-                if(count($systemhistory))
-                {
-                    echo '<div style="padding:10px;">System History</div><table><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Change Description</th></tr>';
-                    foreach ($systemhistory as $record) {
-                        $nicedescription = $record['description'];
-                        if (strlen  ($nicedescription) > $logpreviewlength) {
-                            $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                    if(count($systemhistory))
+                    {
+                        echo '<div style="padding:10px;"><h3>System History</h3></div><table><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Change Description</th></tr>';
+                        foreach ($systemhistory as $record) {
+                            $nicedescription = $record['description'];
+                            if (strlen  ($nicedescription) > $logpreviewlength) {
+                                $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                            }
+                            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td>' . $nicedescription . '</td></tr>';
                         }
-                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td>' . $nicedescription . '</td></tr>';
+                        echo '</table>';
                     }
-                    echo '</table>';
-                }
-                
                 ?>
+                </div>
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    Row 1 Col 3
+                </div>
             </div>
-
-            <div class="contentRight">R</div>
         </div>
-                
+        
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
     </body>

@@ -23,13 +23,13 @@ if($modelcount<=10){$groupcount=1;}
 //comment
 
 $groupsize=intval(count($models)/$groupcount);
-$i=0; $groupnumber=0; $groupemodeles=array();
+$i=0; $groupnumber=0; $groupedmodels=array();
 foreach($models as $model)
 {
  $groupedmodels[$groupnumber][]=$model;
  $i++; if($i>$groupsize){$i=0; $groupnumber++;}
 }
-
+$groupedModelsCount = count($groupedmodels);
 ?>
 <!DOCTYPE html>
 <html>
@@ -43,26 +43,30 @@ foreach($models as $model)
         <!-- Header -->
         <h1>Applications (<?php echo $vcdb->makeName($makeid); ?>)</h1>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                </div>
 
-            <!-- Main Content -->
-            <div class="contentMain button showRow" style="justify-content:center;">
-            <?php
-                echo '<div style="padding:10px;">'; 
-                foreach($groupedmodels[0] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';
-                if(isset($groupedmodels[1])){echo '<div style="padding:10px;">'; foreach($groupedmodels[1] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[2])){echo '<div style="padding:10px;">'; foreach($groupedmodels[2] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[3])){echo '<div style="padding:10px;">'; foreach($groupedmodels[3] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[4])){echo '<div style="padding:10px;">'; foreach($groupedmodels[4] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[5])){echo '<div style="padding:10px;">'; foreach($groupedmodels[5] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[6])){echo '<div style="padding:10px;">'; foreach($groupedmodels[6] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                if(isset($groupedmodels[7])){echo '<div style="padding:10px;">'; foreach($groupedmodels[7] as $model){echo '<div style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'">'.$model['name'].'</a></div>';} echo '</div>';}
-                echo '<div style="clear:both;"></div>';
-            ?>
+                <!-- Main Content -->
+                <div class="col col-xs-12 col-md-8 my-col colMain">
+                    <div class="row padding my-row groupCol">
+                        <?php
+                            for($y = 0;$y < $groupedModelsCount;$y++) {
+                                echo '<div class="col my-col">';
+                                foreach ($groupedmodels[$y] as $model) {
+                                    echo '<div class="groupButton" style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$model['name'].'</a></div>';
+                                }
+                                echo '</div>';
+                            }
+                            echo '<div style="clear:both;"></div>';
+                        ?>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                </div>
             </div>
-
-            <div class="contentRight"></div>
         </div>
                 
         <!-- Footer -->
