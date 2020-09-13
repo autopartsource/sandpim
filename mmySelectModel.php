@@ -11,7 +11,6 @@ $vcdb=new vcdb;
 $makeid=intval($_GET['makeid']);
 $models=$vcdb->getModels($makeid);
 
-
 $groupcount=7;
 $modelcount=count($models);
 if($modelcount<=70){$groupcount=6;}

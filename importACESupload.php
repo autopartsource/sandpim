@@ -103,5 +103,7 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
             </div>
             <div class="contentRight"></div>
         </div>
+        <!-- Footer -->
+        <?php include('./includes/footer.php'); ?>
     </body>
 </html>

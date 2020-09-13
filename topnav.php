@@ -54,12 +54,34 @@
                     <a class="dropdown-item" href="./settings.php">Settings Index</a>
                 </div>
             </li>
-            <li<?php if ($navCategory == 'import/export') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="ioIndex.php" class="nav-link">Import/Export</a></li>
+            <li<?php if ($navCategory == 'import/export') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Import/Export
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="./exportACESselect.php">Export ACES xml</a>
+                    <a class="dropdown-item" href="./exportPIESselect.php">Export PIES xml</a>
+                    <a class="dropdown-item" href="./exportForPrintSelect.php">Export for print publishing</a>
+                    <a class="dropdown-item" href="./exportFlatAppsSelect.php">Export flattened applications files</a>
+                    <a class="dropdown-item" href="./exportFlatPartsSelect.php">Export flattened parts file</a>
+                    <a class="dropdown-item" href="./importACESsnippet.php">Import small ACES xml text</a>
+                    <a class="dropdown-item" href="./importACESupload.php">Upload & import ACES xml file</a>
+                    <a class="dropdown-item" href="./importACEStext.php">Import applications from structured text</a>
+                    <a class="dropdown-item" href="./importPartText.php">Import parts from template spreadsheet</a>
+                    <a class="dropdown-item" href="./importPricesText.php">Import prices from structured text</a>
+                    <a class="dropdown-item" href="./importPartAttributeText.php">Import part attributes from structured text</a>
+                    <a class="dropdown-item" href="./importInterchangeText.php">Import Competitor Interchange from structured text</a>
+                    <a class="dropdown-item" href="./importBrandTableText.php">Import Brand Table text</a>
+                    <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a>
+                    <a class="dropdown-item" href="./backgroundJobs.php">Manage background import/export jobs</a>
+                    <a class="dropdown-item" href="./rhubarb7_1Index.php">Rhubarb 7.1</a>
+                </div>
+            </li>
         </ul>
         <div class="ml-auto">
         <ul class="nav navbar-nav">
             <a href="logout.php" class="nav-link">Logout (<?php echo $_SESSION['name'];?>)</a>
         </ul>
         </div>
-    </div>
+    </div> 
 </nav>

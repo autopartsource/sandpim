@@ -74,7 +74,7 @@ if (isset($_POST['input']))
 <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h1>Import Part Prices</h1>
+        <h1>Import Competitor Interchange</h1>
 
         <div class="wrapper">
             <div class="contentLeft"></div>
