@@ -49,25 +49,37 @@ $partcategories=$pim->getReceiverprofilePartcategories($profile['id']);
         <!-- Header -->
         <h3>Receiver Profile</h3>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-             <form action="" method="post">
-              <table>
-               <tr><th>Name</th><td><input type="text" name="profilename" value="<?php echo $profile['name'];?>"/></td></tr>
-               <tr><th>Notes</th><td><textarea name="notes" rows="10" cols="50"><?php echo $profile['notes'];?></textarea></td></tr>
-               <tr><th>Parameters</th><td><textarea name="profiledata" rows="20" cols="50"><?php echo $profile['data'];?></textarea></td></tr>
-               <tr><th>Part Categories</th><td><?php foreach($partcategories as $partcategory){echo '<div>'.$pim->partCategoryName($partcategory).'</div>';}?></td></tr>
-               <tr><th></th><td><input name="submit" type="submit" value="Save"/> <input name="submit" type="submit" value="Delete"/></td></tr>
-              </table>
-              <input type="hidden" name="id" value="<?php echo $profile['id'];?>"/>
-              <input type="hidden" name="oldname" value="<?php echo $profile['name'];?>"/>
-             </form>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <form action="" method="post">
+                     <table>
+                      <tr><th>Name</th><td><input type="text" name="profilename" value="<?php echo $profile['name'];?>"/></td></tr>
+                      <tr><th>Notes</th><td><textarea name="notes" rows="10" cols="50"><?php echo $profile['notes'];?></textarea></td></tr>
+                      <tr><th>Parameters</th><td><textarea name="profiledata" rows="20" cols="50"><?php echo $profile['data'];?></textarea></td></tr>
+                      <tr><th>Part Categories</th><td><?php foreach($partcategories as $partcategory){echo '<div>'.$pim->partCategoryName($partcategory).'</div>';}?></td></tr>
+                      <tr><th></th><td><input name="submit" type="submit" value="Save"/> <input name="submit" type="submit" value="Delete"/></td></tr>
+                     </table>
+                     <input type="hidden" name="id" value="<?php echo $profile['id'];?>"/>
+                     <input type="hidden" name="oldname" value="<?php echo $profile['name'];?>"/>
+                    </form>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
 <?php include('./includes/footer.php'); ?>

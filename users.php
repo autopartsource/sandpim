@@ -63,42 +63,57 @@ $users=$user->getUsers();
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h1>User Accounts</h1>
+        <h3>User Accounts</h3>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <div style="padding:10px;">
+                        <h4>Existing Accounts</h4>
+                        <table>
+                            <tr><th>Username</th><th>Real Name</th><th>Status</th><th>Application Category Permissions</th><th>System Permissions</th></tr>
+                            <?php
+                            foreach ($users as $user) {
+                                $nicestatus = 'Inactive';
+                                if ($user['status'] == 1) {
+                                    $nicestatus = 'Active';
+                                }
+                                echo '<tr><td><a href="./user.php?userid=' . $user['id'] . '">' . $user['username'] . '</a></td><td>' . $user['name'] . '</td><td>' . $nicestatus . '</td><td></td><td></td></tr>';
+                            }
+                            ?>
+                        </table>
+                    </div>
 
-            <!-- Main Content -->
-            <div class="contentMain" style="flex-direction: column;">
-                <div style="padding:10px;">
-                <h3>Existing Accounts</h3>
-                <table>
-                 <tr><th>Username</th><th>Real Name</th><th>Status</th><th>Application Category Permissions</th><th>System Permissions</th></tr>
-                 <?php foreach($users as $user)
-                 {
-                  $nicestatus='Inactive';if($user['status']==1){$nicestatus='Active';}
-                  echo '<tr><td><a href="./user.php?userid='.$user['id'].'">'.$user['username'].'</a></td><td>'.$user['name'].'</td><td>'.$nicestatus.'</td><td></td><td></td></tr>';
-                 }?>
-                </table>
-               </div>
-
-               <div style="padding:10px;">
-                <h3>Create a new account</h3>
-                <form method="post">
-                 <div style="width:350px;padding:3px;border:1px solid;">
-                  <div style="padding:3px;"><div style="float:left;">Username</div> <div style="float:right;"><input type="text" name="username"/></div><div style="clear:both;"></div></div>
-                  <div style="padding:3px;"><div style="float:left;">Real Name</div> <div style="float:right;"><input type="text" name="realname"/></div><div style="clear:both;"></div></div>
-                  <div style="padding:3px;"><div style="float:left;">Password</div> <div style="float:right;"><input type="password" name="password"/></div><div style="clear:both;"></div></div>
-                  <div style="padding:3px;"><div style="float:left;">Confirm Password</div> <div style="float:right;"><input type="password" name="repassword"/></div><div style="clear:both;"></div></div>
-                  <div style="padding:3px;"><div style="float:right;"><input type="submit" name="submit" value="Create User"/></div><div style="clear:both;"></div></div>
-                  <div style="padding:4px;color:red;"><?php echo $error;?></div>
-                 </div>
-                </form>
-               </div>
+                    <div style="padding:10px;">
+                        <h4>Create a new account</h4>
+                        <form method="post">
+                            <div style="width:350px;padding:3px;border:1px solid;">
+                                <div style="padding:3px;"><div style="float:left;">Username</div> <div style="float:right;"><input type="text" name="username"/></div><div style="clear:both;"></div></div>
+                                <div style="padding:3px;"><div style="float:left;">Real Name</div> <div style="float:right;"><input type="text" name="realname"/></div><div style="clear:both;"></div></div>
+                                <div style="padding:3px;"><div style="float:left;">Password</div> <div style="float:right;"><input type="password" name="password"/></div><div style="clear:both;"></div></div>
+                                <div style="padding:3px;"><div style="float:left;">Confirm Password</div> <div style="float:right;"><input type="password" name="repassword"/></div><div style="clear:both;"></div></div>
+                                <div style="padding:3px;"><div style="float:right;"><input type="submit" name="submit" value="Create User"/></div><div style="clear:both;"></div></div>
+                                <div style="padding:4px;color:red;"><?php echo $error; ?></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

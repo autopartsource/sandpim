@@ -264,94 +264,109 @@ ksort($fitmentcolumnkeys);
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h1></h1>
+        <h1>
+            <div style="padding:10px;font-size:25px;">
+                <?php if ($prevyearexists) {
+                    echo buildModelYearLink($makeid, $modelid, ($yearid - 1), $partcategories, '<<');
+                } else {
+                    echo '....';
+                } echo ' ';
+                ?>
+                <?php echo $vcdb->makeName($makeid); ?>, <?php echo $vcdb->modelName($modelid); ?> <?php echo $yearid; ?>
+                <?php 
+                if ($nextyearexists) {
+                    echo buildModelYearLink($makeid, $modelid, ($yearid + 1), $partcategories, '>>');
+                } else {
+                    echo '....';
+                } ?>
+            </div>
+        </h1>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain" style="flex-direction: column;">
-                <div style="padding:10px;font-size:25px;"><?php echo $vcdb->makeName($makeid); ?>, <?php echo $vcdb->modelName($modelid); ?> <?php echo $yearid; ?>
-                    <?php if ($prevyearexists) {
-                        echo buildModelYearLink($makeid, $modelid, ($yearid - 1), $partcategories, '<<');
-                    } else {
-                        echo '....';
-                    } echo ' ';
-                    if ($nextyearexists) {
-                        echo buildModelYearLink($makeid, $modelid, ($yearid + 1), $partcategories, '>>');
-                    } else {
-                        echo '....';
-                    } ?>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
                 </div>
-                <div style="padding:10px;">
-                    <?php
-                    if (count($apps)) {
-                        foreach ($apps as $app) {
-                            $niceattributes = array();
-                            foreach ($app['attributes'] as $appattribute) {
-                                if ($appattribute['type'] == 'vcdb') {
-                                    $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $vcdb->niceVCdbAttributePair($appattribute), 'cosmetic' => $appattribute['cosmetic']);
-                                }
-                                if ($appattribute['type'] == 'note') {
-                                    $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $appattribute['value'], 'cosmetic' => $appattribute['cosmetic']);
-                                }
-                            }
-                            $nicefitmentstring = '';
-                            $nicefitmentarray = array();
-                            foreach ($niceattributes as $niceattribute) {
-                                $nicefitmentarray[] = $niceattribute['text'];
-                            }
-                        }
-
-                        echo '<label><input type="checkbox" id="copymove" name="copymove"/>Copy mode</label>';
-
-                        echo '<table><tr><td></td>';
-                        foreach ($fitmentcolumnkeys as $fitmentcolumnkey => $trash) {
-                            echo '<td><div style="padding:5px;">' . $fitmentcolumnkey . '</div></td>';
-                        } echo '</tr>';
-
-                        foreach ($fitmentrowkeys as $fitmentrowkey => $rowfitmentattributes) {
-                            echo '<tr><td><div style="padding:5px;">' . $fitmentrowkey . '</div></td>';
-                            foreach ($fitmentcolumnkeys as $fitmentcolumnkey => $positionandparttype) {
-                                echo '<td style="vertical-align:top">';
-                                $dropzonenumber++;
-                                echo '<div id="dropzone_' . $dropzonenumber . '" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="' . $rowfitmentattributes . '" data-column="' . $positionandparttype . '" style="background-color:#c0c0c0;padding-top:2px;padding-bottom:25px;padding-left:2px;padding-right:2px;">';
-                                if (isset($appmatrix[$fitmentrowkey][$fitmentcolumnkey])) {
-                                    foreach ($appmatrix[$fitmentrowkey][$fitmentcolumnkey] as $app) {
-                                        $appstyle = 'apppart';
-                                        if ($app['cosmetic'] > 0) {
-                                            $appstyle = 'apppart-cosmetic';
-                                        } if ($app['status'] > 1) {
-                                            $appstyle = 'apppart-hidden';
-                                        } if ($app['status'] == 1) {
-                                            $appstyle = 'apppart-deleted';
-                                        }
-                                        echo '<div id="apppart_' . $app['id'] . '" class="' . $appstyle . '" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' . $rowfitmentattributes . '" data-column="' . $positionandparttype . '" data-sourceapp="' . $app['id'] . '" data-basevehicleid="' . $app['basevehicleid'] . '" data-partnumber="' . $app['partnumber'] . '" data-quantityperapp="' . $app['quantityperapp'] . '" data-cosmetic="' . $app['cosmetic'] . '" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' . $app['id'] .'&categories='. urlencode(implode(',',$partcategories)).'">' . $app['partnumber'] . '</a></div>';
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <div style="padding:10px;">
+                        <?php
+                        if (count($apps)) {
+                            foreach ($apps as $app) {
+                                $niceattributes = array();
+                                foreach ($app['attributes'] as $appattribute) {
+                                    if ($appattribute['type'] == 'vcdb') {
+                                        $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $vcdb->niceVCdbAttributePair($appattribute), 'cosmetic' => $appattribute['cosmetic']);
+                                    }
+                                    if ($appattribute['type'] == 'note') {
+                                        $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $appattribute['value'], 'cosmetic' => $appattribute['cosmetic']);
                                     }
                                 }
-                                echo '</div>';
-
-                                echo '<div onclick="showAddPartArea(this,\'' . $rowfitmentattributes . '\',\'' . $positionandparttype . '\',\'' . $basevehicleid . '\',\'dropzone_' . $dropzonenumber . '\')" data-type="addpart">...</div>';
-
-                                echo '</td>';
+                                $nicefitmentstring = '';
+                                $nicefitmentarray = array();
+                                foreach ($niceattributes as $niceattribute) {
+                                    $nicefitmentarray[] = $niceattribute['text'];
+                                }
                             }
-                            echo '</tr>';
+
+                            echo '<label><input type="checkbox" id="copymove" name="copymove"/>Copy mode</label>';
+
+                            echo '<table><tr><td></td>';
+                            foreach ($fitmentcolumnkeys as $fitmentcolumnkey => $trash) {
+                                echo '<td><div style="padding:5px;">' . $fitmentcolumnkey . '</div></td>';
+                            } echo '</tr>';
+
+                            foreach ($fitmentrowkeys as $fitmentrowkey => $rowfitmentattributes) {
+                                echo '<tr><td><div style="padding:5px;">' . $fitmentrowkey . '</div></td>';
+                                foreach ($fitmentcolumnkeys as $fitmentcolumnkey => $positionandparttype) {
+                                    echo '<td style="vertical-align:top">';
+                                    $dropzonenumber++;
+                                    echo '<div id="dropzone_' . $dropzonenumber . '" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="' . $rowfitmentattributes . '" data-column="' . $positionandparttype . '" style="background-color:#c0c0c0;padding-top:2px;padding-bottom:25px;padding-left:2px;padding-right:2px;">';
+                                    if (isset($appmatrix[$fitmentrowkey][$fitmentcolumnkey])) {
+                                        foreach ($appmatrix[$fitmentrowkey][$fitmentcolumnkey] as $app) {
+                                            $appstyle = 'apppart';
+                                            if ($app['cosmetic'] > 0) {
+                                                $appstyle = 'apppart-cosmetic';
+                                            } if ($app['status'] > 1) {
+                                                $appstyle = 'apppart-hidden';
+                                            } if ($app['status'] == 1) {
+                                                $appstyle = 'apppart-deleted';
+                                            }
+                                            echo '<div id="apppart_' . $app['id'] . '" class="' . $appstyle . '" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' . $rowfitmentattributes . '" data-column="' . $positionandparttype . '" data-sourceapp="' . $app['id'] . '" data-basevehicleid="' . $app['basevehicleid'] . '" data-partnumber="' . $app['partnumber'] . '" data-quantityperapp="' . $app['quantityperapp'] . '" data-cosmetic="' . $app['cosmetic'] . '" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' . $app['id'] .'&categories='. urlencode(implode(',',$partcategories)).'">' . $app['partnumber'] . '</a></div>';
+                                        }
+                                    }
+                                    echo '</div>';
+
+                                    echo '<div onclick="showAddPartArea(this,\'' . $rowfitmentattributes . '\',\'' . $positionandparttype . '\',\'' . $basevehicleid . '\',\'dropzone_' . $dropzonenumber . '\')" data-type="addpart">...</div>';
+
+                                    echo '</td>';
+                                }
+                                echo '</tr>';
+                            }
+                            echo '</table>';
+
+                            echo '<div id="trash" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="trash" data-column="trash" style="float:left;padding:10px;margin:10px;border:2px solid #f5f5f5;background-color:#FF5533;">Drag apps here to delete them</div>';
+                            echo '<div id="hide" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="hide" data-column="hide" style="float:left;padding:10px;margin:10px;border:2px solid #f5f5f5;background-color:#FFD433;">Drag apps here to de-activate them</div>';
+                            echo '<div style="clear:both;"></div>';
+                        } else { // no apps found
+                            echo 'No applications found for this make/model/year';
                         }
-                        echo '</table>';
+                        ?>
 
-                        echo '<div id="trash" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="trash" data-column="trash" style="float:left;padding:10px;margin:10px;border:2px solid #f5f5f5;background-color:#FF5533;">Drag apps here to delete them</div>';
-                        echo '<div id="hide" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="hide" data-column="hide" style="float:left;padding:10px;margin:10px;border:2px solid #f5f5f5;background-color:#FFD433;">Drag apps here to de-activate them</div>';
-                        echo '<div style="clear:both;"></div>';
-                    } else { // no apps found
-                        echo 'No applications found for this make/model/year';
-                    }
-                    ?>
-
+                    </div>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
                 </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

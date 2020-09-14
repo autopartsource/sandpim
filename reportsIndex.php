@@ -22,21 +22,32 @@ $pim=new pim;
         <!-- Header -->
         <h1>Reports</h1>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain button" style="flex-direction: column;">
-                <div style="padding:10px;"><a href="partReferencesReportForm.php">Parts PCdb Validation</a></div>
-                <div style="padding:10px;"><a href="missingProductDataReportForm.php">Parts Missing Product Data</a></div>
-                <div style="padding:10px;"><a href="applicationReferencesReportForm.php">Application VCdb validation</a></div>
-                <div style="padding:10px;"><a href="applicationHolesReportForm.php">Application Holes</a></div>
-                <div style="padding:10px;"><a href="applicationOverlapsReportForm.php">Application Overlaps</a></div>
-                <div style="padding:10px;"><a href="applicationNotesReportForm.php">Application Note Usage</a></div>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <div style="padding:10px;"><a href="partReferencesReportForm.php">Parts PCdb Validation</a></div>
+                    <div style="padding:10px;"><a href="missingProductDataReportForm.php">Parts Missing Product Data</a></div>
+                    <div style="padding:10px;"><a href="applicationReferencesReportForm.php">Application VCdb validation</a></div>
+                    <div style="padding:10px;"><a href="applicationHolesReportForm.php">Application Holes</a></div>
+                    <div style="padding:10px;"><a href="applicationOverlapsReportForm.php">Application Overlaps</a></div>
+                    <div style="padding:10px;"><a href="applicationNotesReportForm.php">Application Note Usage</a></div>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

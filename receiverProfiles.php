@@ -42,27 +42,38 @@ $profiles = $pim->getReceiverprofiles();
         <!-- Header -->
         <h3>Receiver Profiles</h3>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-                <table>
-                    <tr><th>Name</th><th>Data</th></tr>
-                    <?php
-                    foreach ($profiles as $profile) 
-                    {
-                        echo '<tr><td><a href="./receiverProfile.php?id='.$profile['id'].'">'.$profile['name'].'</a></td>';
-                        echo '<td><div>'.$profile['data'].'</div></td>';
-                        echo '</tr>';
-                    }
-                    ?>
-                    <tr><form method="post"><td><input type="text" name="profilename" /></td><td><textarea name="profiledata" style="width:95%;"/></textarea><div><input type="submit" name="submit" value="Add"/></div></td></form></tr>
-                </table>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <table>
+                        <tr><th>Name</th><th>Data</th></tr>
+                        <?php
+                        foreach ($profiles as $profile) 
+                        {
+                            echo '<tr><td><a href="./receiverProfile.php?id='.$profile['id'].'">'.$profile['name'].'</a></td>';
+                            echo '<td><div>'.$profile['data'].'</div></td>';
+                            echo '</tr>';
+                        }
+                        ?>
+                        <tr><form method="post"><td><input type="text" name="profilename" /></td><td><textarea name="profiledata" style="width:95%;"/></textarea><div><input type="submit" name="submit" value="Add"/></div></td></form></tr>
+                    </table>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
 <?php include('./includes/footer.php'); ?>

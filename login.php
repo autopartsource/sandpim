@@ -45,25 +45,43 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         <?php include('./includes/header.php'); ?>
     </head>
     <body>
-        <div class="wrapper">
-            <?php
-            if ($installationtate == 0) {
-                $setupuser = $user->createSetupUser();
-                ?>
-                <div style="background-color: #FF5533">A temporary account was created for completing the setup process. Be sure to record these credentials - the password will not be shown again.  <br/>
-                    username: <?php echo $setupuser['username']; ?> <br/>
-                    password: <?php echo $setupuser['password']; ?> <br/>
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
                 </div>
-            <?php } ?>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <?php
+                    if ($installationtate == 0) {
+                        $setupuser = $user->createSetupUser();
+                        ?>
+                        <div style="background-color: #FF5533">A temporary account was created for completing the setup process. Be sure to record these credentials - the password will not be shown again.  <br/>
+                            username: <?php echo $setupuser['username']; ?> <br/>
+                            password: <?php echo $setupuser['password']; ?> <br/>
+                        </div>
+                    <?php } ?>
 
-            <div>
-                <form method="post">
-                    <div><?php echo $error; ?></div>
-                    <div style="padding:5px;">Username <input type="text" name="username"/></div>
-                    <div style="padding:5px;">Password <input type="password" name="password"/></div>
-                    <div><input type="submit" name="submit" value="Login"/></div>
-                </form>
+                    <div>
+                        <form method="post">
+                            <div><?php echo $error; ?></div>
+                            <div style="padding:5px;">Username <input type="text" name="username"/></div>
+                            <div style="padding:5px;">Password <input type="password" name="password"/></div>
+                            <div><input type="submit" name="submit" value="Login"/></div>
+                        </form>
+                    </div>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
+        </div>    
+        <!-- End of Content Container -->
         </div>
     </body>
 </html>

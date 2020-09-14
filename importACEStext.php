@@ -41,25 +41,36 @@ if (isset($_POST['input'])) {
         <!-- Header -->
         <h1>Import applications from structured text</h1>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
 
-            <!-- Main Content -->
-            <div class="contentMain">
-                <form method="post">
-                    <div style="padding:10px;"><div>Paste tab-delimited application data for import<br/><i>[cosmetic (0 or 1), BaseVehicleID, Partnumber, PartTypeID, PositionID, Qty, VCdb Attributes, Qdb Qualifiers, Notes]</i></div>
-                        <textarea name="input" rows="20" cols="120"></textarea>
-                    </div>
-                    <div>Category for part creation <select name="partcategory"><option value="0">Do not create parts</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
-                    <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
-                    <div>VCdb Attributes format: name|value|sequence|cosmetic~name|value|sequence|cosmetic~...</div>
-                    <div>Qdb Qualifiers format: id|p1|UoM1|p2|UoM2…~id|p1|UoM1|p2|UoM2…~</div>
-                    <div>Notes Format: text|sequence|cosmetic~text|sequence|cosmetic~</div>
-                </form>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <form method="post">
+                        <div style="padding:10px;"><div>Paste tab-delimited application data for import<br/><i>[cosmetic (0 or 1), BaseVehicleID, Partnumber, PartTypeID, PositionID, Qty, VCdb Attributes, Qdb Qualifiers, Notes]</i></div>
+                            <textarea name="input" rows="20" cols="120"></textarea>
+                        </div>
+                        <div>Category for part creation <select name="partcategory"><option value="0">Do not create parts</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
+                        <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
+                        <div>VCdb Attributes format: name|value|sequence|cosmetic~name|value|sequence|cosmetic~...</div>
+                        <div>Qdb Qualifiers format: id|p1|UoM1|p2|UoM2…~id|p1|UoM1|p2|UoM2…~</div>
+                        <div>Notes Format: text|sequence|cosmetic~text|sequence|cosmetic~</div>
+                    </form>
+                </div>
+                <!-- End of Main Content -->
+
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

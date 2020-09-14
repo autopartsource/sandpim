@@ -58,25 +58,36 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
         <!-- Header -->
         <h1>Create A New Part</h1>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-                <div style="padding:10px;">
-                    <form method="post">
-                        <table border="1" cellpadding="5">
-                            <tr><th>Partnumber</th><td><input type="text" name="partnumber"/></td></tr>
-                            <tr><th>Part Type</th><td><select name="parttypeid"><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
-                            <tr><th>Part Category</th><td><select name="partcategory"><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
-                        </table>
-                        <div style="padding-top:15px;"><input type="submit" name="submit" value="Next"/></div>
-                    </form>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <div style="padding:10px;">
+                        <form method="post">
+                            <table border="1" cellpadding="5">
+                                <tr><th>Partnumber</th><td><input type="text" name="partnumber"/></td></tr>
+                                <tr><th>Part Type</th><td><select name="parttypeid"><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"><?php echo $parttype['name'];?></option><?php }?></select></td></tr>
+                                <tr><th>Part Category</th><td><select name="partcategory"><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
+                            </table>
+                            <div style="padding-top:15px;"><input type="submit" name="submit" value="Next"/></div>
+                        </form>
+                    </div>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
                 </div>
             </div>
-            <div class="contentRight">
-            </div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

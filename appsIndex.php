@@ -57,9 +57,9 @@ $groupedMakesCount = count($groupedmakes);
                     <div class="row padding my-row groupCol">
                         <?php
                             for($y = 0;$y < $groupedMakesCount;$y++) {
-                                echo '<div class="col my-col">';
+                                echo '<div class="my-col inner-col">';
                                 foreach ($groupedmakes[$y] as $make) {
-                                    echo '<div class="groupButton" style="padding:5px;"><a href="mmySelectModel.php?makeid=' . $make['id'] . '"class="btn btn-secondary btn-block my-btn" role="button" aria-disabled="true">' . $make['name'] . '</a></div>';
+                                    echo '<div class="groupButton"><a href="mmySelectModel.php?makeid=' . $make['id'] . '"class="btn btn-block btn-secondary my-btn" role="button" aria-disabled="true">' . $make['name'] . '</a></div>';
                                 }   
                                 echo '</div>';
                             }

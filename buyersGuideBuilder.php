@@ -147,22 +147,34 @@ else
         <!-- Header -->
         <h3>Build Buyer's Guide for a list of partnumbers</h3>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-            <!-- Main Content -->
-            <div class="contentMain">
-                <form method="post">
-                    <div>Partnumbers (one per line)</div>
-                    <div><textarea name="input" rows="10" cols="80"><?php echo $tabbedoutput;?></textarea></div>
-                    <div><input type="checkbox" id="renderxlsx" name="renderxlsx"/><label for="renderxlsx">Download As Excel Spreadsheet</label></div>
-
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
                     
-                    <div style="padding:5px;"><input type="submit" name="submit" value="Generate"/></div>
-                </form>
-            </div>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <form method="post">
+                        <div>Partnumbers (one per line)</div>
+                        <div><textarea name="input" rows="10" cols="80"><?php echo $tabbedoutput;?></textarea></div>
+                        <div><input type="checkbox" id="renderxlsx" name="renderxlsx"/><label for="renderxlsx">Download As Excel Spreadsheet</label></div>
 
-            <div class="contentRight"></div>
-        </div>
+
+                        <div style="padding:5px;"><input type="submit" name="submit" value="Generate"/></div>
+                    </form>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
+            </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
 <?php include('./includes/footer.php'); ?>

@@ -59,28 +59,40 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
         <!-- Header -->
         <h3>Part Category</h3>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-             <form action="" method="post">
-              <table>
-               <tr><th>ID</th><td><?php echo $partcategory['id'];?><input type="hidden" name="id" value="<?php echo $partcategory['id'];?>"/></td></tr>
-               <tr><th>Name</th><td><input type="text" name="name" value="<?php echo $partcategory['name'];?>"/></td></tr>
-               <tr><th>BrandAAIAID</th><td><input type="text" name="brandID" value="<?php echo $partcategory['brandID'];?>"/></td></tr>
-               <tr><th>SubBrandAAIAID</th><td><input type="text" name="subbrandID" value="<?php echo $partcategory['subbrandID'];?>"/></td></tr>
-               <tr><th>MfrLabel (ACES)</th><td><input type="text" name="mfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/></td></tr>
-               <tr><th></th><td><input name="submit" type="submit" value="Save"/></td></tr>
-              </table>
-              <input type="hidden" name="oldname" value="<?php echo $partcategory['name'];?>"/>
-              <input type="hidden" name="oldbrandID" value="<?php echo $partcategory['brandID'];?>"/>
-              <input type="hidden" name="oldsubbrandID" value="<?php echo $partcategory['subbrandID'];?>"/>
-              <input type="hidden" name="oldmfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/>
-             </form>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <form action="" method="post">
+                     <table>
+                      <tr><th>ID</th><td><?php echo $partcategory['id'];?><input type="hidden" name="id" value="<?php echo $partcategory['id'];?>"/></td></tr>
+                      <tr><th>Name</th><td><input type="text" name="name" value="<?php echo $partcategory['name'];?>"/></td></tr>
+                      <tr><th>BrandAAIAID</th><td><input type="text" name="brandID" value="<?php echo $partcategory['brandID'];?>"/></td></tr>
+                      <tr><th>SubBrandAAIAID</th><td><input type="text" name="subbrandID" value="<?php echo $partcategory['subbrandID'];?>"/></td></tr>
+                      <tr><th>MfrLabel (ACES)</th><td><input type="text" name="mfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/></td></tr>
+                      <tr><th></th><td><input name="submit" type="submit" value="Save"/></td></tr>
+                     </table>
+                     <input type="hidden" name="oldname" value="<?php echo $partcategory['name'];?>"/>
+                     <input type="hidden" name="oldbrandID" value="<?php echo $partcategory['brandID'];?>"/>
+                     <input type="hidden" name="oldsubbrandID" value="<?php echo $partcategory['subbrandID'];?>"/>
+                     <input type="hidden" name="oldmfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/>
+                    </form>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
 <?php include('./includes/footer.php'); ?>

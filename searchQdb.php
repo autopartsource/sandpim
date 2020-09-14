@@ -66,19 +66,28 @@ $userid=$_SESSION['userid'];
         <!-- Header -->
         <h1></h1>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-            <!-- Main Content -->
-            <div class="contentMain">
-
-                <div><input type="text" id="searchterm" onchange="searchQdb(this.value)"/></div>
-                <div id="searchresults">
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
                 </div>
-
-            </div> <!-- End Main Content -->
-
-            <div class="contentRight"></div>
-        </div> <!-- End Wrapper -->
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <div><input type="text" id="searchterm" onchange="searchQdb(this.value)"/></div>
+                    <div id="searchresults"></div>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
+            </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

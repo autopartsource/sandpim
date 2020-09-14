@@ -1,32 +1,16 @@
 <?php
-include_once('./class/vcdbClass.php');
-include_once('./class/pimClass.php');
-$navCategory = 'import/export';
-
-session_start();
-if (!isset($_SESSION['userid'])) {
-    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
-    exit;
-}
-
-$vcdb = new vcdb;
-$pim = new pim;
-
-$partcategories = $pim->getPartCategories();
-$receiverprofiles=$pim->getReceiverprofiles();
 ?>
-
 <!DOCTYPE html>
 <html>
     <head>
-        <?php include('./includes/header.php'); ?>
+        <?php include('/var/www/html/includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h1>Export for print publishing</h1>
+        <h1>Dashboard</h1>
         
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -38,9 +22,7 @@ $receiverprofiles=$pim->getReceiverprofiles();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form action="exportForPrintProcess.php" method="post">
-                        <input type="submit" name="submit" value="Export"/>
-                    </form>
+                    
                 </div>
                 <!-- End of Main Content -->
                 
@@ -53,6 +35,6 @@ $receiverprofiles=$pim->getReceiverprofiles();
         <!-- End of Content Container -->
         
         <!-- Footer -->
-        <?php include('./includes/footer.php'); ?>
+        <?php include('/var/www/html/includes/footer.php'); ?>
     </body>
 </html>

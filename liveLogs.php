@@ -203,32 +203,43 @@ if (!isset($_SESSION['userid'])) {
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <div class="wrapper">
-            <div class="contentLeft">L</div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-                
-                <div class="w3-sidebar w3-bar-block w3-black w3-card" style="width:150px">
-                  <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'apps')">Application Log</button>
-                  <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'parts')">Parts Log</button>
-                  <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'assets')">Assets Log</button>
+        <h1></h1>
+        
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    <div class="w3-sidebar w3-bar-block w3-black w3-card" style="width:150px">
+                        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'apps')">Application Log</button>
+                        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'parts')">Parts Log</button>
+                        <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'assets')">Assets Log</button>
+                    </div>
                 </div>
-                <div style="margin-left:150px">
-                    <div id="apps" class="w3-container city w3-animate-opacity" style="display:none">
-                        <div id="appevents"></div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <div>
+                        <div id="apps" class="w3-container city w3-animate-opacity" style="display:none">
+                            <div id="appevents"></div>
+                        </div>
+                        <div id="parts" class="w3-container city w3-animate-opacity" style="display:none">
+                            <div id="partevents"></div>
+                        </div>
+                        <div id="assets" class="w3-container city w3-animate-opacity" style="display:none">
+                            <div id="assetevents"></div>
+                        </div>
                     </div>
-                    <div id="parts" class="w3-container city w3-animate-opacity" style="display:none">
-                        <div id="partevents"></div>
-                    </div>
-                    <div id="assets" class="w3-container city w3-animate-opacity" style="display:none">
-                        <div id="assetevents"></div>
-                    </div>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
                 </div>
             </div>
-
-            <div class="contentRight">R</div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

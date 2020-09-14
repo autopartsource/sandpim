@@ -112,35 +112,31 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                {// event that got us here was keying activity in partnumber box
                 document.getElementById('parttypeid').value=response.parttypeid;
                 document.getElementById('positionid').value=response.typicalposition;
-                position=response.typicalposition;
-                document.getElementById('quantityperapp').value=response.typicalqtyperapp;
-               } 
-                  
-               if(position!=0)
-               {
-                document.getElementById("createapp").disabled=false;
-               }
-               else
-               {
-                document.getElementById("createapp").disabled=true;
-               }
-              }
-              else
-              {// the content of the partnumber input is not a valid item
-                  
-               if(source=='partnumber')
-               {// event that got us here was keying activity in partnumber box
-                document.getElementById("createapp").disabled=true;
-                document.getElementById('parttypeid').value=0;
-                document.getElementById('positionid').value=0;
-                document.getElementById('quantityperapp').value='';
-               }
-              }
-             };
-             xhr.send();
+                            position = response.typicalposition;
+                            document.getElementById('quantityperapp').value = response.typicalqtyperapp;
+                        }
+
+                        if (position != 0)
+                        {
+                            document.getElementById("createapp").disabled = false;
+                        } else
+                        {
+                            document.getElementById("createapp").disabled = true;
+                        }
+                    } else
+                    {// the content of the partnumber input is not a valid item
+
+                        if (source == 'partnumber')
+                        {// event that got us here was keying activity in partnumber box
+                            document.getElementById("createapp").disabled = true;
+                            document.getElementById('parttypeid').value = 0;
+                            document.getElementById('positionid').value = 0;
+                            document.getElementById('quantityperapp').value = '';
+                        }
+                    }
+                };
+                xhr.send();
             }
-
-
             
         </script>
     </head>
@@ -151,22 +147,38 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
         <!-- Header -->
         <h1>Applications (<?php echo $vcdb->makeName($makeid).', '.$vcdb->modelName($modelid).', '.$yearid;?>)</h1>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
                 <div style="padding:20px;">
                     <form action="showAppsByBasevehicle.php">
-                     <?php foreach($partcategories as $partcategory)
-                     {
-                         $checked=''; if($partcategory['selected']){$checked=' checked';}
-                         echo '<div style="padding:5px"><input type="checkbox" id="partcategory_'.$partcategory['id'].'" onclick="selectUnselectPartcategory(\''.$userid.'\',\''.$partcategory['id'].'\')" name="partcategory_'.$partcategory['id'].'"'.$checked.'><label style="padding:5px;border: 1px solid;margin:3px; border-radius:5px"for="partcategory_'.$partcategory['id'].'">'.$partcategory['name'].'<img style="padding:0px 5px 0px" height="17px" src="'.$partcategory['logouri'].'"></label></div>';
-                     }?>
-                     <input type="hidden" name="makeid" value="<?php echo $makeid;?>"/>
-                     <?php if(isset($modelid)){echo '<input type="hidden" name="modelid" value="'.$modelid.'"/>';}
-                     if(isset($yearid)){echo '<input type="hidden" name="yearid" value="'.$yearid.'"/>';}
-                     if(isset($equipmentid)){echo '<input type="hidden" name="equipmentid" value="'.$equipmentid.'"/>';} ?>
+                     <?php
+                        foreach ($partcategories as $partcategory) {
+                            $checked = '';
+                            if ($partcategory['selected']) {
+                                $checked = ' checked';
+                            }
+                            echo '<div style="padding:5px"><input type="checkbox" id="partcategory_' . $partcategory['id'] . '" onclick="selectUnselectPartcategory(\'' . $userid . '\',\'' . $partcategory['id'] . '\')" name="partcategory_' . $partcategory['id'] . '"' . $checked . '><label style="padding:5px;border: 1px solid;margin:3px; border-radius:5px"for="partcategory_' . $partcategory['id'] . '">' . $partcategory['name'] . '<img style="padding:0px 5px 0px" height="17px" src="' . $partcategory['logouri'] . '"></label></div>';
+                        }
+                    ?>
+                        <input type="hidden" name="makeid" value="<?php echo $makeid; ?>"/>
+                    <?php
+                        if (isset($modelid)) {
+                            echo '<input type="hidden" name="modelid" value="' . $modelid . '"/>';
+                        }
+                        if (isset($yearid)) {
+                            echo '<input type="hidden" name="yearid" value="' . $yearid . '"/>';
+                        }
+                        if (isset($equipmentid)) {
+                            echo '<input type="hidden" name="equipmentid" value="' . $equipmentid . '"/>';
+                        }
+                    ?>
                      <div style="padding-top:10px;"><input type="submit" name="submit" value="Show Applications"/></div>
                     </form>
                 </div>
@@ -183,9 +195,15 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                     </div>
                 </form>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
+            </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

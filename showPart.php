@@ -453,133 +453,143 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
         <!-- Header -->
         <h1></h1>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-                <?php if ($part) {; ?>
-                <div style="padding:10px;">
-                    <table border="1" cellpadding="5">
-                        <tr><th>Partnumber</th><td><?php echo $part['partnumber']; ?></td></tr>
-                        <tr><th>Part Type</th><td><div style="float:left;"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div><div style="float:left;padding-left:10px;"><a href="./pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
-                        <tr><th>Category</th><td><div style="float:left;"><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></div><div style="float:left;padding-left:10px;"><a href="./partCategories.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
-                        <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
-                        <tr>
-                            <th>Descriptions</th>
-                            <td>
-                                <div id="descriptions">
-                                <?php foreach($descriptions as $description){;?><div id="descriptionid_<?php echo $description['id'];?>" style="font-size: 80%;"><?php echo $description['descriptioncode'].': '.$description['description'].' <button onclick="deleteDescription(\''.$description['id'].'\')">x</button>';?></div><?php }?>
-                                </div>
-                                <div onclick="showhideNewDescription()">...</div>
-                                <div id="newdescription" style="display:none; padding-top: 10px;">
-                                    <div style="padding:5px;"><input type="text" id="descriptiontext" size="40"/><button id="adddescrption" onclick="addDescription()">Add</button></div>
-                                    <div><select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){$selected=''; if($descriptioncode['code']==$defaultdescriptiontypecode){$selected=' selected';} echo '<option value="'.$descriptioncode['code'].'"'.$selected.'>'.$descriptioncode['description'].'</option>';}?></select> <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){$selected=''; if($descriptionlanguagecode['code']==$defaultdescriptionlanguagecode){$selected=' selected';} echo '<option value="'.$descriptionlanguagecode['code'].'"'.$selected.'>'.$descriptionlanguagecode['description'].'</option>';}?></select></div>
-                                </div>
-                            </td>
-                        <tr>
-                        <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></td><tr>
-                        <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></td><tr>
-                        <tr><th>Replaced By</th><td><input type="text" id="replacedby" value="<?php echo $part['replacedby']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></td><tr>
-                        <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
-                        <tr>
-                            <th>Interchange</th>
-                            <td>
-                                <div id="interchanges">
-                                <?php foreach($competitorparts as $competitorpart){;?><div id="interchangeid_<?php echo $competitorpart['id'];?>" style="font-size: 80%;"><?php echo $interchange->brandName($competitorpart['brandAAIAID']).': '.$competitorpart['competitorpartnumber'].' <button onclick="deleteInterchange(\''.$competitorpart['id'].'\')">x</button>';?></div><?php }?>
-                                </div>
-                                <div onclick="showhideNewInterchange()">...</div>
-                                <div id="newinterchange" style="display:none; padding-top: 10px;"><div style="float:left;padding-right: 10px;"><a href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="float:left;"><select id="competitivebrand"><?php foreach($competitivebrands as $competitivebrand){echo '<option value="'.$competitivebrand['brandAAIAID'].'">'.$competitivebrand['description'].'</option>';}?></select><input type="text" id="competitivepartnumber" size="10"/><button id="addinterchange" onclick="addInterchange()">+</button></div><div style="clear:both;"></div></div>
-                            </td>
-                        <tr>
-                        <tr>
-                            <th>Packages</th>
-                            <td>
-                                <div id="packages"> 
-                                <?php foreach($packages as $package){;?><div style="background-color:#cd9f61; font-size: 80%; border:2px solid #808080;margin: 2px;" id="packageid_<?php echo $package['id'];?>" style="font-size: 80%;"><?php echo $package['nicepackage'];?>  <button onclick="deletePackage(<?php echo $package['id'];?>)">x</button></div><?php }?>
-                                </div>
-                                <div onclick="showhideNewpackage()">...</div>
-                                <div id="newpackage" style="display: none; padding-top: 10px; text-align:left;">
-                                    <div style="padding-top:3px;">Package UoM <select id="packageuom"><?php foreach($packageuoms as $packageuom){$selected=''; if($packageuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$packageuom['code'].'"'.$selected.'>'.$packageuom['description'].'</option>';}?></select></div>
-                                    <div style="padding-top:3px;">Package-Level GTIN <input type="text" id="packagelevelgtin" size="12"/></div>
-                                    <div style="padding-top:3px;">Qty of Eaches <input type="text" id="quantityofeaches" size="2" value="1" style="text-align:right;"/></div>
-                                    <div style="padding-top:3px;">Inner Qty <input type="text" id="innerquantity" size="2" value="1" style="text-align:right;"/><select id="innerquantityuom"><?php foreach($innerqtyuoms as $innerqtyuom){$selected=''; if($innerqtyuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$innerqtyuom['code'].'"'.$selected.'>'.$innerqtyuom['description'].'</option>';}?></select></div>
-                                    <div style="padding-top:3px;">Weight <input type="text" id="weight" size="2" style="text-align:right;"/><select id="weightsuom"><?php foreach($weightsuoms as $weightsuom){echo '<option value="'.$weightsuom['code'].'">'.$weightsuom['description'].'</option>';}?></select></div>
-                                    <div style="padding-top:3px;">L / W / H <input type="text" id="shippinglength" size="2" style="text-align:right;"/><input type="text" id="shippingwidth" size="2" style="text-align:right;"/><input type="text" id="shippingheight" size="2" style="text-align:right;"/><select id="dimensionsuom"><?php foreach($dimensionsuoms as $dimensionsuom){echo '<option value="'.$dimensionsuom['code'].'">'.$dimensionsuom['description'].'</option>';}?></select></div>
-                                    <div><button id="addpackage" onclick="addPackage()">Create</button></div>
-                                </div>
-                            </td>
-                        <tr>
-                        <tr><th>Prices</th>
-                            <td>
-                                <div id="prices">
-                                <?php foreach($prices as $price){;?><div id="priceid_<?php echo $price['id'];?>" style="background-color:#85bb65; font-size: 80%; border:2px solid #808080;margin: 2px;"><?php echo $price['niceprice'];?> <button onclick="deletePrice(<?php echo $price['id'];?>)">x</button></div><?php }?>
-                                </div>
-                                <div onclick="showhideNewPrice()">...</div>
-                                <div id="newprice" style="display:none; text-align: left; padding-top: 10px;">
-                                    <div style="padding-top:3px;"><div style="float:left;">Price Sheet Number <select id="pricesheetnumber" name="pricesheet" onchange="showSlectedPricesheetCurrency()"><option value="">select...</option><?php foreach($pricesheets as $pricesheet){echo '<option value="'.$pricesheet['number'].'">'.$pricesheet['description'].'</option>';}?></select></div><div style="float:left;padding-left: 5px;"><a href="./priceSheets.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> </div>
-                                    <div style="padding-top:3px;">Unit of Measure <select id="priceuom" name="priceuom"><?php foreach($priceuoms as $priceuom){$selected =''; if($priceuom['code']=='PE'){$selected=' selected';} echo '<option value="'.$priceuom['code'].'"'.$selected.'>'.$priceuom['description'].'</option>';}?></select></div>
-                                    <div style="padding-top:3px;"><div style="float:left;">Price Type: </div><div id="newpricetype" data-pricetype="" style="float:left;padding-top:1px;padding-right:5px;"></div><div style="clear:both;"></div> </div>
-                                    <div style="padding-top:3px;"><div style="float:left;">Amount <input disabled style="text-align:right;" type="text" id="priceamount" size="4"/></div> <div id="newpricecurrency" data-currency="" style="float:left;padding-top:3px;padding-right:5px;"></div> <button id="addprice" disabled onclick="addPrice()">+</button><div style="clear:both;"></div></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr><th>Attributes</th>
-                            <td>
-                                <div id="appliedattributes" style="padding:5px;">
-                                    <?php foreach ($attributes as $attribute) 
-                                    {
-                                        if($attribute['PAID']==0)
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <?php if ($part) {; ?>
+                    <div style="padding:10px;">
+                        <table border="1" cellpadding="5">
+                            <tr><th>Partnumber</th><td><?php echo $part['partnumber']; ?></td></tr>
+                            <tr><th>Part Type</th><td><div style="float:left;"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div><div style="float:left;padding-left:10px;"><a href="./pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
+                            <tr><th>Category</th><td><div style="float:left;"><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></div><div style="float:left;padding-left:10px;"><a href="./partCategories.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
+                            <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
+                            <tr>
+                                <th>Descriptions</th>
+                                <td>
+                                    <div id="descriptions">
+                                    <?php foreach($descriptions as $description){;?><div id="descriptionid_<?php echo $description['id'];?>" style="font-size: 80%;"><?php echo $description['descriptioncode'].': '.$description['description'].' <button onclick="deleteDescription(\''.$description['id'].'\')">x</button>';?></div><?php }?>
+                                    </div>
+                                    <div onclick="showhideNewDescription()">...</div>
+                                    <div id="newdescription" style="display:none; padding-top: 10px;">
+                                        <div style="padding:5px;"><input type="text" id="descriptiontext" size="40"/><button id="adddescrption" onclick="addDescription()">Add</button></div>
+                                        <div><select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){$selected=''; if($descriptioncode['code']==$defaultdescriptiontypecode){$selected=' selected';} echo '<option value="'.$descriptioncode['code'].'"'.$selected.'>'.$descriptioncode['description'].'</option>';}?></select> <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){$selected=''; if($descriptionlanguagecode['code']==$defaultdescriptionlanguagecode){$selected=' selected';} echo '<option value="'.$descriptionlanguagecode['code'].'"'.$selected.'>'.$descriptionlanguagecode['description'].'</option>';}?></select></div>
+                                    </div>
+                                </td>
+                            <tr>
+                            <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></td><tr>
+                            <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></td><tr>
+                            <tr><th>Replaced By</th><td><input type="text" id="replacedby" value="<?php echo $part['replacedby']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></td><tr>
+                            <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
+                            <tr>
+                                <th>Interchange</th>
+                                <td>
+                                    <div id="interchanges">
+                                    <?php foreach($competitorparts as $competitorpart){;?><div id="interchangeid_<?php echo $competitorpart['id'];?>" style="font-size: 80%;"><?php echo $interchange->brandName($competitorpart['brandAAIAID']).': '.$competitorpart['competitorpartnumber'].' <button onclick="deleteInterchange(\''.$competitorpart['id'].'\')">x</button>';?></div><?php }?>
+                                    </div>
+                                    <div onclick="showhideNewInterchange()">...</div>
+                                    <div id="newinterchange" style="display:none; padding-top: 10px;"><div style="float:left;padding-right: 10px;"><a href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="float:left;"><select id="competitivebrand"><?php foreach($competitivebrands as $competitivebrand){echo '<option value="'.$competitivebrand['brandAAIAID'].'">'.$competitivebrand['description'].'</option>';}?></select><input type="text" id="competitivepartnumber" size="10"/><button id="addinterchange" onclick="addInterchange()">+</button></div><div style="clear:both;"></div></div>
+                                </td>
+                            <tr>
+                            <tr>
+                                <th>Packages</th>
+                                <td>
+                                    <div id="packages"> 
+                                    <?php foreach($packages as $package){;?><div style="background-color:#cd9f61; font-size: 80%; border:2px solid #808080;margin: 2px;" id="packageid_<?php echo $package['id'];?>" style="font-size: 80%;"><?php echo $package['nicepackage'];?>  <button onclick="deletePackage(<?php echo $package['id'];?>)">x</button></div><?php }?>
+                                    </div>
+                                    <div onclick="showhideNewpackage()">...</div>
+                                    <div id="newpackage" style="display: none; padding-top: 10px; text-align:left;">
+                                        <div style="padding-top:3px;">Package UoM <select id="packageuom"><?php foreach($packageuoms as $packageuom){$selected=''; if($packageuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$packageuom['code'].'"'.$selected.'>'.$packageuom['description'].'</option>';}?></select></div>
+                                        <div style="padding-top:3px;">Package-Level GTIN <input type="text" id="packagelevelgtin" size="12"/></div>
+                                        <div style="padding-top:3px;">Qty of Eaches <input type="text" id="quantityofeaches" size="2" value="1" style="text-align:right;"/></div>
+                                        <div style="padding-top:3px;">Inner Qty <input type="text" id="innerquantity" size="2" value="1" style="text-align:right;"/><select id="innerquantityuom"><?php foreach($innerqtyuoms as $innerqtyuom){$selected=''; if($innerqtyuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$innerqtyuom['code'].'"'.$selected.'>'.$innerqtyuom['description'].'</option>';}?></select></div>
+                                        <div style="padding-top:3px;">Weight <input type="text" id="weight" size="2" style="text-align:right;"/><select id="weightsuom"><?php foreach($weightsuoms as $weightsuom){echo '<option value="'.$weightsuom['code'].'">'.$weightsuom['description'].'</option>';}?></select></div>
+                                        <div style="padding-top:3px;">L / W / H <input type="text" id="shippinglength" size="2" style="text-align:right;"/><input type="text" id="shippingwidth" size="2" style="text-align:right;"/><input type="text" id="shippingheight" size="2" style="text-align:right;"/><select id="dimensionsuom"><?php foreach($dimensionsuoms as $dimensionsuom){echo '<option value="'.$dimensionsuom['code'].'">'.$dimensionsuom['description'].'</option>';}?></select></div>
+                                        <div><button id="addpackage" onclick="addPackage()">Create</button></div>
+                                    </div>
+                                </td>
+                            <tr>
+                            <tr><th>Prices</th>
+                                <td>
+                                    <div id="prices">
+                                    <?php foreach($prices as $price){;?><div id="priceid_<?php echo $price['id'];?>" style="background-color:#85bb65; font-size: 80%; border:2px solid #808080;margin: 2px;"><?php echo $price['niceprice'];?> <button onclick="deletePrice(<?php echo $price['id'];?>)">x</button></div><?php }?>
+                                    </div>
+                                    <div onclick="showhideNewPrice()">...</div>
+                                    <div id="newprice" style="display:none; text-align: left; padding-top: 10px;">
+                                        <div style="padding-top:3px;"><div style="float:left;">Price Sheet Number <select id="pricesheetnumber" name="pricesheet" onchange="showSlectedPricesheetCurrency()"><option value="">select...</option><?php foreach($pricesheets as $pricesheet){echo '<option value="'.$pricesheet['number'].'">'.$pricesheet['description'].'</option>';}?></select></div><div style="float:left;padding-left: 5px;"><a href="./priceSheets.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> </div>
+                                        <div style="padding-top:3px;">Unit of Measure <select id="priceuom" name="priceuom"><?php foreach($priceuoms as $priceuom){$selected =''; if($priceuom['code']=='PE'){$selected=' selected';} echo '<option value="'.$priceuom['code'].'"'.$selected.'>'.$priceuom['description'].'</option>';}?></select></div>
+                                        <div style="padding-top:3px;"><div style="float:left;">Price Type: </div><div id="newpricetype" data-pricetype="" style="float:left;padding-top:1px;padding-right:5px;"></div><div style="clear:both;"></div> </div>
+                                        <div style="padding-top:3px;"><div style="float:left;">Amount <input disabled style="text-align:right;" type="text" id="priceamount" size="4"/></div> <div id="newpricecurrency" data-currency="" style="float:left;padding-top:3px;padding-right:5px;"></div> <button id="addprice" disabled onclick="addPrice()">+</button><div style="clear:both;"></div></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr><th>Attributes</th>
+                                <td>
+                                    <div id="appliedattributes" style="padding:5px;">
+                                        <?php foreach ($attributes as $attribute) 
                                         {
-                                            //echo '<tr><td>' . $attribute['name'] . '</td><td>' . $attribute['value'] . '</td><td>' . $attribute['id'] . '</td></tr>';
-                                        }
-                                        else
-                                        {
-                                            echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).' <input type="text"/></div><div style="clear:both;"></div></div>';
-                                        }
-                                    } ?>
-                                </div>
-                                <div onclick="showhideUnappliedAttributes()">...</div>
-                                <div id="unappliedattributes" style="display:none; padding:5px;">
-                                        <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
-                                            echo '<div id="unappliedattribute_'.$attribute['PAID'].'"><div style="width:2em;float:left;"> <button onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div><div style="float:left;">' . $attribute['name'] . '</div><div style="clear:both;"></div></div>';
-                                        }?>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Assets</th>
-                            <td>
-                            <?php 
-                            foreach($connectedassets as $connectedasset)
-                            {
-                                if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='')
+                                            if($attribute['PAID']==0)
+                                            {
+                                                //echo '<tr><td>' . $attribute['name'] . '</td><td>' . $attribute['value'] . '</td><td>' . $attribute['id'] . '</td></tr>';
+                                            }
+                                            else
+                                            {
+                                                echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).' <input type="text"/></div><div style="clear:both;"></div></div>';
+                                            }
+                                        } ?>
+                                    </div>
+                                    <div onclick="showhideUnappliedAttributes()">...</div>
+                                    <div id="unappliedattributes" style="display:none; padding:5px;">
+                                            <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
+                                                echo '<div id="unappliedattribute_'.$attribute['PAID'].'"><div style="width:2em;float:left;"> <button onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div><div style="float:left;">' . $attribute['name'] . '</div><div style="clear:both;"></div></div>';
+                                            }?>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Assets</th>
+                                <td>
+                                <?php 
+                                foreach($connectedassets as $connectedasset)
                                 {
-                                    echo '<div><img src="'.$connectedasset['uri'].'" width="400px"/></div>';
-                                }
-                                echo '<div><a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>';
-                            };
-                            ?></td>
-                        <tr>
-                        <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
-                    </table>
+                                    if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='')
+                                    {
+                                        echo '<div><img src="'.$connectedasset['uri'].'" width="400px"/></div>';
+                                    }
+                                    echo '<div><a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>';
+                                };
+                                ?></td>
+                            <tr>
+                            <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
+                        </table>
+                    </div>
+                    <?php if(count($history)){echo '<div><a href="./partHistory.php?partnumber='.$partnumber.'">History</a></div>';}?>
+                    <?php
+                    } else {
+                        echo 'Part ('.$partnumber.') not found';
+                    }
+                    ?>
                 </div>
-                <?php if(count($history)){echo '<div><a href="./partHistory.php?partnumber='.$partnumber.'">History</a></div>';}?>
-                <?php
-                } else {
-                    echo 'Part ('.$partnumber.') not found';
-                }
-                ?>
-            </div>
-            <div class="contentRight">
-                <h3 class="mobile">Applications</h3>
-                <div class="scrolling-wrapper-flexbox">
-                <?php foreach ($apps as $app) {
-                    echo '<div style="padding:.2em;" class="button card"><a href="showApp.php?appid=' . $app['id'] . '">' . $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']) . '</a></div>';} 
-                ?>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    <h3 class="mobile">Applications</h3>
+                    <div class="scrolling-wrapper-flexbox">
+                    <?php foreach ($apps as $app) {
+                        echo '<div style="padding:.2em;" class="button card"><a href="showApp.php?appid=' . $app['id'] . '">' . $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']) . '</a></div>';} 
+                    ?>
+                    </div>
                 </div>
             </div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

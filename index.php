@@ -42,7 +42,6 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 <div class="col-xs-12 col-md-2 my-col colLeft">
-                    Row 1 Col 1
                 </div>
                 <div class="col-xs-12 col-md-8 my-col colMain">
                 <?php
@@ -101,7 +100,6 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                 ?>
                 </div>
                 <div class="col-xs-12 col-md-2 my-col colRight">
-                    Row 1 Col 3
                 </div>
             </div>
         </div>

@@ -32,8 +32,12 @@ body { margin: 10px; text-align: center;}
 }
 
 .my-btn { 
-    margin: 10px;
     text-decoration: none;
+}
+
+.colMain {
+    text-align: center;
+    justify-content: center;
 }
 
 .apppart {padding: 1px; border: 1px solid #808080; margin: 0px; background-color:#d0f0c0;}
@@ -106,7 +110,7 @@ table, th, td {
     padding: 10px; 
     border-collapse: collapse; 
     border: 1px solid black;}
-
+/*
 .wrapper {
     display: flex;
     flex-direction: row;
@@ -116,30 +120,46 @@ table, th, td {
     text-align: center;
     min-height: 100%;
     padding-bottom: 2.5rem;    /* Footer height */
+/*
 }
-
 .wrapper > * {
     padding: 10px;
     flex: 1 100%;
 }
-
+*/
 .groupCol {
     justify-content: center;
 }
 
 .groupButton {
+    padding: 10px;
+}
+
+.inner-col {
+    padding: 5px;
+    justify-content: center;
 }
 /*    Mobile View    */
 @media all and (max-width: 600px) {
     .wrapper { flex-direction: column; }
     
-    .contentMain .showRow { 
+    .contentMain, .showRow { 
         display: flex; 
         flex-direction: column;
         flex-wrap: wrap;
         justify-content: center; 
         flex: 1 auto;
     }
+    
+    .inner-col { 
+        display: flex; 
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        flex: 1 auto;
+    }
+    
     /*.contentRight { display: none; }*/
     .contentRight {
         display: flex;
@@ -147,7 +167,7 @@ table, th, td {
         overflow-x: auto;
     }
     
-    .contentRight .scrolling-wrapper-flexbox {
+    .contentRight, .scrolling-wrapper-flexbox {
         display: flex;
         flex-wrap: nowrap;
         overflow-x: auto;
@@ -159,18 +179,6 @@ table, th, td {
     
     .mobile {
         display: none; 
-    }
-    
-    .groupCol, .groupButton {
-        display: flex; 
-        flex-direction: column;
-        flex-wrap: wrap;
-        justify-content: center; 
-        flex: 1 auto;
-    }
-    
-    .groupButton {
-        max-width: 100%;
     }
 }
 
@@ -218,9 +226,9 @@ table, th, td {
     }
 }
 
-.showRow {flex-direction: row;}
+.showRow, .groupCol {flex-direction: row;}
 
-h1 {text-align: center;}
+h1, h3 {text-align: center;}
 
 
 .footer {

@@ -25,21 +25,33 @@ $receiverprofiles=$pim->getReceiverprofiles();
         <!-- Header -->
         <h1>Export applications to a tab-delimited text file</h1>
         
-        <div class="wrapper">
-         <div class="contentLeft"></div>
-
-         <!-- Main Content -->
-         <div class="contentMain">
-          <form action="exportFlatAppsStream.php" method="get">
-           <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
-            <div style="padding: 10px;">Receiver Profile</div>
-            <select name="receiverprofile"><?php foreach($receiverprofiles as $receiverprofile){?><option value="<?php echo $receiverprofile['id'];?>"><?php echo $receiverprofile['name'];?></option><?php }?></select>
-            <input type="submit" name="submit" value="Export"/>
-           </div>
-          </form>
-         </div>
-         <div class="contentRight"></div>
-        </div>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <form action="exportFlatAppsStream.php" method="get">
+                        <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
+                            <div style="padding: 10px;">Receiver Profile</div>
+                            <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+                            <input type="submit" name="submit" value="Export"/>
+                        </div>
+                    </form>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
+            </div>
+        </div>    
+        <!-- End of Content Container -->
         
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

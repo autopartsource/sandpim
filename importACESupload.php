@@ -73,36 +73,51 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
         <!-- Header -->
         <h1>Import ACES by file upload</h1>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain" style="flex-direction: column;">
-              <?php if($jobs){ ?>
-              <div style="border-style: groove;padding:10px;">
-               <div>Existing ACES Import Jobs</div>
-                <table border="1">
-                 <tr><th>Job Type</th><th>Status</th><th>File</th><th>Created On</th><th>Actions</th></tr>
-                 <?php foreach($jobs as $job){?>
-                 <form method="post"><input type="hidden" name="jobid" value="<?php echo $job['id'];?>"/><tr><td><?php echo $job['jobtype'];?></td><td><?php echo $job['status'];?></td><td><?php echo basename($job['inputfile']);?> <?php echo basename($job['outputfile']);?></td><td><?php echo $job['datetimecreated'];?></td><td><?php if($job['status']=='uploaded'){echo '<input type="submit" name="submit" value="Start"/><input type="submit" name="submit" value="Cancel"/>';} if($job['status']=='complete' || $job['status']=='canceled'){echo '<input type="submit" name="submit" value="Hide"/>';}?></td></tr></form>
-                 <?php }?>
-                </table>
-               </div>
-              <?php }?>
-              <div>
-               <?php if($error_msg){echo $error_msg;}?>
-               <form method="post" enctype="multipart/form-data">
-                <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
-
-                <div>Category for parts created during import: <select name="partcategory" <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select> <a href="./partCategories.php"><img src="./settings.png" width="18" alt="settings"/></a></div>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
                 
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <?php if($jobs){ ?>
+                    <div style="border-style: groove;padding:10px;">
+                        <div>Existing ACES Import Jobs</div>
+                            <table border="1">
+                                <tr><th>Job Type</th><th>Status</th><th>File</th><th>Created On</th><th>Actions</th></tr>
+                                <?php foreach ($jobs as $job) { ?>
+                                    <form method="post"><input type="hidden" name="jobid" value="<?php echo $job['id']; ?>"/><tr><td><?php echo $job['jobtype']; ?></td><td><?php echo $job['status']; ?></td><td><?php echo basename($job['inputfile']); ?> <?php echo basename($job['outputfile']); ?></td><td><?php echo $job['datetimecreated']; ?></td><td><?php if ($job['status'] == 'uploaded') {
+                                echo '<input type="submit" name="submit" value="Start"/><input type="submit" name="submit" value="Cancel"/>';
+                            } if ($job['status'] == 'complete' || $job['status'] == 'canceled') {
+                                echo '<input type="submit" name="submit" value="Hide"/>';
+                            } ?></td></tr></form>
+                            <?php } ?>
+                            </table>
+                        </div>
+                    <?php }?>
+                    <div>
+                     <?php if($error_msg){echo $error_msg;}?>
+                     <form method="post" enctype="multipart/form-data">
+                         <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
+
+                         <div>Category for parts created during import: <select name="partcategory" <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select> <a href="./partCategories.php"><img src="./settings.png" width="18" alt="settings"/></a></div>
+
+                         <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
+                     </form>
+                    </div>
+                </div>
+                <!-- End of Main Content -->
                 
-                <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
-               </form>
-              </div>
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
     </body>

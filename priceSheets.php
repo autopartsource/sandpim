@@ -44,26 +44,37 @@ $pricesheets=$pricing->getPricesheets();
         <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h3>Part Categories</h3>
+        <h3>Price Sheets</h3>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-                <table>
-                    <tr><th>Name</th><th>Description</th><th>Currency</th><th>Price Type</th><th>Effective From</th><th>Effective To</th></tr>
-                    <?php
-                    foreach($pricesheets as $pricesheet)
-                    {
-                        echo '<tr><td>'.$pricesheet['number'].'</td><td>'.$pricesheet['description'].'</td><td>'.$pricesheet['currency'].'</td><td>'.$pricesheet['pricetype'].'</td><td>'.$pricesheet['effectivedate'].'</td><td>'.$pricesheet['expirationdate'].'</td></tr>';
-                    }
-                    ?>
-                </table>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <table>
+                        <tr><th>Name</th><th>Description</th><th>Currency</th><th>Price Type</th><th>Effective From</th><th>Effective To</th></tr>
+                        <?php
+                        foreach($pricesheets as $pricesheet)
+                        {
+                            echo '<tr><td>'.$pricesheet['number'].'</td><td>'.$pricesheet['description'].'</td><td>'.$pricesheet['currency'].'</td><td>'.$pricesheet['pricetype'].'</td><td>'.$pricesheet['effectivedate'].'</td><td>'.$pricesheet['expirationdate'].'</td></tr>';
+                        }
+                        ?>
+                    </table>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
 <?php include('./includes/footer.php'); ?>

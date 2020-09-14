@@ -32,6 +32,8 @@ foreach($years as $year)
  $i++; if($i>$groupsize){$i=0; $groupnumber++;}
 }
 
+
+$groupedYearsCount = count($groupedyears);
 ?>
 <!DOCTYPE html>
 <html>
@@ -45,26 +47,35 @@ foreach($years as $year)
         <!-- Header -->
         <h1>Applications (<?php echo $vcdb->makeName($makeid).' '.$vcdb->modelName($modelid);?>)</h1>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
+         <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                </div>
 
-            <!-- Main Content -->
-            <div class="contentMain button showRow" style="justify-content:center;">
-            <?php
-                echo '<div style="padding:10px;">'; foreach($groupedyears[0] as $year){echo '<div style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';} echo '</div>';
-                if(isset($groupedyears[1])){echo '<div style="padding:10px;">'; foreach($groupedyears[1] as $year){echo '<div style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[2])){echo '<div style="padding:10px;">'; foreach($groupedyears[2] as $year){echo '<div style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[3])){echo '<div style="padding:10px;">'; foreach($groupedyears[3] as $year){echo '<div style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[4])){echo '<div style="padding:10px;">'; foreach($groupedyears[4] as $year){echo '<div style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[5])){echo '<div style="padding:10px;">'; foreach($groupedyears[5] as $year){echo '<div style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[6])){echo '<div style="padding:10px;">'; foreach($groupedyears[6] as $year){echo '<div style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';} echo '</div>';}
-                if(isset($groupedyears[7])){echo '<div style="padding:10px;">'; foreach($groupedyears[7] as $year){echo '<div style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';} echo '</div>';}
-                echo '<div style="clear:both;"></div>';
-            ?>
+                <!-- Main Content -->
+                <div class="col col-xs-12 col-md-8 my-col colMain">
+                    <div class="row padding my-row groupCol">
+                        <?php
+                            for($y = 0;$y < $groupedYearsCount;$y++) {
+                                echo '<div class="my-col inner-col">';
+                                foreach ($groupedyears[$y] as $year) {
+                                    echo '<div class="groupButton" style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';
+                                }
+                                echo '</div>';
+                            }
+                        ?>
+                    </div>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                </div>
             </div>
-
-            <div class="contentRight"></div>
         </div>
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

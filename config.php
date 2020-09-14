@@ -45,26 +45,37 @@ $configoptions=$configGet->getConfigOptions();
         <!-- Header -->
         <h3>Configuration Parameters</h3>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-                <form method="post">
-                    <table>
-                        <tr><th>Parameter</th><th>Value</th></tr>
-                        <?php
-                        foreach ($configs as $config) {
-                            echo '<tr><td>' . $config['configname'] . '</td><td>' . $config['configvalue'] . '</td></tr>';
-                        }
-                        ?>
-                        <tr><td><select name="configname"><?php foreach($configoptions as $configoption){echo '<option value="'.$configoption['configname'].'">'.$configoption['configname'].'</option>';}?></select></td><td><input type="text" name="configvalue" size="50"/><input type="submit" name="submit" value="Add/Update"/></td></tr>
-                    </table>
-                </form>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <form method="post">
+                        <table>
+                            <tr><th>Parameter</th><th>Value</th></tr>
+                            <?php
+                            foreach ($configs as $config) {
+                                echo '<tr><td>' . $config['configname'] . '</td><td>' . $config['configvalue'] . '</td></tr>';
+                            }
+                            ?>
+                            <tr><td><select name="configname"><?php foreach($configoptions as $configoption){echo '<option value="'.$configoption['configname'].'">'.$configoption['configname'].'</option>';}?></select></td><td><input type="text" name="configvalue" size="50"/><input type="submit" name="submit" value="Add/Update"/></td></tr>
+                        </table>
+                    </form>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
 <?php include('./includes/footer.php'); ?>

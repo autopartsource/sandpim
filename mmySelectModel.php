@@ -23,11 +23,13 @@ if($modelcount<=10){$groupcount=1;}
 
 $groupsize=intval(count($models)/$groupcount);
 $i=0; $groupnumber=0; $groupedmodels=array();
+
 foreach($models as $model)
 {
  $groupedmodels[$groupnumber][]=$model;
  $i++; if($i>$groupsize){$i=0; $groupnumber++;}
 }
+
 $groupedModelsCount = count($groupedmodels);
 ?>
 <!DOCTYPE html>
@@ -52,13 +54,12 @@ $groupedModelsCount = count($groupedmodels);
                     <div class="row padding my-row groupCol">
                         <?php
                             for($y = 0;$y < $groupedModelsCount;$y++) {
-                                echo '<div class="col my-col">';
+                                echo '<div class="my-col inner-col">';
                                 foreach ($groupedmodels[$y] as $model) {
                                     echo '<div class="groupButton" style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$model['name'].'</a></div>';
                                 }
                                 echo '</div>';
                             }
-                            echo '<div style="clear:both;"></div>';
                         ?>
                     </div>
                 </div>

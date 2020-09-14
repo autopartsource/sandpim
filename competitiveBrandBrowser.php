@@ -74,53 +74,64 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h1>Competitive Brands (system-wide)</h1>
+        <h3>Competitive Brands (system-wide)</h3>
         
-        <div class="wrapper">
-            <div class="contentLeft"></div>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <form method="get">
+                        Brand Name
+                        <select name="searchtype">
+                            <option value="begins"<?php if($searchtype=='begins'){echo ' selected';}?>>Begins with</option>
+                            <option value="contains"<?php if($searchtype=='contains'){echo ' selected';}?>>Contains</option>
+                            <option value="ends"<?php if($searchtype=='ends'){echo ' selected';}?>>Ends with</option>
+                        </select>
+                        <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
+                        <input name="submit" type="submit" value="Search"/>
+                     <div style="padding:15px;">
+                         <?php if(count($allbrands)){
+                             $brandownercolumn=''; if($showowners){$brandownercolumn='<th>Owner</th>';}
+                             ?>
+                         <table><tr><th>Name</th><th>ID</th><?php echo $brandownercolumn;?><th>Selected</th></tr>
+                         <?php foreach ($allbrands as $brand)
+                          {
+                             $checked=''; if(array_key_exists($brand['BrandID'], $brandAAIAIDkeyedcompetitivebrands)){$checked=' checked';}
+                             $brandownercolumn=''; if($showowners){$brandownercolumn='<td>'.$brand['BrandOwner'].'</td>';}
 
-            <!-- Main Content -->
-            <div class="contentMain">
-                <form method="get">
-                    Brand Name
-                    <select name="searchtype">
-                        <option value="begins"<?php if($searchtype=='begins'){echo ' selected';}?>>Begins with</option>
-                        <option value="contains"<?php if($searchtype=='contains'){echo ' selected';}?>>Contains</option>
-                        <option value="ends"<?php if($searchtype=='ends'){echo ' selected';}?>>Ends with</option>
-                    </select>
-                    <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
-                    <input name="submit" type="submit" value="Search"/>
-                 <div style="padding:15px;">
-                     <?php if(count($allbrands)){
-                         $brandownercolumn=''; if($showowners){$brandownercolumn='<th>Owner</th>';}
-                         ?>
-                     <table><tr><th>Name</th><th>ID</th><?php echo $brandownercolumn;?><th>Selected</th></tr>
-                     <?php foreach ($allbrands as $brand)
-                      {
-                         $checked=''; if(array_key_exists($brand['BrandID'], $brandAAIAIDkeyedcompetitivebrands)){$checked=' checked';}
-                         $brandownercolumn=''; if($showowners){$brandownercolumn='<td>'.$brand['BrandOwner'].'</td>';}
-        
-                          echo '<tr><td>'.$brand['BrandName'].'</td><td>'.$brand['BrandID'].'</td>'.$brandownercolumn;
-                          echo '<td align="center"><input type="checkbox" id="brand_'.$brand['BrandID'].'" name="brand_'.$brand['BrandID'].'" onclick="addRemoveBrand(\''.$brand['BrandID'].'\')" name="brand_'.$brand['BrandID'].'"  '.$checked.'></td>';
-                          echo '</tr>';
-                      }
-                     }
-                     else
-                     { // no results found
-                         if(isset($_GET['submit']))
-                         { // user submitted a search
-                             echo '<div style="padding:10px;">No Results Found</div>';
+                              echo '<tr><td>'.$brand['BrandName'].'</td><td>'.$brand['BrandID'].'</td>'.$brandownercolumn;
+                              echo '<td align="center"><input type="checkbox" id="brand_'.$brand['BrandID'].'" name="brand_'.$brand['BrandID'].'" onclick="addRemoveBrand(\''.$brand['BrandID'].'\')" name="brand_'.$brand['BrandID'].'"  '.$checked.'></td>';
+                              echo '</tr>';
+                          }
                          }
-                     }
-                     ?>
-                  </table>
-                 </div>
-                </form>
-                <a href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search">Show brands that are already in the our competitor list</a>
+                         else
+                         { // no results found
+                             if(isset($_GET['submit']))
+                             { // user submitted a search
+                                 echo '<div style="padding:10px;">No Results Found</div>';
+                             }
+                         }
+                         ?>
+                      </table>
+                     </div>
+                    </form>
+                    <a href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search">Show brands that are already in the our competitor list</a>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
