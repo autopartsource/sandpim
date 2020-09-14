@@ -36,6 +36,9 @@ $receiverprofiles=$pim->getReceiverprofiles();
           <form action="exportPIESstream.php" method="get">
            <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
                Receiver Profile <select name="receiverprofile"><?php foreach($receiverprofiles as $receiverprofile){?><option value="<?php echo $receiverprofile['id'];?>"><?php echo $receiverprofile['name'];?></option><?php }?></select>
+               <div><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
+               <div><input type="checkbox" id="showxml" name="showxml"/><label for="showxml">Display XML in a text area</label></div>
+
                
                <input type="submit" name="submit" value="Export"/>
                

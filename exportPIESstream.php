@@ -14,6 +14,14 @@ $packaging=new packaging;
 $PIESgenerator=new PIESgenerator();
 
 
+$streamXML=true;
+
+if(isset($_GET['showxml']))
+{
+ $streamXML=false;   
+}
+
+
 //receiver profile will hold CSS-style elements to convey into the PIES xml
 /*
  * 
@@ -244,7 +252,7 @@ if(!$newdoc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
 }
 
  
-if(isset($schemaresults) && count($schemaresults)>0)
+if((isset($schemaresults) && count($schemaresults)>0) || count($logicerrors)>0)
 {
  echo '<div style="margin:10px; background-color:#ffc0c0;"><div style="font-size:1.5em;font-weight:bold;">Scheama (XSD) problems</div>';
  foreach($schemaresults as $result)
@@ -252,12 +260,25 @@ if(isset($schemaresults) && count($schemaresults)>0)
   echo '<div style="padding:8px">'.$result.'</div>';
  }
  echo '</div>';
-  echo '<textarea rows="20" cols="150">'.$piesxml.'</textarea>';
-
+ 
+ 
+ 
 }
 else
-{
- echo '<textarea rows="20" cols="150">'.$piesxml.'</textarea>';
+{// validated xml is ready to give to the user
+ if($streamXML)
+ {// download to file
+  $filename='PIES_7_1_FULL_'.date('Y-m-d').'.xml';
+  header('Content-Disposition: attachment; filename="'.$filename.'"');
+  header('Content-Type: application/octet-stream');
+  header('Content-Length: ' . strlen($piesxml));
+  header('Connection: close');    
+  echo $piesxml;
+ }
+ else
+ {// display in text area
+  echo '<textarea rows="20" cols="150">'.$piesxml.'</textarea>';
+ }
 }
 
 if(count($logicerrors))
