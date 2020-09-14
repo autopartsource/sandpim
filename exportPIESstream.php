@@ -14,19 +14,7 @@ $packaging=new packaging;
 $PIESgenerator=new PIESgenerator();
 
 
-// explicit list of parts
-
-// list of part categories (to query part table)
-
-// list of app categories (to extract a list of items from)
-
-// list of parttypeid's (to query part table)
-
-// 
-
-
 //receiver profile will hold CSS-style elements to convey into the PIES xml
-//
 /*
  * 
  * 
@@ -39,8 +27,12 @@ $PIESgenerator=new PIESgenerator();
 $header=array();
 $marketingcopys=array();
 
-$profile=$pim->getReceiverprofileById(intval($_POST['receiverprofile']));
+$profile=$pim->getReceiverprofileById(intval($_GET['receiverprofile']));
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
+
+$partcategories=$pim->getReceiverprofilePartcategories($profile['id']);
+$partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
+
 
 $marketingcopyrecords=$pim->getMarketingcopyByReceiverprofileId($profile['id']);
 
@@ -75,39 +67,24 @@ $header['PCdbVersionDate']=date('Y-m-d');
 
 $logicerrors=array();
 
-$partnumbers=array();
-if($_POST['exporttype']=='itemlist')
-{
-    $lines=explode("\r\n",$_POST['parts']); $linenumber=0;
-    foreach($lines as $line)
-    {
-        $linenumber++;
-        if($pim->getPart(trim($line)))
-        {
-            $partnumbers[]=trim(strtoupper($line));
-        }
-        else
-        {// invalid part - add it to errors list
-            
-            $logicerrors[]= 'Input part number: '.$line.' on line '.$linenumber.' is not valid. It was excluded from the export.';
-        }
-    }
-}
-
-
 $items=array();
 
 //--------------------- marketing copy -------------------------------    
-
-
 
 foreach($partnumbers as $partnumber)
 {
     $item=array();
     $part=$pim->getPart($partnumber);
     
-    $item['ItemLevelGTIN']=$part['GTIN'];
-    $item['GTINQualifier']='UP';
+    
+    if($part['GTIN']!='')
+    {
+        $item['ItemLevelGTIN']=$part['GTIN'];
+        $item['GTINQualifier']='UP';
+        if(strlen($item['ItemLevelGTIN'])==12){$item['ItemLevelGTIN']='00'.$item['ItemLevelGTIN'];}
+    }
+    
+    
     $item['PartTerminologyID']=$part['parttypeid'];
     $item['BrandAAIAID']=$part['brandid'];
 
@@ -169,7 +146,7 @@ foreach($partnumbers as $partnumber)
     
  //--------------------- packages -------------------------------    
  $packages=$packaging->getPackagesByPartnumber($partnumber);
- print_r($packages);
+// print_r($packages);
     
     
     
@@ -233,9 +210,17 @@ $doc=$PIESgenerator->createPIESdoc($header,$marketingcopys,$items);//,$descripti
 $doc->formatOutput=true;
 $piesxml=$doc->saveXML();    
 
+$newdoc=new DOMDocument();
+$newdoc->loadXML($piesxml); 
+// I do realize that this extra step seems redundant. Running the schema validation 
+// directly on the original object failed because of namespace problems that 
+// I could not resolve (or understand). Exporting the original object's xml 
+// to a text string and then re-importing it to a new DOM object was the
+// work-around that I found.
+
 $schemavalidated=true;   
 libxml_use_internal_errors(true);
-if(!$doc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
+if(!$newdoc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
 {
  $schemavalidated=false;
  $schemaerrors = libxml_get_errors();
@@ -267,6 +252,8 @@ if(isset($schemaresults) && count($schemaresults)>0)
   echo '<div style="padding:8px">'.$result.'</div>';
  }
  echo '</div>';
+  echo '<textarea rows="20" cols="150">'.$piesxml.'</textarea>';
+
 }
 else
 {

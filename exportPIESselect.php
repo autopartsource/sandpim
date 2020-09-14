@@ -26,34 +26,19 @@ $receiverprofiles=$pim->getReceiverprofiles();
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h1>Export PIES xml - select source and options</h1>
+        <h1>Export PIES xml</h1>
         
         <div class="wrapper">
          <div class="contentLeft"></div>
 
          <!-- Main Content -->
          <div class="contentMain">
-          <form action="exportPIESstream.php" method="post">
+          <form action="exportPIESstream.php" method="get">
            <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
-               Export data for this list of part numbers (header elements are pulled from the "Global" Receiver template)
-               <div><textarea style="width: 95%;height:100px;" name="parts"/></textarea></div>
-               Profile to use for header and marketing copy <select name="receiverprofile"><?php foreach($receiverprofiles as $receiverprofile){?><option value="<?php echo $receiverprofile['id'];?>"><?php echo $receiverprofile['name'];?></option><?php }?></select>
+               Receiver Profile <select name="receiverprofile"><?php foreach($receiverprofiles as $receiverprofile){?><option value="<?php echo $receiverprofile['id'];?>"><?php echo $receiverprofile['name'];?></option><?php }?></select>
+               
                <input type="submit" name="submit" value="Export"/>
-               <input type="hidden" name="exporttype" value="itemlist"/>
-           </div>
-          </form>
-          <form action="exportPIESstream.php" method="post">
-           <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
-               Export data for these part type id's from parts table (header elements are pulled from the "Global" Receiver template)
-               <div><textarea style="width: 95%;height:100px;" name="parttypes"/></textarea></div>
-               <input type="submit" name="submit" value="Export"/>
-           </div>
-          </form>
-          <form action="exportPIESstream.php" method="post">
-           <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
-               Export data for these part category id's (header elements are pulled from the "Global" Receiver template)
-               <div><textarea style="width: 95%;height:100px;" name="partcategories"/></textarea></div>
-               <input type="submit" name="submit" value="Export"/>
+               
            </div>
           </form>
          </div>
