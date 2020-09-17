@@ -55,6 +55,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
 }
 
 
+
 if (isset($_POST['submit']) && $_POST['submit'] == 'Upload') 
 {
     $target_dir = '/var/www/html/ACESuploads/';
@@ -162,8 +163,8 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
 
                             <div style="padding:10px;">File Type: <?php echo $filetype;?></div>
                             <div style="padding:10px;">File Size: <?php echo $filesize;?></div>
-                            <div style="padding:10px;">Width: <?php echo $imagedims[1];?></div>
-                            <div style="padding:10px;">Height: <?php echo $imagedims[0];?></div>
+                            <div style="padding:10px;">Width: <?php echo $imagedims[0];?></div>
+                            <div style="padding:10px;">Height: <?php echo $imagedims[1];?></div>
                             <div style="padding:10px;">AssetID: <input type="text" name="assetid" value="<?php echo $filename;?>"/></div>
                             <div style="padding:10px;">Description <input name="description" type="text" value="<?php echo $description;?>"/></div>
                             <div style="padding:10px;">Orientation <input name="orientationviewcode" type="text" value="<?php echo $orientationviewcode;?>"/></div>
