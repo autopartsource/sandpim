@@ -75,6 +75,7 @@
         <ul class="nav navbar-nav">
             <a href="logout.php" class="nav-link">Logout (<?php echo $_SESSION['name'];?>)</a>
         </ul>
+            
         </div>
     </div> 
 </nav>
