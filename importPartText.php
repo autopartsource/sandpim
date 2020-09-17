@@ -16,7 +16,7 @@ $partcategories = $pim->getPartCategories();
 
         <!-- Header -->
         <h1>Product data structured text import</h1>
-        <h2>Step 1: copy/paste data from the template spreadsheet</h2>
+        <h3>Step 1: copy/paste data from the template spreadsheet</h3>
 
         <!-- Content Container -->
         <div class="container-fluid padding my-container">

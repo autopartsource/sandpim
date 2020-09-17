@@ -24,31 +24,40 @@ $jobs=$pim->getBackgroundjobs('%', '%');
         <!-- Header -->
         <h1>ACES background export jobs</h1>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
 
-            <!-- Main Content -->
-            <div class="contentMain">
+                    <table>
+                        <tr><th>ID</th><th>Type</th><th>Status</th><th>Completed on</th></tr>
+                        <?php
+                        foreach ($jobs as $job) 
+                        {
+                            echo '<tr>';
+                            echo '<td><a href="./backgroundJob.php?id='.$job['id'].'">'.$job['id'].'</a></td>';
+                            echo '<td>'.$job['jobtype'].'</td>';
+                            echo '<td>'.$job['status'].'</td>';
+                            echo '<td>'.$job['datetimeended'].'</td>';
+                            echo '</tr>';
+                        }
+                        ?>
+                    </table>
 
-                <table>
-                    <tr><th>ID</th><th>Type</th><th>Status</th><th>Completed on</th></tr>
-                    <?php
-                    foreach ($jobs as $job) 
-                    {
-                        echo '<tr>';
-                        echo '<td><a href="./backgroundJob.php?id='.$job['id'].'">'.$job['id'].'</a></td>';
-                        echo '<td>'.$job['jobtype'].'</td>';
-                        echo '<td>'.$job['status'].'</td>';
-                        echo '<td>'.$job['datetimeended'].'</td>';
-                        echo '</tr>';
-                    }
-                    ?>
-                </table>
-
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

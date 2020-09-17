@@ -23,21 +23,33 @@ $databaseversions=$pim->getAutocareDatabaseList('pcdb');
         <div style="padding:5px;"><img src="./rhubarb_from_pies.png" width="120"/></div>
         <h1>Flatten PIES (7.1) xml file to an Excel spreadsheet</h1>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <form method="post" action="convertPIES7_1toExcelProcess.php" enctype="multipart/form-data">
+                        <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" accept=".xml"/></div>
+                        <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
+                        <div style="padding:5px;text-align: left;">PCdb Version for validation <select name="pcdbversion"><?php foreach($databaseversions as $databaseversion){ echo '<option value="'.$databaseversion['name'].'">'.$databaseversion['versiondate'].'</option>';}?></select></div>
+                        <div style="padding:5px;"><input name="submit" type="submit" value="Generate Excel file"/></div>
 
-            <!-- Main Content -->
-            <div class="contentMain">
-                <form method="post" action="convertPIES7_1toExcelProcess.php" enctype="multipart/form-data">
-                    <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" accept=".xml"/></div>
-                    <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
-                    <div style="padding:5px;text-align: left;">PCdb Version for validation <select name="pcdbversion"><?php foreach($databaseversions as $databaseversion){ echo '<option value="'.$databaseversion['name'].'">'.$databaseversion['versiondate'].'</option>';}?></select></div>
-                    <div style="padding:5px;"><input name="submit" type="submit" value="Generate Excel file"/></div>
+                    </form>
+                </div>
+                <!-- End of Main Content -->
 
-                </form>
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+
+                </div>
             </div>
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
 <?php 

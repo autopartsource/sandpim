@@ -44,13 +44,16 @@ $groupedModelsCount = count($groupedmodels);
         <!-- Header -->
         <h1>Applications (<?php echo $vcdb->makeName($makeid); ?>)</h1>
         
+        <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
+                <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
                 </div>
-
+                
                 <!-- Main Content -->
-                <div class="col col-xs-12 col-md-8 my-col colMain">
+                <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="row padding my-row groupCol">
                         <?php
                             for($y = 0;$y < $groupedModelsCount;$y++) {
@@ -63,11 +66,15 @@ $groupedModelsCount = count($groupedmodels);
                         ?>
                     </div>
                 </div>
-
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
+                    
                 </div>
             </div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
                 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

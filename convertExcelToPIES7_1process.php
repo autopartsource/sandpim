@@ -887,52 +887,62 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelogic'
         <h1>Build PIES xml from structured text</h1>
         <h2>Step 2: Analyze results and download XML</h2>
         <div style="font-style: italic;">Validation done against PCdb version: <?php echo $pcdbVersion;?></div>
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-    
-
-                <?php
-                if(!$validUpload){?>
-                <div style="padding:10px;background-color:#FF0000;font-size:1.5em;">Your input file has problems:</div>
-                <table><?php
-                foreach($inputFileLog as $result)
-                { // render each element of schema problems into a table
-                    echo '<tr><td style="text-align:left;background-color:#FF0000;">'.$result.'</td></tr>';
-                }
-                ?>
-                </table>
-                <?php }?>
+        
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
                 
-                <?php if(count($schemaresults)>0){?>
-                <div style="padding:10px;background-color:#FF8800;font-size:1.5em;">Your input data causes schema (XSD) problems. Here they are:</div>
-                <table><?php
-                foreach($schemaresults as $result)
-                { // render each element of schema problems into a table
-                 echo '<tr><td style="text-align:left;background-color:#FF8800;">'.$result.'</td></tr>';
-                } ?>
-                </table>
-                <?php }else{if(strlen($piesxmlstring)>0){?>
-                <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $piesxmlstring;?></textarea></div>
-                <?php }}?>
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <?php
+                    if(!$validUpload){?>
+                    <div style="padding:10px;background-color:#FF0000;font-size:1.5em;">Your input file has problems:</div>
+                    <table><?php
+                    foreach($inputFileLog as $result)
+                    { // render each element of schema problems into a table
+                        echo '<tr><td style="text-align:left;background-color:#FF0000;">'.$result.'</td></tr>';
+                    }
+                    ?>
+                    </table>
+                    <?php }?>
 
-                <?php if(count($errors)>0 && !isset($_POST['ignorelogic'])){?>
-                <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was (or could be) produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
-                <table><?php
-                foreach($errors as $error)
-                {
-                    echo '<tr><td style="text-align:left;background-color:yellow;">'.$error.'</td></tr>';
-                }
-                ?>
-                </table>
-                <?php }?>
+                    <?php if(count($schemaresults)>0){?>
+                    <div style="padding:10px;background-color:#FF8800;font-size:1.5em;">Your input data causes schema (XSD) problems. Here they are:</div>
+                    <table><?php
+                    foreach($schemaresults as $result)
+                    { // render each element of schema problems into a table
+                     echo '<tr><td style="text-align:left;background-color:#FF8800;">'.$result.'</td></tr>';
+                    } ?>
+                    </table>
+                    <?php }else{if(strlen($piesxmlstring)>0){?>
+                    <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $piesxmlstring;?></textarea></div>
+                    <?php }}?>
+
+                    <?php if(count($errors)>0 && !isset($_POST['ignorelogic'])){?>
+                    <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was (or could be) produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
+                    <table><?php
+                    foreach($errors as $error)
+                    {
+                        echo '<tr><td style="text-align:left;background-color:yellow;">'.$error.'</td></tr>';
+                    }
+                    ?>
+                    </table>
+                    <?php }?>
                  
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
        <?php if (isset($_SESSION['userid'])){include('./includes/footer.php');} ?>
