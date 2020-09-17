@@ -210,15 +210,15 @@ if (!isset($_SESSION['userid'])) {
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="w3-sidebar w3-bar-block w3-black w3-card" style="width:150px">
                         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'apps')">Application Log</button>
                         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'parts')">Parts Log</button>
                         <button class="w3-bar-item w3-button tablink" onclick="openLink(event, 'assets')">Assets Log</button>
                     </div>
-                </div>
-                
-                <!-- Main Content -->
-                <div class="col-xs-12 col-md-8 my-col colMain">
                     <div>
                         <div id="apps" class="w3-container city w3-animate-opacity" style="display:none">
                             <div id="appevents"></div>

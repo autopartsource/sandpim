@@ -1,4 +1,4 @@
-<nav class="navbar sticky-top navbar-expand-md navbar-dark bg-dark">
+<nav class="navbar can-stick navbar-expand-md navbar-dark bg-dark">
     <a href="index.php" class="navbar-brand">sandPIM</a>
     <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>

@@ -17,7 +17,7 @@ $logs=new logs();
         
         <!-- Header -->
         <h1>Rhubarb 7.1</h1>
-        <h2>Tools for converting between Excel spreadsheets and PIES xml</h2>
+        <h3>Tools for converting between Excel spreadsheets and PIES xml</h3>
         
         <!-- Content Container -->
         <div class="container-fluid padding my-container">

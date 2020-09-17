@@ -55,26 +55,37 @@ $history = $pim->getAppEvents($appid, 25);
         <h1>History for application <?php echo $appid;?></h1>
 	<h2><?php echo $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']);?></h2>
 
-        <div class="wrapper">
-            <div class="contentLeft"></div>
-
-            <!-- Main Content -->
-            <div class="contentMain">
-                <?php
-                if ($app && count($history)) {
-                    echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
-                    foreach ($history as $record) {
-                        echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $record['description'] . '</td><td>' . $record['new_oid'] . '</td></tr>';
+        <!-- Content Container -->
+        <div class="container-fluid padding my-container">
+            <div class="row padding my-row">
+                <!-- Left Column -->
+                <div class="col-xs-12 col-md-2 my-col colLeft">
+                    
+                </div>
+                
+                <!-- Main Content -->
+                <div class="col-xs-12 col-md-8 my-col colMain">
+                    <?php
+                    if ($app && count($history)) {
+                        echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
+                        foreach ($history as $record) {
+                            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $record['description'] . '</td><td>' . $record['new_oid'] . '</td></tr>';
+                        }
+                        echo '</table>';
+                    } else { // no apps found
+                        echo 'No history found';
                     }
-                    echo '</table>';
-                } else { // no apps found
-                    echo 'No history found';
-                }
-                ?>
+                    ?>
+                </div>
+                <!-- End of Main Content -->
+                
+                <!-- Right Column -->
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                </div>
             </div>
-
-            <div class="contentRight"></div>
-        </div>
+        </div>    
+        <!-- End of Content Container -->
 
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
