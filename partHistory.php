@@ -32,9 +32,6 @@ $history = $logs->getPartEvents($partnumber, 25);
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
 
-        <!-- Header -->
-        <h1>History for <?php echo $partnumber?></h1>
-
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -45,17 +42,23 @@ $history = $logs->getPartEvents($partnumber, 25);
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <?php
-                    if ($part && count($history)) {
-                        echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
-                        foreach ($history as $record) {
-                            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $record['description'] . '</td><td>' . $record['new_oid'] . '</td></tr>';
-                        }
-                        echo '</table>';
-                    } else { // no apps found
-                        echo 'No history found';
-                    }
-                    ?>
+                    <div class="card shadow-sm">
+                        <!-- Header -->
+                        <h3 class="card-header text-left">History for <a href="./showPart.php?partnumber=<?php echo $partnumber?>"><span class="text-info"><?php echo $partnumber?></span></a></h3>
+                        <div class="card-body">
+                            <?php
+                            if ($part && count($history)) {
+                                echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
+                                foreach ($history as $record) {
+                                    echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $record['description'] . '</td><td>' . $record['new_oid'] . '</td></tr>';
+                                }
+                                echo '</table>';
+                            } else { // no apps found
+                                echo 'No history found';
+                            }
+                            ?>
+                        </div>
+                    </div>
                 </div>
                 <!-- End of Main Content -->
                 

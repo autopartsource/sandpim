@@ -42,10 +42,10 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                 <div class="col-xs-12 col-md-2 my-col colLeft"></div>
                 
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <div class="card">
+                    <div class="card shadow-sm">
                         
                         <!-- Header -->
-                        <h1 class="card-header text-left">Dashboard</h1>
+                        <h3 class="card-header text-left">Dashboard</h3>
                         
                         <!-- Main Content -->
                         <div class="card-body">

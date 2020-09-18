@@ -48,8 +48,6 @@ if(isset($_GET['submit']) && $_GET['submit']=='Create' )
  }
 }
 
-
-
 $partcategories=$user->getUserVisiblePartcategories($userid);
 $favoritepositions=$pim->getFavoritePositions();
 $favoriteparttypes=$pim->getFavoriteParttypes();
@@ -68,6 +66,8 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
               var xhr = new XMLHttpRequest();
               xhr.open('GET', 'ajaxSelectUnselectUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&action=select');
               xhr.send();
+              document.getElementById('categorySelectButton_'+partcategory).className = "btn btn-success";
+              console.log(document.getElementById('categorySelectButton_'+partcategory).className);
              }
              else
              { // category has been clocked off
@@ -76,6 +76,8 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
 
               xhr.open('GET', 'ajaxSelectUnselectUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&action=unselect');
               xhr.send();
+              document.getElementById('categorySelectButton_'+partcategory).className = "btn btn-secondary";
+              console.log(document.getElementById('categorySelectButton_'+partcategory).className);
              }
             }
             

@@ -54,10 +54,7 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
     <body>
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
-        
-        <!-- Header -->
-        <h1>Create A New Part</h1>
-        
+                
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -68,15 +65,19 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <div style="padding:10px;">
-                        <form method="post">
+                    <div class="card shadow-sm">
+                        <!-- Header -->
+                        <h3 class="card-header text-left">Create A New Part</h3>
+                        <div class="card-body">
+                            <form method="post">
                             <table border="1" cellpadding="5">
                                 <tr><th>Partnumber</th><td><input type="text" name="partnumber"/></td></tr>
                                 <tr><th>Part Type</th><td><select name="parttypeid"><?php foreach ($favoriteparttypes as $parttype) { ?> <option value="<?php echo $parttype['id']; ?>"><?php echo $parttype['name']; ?></option><?php } ?></select></td></tr>
                                 <tr><th>Part Category</th><td><select name="partcategory"><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
                             </table>
                             <div style="padding-top:15px;"><input type="submit" name="submit" value="Next"/></div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <!-- End of Main Content -->

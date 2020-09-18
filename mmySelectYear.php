@@ -44,9 +44,6 @@ $groupedYearsCount = count($groupedyears);
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
-        <!-- Header -->
-        <h1>Applications (<?php echo $vcdb->makeName($makeid).' '.$vcdb->modelName($modelid);?>)</h1>
-        
          <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -56,17 +53,25 @@ $groupedYearsCount = count($groupedyears);
 
                 <!-- Main Content -->
                 <div class="col col-xs-12 col-md-8 my-col colMain">
-                    <div class="row padding my-row groupCol">
-                        <?php
-                            for($y = 0;$y < $groupedYearsCount;$y++) {
-                                echo '<div class="my-col inner-col">';
-                                foreach ($groupedyears[$y] as $year) {
-                                    echo '<div class="groupButton" style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';
-                                }
-                                echo '</div>';
-                            }
-                        ?>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">Applications (<?php echo $vcdb->makeName($makeid).' '.$vcdb->modelName($modelid);?>)</h3>
+
+                        <div class="card-body">
+                            <div class="row padding my-row groupCol">
+                                <?php
+                                    for($y = 0;$y < $groupedYearsCount;$y++) {
+                                        echo '<div class="my-col inner-col">';
+                                        foreach ($groupedyears[$y] as $year) {
+                                            echo '<div class="groupButton" style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';
+                                        }
+                                        echo '</div>';
+                                    }
+                                ?>
+                            </div>
+                        </div>
                     </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 

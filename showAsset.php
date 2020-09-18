@@ -82,61 +82,67 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-
-                    <h4><div style="text-align: left;padding-bottom:20px;">Records for Asset: <?php echo $assetid;?></div></h4>
-
-                     <?php foreach ($assetrecords as $assetrecord){
+                    <?php foreach ($assetrecords as $assetrecord){
                          if(strlen($assetrecord['uri'])>0){$imgsrc=$assetrecord['uri'];}
                          if(strlen($assetrecord['localpath'])>0){$imgsrc=$configGet->getConfigValue('localImageStorePath').'/'.$assetrecord['localpath'];}
                          ?>
-
-                     <div style="padding-bottom:30px;">
-                         <table>
-                             <tr><th>Description</th>
-                                 <td><?php echo $assetrecord['description'];?></td>
-                                 <td class="mobile" rowspan="14"><img width="<?php echo $configGet->getConfigValue('imageAssetTumbnailRenderWidth',350); ?>" src="<?php echo $imgsrc;?>"/></td></tr>
-                             <tr><th>File Type</th><td><?php echo $asset->niceExifTypeName($assetrecord['fileType']);?></td></tr>
-                             <tr><th>Filename</th><td><?php echo $assetrecord['filename'];?></td></tr>
-                             <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'].' x '.$assetrecord['assetHeight'].' ('.$assetrecord['dimensionUOM'].')';?></td></tr>
-                             <tr><th>Background</th><td><?php echo $assetrecord['background'];?></td></tr>
-                             <tr><th>File Size</th><td><?php echo $asset->niceFileSize($assetrecord['filesize']);?></td></tr>
-                             <tr><th>URI</th><td><?php echo $assetrecord['uri'];?></td></tr>
-                             <tr><th>Local Path</th><td><?php echo $assetrecord['localpath'];?></td></tr>
-                             <tr><th>Orientation</th><td><?php echo $assetrecord['orientationViewCode'];?></td></tr>
-                             <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode'];?></td></tr>
-                             <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate'];?></td></tr>
-                             <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'],'Public','Private');?></td></tr>
-                             <tr><th>File Hash</th><td><?php echo $assetrecord['fileHashMD5'];?></td></tr>
-                             <tr><td></td><td><form method="post" action="showAsset.php?assetid=<?php echo $assetid;?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id'];?>"/><input type="hidden" name="assetid" value="<?php echo $assetid;?>"/></form></td></tr>
-                         </table>
-                     </div>
-                     <?php }?>
-
+                        <div class="card shadow-sm">
+                            <h3 class="card-header text-left">Records for Asset: <span class="text-info"><?php echo $assetid;?></span></h3>
+                            <div class="row no-gutters">
+                                <div class="card-body">
+                                    <table>
+                                        <tr><th>Description</th>
+                                            <td><?php echo $assetrecord['description']; ?></td>
+                                            <td class="mobile" rowspan="14"><img width="<?php echo $configGet->getConfigValue('imageAssetTumbnailRenderWidth', 350); ?>" src="<?php echo $imgsrc; ?>"/></td></tr>
+                                        <tr><th>File Type</th><td><?php echo $asset->niceExifTypeName($assetrecord['fileType']); ?></td></tr>
+                                        <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
+                                        <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
+                                        <tr><th>Background</th><td><?php echo $assetrecord['background']; ?></td></tr>
+                                        <tr><th>File Size</th><td><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></td></tr>
+                                        <tr><th>URI</th><td><?php echo $assetrecord['uri']; ?></td></tr>
+                                        <tr><th>Local Path</th><td><?php echo $assetrecord['localpath']; ?></td></tr>
+                                        <tr><th>Orientation</th><td><?php echo $assetrecord['orientationViewCode']; ?></td></tr>
+                                        <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode']; ?></td></tr>
+                                        <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
+                                        <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'], 'Public', 'Private'); ?></td></tr>
+                                        <tr><th>File Hash</th><td><?php echo $assetrecord['fileHashMD5']; ?></td></tr>
+                                        <tr><td></td><td><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    <?php }?>
                 </div>
                 <!-- End of Main Content -->
                 
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
-                    <h4>Connected Parts</h4>
-                <div>
-                    <?php foreach($connectedparts as $connectedpart){?>
-                    <div id="assetconnectionid_<?php echo $connectedpart['id'];?>"> 
-                       <a href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a>
-                       <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>
+                    <div class="card shadow-sm">
+                        <h4 class="card-header text-left">Connected Parts</h4>
+                        <div class="card-body">
+                            <?php foreach($connectedparts as $connectedpart){?>
+                            <div id="assetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
+                               <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a>
+                               <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>
+                            </div>
+                            <?php }?>
+                        </div>
                     </div>
-                    <?php }?>
-                </div>
                     
-                    
-                <form method="post" action="showAsset.php?assetid=<?php echo $assetid;?>">
-                    <div>
-                        <input type="hidden" name="assetid" value="<?php echo $assetid;?>"/>
-                        <input type="text" name="partnumber" size="8"/> 
-                        <select name="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
-                        <select name="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
-                        <input type="submit" name="submit" value="Connect"/>
+                    <div class="card shadow-sm">
+                        <h4 class="card-header text-left">Add Connection</h4>
+                        <div class="card-body">
+                            <form method="post" action="showAsset.php?assetid=<?php echo $assetid;?>">
+                                <div>
+                                    <input type="hidden" name="assetid" value="<?php echo $assetid;?>"/>
+                                    <input type="text" name="partnumber" size="8"/> 
+                                    <select name="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
+                                    <select name="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
+                                    <input type="submit" name="submit" value="Connect"/>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </form>
                 </div>
             </div>
         </div>    

@@ -44,9 +44,6 @@ $groupedMakesCount = count($groupedmakes);
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
-        <!-- Header -->
-        <h1>Applications</h1>
-        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -57,16 +54,24 @@ $groupedMakesCount = count($groupedmakes);
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <div class="row padding my-row groupCol">
-                        <?php
-                            for($y = 0;$y < $groupedMakesCount;$y++) {
-                                echo '<div class="my-col inner-col">';
-                                foreach ($groupedmakes[$y] as $make) {
-                                    echo '<div class="groupButton"><a href="mmySelectModel.php?makeid=' . $make['id'] . '"class="btn btn-block btn-secondary my-btn" role="button" aria-disabled="true">' . $make['name'] . '</a></div>';
-                                }   
-                                echo '</div>';
-                            }
-                        ?>
+                    <div class="card shadow-sm">
+                        
+                        <!-- Header -->
+                        <h3 class="card-header text-left">Applications</h3>
+                        
+                        <div class="card-body">
+                            <div class="row padding my-row groupCol">
+                                <?php
+                                    for($y = 0;$y < $groupedMakesCount;$y++) {
+                                        echo '<div class="my-col inner-col">';
+                                        foreach ($groupedmakes[$y] as $make) {
+                                            echo '<div class="groupButton"><a href="mmySelectModel.php?makeid=' . $make['id'] . '"class="btn btn-block btn-secondary my-btn" role="button" aria-disabled="true">' . $make['name'] . '</a></div>';
+                                        }   
+                                        echo '</div>';
+                                    }
+                                ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- End of Main Content -->
