@@ -78,12 +78,12 @@ class asset
   return $id;   
  }
  
- function disconnectPartFromAsset($part,$assetid)
+ function disconnectPartFromAsset($partnumber,$connectionid)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('delete from part_asset where part=? and assetid=?'))
+  if($stmt=$db->conn->prepare('delete from part_asset where partnumber=? and id=?'))
   {
-   $stmt->bind_param('ss',$part,$assetid);
+   $stmt->bind_param('si',$partnumber,$connectionid);
    $stmt->execute();
   } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
@@ -113,7 +113,7 @@ class asset
   $db=new mysql; $db->connect();
   $connections=array();
   
-  if($stmt=$db->conn->prepare('select * from part_asset,asset where part_asset.assetid=asset.assetid and partnumber=? order by sequence'))
+  if($stmt=$db->conn->prepare('select part_asset.id as connectionid, partnumber,assettypecode,sequence,representation, asset.* from part_asset,asset where part_asset.assetid=asset.assetid and partnumber=? order by sequence'))
   {
    if($stmt->bind_param('s',$partnumber))
    {
@@ -122,7 +122,7 @@ class asset
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-       $connections[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri']);
+       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri']);
      }
     }
    }
@@ -131,7 +131,31 @@ class asset
   return $connections;   
  }
 
+ function getAssetByPartConnectionid($connectionid)
+ {
+  $db=new mysql; $db->connect();
+  $asset=false;
+  
+  if($stmt=$db->conn->prepare('select * from part_asset,asset where part_asset.assetid=asset.assetid and part_asset.id=? order by sequence'))
+  {
+   if($stmt->bind_param('i',$connectionid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+       $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $asset;   
+ }
 
+ 
+ 
  
  
  

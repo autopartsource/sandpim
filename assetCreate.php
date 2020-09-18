@@ -1,5 +1,6 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/pcdbClass.php');
 include_once('./class/assetClass.php');
 $navCategory = 'assets';
 
@@ -12,6 +13,7 @@ if (!isset($_SESSION['userid']))
 
 $asset = new asset;
 $pim = new pim;
+$pcdb=new pcdb();
 $error_msg = false;
 
 $valid_upload=false;
@@ -113,9 +115,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
 }
 
 
-
-
-
+$orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
 
 
 ?>
@@ -167,7 +167,9 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                             <div style="padding:10px;">Height: <?php echo $imagedims[1];?></div>
                             <div style="padding:10px;">AssetID: <input type="text" name="assetid" value="<?php echo $filename;?>"/></div>
                             <div style="padding:10px;">Description <input name="description" type="text" value="<?php echo $description;?>"/></div>
-                            <div style="padding:10px;">Orientation <input name="orientationviewcode" type="text" value="<?php echo $orientationviewcode;?>"/></div>
+                            <div style="padding:10px;">Orientation 
+                            <select name="orientationviewcode"><?php foreach ($orientationviewcodes as $orientationviewcode) { ?> <option value="<?php echo $orientationviewcode['code']; ?>"><?php echo $orientationviewcode['description']; ?></option><?php } ?></select>
+                            </div>
                             <div style="padding:10px;">Resolution (DPI) <input name="resolution" type="text" value="<?php echo $resolution;?>"/></div>
                             <div style="padding:10px;">Background <input name="background" type="text" value="<?php echo $background;?>"/></div>
                             <div style="padding:10px;">Public <input name="public" type="text" value="<?php echo $public;?>"/></div>

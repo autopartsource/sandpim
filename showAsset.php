@@ -45,6 +45,25 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
 <html>
     <head>
         <?php include('./includes/header.php'); ?>
+            <script>
+            
+            function disconnectPart(partnumber,connectionid)
+            {
+                var assetdiv = document.getElementById('assetconnectionid_'+connectionid);
+                assetdiv.parentNode.removeChild(assetdiv);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'ajaxDisconnectPartAsset.php?connectionid='+connectionid+'&partnumber='+partnumber);
+                xhr.onload = function()
+                {
+                 var response=JSON.parse(xhr.responseText);
+                };
+                xhr.send();
+            }
+
+            
+            
+            </script>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -99,11 +118,16 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
                     <h4>Connected Parts</h4>
-                <table>
+                <div>
                     <?php foreach($connectedparts as $connectedpart){?>
-                    <tr><td><a href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a></td><td><?php echo $pcdb->assetTypeCodeDescription($connectedpart['assettypecode']);?></td></tr>
+                    <div id="assetconnectionid_<?php echo $connectedpart['id'];?>"> 
+                       <a href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a>
+                       <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>
+                    </div>
                     <?php }?>
-                </table>
+                </div>
+                    
+                    
                 <form method="post" action="showAsset.php?assetid=<?php echo $assetid;?>">
                     <div>
                         <input type="hidden" name="assetid" value="<?php echo $assetid;?>"/>

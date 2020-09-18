@@ -26,11 +26,9 @@ contributing in any way (even just offering opinions!), please don't hesitate to
 
 ## To-Do list
 
-- Orientation view codes select (from PCdb) in assetCreate.php
 - Delete button (ajax) for part-asset link on showAsset.php
 - ajax-ify the connect asset to part button on showAsset.php
 - assetCreate.php add connect-part entry box for partnumber (typed in) and actual vs rep, assettype, sequence
-- showPart.php make a delete button for asset connection
 - PAdb attribute display/edit in showPart.php
 - vcdb-validation an app on the fly (uppon change)
 - Part search by PAdb attribute

@@ -433,5 +433,26 @@ function getValidEXPIvalues($code)
  }
           
  
+ function getAssetOrientationViewCodes()
+ {
+  $codes=array();
+  $db = new mysql; $db->dbname=$db->pcdbname;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect();
+  if($stmt=$db->conn->prepare("select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=103 and CodeDescription <>'User Defined' order by CodeDescription"))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+   }
+  }
+  $db->close();
+  return $codes;    
+ }
+ 
+ 
+ 
 }
 ?>

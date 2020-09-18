@@ -440,6 +440,24 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
             }
 
 
+            function disconnectAsset(connectionid)
+            {
+                var assetdiv = document.getElementById('assetconnectionid_'+connectionid);
+                assetdiv.parentNode.removeChild(assetdiv);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'ajaxDisconnectPartAsset.php?connectionid='+connectionid+'&partnumber=<?php echo $partnumber;?>');
+                xhr.onload = function()
+                {
+                 var response=JSON.parse(xhr.responseText);
+                 document.getElementById("sandpiperoid").innerHTML=response.oid;
+                };
+                xhr.send();
+            }
+
+
+
+
 
 
 
@@ -562,7 +580,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                                     {
                                         echo '<div><img src="'.$connectedasset['uri'].'" width="400px"/></div>';
                                     }
-                                    echo '<div><a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>';
+                                    echo '<div id="assetconnectionid_'.$connectedasset['connectionid'].'"><a class="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> <button onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div>';
                                 };
                                 ?></td>
                             <tr>
