@@ -450,7 +450,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                 xhr.onload = function()
                 {
                  var response=JSON.parse(xhr.responseText);
-                 document.getElementById("sandpiperoid").innerHTML=response.oid;
+                 document.getElementById("sandpiperoid").innerHTML=response.partoid;
                 };
                 xhr.send();
             }

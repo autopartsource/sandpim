@@ -91,7 +91,7 @@ class asset
  
  function getPartsConnectedToAsset($assetid)
  {
-  $connections=false;
+  $connections=array();
   $db=new mysql; $db->connect();
   
   if($stmt=$db->conn->prepare('select * from part_asset where assetid=? order by partnumber'))
@@ -184,6 +184,30 @@ class asset
   } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
  }
+
+ function updateAssetOID($assetid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set oid=? where id=?'))
+  {
+   $oid=$this->newoid();
+   $stmt->bind_param('ss', $oid,$assetid);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+
+ function newoid()
+ {
+  $charset=array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
+  $oid='';
+  for($i=0;$i<10;$i++)
+  {
+   $oid.=$charset[random_int(0,61)];
+  }
+  return $oid;
+ }
+
  
  function toggleAssetPublic($id)
  {
@@ -227,11 +251,70 @@ class asset
   return $assets;   
  }
 
- function logAppEvent($assetid,$userid,$description,$newoid)
+ function sqlclean($string)
+ {
+   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+   $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+   return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
+}
+ 
+ function getAssets($assetid,$assetidsearchtype,$filetype,$orientation,$createddate,$createdsearchtype,$publicprivate,$filehash,$limit)
+ {
+  $assets=array(); $db=new mysql; 
+  $db->connect();
+  
+  //because we cant bind parameters with a wildcard, we have to manually build the query string 
+  // 
+  
+  
+  $assetid=$this->sqlclean($assetid);
+  
+  if($assetidsearchtype=='equals'){$assetidsearch=$assetid;}
+  if($assetidsearchtype=='startswith'){$assetidsearch=$assetid.'%';}
+  if($assetidsearchtype=='contains'){$assetidsearch='%'.$assetid.'%';}
+  if($assetidsearchtype=='endswith'){$assetidsearch='%'.$assetid;}
+  
+  if($filetype=='any'){$filetype='%';}
+  if($orientation=='any'){$orientation='%';}
+  
+  
+  if($createdsearchtype=='any'){$createdsearchtype='like'; $createddate='%';}
+  if($createdsearchtype=='from'){$createdsearchtype='>=';}
+  if($createdsearchtype=='to'){$createdsearchtype='<=';}
+  if($createdsearchtype=='on'){$createdsearchtype='=';}
+  
+  $publicprivateclause=''; // "any"
+  if($publicprivate=='public'){$publicprivateclause='and public=1';}
+  if($publicprivate=='private'){$publicprivateclause='and public=0';}
+  
+  if($filehash==''){$filehash='%';}
+  $sql="select * from asset where assetid like '".$assetidsearch."' and fileType like ? and orientationViewCode like ? and createdDate ".$createdsearchtype." ? ".$publicprivateclause." and fileHashMD5 like ?";
+   
+  if($stmt=$db->conn->prepare($sql))
+  {
+   $stmt->bind_param('ssss',$filetype,$orientation,$createddate,$filehash);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution']);
+   }
+  }
+  $db->close();
+  return $assets;   
+ }
+
+ 
+ 
+ 
+ 
+ 
+ function logAssetEvent($assetid,$userid,$description,$newoid)
  {
   $db=new mysql; $db->connect();
   if($stmt=$db->conn->prepare('insert into asset_history (id,assetid,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
   {
+   if($newoid==''){$newoid= $this->newoid();}
    $stmt->bind_param('siss', $assetid,$userid,$description,$newoid);
    $stmt->execute();
   } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
@@ -325,7 +408,7 @@ class asset
             $name='WEBP';
             break;
         default:
-            $name='unknown EXIF type';
+            $name='unknown EXIF type ('.$type.')';
             break;
     } 
     return $name;

@@ -5,7 +5,8 @@ session_start();
 $pim= new pim;
 $asset=new asset();
 
-$oid='';
+$partoid='';
+$assetoid='';
 
 if(isset($_SESSION['userid']) && isset($_GET['connectionid']) && isset($_GET['partnumber']))
 {
@@ -15,12 +16,12 @@ if(isset($_SESSION['userid']) && isset($_GET['connectionid']) && isset($_GET['pa
 
  if($assetrecord=$asset->getAssetByPartConnectionid($connectionid))
  {
-  $oid=$pim->updatePartOID($partnumber);
- 
+  $partoid=$pim->updatePartOID($partnumber);
+  $assetoid=$asset->updateAssetOID($asset['assetid']);
   $asset->disconnectPartFromAsset($partnumber,$connectionid);
-  
-  $pim->logPartEvent($partnumber,$userid, 'asset ['.$assetrecord['assetid'].'] was disconnected' ,$oid);
-  $result=array('success'=>true,'oid'=>$oid);
+  $pim->logPartEvent($partnumber,$userid, 'asset ['.$assetrecord['assetid'].'] was disconnected' ,$partoid);
+  $asset->logAssetEvent($asset['assetid'], $userid, 'part ['.$partnumber.'] was disconnected', $assetoid);
+  $result=array('success'=>true,'partoid'=>$partoid,'assetoid'=>$assetoid);
  }
  echo json_encode($result);
 }

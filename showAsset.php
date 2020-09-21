@@ -23,15 +23,13 @@ $allassettypes=$pcdb->getAssetTypeCodes();
 if (isset($_POST['submit']) && $_POST['submit'] == 'Connect') {
 
     $asset->connectPartToAsset($_POST['partnumber'],$_POST['assetid'],$_POST['assettypecode'],0,$_POST['representation']);
-    $asset->logAppEvent($_POST['assetid'], $_SESSION['userid'], $_POST['partnumber'].' connected to asset '.$_POST['assetid'].' as type '.$_POST['assettypecode'] , '');
-//    $pim->updatePartOID($partnumber);
+    $asset->logAssetEvent($_POST['assetid'], $_SESSION['userid'], $_POST['partnumber'].' connected to asset '.$_POST['assetid'].' as type '.$_POST['assettypecode'] , '');
 }
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Delete') {
 
     $asset->deleteAssetRecord($_POST['id']);
-    $asset->logAppEvent($_GET['assetid'], $_SESSION['userid'], 'Asset record ('.$_POST['id'].') deleted' , '');
-//    $pim->updatePartOID($partnumber);
+    $asset->logAssetEvent($_GET['assetid'], $_SESSION['userid'], 'Asset record ('.$_POST['id'].') deleted' , '');
 }
 
 
@@ -94,7 +92,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                         <tr><th>Description</th>
                                             <td><?php echo $assetrecord['description']; ?></td>
                                             <td class="mobile" rowspan="14"><img width="<?php echo $configGet->getConfigValue('imageAssetTumbnailRenderWidth', 350); ?>" src="<?php echo $imgsrc; ?>"/></td></tr>
-                                        <tr><th>File Type</th><td><?php echo $asset->niceExifTypeName($assetrecord['fileType']); ?></td></tr>
+                                        <tr><th>File Type</th><td><?php echo $assetrecord['fileType']; ?></td></tr>
                                         <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
                                         <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
                                         <tr><th>Background</th><td><?php echo $assetrecord['background']; ?></td></tr>

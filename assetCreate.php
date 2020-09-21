@@ -43,7 +43,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic))
     {
         $error_msg = 'Asset id ' . $id . ' was created.';
-        $asset->logAppEvent($assetid, $_SESSION['userid'], 'Asset created' , '');
+        $asset->logAssetEvent($assetid, $_SESSION['userid'], 'Asset created' , '');
     }
     else 
     { // asset not created
