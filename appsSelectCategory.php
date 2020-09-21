@@ -64,20 +64,23 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
              { // category has been clocked on 
               console.log(partcategory);
               var xhr = new XMLHttpRequest();
-              xhr.open('GET', 'ajaxSelectUnselectUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&action=select');
-              xhr.send();
+              
               document.getElementById('categorySelectButton_'+partcategory).className = "btn btn-success";
               console.log(document.getElementById('categorySelectButton_'+partcategory).className);
+              
+              xhr.open('GET', 'ajaxSelectUnselectUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&action=select');
+              xhr.send();
              }
              else
              { // category has been clocked off
               var xhr = new XMLHttpRequest();
               console.log(partcategory);
+              
+              document.getElementById('categorySelectButton_'+partcategory).className = "btn btn-secondary";
+              console.log(document.getElementById('categorySelectButton_'+partcategory).className);
 
               xhr.open('GET', 'ajaxSelectUnselectUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&action=unselect');
               xhr.send();
-              document.getElementById('categorySelectButton_'+partcategory).className = "btn btn-secondary";
-              console.log(document.getElementById('categorySelectButton_'+partcategory).className);
              }
             }
             
@@ -146,9 +149,6 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
-        <!-- Header -->
-        <h1>Applications (<?php echo $vcdb->makeName($makeid).', '.$vcdb->modelName($modelid).', '.$yearid;?>)</h1>
-        
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 <!-- Left Column -->
@@ -158,44 +158,53 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <div style="padding:20px;">
-                        <form action="showAppsByBasevehicle.php">
-                         <?php
-                            foreach ($partcategories as $partcategory) {
-                                $checked = '';
-                                if ($partcategory['selected']) {
-                                    $checked = ' checked';
-                                }
-                                echo '<div style="padding:5px"><input type="checkbox" id="partcategory_' . $partcategory['id'] . '" onclick="selectUnselectPartcategory(\'' . $userid . '\',\'' . $partcategory['id'] . '\')" name="partcategory_' . $partcategory['id'] . '"' . $checked . '><label style="padding:5px;border: 1px solid;margin:3px; border-radius:5px"for="partcategory_' . $partcategory['id'] . '">' . $partcategory['name'] . '<img style="padding:0px 5px 0px" height="17px" src="' . $partcategory['logouri'] . '"></label></div>';
-                            }
-                        ?>
-                            <input type="hidden" name="makeid" value="<?php echo $makeid; ?>"/>
-                        <?php
-                            if (isset($modelid)) {
-                                echo '<input type="hidden" name="modelid" value="' . $modelid . '"/>';
-                            }
-                            if (isset($yearid)) {
-                                echo '<input type="hidden" name="yearid" value="' . $yearid . '"/>';
-                            }
-                            if (isset($equipmentid)) {
-                                echo '<input type="hidden" name="equipmentid" value="' . $equipmentid . '"/>';
-                            }
-                        ?>
-                         <div style="padding-top:10px;"><input type="submit" name="submit" value="Show Applications"/></div>
-                        </form>
-                    </div>
-                    <div onclick="showhideNewApp()">...</div>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">Applications (<?php echo $vcdb->makeName($makeid).', '.$vcdb->modelName($modelid).', '.$yearid;?>)</h3>
 
-                    <form action="appsSelectCategory.php">
-                        <div id="newapp" style="display:none; padding:5px;">
-                            <div style="text-align: left;padding:3px;font-weight: bold;">Create new app to this vehicle</div>
-                            <div style="text-align: left;padding:5px;">Part Number <input type="text" id="partnumber" name="partnumber" size="15" onkeyup="validateCreate('partnumber')"/></div>
-                            <div style="text-align: left;padding:5px;">Position <select id="positionid" name="positionid" onchange="validateCreate('positionid')"><option value="0">--- Select ---</option><?php foreach($favoritepositions as $position){?><option value="<?php echo $position['id'];?>"><?php echo $position['name'];?></option><?php }?></select></div>
-                            <div style="float:left; text-align: left; padding:5px;">Part Type <select id="parttypeid" name="parttypeid" onchange="validateCreate('parttypeid')"><option value="0">--- Select ---</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"><?php echo $parttype['name'];?></option><?php }?></select></div><div style="float:left;padding-left:10px;"><a href="./pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> 
-                            <div style="text-align: left;padding:5px;">Quantity <input style="text-align: right;" type="text" id="quantityperapp" name="quantityperapp" size="2"/> <input type="submit" name="submit" value="Create" id="createapp" /></div>
-                            <input type="hidden" name="makeid" value="<?php echo $makeid;?>"/><input type="hidden" name="modelid" value="<?php echo $modelid;?>"/><input type="hidden" name="yearid" value="<?php echo $yearid;?>"/>
+                        <div class="card-body">
+                            <form action="showAppsByBasevehicle.php">
+                                <?php
+                                    $buttonClass = 'btn-secondary';
+                                    echo '<div class="btn-group-toggle">';
+                                    foreach ($partcategories as $partcategory) {
+                                        $checked = '';
+                                        if ($partcategory['selected']) {
+                                            $checked = ' checked';
+                                            $buttonClass = 'btn btn-success';
+                                        }
+                                        echo '<div style="padding:5px"><label id="categorySelectButton_' . $partcategory['id'] . '" class="'. $buttonClass .'" style="padding:5px;border: 1px solid;margin:3px; border-radius:5px"for="partcategory_' . $partcategory['id'] . '">' . $partcategory['name'] . '<img style="padding:0px 5px 0px" height="17px" src="' . $partcategory['logouri'] . '"><input type="checkbox" id="partcategory_' . $partcategory['id'] . '" onclick="selectUnselectPartcategory(\'' . $userid . '\',\'' . $partcategory['id'] . '\')" name="partcategory_' . $partcategory['id'] . '"' . $checked . ' ></label></div>';
+                                    }
+                                    echo '</div>';
+                                ?>
+                                   <input type="hidden" name="makeid" value="<?php echo $makeid; ?>"/>
+                                <?php
+                                    if (isset($modelid)) {
+                                        echo '<input type="hidden" name="modelid" value="' . $modelid . '"/>';
+                                    }
+                                    if (isset($yearid)) {
+                                        echo '<input type="hidden" name="yearid" value="' . $yearid . '"/>';
+                                    }
+                                    if (isset($equipmentid)) {
+                                        echo '<input type="hidden" name="equipmentid" value="' . $equipmentid . '"/>';
+                                    }
+                                ?>
+                            <div style="padding-top:10px;"><input type="submit" name="submit" value="Show Applications"/></div>
+                        </form>
+                        <div onclick="showhideNewApp()">...</div>
+
+                        <form action="appsSelectCategory.php">
+                            <div id="newapp" style="display:none; padding:5px;">
+                                <div style="text-align: left;padding:3px;font-weight: bold;">Create new app to this vehicle</div>
+                                <div style="text-align: left;padding:5px;">Part Number <input type="text" id="partnumber" name="partnumber" size="15" onkeyup="validateCreate('partnumber')"/></div>
+                                <div style="text-align: left;padding:5px;">Position <select id="positionid" name="positionid" onchange="validateCreate('positionid')"><option value="0">--- Select ---</option><?php foreach($favoritepositions as $position){?><option value="<?php echo $position['id'];?>"><?php echo $position['name'];?></option><?php }?></select></div>
+                                <div style="float:left; text-align: left; padding:5px;">Part Type <select id="parttypeid" name="parttypeid" onchange="validateCreate('parttypeid')"><option value="0">--- Select ---</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"><?php echo $parttype['name'];?></option><?php }?></select></div><div style="float:left;padding-left:10px;"><a href="./pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> 
+                                <div style="text-align: left;padding:5px;">Quantity <input style="text-align: right;" type="text" id="quantityperapp" name="quantityperapp" size="2"/> <input type="submit" name="submit" value="Create" id="createapp" /></div>
+                                <input type="hidden" name="makeid" value="<?php echo $makeid;?>"/><input type="hidden" name="modelid" value="<?php echo $modelid;?>"/><input type="hidden" name="yearid" value="<?php echo $yearid;?>"/>
+                            </div>
+                        </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
                 <!-- End of Main Content -->
                 
