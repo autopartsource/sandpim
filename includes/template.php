@@ -9,9 +9,6 @@
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
-        <!-- Header -->
-        <h1>Dashboard</h1>
-        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -22,6 +19,15 @@
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
+                    
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left"></h3>
+
+                        <div class="card-body">
+                            
+                        </div>
+                    </div>
                     
                 </div>
                 <!-- End of Main Content -->
