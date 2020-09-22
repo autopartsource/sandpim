@@ -609,7 +609,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                 <div class="col-xs-12 col-md-3 my-col colRight">
                     <div class="card shadow-sm">
                         <h4 class="card-header text-left">Applications</h4>
-                        <div class="card-body flex-column">
+                        <div class="card-body flex-column scroll">
                             <?php foreach ($apps as $app) {
                                 echo '<a class="btn btn-block btn-secondary" href="showApp.php?appid=' . $app['id'] . '">' . $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']) . '</a>';} 
                             ?>
