@@ -152,7 +152,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
 			<!-- Header -->
                         <h3 class="card-header text-left">Recent Assets</h3>
 
-                        <div class="card-body">
+                        <div class="card-body scroll">
                             <?php
                                 if (count($assets)) {
                                     echo '<table><tr><th>AssetID</th><th>Description</th></tr>';
