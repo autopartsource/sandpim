@@ -1,7 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 
-$navCategory = 'utilities';
+$navCategory = 'settings';
 
 session_start();
 if (!isset($_SESSION['userid'])) {
