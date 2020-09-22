@@ -737,6 +737,13 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_partcategory ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE user_selected_partcategory (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        userid int UNSIGNED NOT NULL,
+        partcategory int UNSIGNED NOT NULL,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_selected_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_selected_partcategory ('.$db->conn->error.')';}
+
         
         $sql="CREATE TABLE brand (
         BrandID varchar(255) not null,

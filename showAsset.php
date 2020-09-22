@@ -45,6 +45,21 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
         <?php include('./includes/header.php'); ?>
             <script>
             
+            function connectPart(assetid)
+            {
+
+                var partnumber=document.getElementById('partnumber').value;
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'ajaxConnectPartAsset.php?assetid='+assetid+'&partnumber='+partnumber+'&assettypecode=P04&sequence=1&representation=A');
+                xhr.onload = function()
+                {
+                 var response=JSON.parse(xhr.responseText);
+                 console.log(response);
+                };
+                xhr.send();
+            }
+
             function disconnectPart(partnumber,connectionid)
             {
                 var assetdiv = document.getElementById('assetconnectionid_'+connectionid);
@@ -58,6 +73,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 };
                 xhr.send();
             }
+
 
             
             
@@ -116,7 +132,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
                     <div class="card shadow-sm">
-                        <h4 class="card-header text-left">Connected Parts</h4>
+                        <h4 class="card-header text-left">Connected</h4>
                         <div class="card-body">
                             <?php foreach($connectedparts as $connectedpart){?>
                             <div id="assetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
@@ -124,21 +140,28 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>
                             </div>
                             <?php }?>
+                            
+                            <div>
+                                <input type="text" id="partnumber" size="8"/> 
+                                <select id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
+                                <select id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
+                                <button onclick="connectPart('<?php echo $assetid;?>')">Connect</button>
+                            </div>
+
+                            
+                            
                         </div>
                     </div>
                     
                     <div class="card shadow-sm">
-                        <h4 class="card-header text-left">Add Connection</h4>
+                        <h4 class="card-header text-left">Connect</h4>
                         <div class="card-body">
-                            <form method="post" action="showAsset.php?assetid=<?php echo $assetid;?>">
-                                <div>
-                                    <input type="hidden" name="assetid" value="<?php echo $assetid;?>"/>
-                                    <input type="text" name="partnumber" size="8"/> 
-                                    <select name="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
-                                    <select name="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
-                                    <input type="submit" name="submit" value="Connect"/>
-                                </div>
-                            </form>
+                            <div>
+                                <input type="text" id="partnumber" size="8"/> 
+                                <select id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
+                                <select id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
+                                <button onclick="connectPart('<?php echo $assetid;?>')">Connect</button>
+                            </div>
                         </div>
                     </div>
                 </div>

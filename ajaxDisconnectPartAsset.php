@@ -17,10 +17,10 @@ if(isset($_SESSION['userid']) && isset($_GET['connectionid']) && isset($_GET['pa
  if($assetrecord=$asset->getAssetByPartConnectionid($connectionid))
  {
   $partoid=$pim->updatePartOID($partnumber);
-  $assetoid=$asset->updateAssetOID($asset['assetid']);
+  $assetoid=$asset->updateAssetOID($assetrecord['assetid']);
   $asset->disconnectPartFromAsset($partnumber,$connectionid);
   $pim->logPartEvent($partnumber,$userid, 'asset ['.$assetrecord['assetid'].'] was disconnected' ,$partoid);
-  $asset->logAssetEvent($asset['assetid'], $userid, 'part ['.$partnumber.'] was disconnected', $assetoid);
+  $asset->logAssetEvent($assetrecord['assetid'], $userid, 'part ['.$partnumber.'] was disconnected', $assetoid);
   $result=array('success'=>true,'partoid'=>$partoid,'assetoid'=>$assetoid);
  }
  echo json_encode($result);
