@@ -165,14 +165,14 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                         <div class="card-body">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="brands-tab" data-toggle="tab" href="#brands" role="tab" aria-controls="brands" aria-selected="true">Brands</a>
+                                    <a class="nav-link active" id="existing-tab" data-toggle="tab" href="#existing" role="tab" aria-controls="existing" aria-selected="true">Existing Apps</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="create-tab" data-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Application</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active" id="brands" role="tabpanel" aria-labelledby="brands-tab">
+                                <div class="tab-pane fade show active" id="existing" role="tabpanel" aria-labelledby="existing-tab">
                                     <form action="showAppsByBasevehicle.php">
                                         <?php
                                             echo '<div class="btn-group-toggle">';
