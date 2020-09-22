@@ -25,6 +25,11 @@ body {
     min-height: 35em;
 }
 
+.scroll {
+    max-height: 100vh;
+    overflow-y: scroll;
+}
+
 .my-row {
 }
 
