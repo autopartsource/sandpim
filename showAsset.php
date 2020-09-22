@@ -95,7 +95,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 </div>
                 
                 <!-- Main Content -->
-                <div class="col-xs-12 col-md-8 my-col colMain">
+                <div class="col-xs-12 col-md-7 my-col colMain">
                     <?php foreach ($assetrecords as $assetrecord){
                          if(strlen($assetrecord['uri'])>0){$imgsrc=$assetrecord['uri'];}
                          if(strlen($assetrecord['localpath'])>0){$imgsrc=$configGet->getConfigValue('localImageStorePath').'/'.$assetrecord['localpath'];}
@@ -130,33 +130,28 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 <!-- End of Main Content -->
                 
                 <!-- Right Column -->
-                <div class="col-xs-12 col-md-2 my-col colRight">
+                <div class="col-xs-12 col-md-3 my-col colRight">
                     <div class="card shadow-sm">
-                        <h4 class="card-header text-left">Connected</h4>
-                        <div class="card-body">
-                            <?php foreach($connectedparts as $connectedpart){?>
-                            <div id="assetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
-                               <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a>
-                               <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>
+                        <h5 class="card-header">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                        <a class="nav-link active" id="connected-tab" data-toggle="tab" href="#connected" role="tab" aria-controls="connected" aria-selected="true">Connected</a>
+                                </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" id="newconnection-tab" data-toggle="tab" href="#newconnection" role="tab" aria-controls="newconnection" aria-selected="false">New Connection</a>
+                                </li>
+                            </ul>
+                        </h5>
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active text-left m-3" id="connected" role="tabpanel" aria-labelledby="connected-tab">
+                                <?php foreach($connectedparts as $connectedpart){?>
+                                <div id="assetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
+                                   <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a>
+                                   <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>
+                                </div>
+                                <?php }?>
                             </div>
-                            <?php }?>
-                            
-                            <div>
-                                <input type="text" id="partnumber" size="8"/> 
-                                <select id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
-                                <select id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
-                                <button onclick="connectPart('<?php echo $assetid;?>')">Connect</button>
-                            </div>
-
-                            
-                            
-                        </div>
-                    </div>
-                    
-                    <div class="card shadow-sm">
-                        <h4 class="card-header text-left">Connect</h4>
-                        <div class="card-body">
-                            <div>
+                            <div class="tab-pane fade m-3" id="newconnection" role="tabpanel" aria-labelledby="newconnection-tab">
                                 <input type="text" id="partnumber" size="8"/> 
                                 <select id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
                                 <select id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
