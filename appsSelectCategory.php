@@ -165,7 +165,6 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                         <div class="card-body">
                             <form action="showAppsByBasevehicle.php">
                                 <?php
-                                    $buttonClass = 'btn-secondary';
                                     echo '<div class="btn-group-toggle">';
                                     foreach ($partcategories as $partcategory) {
                                         $checked = '';
@@ -173,7 +172,10 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                                             $checked = ' checked';
                                             $buttonClass = 'btn btn-success';
                                         }
-                                        echo '<div style="padding:5px"><label id="categorySelectButton_' . $partcategory['id'] . '" class="'. $buttonClass .'" style="padding:5px;border: 1px solid;margin:3px; border-radius:5px"for="partcategory_' . $partcategory['id'] . '">' . $partcategory['name'] . '<img style="padding:0px 5px 0px" height="17px" src="' . $partcategory['logouri'] . '"><input type="checkbox" id="partcategory_' . $partcategory['id'] . '" onclick="selectUnselectPartcategory(\'' . $userid . '\',\'' . $partcategory['id'] . '\')" name="partcategory_' . $partcategory['id'] . '"' . $checked . ' ></label></div>';
+                                        else {
+                                            $buttonClass = 'btn-secondary';
+                                        }
+                                        echo '<div style="padding:5px"><label id="categorySelectButton_' . $partcategory['id'] . '" class="'. $buttonClass .'" style="padding:5px;border: 1px solid;margin:3px; border-radius:5px"for="partcategory_' . $partcategory['id'] . '">' . $partcategory['name'] . '<img style="padding:0px 5px 0px" height="17px" src="' . $partcategory['logouri'] . '"><input type="checkbox" id="partcategory_' . $partcategory['id'] . '" onclick="selectUnselectPartcategory(\'' . $userid . '\',\'' . $partcategory['id'] . '\')" name="partcategory_' . $partcategory['id'] . '"' . $checked . ' style="display:none"></label></div>';
                                     }
                                     echo '</div>';
                                 ?>
