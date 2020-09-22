@@ -25,9 +25,6 @@ $notes=$pim->getAppNoteAttributeCounts();
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
 
-        <!-- Header -->
-        <h3>Fitment Notes</h3>
-
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -38,16 +35,25 @@ $notes=$pim->getAppNoteAttributeCounts();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <table>
-                          <tr><th>Note</th><th>Use Count</th><th>Action</th></tr>
-                          <?php
-                          foreach ($notes as $note) 
-                          {
-                           echo '<tr><td>'.$note['note'].'</td><td>'.$note['count'].'</td><td><a href="./convertNoteToQdb.php?attributeid='.$note['lastid'].'&source=noteManager">To Qdb</td></tr>';
-                          }
-                          ?>
-                      </table>
-                  </div>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">Fitment Notes</h3>
+
+                        <div class="card-body scroll">
+                            <table>
+                                <div id="top"></div>
+                                <tr><th>Note</th><th>Use Count</th><th>Action</th></tr>
+                                <?php
+                                foreach ($notes as $note) 
+                                {
+                                 echo '<tr><td>'.$note['note'].'</td><td>'.$note['count'].'</td><td><a href="./convertNoteToQdb.php?attributeid='.$note['lastid'].'&source=noteManager">To Qdb</td></tr>';
+                                }
+                                ?>
+                            </table>
+                            <a href="#top">Back to Top</a>
+                        </div>
+                    </div>
+                </div>
                 <!-- End of Main Content -->
                 
                 <!-- Right Column -->
