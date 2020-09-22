@@ -135,10 +135,10 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                         <h5 class="card-header">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item">
-                                        <a class="nav-link active" id="connected-tab" data-toggle="tab" href="#connected" role="tab" aria-controls="connected" aria-selected="true">Connected</a>
+                                    <a class="nav-link active" id="connected-tab" data-toggle="tab" href="#connected" role="tab" aria-controls="connected" aria-selected="true">Connected</a>
                                 </li>
                                 <li class="nav-item">
-                                        <a class="nav-link" id="newconnection-tab" data-toggle="tab" href="#newconnection" role="tab" aria-controls="newconnection" aria-selected="false">New Connection</a>
+                                    <a class="nav-link" id="newconnection-tab" data-toggle="tab" href="#newconnection" role="tab" aria-controls="newconnection" aria-selected="false">New Connection</a>
                                 </li>
                             </ul>
                         </h5>
