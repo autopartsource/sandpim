@@ -105,7 +105,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                                              {
                                                 $checked=''; if(array_key_exists($type['id'], $idkeyedmytypes)){$checked=' checked';}
                                                  echo '<tr><td style="text-align:left;">'.$type['name'].'</td><td>'.$type['id'].'</td>';
-                                                 echo '<td align="center"><input type="checkbox" id="parttypeid_'.$type['id'].'" name="parttypeid_'.$type['id'].'" onclick="addRemoveType(\''.$type['id'].'\')" name="partcategory_'.$partcategory['id'].'"  '.$checked.'></td>';
+                                                 echo '<td align="center"><input type="checkbox" id="parttypeid_'.$type['id'].'" name="parttypeid_'.$type['id'].'" onclick="addRemoveType(\''.$type['id'].'\')"  '.$checked.'></td>';
                                                  echo '</tr>';
                                              }
                                             }
