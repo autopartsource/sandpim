@@ -47,15 +47,21 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
             
             function connectPart(assetid)
             {
-
                 var partnumber=document.getElementById('partnumber').value;
-
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', 'ajaxConnectPartAsset.php?assetid='+assetid+'&partnumber='+partnumber+'&assettypecode=P04&sequence=1&representation=A');
                 xhr.onload = function()
                 {
                  var response=JSON.parse(xhr.responseText);
-                 console.log(response);
+                 if(response.success)
+                 {
+                  var e = document.getElementById('connected');
+                  var d = document.createElement('div');
+                  d.style='padding: 2px;';
+                  d.id = 'assetconnectionid_'+response.connectionid;
+                  d.innerHTML='<a class="btn btn-secondary" href="showPart.php?partnumber='+partnumber+'">'+partnumber+'</a> <button onclick="disconnectPart(\''+partnumber+'\',\''+response.connectionid+'\')">x</button>';
+                  e.appendChild(d);
+                 }
                 };
                 xhr.send();
             }
@@ -146,8 +152,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                             <div class="tab-pane fade show active text-left m-3" id="connected" role="tabpanel" aria-labelledby="connected-tab">
                                 <?php foreach($connectedparts as $connectedpart){?>
                                 <div id="assetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
-                                   <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a>
-                                   <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>
+                                   <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a> <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>
                                 </div>
                                 <?php }?>
                             </div>

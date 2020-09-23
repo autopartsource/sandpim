@@ -11,6 +11,7 @@ if (!isset($_SESSION['userid']))
     exit;
 }
 
+
 $asset = new asset;
 $pim = new pim;
 $pcdb=new pcdb();
