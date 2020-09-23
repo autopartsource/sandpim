@@ -52,8 +52,8 @@ $history = $pim->getAppEvents($appid, 25);
         <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h1>History for application <?php echo $appid;?></h1>
-	<h2><?php echo $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']);?></h2>
+        <h1></h1>
+	<h2></h2>
 
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -65,17 +65,44 @@ $history = $pim->getAppEvents($appid, 25);
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <?php
-                    if ($app && count($history)) {
-                        echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
-                        foreach ($history as $record) {
-                            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $record['description'] . '</td><td>' . $record['new_oid'] . '</td></tr>';
-                        }
-                        echo '</table>';
-                    } else { // no apps found
-                        echo 'No history found';
-                    }
-                    ?>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">History for application <a href="./showApp.php?appid=<?php echo $appid?>"><span class="text-info"><?php echo $appid?></span></a></h3>
+
+                        <div class="card-body">
+                            
+                            <!-- Vehicle and Attributes -->
+                            <div class="card">
+                                <!-- Header -->
+                                <h4 class="card-header text-left"><?php echo $vcdb->niceMMYofBasevid($app['basevehicleid'])?></h4>
+
+                                <div class="card-body">
+                                    <?php echo niceAppAttributes($app['attributes']);?>
+                                </div>
+                            </div>
+                            
+                            <!-- Logs -->
+                            <div class="card shadow-sm">
+                                <!-- Header -->
+                                <h5 class="card-header text-left">Logs</h5>
+
+                                <div class="card-body scroll">
+                                    <?php
+                                    if ($app && count($history)) {
+                                        echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
+                                        foreach ($history as $record) {
+                                            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $record['description'] . '</td><td>' . $record['new_oid'] . '</td></tr>';
+                                        }
+                                        echo '</table>';
+                                    } else { // no apps found
+                                        echo 'No history found';
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 
