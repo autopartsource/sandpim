@@ -73,9 +73,6 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
-        <!-- Header -->
-        <h3>Competitive Brands (system-wide)</h3>
-        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -86,42 +83,55 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form method="get">
-                        Brand Name
-                        <select name="searchtype">
-                            <option value="begins"<?php if($searchtype=='begins'){echo ' selected';}?>>Begins with</option>
-                            <option value="contains"<?php if($searchtype=='contains'){echo ' selected';}?>>Contains</option>
-                            <option value="ends"<?php if($searchtype=='ends'){echo ' selected';}?>>Ends with</option>
-                        </select>
-                        <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
-                        <input name="submit" type="submit" value="Search"/>
-                     <div style="padding:15px;">
-                         <?php if(count($allbrands)){
-                             $brandownercolumn=''; if($showowners){$brandownercolumn='<th>Owner</th>';}
-                             ?>
-                         <table><tr><th>Name</th><th>ID</th><?php echo $brandownercolumn;?><th>Selected</th></tr>
-                         <?php foreach ($allbrands as $brand)
-                          {
-                             $checked=''; if(array_key_exists($brand['BrandID'], $brandAAIAIDkeyedcompetitivebrands)){$checked=' checked';}
-                             $brandownercolumn=''; if($showowners){$brandownercolumn='<td>'.$brand['BrandOwner'].'</td>';}
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">Competitive Brands (system-wide<div style="float:right;"><a class="btn btn-secondary" href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search">Show brands that are already in the our competitor list</a></div></h3>
 
-                              echo '<tr><td>'.$brand['BrandName'].'</td><td>'.$brand['BrandID'].'</td>'.$brandownercolumn;
-                              echo '<td align="center"><input type="checkbox" id="brand_'.$brand['BrandID'].'" name="brand_'.$brand['BrandID'].'" onclick="addRemoveBrand(\''.$brand['BrandID'].'\')" name="brand_'.$brand['BrandID'].'"  '.$checked.'></td>';
-                              echo '</tr>';
-                          }
-                         }
-                         else
-                         { // no results found
-                             if(isset($_GET['submit']))
-                             { // user submitted a search
-                                 echo '<div style="padding:10px;">No Results Found</div>';
-                             }
-                         }
-                         ?>
-                      </table>
-                     </div>
-                    </form>
-                    <a href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search">Show brands that are already in the our competitor list</a>
+                        <div class="card-body">
+                            <form method="get">
+                                Brand Name
+                                <select name="searchtype">
+                                    <option value="begins"<?php if($searchtype=='begins'){echo ' selected';}?>>Begins with</option>
+                                    <option value="contains"<?php if($searchtype=='contains'){echo ' selected';}?>>Contains</option>
+                                    <option value="ends"<?php if($searchtype=='ends'){echo ' selected';}?>>Ends with</option>
+                                </select>
+                                <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
+                                <input name="submit" type="submit" value="Search"/>
+                             
+                                <?php if(count($allbrands)){ 
+                                    $brandownercolumn=''; 
+                                    if($showowners){$brandownercolumn='<th>Owner</th>';} 
+                                ?>
+                                <div class="card">
+                                    <!-- Header -->
+                                    <h6 class="card-header text-left">Search Results</h6>
+
+                                    <div class="card-body scroll">
+                                        <table><tr><th>Name</th><th>ID</th><?php echo $brandownercolumn;?><th>Selected</th></tr>
+                                        <?php foreach ($allbrands as $brand)
+                                         {
+                                            $checked=''; if(array_key_exists($brand['BrandID'], $brandAAIAIDkeyedcompetitivebrands)){$checked=' checked';}
+                                            $brandownercolumn=''; if($showowners){$brandownercolumn='<td>'.$brand['BrandOwner'].'</td>';}
+
+                                             echo '<tr><td>'.$brand['BrandName'].'</td><td>'.$brand['BrandID'].'</td>'.$brandownercolumn;
+                                             echo '<td align="center"><input type="checkbox" id="brand_'.$brand['BrandID'].'" name="brand_'.$brand['BrandID'].'" onclick="addRemoveBrand(\''.$brand['BrandID'].'\')" name="brand_'.$brand['BrandID'].'"  '.$checked.'></td>';
+                                             echo '</tr>';
+                                         }
+                                        }
+                                        else
+                                        { // no results found
+                                            if(isset($_GET['submit']))
+                                            { // user submitted a search
+                                                echo '<div style="padding:10px;">No Results Found</div>';
+                                            }
+                                        }
+                                        ?>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
                 <!-- End of Main Content -->
                 
