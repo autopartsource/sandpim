@@ -107,13 +107,13 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                          if(strlen($assetrecord['localpath'])>0){$imgsrc=$configGet->getConfigValue('localImageStorePath').'/'.$assetrecord['localpath'];}
                          ?>
                         <div class="card shadow-sm">
-                            <h3 class="card-header text-left">Records for Asset: <span class="text-info"><?php echo $assetid;?></span></h3>
+                            <h3 class="card-header text-left">Record for Asset: <span class="text-info"><?php echo $assetid;?></span><div style="float:right;"><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></div></h3>
                             <div class="row no-gutters">
                                 <div class="card-body">
                                     <table>
                                         <tr><th>Description</th>
                                             <td><?php echo $assetrecord['description']; ?></td>
-                                            <td class="mobile" rowspan="14"><img width="<?php echo $configGet->getConfigValue('imageAssetTumbnailRenderWidth', 350); ?>" src="<?php echo $imgsrc; ?>"/></td></tr>
+                                            <td class="mobile" rowspan="13"><img width="<?php echo $configGet->getConfigValue('imageAssetTumbnailRenderWidth', 350); ?>" src="<?php echo $imgsrc; ?>"/></td></tr>
                                         <tr><th>File Type</th><td><?php echo $assetrecord['fileType']; ?></td></tr>
                                         <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
                                         <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
@@ -126,7 +126,6 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                         <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
                                         <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'], 'Public', 'Private'); ?></td></tr>
                                         <tr><th>File Hash</th><td><?php echo $assetrecord['fileHashMD5']; ?></td></tr>
-                                        <tr><td></td><td><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></td></tr>
                                     </table>
                                 </div>
                             </div>
