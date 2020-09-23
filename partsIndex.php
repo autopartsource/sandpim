@@ -61,9 +61,9 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
-                        <h3 class="card-header text-left">Parts</h3>
+                        <h3 class="card-header text-left">Parts<div style="float:right;"><a href="./newPart.php" class="btn btn-secondary">Create a new part</a></div></h3>
                         <div class="card-body">
-                            <a href="./newPart.php" class="btn btn-secondary">Create a new part</a>
+                            
                             
                             <div class="card text-left">
                                 <h6 class="card-header">Find Existing Parts</h6>
