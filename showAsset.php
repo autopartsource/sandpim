@@ -89,9 +89,6 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
-        <!-- Header -->
-        <h1></h1>
-        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
