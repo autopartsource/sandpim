@@ -32,6 +32,9 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
         case 'ends':
             $allpositions=$pcdb->getPositions('%'.$searchterm);
             break;
+        case 'selected':
+            $allpositions=$mypositions;
+            break;
         
         default :break;
     }
@@ -43,22 +46,22 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
     <head>
         <?php include('./includes/header.php'); ?>
         <script>
-            function addRemovePosition(positioneid)
+            function addRemovePosition(positionid)
             {
              if(document.getElementById('positionid_'+positionid).checked) 
              { // parttype has been clicked on 
               console.log('add:'+positionid);
-              //var xhr = new XMLHttpRequest();
-              //xhr.open('GET', 'ajaxAddRemoveFavoritePosition.php?positionid='+positionid+'&action=add');
-              //xhr.send();
+//              var xhr = new XMLHttpRequest();
+//              xhr.open('GET', 'ajaxAddRemoveFavoritePosition.php?positionid='+positionid+'&action=add');
+//              xhr.send();
              }
              else
              { // has been clocked off
               console.log('remove:'+positionid);
 
-             //var xhr = new XMLHttpRequest();
-             // xhr.open('GET', 'ajaxAddRemoveFavoritePosition.php?positionid='+positionid+'&action=remove');
-             // xhr.send();
+//             var xhr = new XMLHttpRequest();
+//              xhr.open('GET', 'ajaxAddRemoveFavoritePosition.php?positionid='+positionid+'&action=remove');
+//              xhr.send();
              }
             }
 
@@ -67,9 +70,6 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
     <body>
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
-        
-        <!-- Header -->
-        <h3>Favorite PCdb Positions</h3>
         
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -81,37 +81,51 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form method="get">
-                        Position
-                        <select name="searchtype">
-                            <option value="begins"<?php if($searchtype=='begins'){echo ' selected';}?>>Begins with</option>
-                            <option value="contains"<?php if($searchtype=='contains'){echo ' selected';}?>>Contains</option>
-                            <option value="ends"<?php if($searchtype=='ends'){echo ' selected';}?>>Ends with</option>
-                        </select>
-                        <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
-                        <input name="submit" type="submit" value="Search"/>
-                     <div style="padding-left:10px;">
-                         <?php if(count($allpositions)){?>
-                         <table><tr><th>Name</th><th>ID</th><th>Favorite</th></tr>
-                         <?php foreach ($allpositions as $position)
-                          {
-                             $checked=''; if(array_key_exists($position['id'], $idkeyedpositions)){$checked=' checked';}
-                              echo '<tr><td>'.$position['name'].'</td><td>'.$position['id'].'</td>';
-                              echo '<td align="center"><input type="checkbox" id="positionid_'.$position['id'].'" name="positionid_'.$position['id'].'" onclick="addRemovePosition(\''.$position['id'].'\')" '.$checked.'></td>';
-                              echo '</tr>';
-                          }
-                         }
-                         else
-                         { // no results found
-                             if(isset($_GET['submit']))
-                             { // user submitted a search
-                                 echo '<div style="padding:10px;">No Results Found</div>';
-                             }
-                         }
-                         ?>
-                      </table>
-                     </div>
-                    </form>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">Favorite PCdb Positions<div style="float:right"><a class="btn btn-secondary" href="pcdbPositionBrowser.php?searchtype=selected&searchterm=&submit=Search">Show only already selected positions</a></div></h3>
+
+                        <div class="card-body">
+                            <form method="get">
+                                Position
+                                <select name="searchtype">
+                                    <option value="begins"<?php if($searchposition=='begins'){echo ' selected';}?>>Begins with</option>
+                                    <option value="contains"<?php if($searchposition=='contains'){echo ' selected';}?>>Contains</option>
+                                    <option value="ends"<?php if($searchposition=='ends'){echo ' selected';}?>>Ends with</option>
+                                </select>
+                                <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
+                                <input name="submit" type="submit" value="Search"/>
+                                
+                                <?php if(count($allpositions)){?>
+                                <div class="card">
+                                    <!-- Header -->
+                                    <h6 class="card-header text-left">Search Results</h6>
+
+                                    <div class="card-body scroll">
+                                        <table><tr><th>Name</th><th>ID</th><th>Favorite</th></tr>
+                                        <?php foreach ($allpositions as $position)
+                                         {
+                                            $checked=''; if(array_key_exists($position['id'], $idkeyedpositions)){$checked=' checked';}
+                                             echo '<tr><td>'.$position['name'].'</td><td>'.$position['id'].'</td>';
+                                             echo '<td align="center"><input type="checkbox" id="positionid_'.$position['id'].'" name="positionid_'.$position['id'].'" onclick="addRemovePosition(\''.$position['id'].'\')" '.$checked.'></td>';
+                                             echo '</tr>';
+                                         }
+                                        }
+                                        else
+                                        { // no results found
+                                            if(isset($_GET['submit']))
+                                            { // user submitted a search
+                                                echo '<div style="padding:10px;">No Results Found</div>';
+                                            }
+                                        }
+                                        ?>
+                                        </table>
+                                    </div>
+                                </div>    
+                            </form>
+                        </div>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 
