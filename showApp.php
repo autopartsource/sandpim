@@ -542,6 +542,9 @@ if(isset($_GET['categories']))
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
+                        <h6 class="card-header text-left">
+                            <div style="float:right"><?php if(count($history)){echo '<a class="btn btn-secondary" href="./appHistory.php?appid='.$appid.'">History</a>';}?></div>
+                        </h6>
                         <div class="card-body">
                             <?php if($app) {;?>
                             <div style="padding:10px;">
@@ -679,7 +682,6 @@ if(isset($_GET['categories']))
                                 } ?>>Hidden</option></select></td></tr>
                                </table>
                               </div>
-                              <?php if(count($history)){echo '<div><a href="./appHistory.php?appid='.$appid.'">History</a></div>';}?>
                               <?php }
                               else
                               { // no apps found
