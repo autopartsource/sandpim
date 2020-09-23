@@ -4,7 +4,7 @@ include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/userClass.php');
-$navCategory = 'applications';
+$navCategory = 'parts';
 
 session_start();
 if (!isset($_SESSION['userid'])) {
