@@ -58,10 +58,7 @@ if (isset($_POST['submit']) && strlen($_POST['input'])>0)
     <body>
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
-
-        <!-- Header -->
-        <h3>Convert make/model/year text to VCdb BaseVehicle IDs</h3>
-
+        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -72,17 +69,25 @@ if (isset($_POST['submit']) && strlen($_POST['input'])>0)
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form method="post">
-                        <div>MakeName (tab) ModelName (tab) Year</div>
-                        <div><textarea name="input" rows="10" cols="80"><?php echo $output;?></textarea></div>
-                        <div style="padding:5px;">Vcdb 
-                            <select name="vcdbversion">
-                            <?php foreach($databaseversions as $databaseversion){?>
-                                <option value="<?php echo $databaseversion['name'];?>"<?php if($vcdbversion==$databaseversion['name']){echo ' selected';}?>><?php echo $databaseversion['versiondate'];?></option>
-                                <?php }?>
-                            </select> <input type="submit" name="submit" value="Convert"/>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">Convert make/model/year text to VCdb BaseVehicle IDs</h3>
+
+                        <div class="card-body">
+                            <form method="post">
+                                <div>MakeName (tab) ModelName (tab) Year</div>
+                                <div><textarea name="input" rows="10" cols="80"><?php echo $output;?></textarea></div>
+                                <div style="padding:5px;">Vcdb 
+                                    <select name="vcdbversion">
+                                    <?php foreach($databaseversions as $databaseversion){?>
+                                        <option value="<?php echo $databaseversion['name'];?>"<?php if($vcdbversion==$databaseversion['name']){echo ' selected';}?>><?php echo $databaseversion['versiondate'];?></option>
+                                        <?php }?>
+                                    </select> <input type="submit" name="submit" value="Convert"/>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 

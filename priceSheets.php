@@ -42,10 +42,7 @@ $pricesheets=$pricing->getPricesheets();
     <body>
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
-
-        <!-- Header -->
-        <h3>Price Sheets</h3>
-
+        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -56,15 +53,23 @@ $pricesheets=$pricing->getPricesheets();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <table>
-                        <tr><th>Name</th><th>Description</th><th>Currency</th><th>Price Type</th><th>Effective From</th><th>Effective To</th></tr>
-                        <?php
-                        foreach($pricesheets as $pricesheet)
-                        {
-                            echo '<tr><td>'.$pricesheet['number'].'</td><td>'.$pricesheet['description'].'</td><td>'.$pricesheet['currency'].'</td><td>'.$pricesheet['pricetype'].'</td><td>'.$pricesheet['effectivedate'].'</td><td>'.$pricesheet['expirationdate'].'</td></tr>';
-                        }
-                        ?>
-                    </table>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">Price Sheets</h3>
+
+                        <div class="card-body">
+                            <table>
+                                <tr><th>Name</th><th>Description</th><th>Currency</th><th>Price Type</th><th>Effective From</th><th>Effective To</th></tr>
+                                <?php
+                                foreach($pricesheets as $pricesheet)
+                                {
+                                    echo '<tr><td>'.$pricesheet['number'].'</td><td>'.$pricesheet['description'].'</td><td>'.$pricesheet['currency'].'</td><td>'.$pricesheet['pricetype'].'</td><td>'.$pricesheet['effectivedate'].'</td><td>'.$pricesheet['expirationdate'].'</td></tr>';
+                                }
+                                ?>
+                            </table>
+                        </div>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 

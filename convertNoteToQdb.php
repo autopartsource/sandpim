@@ -1,7 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 
-$navCategory = 'utilities';
+$navCategory = 'settings';
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -195,9 +195,6 @@ if(isset($_GET['source']) && $_GET['source']=='noteManager')
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
 
-        <!-- Header -->
-        <h3>Migrate a fitment note to Qdb</h3>
-
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -208,49 +205,65 @@ if(isset($_GET['source']) && $_GET['source']=='noteManager')
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                
-                    <div>
-                        <div style="padding:5px;float:left;">Note to Migrate</div>
-                        <div style="background-color:#c0c0c0; padding:5px;float:left;"><?php echo $attribute['value']; ?></div>
-                        <div style="clear: both;"></div>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">Migrate a fitment note to Qdb</h3>
+                        
+                        <div class="card-body">
+                            <!-- Note to Migrate Card -->
+                            <div class="card">
+                                <!-- Header -->
+                                <h6 class="card-header text-left">
+                                    Note to Migrate
+                                    <div style="float:right">Total Uses: <?php echo $usecount; ?></div>
+                                </h6>
 
-                        <div style="padding:5px;float:left;">Total Uses:</div>
-                        <div style="padding:5px;float:left;"><?php echo $usecount; ?></div>
-                        <div style="clear: both;"></div>
+                                <div class="card-body">
+                                    <div style="background-color:#c0c0c0; padding:5px;float:left;"><?php echo $attribute['value']; ?></div>
 
-
-
-
-                        <div id="newqdbattributeform" style="padding:30px;">
-                            <div style="padding:3px;">
-                                <div style="float:left;">
-                                    <input type="text" id="qdbsearchterm"/>
-                                    <button id="qdbsearch" onclick="searchQdb()">Search</button>
                                 </div>
-                                <div style="clear:both;"></div>
                             </div>
-                            <div style="padding:3px;font-size: 75%; color: #aaaaaa;" id="qdbresultscount"></div>
-                            <select id="qdbresults" style="display:none;" size="10" multiple onchange="selectQdb(); getElementById('convertNotesButton').style.display='block';"></select>
-
-                            <?php for ($i = 1; $i <= 8; $i++) { ?>
-                                <div id="qdbparm<?php echo $i; ?>block" style="padding:3px; display:none;">
-                                    <div id="qdbparm<?php echo $i; ?>title" style="float:left;"></div>
+                            
+                            <!-- Search Card -->
+                            <div class="card">
+                                <!-- Header -->
+                                <h6 class="card-header text-left">
                                     <div style="float:left;">
-                                        <input size="8" type="text" id="qdbparm<?php echo $i; ?>value" onkeyup="showQdbPreview()"/>
+                                        <input type="text" id="qdbsearchterm"/>
+                                        <button id="qdbsearch" onclick="searchQdb()">Search</button>
                                     </div>
-                                    <div id="qdbparm<?php echo $i; ?>uomblock" style="float:left;padding-left:10px; display:none;">uom
-                                        <input type="text" id="qdbparm<?php echo $i; ?>uom" size="2" onkeyup="showQdbPreview();"/>
+                                </h6>
+
+                                <div class="card-body">
+                                    <div id="newqdbattributeform">
+                                    <div style="padding:3px;font-size: 75%; color: #aaaaaa;" id="qdbresultscount"></div>
+                                    <select id="qdbresults" style="display:none;" size="10" multiple onchange="selectQdb(); getElementById('convertNotesButton').style.display='block';"></select>
+
+                                    <?php for ($i = 1; $i <= 8; $i++) { ?>
+                                        <div id="qdbparm<?php echo $i; ?>block" style="padding:3px; display:none;">
+                                            <div id="qdbparm<?php echo $i; ?>title" style="float:left;"></div>
+                                            <div style="float:left;">
+                                                <input size="8" type="text" id="qdbparm<?php echo $i; ?>value" onkeyup="showQdbPreview()"/>
+                                            </div>
+                                            <div id="qdbparm<?php echo $i; ?>uomblock" style="float:left;padding-left:10px; display:none;">uom
+                                                <input type="text" id="qdbparm<?php echo $i; ?>uom" size="2" onkeyup="showQdbPreview();"/>
+                                            </div>
+                                            <div style="clear:both;"></div>
+                                        </div>
+                                    <?php } ?>
+
+                                    <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="display:none; background-color: #6060F0; border: solid 1px black; padding:3px;margin: 20px;"></div>
+
+                                    <div id="convertNotesButton" style="padding: 5px;display:none;"><button id="convert" onclick="convertNote('<?php echo $redirectto; ?>');">Convert</button></div>
+                                    <div id="loadinggif" style="padding: 5px;display:none;"><img src="./loading.gif" width="50"/><div>Converting <?php echo $usecount ?> instances of this note (in all applications) to a Qdb qualifiers</div></div>
                                     </div>
-                                    <div style="clear:both;"></div>
                                 </div>
-                            <?php } ?>
+                            </div>
 
-                            <div id="qdbpreview" data-qdbid="" data-qdbparmstring="" style="display:none; background-color: #6060F0; border: solid 1px black; padding:3px;margin: 20px;"></div>
-
-                            <div id="convertNotesButton" style="padding: 5px;display:none;"><button id="convert" onclick="convertNote('<?php echo $redirectto; ?>');">Convert</button></div>
-                            <div id="loadinggif" style="padding: 5px;display:none;"><img src="./loading.gif" width="50"/><div>Converting <?php echo $usecount ?> instances of this note (in all applications) to a Qdb qualifiers</div></div>
+                            
                         </div>
                     </div>
+                
                 </div>
                 <!-- End of Main Content -->
                 

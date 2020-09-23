@@ -39,9 +39,6 @@ $profiles = $pim->getReceiverprofiles();
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
 
-        <!-- Header -->
-        <h3>Receiver Profiles</h3>
-
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -52,18 +49,26 @@ $profiles = $pim->getReceiverprofiles();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <table>
-                        <tr><th>Name</th><th>Data</th></tr>
-                        <?php
-                        foreach ($profiles as $profile) 
-                        {
-                            echo '<tr><td><a href="./receiverProfile.php?id='.$profile['id'].'">'.$profile['name'].'</a></td>';
-                            echo '<td><div>'.$profile['data'].'</div></td>';
-                            echo '</tr>';
-                        }
-                        ?>
-                        <tr><form method="post"><td><input type="text" name="profilename" /></td><td><textarea name="profiledata" style="width:95%;"/></textarea><div><input type="submit" name="submit" value="Add"/></div></td></form></tr>
-                    </table>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-left">Receiver Profiles</h3>
+
+                        <div class="card-body">
+                            <table>
+                                <tr><th>Name</th><th>Data</th></tr>
+                                <?php
+                                foreach ($profiles as $profile) 
+                                {
+                                    echo '<tr><td><a href="./receiverProfile.php?id='.$profile['id'].'">'.$profile['name'].'</a></td>';
+                                    echo '<td><div>'.$profile['data'].'</div></td>';
+                                    echo '</tr>';
+                                }
+                                ?>
+                                <tr><form method="post"><td><input type="text" name="profilename" /></td><td><textarea name="profiledata" style="width:95%;"/></textarea><div><input type="submit" name="submit" value="Add"/></div></td></form></tr>
+                            </table>
+                        </div>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 
