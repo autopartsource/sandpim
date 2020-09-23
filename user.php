@@ -83,12 +83,20 @@ $user->getUserByID($userid);
              { // category has been clicked on 
          //     console.log(partcategory);
               var xhr = new XMLHttpRequest();
+              
+              document.getElementById('categorySelectButton_'+partcategory).className = "btn btn-success";
+              console.log(document.getElementById('categorySelectButton_'+partcategory).className);
+              
               xhr.open('GET', 'ajaxAddRemoveUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&permissionname=canView&action=add');
               xhr.send();
              }
              else
              { // category has been clicked off
               var xhr = new XMLHttpRequest();
+              
+              document.getElementById('categorySelectButton_'+partcategory).className = "btn btn-secondary";
+              console.log(document.getElementById('categorySelectButton_'+partcategory).className);
+              
               xhr.open('GET', 'ajaxAddRemoveUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&permissionname=canView&action=remove');
               xhr.send();
              }
@@ -100,9 +108,6 @@ $user->getUserByID($userid);
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
-        <!-- Header -->
-        <h3>Edit User Account - <?php echo $user->name;?></h3>
-        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -113,30 +118,50 @@ $user->getUserByID($userid);
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <div style="padding:10px;">
-                        <form method="post" action="./user.php?userid=<?php echo $userid;?>">
-                            <div style="width:400px;padding:3px;border:1px solid;">
-                             <div style="padding:3px;">
-                              <div style="float:left;">Real Name</div>
-                              <div style="float:right;">
-                               <input type="text" name="realname" value="<?php echo $user->name;?>"/>
-                               <input type="submit" name="submit" value="Update Name"/>
-                              </div>
-                              <div style="clear:both;"></div>
-                             </div>
+                    <div class="row padding my-row">
+                        <div class="col-md-6 my-col">
+                            <div class="card shadow-sm">
+                                <!-- Header -->
+                                <h3 class="card-header text-left">Edit User Account - <?php echo $user->name;?></h3>
 
-
-                             <div style="padding:3px;"><div style="float:left;">Password</div> <div style="float:right;"><input type="password" name="password"/></div><div style="clear:both;"></div></div>
-                             <div style="padding:3px;"><div style="float:left;">Confirm Password</div> <div style="float:right;"><input type="password" name="repassword"/></div><div style="clear:both;"></div></div>
-                             <div style="padding:3px;"><div style="float:right;"><input type="submit" name="submit" value="Update Password"/></div><div style="clear:both;"></div></div>
-                             <div style="padding:4px;color:red;"><?php echo $error;?></div>
+                                <div class="card-body">
+                                    <form method="post" action="./user.php?userid=<?php echo $userid; ?>">
+                                        <div style="width:400px;padding:3px;border:1px solid;">
+                                            <div style="padding:3px;">
+                                                <div style="float:left;">Real Name</div>
+                                                <div style="float:right;">
+                                                    <input type="text" name="realname" value="<?php echo $user->name; ?>"/>
+                                                    <input type="submit" name="submit" value="Update Name"/>
+                                                </div>
+                                                <div style="clear:both;"></div>
+                                            </div>
+                                            <div style="padding:3px;"><div style="float:left;">Password</div> <div style="float:right;"><input type="password" name="password"/></div><div style="clear:both;"></div></div>
+                                            <div style="padding:3px;"><div style="float:left;">Confirm Password</div> <div style="float:right;"><input type="password" name="repassword"/></div><div style="clear:both;"></div></div>
+                                            <div style="padding:3px;"><div style="float:right;"><input type="submit" name="submit" value="Update Password"/></div><div style="clear:both;"></div></div>
+                                            <div style="padding:4px;color:red;"><?php echo $error; ?></div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                        </form>
-                    </div>
-                    <div>
-                        <h3>Application Category Permissions</h3>
-                        <div style="padding:20px;">
-                            <?php foreach($partcategories as $partcategory){$checked=''; if(array_key_exists($partcategory['id'],$idkeyedallowlist)){$checked='checked';} echo '<div><input type="checkbox" id="partcategory_'.$partcategory['id'].'" onclick="addRemovePartcategory(\''.$userid.'\',\''.$partcategory['id'].'\')" name="partcategory_'.$partcategory['id'].'" '.$checked.'><label for="partcategory_'.$partcategory['id'].'">'.$partcategory['name'].'</label></div>';}?>
+                        </div>
+                        <div class="col-md-6 my-col">
+                            <div class="card shadow-sm">
+                                <!-- Header -->
+                                <h3 class="card-header text-left">Application Category Permissions</h3>
+
+                                <div class="card-body">
+                                    <?php foreach($partcategories as $partcategory){
+                                        $checked=''; 
+                                        if(array_key_exists($partcategory['id'],$idkeyedallowlist)){
+                                            $checked='checked';
+                                            $buttonClass = 'btn btn-success';
+                                        } 
+                                        else {
+                                            $buttonClass = 'btn btn-secondary';
+                                        }
+                                        echo '<div><label id="categorySelectButton_' . $partcategory['id'] . '" class="'. $buttonClass .'" for="partcategory_'.$partcategory['id'].'">'.$partcategory['name'].'<input type="checkbox" id="partcategory_'.$partcategory['id'].'" onclick="addRemovePartcategory(\''.$userid.'\',\''.$partcategory['id'].'\')" name="partcategory_'.$partcategory['id'].'" '.$checked.' style="display:none"></label></div>';}?>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
