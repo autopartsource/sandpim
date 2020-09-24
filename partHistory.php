@@ -21,7 +21,6 @@ $user=new user;
 $partnumber = $_GET['partnumber'];
 $part = $pim->getPart($partnumber);
 $history = $logs->getPartEvents($partnumber, 25);
-
 ?>
 <!DOCTYPE html>
 <html>
