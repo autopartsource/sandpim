@@ -148,13 +148,14 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                             ?>
                         </div>
                         <!-- End of Main Content -->
+                        </div>
                     </div>
                 </div>
-                
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight"></div>
             </div>
         </div>
+    </div>
         
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
