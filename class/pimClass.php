@@ -194,6 +194,28 @@ function countAppsByPartcategories($partcategories)
   return $positions;
  }
 
+ function addFavoritePosition($id,$name)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into position (id,name) values(?,?)'))
+  {
+   $stmt->bind_param('is', $id,$name);
+   $stmt->execute();
+  } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+
+ function removeFavoritePosition($id)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from position where id=?'))
+  {
+   $stmt->bind_param('i', $id);
+   $stmt->execute();
+  } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+ 
  function getApp($appid)
  {
   $db = new mysql; $db->connect();

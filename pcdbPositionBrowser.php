@@ -16,7 +16,7 @@ $pim=new pim;
  $idkeyedpositions=array(); foreach($mypositions as $myposition){$idkeyedpositions[$myposition['id']]=$myposition['name'];}
 
 $searchposition='';
-if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchterm']) && $_GET['searchterm']!='')
+if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchterm']))
 {
     $searchtype=$_GET['searchtype'];
     $searchterm=$_GET['searchterm'];
@@ -24,13 +24,22 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
     switch ($searchtype)
     {
         case 'begins':
-            $allpositions=$pcdb->getPositions($searchterm.'%');
+            if($searchterm!='')
+            {
+                $allpositions=$pcdb->getPositions($searchterm.'%');
+            }
             break;
         case 'contains':
-            $allpositions=$pcdb->getPositions('%'.$searchterm.'%');
+            if($searchterm!='')
+            {
+                $allpositions=$pcdb->getPositions('%'.$searchterm.'%');
+            }
             break;
         case 'ends':
-            $allpositions=$pcdb->getPositions('%'.$searchterm);
+            if($searchterm!='')
+            {
+                $allpositions=$pcdb->getPositions('%'.$searchterm);
+            }
             break;
         case 'selected':
             $allpositions=$mypositions;
@@ -50,21 +59,17 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
             {
              if(document.getElementById('positionid_'+positionid).checked) 
              { // parttype has been clicked on 
-              console.log('add:'+positionid);
-//              var xhr = new XMLHttpRequest();
-//              xhr.open('GET', 'ajaxAddRemoveFavoritePosition.php?positionid='+positionid+'&action=add');
-//              xhr.send();
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddRemoveFavoritePosition.php?positionid='+positionid+'&action=add');
+              xhr.send();
              }
              else
-             { // has been clocked off
-              console.log('remove:'+positionid);
-
-//             var xhr = new XMLHttpRequest();
-//              xhr.open('GET', 'ajaxAddRemoveFavoritePosition.php?positionid='+positionid+'&action=remove');
-//              xhr.send();
+             { // has been clicked off
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddRemoveFavoritePosition.php?positionid='+positionid+'&action=remove');
+              xhr.send();
              }
             }
-
         </script>
     </head>
     <body>
@@ -83,7 +88,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Favorite PCdb Positions<div style="float:right"><a class="btn btn-secondary" href="pcdbPositionBrowser.php?searchtype=selected&searchterm=&submit=Search">Show only already selected positions</a></div></h3>
+                        <h3 class="card-header text-left">Favorite PCdb Positions<div style="float:right"><a class="btn btn-secondary" href="./pcdbPositionBrowser.php?searchtype=selected&searchterm=&submit=Search">Show only already selected positions</a></div></h3>
 
                         <div class="card-body">
                             <form method="get">
