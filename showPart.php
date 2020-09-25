@@ -81,7 +81,7 @@ $lifecyclestatuses=$pcdb->getLifeCycleCodes();
 $descriptioncodes=$pcdb->getPartDescriptionTypeCodes();
 $descriptionlanguagecodes=$pcdb->getPartDescriptionLanguageCodes();
 $pricesheets=$pricing->getPricesheets();
-$history=$logs->getPartsEvents(50);
+$history=$logs->getPartEvents($partnumber,50);
 
 $defaultdescriptionlanguagecode=$configGet->getConfigValue('defaultDescriptionLanguageCode','EN');
 $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCode');
