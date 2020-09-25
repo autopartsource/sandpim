@@ -2128,6 +2128,39 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $databases;
  }
+
+
+ function recordIssue($issuetype,$issuekeyalpha,$issuekeynumeric,$description,$source,$issuehash)
+ {
+  $db=new mysql; $db->connect(); $id=false;
+  if($stmt=$db->conn->prepare('insert into issue (id,status,issuedatetime,issuetype,issuekeyalpha,issuekeynumeric,description,source,issuehash) values(null,0,NOW(),?,?,?,?,?,?)'))
+  {
+   $stmt->bind_param('ssisss', $issuetype,$issuekeyalpha,$issuekeynumeric,$description,$source,$issuehash);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;
+ }
+
+ 
+ function getIssueByHash($hash)
+ {
+  $db=new mysql; $db->connect(); $issue=false;
+  if($stmt=$db->conn->prepare('select * from issue where issuehash=?'))
+  {
+   $stmt->bind_param('s',$hash);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $issue=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'source'=>$row['source']);
+   }
+  }
+  $db->close();
+  return $issue;     
+ }
+ 
  
  
  

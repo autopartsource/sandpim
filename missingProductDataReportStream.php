@@ -6,6 +6,11 @@ include_once('./class/packagingClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 session_start();
+if (!isset($_SESSION['userid']))
+{
+    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
+    exit;
+}
 
 $pim = new pim();
 $logs=new logs();
@@ -35,6 +40,11 @@ foreach($partnumbers as $partnumber)
   {
    $row=array($partnumber,'core','missing GTIN');
    $writer->writeSheetRow('Sheet1', $row);
+   $issuehash=md5('PART/GTIN/MISSING'.$partnumber.'missing GTIN'.'manual report run');
+   if(!$pim->getIssueByHash($issuehash))
+   {
+    $pim->recordIssue('PART/GTIN/MISSING',$partnumber,0,'missing GTIN','manual report run', $issuehash);
+   }
   }
      
   $packages=$packaging->getPackagesByPartnumber($partnumber);
@@ -42,6 +52,11 @@ foreach($partnumbers as $partnumber)
   {// no package records for this item
    $row=array($partnumber,'package','no packages');
    $writer->writeSheetRow('Sheet1', $row);
+   $issuehash=md5('PART/PACKAGE/MISSING'.$partnumber.'missing package'.'manual report run');
+   if(!$pim->getIssueByHash($issuehash))
+   {
+    $pim->recordIssue('PART/PACKAGE/MISSING',$partnumber,0,'missing package','manual report run', $issuehash);
+   }
   }
   else
   {// package records exist - look for zero values in weight and dims
@@ -53,7 +68,13 @@ foreach($partnumbers as $partnumber)
    if($foundproblem)
    {
     $row=array($partnumber,'package','0 weight package');
-    $writer->writeSheetRow('Sheet1', $row);      
+    $writer->writeSheetRow('Sheet1', $row);
+    
+    $issuehash=md5('PART/PACKAGE/WEIGHT'.$partnumber.'0 weight package'.'manual report run');
+    if(!$pim->getIssueByHash($issuehash))
+    {
+     $pim->recordIssue('PART/PACKAGE/WEIGHT',$partnumber,0,'0 weight package','manual report run', $issuehash);
+    }
    }
    
    $foundproblem=false;
@@ -65,6 +86,11 @@ foreach($partnumbers as $partnumber)
    {
     $row=array($partnumber,'package','0 shipping dims package');
     $writer->writeSheetRow('Sheet1', $row);      
+    $issuehash=md5('PART/PACKAGE/DIMS'.$partnumber.'0 shipping dims package'.'manual report run');
+    if(!$pim->getIssueByHash($issuehash))
+    {
+     $pim->recordIssue('PART/PACKAGE/DIMS',$partnumber,0,'0 shipping dims package','manual report run', $issuehash);
+    }
    }
   }
 
@@ -80,7 +106,7 @@ $writer->setAuthor('SandPIM');
 $xlsxdata=$writer->writeToString();
 $streamXLSX=true;
 
-$logs->logSystemEvent('report', 0, 'Missing product data - '.count($partnumbers).' parts');
+$logs->logSystemEvent('report', $_SESSION['userid'], 'Missing product data - '.count($partnumbers).' parts');
 
 if($streamXLSX)
 {   
