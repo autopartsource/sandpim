@@ -20,16 +20,32 @@ $pim = new pim;
 $logs = new logs;
 
 $configGet = new configGet;
-$appshistory = $logs->getAppsEvents(10);
-$assetshistory = $logs->getAssetsEvents(10);
-$partshistory = $logs->getPartsEvents(10);
-$systemhistory = $logs->getSystemEvents('%', false, 10);
+$appshistory = $logs->getAppsEvents(20);
+$assetshistory = $logs->getAssetsEvents(20);
+$partshistory = $logs->getPartsEvents(20);
+$systemhistory = $logs->getSystemEvents('%', false, 20);
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
 <!DOCTYPE html>
 <html>
     <head>
+        <script>
+            function deleteIssue(id)
+            {
+             var issuediv = document.getElementById('issue_'+id);
+             issuediv.parentNode.removeChild(issuediv);
+             
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeleteIssue.php?id='+id);
+             xhr.onload = function()
+             {
+             };
+             xhr.send();
+            }
+
+        </script>
+            
         <?php include('./includes/header.php'); ?>
     </head>
     <body>
@@ -49,6 +65,25 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                         
                         <!-- Main Content -->
                         <div class="card-body">
+                            
+                            <div class="card">
+                                <h5 class="card-header text-left">Issues</h5>
+                                <div class="card-body">
+                                    <div id="issues">
+
+<?php $issues=$pim->getIssues('PART/%','%',0,20); 
+foreach($issues as $issue)
+{
+ echo '<div style="padding:2px;" id="issue_'.$issue['id'].'"><a href="./showPart.php?partnumber='.$issue['issuekeyalpha'].'">'.$issue['issuekeyalpha'].'</a>: '.$issue['description'].' <button onclick="deleteIssue(\''.$issue['id'].'\')">x</button></div>';
+}
+?>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
                             <?php
                             if(count($appshistory) || count($assetshistory) || count($partshistory) || count($systemhistory)) {
                             echo '<div class="card">

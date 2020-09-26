@@ -2161,8 +2161,50 @@ function countAppsByPartcategories($partcategories)
   return $issue;     
  }
  
+ function getIssueById($id)
+ {
+  $db=new mysql; $db->connect(); $issue=false;
+  if($stmt=$db->conn->prepare('select * from issue where id=?'))
+  {
+   $stmt->bind_param('i',$id);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $issue=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'source'=>$row['source']);
+   }
+  }
+  $db->close();
+  return $issue;     
+ }
  
+ function getIssues($type,$keyalpha,$keynumeric,$limit)
+ {
+  $db=new mysql; $db->connect(); $issues=array();
+  if($stmt=$db->conn->prepare('select * from issue where issuetype like ? and issuekeyalpha like ? and issuekeynumeric=? limit ?'))
+  {
+   $stmt->bind_param('ssii',$type,$keyalpha,$keynumeric,$limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $issues[]=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'source'=>$row['source']);
+   }
+  }
+  $db->close();
+  return $issues;     
+ }
  
+ function deleteIssue($id)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from issue where id=?'))
+  {
+   $stmt->bind_param('i',$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
 
 }?>

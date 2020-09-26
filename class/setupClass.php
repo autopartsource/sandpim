@@ -651,7 +651,7 @@ class setup
         issuehash varchar(255) not null,
         PRIMARY KEY (id),INDEX idx_issuehash (issuehash),INDEX idx_type_keyalpha (issuetype,issuekeyalpha), INDEX idx_type_keynumeric (issuetype,issuekeynumeric) )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - issues table ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - issues table ('.$db->conn->error.')';}
-
+        
         $sql="CREATE TABLE system_history (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         eventdatetime datetime not null,
