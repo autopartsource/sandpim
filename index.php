@@ -69,18 +69,71 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                             <div class="card">
                                 <h5 class="card-header text-left">Issues</h5>
                                 <div class="card-body">
-                                    <div id="issues">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="partissues-tab" data-toggle="tab" href="#partissues" role="tab" aria-controls="partissues" aria-selected="true">Parts</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="appissues-tab" data-toggle="tab" href="#appissues" role="tab" aria-controls="appissues" aria-selected="true">Apps</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="assetissues-tab" data-toggle="tab" href="#assetissues" role="tab" aria-controls="assetissues" aria-selected="true">Assets</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="systemissues-tab" data-toggle="tab" href="#systemissues" role="tab" aria-controls="systemissues" aria-selected="true">System</a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane fade show active mt-3" id="main" role="tabpanel" aria-labelledby="main-tab">
+                                            Open Issues (from all sources)
+                                        </div>
 
-<?php $issues=$pim->getIssues('PART/%','%',0,20); 
-foreach($issues as $issue)
-{
- echo '<div style="padding:2px;" id="issue_'.$issue['id'].'"><a href="./showPart.php?partnumber='.$issue['issuekeyalpha'].'">'.$issue['issuekeyalpha'].'</a>: '.$issue['description'].' <button onclick="deleteIssue(\''.$issue['id'].'\')">x</button></div>';
-}
-?>
+                                        
+                                        <div class="tab-pane fade mt-3" id="partissues" role="tabpanel" aria-labelledby="partissues-tab">
+                                        <?php
+                                        $partissues=$pim->getIssues('PART/%','%',0,20);
+                                        foreach($partissues as $partissue)
+                                        {
+                                         echo '<div style="padding:2px;" id="issue_'.$partissue['id'].'"><a href="./showPart.php?partnumber='.$partissue['issuekeyalpha'].'">'.$partissue['issuekeyalpha'].'</a>: '.$partissue['description'].' <button onclick="deleteIssue(\''.$partissue['id'].'\')">x</button></div>';
+                                        }?>
 
+                                        </div>
 
+                                        <div class="tab-pane fade mt-3" id="appissues" role="tabpanel" aria-labelledby="appissues-tab">
+                                        <?php
+                                        $appissues=$pim->getIssues('APP/%','%','%',20);
+                                        foreach($appissues as $appissue)
+                                        {
+                                         echo '<div style="padding:2px;" id="issue_'.$appissue['id'].'"><a href="./showApp.php?appid='.$appissue['issuekeynumeric'].'">App ID '.$appissue['issuekeynumeric'].'</a>: '.$appissue['description'].' <button onclick="deleteIssue(\''.$appissue['id'].'\')">x</button></div>';
+                                        }?>
+                                        </div>
+                                        
+
+                                        <div class="tab-pane fade mt-3" id="assetissues" role="tabpanel" aria-labelledby="assetissues-tab">'
+                                            <table><tr><th>Description</th><th>Source</th></tr>
+                                                <tr><td>Asset problem</td><td>Automated Auditor</td></tr>
+                                                <tr><td>Asset problem</td><td>Automated Auditor</td></tr>
+                                                <tr><td>Worst asset problem</td><td>Manual Entry (human person name)</td></tr>
+                                            </table>
+                                        </div>
+
+                                        
+                                        
+                                        <div class="tab-pane fade mt-3" id="systemissues" role="tabpanel" aria-labelledby="systemissues-tab">'
+                                            <table><tr><th>Description</th><th>Source</th></tr>
+                                                <tr><td>Bad System problem</td><td>Mysource</td></tr>
+                                                <tr><td>Other Bad problem</td><td>Automated Auditor</td></tr>
+                                            </table>
+                                        </div>
+                                        
+                                        
+                                        
                                     </div>
+
                                 </div>
+                                
+                                
+                                
                             </div>
                             
                             

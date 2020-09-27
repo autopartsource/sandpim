@@ -50,6 +50,23 @@ class pim
   return $apps;
  }
 
+ function getAppIDsByRandom($limit)
+ {
+  $db = new mysql; $db->connect(); $ids=array();
+  if($stmt=$db->conn->prepare('select id from application order by rand() limit ?'))
+  {
+   $stmt->bind_param('i', $limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $ids[]=$row['id'];
+   }
+  }
+  $db->close();
+  return $ids;
+ }
+ 
  
  function typicalAppPosition($partnumber)
  {
@@ -471,7 +488,6 @@ function countAppsByPartcategories($partcategories)
   return $parts;
  }
 
- //ccc
  function getPartnumbersByPartcategories($partcategories)
  {
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
@@ -488,7 +504,49 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $partnumbers;
  }
+
+
+ function getPartnumbersByGTIN($gtin)
+ {
+  $db = new mysql; $db->connect(); $partnumbers=array();
+  if(strlen(trim($gtin))>0)
+  {
+   if($stmt=$db->conn->prepare('select partnumber from part where GTIN=?'))
+   { 
+    $stmt->bind_param('s', $gtin);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $partnumbers[]=$row['partnumber'];
+    }
+   }
+   $db->close();
+  }
+  return $partnumbers;
+ }
+
+
+
+
  
+ // for continuous background auditing (small selections of the entire part population)
+ function getPartnumbersByRandom($limit)
+ {
+  $db = new mysql; $db->connect(); $partnumbers=array();
+  if($stmt=$db->conn->prepare('select partnumber from part order by rand() limit ?'))
+  {
+   $stmt->bind_param('i', $limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $partnumbers[]=$row['partnumber'];
+   }
+  }
+  $db->close();
+  return $partnumbers;
+ }
  
  
 
@@ -2111,6 +2169,47 @@ function countAppsByPartcategories($partcategories)
   return ($check == ($sum_rounded_up - $sum));
  }
 
+function gtinCheckDigit($barcode)
+{
+  //checks validity of: GTIN-8, GTIN-12, GTIN-13, GTIN-14, GSIN, SSCC
+  //see: http://www.gs1.org/how-calculate-check-digit-manually
+  $barcode = (string) $barcode;
+  //we accept only digits
+  if (!preg_match("/^[0-9]+$/", $barcode)) {return false;}
+  //check valid lengths:
+  $l = strlen($barcode);
+  if(!in_array($l, [8,12,13,14,17,18])){ return false;}
+  //get check digit
+  $check = substr($barcode, -1);
+  $barcode = substr($barcode, 0, -1);
+  $sum_even = $sum_odd = 0;
+  $even = true;
+  while(strlen($barcode)>0) 
+  {
+   $digit = substr($barcode, -1);
+   if($even)
+   {
+    $sum_even += 3 * $digit;
+   }
+   else 
+   {
+    $sum_odd += $digit;
+   }
+   $even = !$even;
+   $barcode = substr($barcode, 0, -1);
+  }
+  $sum = $sum_even + $sum_odd;
+  $sum_rounded_up = ceil($sum/10) * 10;
+  return ($sum_rounded_up - $sum);
+}
+
+
+
+
+
+
+
+
  function getAutocareDatabaseList($type)
  {
   $db=new mysql; $db->connect();
@@ -2181,9 +2280,16 @@ function countAppsByPartcategories($partcategories)
  function getIssues($type,$keyalpha,$keynumeric,$limit)
  {
   $db=new mysql; $db->connect(); $issues=array();
-  if($stmt=$db->conn->prepare('select * from issue where issuetype like ? and issuekeyalpha like ? and issuekeynumeric=? limit ?'))
+  
+  $numericclause='';
+  if(intval($keynumeric)!=0)
   {
-   $stmt->bind_param('ssii',$type,$keyalpha,$keynumeric,$limit);
+   $numericclause=' and issuekeynumeric='.intval($keynumeric);
+  }
+    
+  if($stmt=$db->conn->prepare('select * from issue where issuetype like ? and issuekeyalpha like ? '.$numericclause.' limit ?'))
+  {
+   $stmt->bind_param('ssi',$type,$keyalpha,$limit);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())

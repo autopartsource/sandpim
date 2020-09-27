@@ -30,6 +30,29 @@ class pcdb
   return $name;
  }
 
+ function validParttypePosition($parttypeid,$positionid)
+ {
+     
+  $db = new mysql; $db->dbname=$db->pcdbname; $valid=false;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect();
+  if($stmt=$db->conn->prepare('select * from PartPosition where PartTerminologyID=? and PositionID=?'))
+  {
+   $stmt->bind_param('ii', $parttypeid, $positionid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $valid=true;
+   }
+  }
+  $db->close();
+  return $valid;
+ }
+ 
+ 
+ 
+ 
  function parttypeName($parttypeid)
  {
   $name='not found';
