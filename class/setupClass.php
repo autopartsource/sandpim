@@ -647,6 +647,7 @@ class setup
         issuekeyalpha varchar(255) not null,
         issuekeynumeric int UNSIGNED NOT NULL,
         description text not null,
+        notes text,
         source varchar(255) not null,
         issuehash varchar(255) not null,
         PRIMARY KEY (id),INDEX idx_issuehash (issuehash),INDEX idx_type_keyalpha (issuetype,issuekeyalpha), INDEX idx_type_keynumeric (issuetype,issuekeynumeric) )";
