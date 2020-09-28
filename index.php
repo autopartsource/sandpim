@@ -110,20 +110,23 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         
 
                                         <div class="tab-pane fade mt-3" id="assetissues" role="tabpanel" aria-labelledby="assetissues-tab">'
-                                            <table><tr><th>Description</th><th>Source</th></tr>
-                                                <tr><td>Asset problem</td><td>Automated Auditor</td></tr>
-                                                <tr><td>Asset problem</td><td>Automated Auditor</td></tr>
-                                                <tr><td>Worst asset problem</td><td>Manual Entry (human person name)</td></tr>
-                                            </table>
+                                        <?php
+                                        $assetissues=$pim->getIssues('ASSET/%','%','%',20);
+                                        foreach($assetissues as $assetissue)
+                                        {
+                                         echo '<div style="padding:2px;" id="issue_'.$assetissue['id'].'"><a href="./showAsset.php?assetid='.$assetissue['issuekeyalpha'].'">'.$assetissue['issuekeyalpha'].'</a>: '.$assetissue['description'].' <button onclick="deleteIssue(\''.$assetissue['id'].'\')">x</button></div>';
+                                        }?>
                                         </div>
 
                                         
                                         
                                         <div class="tab-pane fade mt-3" id="systemissues" role="tabpanel" aria-labelledby="systemissues-tab">'
-                                            <table><tr><th>Description</th><th>Source</th></tr>
-                                                <tr><td>Bad System problem</td><td>Mysource</td></tr>
-                                                <tr><td>Other Bad problem</td><td>Automated Auditor</td></tr>
-                                            </table>
+                                        <?php
+                                        $systemissues=$pim->getIssues('SYSTEM/%','%','%',20);
+                                        foreach($systemissues as $systemissue)
+                                        {
+                                         echo '<div style="padding:2px;" id="issue_'.$systemissue['id'].'">'.$systemissue['description'].' <button onclick="deleteIssue(\''.$systemissue['id'].'\')">x</button></div>';
+                                        }?>
                                         </div>
                                         
                                         
