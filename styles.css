@@ -195,10 +195,10 @@ table, th, td {
 
 h1, h2, h3 {text-align: center;}
 
-.nav-link[data-toggle].collapsed:before {
+.side-nav-link[data-toggle].collapsed:before {
     content: " ▾";
 }
-.nav-link[data-toggle]:not(.collapsed):before {
+.side-nav-link[data-toggle]:not(.collapsed):before {
     content: " ▴";
 }
 

@@ -2253,7 +2253,7 @@ function gtinCheckDigit($barcode)
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $issue=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'notes'=>$row['notes'],'source'=>$row['source'],'issuehash'=>$row['issuehash']);
+    $issue=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'notes'=>base64_decode($row['notes']),'source'=>$row['source'],'issuehash'=>$row['issuehash']);
    }
   }
   $db->close();
@@ -2270,7 +2270,7 @@ function gtinCheckDigit($barcode)
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $issue=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'notes'=>$row['notes'],'source'=>$row['source'],'issuehash'=>$row['issuehash']);
+    $issue=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'notes'=>base64_decode($row['notes']),'source'=>$row['source'],'issuehash'=>$row['issuehash']);
    }
   }
   $db->close();
@@ -2294,7 +2294,7 @@ function gtinCheckDigit($barcode)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $issues[]=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'notes'=>$row['notes'],'source'=>$row['source'],'issuehash'=>$row['issuehash']);
+    $issues[]=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'notes'=>base64_decode($row['notes']),'source'=>$row['source'],'issuehash'=>$row['issuehash']);
    }
   }
   $db->close();
@@ -2310,6 +2310,29 @@ function gtinCheckDigit($barcode)
    $stmt->execute();
   }
   $db->close();
+ }
+ 
+ function updateIssueNotes($id, $notes) {
+      $db = new mysql; 
+        $db->connect();
+        if($stmt=$db->conn->prepare('update issue set notes=? where id=?'))
+        {
+         $encodednotes=base64_encode($notes);
+         $stmt->bind_param('si', $encodednotes,$id);
+         $stmt->execute();
+        }
+        $db->close();
+ }
+ 
+ function updateIssueStatus($id, $status) {
+      $db = new mysql; 
+        $db->connect();
+        if($stmt=$db->conn->prepare('update issue set status=? where id=?'))
+        {
+         $stmt->bind_param('ii', $status,$id);
+         $stmt->execute();
+        }
+        $db->close();
  }
  
 
