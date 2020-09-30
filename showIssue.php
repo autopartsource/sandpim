@@ -85,7 +85,6 @@ foreach ($issues as $issue) {
 <?php include('./includes/header.php'); ?>
         <script>
             function renderIssue(id) {
-                console.log(id);
 
                 var issueData = atob(document.getElementById('issue_' + id).getAttribute('data-issue'));
                 var issueObject = JSON.parse(issueData);
@@ -94,6 +93,11 @@ foreach ($issues as $issue) {
                 document.getElementById("issueBreadcrumb").innerHTML = issueObject.issuetype;
                 document.getElementById("issueDescription").innerHTML = issueObject.description;
                 document.getElementById("issueSource").innerHTML = issueObject.source;
+                document.getElementById("issueDatetime").innerHTML = issueObject.issuedatetime;
+                document.getElementById("issueNotes").innerHTML = issueObject.notes;
+                
+                
+                
                 document.getElementById("issueFooter").innerHTML = issueObject.issuedatetime;
 
                 if (issueObject.status == 1) {
@@ -108,10 +112,31 @@ foreach ($issues as $issue) {
                     document.getElementById("issueStatus").className = "card-header text-white bg-danger";
                 }
                 
+                
+                if(issueObject.issuetype.substring(0, 5)=='PART/')
+                {
+                 document.getElementById("issuekeydisplay").innerHTML='Partnumber: <a href="./showPart.php?partnumber='+issueObject.issuekeyalpha+'">'+issueObject.issuekeyalpha+'</a>';
+                }
+                else
+                {
+                 if(issueObject.issuetype.substring(0, 4)=='APP/')
+                 {
+                  document.getElementById("issuekeydisplay").innerHTML='App: <a href="./showApp.php?appid='+issueObject.issuekeynumeric+'">'+issueObject.issuekeynumeric+'</a>';
+                 }
+                 else
+                 {
+                  if(issueObject.issuetype.substring(0, 6)=='ASSET/')
+                  {
+                   document.getElementById("issuekeydisplay").innerHTML='Asset: <a href="./showAsset.php?assetid='+issueObject.issuekeyalpha+'">'+issueObject.issuekeyalpha+'</a>';
+                  }
+                  else
+                  {// unknown type
+                   document.getElementById("issuekeydisplay").innerHTML=issueObject.issuekeyalpha+','+issueObject.issuekeynumeric;
+                  }
+                 }
+                }
+                
                 document.getElementById("issueId").setAttribute("data-issueid",issueObject.id);
-
-                console.log(issueObject);
-
             }
 
             function updateIssueNotes()
@@ -129,7 +154,7 @@ foreach ($issues as $issue) {
 
         </script>
     </head>
-    <body>
+    <body onload="renderIssue(<?php echo $selectedissue['id']?>)">
         <!-- Navigation Bar -->
 <?php include('topnav.php'); ?>
 
@@ -138,34 +163,6 @@ foreach ($issues as $issue) {
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft scroll" id="sidebar">
-                    <!--
-                    <ul class="nav flex-column flex-nowrap overflow-hidden">
-                        <li class="nav-item">
-                            <a class="nav-link collapsed text-truncate side-nav-link" href="#submenu1" data-toggle="collapse" data-target="#submenu1"><span class="d-none d-sm-inline">Parts</span></a>
-                            <div class="collapse" id="submenu1" aria-expanded="false">
-                                <ul class="flex-column pl-2 nav">
-                                    <li class="nav-item">
-                                        <a class="nav-link collapsed text-truncate side-nav-link" href="#submenu1sub1" data-toggle="collapse" data-target="#submenu1sub1"><span class="d-none d-sm-inline">GTIN</span></a>
-                                        <div class="collapse" id="submenu1sub1" aria-expanded="false">
-                                            <ul class="flex-column nav pl-4">
-                                                <li class="nav-item">
-                                                    <a class="nav-link p-1 side-nav-link" href="./showIssue.php?id=<?php echo $selectedissue['id'] ?>"><?php echo $selectedissue['issuekeyalpha'] ?></a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link collapsed text-truncate side-nav-link" href="#submenu1" data-toggle="collapse" data-target="#submenu1sub2"><span class="d-none d-sm-inline">Package</span></a>
-                                        <div class="collapse" id="submenu1sub2" aria-expanded="false">
-                                            
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                    -->
-
                     <div>
                         <?php
                         echo '<ul class="nav flex-column flex-nowrap overflow-hidden">';
@@ -184,7 +181,6 @@ foreach ($issues as $issue) {
                                 } else {// this node contains children 
                                     echo '<a class="nav-link collapsed text-truncate side-nav-link" href="#' . $key0 . '-' . $key1 . '" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '"><span class="d-none d-sm-inline">' . $key1 . '</span></a>';
                                     echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '" aria-expanded="false">';
-                                    //echo '- ' . $key1 . '<br/>';
                                 }
 
                                 foreach ($data1 as $key2 => $data2) {
@@ -196,7 +192,6 @@ foreach ($issues as $issue) {
                                     } else {// this node contains children 
                                         echo '<a class="nav-link collapsed text-truncate side-nav-link" href="#' . $key0 . '-' . $key1 . '-' . $key2 . '" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '-' . $key2 . '"><span class="d-none d-sm-inline">' . $key2 . '</span></a>';
                                         echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '-' . $key2 . '" aria-expanded="false">';
-                                        //echo '- - ' . $key2 . '<br/>'; 
                                     }
 
                                     foreach ($data2 as $key3 => $data3) {
@@ -251,7 +246,7 @@ foreach ($issues as $issue) {
                                     <div class="col md-4">
                                         <div class="card shadow-sm">
                                             <!-- Header -->
-                                            <h6 class="card-header text-left">Item - <?php echo $selectedissue['issuekeyalpha']; ?></h6>
+                                            <h6 class="card-header text-left"><div id="issuekeydisplay"></div></h6>
                                         </div>
                                     </div>
                                     <div class="col md-4">
@@ -271,7 +266,7 @@ foreach ($issues as $issue) {
                                     <div class="col md-4">
                                         <div class="card shadow-sm">
                                             <!-- Header -->
-                                            <h6 class="card-header text-left">Reported by: <span id="issueSource" class="text-info"><?php echo $selectedissue['source']; ?></span></h6>
+                                            <h6 class="card-header text-left">Reported by: <span id="issueSource" class="text-info"></span> on <span id="issueDatetime" class="text-info"></span></h6>
                                         </div>
                                     </div>
                                 </div>
@@ -279,18 +274,15 @@ foreach ($issues as $issue) {
                                     <div class="col md-6">
                                         <div class="card shadow-sm">
                                             <h6 class="card-header text-left">Description</h6>
-
-                                            <div id="issueDescription" class="card-body">
-                                                <?php echo $selectedissue['description']; ?>
-                                            </div>
+                                            <div id="issueDescription" class="card-body"></div>
                                         </div>
                                     </div>
                                     <div class="col md-6">
                                         <div class="card shadow-sm">
-                                            <h6 class="card-header text-left"> Notes</h6>
+                                            <h6 class="card-header text-left">Notes</h6>
 
                                             <div class="card-body">
-                                                <textarea id="issueNotes" type=""><?php echo $selectedissue['notes']; ?></textarea>
+                                                <textarea id="issueNotes"></textarea>
                                                 <button onclick="updateIssueNotes();" >Save</button>
                                             </div>
                                         </div>

@@ -473,7 +473,22 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
-                    
+
+                <?php $issues=$pim->getIssues('PART/%', $partnumber, 0, 10);
+                if(count($issues)>0){?>
+                <div class="card shadow-sm">
+                    <h5 class="card-header">
+                        Issues
+                    </h5>
+                    <div class="card-body">
+                        <?php
+                        foreach($issues as $issue)
+                        {
+                            echo '<div><a href="showIssue.php?id='.$issue['id'].'">'.$issue['description'].'</a></div>';
+                        }?>
+                    </div>
+                </div>
+                <?php }?>
                 </div>
                 
                 <!-- Main Content -->
