@@ -3,6 +3,7 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/qdbClass.php');
+include_once('./class/assetClass.php');
 $navCategory = 'applications';
 
 session_start();
@@ -12,6 +13,7 @@ $vcdb=new vcdb;
 $pcdb=new pcdb;
 $pim=new pim;
 $qdb=new qdb;
+$asset=new asset();
 $userid=$_SESSION['userid'];
 
 $appid=intval($_GET['appid']);
@@ -111,8 +113,8 @@ $nicefitmentstring=implode('; ',$nicefitmentarray);
 
 $allattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid']); //print_r($allattributes);
 
-$assets=array();
-$assets_linked_to_item=array();
+$appassets=array();
+$partassets=$asset->getAssetsConnectedToPart($app['partnumber']); print_r($partassets);
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $favoritepositions=$pim->getFavoritePositions();
 $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
@@ -525,6 +527,26 @@ if(isset($_GET['categories']))
              location.href='convertNoteToQdb.php?attributeid='+id;
             }
 
+            function addAsset()
+            {
+
+
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddAppAsset.php?&appid=<?php echo $appid;?>'+assetid);
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
+             };
+             xhr.send();
+
+
+
+
+
+            }
+
+
         </script>
     </head>
     <body onload="setStatusColor()">
@@ -662,29 +684,18 @@ if(isset($_GET['categories']))
                                     <tr><th>Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp']; ?>"/><button onclick='updateApp(<?php echo $appid; ?>,"text","quantityperapp");'>Update Qty</button></td></tr>
                                     <tr><th>Fitment<br/>Assets</th>
                                         <td align="right">
-                                            <?php if (count($assets)) {
-                                                foreach ($assets as $asset) {
-                                                    echo '<div><a title="view this asset in new browser window" href="' . $asset['uri'] . '" target="_blank">' . $asset['assetId'] . '</a> (representation:' . $asset['representation'] . ', sequence: ' . $asset['assetItemOrder'] . ') <a title="remove this asset from the application" href="./showAdminApplication.php?id=' . intval($_GET['id']) . '&removeasset=' . $asset['id'] . '">x</a><div>';
+                                            <?php if (count($appassets)) {
+                                                foreach ($appassets as $appasset) {
+                                                    echo '<div><a title="view this asset in new browser window" href="' . $appasset['uri'] . '" target="_blank">' . $appasset['assetId'] . '</a> (representation:' . $appasset['representation'] . ', sequence: ' . $appasset['assetItemOrder'] . ') <a title="remove this asset from the application" href="./showAdminApplication.php?id=' . intval($_GET['id']) . '&removeasset=' . $appasset['id'] . '">x</a><div>';
                                                 }
                                             } ?>
                                             <div>
-                                                Asset <select name="assetid"><option value=""></option>
-                                                <?php
-                                                foreach ($assets_linked_to_item as $asset) {
-                                                    $already_applied = false;
-                                                    foreach ($assets as $tempasset) {
-                                                        if ($tempasset['assetId'] == $asset['assetId']) {
-                                                            $already_applied = true;
-                                                        }
-                                                    } if ($already_applied) {
-                                                        continue;
-                                                    }
-                                                    echo '<option value="' . $asset['assetId'] . '">' . $asset['fileType'] . ' - ' . $asset['filename'] . ' (' . $asset['description'] . ')</option>';
-                                                }
-                                                ?>
+                                                Asset <select name="assetid">
+                                                <?php foreach ($partassets as $partasset) {echo '<option value="' . $partasset['assetid'] . '">'.$partasset['filename'].'</option>';}?>
                                                 </select>
                                                 Sequence <input type="text" name="assetorder" size="3" value="1"/>
                                                 <select name="representation"><option value="A">Actual</option><option value="R">Representative</option></select>
+                                                <button onclick="addAsset();">+</button>
                                             </div>
                                         </td>
                                     </tr>

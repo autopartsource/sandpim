@@ -28,6 +28,7 @@ foreach ($issues as $issue) {
 
             switch ($i) {
                 case 0:
+                    // highest (root) level 
                     if (!array_key_exists($issuebits[0], $tree)) {
                         $tree[$issuebits[0]] = array();
                     }
@@ -37,6 +38,7 @@ foreach ($issues as $issue) {
 
                     break;
                 case 1:
+                    // sub-level
                     if (!array_key_exists($issuebits[1], $tree[$issuebits[0]])) {
                         $tree[$issuebits[0]][$issuebits[1]] = array();
                     }
@@ -46,6 +48,7 @@ foreach ($issues as $issue) {
 
                     break;
                 case 2:
+                    // sub-sub-level
                     if (!array_key_exists($issuebits[2], $tree[$issuebits[0]][$issuebits[1]])) {
                         $tree[$issuebits[0]][$issuebits[1]][$issuebits[2]] = array();
                     }
@@ -55,6 +58,7 @@ foreach ($issues as $issue) {
 
                     break;
                 case 3:
+                    // sub-sub-sub-level
                     if (!array_key_exists($issuebits[3], $tree[$issuebits[0]][$issuebits[1]][$issuebits[2]])) {
                         $tree[$issuebits[0]][$issuebits[1]][$issuebits[2]][$issuebits[3]] = array();
                     }
@@ -64,6 +68,7 @@ foreach ($issues as $issue) {
 
                     break;
                 case 4:
+                    // sub-sub-sub-sub-level
                     if (!array_key_exists($issuebits[4], $tree[$issuebits[0]][$issuebits[1]][$issuebits[2]][$issuebits[3]])) {
                         $tree[$issuebits[0]][$issuebits[1]][$issuebits[2]][$issuebits[3]][$issuebits[4]] = array();
                     }
@@ -204,8 +209,6 @@ foreach ($issues as $issue) {
                                         } else {// this node contains children
                                             echo '<li class="nav-item">';
                                             echo '<div>' . $key3 . '</div>';
-                                            //echo '<a class="nav-link p-1 side-nav-link" href="./showIssue.php?id='.$key3.'">'.$key3.'</a>';
-                                            //echo $key3;
                                             echo '</li>';
                                         }
 
@@ -297,7 +300,7 @@ foreach ($issues as $issue) {
                     </div>
                 </div>
                 <!-- End of Main Content -->
-
+<?php print_r($nodes);?>
             </div>
         </div>    
         <!-- End of Content Container -->
