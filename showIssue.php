@@ -89,59 +89,80 @@ foreach ($issues as $issue) {
     <head>
 <?php include('./includes/header.php'); ?>
         <script>
+                                
             function renderIssue(id) {
-
-                var issueData = atob(document.getElementById('issue_' + id).getAttribute('data-issue'));
-                var issueObject = JSON.parse(issueData);
-
-                document.getElementById("issueId").innerHTML = issueObject.id;
-                document.getElementById("issueBreadcrumb").innerHTML = issueObject.issuetype;
-                document.getElementById("issueDescription").innerHTML = issueObject.description;
-                document.getElementById("issueSource").innerHTML = issueObject.source;
-                document.getElementById("issueDatetime").innerHTML = issueObject.issuedatetime;
-                document.getElementById("issueNotes").innerHTML = issueObject.notes;
                 
-                
-                
-                document.getElementById("issueFooter").innerHTML = issueObject.issuedatetime;
+                if(id) {
 
-                if (issueObject.status == 1) {
-                    document.getElementById("issueStatus").innerHTML = "Issue Resolved";
-                    document.getElementById("issueStatus").className = "card-header text-white bg-success";
-                } else if (issueObject.status == 2) {
-                    document.getElementById("issueStatus").innerHTML = "Issue In Review";
-                    document.getElementById("issueStatus").className = "card-header text-white bg-warning";
+                    var issueData = atob(document.getElementById('issue_' + id).getAttribute('data-issue'));
+                    var issueObject = JSON.parse(issueData);
+                    
+                    document.getElementById("IssueContent").setAttribute("style","");
 
+                    document.getElementById("issueId").innerHTML = issueObject.id;
+                    document.getElementById("issueBreadcrumb").innerHTML = issueObject.issuetype;
+                    document.getElementById("issueDescription").innerHTML = issueObject.description;
+                    document.getElementById("issueSource").innerHTML = issueObject.source;
+                    document.getElementById("issueDatetime").innerHTML = issueObject.issuedatetime;
+                    document.getElementById("issueNotes").innerHTML = issueObject.notes;
+
+
+                    if (issueObject.status == 1) {
+                        document.getElementById("issueStatus").innerHTML = "Issue Resolved";
+                        document.getElementById("issueStatus").className = "card-header text-white bg-success";
+                    } else if (issueObject.status == 2) {
+                        document.getElementById("issueStatus").innerHTML = "Issue In Review";
+                        document.getElementById("issueStatus").className = "card-header text-white bg-warning";
+
+                    } else {
+                        document.getElementById("issueStatus").innerHTML = "Issue Open";
+                        document.getElementById("issueStatus").className = "card-header text-white bg-danger";
+                    }
+
+
+                    if(issueObject.issuetype.substring(0, 5)=='PART/')
+                    {
+                     document.getElementById("issuekeydisplay").innerHTML='Partnumber: <a href="./showPart.php?partnumber='+issueObject.issuekeyalpha+'">'+issueObject.issuekeyalpha+'</a>';
+                    }
+                    else
+                    {
+                     if(issueObject.issuetype.substring(0, 4)=='APP/')
+                     {
+                      document.getElementById("issuekeydisplay").innerHTML='App: <a href="./showApp.php?appid='+issueObject.issuekeynumeric+'">'+issueObject.issuekeynumeric+'</a>';
+                     }
+                     else
+                     {
+                      if(issueObject.issuetype.substring(0, 6)=='ASSET/')
+                      {
+                       document.getElementById("issuekeydisplay").innerHTML='Asset: <a href="./showAsset.php?assetid='+issueObject.issuekeyalpha+'">'+issueObject.issuekeyalpha+'</a>';
+                      }
+                      else
+                      {// unknown type
+                       document.getElementById("issuekeydisplay").innerHTML=issueObject.issuekeyalpha+','+issueObject.issuekeynumeric;
+                      }
+                     }
+                    }
+
+                    document.getElementById("issueId").setAttribute("data-issueid",issueObject.id);
+                    document.getElementById('issue_' + id).setAttribute("class","btn btn-primary");
+                    
+                    issueTypeArray = issueObject.issuetype.split("/");
+                    console.log(issueTypeArray.length);
+                    
+                    var totalPath = issueTypeArray[0];
+                    document.getElementById(totalPath).setAttribute("class","collapse show");
+                    console.log(totalPath);
+                    
+                    for(var i = 1; i < issueTypeArray.length ; i++) {
+                        totalPath += "-" + issueTypeArray[i];
+                        document.getElementById(totalPath).setAttribute("class","collapse show");
+                        console.log(totalPath);
+                    }
+                    
                 } else {
-                    document.getElementById("issueStatus").innerHTML = "Issue Open";
-                    document.getElementById("issueStatus").className = "card-header text-white bg-danger";
+                    document.getElementById("IssueContent").setAttribute("style","display:none;");
                 }
                 
-                
-                if(issueObject.issuetype.substring(0, 5)=='PART/')
-                {
-                 document.getElementById("issuekeydisplay").innerHTML='Partnumber: <a href="./showPart.php?partnumber='+issueObject.issuekeyalpha+'">'+issueObject.issuekeyalpha+'</a>';
-                }
-                else
-                {
-                 if(issueObject.issuetype.substring(0, 4)=='APP/')
-                 {
-                  document.getElementById("issuekeydisplay").innerHTML='App: <a href="./showApp.php?appid='+issueObject.issuekeynumeric+'">'+issueObject.issuekeynumeric+'</a>';
-                 }
-                 else
-                 {
-                  if(issueObject.issuetype.substring(0, 6)=='ASSET/')
-                  {
-                   document.getElementById("issuekeydisplay").innerHTML='Asset: <a href="./showAsset.php?assetid='+issueObject.issuekeyalpha+'">'+issueObject.issuekeyalpha+'</a>';
-                  }
-                  else
-                  {// unknown type
-                   document.getElementById("issuekeydisplay").innerHTML=issueObject.issuekeyalpha+','+issueObject.issuekeynumeric;
-                  }
-                 }
-                }
-                
-                document.getElementById("issueId").setAttribute("data-issueid",issueObject.id);
             }
 
             function updateIssueNotes()
@@ -156,7 +177,7 @@ foreach ($issues as $issue) {
                 };
                 xhr.send();
             }
-
+            
         </script>
     </head>
     <body onload="renderIssue(<?php echo $selectedissue['id']?>)">
@@ -167,34 +188,44 @@ foreach ($issues as $issue) {
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 <!-- Left Column -->
-                <div class="col-xs-12 col-md-2 my-col colLeft scroll" id="sidebar">
+                <div class="col-xs-12 col-md-3 my-col colLeft scroll" id="sidebar">
                     <div>
                         <?php
-                        echo '<ul class="nav flex-column flex-nowrap overflow-hidden">';
+                        echo '<ul class="nav flex-column flex-nowrap overflow-hidden btn-group-vertical" role="group">';
                         foreach ($tree as $key0 => $data0) {
-
-                            echo '<li class="nav-item">';
-                            echo '<a class="nav-link collapsed text-truncate side-nav-link" href="#' . $key0 . '" data-toggle="collapse" data-target="#' . $key0 . '"><span class="d-none d-sm-inline">' . $key0 . '</span></a>';
-                            echo '<div class="collapse" id="' . $key0 . '" aria-expanded="false">';
-
+                            
+                            if (is_array($data0) && array_key_exists('issuehash', $data0)) {
+                                echo '<li class="nav-item">';
+                                echo '<div id="issue_' . $data0['id'] . '" data-issue="' . base64_encode(json_encode($data0)) . '" class="btn btn-secondary" onclick="renderIssue(\'' . intval($data0['id']) . '\');">' . $data0['description'] . '</div>';
+                                echo '</li>';
+                            } else {
+                                echo '<li class="nav-item">';
+                                echo '<a id="nav_'.$key0.'" class="nav-link collapsed text-truncate side-nav-link" href="#' . $key0 . '" data-toggle="collapse" data-target="#' . $key0 . '"><span class="d-none d-sm-inline">' . $key0 . '</span></a>';
+                                echo '<div class="collapse" id="' . $key0 . '" aria-expanded="false">';
+                            }
+                            
                             foreach ($data0 as $key1 => $data1) {
                                 echo '<ul class="flex-column pl-2 nav">';
-                                echo '<li class="nav-item">';
-
-                                if (array_key_exists('issuehash', $data1)) {// this is an end-node
-                                    echo '<div>' . $data1 . '</div>';
+                                
+                                if (is_array($data1) && array_key_exists('issuehash', $data1)) {// this is an end-node
+                                    echo '<li class="nav-item">';
+                                    echo '<div id="issue_' . $data1['id'] . '" data-issue="' . base64_encode(json_encode($data1)) . '" class="btn btn-secondary" onclick="renderIssue(\'' . intval($data1['id']) . '\');">' . $data1['description'] . '</div>';
+                                    echo '</li>';
                                 } else {// this node contains children 
+                                    echo '<li class="nav-item">';
                                     echo '<a class="nav-link collapsed text-truncate side-nav-link" href="#' . $key0 . '-' . $key1 . '" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '"><span class="d-none d-sm-inline">' . $key1 . '</span></a>';
                                     echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '" aria-expanded="false">';
                                 }
 
                                 foreach ($data1 as $key2 => $data2) {
                                     echo '<ul class="flex-column nav pl-4">';
-                                    echo '<li class="nav-item">';
 
-                                    if (array_key_exists('issuehash', $data2)) {// this is an end-node
-                                        echo '<div>' . $data2 . '</div>';
+                                    if (is_array($data2) && array_key_exists('issuehash', $data2)) {// this is an end-node
+                                        echo '<li class="nav-item">';
+                                        echo '<div id="issue_' . $data2['id'] . '" data-issue="' . base64_encode(json_encode($data2)) . '" class="btn btn-secondary" onclick="renderIssue(\'' . intval($data2['id']) . '\');">' . $data2['description'] . '</div>';
+                                        echo '</li>';
                                     } else {// this node contains children 
+                                        echo '<li class="nav-item">';
                                         echo '<a class="nav-link collapsed text-truncate side-nav-link" href="#' . $key0 . '-' . $key1 . '-' . $key2 . '" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '-' . $key2 . '"><span class="d-none d-sm-inline">' . $key2 . '</span></a>';
                                         echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '-' . $key2 . '" aria-expanded="false">';
                                     }
@@ -202,19 +233,33 @@ foreach ($issues as $issue) {
                                     foreach ($data2 as $key3 => $data3) {
                                         echo '<ul class="flex-column nav pl-5">';
 
-                                        if (array_key_exists('issuehash', $data3)) {// this is an end-node
+                                        if (is_array($data3) && array_key_exists('issuehash', $data3)) {// this is an end-node
                                             echo '<li class="nav-item">';
-                                            echo '<div id="issue_' . $data3['id'] . '" data-issue="' . base64_encode(json_encode($data3)) . '" onclick="renderIssue(\'' . intval($data3['id']) . '\');">' . $data3['description'] . '</div>';
+                                            echo '<div id="issue_' . $data3['id'] . '" data-issue="' . base64_encode(json_encode($data3)) . '" class="btn btn-secondary" onclick="renderIssue(\'' . intval($data3['id']) . '\');">' . $data3['description'] . '</div>';
                                             echo '</li>';
                                         } else {// this node contains children
                                             echo '<li class="nav-item">';
-                                            echo '<div>' . $key3 . '</div>';
-                                            echo '</li>';
+                                            echo '<a class="nav-link collapsed text-truncate side-nav-link" href="#' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '"><span class="d-none d-sm-inline">' . $key3 . '</span></a>';
+                                            echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '" aria-expanded="false">';
                                         }
+                                        
+                                        foreach ($data3 as $key4 => $data4) {
+                                            echo '<ul class="flex-column nav pl-7">';
 
-                                        echo'</ul>';
+                                            if (is_array($data4) && array_key_exists('issuehash', $data4)) {// this is an end-node
+//                                                echo '<li class="nav-item">';
+//                                                echo '<div id="issue_' . $data4['id'] . '" data-issue="' . base64_encode(json_encode($data4)) . '" class="btn btn-secondary" onclick="renderIssue(\'' . intval($data4['id']) . '\');">' . $data4['description'] . '</div>';
+//                                                echo '</li>';
+                                                echo ' - - - - ';
+                                                echo ' - - - - ';
+                                            }
+
+                                            echo '</ul>';
+                                            
+                                        }
+                                        echo '</li>';
+                                        echo '</ul>';
                                     }
-
                                     echo '</li>';
                                     echo'</ul>';
                                 }
@@ -235,9 +280,21 @@ foreach ($issues as $issue) {
 
 
                 <!-- Main Content -->
-                <div class="col-xs-12 col-md-10 my-col colMain">
-                    <div class="card shadow-sm">
-                        <div id="issueBreadcrumb" class="card-header text-left">
+                <div class="col-xs-12 col-md-9 my-col colMain">
+                    <div id="IssueContent" class="card shadow-sm" style="">
+                        <div class="card-header text-left">
+                            <span id="issueBreadcrumb"></span>
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons" style="float:right;">
+                                <label class="btn btn-secondary active">
+                                  <input type="radio" name="options" id="option1" checked> Open
+                                </label>
+                                <label class="btn btn-secondary">
+                                  <input type="radio" name="options" id="option2"> In Review
+                                </label>
+                                <label class="btn btn-secondary">
+                                  <input type="radio" name="options" id="option3"> Closed
+                                </label>
+                            </div>
                         </div>
 
                         <div class="card shadow-sm">
@@ -269,7 +326,9 @@ foreach ($issues as $issue) {
                                     <div class="col md-4">
                                         <div class="card shadow-sm">
                                             <!-- Header -->
-                                            <h6 class="card-header text-left">Reported by: <span id="issueSource" class="text-info"></span> on <span id="issueDatetime" class="text-info"></span></h6>
+                                            <h6 class="card-header text-left">Reported by: <span id="issueSource" class="text-info"></span>
+                                                <div>on <span id="issueDatetime" class="text-info"></span><div>
+                                            </h6>
                                         </div>
                                     </div>
                                 </div>
@@ -292,15 +351,11 @@ foreach ($issues as $issue) {
                                     </div>
                                 </div>
                             </div>
-                            <div id="issueFooter" class="card-footer">
-                                <?php echo $selectedissue['issuedatetime']; ?>
-                            </div>
                         </div>
 
                     </div>
                 </div>
                 <!-- End of Main Content -->
-<?php print_r($nodes);?>
             </div>
         </div>    
         <!-- End of Content Container -->
