@@ -16,7 +16,13 @@ $pim = new pim;
 $selectedissue = $pim->getIssueById(intval($_GET['id']));
 
 $tree = array();
-$statuses=array(0,1,2,3);
+
+if(isset($_GET['showclosed'])) {
+    $statuses=array(0,1,2,3);
+} else {
+    $statuses=array(1,2,3);
+}
+
 $issues = $pim->getIssues('%', '%', '%', $statuses ,9999);
 
 foreach ($issues as $issue) {
@@ -105,30 +111,8 @@ foreach ($issues as $issue) {
                     document.getElementById("issueSource").innerHTML = issueObject.source;
                     document.getElementById("issueDatetime").innerHTML = issueObject.issuedatetime;
                     document.getElementById("issueNotes").innerHTML = issueObject.notes;
-
-
-                    if (issueObject.status == 1) {
-                        document.getElementById("issueStatus").innerHTML = "Issue Resolved";
-                        document.getElementById("issueStatus").className = "card-header text-white bg-success";
-                        document.getElementById("label_status_closed").className = "btn btn-success active";
-                        document.getElementById("label_status_review").className = "btn btn-success";
-                        document.getElementById("label_status_open").className = "btn btn-success";
-                        document.getElementById("input_closed").checked = true;
-                    } else if (issueObject.status == 2) {
-                        document.getElementById("issueStatus").innerHTML = "Issue In Review";
-                        document.getElementById("issueStatus").className = "card-header text-white bg-warning";
-                        document.getElementById("label_status_closed").className = "btn btn-warning";
-                        document.getElementById("label_status_review").className = "btn btn-warning active";
-                        document.getElementById("label_status_open").className = "btn btn-warning";
-                        document.getElementById("input_review").checked = true;
-                    } else {
-                        document.getElementById("issueStatus").innerHTML = "Issue Open";
-                        document.getElementById("issueStatus").className = "card-header text-white bg-danger";
-                        document.getElementById("label_status_closed").className = "btn btn-danger";
-                        document.getElementById("label_status_review").className = "btn btn-danger";
-                        document.getElementById("label_status_open").className = "btn btn-danger active";
-                        document.getElementById("input_open").checked = true;
-                    }
+                    
+                    updateIssueStatus(issueObject.status); // sets current status state
 
                     if(issueObject.issuetype.substring(0, 5)=='PART/')
                     {
@@ -199,27 +183,32 @@ foreach ($issues as $issue) {
                 xhr.send();
                 
                 if (value == 1) {
-                    document.getElementById("issueStatus").innerHTML = "Issue Resolved";
-                    document.getElementById("issueStatus").className = "card-header text-white bg-success";
-                    document.getElementById("label_status_closed").className = "btn btn-success active";
-                    document.getElementById("label_status_review").className = "btn btn-success";
-                    document.getElementById("label_status_open").className = "btn btn-success";
-                    document.getElementById("input_closed").checked = true;
-                } else if (value == 2) {
-                    document.getElementById("issueStatus").innerHTML = "Issue In Review";
-                    document.getElementById("issueStatus").className = "card-header text-white bg-warning";
-                    document.getElementById("label_status_closed").className = "btn btn-warning";
-                    document.getElementById("label_status_review").className = "btn btn-warning active";
-                    document.getElementById("label_status_open").className = "btn btn-warning";
-                    document.getElementById("input_review").checked = true;
-
-                } else {
-                    document.getElementById("issueStatus").innerHTML = "Issue Open";
-                    document.getElementById("issueStatus").className = "card-header text-white bg-danger";
                     document.getElementById("label_status_closed").className = "btn btn-danger";
                     document.getElementById("label_status_review").className = "btn btn-danger";
                     document.getElementById("label_status_open").className = "btn btn-danger active";
+                    document.getElementById("label_status_snooze").className = "btn btn-danger";
                     document.getElementById("input_open").checked = true;
+                    
+                } else if (value == 2) {
+                    document.getElementById("label_status_closed").className = "btn btn-warning";
+                    document.getElementById("label_status_review").className = "btn btn-warning active";
+                    document.getElementById("label_status_open").className = "btn btn-warning";
+                    document.getElementById("label_status_snooze").className = "btn btn-warning";
+                    document.getElementById("input_review").checked = true;
+
+                } else if (value == 3) {
+                    document.getElementById("label_status_closed").className = "btn btn-secondary";
+                    document.getElementById("label_status_review").className = "btn btn-secondary";
+                    document.getElementById("label_status_open").className = "btn btn-secondary";
+                    document.getElementById("label_status_snooze").className = "btn btn-secondary active";
+                    document.getElementById("input_snooze").checked = true;
+                }
+                else {
+                    document.getElementById("label_status_closed").className = "btn btn-success active";
+                    document.getElementById("label_status_review").className = "btn btn-success";
+                    document.getElementById("label_status_open").className = "btn btn-success";
+                    document.getElementById("label_status_snooze").className = "btn btn-success";
+                    document.getElementById("input_closed").checked = true;
                 }
             }
             
@@ -334,6 +323,11 @@ foreach ($issues as $issue) {
                     <div id="IssueContent" class="card shadow-sm" style="">
                         <div class="card-header text-left">
                             <span id="issueBreadcrumb"></span>
+                            <div class="btn-group-toggle" data-toggle="buttons" style="float:right;">
+                                <label id="toggleClosed" class="btn btn-secondary">
+                                    <input type="checkbox" autocomplete="off" onclick=""> Show Closed
+                                </label>
+                            </div>
                         </div>
 
                         <div class="card shadow-sm">
@@ -343,13 +337,18 @@ foreach ($issues as $issue) {
                                 <form id="IssueSetStatus" style="float:right;" >
                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                         <label id="label_status_open" class="btn">
-                                            <input type="radio" name="status" id="input_open" value="0" onclick="updateIssueStatus(0)"> Open
+                                            <input type="radio" name="status" id="input_open" value="0" onclick="updateIssueStatus(1)"> Open
                                         </label>
                                         <label id="label_status_review" class="btn">
                                             <input type="radio" name="status" id="input_review" value="2" onclick="updateIssueStatus(2)"> In Review
                                         </label>
                                         <label id="label_status_closed" class="btn">
-                                            <input type="radio" name="status" id="input_closed" value="1" onclick="updateIssueStatus(1)"> Closed
+                                            <input type="radio" name="status" id="input_closed" value="1" onclick="updateIssueStatus(0)"> Closed
+                                        </label>
+                                    </div>
+                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        <label id="label_status_snooze" class="btn">
+                                            <input type="radio" name="status" id="input_snooze" value="3" onclick="updateIssueStatus(3)"> Snooze 
                                         </label>
                                     </div>
                                 </form>
@@ -357,27 +356,13 @@ foreach ($issues as $issue) {
 
                             <div class="card-body">
                                 <div class="row padding my-row">
-                                    <div class="col md-4">
+                                    <div class="col md-6">
                                         <div class="card shadow-sm">
                                             <!-- Header -->
                                             <h6 class="card-header text-left"><div id="issuekeydisplay"></div></h6>
                                         </div>
                                     </div>
-                                    <div class="col md-4">
-                                        <div class="card shadow-sm">
-                                            <!-- Header -->
-                                            <?php
-                                            if ($selectedissue['status'] == 1) {
-                                                echo '<h6 id="issueStatus" class="card-header text-white bg-success">Issue Resolved</h6>';
-                                            } else if ($selectedissue['status'] == 2) {
-                                                echo '<h6 id="issueStatus" class="card-header text-white bg-warning">Issue In Review</h6>';
-                                            } else {
-                                                echo '<h6 id="issueStatus" class="card-header text-white bg-danger">Issue Open</h6>';
-                                            }
-                                            ?>
-                                        </div>
-                                    </div>
-                                    <div class="col md-4">
+                                    <div class="col md-6">
                                         <div class="card shadow-sm">
                                             <!-- Header -->
                                             <h6 class="card-header text-left">Reported by: <span id="issueSource" class="text-info"></span>
