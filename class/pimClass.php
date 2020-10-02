@@ -420,6 +420,61 @@ function countAppsByPartcategories($partcategories)
   return $topsequence;
  }
 
+ function getAppAssets($appid)
+ {
+  $db = new mysql; $db->connect();
+  $assets=array();
+  if($stmt=$db->conn->prepare('select * from application_asset where applicationid=? order by assetItemOrder'))
+  {
+   $stmt->bind_param('i', $appid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'representation'=>$row['representation'],'assetItemOrder'=>$row['assetItemOrder'],'cosmetic'=>$row['cosmetic']);
+   }
+  }
+  $db->close();
+  return $assets;
+ }
+
+ function addAssetToApp($applicationid,$assetid,$representation,$assetItemOrder,$cosmetic)
+ {
+  $db=new mysql; $db->connect();$id=false;
+  if($stmt=$db->conn->prepare('insert into application_asset (id,applicationid,assetid,representation,assetItemOrder,cosmetic) values(null,?,?,?,?,?)'))
+  {
+   if($stmt->bind_param('issii', $applicationid,$assetid,$representation,$assetItemOrder,$cosmetic))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+     $this->updateAppOID($applicationid);
+    }
+   }
+  }
+  $db->close();
+  return $id;
+ }
+ 
+ function deleteAppAsset($appid,$id)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from application_asset where applicationid=? and id=?'))
+  {
+   $this->updateAppOID($appid);
+   $stmt->bind_param('ii', $appid,$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  function getPart($partnumber)
  {
   $db = new mysql; $db->connect();

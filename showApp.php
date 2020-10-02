@@ -113,8 +113,8 @@ $nicefitmentstring=implode('; ',$nicefitmentarray);
 
 $allattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid']); //print_r($allattributes);
 
-$appassets=array();
-$partassets=$asset->getAssetsConnectedToPart($app['partnumber']); print_r($partassets);
+$appassets=$pim->getAppAssets($appid);
+$partassets=$asset->getAssetsConnectedToPart($app['partnumber']);
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $favoritepositions=$pim->getFavoritePositions();
 $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
@@ -529,10 +529,26 @@ if(isset($_GET['categories']))
 
             function addAsset()
             {
-
-
+             var assetid=document.getElementById('assetid').value;
+             var assetrepresentation=document.getElementById('assetrepresentation').value;
+             var assetsequence=document.getElementById('assetsequence').value;
+             
              var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxAddAppAsset.php?&appid=<?php echo $appid;?>'+assetid);
+             xhr.open('GET', 'ajaxAddAppAsset.php?appid=<?php echo $appid;?>&assetid='+assetid+'&representation='+assetrepresentation+'&sequence='+assetsequence);
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
+              var container = document.getElementById('assets');
+              container.innerHTML+='<div id="assetconnection_'+response.id+'"><span>'+assetid+' ('+assetrepresentation+', '+assetsequence+')</span><span onclick="removeAsset(\''+response.id+'\');">x</span></div>';
+             };
+             xhr.send();
+            }
+            
+            function removeAsset(id)
+            {
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeleteAppAsset.php?appid=<?php echo $appid;?>&id='+id);
              xhr.onload = function()
              {
               var response=JSON.parse(xhr.responseText);
@@ -540,11 +556,13 @@ if(isset($_GET['categories']))
              };
              xhr.send();
 
-
-
-
-
+             var div = document.getElementById('assetconnection_'+id);
+             div.parentNode.removeChild(div);
             }
+
+
+
+
 
 
         </script>
@@ -684,17 +702,19 @@ if(isset($_GET['categories']))
                                     <tr><th>Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp']; ?>"/><button onclick='updateApp(<?php echo $appid; ?>,"text","quantityperapp");'>Update Qty</button></td></tr>
                                     <tr><th>Fitment<br/>Assets</th>
                                         <td align="right">
+                                            <div id="assets">
                                             <?php if (count($appassets)) {
                                                 foreach ($appassets as $appasset) {
-                                                    echo '<div><a title="view this asset in new browser window" href="' . $appasset['uri'] . '" target="_blank">' . $appasset['assetId'] . '</a> (representation:' . $appasset['representation'] . ', sequence: ' . $appasset['assetItemOrder'] . ') <a title="remove this asset from the application" href="./showAdminApplication.php?id=' . intval($_GET['id']) . '&removeasset=' . $appasset['id'] . '">x</a><div>';
+                                                    echo '<div id="assetconnection_'.$appasset['id'].'"><span>'.$appasset['assetid'].' ('.$appasset['representation'].', ' . $appasset['assetItemOrder']. ')</span><span onclick="removeAsset(\''.$appasset['id'].'\');">x</span></div>';
                                                 }
                                             } ?>
+                                            </div>
                                             <div>
-                                                Asset <select name="assetid">
+                                                Asset <select id="assetid">
                                                 <?php foreach ($partassets as $partasset) {echo '<option value="' . $partasset['assetid'] . '">'.$partasset['filename'].'</option>';}?>
                                                 </select>
-                                                Sequence <input type="text" name="assetorder" size="3" value="1"/>
-                                                <select name="representation"><option value="A">Actual</option><option value="R">Representative</option></select>
+                                                Sequence <input type="text" id="assetsequence" size="3" value="1"/>
+                                                <select id="assetrepresentation"><option value="A">Actual</option><option value="R">Representative</option></select>
                                                 <button onclick="addAsset();">+</button>
                                             </div>
                                         </td>
