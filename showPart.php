@@ -474,7 +474,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
 
-                <?php $issues=$pim->getIssues('PART/%', $partnumber, 0, 10);
+                <?php $issues=$pim->getIssues('PART/%', $partnumber, 0, array(1,2) ,10);
                 if(count($issues)>0){?>
                 <div class="card shadow-sm">
                     <h5 class="card-header">

@@ -2332,17 +2332,20 @@ function gtinCheckDigit($barcode)
   return $issue;     
  }
  
- function getIssues($type,$keyalpha,$keynumeric,$limit)
+ function getIssues($type,$keyalpha,$keynumeric,$rawstatuses,$limit)
  {
-  $db=new mysql; $db->connect(); $issues=array();
+  $statuses=array();
+  foreach($rawstatuses as $rawstatus){$statuses[]=intval($rawstatus);}
   
+  
+  $statusclause= 'and status in('.implode(',',$statuses).')';
   $numericclause='';
   if(intval($keynumeric)!=0)
   {
    $numericclause=' and issuekeynumeric='.intval($keynumeric);
   }
     
-  if($stmt=$db->conn->prepare('select * from issue where issuetype like ? and issuekeyalpha like ? '.$numericclause.' limit ?'))
+  if($stmt=$db->conn->prepare('select * from issue where issuetype like ? and issuekeyalpha like ? '.$numericclause.' '.$statusclause.' limit ?'))
   {
    $stmt->bind_param('ssi',$type,$keyalpha,$limit);
    $stmt->execute();

@@ -16,8 +16,8 @@ $pim = new pim;
 $selectedissue = $pim->getIssueById(intval($_GET['id']));
 
 $tree = array();
-
-$issues = $pim->getIssues('%', '%', '%', 9999);
+$statuses=array(0,1,2,3);
+$issues = $pim->getIssues('%', '%', '%', $statuses ,9999);
 
 foreach ($issues as $issue) {
     $issuebits = explode('/', $issue['issuetype']);
