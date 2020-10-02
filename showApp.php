@@ -576,25 +576,23 @@ if(isset($_GET['categories']))
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
-                <?php $issues=$pim->getIssues('APP/%', '', $appid, 10);
-                if(count($issues)>0){?>
-                <div class="card shadow-sm">
-                    <h5 class="card-header">
-                        Issues
-                    </h5>
-                    <div class="card-body">
-                        <?php
-                        foreach($issues as $issue)
-                        {
-                            echo '<div><a href="showIssue.php?id='.$issue['id'].'">'.$issue['description'].'</a></div>';
-                        }?>
+                    <?php $issues=$pim->getIssues('APP/%', '', $appid, 10);
+                    if(count($issues)>0){?>
+                    <div class="card shadow-sm">
+                        <h5 class="card-header">
+                            Issues
+                        </h5>
+                        <div class="card-body">
+                            <?php
+                            foreach($issues as $issue)
+                            {
+                                echo '<div><a href="showIssue.php?id='.$issue['id'].'">'.$issue['description'].'</a></div>';
+                            }?>
+                        </div>
                     </div>
+                    <?php }?>
                 </div>
-                <?php }?>
-                </div>
-                     
-                </div>
-                
+                                
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
@@ -743,6 +741,7 @@ if(isset($_GET['categories']))
                 <div class="col-xs-12 col-md-2 my-col colRight">
                     
                 </div>
+        
             </div>
         </div>    
         <!-- End of Content Container -->
