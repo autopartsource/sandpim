@@ -2334,6 +2334,7 @@ function gtinCheckDigit($barcode)
  
  function getIssues($type,$keyalpha,$keynumeric,$rawstatuses,$limit)
  {
+  $db=new mysql; $db->connect(); $issues=array();
   $statuses=array();
   foreach($rawstatuses as $rawstatus){$statuses[]=intval($rawstatus);}
   
@@ -2344,7 +2345,7 @@ function gtinCheckDigit($barcode)
   {
    $numericclause=' and issuekeynumeric='.intval($keynumeric);
   }
-    
+  
   if($stmt=$db->conn->prepare('select * from issue where issuetype like ? and issuekeyalpha like ? '.$numericclause.' '.$statusclause.' limit ?'))
   {
    $stmt->bind_param('ssi',$type,$keyalpha,$limit);
