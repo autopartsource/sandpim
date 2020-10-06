@@ -2394,5 +2394,35 @@ function gtinCheckDigit($barcode)
         $db->close();
  }
  
-
+/* "path" and "language" together make up the primary key for the documentation table
+ * ex: 'EN','APPS/FITMENT ASSETS/REPRESENTATION'
+ *  is the record that describes the backstory and implications of this 
+ * valuse and what effect it has on other areas of the system. A popup explainer 
+ * widget on the app page (and maybe other places) could query explicitly for this 
+ * record to display one small chunk of text beside the input field in question.
+ * 
+ * To get the multiple records for building "the whole story" as one document, 
+ * the select critera would be less selective ( path like 'APPS/FITMENT ASSETS/%'
+ * 
+ * 
+ */
+ 
+ function getDocumentationText($path,$language)
+ {
+  $db=new mysql; $db->connect(); $records=array();
+  if($stmt=$db->conn->prepare('select * from documentation where language=? and path like ? order by path,sequence'))
+  {
+   $stmt->bind_param('ss',$language,$path);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $records[]=array('id'=>$row['id'], 'language'=>$row['language'],'path'=>$row['path'],'sequence'=>$row['sequence'],'doctext'=>$row['doctext']);
+   }
+  }
+  $db->close();
+  return $records;
+ }
+ 
+ 
 }?>

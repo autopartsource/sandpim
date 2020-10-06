@@ -559,10 +559,25 @@ if(isset($_GET['categories']))
              var div = document.getElementById('assetconnection_'+id);
              div.parentNode.removeChild(div);
             }
-
-
-
-
+            
+            function showhideDocumentationDiv(divid,path)
+            {
+             var docdiv=document.getElementById(divid);
+             if(docdiv.innerHTML=='')
+             {
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxGetDocumentation.php?path='+btoa(path));
+              xhr.onload = function()
+              {
+               docdiv.innerHTML='<div style="border:1px solid blue;background-color:#c0c0c0;text-align:left;">'+xhr.responseText+'</div>';
+              };
+              xhr.send();
+             }
+             else
+             {
+              docdiv.innerHTML='';
+             }
+            }
 
 
         </script>
@@ -697,7 +712,11 @@ if(isset($_GET['categories']))
 
                                         </td>
                                     </tr>
-                                    <tr><th>Quantity<br/>(on this vehicle)</th><td align="right"><input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp']; ?>"/><button onclick='updateApp(<?php echo $appid; ?>,"text","quantityperapp");'>Update Qty</button></td></tr>
+                                    <tr><th>Quantity<br/>(on this vehicle)</th>
+                                        <td align="right">
+                                            <input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp']; ?>"/><button onclick='updateApp(<?php echo $appid; ?>,"text","quantityperapp");'>Update Qty</button>
+                                            <div onclick="showhideDocumentationDiv('doc-qty','Apps/Show App/Fitment Quantity');">?</div><div id="doc-qty"></div>
+                                        </td></tr>
                                     <tr><th>Fitment<br/>Assets</th>
                                         <td align="right">
                                             <div id="assets">
@@ -713,13 +732,25 @@ if(isset($_GET['categories']))
                                                 </select>
                                                 Sequence <input type="text" id="assetsequence" size="3" value="1"/>
                                                 <select id="assetrepresentation"><option value="A">Actual</option><option value="R">Representative</option></select>
-                                                <button onclick="addAsset();">+</button>
+                                                <button onclick="addAsset();">+</button><div onclick="showhideDocumentationDiv('doc-asset','Apps/Show App/Fitment Assets/Representation');">?</div><div id="doc-asset"></div>
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr><th>Internal<br/>Notes</th><td><textarea id="internalnotes" cols="60" rows="5"><?php echo $app['internalnotes']; ?></textarea><div><button onclick='updateApp(<?php echo $appid; ?>,"text","internalnotes");'>Save</button></div></td><tr>
+                                    <tr><th>Internal<br/>Notes</th>
+                                        <td>
+                                            <textarea id="internalnotes" cols="60" rows="5"><?php echo $app['internalnotes']; ?></textarea><div><button onclick='updateApp(<?php echo $appid; ?>,"text","internalnotes");'>Save</button></div>
+                                            <div onclick="showhideDocumentationDiv('doc-internalnotes','Apps/Show App/Internal Notes');">?</div><div id="doc-internalnotes"></div>
+                                        </td>
+                                    <tr>
                                 <tr><th>IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id']; ?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid']; ?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid']; ?></div><div style="clear:both;"></div></td><tr>
-                                <tr><th id="label-cosmetic" class="appcosmetic-noncosmetic">Cosmetic</th><td id="value-cosmetic" class="appcosmetic-noncosmetic" align="right"><div id="cosmetic-text"></div> <button onclick='updateApp(<?php echo $appid; ?>,"button","cosmetic");'>Cosmetic</button></td></tr>
+                                <tr>
+                                    <th id="label-cosmetic" class="appcosmetic-noncosmetic">Cosmetic</th>
+                                    <td id="value-cosmetic" class="appcosmetic-noncosmetic" align="right">
+                                        <div id="cosmetic-text"></div>
+                                        <button onclick='updateApp(<?php echo $appid; ?>,"button","cosmetic");'>Cosmetic</button>
+                                        <div onclick="showhideDocumentationDiv('doc-cosmetic','Apps/Show App/Cosmetic');">?</div><div id="doc-cosmetic"></div>
+                                    </td>
+                                </tr>
                                 <tr><th id="label-status" class="apppart-active">Status</th><td id="value-status" class="apppart-active" align="right"><select id="status" onchange="updateApp(<?php echo $appid; ?>,'select','status');"><option value="0">Active</option><option value="1"<?php if ($app['status'] == 1) {
                                 echo ' selected';
                                 } ?>>Deleted</option><option value="2"<?php if ($app['status'] == 2) {

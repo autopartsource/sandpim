@@ -778,6 +778,27 @@ class setup
         versiondate date not null,
         PRIMARY KEY (databasename))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - autocare_databases ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - autocare_databases ('.$db->conn->error.')';}
+  
+        
+        $sql="CREATE TABLE documentation (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        language varchar(255) not null,
+        path varchar(255) not null,
+        doctext text not null,
+        sequence int unsigned not null,
+        PRIMARY KEY (id),
+        unique key idx_language_path(language,path))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - documentation ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - documentation ('.$db->conn->error.')';}
+
+        $sql="insert into documentation values(null,'EN','Apps/Show App/Fitment Quantity','The quantity of this part used on the particular position on this vehicle. For example, a six cylinder engine would have a quantity of 6 spark plugs. A front brake rotor would have a quantity of 2. A Front-Right brake rotor would have a quantity of 1.',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into documentation values(null,'EN','Apps/Show App/Fitment Assets/Representation','Assets can be used to explain (or sometime qualify) an application of a part to a vehicle. A video, photo or diagram could depict the specific part and vehilce described by this app, or it could be more generic and intended to represent many similar situations. This is the distinction between Actual and Representitive. This element is part of data exported to an ACES file.',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into documentation values(null,'EN','Apps/Show App/Fitment Assets/Sequence','Assets can be used to explain (or sometime qualify) an application of a part to a vehicle. An example of this is an exhaust diagram. The diagram could show a dozen different parts in a system and only one of them is the one in this application. That one part among the dozen is differentiated by its unique sequence number',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into documentation values(null,'EN','Apps/Show App/Internal Notes','These notes are internal and for the use of the product/catalog manager. They will not be exported to a reciever. Free-form notes that are intended to qualify or describe the application can be created in the Fitment Qualifiers area.',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into documentation values(null,'EN','Apps/Show App/Cosmetic','Marking an app as Cosmetic will prevent it from being exported in an ACES file. Cosmetic apps fill-in holes implied in a matrix (printed page) presentation of the content.',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+
+             
+        
         
         
         $db->close();
