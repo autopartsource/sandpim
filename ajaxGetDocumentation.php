@@ -11,7 +11,7 @@ if(isset($_SESSION['userid']) && isset($_GET['path']))
  $records=$pim->getDocumentationText($path,'EN');
  foreach($records as $record)
  {
-     $result.='<div>'.$record['doctext'].'</div>';
+     $result.=$record['doctext'];
  }
  
  echo $result;

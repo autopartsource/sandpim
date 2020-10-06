@@ -562,21 +562,46 @@ if(isset($_GET['categories']))
             
             function showhideDocumentationDiv(divid,path)
             {
-             var docdiv=document.getElementById(divid);
-             if(docdiv.innerHTML=='')
-             {
-              var xhr = new XMLHttpRequest();
-              xhr.open('GET', 'ajaxGetDocumentation.php?path='+btoa(path));
-              xhr.onload = function()
-              {
-               docdiv.innerHTML='<div style="border:1px solid blue;background-color:#c0c0c0;text-align:left;">'+xhr.responseText+'</div>';
-              };
-              xhr.send();
-             }
-             else
-             {
-              docdiv.innerHTML='';
-             }
+                var docdiv=document.getElementById(divid);
+                
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'ajaxGetDocumentation.php?path='+btoa(path));
+                xhr.onload = function()
+                {
+                    docdiv.setAttribute("data-content",xhr.responseText);
+                };
+                console.log(xhr.responseText);
+                xhr.send();
+                
+//             if(docdiv.getAttribute("title") == '') {
+//                var xhr = new XMLHttpRequest();
+//                xhr.open('GET', 'ajaxGetDocumentation.php?path='+btoa(path));
+//                xhr.onload = function()
+//              {
+//               docdiv.setAttribute("title",xhr.responseText);
+//              };
+//              xhr.send();
+//             }
+//             else {
+//                 docdiv.setAttribute("title","");
+//             }
+//             
+             
+//             if(docdiv.innerHTML=='')
+//             {
+//              var xhr = new XMLHttpRequest();
+//              xhr.open('GET', 'ajaxGetDocumentation.php?path='+btoa(path));
+//              xhr.onload = function()
+//              {
+//               docdiv.innerHTML='<div style="border:1px solid blue;background-color:#c0c0c0;text-align:left;">'+xhr.responseText+'</div>';
+//              };
+//              xhr.send();
+//             }
+//             else
+//             {
+//              docdiv.innerHTML='';
+//             }
+             
             }
 
 
@@ -591,6 +616,7 @@ if(isset($_GET['categories']))
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
+                    <button type="button" class="btn btn-sm" data-toggle="popover" title="Popover title" data-content="Default popover">?</button>
                     <?php $issues=$pim->getIssues('APP/%', '', $appid, array(1,2),10);
                     if(count($issues)>0){?>
                     <div class="card shadow-sm">
@@ -732,7 +758,7 @@ if(isset($_GET['categories']))
                                                 </select>
                                                 Sequence <input type="text" id="assetsequence" size="3" value="1"/>
                                                 <select id="assetrepresentation"><option value="A">Actual</option><option value="R">Representative</option></select>
-                                                <button onclick="addAsset();">+</button><div onclick="showhideDocumentationDiv('doc-asset','Apps/Show App/Fitment Assets/Representation');">?</div><div id="doc-asset"></div>
+                                                <button onclick="addAsset();">+</button><button id="doc-asset" type="button" class="btn btn-sm" onclick="showhideDocumentationDiv('doc-asset','Apps/Show App/Fitment Assets/Representation');" data-toggle="popover" title="Asset">?</button>
                                             </div>
                                         </td>
                                     </tr>
