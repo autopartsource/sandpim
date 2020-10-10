@@ -23,7 +23,7 @@ if (isset($_POST['submit']) && $_POST['submit']=='Add' && isset($_POST['category
     $name = $_POST['categoryname'];
     $id = $_POST['categoryid'];
     $pim->createPartcategory($name,$id);
-    $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$name.' was created');
+    $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Partcategory '.$id.' ('.$name.') was created');
 }
 
 if (isset($_POST['submit']) && $_POST['submit']=='Delete') 
@@ -72,7 +72,7 @@ $partcategories = $pim->getPartCategories();
                                     echo '</td></tr>';
                                 }
                                 ?>
-                                <tr><form method="post"><td><input type="text" name="categoryname" size="30"/></td><td><input type="text" name="categoryid" size="50"/><input type="submit" name="submit" value="Add"/></td><td></td><td></td></form></tr>
+                                <tr><form method="post"><td><input type="text" name="categoryname" size="30"/></td><td><input type="text" name="categoryid" /><input type="submit" name="submit" value="Add"/></td><td></td><td></td></form></tr>
                             </table>
                         </div>
                     </div>

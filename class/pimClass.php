@@ -989,30 +989,30 @@ function countAppsByPartcategories($partcategories)
  function createPartcategory($name,$partcategory)
  {
   $db=new mysql; $db->connect();
-  $success=false; $brandid='';
+  $success=false; $brandid=''; $subbrandID=''; $mfrlabel=''; $logouri='';
   if(!$this->validPartcategoryid($partcategory) && !$this->existingPartcategoryName($name))
   {
    if($partcategory=='')
    {
-    if($stmt=$db->conn->prepare('insert into partcategory (id,name,brandID) values(null,?,?)'))
+    if($stmt=$db->conn->prepare('insert into partcategory (id,`name`,brandID,subbrandID,mfrlabel,logouri) values(null,?,?,?,?,?)'))
     {
-     if($stmt->bind_param('ss', $name, $brandid))
+     if($stmt->bind_param('sssss', $name, $brandid, $subbrandID, $mfrlabel, $logouri))
      {
       $success=$stmt->execute();
-     }//  else{echo 'problem with bind';}
-    }//  else{echo 'problem with prepare';}
+     }  else{echo 'problem with bind';}
+    }  else{echo 'problem with prepare';}
    }
    else
    {
-    if($stmt=$db->conn->prepare('insert into partcategory (id,name,brandID) values(?,?,?)'))
+    if($stmt=$db->conn->prepare('insert into partcategory (id,`name`,brandID,subbrandID,mfrlabel,logouri) values(?,?,?,?,?,?)'))
     {
-     if($stmt->bind_param('iss', $partcategory, $name, $brandid))
+     if($stmt->bind_param('isssss', $partcategory, $name, $brandid, $subbrandID, $mfrlabel, $logouri))
      {
       $success=$stmt->execute();
-     }//  else{echo 'problem with bind';}
-    }//  else{echo 'problem with prepare';}
+     }  else{echo 'problem with bind';}
+    }  else{echo 'problem with prepare';}
    }
-  }//  else{echo 'already exists';}
+  }  else{echo 'already exists';}
   $db->close();
   return $success;
  }
@@ -1165,7 +1165,7 @@ function countAppsByPartcategories($partcategories)
  {
   $returnval=false;
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('select name from partcategory where id=?'))
+  if($stmt=$db->conn->prepare('select `name` from partcategory where id=?'))
   {
    $stmt->bind_param('i', $partcategoryid);
    $stmt->execute();
