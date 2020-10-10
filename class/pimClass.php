@@ -942,17 +942,14 @@ function countAppsByPartcategories($partcategories)
 
  function writePartAttribute($partnumber,$PAID,$attributename,$attributevalue,$uom)
  { // PAID of 0 implies a user-defned attribute 
-  $id=false;
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+  $id=false; $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('insert into part_attribute (id,partnumber,PAID,userDefinedAttributeName,`value`,uom) values(null,?,?,?,?,?)'))
   {
    $stmt->bind_param('sisss',$partnumber,$PAID,$attributename,$attributevalue,$uom);
    $stmt->execute();
    $id=$db->conn->insert_id;
+   $this->updatePartOID($partnumber);
   } // else{print_r($db->conn->error);}
-
   $db->close();
   return $id;
  }
@@ -968,6 +965,7 @@ function countAppsByPartcategories($partcategories)
    $stmt->bind_param('sssis',$attributevalue,$uom,$partnumber,$PAID,$attributename);
    $stmt->execute();
    $id=$db->conn->insert_id;
+   $this->updatePartOID($partnumber);  
   } // else{print_r($db->conn->error);}
 
   $db->close();
@@ -981,6 +979,7 @@ function countAppsByPartcategories($partcategories)
   {
    $stmt->bind_param('i',$attributeid);
    $stmt->execute();
+   $this->updatePartOID($partnumber);
   } // else{print_r($db->conn->error);}
   $db->close();
  }

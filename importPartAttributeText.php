@@ -1,5 +1,6 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/pcdbClass.php');
 $navCategory = 'import/export';
 
 session_start();
@@ -9,24 +10,75 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $pim = new pim;
+$pcdb=new pcdb();
 
 if (isset($_POST['input'])) {
     $input = $_POST['input'];
     $records = explode("\r\n", $_POST['input']);
-    $PAID = 0;
     foreach ($records as $record) {
         $fields = explode("\t", $record);
         if (count($fields) == 3 || count($fields) == 4) { // partnumber,attributename,attributevalue[,unitOfMeasure]
             $partnumber = trim(strtoupper($fields[0]));
             if (strlen($partnumber) <= 20 && strlen($partnumber) > 0) { // partnumber is within valid length
                 if ($pim->validPart($partnumber)) {
+
                     $attributename = trim($fields[1]);
                     $attributevalue = trim($fields[2]);
+                    $PAID=intval(trim($fields[1]));
                     $uom = '';
-                    if (count($fields) == 4) {
+                    if (count($fields) == 4 && trim($fields[3])!='') {
                         $uom = trim($fields[3]);
                     }
-                    $pim->writePartAttribute($partnumber, $PAID, $attributename, $attributevalue, $uom);
+                    
+                    if($PAID==0)
+                    {// this is a user-defined name string
+                        
+                        // look for reserved attribute names (GTIN,parttypeid,lifecyclestatus)
+                        // these will update the part table (not the part_attribute table)
+                        
+                        switch(trim($fields[1]))
+                        {
+                            case '':
+                                // blank name. Do nothing
+                                break;
+                            
+                            case 'GTIN':
+                                // maybe should validate the checkdigit and lengthere?
+                                $pim->setPartGTIN($partnumber, $attributevalue, true);
+                                $newoid=$pim->getOIDofPart($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'GTIN updated to ['.$attributevalue.'] by mass import', $newoid);
+                                break;
+
+                            case 'parttypeid':
+                                $parttypename=$pcdb->parttypeName(intval($attributevalue));
+                                if($parttypename!='not found')
+                                {
+                                    $pim->setPartParttype($partnumber, intval($attributevalue), true);
+                                    $newoid=$pim->getOIDofPart($partnumber);
+                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'part type updated to ['.$parttypename.'] by mass import', $newoid);
+                                }
+                                break;
+
+                            case 'lifecyclestatus':
+                                $pim->setPartLifecyclestatus($partnumber, $attributevalue, true);
+                                $newoid=$pim->getOIDofPart($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle status updated to ['.$attributevalue.'] by mass import', $newoid);
+                                break;
+     
+                            default: 
+                                // attribute name is not reserved, and not a PAdb numeric ID
+                                $pim->writePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
+                                $newoid=$pim->getOIDofPart($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] writted by mass import', $newoid);
+                                break;
+                        }
+                    }
+                    else
+                    {// this is a PAdb numeric ID
+                        $pim->writePartAttribute($partnumber, $PAID, '', $attributevalue, $uom);
+                        $newoid=$pim->getOIDofPart($partnumber);
+                        $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] writted by mass import', $newoid);
+                    }
                 }
             }
         }
@@ -43,7 +95,7 @@ if (isset($_POST['input'])) {
 <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h1>Import Part Attribute Data (non-PAdb)</h1>
+        <h1>Import Part Attributes</h1>
 
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -56,7 +108,7 @@ if (isset($_POST['input'])) {
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <form method="post">
-                        <div style="padding:10px;"><div>Paste three or four columns (tab delimited) data: part, name, value [, UoM])</div>
+                        <div style="padding:10px;"><div>Paste three or four tab delimited columns: Partnumber, attributename or PAdbID, value [, UoM]</div><div>Part numbers are validated. If the second column is a number, it is assumed to be a PAdb ID. Non-numeric values are assumed to be user-defined attribute names. Attribute names GTIN, parttypeid, lifecyclestatus are special cases that will apply to the part if used.</div>
                             <textarea name="input" rows="20" cols="100"></textarea>
                         </div>
                         <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
