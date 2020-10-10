@@ -18,7 +18,7 @@ if (isset($_POST['submit']) && $_POST['submit']=='Save')
 {
  $profiledata=str_replace("\r\n",';',$_POST['profiledata']);
 
- $pim->updateReceiverprofile(intval($_POST['id']), $_POST['profilename'],$profiledata); 
+ $pim->updateReceiverprofile(intval($_POST['id']), $_POST['profilename'],$profiledata,$_POST['notes']);
  $logs->logSystemEvent('receiverprofilechange', $_SESSION['userid'], 'Receiver Profile '.$_POST['id'].' was changed.');
  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./receiverProfiles.php'\" /></head><body></body></html>";
  exit;

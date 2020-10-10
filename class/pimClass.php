@@ -2089,7 +2089,7 @@ function countAppsByPartcategories($partcategories)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $profiles[]=array('id'=>$row['id'],'name'=>$row['name'],'data'=>$row['data'],'status'=>$row['status'],'intervaldays'=>$row['intervaldays'],'lastexport'=>$row['lastexport'],'notes'=>$row['notes']);
+    $profiles[]=array('id'=>$row['id'],'name'=>$row['name'],'data'=>$row['data'],'status'=>$row['status'],'intervaldays'=>$row['intervaldays'],'lastexport'=>$row['lastexport'],'notes'=>base64_decode($row['notes']));
    }
   }
   $db->close();
@@ -2109,7 +2109,7 @@ function countAppsByPartcategories($partcategories)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $profile=array('id'=>$row['id'],'name'=>$row['name'],'data'=>$row['data'],'status'=>$row['status'],'intervaldays'=>$row['intervaldays'],'lastexport'=>$row['lastexport'],'notes'=>$row['notes']);
+    $profile=array('id'=>$row['id'],'name'=>$row['name'],'data'=>$row['data'],'status'=>$row['status'],'intervaldays'=>$row['intervaldays'],'lastexport'=>$row['lastexport'],'notes'=>base64_decode($row['notes']));
    }
   }
   $db->close();
@@ -2145,12 +2145,13 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
  
- function updateReceiverprofile($id, $name, $data)
+ function updateReceiverprofile($id, $name, $data, $notes)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update receiverprofile set `name`=?, `data`=? where id=?'))
+  $encodednotes= base64_encode($notes);
+  if($stmt=$db->conn->prepare('update receiverprofile set `name`=?, `data`=?, notes=? where id=?'))
   {
-   $stmt->bind_param('ssi',$name,$data,$id);
+   $stmt->bind_param('sssi',$name,$data,$encodednotes,$id);
    $stmt->execute();
   }
   $db->close();
