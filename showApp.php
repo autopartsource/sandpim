@@ -752,14 +752,17 @@ if(isset($_GET['categories']))
                                                 }
                                             } ?>
                                             </div>
+                                            <?php if(count($partassets)){?>
                                             <div>
                                                 Asset <select id="assetid">
                                                 <?php foreach ($partassets as $partasset) {echo '<option value="' . $partasset['assetid'] . '">'.$partasset['filename'].'</option>';}?>
                                                 </select>
                                                 Sequence <input type="text" id="assetsequence" size="3" value="1"/>
                                                 <select id="assetrepresentation"><option value="A">Actual</option><option value="R">Representative</option></select>
-                                                <button onclick="addAsset();">+</button><button id="doc-asset" type="button" class="btn btn-sm" onclick="showhideDocumentationDiv('doc-asset','Apps/Show App/Fitment Assets/Representation');" data-toggle="popover" title="Asset">?</button>
+                                                <button onclick="addAsset();">+</button>
                                             </div>
+                                            <?php }?>
+                                            <button id="doc-asset" type="button" class="btn btn-sm" onclick="showhideDocumentationDiv('doc-asset','Apps/Show App/Fitment Assets/Representation');" data-toggle="popover" title="Asset">?</button>
                                         </td>
                                     </tr>
                                     <tr><th>Internal<br/>Notes</th>
