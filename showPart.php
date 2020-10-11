@@ -574,10 +574,11 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                                                     if($attribute['PAID']==0)
                                                     {
                                                         //echo '<tr><td>' . $attribute['name'] . '</td><td>' . $attribute['value'] . '</td><td>' . $attribute['id'] . '</td></tr>';
+                                                        echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$attribute['name'].':<span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
                                                     }
                                                     else
                                                     {
-                                                        echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).' <input type="text"/></div><div style="clear:both;"></div></div>';
+                                                        echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).':<span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
                                                     }
                                                 } ?>
                                             </div>
