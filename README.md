@@ -26,14 +26,12 @@ contributing in any way (even just offering opinions!), please don't hesitate to
 
 ## To-Do list
 
-- Delete button (ajax) for part-asset link on showAsset.php
-- ajax-ify the connect asset to part button on showAsset.php
+- FRONT vs FRO in asset is causing xsd-invalid PIES output
+- receiverProfile.php ajax-ify the adds and deletes of partcategories
 - assetCreate.php add connect-part entry box for partnumber (typed in) and actual vs rep, assettype, sequence
-- PAdb attribute display/edit in showPart.php
 - vcdb-validation an app on the fly (uppon change)
 - Part search by PAdb attribute
 - copy-forward to next model-year on apps grid (showAppsByBasevehicle.php)
-- fitment assets (show on the right side of showApp.php)
 - user permission mechanism
 - utility to duplicate apps from one basevehicle to another
 - utility to duplicate apps from one partnumber to another
