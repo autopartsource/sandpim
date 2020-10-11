@@ -28,7 +28,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['attr
    { // valid PAdb id
      if(!$pim->getPartAttribute($partnumber,$PAID,''))
      {
-      $eventtext='PAdb attribute ['.$PAname.']'.$value.$uom.' was added';
+      $eventtext='PAdb attribute ['.$PAname.'='.$value.$uom.'] was added';
       $id=$pim->writePartAttribute($partnumber, $PAID, $attributename, $value, $uom);
       $oid=$pim->updatePartOID($partnumber);
       $success=true;
@@ -48,7 +48,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['attr
    $attributename=$_GET['attribute'];
    if(!$pim->getPartAttribute($partnumber,0,$attributename))
    {
-    $eventtext='user-defined attribute['.$attributename.']='.$value.$uom.' was added';
+    $eventtext='user-defined attribute['.$attributename.'='.$value.$uom.'] was added';
     $pim->writePartAttribute($partnumber, $PAID, $attributename, $value, $uom);
    }
    else

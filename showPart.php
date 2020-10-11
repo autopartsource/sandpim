@@ -177,16 +177,19 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
 
             function addPAdbAttribute(PAID)
             {
+                
+             var PAIDvalue=document.getElementById('unappliedattributevalue_'+PAID).value;
+             var PAIDuom=document.getElementById('unappliedattributeuom_'+PAID).value;
+                
              var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxUpdateAttributeOfPart.php?partnumber=<?php echo $partnumber;?>&attribute='+PAID+'&value=&uom=');
+             xhr.open('GET', 'ajaxUpdateAttributeOfPart.php?partnumber=<?php echo $partnumber;?>&attribute='+PAID+'&value='+encodeURIComponent(PAIDvalue)+'&uom='+encodeURIComponent(PAIDuom));
              xhr.onload = function()
              {
               var response=JSON.parse(xhr.responseText);
               if(response.success)
               { //add attribute to "applied" list
                var container=document.getElementById('appliedattributes');
-               container.innerHTML+='<div id="appliedattribute_'+response.id+'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('+response.id+','+response.PAID+',\''+response.name+'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'+response.name+'<input type="text"/></div><div style="clear:both;"></div></div>';
-               
+               container.innerHTML+='<div id="appliedattribute_'+response.id+'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('+response.id+','+response.PAID+',\''+response.name+'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'+response.name+':<span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'+response.value+' '+response.uom+'</span></div><div style="clear:both;"></div></div>';
                //remove PAdb form "unapplied" list
                var unappliedattributediv = document.getElementById('unappliedattribute_'+PAID);
                unappliedattributediv.parentNode.removeChild(unappliedattributediv);
@@ -197,22 +200,6 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
              };
              xhr.send();
             }
-
-            function updatePAdbAttribute(PAID)
-            {
-             var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxUpdateAttributeOfPart.php?partnumber=<?php echo $partnumber;?>&attribute='+PAID+'&value=&uom=');
-             xhr.onload = function()
-             {
-              var response=JSON.parse(xhr.responseText);
-              if(response.success)
-              {
-               document.getElementById("sandpiperoid").innerHTML=response.oid;
-              }
-             };
-             xhr.send();
-            }
-
 
             function deleteAttribute(attributeid,PAID,name)
             {
@@ -227,7 +214,8 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
               
               // add it back to the "unnapplied" list
               var container=document.getElementById('unappliedattributes');
-              container.innerHTML+='<div id="unappliedattribute_'+PAID+'"><div style="width:2em;float:left;"><button onclick="addPAdbAttribute('+PAID+')">+</button></div><div style="float:left;">'+name+'</div><div style="clear:both;"></div></div>';
+              //container.innerHTML+='<div id="unappliedattribute_'+PAID+'"><div style="width:2em;float:left;"><button onclick="addPAdbAttribute('+PAID+')">+</button></div><div style="float:left;">'+name+'</div><div style="clear:both;"></div></div>';
+              container.innerHTML+='<div style="text-align:left;padding:3px;" id="unappliedattribute_'+PAID+'">'+name+' <span><input size="8" id="unappliedattributevalue_'+PAID+'"/> <input size="2" id="unappliedattributeuom_'+PAID+'"/></span><button onclick="addPAdbAttribute('+PAID+')">+</button></div>';
 
               document.getElementById("sandpiperoid").innerHTML=response.oid;
              };
@@ -573,7 +561,6 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                                                 {
                                                     if($attribute['PAID']==0)
                                                     {
-                                                        //echo '<tr><td>' . $attribute['name'] . '</td><td>' . $attribute['value'] . '</td><td>' . $attribute['id'] . '</td></tr>';
                                                         echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$attribute['name'].':<span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
                                                     }
                                                     else
@@ -585,7 +572,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                                             <div onclick="showhideUnappliedAttributes()">...</div>
                                             <div id="unappliedattributes" style="display:none; padding:5px;">
                                                     <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
-                                                        echo '<div id="unappliedattribute_'.$attribute['PAID'].'"><div style="width:2em;float:left;"> <button onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div><div style="float:left;">' . $attribute['name'] . '</div><div style="clear:both;"></div></div>';
+                                                        echo '<div style="text-align:left;padding:3px;" id="unappliedattribute_'.$attribute['PAID'].'">'. $attribute['name'] . ' <span><input size="8" id="unappliedattributevalue_'.$attribute['PAID'].'"/> <input size="2" id="unappliedattributeuom_'.$attribute['PAID'].'"/></span><button onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div>';
                                                     }?>
                                             </div>
                                         </td>
