@@ -2098,10 +2098,7 @@ function countAppsByPartcategories($partcategories)
 
  function getReceiverprofileById($id)
  {
-  $profile=false; $status=0;
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
+  $db = new mysql; $db->connect(); $profile=false;
   if($stmt=$db->conn->prepare('select * from receiverprofile where id=?'))
   {
    $stmt->bind_param('i',$id);
@@ -2168,7 +2165,36 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ function addPartcategoryToReceiverProfile($receiverprofileid,$partcategoryid)
+ {
+  $db = new mysql; $db->connect(); $id=false;
+  if($stmt=$db->conn->prepare("insert into receiverprofile_partcategory values(null,?,?)"))
+  {
+   if($stmt->bind_param('ii',$receiverprofileid,$partcategoryid))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+    }
+   }
+  }
+  $db->close();
+  return $id;
+ }
 
+ function removePartcategoryFromReceiverProfile($receiverprofileid,$partcategoryid)
+ {
+  $db = new mysql; $db->connect(); $success=false;
+  if($stmt=$db->conn->prepare("delete from receiverprofile_partcategory where receiverprofileid=? and partcategory=?"))
+  {
+   if($stmt->bind_param('ii',$receiverprofileid,$partcategoryid))
+   {
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;
+ }
  
  
  function getMarketingcopyByReceiverprofileId($receiverprofileid)

@@ -138,13 +138,13 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                         <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
                                         <tr><th>Background</th><td><?php echo $assetrecord['background']; ?></td></tr>
                                         <tr><th>File Size</th><td><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></td></tr>
-                                        <tr><th>URI</th><td><?php echo $assetrecord['uri']; ?></td></tr>
+                                        <tr><th>URI</th><td><div style="font-size:50%;"><?php echo $assetrecord['uri']; ?></div></td></tr>
                                         <tr><th>Local Path</th><td><?php echo $assetrecord['localpath']; ?></td></tr>
                                         <tr><th>Orientation</th><td><?php echo $assetrecord['orientationViewCode']; ?></td></tr>
                                         <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode']; ?></td></tr>
                                         <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
                                         <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'], 'Public', 'Private'); ?></td></tr>
-                                        <tr><th>File Hash</th><td><?php echo $assetrecord['fileHashMD5']; ?></td></tr>
+                                        <tr><th>File Hash</th><td><div style="font-size:50%;"><?php echo $assetrecord['fileHashMD5']; ?></div></td></tr>
                                     </table>
                                 </div>
                             </div>

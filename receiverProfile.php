@@ -35,11 +35,48 @@ if (isset($_POST['submit']) && $_POST['submit']=='Delete')
 
 $profile = $pim->getReceiverprofileById(intval($_GET['id']));
 $profile['data']=str_replace(';',"\r\n",$profile['data']);
-$partcategories=$pim->getReceiverprofilePartcategories($profile['id']);
+$appliedpartcategories=$pim->getReceiverprofilePartcategories($profile['id']);
+$allpartcategories=$pim->getPartCategories();
 ?>
 <!DOCTYPE html>
 <html>
     <head>
+        <script>
+            
+            function removePartcategory(partcategoryid,partcategoryname)
+            {
+             var partcategorydiv = document.getElementById('appliedpartcategoryid_'+partcategoryid);
+             partcategorydiv.parentNode.removeChild(partcategorydiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddRemoveReceiverPartcategory.php?receiverprofileid=<?php echo $profile['id'];?>&partcategoryid='+partcategoryid+'&action=remove');
+             xhr.onload = function()
+             {
+             };
+             xhr.send();
+             
+             document.getElementById('unappliedpartcategories').innerHTML+='<div style="text-align:left;padding:3px;" id="unappliedpartcategoryid_'+partcategoryid+'">'+partcategoryname+' <button  onclick="addPartcategory(\''+partcategoryid+'\',\''+partcategoryname+'\')">+</button></div>';
+
+            }
+            
+            function addPartcategory(partcategoryid,partcategoryname)
+            {
+             var partcategorydiv = document.getElementById('unappliedpartcategoryid_'+partcategoryid);
+             partcategorydiv.parentNode.removeChild(partcategorydiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddRemoveReceiverPartcategory.php?receiverprofileid=<?php echo $profile['id'];?>&partcategoryid='+partcategoryid+'&action=add');
+             xhr.onload = function()
+             {
+             };
+             xhr.send();
+             
+             document.getElementById('appliedpartcategories').innerHTML+='<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'+partcategoryid+'">'+partcategoryname+' <button  onclick="removePartcategory(\''+partcategoryid+'\',\''+partcategoryname+'\')">x</button></div>';
+             
+             
+            }
+            
+        </script>
         <?php include('./includes/header.php'); ?>
     </head>
     <body>
@@ -66,12 +103,31 @@ $partcategories=$pim->getReceiverprofilePartcategories($profile['id']);
                                     <tr><th>Name</th><td><input type="text" name="profilename" value="<?php echo $profile['name']; ?>"/></td></tr>
                                     <tr><th>Notes</th><td><textarea name="notes" rows="10" cols="50"><?php echo $profile['notes']; ?></textarea></td></tr>
                                     <tr><th>Parameters</th><td><textarea name="profiledata" rows="20" cols="50"><?php echo $profile['data']; ?></textarea></td></tr>
-                                    <tr><th>Part Categories</th><td>
-                                        <?php
-                                        foreach ($partcategories as $partcategory) {
-                                            echo '<div>' . $pim->partCategoryName($partcategory) . '</div>';
-                                        }
-                                        ?></td>
+                                    <tr><th>Part Categories</th>
+                                        <td>
+                                            <div id="appliedpartcategories">
+                                            <?php
+                                            foreach ($appliedpartcategories as $partcategory) 
+                                            {
+                                                $partcategoryname=$pim->partCategoryName($partcategory);
+                                                echo '<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'.$partcategory.'">'.$partcategoryname.' <button  onclick="removePartcategory(\''.$partcategory.'\',\''.$partcategoryname.'\')">x</button></div>';
+                                            }
+                                            ?>
+                                            </div>
+
+                                            <hr/>
+
+                                            <div id="unappliedpartcategories">
+                                            <?php
+                                            foreach ($allpartcategories as $partcategory) 
+                                            {   if(in_array($partcategory['id'], $appliedpartcategories)){continue;}
+                                            
+                                                echo '<div style="text-align:left;padding:3px;" id="unappliedpartcategoryid_'.$partcategory['id'].'">'.$pim->partCategoryName($partcategory['id']) . ' <button  onclick="addPartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')">+</button></div>';
+                                            }
+                                            ?>
+                                            </div>
+
+                                        </td>
                                     </tr>
                                     <tr><th></th><td><input name="submit" type="submit" value="Save"/> <input name="submit" type="submit" value="Delete"/></td></tr>
                                 </table>

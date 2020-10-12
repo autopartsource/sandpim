@@ -27,16 +27,12 @@ contributing in any way (even just offering opinions!), please don't hesitate to
 ## To-Do list
 
 - FRONT vs FRO in asset is causing xsd-invalid PIES output
-- receiverProfile.php ajax-ify the adds and deletes of partcategories
 - assetCreate.php add connect-part entry box for partnumber (typed in) and actual vs rep, assettype, sequence
 - vcdb-validation an app on the fly (uppon change)
 - Part search by PAdb attribute
 - copy-forward to next model-year on apps grid (showAppsByBasevehicle.php)
-- user permission mechanism
 - utility to duplicate apps from one basevehicle to another
 - utility to duplicate apps from one partnumber to another
-- background auditing and reporoting of parts
-- background auditing and reporoting of apps
 - API service to expose sandpiper objects
 - API client features to consume sandpiper objects
 

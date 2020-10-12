@@ -1,5 +1,6 @@
 <?php
 include_once('./class/assetClass.php');
+include_once('./class/pcdbClass.php');
 $navCategory = 'assets';
 
 session_start();
@@ -9,7 +10,12 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $asset = new asset;
+$pcdb=new pcdb();
 $error_msg = '';
+
+$allassettypes=$pcdb->getAssetTypeCodes();
+
+
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve') 
 {
@@ -39,7 +45,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
             $description='Photo of '.$filename;
             $background='WHI';
             $uri=$_POST['uri'];
-            $orientationviewcode='FRONT';
+            $orientationviewcode='FRO';
         }
         else
         {
@@ -88,7 +94,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
                             <input type="hidden" name="dimensionUOM" value="<?php echo $dimensionUOM;?>"/>
                             <input type="hidden" name="filehash" value="<?php echo $filehash;?>"/>
                             <div style="padding:10px;">File Type: <?php echo $asset->niceExifTypeName($filetype);?></div>
-                            <input type="hidden" name="filetype" value="<?php echo $filetype;?>" />
+                            <input type="hidden" name="filetype" value="<?php echo $asset->niceExifTypeName($filetype);?>" />
                             <div style="padding:10px;">File Size: <?php echo $asset->niceFileSize($filesize);?></div>
                             <input type="hidden" name="filesize" value="<?php echo $filesize;?>"/>
                             <div style="padding:10px;">Width: <?php echo $imagedims[0];?></div>
@@ -100,10 +106,17 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
                             <div style="padding:10px;">Orientation <input name="orientationviewcode" type="text" value="<?php echo $orientationviewcode;?>"/></div>
                             <div style="padding:10px;">Background <input name="background" type="text" value="<?php echo $background;?>"/></div>
                             <div style="padding:10px;">Color Mode Code<input name="colormodecode" type="text" value="<?php echo $colormodecode;?>"/></div>
+                            <div style="padding:10px;">Resolution<input name="resolution" type="text" value="300"/></div>
                             <div style="padding:10px;">Public <input name="public" type="text" value="<?php echo $public;?>"/></div>
                             <div style="padding:10px;">URI <input name="uri" value="<?php echo $uri;?>"/></div>
                             <div style="padding:10px;"><label><input type="checkbox" id="uripublic" name="uripublic"/>URI is for public consumption</label></div>
                             <div style="padding:10px;"><input type="checkbox" name="discardlocal"/>Discard local copy</div>
+                            
+                            <div style="padding:10px;">Connect Part<input name="partnumber" value="<?php echo $filename;?>"/></div>
+                            <select id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
+                            <select id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
+
+                            
                             <div style="padding:10px;"><input name="submit" type="submit" value="Create"/></div>
                         </form>
                     </div>

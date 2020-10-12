@@ -357,7 +357,7 @@ class asset
             $name='GIF';
             break;
         case 2:
-            $name='JPEG';
+            $name='JPG';
             break;
         case 3:
             $name='PNG';
@@ -419,11 +419,11 @@ class asset
      $nicevalue= number_format($size/1000,0).'KB';
      if($size>1000000)
      {
-         $nicevalue= number_format($size/100000,1,',','.').'MB';
+         $nicevalue= number_format($size/1000000,1,'.',',').'MB';
      }
      if($size>10000000)
      {
-         $nicevalue= number_format($size/1000000,0,',','.').'MB';
+         $nicevalue= number_format($size/1000000,0,'.',',').'MB';
      }
      return $nicevalue;
  }
