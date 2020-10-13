@@ -44,7 +44,17 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic))
     {
         $error_msg = 'Asset id ' . $id . ' was created.';
-        $asset->logAssetEvent($assetid, $_SESSION['userid'], 'Asset created' , '');
+        $assetoid=$asset->updateAssetOID($assetid);
+        $asset->logAssetEvent($assetid, $_SESSION['userid'], 'Asset created' ,$assetoid);
+        
+        if(isset($_POST['partnumber']) && $pim->validPart($_POST['partnumber']))
+        {
+            $partnumber=trim(strtoupper($_POST['partnumber']));
+            $partoid=$pim->updatePartOID($partnumber);
+            $connectionid=$asset->connectPartToAsset($partnumber,$assetid,$_POST['assettypecode'],1,$_POST['representation']);
+            $pim->logPartEvent($partnumber,$_SESSION['userid'], 'asset ['.$assetid.'] was connected' ,$partoid);
+            $asset->logAssetEvent($assetid, $_SESSION['userid'], 'part ['.$partnumber.'] was connected', $assetoid);
+        }
     }
     else 
     { // asset not created

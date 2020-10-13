@@ -1,4 +1,5 @@
 <?php
+include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/pcdbClass.php');
 $navCategory = 'assets';
@@ -11,10 +12,11 @@ if (!isset($_SESSION['userid'])) {
 
 $asset = new asset;
 $pcdb=new pcdb();
+$pim=new pim;
 $error_msg = '';
 
 $allassettypes=$pcdb->getAssetTypeCodes();
-
+$guessedpartnumber='';
 
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve') 
@@ -46,6 +48,22 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
             $background='WHI';
             $uri=$_POST['uri'];
             $orientationviewcode='FRO';
+            
+            if($pim->validPart($filename))
+            {// filename(sans ext) is found to be a valid partnumber
+                $guessedpartnumber=$filename;
+            }
+            else
+            {// filename(sans ext) is not found as a valid partnumber
+                if(strpos($filename,'_'))
+                {//filename contains '_' 
+                    $namebits= explode('_', $filename);
+                    if($pim->validPart($namebits[0]))
+                    {
+                        $guessedpartnumber=strtoupper($namebits[0]);
+                    }
+                }
+            }
         }
         else
         {
@@ -112,9 +130,9 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
                             <div style="padding:10px;"><label><input type="checkbox" id="uripublic" name="uripublic"/>URI is for public consumption</label></div>
                             <div style="padding:10px;"><input type="checkbox" name="discardlocal"/>Discard local copy</div>
                             
-                            <div style="padding:10px;">Connect Part<input name="partnumber" value="<?php echo $filename;?>"/></div>
-                            <select id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
-                            <select id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
+                            <div style="padding:10px;">Connect Part<input name="partnumber" value="<?php echo $guessedpartnumber;?>"/></div>
+                            <select name="assettypecode" id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
+                            <select name="representation" id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
 
                             
                             <div style="padding:10px;"><input name="submit" type="submit" value="Create"/></div>
