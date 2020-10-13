@@ -560,7 +560,14 @@ if(isset($_GET['categories']))
              div.parentNode.removeChild(div);
             }
             
-            function showhideDocumentationDiv(divid,path)
+            function populateDoc() {
+                var docs = document.getElementsByClassName("btn-docs");
+                for (var i=0; i<docs.length; i++) {
+                    getDocText(docs[i].getAttribute('id'),docs[i].getAttribute('data-doc'));
+                }
+            }
+                        
+            function getDocText(divid,path)
             {
                 var docdiv=document.getElementById(divid);
                 
@@ -568,46 +575,17 @@ if(isset($_GET['categories']))
                 xhr.open('GET', 'ajaxGetDocumentation.php?path='+btoa(path));
                 xhr.onload = function()
                 {
-                    docdiv.setAttribute("data-content",xhr.responseText);
+                    docdiv.setAttribute("data-original-title",xhr.responseText);
                 };
                 console.log(xhr.responseText);
                 xhr.send();
-                
-//             if(docdiv.getAttribute("title") == '') {
-//                var xhr = new XMLHttpRequest();
-//                xhr.open('GET', 'ajaxGetDocumentation.php?path='+btoa(path));
-//                xhr.onload = function()
-//              {
-//               docdiv.setAttribute("title",xhr.responseText);
-//              };
-//              xhr.send();
-//             }
-//             else {
-//                 docdiv.setAttribute("title","");
-//             }
-//             
-             
-//             if(docdiv.innerHTML=='')
-//             {
-//              var xhr = new XMLHttpRequest();
-//              xhr.open('GET', 'ajaxGetDocumentation.php?path='+btoa(path));
-//              xhr.onload = function()
-//              {
-//               docdiv.innerHTML='<div style="border:1px solid blue;background-color:#c0c0c0;text-align:left;">'+xhr.responseText+'</div>';
-//              };
-//              xhr.send();
-//             }
-//             else
-//             {
-//              docdiv.innerHTML='';
-//             }
              
             }
 
 
         </script>
     </head>
-    <body onload="setStatusColor()">
+    <body onload="setStatusColor();populateDoc()">
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
@@ -616,7 +594,6 @@ if(isset($_GET['categories']))
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
-                    <button type="button" class="btn btn-sm" data-toggle="popover" title="Popover title" data-content="Default popover">?</button>
                     <?php $issues=$pim->getIssues('APP/%', '', $appid, array(1,2),10);
                     if(count($issues)>0){?>
                     <div class="card shadow-sm">
@@ -741,7 +718,7 @@ if(isset($_GET['categories']))
                                     <tr><th>Quantity<br/>(on this vehicle)</th>
                                         <td align="right">
                                             <input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp']; ?>"/><button onclick='updateApp(<?php echo $appid; ?>,"text","quantityperapp");'>Update Qty</button>
-                                            <div onclick="showhideDocumentationDiv('doc-qty','Apps/Show App/Fitment Quantity');">?</div><div id="doc-qty"></div>
+                                            <button id="doc-qty" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Fitment Quantity" data-toggle="tooltip" data-placement="top">?</button>
                                         </td></tr>
                                     <tr><th>Fitment<br/>Assets</th>
                                         <td align="right">
@@ -762,13 +739,13 @@ if(isset($_GET['categories']))
                                                 <button onclick="addAsset();">+</button>
                                             </div>
                                             <?php }?>
-                                            <button id="doc-asset" type="button" class="btn btn-sm" onclick="showhideDocumentationDiv('doc-asset','Apps/Show App/Fitment Assets/Representation');" data-toggle="popover" title="Asset">?</button>
+                                            <button id="doc-asset" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Fitment Assets/Representation" data-toggle="tooltip" data-placement="top">?</button>
                                         </td>
                                     </tr>
                                     <tr><th>Internal<br/>Notes</th>
                                         <td>
                                             <textarea id="internalnotes" cols="60" rows="5"><?php echo $app['internalnotes']; ?></textarea><div><button onclick='updateApp(<?php echo $appid; ?>,"text","internalnotes");'>Save</button></div>
-                                            <div onclick="showhideDocumentationDiv('doc-internalnotes','Apps/Show App/Internal Notes');">?</div><div id="doc-internalnotes"></div>
+                                            <button id="doc-internalnotes" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Internal Notes" data-toggle="tooltip" data-placement="top">?</button>
                                         </td>
                                     <tr>
                                 <tr><th>IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id']; ?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid']; ?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid']; ?></div><div style="clear:both;"></div></td><tr>
@@ -777,7 +754,7 @@ if(isset($_GET['categories']))
                                     <td id="value-cosmetic" class="appcosmetic-noncosmetic" align="right">
                                         <div id="cosmetic-text"></div>
                                         <button onclick='updateApp(<?php echo $appid; ?>,"button","cosmetic");'>Cosmetic</button>
-                                        <div onclick="showhideDocumentationDiv('doc-cosmetic','Apps/Show App/Cosmetic');">?</div><div id="doc-cosmetic"></div>
+                                        <button id="doc-cosmetic" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Cosmetic" data-toggle="tooltip" data-placement="top">?</button>
                                     </td>
                                 </tr>
                                 <tr><th id="label-status" class="apppart-active">Status</th><td id="value-status" class="apppart-active" align="right"><select id="status" onchange="updateApp(<?php echo $appid; ?>,'select','status');"><option value="0">Active</option><option value="1"<?php if ($app['status'] == 1) {
