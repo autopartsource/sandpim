@@ -18,13 +18,13 @@ html {
 .sidenav {
     height: 100%;
     width: 100%;
-    position: absolute;
+    position: inherit;
     z-index: 1;
-    top: 0;
+    top: 50;
     left: 0;
     background-color: #343a40;
     overflow-x: hidden;
-    padding-top: 20px;
+    padding-top: 10px;
 }
 
 /* Style the sidenav links and the dropdown button */
@@ -105,7 +105,7 @@ body {
 }
 
 .my-col {
-    /*border: 1px dotted red;*/
+    border: 1px dotted red;
 }
 
 .my-btn { 

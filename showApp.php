@@ -313,11 +313,6 @@ if(isset($_GET['categories']))
             }
 
 
-
-
-            
-            
-
             function searchQdb()
             {
              document.getElementById("qdbresultscount").innerHTML="Searching Qdb...";

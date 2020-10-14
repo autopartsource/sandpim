@@ -140,24 +140,8 @@ foreach ($issues as $issue) {
                     document.getElementById("issueId").setAttribute("data-issueid",issueObject.id);
                     document.getElementById('issue_' + id).classList.add("nodeSelected");
                     
-                    issueTypeArray = issueObject.issuetype.split("/");
-                    console.log(issueTypeArray.length);
-                    
-                    issueTypeArray.forEach(element => console.log(element)); 
-                    
-                    
-                    
-                    var totalPath = issueTypeArray[0];
-                    document.getElementById(totalPath).setAttribute("style","display: block;");
-                    document.getElementById('nav_' + totalPath).classList.toggle("sidenavActive", true);
-                    console.log(totalPath);
-                    
-                    for(var i = 1; i < issueTypeArray.length ; i++) {
-                        totalPath += "-" + issueTypeArray[i];
-                        document.getElementById(totalPath).setAttribute("style","display: block;");
-                        document.getElementById('nav_' + totalPath).classList.toggle("sidenavActive", true);
-                        console.log(totalPath);
-                    }
+                    removePreviousSelection();
+                    renderSelectedTree(issueObject);
                     
                 } else {
                     document.getElementById("IssueContent").setAttribute("style","display:none;");
@@ -218,6 +202,42 @@ foreach ($issues as $issue) {
                 }
             }
             
+            function renderSelectedTree(issueObject) {    
+//                console.log(issueObject.id);
+                
+                issueTypeArray = issueObject.issuetype.split("/");
+
+                var totalPath = issueTypeArray[0];
+                document.getElementById(totalPath).setAttribute("style","display: block;");
+                document.getElementById('nav_' + totalPath).setAttribute("class","dropdown-btn sidenavActive");
+
+                for(var i = 1; i < issueTypeArray.length ; i++) {
+                    totalPath += "-" + issueTypeArray[i];
+                    document.getElementById(totalPath).setAttribute("style","display: block;");
+                    document.getElementById('nav_' + totalPath).setAttribute("class","dropdown-btn sidenavActive");
+                }
+                
+                document.getElementById('issue_' + issueObject.id).classList.add("nodeSelected");
+                
+            }
+            
+            function removePreviousSelection() {
+                var selectedArray = document.getElementsByClassName("sidenavActive");
+                var selectedEndNode = document.getElementsByClassName("nodeSelected");
+                
+                console.log(selectedEndNode[0].getAttribute('id'));
+//                document.getElementById("issue_" + selectedEndNode[0].getAttribute('id')).className = "navbarEndNode";
+                
+                for (var i=0; i<selectedArray.length; i++) {
+                    
+                      console.log(selectedArray[i].getAttribute('id'));
+                      document.getElementById(selectedArray[i].getAttribute('id')).setAttribute("class","dropdown-btn");
+
+//                    document.getElementById(selectedArray[i].getAttribute('id')).setAttribute("class","dropdown-btn");
+                    
+                }
+            }
+            
         </script>
     </head>
     <body onload="renderIssue(<?php echo $selectedissue['id']?>)">
@@ -228,8 +248,8 @@ foreach ($issues as $issue) {
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 <!-- Left Column -->
-                <div class="col-xs-12 col-md-2 my-col colLeft" id="sidebar">
-                    <div class="sidenav">
+                <div class="col-xs-12 col-md-2 colLeft" style="background-color: #343a40; min-height: 90vh;">
+                    <div id="sidebar" class="sidenav scroll" role="group">
                     <?php
                     foreach ($tree as $key0 => $data0) {
                         if (is_array($data0) && array_key_exists('issuehash', $data0)) {
@@ -242,21 +262,21 @@ foreach ($issues as $issue) {
                                 if (is_array($data1) && array_key_exists('issuehash', $data1)) {// this is an end-node
                                     echo '<a id="issue_' . $data1['id'] . '" data-issue="' . base64_encode(json_encode($data1)) . '" class="navbarEndNode pl-3" onclick="renderIssue(\'' . intval($data1['id']) . '\');">' . $data1['description'] . '</a>';
                                 } else {
-                                    echo '<button id="nav_'.$key1.'" class="dropdown-btn pl-3" data-toggle="collapse" data-target="#' . $key1 . '">' . $key1 . '<i class="fa fa-caret-down"></i></button>';
+                                    echo '<button id="nav_' . $key0 . '-' . $key1 . '" class="dropdown-btn pl-3" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '">' . $key1 . '<i class="fa fa-caret-down"></i></button>';
                                     echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '" aria-expanded="false">';
 
                                     foreach ($data1 as $key2 => $data2) {
                                         if (is_array($data2) && array_key_exists('issuehash', $data2)) {// this is an end-node
-                                            echo '<a id="issue_' . $data2['id'] . '" data-issue="' . base64_encode(json_encode($data1)) . '" class="navbarEndNode pl-4" onclick="renderIssue(\'' . intval($data2['id']) . '\');">' . $data2['description'] . '</a>';
+                                            echo '<a id="issue_' . $data2['id'] . '" data-issue="' . base64_encode(json_encode($data2)) . '" class="navbarEndNode pl-4" onclick="renderIssue(\'' . intval($data2['id']) . '\');">' . $data2['description'] . '</a>';
                                         } else {
-                                            echo '<button id="nav_'.$key2.'" class="dropdown-btn pl-4" data-toggle="collapse" data-target="#' . $key2 . '">' . $key2 . '<i class="fa fa-caret-down"></i></button>';
+                                            echo '<button id="nav_' . $key0 . '-' . $key1 . '-' . $key2 . '" class="dropdown-btn pl-4" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '-' . $key2 . '">' . $key2 . '<i class="fa fa-caret-down"></i></button>';
                                             echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '-' . $key2 . '" aria-expanded="false">';
 
                                             foreach ($data2 as $key3 => $data3) {
                                                 if (is_array($data3) && array_key_exists('issuehash', $data3)) {// this is an end-node
                                                     echo '<a id="issue_' . $data3['id'] . '" data-issue="' . base64_encode(json_encode($data3)) . '" class="navbarEndNode pl-5" onclick="renderIssue(\'' . intval($data3['id']) . '\');">' . $data3['description'] . '</a>';
                                                 } else {
-                                                    echo '<button id="nav_'.$key3.'" class="dropdown-btn pl-5" data-toggle="collapse" data-target="#' . $key3 . '">' . $key3 . '<i class="fa fa-caret-down"></i></button>';
+                                                    echo '<button id="nav_' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '" class="dropdown-btn pl-5" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '">' . $key3 . '<i class="fa fa-caret-down"></i></button>';
                                                     echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '" aria-expanded="false">';
 
                                                     foreach ($data3 as $key4 => $data4) {
@@ -373,7 +393,7 @@ foreach ($issues as $issue) {
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-10 my-col colMain">
-                    <div id="IssueContent" class="card shadow-sm" style="">
+                    <div id="IssueContent" class="card shadow-sm my-col" style="">
                         <div class="card-header text-left">
                             <span id="issueBreadcrumb"></span>
                             <div class="btn-group-toggle" data-toggle="buttons" style="float:right;">
