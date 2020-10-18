@@ -28,6 +28,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="basevidsToMMYinput.php">Convert BaseVehicleIDs to Makes/Models/Years</a>
                     <a class="dropdown-item" href="MMYtoBasevidsInput.php">Convert Makes/Models/Years to BaseVehicleIDs</a>
+                    <a class="dropdown-item" href="convertExcelToACES4_1upload.php">Convert spreadsheet to ACES</a>
                 </div>
             </li>
             <li<?php if ($navCategory == 'settings') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>

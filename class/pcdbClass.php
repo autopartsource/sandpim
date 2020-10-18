@@ -30,6 +30,27 @@ class pcdb
   return $name;
  }
 
+ function positionIDofName($positionname)
+ {
+  $id=false; $db = new mysql; $db->dbname=$db->pcdbname; 
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;} $db->connect();
+  if($stmt=$db->conn->prepare('select PositionID from Positions where Position=?'))
+  {
+   $stmt->bind_param('s', $positionname);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id=$row['PositionID'];
+   }
+  }
+  $db->close();
+  return $id;
+ }
+
+ 
+ 
+ 
  function validParttypePosition($parttypeid,$positionid)
  {
      
@@ -73,6 +94,25 @@ class pcdb
   return $name;
  }
 
+ function parttypeIDofName($parttypename)
+ {
+  $id=false; $db = new mysql; $db->dbname=$db->pcdbname;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;} $db->connect();
+  if($stmt=$db->conn->prepare('select PartTerminologyID from Parts where PartTerminologyName=?'))
+  {
+   $stmt->bind_param('s', $parttypename);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id=$row['PartTerminologyID'];
+   }
+  }
+  $db->close();
+  return $id;
+ }
+ 
+ 
  function version()
  {
   $versiondate='not found';
