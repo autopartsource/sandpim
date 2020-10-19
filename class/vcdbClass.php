@@ -232,6 +232,27 @@ class vcdb
   return $mmy;
  }
 
+  function regionIDofRegionName($regionname)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
+  $id=false;
+  if($stmt=$db->conn->prepare('SELECT RegionID from Region WHERE RegionName = ?'))
+  {
+   $stmt->bind_param('s', $regionname);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id = $row['RegionID'];
+   }
+  }
+  $db->close();
+  return $id;
+ }
+
+ 
+ 
+ 
  function niceVCdbAttributePair($attributePair)
  {
   $db=new mysql; $db->dbname=$db->vcdbname; $db->connect(); $value=$attributePair['value'];

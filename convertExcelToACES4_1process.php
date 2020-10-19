@@ -38,7 +38,8 @@ $columnids=array();
 $basevidscache=array();
 $positionidscache=array();
 $parttypenamescache=array();
-
+$regionidscache=array();
+        
 if(isset($_POST['submit']) && $_POST['submit']=='Generate ACES xml')
 {
  if($_FILES['fileToUpload']['type']=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -215,10 +216,16 @@ if($validUpload)
   
   foreach($basevids as $basevid)
   {// 1 or more basevids come from each spreadsheet row
-      
+    
+   $goodrecord=true;
    $partnumber=$row[$partnumbercolumnid];
-   $positionname=$row[$positioncolumnid];
+   $ref=$row[$appidcolumnid];
+   $notes=$row[$notescolumnid];
+   $mfrlabel=$row[$mfrlabelcolumnid];
+   $qty=$row[$qtycolumnid];
+   $attributes=array();
    
+   $positionname=$row[$positioncolumnid];
    if(array_key_exists($positionname, $positionidscache))
    {// position name is already in cache
     $positionid=$positionidscache[$positionname];
@@ -228,9 +235,7 @@ if($validUpload)
     $positionid=$pcdb->positionIDofName($positionname);
     $positionidscache[$positionname]=$positionid;
    }
-   
-   $qty=$row[$qtycolumnid];
-   
+     
    $parttypename=$row[$parttypecolumnid];
    if(array_key_exists($parttypename, $parttypenamescache))
    {// parttype name is already in cache
@@ -240,17 +245,36 @@ if($validUpload)
    {// no hit on parttype name cache - look it up and add it to the cache
     $parttypeid=$pcdb->parttypeIDofName($parttypename);
     $parttypenamescache[$parttypename]=$parttypeid;
+   }   
+
+   $regionname=trim($row[$regioncolumnid]);
+   if($regionname!='')
+   {
+    if(array_key_exists($regionname, $regionidscache))
+    {// region name is already in cache
+     $regionid=$regionidscache[$regionname];
+    }
+    else
+    {// no hit on region name cache - look it up and add it to the cache
+     $regionid=$vcdb->regionIDofRegionName($regionname);
+     $regionidscache[$regionname]=$regionid;
+    }   
+    if($regionid===false)
+    {// name supplied was not found in the VCdb
+     $errors[]='row '.$rownumber.' contains a region name ['.$regionname.'] that was not found in the VCdb';
+     $goodrecord=false;
+    }
+    else
+    {// successful lookup of value
+     $attributes[]=array('id'=>0,'name'=>'Region','value'=>$regionid,'type'=>'vcdb','sequence'=>1,'cosmetic'=>0);
+    }
    }
    
    
-   $mfrlabel=$row[$mfrlabelcolumnid];
-   $ref=$row[$appidcolumnid];
-   $notes=$row[$notescolumnid];
-   
-   //echo $partnumber.', '.$basevid.', '.$positionid.', '.$qty.', '.$parttypeid.', '.$mfrlabel.', '.$ref.', '.$notes.'<br/>';
-           
-   $apps[]=array('partnumber'=>$partnumber,'id'=>$ref,'basevehicleid'=>$basevid,'parttypeid'=>$parttypeid,'positionid'=>$positionid,'quantityperapp'=>$qty);
-
+   if($goodrecord)
+   {
+    $apps[]=array('partnumber'=>$partnumber,'id'=>$ref,'basevehicleid'=>$basevid,'parttypeid'=>$parttypeid,'positionid'=>$positionid,'quantityperapp'=>$qty,'attributes'=>$attributes);
+   }
   }
   
             
