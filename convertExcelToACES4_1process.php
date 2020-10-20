@@ -39,6 +39,12 @@ $basevidscache=array();
 $positionidscache=array();
 $parttypenamescache=array();
 $regionidscache=array();
+$bedlengthcache=array();
+$bedtypeidscache=array();
+$bodynumdoorscache=array();
+$bodytypeidscache=array();
+$brakeabsidscache=array();
+$brakesystemidscache=array();
         
 if(isset($_POST['submit']) && $_POST['submit']=='Generate ACES xml')
 {
@@ -269,6 +275,152 @@ if($validUpload)
      $attributes[]=array('id'=>0,'name'=>'Region','value'=>$regionid,'type'=>'vcdb','sequence'=>1,'cosmetic'=>0);
     }
    }
+
+
+   $bedlength=trim($row[$bedlengthcolumnid]);
+   if($bedlength!='')
+   {
+    if(array_key_exists($bedlength, $bedlengthcache))
+    {// bedlength name is already in cache
+     $bedlengthid=$bedlengthcache[$bedlength];
+    }
+    else
+    {// no hit on bedlength cache - look it up and add it to the cache
+     $bedlengthid=$vcdb->bedlengthIDofBedlength($bedlength);
+     $bedlengthcache[$bedlength]=$bedlengthid;
+    }   
+    if($bedlengthid===false)
+    {// bedlength supplied was not found in the VCdb
+     $errors[]='row '.$rownumber.' contains a BedLength ['.$bedlength.'] that was not found in the VCdb';
+     $goodrecord=false;
+    }
+    else
+    {// successful lookup of bedlength
+     $attributes[]=array('id'=>0,'name'=>'BedLength','value'=>$bedlengthid,'type'=>'vcdb','sequence'=>1,'cosmetic'=>0);
+    }
+   }
+
+   $bedtypename=trim($row[$bedtypecolumnid]);
+   if($bedtypename!='')
+   {
+    if(array_key_exists($bedtypename, $bedtypeidscache))
+    {// bedtype name is already in cache
+     $bedtypeid=$bedtypeidscache[$bedtypename];
+    }
+    else
+    {// no hit on bedlength cache - look it up and add it to the cache
+     $bedtypeid=$vcdb->bedtypeIDofBedtypeName($bedtypename);
+     $bedtypeidscache[$bedtypename]=$bedtypeid;
+    }   
+    if($bedtypeid===false)
+    {// bedtype supplied was not found in the VCdb
+     $errors[]='row '.$rownumber.' contains a BedType ['.$bedtypename.'] that was not found in the VCdb';
+     $goodrecord=false;
+    }
+    else
+    {// successful lookup of bedtype
+     $attributes[]=array('id'=>0,'name'=>'BedType','value'=>$bedtypeid,'type'=>'vcdb','sequence'=>1,'cosmetic'=>0);
+    }
+   }
+
+   $bodynumdoors=trim($row[$bodydoorcolumnid]);
+   if($bodynumdoors!='')
+   {
+    if(array_key_exists($bodynumdoors, $bodynumdoorscache))
+    {// bedtype name is already in cache
+     $bodynumdoorsid=$bodynumdoorscache[$bodynumdoors];
+    }
+    else
+    {// no hit on bedlength cache - look it up and add it to the cache
+     $bodynumdoorsid=$vcdb->bodynumdoorsIDofBodyNumDoors($bodynumdoors);
+     $bodynumdoorscache[$bodynumdoors]=$bodynumdoorsid;
+    }   
+    if($bodynumdoorsid===false)
+    {// bedtype supplied was not found in the VCdb
+     $errors[]='row '.$rownumber.' contains a BodyNumDoors ['.$bodynumdoors.'] that was not found in the VCdb';
+     $goodrecord=false;
+    }
+    else
+    {// successful lookup of bedtype
+     $attributes[]=array('id'=>0,'name'=>'BodyNumDoors','value'=>$bodynumdoorsid,'type'=>'vcdb','sequence'=>1,'cosmetic'=>0);
+    }
+   }
+   
+   
+   $bodytypename=trim($row[$bodytypecolumnid]);
+   if($bodytypename!='')
+   {
+    if(array_key_exists($bodytypename, $bodytypeidscache))
+    {// bedtype name is already in cache
+     $bodytypeidid=$bodytypeidscache[$bodytypename];
+    }
+    else
+    {// no hit on bedlength cache - look it up and add it to the cache
+     $bodytypeidid=$vcdb->bodytypeIDofBodyTypeName($bodytypename);
+     $bodytypeidscache[$bodytypename]=$bodytypeidid;
+    }   
+    if($bodytypeidid===false)
+    {// bedtype supplied was not found in the VCdb
+     $errors[]='row '.$rownumber.' contains a BodyType name ['.$bodytypename.'] that was not found in the VCdb';
+     $goodrecord=false;
+    }
+    else
+    {// successful lookup of bedtype
+     $attributes[]=array('id'=>0,'name'=>'BodyType','value'=>$bodytypeidid,'type'=>'vcdb','sequence'=>1,'cosmetic'=>0);
+    }
+   }
+   
+   
+   
+   
+   $brakeabsname=trim($row[$brakeabscolumnid]);
+   if($brakeabsname!='')
+   {
+    if(array_key_exists($brakeabsname, $brakeabsidscache))
+    {// bedtype name is already in cache
+     $brakeabsid=$brakeabsidscache[$brakeabsname];
+    }
+    else
+    {// no hit on bedlength cache - look it up and add it to the cache
+     $brakeabsid=$vcdb->brakeabsIDofBrakeAbsName($brakeabsname);
+     $brakeabsidscache[$brakeabsname]=$brakeabsid;
+    }   
+    if($brakeabsid===false)
+    {// bedtype supplied was not found in the VCdb
+     $errors[]='row '.$rownumber.' contains a BrakeABS name ['.$brakeabsname.'] that was not found in the VCdb';
+     $goodrecord=false;
+    }
+    else
+    {// successful lookup of bedtype
+     $attributes[]=array('id'=>0,'name'=>'BrakeABS','value'=>$brakeabsid,'type'=>'vcdb','sequence'=>1,'cosmetic'=>0);
+    }
+   }
+      
+   $brakesystemname=trim($row[$brakesystemcolumnid]);
+   if($brakesystemname!='')
+   {
+    if(array_key_exists($brakesystemname, $brakesystemidscache))
+    {// bedtype name is already in cache
+     $brakesystemid=$brakesystemidscache[$brakesystemname];
+    }
+    else
+    {// no hit on bedlength cache - look it up and add it to the cache
+     $brakesystemid=$vcdb->brakesystemIDofBrakeAbsName($brakesystemname);
+     $brakesystemidscache[$brakesystemname]=$brakesystemid;
+    }   
+    if($brakesystemid===false)
+    {// bedtype supplied was not found in the VCdb
+     $errors[]='row '.$rownumber.' contains a BrakeSystem name ['.$brakesystemname.'] that was not found in the VCdb';
+     $goodrecord=false;
+    }
+    else
+    {// successful lookup of bedtype
+     $attributes[]=array('id'=>0,'name'=>'BrakeSystem','value'=>$brakesystemid,'type'=>'vcdb','sequence'=>1,'cosmetic'=>0);
+    }
+   }
+           
+           
+   
    
    
    if($goodrecord)
@@ -284,7 +436,6 @@ if($validUpload)
 
  
  //-----------------------------------------------------
- //$doc=$PIESgenerator->createPIESdoc($header,$marketingcopys,$items);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
  $doc=$ACESgenerator->createACESdoc($header, $apps, $assets, $options);
  $doc->formatOutput=true;
  $acesxmlstring=$doc->saveXML();    

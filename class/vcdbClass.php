@@ -232,7 +232,7 @@ class vcdb
   return $mmy;
  }
 
-  function regionIDofRegionName($regionname)
+ function regionIDofRegionName($regionname)
  {
   $db = new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
   $id=false;
@@ -250,6 +250,117 @@ class vcdb
   return $id;
  }
 
+ function bedlengthIDofBedlength($bedlength)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
+  $id=false;
+  if($stmt=$db->conn->prepare('SELECT BedLengthID from BedLength WHERE BedLength = ?'))
+  {
+   $stmt->bind_param('s', $bedlength);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id = $row['BedLengthID'];
+   }
+  }
+  $db->close();
+  return $id;
+ }
+ 
+ function bedtypeIDofBedtypeName($bedtypename)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
+  $id=false;
+  if($stmt=$db->conn->prepare('SELECT BedTypeID from BedType WHERE BedTypeName = ?'))
+  {
+   $stmt->bind_param('s', $bedtypename);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id = $row['BedTypeID'];
+   }
+  }
+  $db->close();
+  return $id;
+ }
+ 
+ 
+ 
+ function bodynumdoorsIDofBodyNumDoors($bodynumdoors)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
+  $id=false;
+  if($stmt=$db->conn->prepare('Select BodyNumDoorsID from BodyNumDoors WHERE BodyNumDoors = ?'))
+  {
+   $stmt->bind_param('s', $bodynumdoors);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id = $row['BodyNumDoorsID'];
+   }
+  }
+  $db->close();
+  return $id;
+ }
+  
+ function bodytypeIDofBodyTypeName($bodytypename)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
+  $id=false;
+  if($stmt=$db->conn->prepare('select BodyTypeID from BodyType WHERE BodyTypeName = ?'))
+  {
+   $stmt->bind_param('s', $bodytypename);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id = $row['BodyTypeID'];
+   }
+  }
+  $db->close();
+  return $id;
+ }
+ 
+ function brakeabsIDofBrakeAbsName($brakeabsname)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
+  $id=false;
+  if($stmt=$db->conn->prepare('SELECT BrakeABSID from BrakeABS WHERE BrakeABSName = ?'))
+  {
+   $stmt->bind_param('s', $brakeabsname);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id = $row['BrakeABSID'];
+   }
+  }
+  $db->close();
+  return $id;
+ }
+
+ 
+ function brakesystemIDofBrakeAbsName($brakesystemname)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
+  $id=false;
+  if($stmt=$db->conn->prepare('SELECT BrakeSystemID from BrakeSystem WHERE  BrakeSystemName = ?'))
+  {
+   $stmt->bind_param('s', $brakesystemname);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id = $row['BrakeSystemID'];
+   }
+  }
+  $db->close();
+  return $id;
+ }
+ 
  
  
  
