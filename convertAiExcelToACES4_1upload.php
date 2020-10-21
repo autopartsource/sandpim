@@ -34,7 +34,7 @@ $qdbversions=$pim->getAutocareDatabaseList('qdb');
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form method="post" action="convertExcelToACES4_1process.php" enctype="multipart/form-data">
+                    <form method="post" action="convertAiExcelToACES4_1process.php" enctype="multipart/form-data">
                         <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" accept=".xlsx"/></div>
                         <div style="padding:5px;text-align: left;"><input type="checkbox" id="showtext" name="showtext"/><label for="showtext">Display output xml in text area (un-check to auto download ACES xml file)</label></div>
                         <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelookupfails" name="ignorelookupfails"/><label for="ignorelookupfails">Ignore and exclude apps with lookup fails</label></div>
