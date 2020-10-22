@@ -2,12 +2,15 @@
 include_once('./class/userClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/configSetClass.php');
+include_once('./class/logsSetClass.php');
+
 $navCategory = 'settings';
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
 
 $user= new user;
+$logs=new logs;
 $configGet= new configGet;
 $configSet= new configSet;
 

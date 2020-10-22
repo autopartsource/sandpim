@@ -1966,12 +1966,12 @@ function countAppsByPartcategories($partcategories)
    $fields=explode("\t",$row);
    if(count($fields)==9)
    {// row has the correct number of fields
-    if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic) values(null,?,?,0,0,?,?,?,?,0,0)'))
+    if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic) values(null,?,?,0,0,?,?,?,?,0,?)'))
     {
      $oid=$this->newoid();
-     $stmt->bind_param('siiiis', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber);
+     $stmt->bind_param('siiiisi', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic);
      
-     $cosmetic=intval($fields[0]); 
+     $cosmetic=intval($fields[0]);
      $basevehicleid=intval($fields[1]); 
      $partnumber=trim(strtoupper($fields[2]));
      $parttypeid=intval($fields[3]); 
