@@ -2,7 +2,7 @@
 include_once('./class/userClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/configSetClass.php');
-include_once('./class/logsSetClass.php');
+include_once('./class/logsClass.php');
 
 $navCategory = 'settings';
 
