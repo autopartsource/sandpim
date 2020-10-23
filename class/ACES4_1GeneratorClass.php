@@ -48,8 +48,8 @@ class ACESgenerator
   {
    if($includecosmeticapps==false && $app['cosmetic']==1){continue;}
    
-   if($app['parttypeid']==0 || $app['positionid']==0 || $app['quantityperapp']==0)
-   { // major app problems that would cause an XSD violation 
+   if($app['parttypeid']==0 || $app['quantityperapp']==0)
+   { // major app problems that would cause an XSD violation //$app['positionid']==0 ||
     continue;
    }
    
@@ -151,9 +151,12 @@ class ACESgenerator
 
    if(array_key_exists('mfrlabel', $app) && trim($app['mfrlabel'])!=''){$mfrlabelElement=new DOMElement('MfrLabel',$app['mfrlabel']); $appElement->appendChild($mfrlabelElement);}
 
-   $positionElement=new DOMElement('Position');
-   $appElement->appendChild($positionElement);
-   $positionElement->setAttribute('id', $app['positionid']);
+   if($app['positionid']!=0)
+   {
+    $positionElement=new DOMElement('Position');
+    $appElement->appendChild($positionElement);
+    $positionElement->setAttribute('id', $app['positionid']);
+   }
    
    $partElement=new DOMElement('Part',$app['partnumber']);
    $appElement->appendChild($partElement);

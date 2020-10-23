@@ -31,8 +31,11 @@ $header=array('Company'=>'ACME Anvils','SenderName'=>'Luke Smith','SenderPhone'=
 $assets=array();
 $options=array();
         
-$validcolumns=array('Ref','BaseVehicleID','PartNumber','PartTypeID','PositionID','Qty','VCdb Attributes','Qdb Qualifiers','Free-Form Fitments Notes','MfrLabel','AssetName');
-$RefColumnId=-1; $BaseVehicleIDColumnId=-1; $PartNumberColumnId=-1; $PartTypeIDColumnId=-1; $PositionIDColumnId=-1; $QtyColumnId=-1; $VCdbAttributesColumnId=-1; $QdbQualifiersColumnId=-1; $NotesColumnId=-1; $MfrLabelColumnId=-1; $AssetNameColumnId=-1;
+//$validcolumns=array('Ref','BaseVehicleID','PartNumber','PartTypeID','PositionID','Qty','VCdb Attributes','Qdb Qualifiers','Free-Form Fitments Notes','MfrLabel','AssetName');
+$validcolumns=array('Application id','Reference','BaseVehicleid','Part','PartTypeid','Positionid','Quantity','VCdb-coded Attributes','Qdb-coded Qualifiers','Notes','Mfr Label','Asset','Asset Item Order');
+
+
+$RefColumnId=-1; $BaseVehicleIDColumnId=-1; $PartNumberColumnId=-1; $PartTypeIDColumnId=-1; $PositionIDColumnId=-1; $QtyColumnId=-1; $VCdbAttributesColumnId=-1; $QdbQualifiersColumnId=-1; $NotesColumnId=-1; $MfrLabelColumnId=-1; $AssetNameColumnId=-1; $assetitemordercolumnid=-1;
 $columnids=array();
 
         
@@ -47,13 +50,13 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate ACES xml')
    $sheetNames = $xlsx->getSheetNames();
    $originalFilename= basename($_FILES['fileToUpload']['name']);
 
-   if(in_array('Applications',$sheetNames))
+   if(in_array('Sheet1',$sheetNames))
    {
-    $appsSheet=$xlsx->getSheetData('Applications');
+    $appsSheet=$xlsx->getSheetData('Sheet1');
    
     $validUpload=true;
     
-     if(isset($appsSheet[0][2]) && $appsSheet[0][2]=='PartNumber' )
+     if(isset($appsSheet[0][3]) && $appsSheet[0][3]=='Part' )
      {
          
          
@@ -97,17 +100,18 @@ if($validUpload)
   if(in_array($columnname, $validcolumns)){$columnids[$columnname]=$columnnumber;}
  }     
 
-$refcolumnid=$columnids['Ref'];
-$basevehicleidcolumnid=$columnids['BaseVehicleID'];
-$partnumbercolumnid=$columnids['PartNumber'];
-$parttypeidcolumnid=$columnids['PartTypeID'];
-$positionidcolumnid=$columnids['PositionID'];
-$qtycolumnid=$columnids['Qty'];
-$vcdbattributescolumnid=$columnids['VCdb Attributes'];
-$qdbqualifierscolumnid=$columnids['Qdb Qualifiers'];
-$notescolumnid=$columnids['Free-Form Fitments Notes'];
-$mfrlabelcolumnid=$columnids['MfrLabel'];
-$assetnamecolumnid=$columnids['AssetName'];
+$refcolumnid=$columnids['Reference'];
+$basevehicleidcolumnid=$columnids['BaseVehicleid'];
+$partnumbercolumnid=$columnids['Part'];
+$parttypeidcolumnid=$columnids['PartTypeid'];
+$positionidcolumnid=$columnids['Positionid'];
+$qtycolumnid=$columnids['Quantity'];
+$vcdbattributescolumnid=$columnids['VCdb-coded Attributes'];
+$qdbqualifierscolumnid=$columnids['Qdb-coded Qualifiers'];
+$notescolumnid=$columnids['Notes'];
+$mfrlabelcolumnid=$columnids['Mfr Label'];
+$assetnamecolumnid=$columnids['Asset'];
+$assetitemordercolumnid=$columnids['Asset Item Order'];
 
 
  foreach ($appsSheet as $rownumber=>$row)
@@ -142,21 +146,40 @@ $assetnamecolumnid=$columnids['AssetName'];
   }
 
   if($qdbqualifiersstring!='')
-  {// 13120;4623^10/05/2009|~12/08/2010|
-    //in this example, 13120 = "with Automatic Temperature Control" and has no parms
-    //4623 is "From <date> to <date>" -- 2 parms and no units of measure
-     
-   $rawqdbstrings=explode(';',$rawqdbstrings);
+  { // 10866:G16B;
+    // 2431;
+    // 4615:07/07/1994;
+    // 2431;793:7/32 in;
+
+   $rawqdbstrings=explode(';',$qdbqualifiersstring);
    foreach($rawqdbstrings as $rawqdbstring)
    {
-    if(strpos($rawqdbstring, '^'))
+    if(trim($rawqdbstring)==''){continue;}
+    if(strpos($rawqdbstring, ':'))
     {// parms are present
-     $qdbbits=explode('^',$rawqdbstring);
-     $attributes[]=array('id'=>0,'name'=>intval($qdbbits[0]),'value'=>$qdbbits[1],'type'=>'qdb','sequence'=>1,'cosmetic'=>0);
+     $qdbbits=explode(':',$rawqdbstring);
+     $qdbid=intval($qdbbits[0]);
+     unset($qdbbits[0]); // the 0th element is the Qdbid the rest of the elements are parms
+     if($qdbid==0)
+     {// qdb lookup failed (qdbid=0). log the error and prevent this app from being added to the output
+      $goodrecord=false;
+     }
+     else
+     {
+      $attributes[]=array('id'=>0,'name'=>$qdbid,'value'=>implode('~', $qdbbits),'type'=>'qdb','sequence'=>1,'cosmetic'=>0);
+     }
     }
     else
-    {// no parms are present. like "13120"   
-     $attributes[]=array('id'=>0,'name'=>intval($rawqdbstring),'value'=>'','type'=>'qdb','sequence'=>1,'cosmetic'=>0);
+    {// no parms are present. like "13120" 
+     $qdbid=intval($rawqdbstring);
+     if($qdbid==0)
+     {// qdb lookup failed (qdbid=0). log the error and prevent this app from being added to the output
+      $goodrecord=false;    
+     }
+     else
+     {// 
+      $attributes[]=array('id'=>0,'name'=>$qdbid,'value'=>'','type'=>'qdb','sequence'=>1,'cosmetic'=>0);   
+     }
     }   
    }
   }
@@ -168,7 +191,7 @@ $assetnamecolumnid=$columnids['AssetName'];
   
   if($goodrecord)
   {
-   $apps[]=array('partnumber'=>$partnumber,'id'=>$ref,'basevehicleid'=>$basevehicleid,'parttypeid'=>$parttypeid,'positionid'=>$positionid,'quantityperapp'=>$qty,'attributes'=>$attributes);
+   $apps[]=array('partnumber'=>$partnumber,'id'=>$ref,'basevehicleid'=>$basevehicleid,'parttypeid'=>$parttypeid,'positionid'=>$positionid,'quantityperapp'=>$qty,'attributes'=>$attributes,'cosmetic'=>0);
   }
             
             
@@ -302,7 +325,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelookup
 <?php }
 $logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';apps:'.count($apps).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
 
-echo '<textarea>'.$acesxmlstring.'</textarea>';
+//echo '<textarea>'.$acesxmlstring.'</textarea>';
 
 if($streamXML && $validUpload)
 {
