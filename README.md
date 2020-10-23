@@ -26,15 +26,13 @@ contributing in any way (even just offering opinions!), please don't hesitate to
 
 ## To-Do list
 
-- FRONT vs FRO in asset is causing xsd-invalid PIES output
+- Publish deployment how-to document for Fedora Linux 
+- Publish VirtualBox VM on S3 for public download of fully functional demo server
 - assetCreate.php add connect-part entry box for partnumber (typed in) and actual vs rep, assettype, sequence
 - vcdb-validation an app on the fly (uppon change)
 - Part search by PAdb attribute
 - copy-forward to next model-year on apps grid (showAppsByBasevehicle.php)
 - utility to duplicate apps from one basevehicle to another
 - utility to duplicate apps from one partnumber to another
-- API service to expose sandpiper objects
-- API client features to consume sandpiper objects
-
-## Installation notes
-- SELinux allow uploads chcon unconfined_u:object_r:httpd_sys_rw_content_t:s0 PIESuploads/
+- API service to expose Content via Sandpiper protocol
+- API client features to consume Content via Sandpiper protocol
