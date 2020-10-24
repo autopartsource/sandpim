@@ -6,6 +6,7 @@ include_once('./class/vcdbClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/ACES4_1GeneratorClass.php');
 include_once('./class/XLSXReaderClass.php');
+
 $navCategory = 'import/export';
 
 session_start();
@@ -19,6 +20,11 @@ $pcdbVersion=$pcdb->version();
 $vcdbVersion=$vcdb->version();
 $qdbVersion=$qdb->version();
 $logs=new logs();
+$basevehicles=$vcdb->getAllBaseVehicles();
+$qdbs=$qdb->getAllQdbs();
+$positions=$pcdb->getAllPositions();
+
+//print_r($positions);
 
 $acesxmlstring='';
 $streamXML=true;
@@ -27,13 +33,15 @@ $originalFilename='';
 $validUpload=false;
 $inputFileLog=array();
 $apps=array();
-$header=array('Company'=>'ACME Anvils','SenderName'=>'Luke Smith','SenderPhone'=>'804-329-3000','TransferDate'=>'2020-10-17','DocumentTitle'=>'stuff','EffectiveDate'=>'2020-10-17','SubmissionType'=>'FULL','VcdbVersionDate'=>'2020-08-28','QdbVersionDate'=>'2020-08-28','PcdbVersionDate'=>'2020-08-28');
+$header=array();//'Company'=>'ACME Anvils','SenderName'=>'Luke Smith','SenderPhone'=>'804-329-3000','TransferDate'=>'2020-10-17','DocumentTitle'=>'stuff','EffectiveDate'=>'2020-10-17','SubmissionType'=>'FULL','VcdbVersionDate'=>'2020-08-28','QdbVersionDate'=>'2020-08-28','PcdbVersionDate'=>'2020-08-28');
+$header=array('VcdbVersionDate'=>$vcdbVersion,'QdbVersionDate'=>$qdbVersion,'PcdbVersionDate'=>$qdbVersion);
+
+
+
 $assets=array();
 $options=array();
         
-//$validcolumns=array('Ref','BaseVehicleID','PartNumber','PartTypeID','PositionID','Qty','VCdb Attributes','Qdb Qualifiers','Free-Form Fitments Notes','MfrLabel','AssetName');
-$validcolumns=array('Application id','Reference','BaseVehicleid','Part','PartTypeid','Positionid','Quantity','VCdb-coded Attributes','Qdb-coded Qualifiers','Notes','Mfr Label','Asset','Asset Item Order');
-
+$validcolumns=array('Application id','Reference','BaseVehicleid','Part','PartTypeid','Positionid','Quantity','VCdb-coded Attributes','Qdb-coded Qualifiers','Notes','Mfr Label','AssetName','Asset Item Order');
 
 $RefColumnId=-1; $BaseVehicleIDColumnId=-1; $PartNumberColumnId=-1; $PartTypeIDColumnId=-1; $PositionIDColumnId=-1; $QtyColumnId=-1; $VCdbAttributesColumnId=-1; $QdbQualifiersColumnId=-1; $NotesColumnId=-1; $MfrLabelColumnId=-1; $AssetNameColumnId=-1; $assetitemordercolumnid=-1;
 $columnids=array();
@@ -50,9 +58,9 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate ACES xml')
    $sheetNames = $xlsx->getSheetNames();
    $originalFilename= basename($_FILES['fileToUpload']['name']);
 
-   if(in_array('Sheet1',$sheetNames))
+   if(in_array('Applications',$sheetNames) && in_array('Header',$sheetNames))
    {
-    $appsSheet=$xlsx->getSheetData('Sheet1');
+    $appsSheet=$xlsx->getSheetData('Applications');
    
     $validUpload=true;
     
@@ -64,13 +72,13 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate ACES xml')
      else
      {
       $validUpload=false;
-      $inputFileLog[]='First row must contain these three columns: BaseVehicleID, PartNumber, PartTypeID, PositionID, Qty,';
+      $inputFileLog[]='First row must contain specific named columns:Application id,Reference,BaseVehicleid,Part,PartTypeid,Positionid,Quantity,VCdb-coded Attributes,Qdb-coded Qualifiers,Notes,Mfr Label,AssetName,Asset Item Order';
       $logs->logSystemEvent('rhubarb', 0, 'First row must contain these three columns: PartNumber, PartType, Make, Model, YearFrom, YearTo');
      }
    }
    else
    { // Header or Items sheets are not present
-    $inputFileLog[]='Uploaded workbook does not contain required worksheet named Applications'; 
+    $inputFileLog[]='Uploaded workbook does not contain required worksheets named Applications and Header'; 
     $logs->logSystemEvent('rhubarb', 0, 'Uploaded workbook does not contain required worksheet named Applications');
    }
   }
@@ -91,7 +99,18 @@ $errors=array(); $warnings=array(); $schemaresults=array();
 
 if($validUpload)
 {
-     
+    
+ //extract header elements from the Header worksheet
+    
+ $headerSheet=$xlsx->getSheetData('Header');
+ for($i=0;$i<20;$i++)
+ {
+  if(isset($headerSheet[$i]) && isset($headerSheet[$i][0]) && $headerSheet[$i][0]!='' && isset($headerSheet[$i][1]) && $headerSheet[$i][1]!='')
+  {
+   $header[$headerSheet[$i][0]]=$headerSheet[$i][1];
+  }
+ }
+ 
  // Establish a map of column names (identified by the first row - which is element 0) and their relative column number.
  // this way, there does not have to be a specific order of columns in the input data - we just need to 
  // verify that all of the required elements are present.
@@ -110,7 +129,7 @@ $vcdbattributescolumnid=$columnids['VCdb-coded Attributes'];
 $qdbqualifierscolumnid=$columnids['Qdb-coded Qualifiers'];
 $notescolumnid=$columnids['Notes'];
 $mfrlabelcolumnid=$columnids['Mfr Label'];
-$assetnamecolumnid=$columnids['Asset'];
+$assetnamecolumnid=$columnids['AssetName'];
 $assetitemordercolumnid=$columnids['Asset Item Order'];
 
 
@@ -130,6 +149,19 @@ $assetitemordercolumnid=$columnids['Asset Item Order'];
   $notes=trim($row[$notescolumnid]);
   $mfrlabel=$row[$mfrlabelcolumnid];
   $assetname=$row[$assetnamecolumnid];
+  
+  if(count($basevehicles) && !array_key_exists($basevehicleid, $basevehicles))
+  {
+   $errors[]='row number '.($rownumber+1).' contains an unknown BaseVehicleID ('.$basevehicleid.')';
+   continue;
+  }
+
+  if($positionid>0 && count($positions) && !array_key_exists($positionid, $positions))
+  {
+   $errors[]='row number '.($rownumber+1).' contains an unknown PositionID ('.$positionid.')';
+   continue;
+  }
+  
   $attributes=array();
    
   if($vcdbattributesstring!='')
@@ -160,25 +192,28 @@ $assetitemordercolumnid=$columnids['Asset Item Order'];
      $qdbbits=explode(':',$rawqdbstring);
      $qdbid=intval($qdbbits[0]);
      unset($qdbbits[0]); // the 0th element is the Qdbid the rest of the elements are parms
-     if($qdbid==0)
-     {// qdb lookup failed (qdbid=0). log the error and prevent this app from being added to the output
-      $goodrecord=false;
-     }
-     else
+     
+     if(count($qdbs)==0 || array_key_exists($qdbid, $qdbs))
      {
       $attributes[]=array('id'=>0,'name'=>$qdbid,'value'=>implode('~', $qdbbits),'type'=>'qdb','sequence'=>1,'cosmetic'=>0);
+     }
+     else
+     {// invalid qdbid -log the error and prevent this app from being added to the output
+      $goodrecord=false;
+      $errors[]='row number '.($rownumber+1).' contains an unknown QdbID ('.$qdbid.')';
      }
     }
     else
     {// no parms are present. like "13120" 
      $qdbid=intval($rawqdbstring);
-     if($qdbid==0)
-     {// qdb lookup failed (qdbid=0). log the error and prevent this app from being added to the output
-      $goodrecord=false;    
-     }
-     else
-     {// 
+     if(count($qdbs)==0 || array_key_exists($qdbid, $qdbs))
+     {
       $attributes[]=array('id'=>0,'name'=>$qdbid,'value'=>'','type'=>'qdb','sequence'=>1,'cosmetic'=>0);   
+     }
+     else     
+     {// qdb lookup failed (qdbid=0). log the error and prevent this app from being added to the output
+      $goodrecord=false;
+      $errors[]='row number '.($rownumber+1).' contains an unknown QdbID ('.$qdbid.')';
      }
     }   
    }
@@ -189,11 +224,11 @@ $assetitemordercolumnid=$columnids['Asset Item Order'];
    $attributes[]=array('id'=>0,'name'=>'note','value'=>$notes,'type'=>'note','sequence'=>1,'cosmetic'=>0);
   }
   
+  
   if($goodrecord)
   {
-   $apps[]=array('partnumber'=>$partnumber,'id'=>$ref,'basevehicleid'=>$basevehicleid,'parttypeid'=>$parttypeid,'positionid'=>$positionid,'quantityperapp'=>$qty,'attributes'=>$attributes,'cosmetic'=>0);
-  }
-            
+   $apps[]=array('partnumber'=>$partnumber,'id'=>$ref,'basevehicleid'=>$basevehicleid,'parttypeid'=>$parttypeid,'positionid'=>$positionid,'quantityperapp'=>$qty,'attributes'=>$attributes,'cosmetic'=>0,'mfrlabel'=>$mfrlabel,'assetname'=>$assetname);
+  }          
             
  }
    

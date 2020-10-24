@@ -22,7 +22,7 @@ $qdbversions=$pim->getAutocareDatabaseList('qdb');
         <?php if (isset($_SESSION['userid'])){include('topnav.php');} ?>
 
         <!-- Header -->
-        <h1>Build ACES (4.1) xml from <a title="This is the template spreadsheet (Excel .xlsx) to use as a guide. Fill in your own application data and upload it using the form on this page." href="./Flat_ACES_4_1_template_B.xlsx">spreadsheet</a> of flat application data</h1>
+        <h1>Build ACES (4.1) xml from <a title="This is the template spreadsheet (Excel .xlsx) to use as a guide. Fill in your own application data and upload it using the form on this page." href="./Flat_ACES_4_1_template_C.xlsx">spreadsheet</a> of flat application data</h1>
 
         <!-- Content Container -->
         <div class="container-fluid padding my-container">

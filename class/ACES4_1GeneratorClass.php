@@ -161,6 +161,10 @@ class ACESgenerator
    $partElement=new DOMElement('Part',$app['partnumber']);
    $appElement->appendChild($partElement);
    
+   if(array_key_exists('assetname', $app) && trim($app['assetname'])!=''){
+       $assetnameElement=new DOMElement('AssetName',$app['assetname']); 
+       $appElement->appendChild($assetnameElement);}
+  
    $appnumber++;
   }
   

@@ -175,6 +175,27 @@ class pcdb
   $db->close();
   return $positions;
  }
+
+ function getAllPositions()
+ {
+  $positions=array();
+  $db = new mysql; $db->dbname=$db->pcdbname;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect();
+  if($stmt=$db->conn->prepare('select PositionID, Position from Positions'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $positions[$row['PositionID']]=$row['Position'];
+   }
+  }
+  $db->close();
+  return $positions;
+ }
+
+
  
  function getLifeCycleCodes()
  {

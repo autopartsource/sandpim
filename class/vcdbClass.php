@@ -231,6 +231,25 @@ class vcdb
   $db->close();
   return $mmy;
  }
+ 
+ function getAllBaseVehicles()
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; 
+  if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
+  $basevehicles=array();
+  
+  if($stmt=$db->conn->prepare('SELECT BaseVehicle.BaseVehicleID, MakeName, ModelName,YearID FROM BaseVehicle,Make,Model WHERE BaseVehicle.MakeID=Make.MakeID AND BaseVehicle.ModelID=Model.ModelID'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $basevehicles[$row['BaseVehicleID']] = array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID']);
+   }
+  }
+  $db->close();
+  return $basevehicles;   
+ }
 
  function regionIDofRegionName($regionname)
  {
