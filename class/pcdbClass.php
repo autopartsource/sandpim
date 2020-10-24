@@ -195,6 +195,22 @@ class pcdb
   return $positions;
  }
 
+ function getAllParttypes()
+ {
+  $parttypes=array();
+  $db = new mysql; $db->dbname=$db->pcdbname; if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;} $db->connect();
+  if($stmt=$db->conn->prepare('select PartTerminologyID,PartTerminologyName from Parts'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $parttypes[$row['PartTerminologyID']]=$row['PartTerminologyName'];
+   }
+  }
+  $db->close();
+  return $parttypes;
+ }
 
  
  function getLifeCycleCodes()

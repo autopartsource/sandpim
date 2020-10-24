@@ -2449,6 +2449,39 @@ function gtinCheckDigit($barcode)
   $db->close();
   return $records;
  }
+
+ function validAutoCareVersionFormat($version)
+ {
+  // validate the 10-character version string (used mostly for input sanitation)
+  // format: 2020-10-24
+  if(strlen($version)!=10){return false;}
+  $bits=explode('-', $version);
+  if(count($bits)!=3){return false;}
+  $year=intval($bits[0]); $month=intval($bits[1]); $day=intval($bits[2]);
+  if($year < 2000 || $year > 2050){return false;}
+  if($month < 1 || $month > 12){return false;}
+  if($day < 1 || $day > 31){return false;}
+  return true;
+ }
+ 
+ 
+ function validAutoCareLocalDatabaseName($name)
+ {
+  $validdatabases=$this->getAutocareDatabaseList('%'); // all types with wildcard search
+  foreach($validdatabases as $validdatabase)
+  {
+   if($name==$validdatabase['name'])
+   {
+    return true;
+   }
+  }
+  return false; 
+ }
+ 
+ 
+ 
+ 
+ 
  
  
 }?>

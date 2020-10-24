@@ -36,12 +36,15 @@ $qdbversions=$pim->getAutocareDatabaseList('qdb');
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <form method="post" action="convertAiExcelToACES4_1process.php" enctype="multipart/form-data">
                         <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" accept=".xlsx"/></div>
-                        <div style="padding:5px;text-align: left;"><input type="checkbox" id="showtext" name="showtext"/><label for="showtext">Display output xml in text area (un-check to auto download ACES xml file)</label></div>
-                        <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelookupfails" name="ignorelookupfails"/><label for="ignorelookupfails">Ignore and exclude apps with lookup fails</label></div>
-                        <div style="padding:5px;text-align: left;">VCdb for code lookup <select name="vcdbversion"><?php foreach($vcdbversions as $vcdbversion){ echo '<option value="'.$vcdbversion['name'].'">'.$vcdbversion['versiondate'].'</option>';}?></select></div>
-                        <div style="padding:5px;text-align: left;">PCdb for code lookup <select name="pcdbversion"><?php foreach($pcdbversions as $pcdbversion){ echo '<option value="'.$pcdbversion['name'].'">'.$pcdbversion['versiondate'].'</option>';}?></select></div>
-                        <div style="padding:5px;text-align: left;">Qdb for code lookup <select name="qdbversion"><?php foreach($qdbversions as $qdbversion){ echo '<option value="'.$qdbversion['name'].'">'.$qdbversion['versiondate'].'</option>';}?></select></div>
-                        <div style="padding:5px;"><input name="submit" type="submit" value="Generate ACES xml"/></div>
+                        <div style="padding:5px;text-align: left;"><input type="checkbox" id="showtext" name="showtext"/> <label for="showtext">Display output xml in text area (un-check to auto download ACES xml file)</label></div>
+                        <div style="border:1px solid #e0e0e0;padding: 15px;">
+                            <div style="padding:5px;text-align: left;">AutoCare reference database versions for basic validation of BaseVehicleID, PartTypeID, PositionID and QdbID.</div>
+                            <div style="float:left;padding:5px;text-align: left;">VCdb <select name="vcdbname"><?php foreach($vcdbversions as $vcdbversion){ echo '<option value="'.$vcdbversion['name'].'">'.$vcdbversion['versiondate'].'</option>';}?><option value="">No validation</option></select></div>
+                            <div style="float:left;padding:5px;text-align: left;">PCdb <select name="pcdbname"><?php foreach($pcdbversions as $pcdbversion){ echo '<option value="'.$pcdbversion['name'].'">'.$pcdbversion['versiondate'].'</option>';}?><option value="">No validation</option></select></div>
+                            <div style="float:left;padding:5px;text-align: left;">Qdb <select name="qdbname"><?php foreach($qdbversions as $qdbversion){ echo '<option value="'.$qdbversion['name'].'">'.$qdbversion['versiondate'].'</option>';}?><option value="">No validation</option></select></div>
+                            <div style="clear:both;"></div>
+                        </div>
+                        <div style="padding:25px;"><input name="submit" type="submit" value="Generate ACES xml"/></div>
                     </form>
                 </div>
                 <!-- End of Main Content -->

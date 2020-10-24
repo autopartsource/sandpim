@@ -13,18 +13,41 @@ session_start();
 
 $pim = new pim;
 $ACESgenerator=new ACESgenerator();
-$pcdb=new pcdb($_POST['pcdbversion']);
-$vcdb=new vcdb($_POST['vcdbversion']);
-$qdb=new qdb($_POST['qdbversion']);
-$pcdbVersion=$pcdb->version();
-$vcdbVersion=$vcdb->version();
-$qdbVersion=$qdb->version();
 $logs=new logs();
-$basevehicles=$vcdb->getAllBaseVehicles();
-$qdbs=$qdb->getAllQdbs();
-$positions=$pcdb->getAllPositions();
 
-//print_r($positions);
+// ACA database vserion of null implies "dont validate"
+// a valid date is required for XSD pass on the output XML, so 1900-01-01 
+// is what we actually put in the xml if "dont validate" was the user's 
+// intention
+$pcdbVersion='1900-01-01';
+$vcdbVersion='1900-01-01';
+$qdbVersion='1900-01-01';
+$basevehicles=array();
+$qdbs=array();
+$positions=array();
+$parttypeids=array();
+
+if($pim->validAutoCareLocalDatabaseName($_POST['vcdbname']))
+{
+ $vcdb=new vcdb($_POST['vcdbname']);
+ $vcdbVersion=$vcdb->version();
+ $basevehicles=$vcdb->getAllBaseVehicles();
+}
+
+if($pim->validAutoCareLocalDatabaseName($_POST['pcdbname']))
+{
+ $pcdb=new pcdb($_POST['pcdbname']);
+ $pcdbVersion=$pcdb->version();
+ $positions=$pcdb->getAllPositions();
+ $parttypeids=$pcdb->getAllParttypes();
+}
+
+if($pim->validAutoCareLocalDatabaseName($_POST['qdbname']))
+{
+ $qdb=new qdb($_POST['qdbname']);
+ $qdbVersion=$qdb->version();
+ $qdbs=$qdb->getAllQdbs(); 
+}
 
 $acesxmlstring='';
 $streamXML=true;
@@ -35,8 +58,6 @@ $inputFileLog=array();
 $apps=array();
 $header=array();//'Company'=>'ACME Anvils','SenderName'=>'Luke Smith','SenderPhone'=>'804-329-3000','TransferDate'=>'2020-10-17','DocumentTitle'=>'stuff','EffectiveDate'=>'2020-10-17','SubmissionType'=>'FULL','VcdbVersionDate'=>'2020-08-28','QdbVersionDate'=>'2020-08-28','PcdbVersionDate'=>'2020-08-28');
 $header=array('VcdbVersionDate'=>$vcdbVersion,'QdbVersionDate'=>$qdbVersion,'PcdbVersionDate'=>$qdbVersion);
-
-
 
 $assets=array();
 $options=array();
@@ -100,8 +121,7 @@ $errors=array(); $warnings=array(); $schemaresults=array();
 if($validUpload)
 {
     
- //extract header elements from the Header worksheet
-    
+ //extract xml header elements from the Header worksheet
  $headerSheet=$xlsx->getSheetData('Header');
  for($i=0;$i<20;$i++)
  {
@@ -153,14 +173,21 @@ $assetitemordercolumnid=$columnids['Asset Item Order'];
   if(count($basevehicles) && !array_key_exists($basevehicleid, $basevehicles))
   {
    $errors[]='row number '.($rownumber+1).' contains an unknown BaseVehicleID ('.$basevehicleid.')';
-   continue;
+   //continue;
   }
 
   if($positionid>0 && count($positions) && !array_key_exists($positionid, $positions))
   {
    $errors[]='row number '.($rownumber+1).' contains an unknown PositionID ('.$positionid.')';
-   continue;
+   //continue;
   }
+  
+  if(count($parttypeids) && !array_key_exists($parttypeid, $parttypeids))
+  {
+   $errors[]='row number '.($rownumber+1).' contains an unknown PartTypeID ('.$parttypeid.')';
+   //continue;
+  }
+  
   
   $attributes=array();
    
@@ -275,12 +302,12 @@ $assetitemordercolumnid=$columnids['Asset Item Order'];
  }
 }
 else
-{ // not a valid upload (for many possible reasons)
+{ // not a valid upload (for many possible reasons). Log it
     
     
 }
 
-if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelookupfails']) ) || count($schemaresults)>0 || !$validUpload)
+if(isset($_POST['showtext']) || count($errors)>0 || count($schemaresults)>0 || !$validUpload)
 {
  $streamXML=false; ?>
 <!DOCTYPE html>
@@ -331,8 +358,8 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelookup
                     <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $acesxmlstring;?></textarea></div>
                     <?php }}?>
 
-                    <?php if(count($errors)>0 && !isset($_POST['ignorelookupfails'])){?>
-                    <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was (or could be) produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
+                    <?php if(count($errors)>0){?>
+                    <div style="padding:10px;background-color:yellow;font-size:1.5em;margin: 10px;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was produced and rendered to the text box above. You could copy/paste it into a text editor and save that as a .xml file. However, ';} ?>your input data contains invalid references (included in the xml above) to the AutoCare database versions selected. Here are the ones we detected:</div>
                     <table><?php
                     foreach($errors as $error)
                     {

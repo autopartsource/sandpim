@@ -1085,8 +1085,6 @@ function getBrakeConfigsForVehicleid($vehicleid)
   $db->close();
   return $versiondate;
  }
-
- 
  
 }
 
