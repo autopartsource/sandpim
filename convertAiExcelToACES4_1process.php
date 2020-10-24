@@ -57,7 +57,7 @@ $validUpload=false;
 $inputFileLog=array();
 $apps=array();
 $header=array();//'Company'=>'ACME Anvils','SenderName'=>'Luke Smith','SenderPhone'=>'804-329-3000','TransferDate'=>'2020-10-17','DocumentTitle'=>'stuff','EffectiveDate'=>'2020-10-17','SubmissionType'=>'FULL','VcdbVersionDate'=>'2020-08-28','QdbVersionDate'=>'2020-08-28','PcdbVersionDate'=>'2020-08-28');
-$header=array('VcdbVersionDate'=>$vcdbVersion,'QdbVersionDate'=>$qdbVersion,'PcdbVersionDate'=>$qdbVersion);
+$header=array('VcdbVersionDate'=>$vcdbVersion,'QdbVersionDate'=>$qdbVersion,'PcdbVersionDate'=>$pcdbVersion);
 
 $assets=array();
 $options=array();
