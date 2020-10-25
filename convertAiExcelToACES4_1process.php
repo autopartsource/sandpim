@@ -94,25 +94,25 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate ACES xml')
      {
       $validUpload=false;
       $inputFileLog[]='First row must contain specific named columns:Application id,Reference,BaseVehicleid,Part,PartTypeid,Positionid,Quantity,VCdb-coded Attributes,Qdb-coded Qualifiers,Notes,Mfr Label,AssetName,Asset Item Order';
-      $logs->logSystemEvent('rhubarb', 0, 'First row must contain these three columns: PartNumber, PartType, Make, Model, YearFrom, YearTo');
+      $logs->logSystemEvent('flatACEStoXML', 0, 'First row must contain specific named columns:Application id,Reference,BaseVehicleid,Part,PartTypeid,Positionid,Quantity,VCdb-coded Attributes,Qdb-coded Qualifiers,Notes,Mfr Label,AssetName,Asset Item Order');
      }
    }
    else
    { // Header or Items sheets are not present
     $inputFileLog[]='Uploaded workbook does not contain required worksheets named Applications and Header'; 
-    $logs->logSystemEvent('rhubarb', 0, 'Uploaded workbook does not contain required worksheet named Applications');
+    $logs->logSystemEvent('flatACEStoXML', 0, 'Uploaded workbook does not contain required worksheets named Applications and Header');
    }
   }
   else
   {
    $inputFileLog[]='Input file was too big (5M limit for anonymous users)';
-   $logs->logSystemEvent('rhubarb', 0, 'Input file was too big (1M limit for anonymous users');
+   $logs->logSystemEvent('flatACEStoXML', 0, 'Input file was too big (5M limit for anonymous users');
   }
  }
  else
  {
   $inputFileLog[]='Error uploading file - un-supported file format (must be a valid xlsx file)';
-  $logs->logSystemEvent('rhubarb', 0, 'Error uploading file - un-supported file format');
+  $logs->logSystemEvent('flatACEStoXML', 0, 'Error uploading file - un-supported file format (must be a valid xlsx file');
  }
 }
 
@@ -385,7 +385,7 @@ if(isset($_POST['showtext']) || count($errors)>0 || count($schemaresults)>0 || !
     </body>
 </html>
 <?php }
-$logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';apps:'.count($apps).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
+$logs->logSystemEvent('flatACEStoXML', 0, 'file:'.$originalFilename.';apps:'.count($apps).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
 
 //echo '<textarea>'.$acesxmlstring.'</textarea>';
 
