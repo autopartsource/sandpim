@@ -38,6 +38,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="./receiverProfiles.php">Receiver Profiles</a>
                     <a class="dropdown-item" href="./partCategories.php">Part Categories</a>
+                    <a class="dropdown-item" href="./deliveryGroups.php">Delivery Groups</a>
                     <a class="dropdown-item" href="./priceSheets.php">Price Sheets</a>
                     <a class="dropdown-item" href="./pcdbTypeBrowser.php">Favorite PCdb parttypes</a>
                     <a class="dropdown-item" href="./pcdbPositionBrowser.php">Favorite PCdb positions</a>

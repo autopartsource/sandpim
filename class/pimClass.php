@@ -603,54 +603,6 @@ function countAppsByPartcategories($partcategories)
   return $partnumbers;
  }
  
- 
-
- function getOIDdata($oid)
- {
-  $data=false;
-  $db = new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
-
-  // see if this oid is attched to an app
-  if($stmt=$db->conn->prepare('select id from application where oid=?'))
-  {
-   $stmt->bind_param('s', $oid);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   if($row = $db->result->fetch_assoc())
-   { // found a hit in applications - call the getApp function to get the actual data
-    $appid=$row['id'];
-    $app=$this->getApp($appid);
-    $data=array('oid'=>$oid,'type'=>'app',$data=$app);
-    $db->close();
-    return $data;
-   }
-  }
-
-  // see if this oid is attached to a part
-  if($stmt=$db->conn->prepare('select partnumber from part where oid=?'))
-  {
-   $stmt->bind_param('s', $oid);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   if($row = $db->result->fetch_assoc())
-   { // found a hit in part - call the getPart function to get the actual data
-    $partnumber=$row['partnumber'];
-    $part=$this->getPart($partnumber);
-    $data=array('oid'=>$oid,'type'=>'part',$data=$part);
-    $db->close();
-    return $data;
-   }
-  }
-
-  // see if this oid is attached to an asset
-
-  $db->close();
-  return $data;
- }
-
-
  function updateAppOID($appid)
  {
   $db = new mysql; $db->connect();
@@ -2074,8 +2026,45 @@ function countAppsByPartcategories($partcategories)
   return $success;
  }
  
+ function getDeliverygroups()
+ {
+  $groups=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from deliverygroup order by description'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $groups[]=array('id'=>$row['id'],'description'=>$row['description']);
+   }
+  }
+  $db->close();
+  return $groups;
+ }
 
+ function getDeliverygroup($id)
+ {
+  $deliverygroup=false;
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from deliverygroup where id=?'))
+  {
+   if($stmt->bind_param('i', $id))
+   {
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $deliverygroup=array('id'=>$row['id'],'description'=>$row['description']);
+    }
+   }
+  }
+  $db->close();
+  return $deliverygroup;
+ }
 
+ 
+ 
  function getReceiverprofiles()
  {
   $profiles=false; $status=0;
@@ -2112,12 +2101,12 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $profile;
  }
-
+ 
  function getReceiverprofilePartcategories($receiverprofileid)
  {  // return and array of partcategory id's for a given receiverprofile
   $partcategories=array();
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('select partcategory from receiverprofile_partcategory where receiverprofileid=?'))
+  if($stmt=$db->conn->prepare('select deliverygroup_partcategory.partcategory from receiverprofile_deliverygroup,deliverygroup_partcategory where receiverprofile_deliverygroup.deliverygroupid=deliverygroup_partcategory.deliverygroupid and receiverprofile_deliverygroup.receiverprofileid=?'))
   {
    $stmt->bind_param('i',$receiverprofileid);
    $stmt->execute();
@@ -2130,7 +2119,7 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $partcategories;
  }
- 
+  
  function createReceiverprofile($name, $data)
  {
   $db = new mysql; $db->connect();
@@ -2165,6 +2154,8 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ 
+ /*
  function addPartcategoryToReceiverProfile($receiverprofileid,$partcategoryid)
  {
   $db = new mysql; $db->connect(); $id=false;
@@ -2181,6 +2172,27 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $id;
  }
+
+*/
+ 
+ function addDeliverygroupToReceiverProfile($receiverprofileid,$deliverygroupid)
+ {
+  $db = new mysql; $db->connect(); $id=false;
+  if($stmt=$db->conn->prepare("insert into receiverprofile_deliverygroup values(null,?,?,'','','',0,now())"))
+  {
+   if($stmt->bind_param('ii',$receiverprofileid,$partcategoryid))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+    }
+   }
+  }
+  $db->close();
+  return $id;
+ }
+ 
+ 
 
  function removePartcategoryFromReceiverProfile($receiverprofileid,$partcategoryid)
  {

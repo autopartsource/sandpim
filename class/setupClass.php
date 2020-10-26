@@ -538,34 +538,6 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - interchange ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - interchange ('.$db->conn->error.')';}
 
-        
-        $sql="CREATE TABLE slice (
-        sliceid varchar(255) NOT NULL,
-        slicename varchar(255) NOT NULL,
-        peerid int unsigned not null,
-        expectedsyncperiod int unsigned not null,
-        minsyncperiod int unsigned not null,
-        lastsyncepochtime int unsigned not null,
-        peeruri varchar(255) not null,
-        peerusername varchar(255) not null,
-        peerpassword varchar(255) not null,
-        PRIMARY KEY (sliceid))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - slice ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - slice ('.$db->conn->error.')';}
-
-        $sql="CREATE TABLE slice_parttype (
-        id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        sliceid varchar(255) NOT NULL,
-        parttypeid int unsigned not null,
-        PRIMARY KEY (id))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - slice_parttype ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - slice_parttype ('.$db->conn->error.')';}
-
-        $sql="CREATE TABLE slice_partalias (
-        id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        sliceid varchar(255) NOT NULL,
-        partnumber varchar(255) not null,
-        peerpartnumber varchar(255) not null,
-        PRIMARY KEY (id))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - slice_partalias ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - slice_partalias ('.$db->conn->error.')';}
 
         $sql="CREATE TABLE partcategory (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -731,13 +703,48 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}
 
-        $sql="CREATE TABLE receiverprofile_partcategory (
+        
+        
+    /*    $sql="CREATE TABLE receiverprofile_partcategory (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         receiverprofileid int UNSIGNED NOT NULL,
         partcategory int unsigned not null default 0,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_parttype ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_parttype ('.$db->conn->error.')';}
+*/
 
+        $sql="CREATE TABLE receiverprofile_deliverygroup (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        deliverygroupid int unsigned not null,
+        sandpipersliceuuid varchar(255) NOT NULL,
+        sandpiperslicetype varchar(255) NOT NULL,
+        sandpipercontenthash varchar(255) NOT NULL,
+        sandpipercontentcount int unsigned NOT NULL,
+        sandpipercontentdatetime datetime NOT NULL,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}
+
+        // a collections of partcategories that go together 
+        // "send me your brand X data" would likely require multiple (maybe dozens) of part categories
+        // putting them in a collection (deliverygroup) allows repeatability over
+        // many receivers without having to manually maintain lists of part categories for each.
+        $sql="CREATE TABLE deliverygroup (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        description varchar(255) not null,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - deliverygroup ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE deliverygroup_partcategory (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        deliverygroupid int unsigned not null,
+        partcategory int unsigned not null,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - deliverygroup_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - deliverygroup_partcategory ('.$db->conn->error.')';}
+        
+        
+        
+        
         $sql="CREATE TABLE user_partcategory (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         userid int UNSIGNED NOT NULL,
