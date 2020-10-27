@@ -72,9 +72,10 @@ $allpartcategories=$pim->getPartCategories();
              xhr.send();
              
              document.getElementById('appliedpartcategories').innerHTML+='<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'+partcategoryid+'">'+partcategoryname+' <button  onclick="removePartcategory(\''+partcategoryid+'\',\''+partcategoryname+'\')">x</button></div>';
-             
-             
             }
+            
+            
+            
             
         </script>
         <?php include('./includes/header.php'); ?>

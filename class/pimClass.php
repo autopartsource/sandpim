@@ -1148,6 +1148,40 @@ function countAppsByPartcategories($partcategories)
   return $returnval;
  }
 
+ function addPartcategoryToDeliverygroup($deliverygroupid, $partcategoryid)
+ {
+  $db = new mysql; $db->connect(); $id=false;
+  if($stmt=$db->conn->prepare('insert into deliverygroup_partcategory values(null,?,?)'))
+  {
+   if($stmt->bind_param('ii', $deliverygroupid, $partcategoryid))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+    }
+   }
+  }
+  $db->close();
+  return $id;
+ }
+
+ function removePartcategoryFromDeliverygroup($deliverygroupid, $partcategoryid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from deliverygroup_partcategory where deliverygroupid=? and partcategory=?'))
+  {
+   if($stmt->bind_param('ii', $deliverygroupid, $partcategoryid))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+
+
+ 
+ 
+ 
  function getBackgroundjobs($jobtype,$status)
  {
   $db = new mysql; 
@@ -2063,7 +2097,27 @@ function countAppsByPartcategories($partcategories)
   return $deliverygroup;
  }
 
- 
+ function getDeliverygroupPartcategories($deliverygroupid)
+ {
+  $partcategories=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select deliverygroup_partcategory.partcategory as id, partcategory.name as `name` from deliverygroup_partcategory,partcategory where deliverygroup_partcategory.partcategory=partcategory.id and deliverygroupid=?'))
+  {
+   if($stmt->bind_param('i', $deliverygroupid))
+   {  
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $partcategories[]=array('id'=>$row['id'],'name'=>$row['name']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $partcategories;            
+ }
  
  function getReceiverprofiles()
  {
@@ -2084,6 +2138,20 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $profiles;
  }
+ 
+ function setDeliverygroupDescription($deliverygroupid,$description)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update deliverygroup set description=? where id=?'))
+  {
+   $stmt->bind_param('si', $description, $deliverygroupid);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+ 
+ 
+ 
 
  function getReceiverprofileById($id)
  {
@@ -2154,26 +2222,6 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
- 
- /*
- function addPartcategoryToReceiverProfile($receiverprofileid,$partcategoryid)
- {
-  $db = new mysql; $db->connect(); $id=false;
-  if($stmt=$db->conn->prepare("insert into receiverprofile_partcategory values(null,?,?)"))
-  {
-   if($stmt->bind_param('ii',$receiverprofileid,$partcategoryid))
-   {
-    if($stmt->execute())
-    {
-     $id=$db->conn->insert_id;
-    }
-   }
-  }
-  $db->close();
-  return $id;
- }
-
-*/
  
  function addDeliverygroupToReceiverProfile($receiverprofileid,$deliverygroupid)
  {

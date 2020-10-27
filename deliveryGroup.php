@@ -13,6 +13,8 @@ if (!isset($_SESSION['userid'])) {
 $pim = new pim;
 $logs = new logs;
 
+
+
 if (isset($_POST['submit']) && $_POST['submit']=='Save') 
 {
  if($_POST['description']!=$_POST['olddescription'])   
@@ -26,12 +28,64 @@ if (isset($_POST['submit']) && $_POST['submit']=='Save')
 }
 
 $deliverygroup = $pim->getDeliverygroup(intval($_GET['id']));
+$appliedpartcategories = $pim->getDeliverygroupPartcategories(intval($_GET['id']));
+$allpartcategories=$pim->getPartCategories();
+
 
 ?>
 
 <!DOCTYPE html>
 <html>
     <head>
+        <script>
+            function removePartcategory(partcategoryid,partcategoryname)
+            {
+             var partcategorydiv = document.getElementById('appliedpartcategoryid_'+partcategoryid);
+             partcategorydiv.parentNode.removeChild(partcategorydiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddRemoveDeliverygroupPartcategory.php?deliverygroupid=<?php echo $deliverygroup['id'];?>&partcategoryid='+partcategoryid+'&action=remove');
+             xhr.onload = function()
+             {
+             };
+             xhr.send();
+             
+             document.getElementById('unappliedpartcategories').innerHTML+='<div style="text-align:left;padding:3px;" id="unappliedpartcategoryid_'+partcategoryid+'">'+partcategoryname+' <button  onclick="addPartcategory(\''+partcategoryid+'\',\''+partcategoryname+'\')">+</button></div>';
+
+            }
+            
+            function addPartcategory(partcategoryid,partcategoryname)
+            {
+             var partcategorydiv = document.getElementById('unappliedpartcategoryid_'+partcategoryid);
+             partcategorydiv.parentNode.removeChild(partcategorydiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddRemoveDeliverygroupPartcategory.php?deliverygroupid=<?php echo $deliverygroup['id'];?>&partcategoryid='+partcategoryid+'&action=add');
+             xhr.onload = function()
+             {
+             };
+             xhr.send();
+             
+             document.getElementById('appliedpartcategories').innerHTML+='<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'+partcategoryid+'">'+partcategoryname+' <button  onclick="removePartcategory(\''+partcategoryid+'\',\''+partcategoryname+'\')">x</button></div>';
+                          
+            }
+            
+            function updateDescription()
+            {
+             var xhr = new XMLHttpRequest();
+             var descriptionvalue=document.getElementById('deliverygroupdescription').value;
+             xhr.open('GET', 'ajaxUpdateDeliverygroup.php?deliverygroupid=<?php echo $deliverygroup['id'];?>&elementid=description&value='+encodeURIComponent(descriptionvalue));
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+             };
+             xhr.send();
+            }
+
+            
+            
+            
+        </script>
         <?php include('./includes/header.php'); ?>
     </head>
     <body>
@@ -55,8 +109,34 @@ $deliverygroup = $pim->getDeliverygroup(intval($_GET['id']));
                         <div class="card-body">
                                 <table>
                                     <tr><th>ID</th><td><?php echo $deliverygroup['id'];?><input type="hidden" name="id" value="<?php echo $deliverygroup['id'];?>"/></td></tr>
-                                    <tr><th>Description</th><td><input type="text" name="description" value="<?php echo $deliverygroup['description'];?>"/><button>Update</button></td></tr>
-                                    <tr><th>Part Categories</th><td></td></tr>
+                                    <tr><th>Description</th><td><input type="text" id="deliverygroupdescription" value="<?php echo $deliverygroup['description'];?>"/><button onclick="updateDescription();">Update</button></td></tr>
+                                    <tr><th>Part Categories</th>
+                                        <td>
+                                            <div id="appliedpartcategories">
+                                            <?php $appliedpartcategoryidlist=array();
+                                            foreach ($appliedpartcategories as $partcategory) 
+                                            {
+                                                $appliedpartcategoryidlist[]=$partcategory['id'];
+                                                echo '<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'.$partcategory['id'].'">'.$partcategory['name'].' <button  onclick="removePartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')">x</button></div>';
+                                            }
+                                            ?>
+                                            </div>
+                                            
+                                            <hr/>
+
+                                            <div id="unappliedpartcategories">
+                                            <?php
+                                            foreach ($allpartcategories as $partcategory) 
+                                            {   if(in_array($partcategory['id'], $appliedpartcategoryidlist)){continue;}
+                                                echo '<div style="text-align:left;padding:3px;" id="unappliedpartcategoryid_'.$partcategory['id'].'">'.$pim->partCategoryName($partcategory['id']) . ' <button  onclick="addPartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')">+</button></div>';
+                                            }
+                                            ?>
+                                            </div>
+
+                                            
+
+                                        </td>
+                                    </tr>
                                 </table>
                         </div>
                     </div>
