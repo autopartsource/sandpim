@@ -8,24 +8,29 @@ $dbname='pim';
 $results=$setup->createDatebase($dbname);
 if($results=='')
 {
-    echo 'successfully created database '.$dbname.'<br/>';
+    echo 'successfully created database '.$dbname."\n";
     
     $results=$setup->verifyDatabasePermissions($dbname);
     if($results['success'])
     {
         $results=$setup->createTables($dbname);
-        print_r($results);
+        if($results['success'])
+        {
+         echo "successfully created database tables\n";           
+        }
+        else
+        {
+         echo "problems encountered creating database:\n";
+         print_r($results);
+        }
     }
     else
     {
-        echo 'database permission problem<br/>';
-        print_r($results);
+        echo "database permission problem\n";
     }
 }
 else
 {
-    echo 'failed to create database ('.$results.')<br/>';
+    echo "failed to create database (".print_r($results,true).")\n";
 }
-
-
 ?>
