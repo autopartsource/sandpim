@@ -171,14 +171,14 @@ foreach ($issues as $issue) {
                 {
                 };
                 xhr.send();
-                
+
                 if (value == 1) {
                     document.getElementById("label_status_closed").className = "btn btn-danger";
                     document.getElementById("label_status_review").className = "btn btn-danger";
                     document.getElementById("label_status_open").className = "btn btn-danger active";
                     document.getElementById("label_status_snooze").className = "btn btn-danger";
                     document.getElementById("input_open").checked = true;
-                    
+
                 } else if (value == 2) {
                     document.getElementById("label_status_closed").className = "btn btn-warning";
                     document.getElementById("label_status_review").className = "btn btn-warning active";
@@ -192,8 +192,7 @@ foreach ($issues as $issue) {
                     document.getElementById("label_status_open").className = "btn btn-secondary";
                     document.getElementById("label_status_snooze").className = "btn btn-secondary active";
                     document.getElementById("input_snooze").checked = true;
-                }
-                else {
+                } else {
                     document.getElementById("label_status_closed").className = "btn btn-success active";
                     document.getElementById("label_status_review").className = "btn btn-success";
                     document.getElementById("label_status_open").className = "btn btn-success";
@@ -201,43 +200,57 @@ foreach ($issues as $issue) {
                     document.getElementById("input_closed").checked = true;
                 }
             }
-            
-            function renderSelectedTree(issueObject) {    
+
+            function renderSelectedTree(issueObject) {
 //                console.log(issueObject.id);
-                
+
                 issueTypeArray = issueObject.issuetype.split("/");
 
                 var totalPath = issueTypeArray[0];
-                document.getElementById(totalPath).setAttribute("style","display: block;");
-                document.getElementById('nav_' + totalPath).setAttribute("class","dropdown-btn sidenavActive");
+                document.getElementById(totalPath).setAttribute("style", "display: block;");
+                document.getElementById('nav_' + totalPath).setAttribute("class", "dropdown-btn sidenavActive");
 
-                for(var i = 1; i < issueTypeArray.length ; i++) {
+                for (var i = 1; i < issueTypeArray.length; i++) {
                     totalPath += "-" + issueTypeArray[i];
-                    document.getElementById(totalPath).setAttribute("style","display: block;");
-                    document.getElementById('nav_' + totalPath).setAttribute("class","dropdown-btn sidenavActive");
+                    document.getElementById(totalPath).setAttribute("style", "display: block;");
+                    document.getElementById('nav_' + totalPath).setAttribute("class", "dropdown-btn sidenavActive");
                 }
-                
+
                 document.getElementById('issue_' + issueObject.id).classList.add("nodeSelected");
-                
+
             }
-            
+
             function removePreviousSelection() {
                 var selectedArray = document.getElementsByClassName("sidenavActive");
                 var selectedEndNode = document.getElementsByClassName("nodeSelected");
                 
-                console.log(selectedEndNode[0].getAttribute('id'));
-//                document.getElementById("issue_" + selectedEndNode[0].getAttribute('id')).className = "navbarEndNode";
-                
-                for (var i=0; i<selectedArray.length; i++) {
-                    
-                      console.log(selectedArray[i].getAttribute('id'));
-                      document.getElementById(selectedArray[i].getAttribute('id')).setAttribute("class","dropdown-btn");
+                for (var i = 0; i < selectedArray.length; i++) {
+                    var testing = selectedArray[i].getAttribute('data-target');
+                    var nohash = testing.replace("#","")
+                    console.log(nohash);
+                    document.getElementById(nohash).setAttribute("style", "display: none");
+//                    console.log(str_replace("#","",selectedArray[i].getAttribute('data-target')));
+                }
 
-//                    document.getElementById(selectedArray[i].getAttribute('id')).setAttribute("class","dropdown-btn");
-                    
+                for (var i = 0; i < selectedEndNode.length; i++) {
+//                    console.log(selectedEndNode[i].getAttribute('id'));
+                    document.getElementById(selectedEndNode[i].getAttribute('id')).setAttribute("class", "navbarEndNode pl-5");
+                }
+                for (var i = 0; i < selectedEndNode.length; i++) {
+//                    console.log(selectedEndNode[i].getAttribute('id'));
+                    document.getElementById(selectedEndNode[i].getAttribute('id')).setAttribute("class", "navbarEndNode pl-5");
+                }
+
+                for (var i = 0; i < selectedArray.length; i++) {
+//                    console.log(selectedArray[i].getAttribute('id'));
+                    document.getElementById(selectedArray[i].getAttribute('id')).setAttribute("class", "dropdown-btn");
+                }
+                for (var i = 0; i < selectedArray.length; i++) {
+//                    console.log(selectedArray[i].getAttribute('id'));
+                    document.getElementById(selectedArray[i].getAttribute('id')).setAttribute("class", "dropdown-btn");
                 }
             }
-            
+
         </script>
     </head>
     <body onload="renderIssue(<?php echo $selectedissue['id']?>)">
