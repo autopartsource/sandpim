@@ -43,7 +43,7 @@ foreach($partnumbers as $partnumber)
    $issuehash=md5('PART/GTIN/MISSING'.$partnumber.'missing GTIN'.'manual report run');
    if(!$pim->getIssueByHash($issuehash))
    {
-    $pim->recordIssue('PART/GTIN/MISSING',$partnumber,0,'missing GTIN','manual report run', $issuehash);
+    $pim->recordIssue('PART/GTIN/MISSING',$partnumber,1,'missing GTIN','manual report run', $issuehash);
    }
   }
      
@@ -55,7 +55,7 @@ foreach($partnumbers as $partnumber)
    $issuehash=md5('PART/PACKAGE/MISSING'.$partnumber.'missing package'.'manual report run');
    if(!$pim->getIssueByHash($issuehash))
    {
-    $pim->recordIssue('PART/PACKAGE/MISSING',$partnumber,0,'missing package','manual report run', $issuehash);
+    $pim->recordIssue('PART/PACKAGE/MISSING',$partnumber,1,'missing package','manual report run', $issuehash);
    }
   }
   else
@@ -73,7 +73,7 @@ foreach($partnumbers as $partnumber)
     $issuehash=md5('PART/PACKAGE/WEIGHT'.$partnumber.'0 weight package'.'manual report run');
     if(!$pim->getIssueByHash($issuehash))
     {
-     $pim->recordIssue('PART/PACKAGE/WEIGHT',$partnumber,0,'0 weight package','manual report run', $issuehash);
+     $pim->recordIssue('PART/PACKAGE/WEIGHT',$partnumber,1,'0 weight package','manual report run', $issuehash);
     }
    }
    
@@ -89,7 +89,7 @@ foreach($partnumbers as $partnumber)
     $issuehash=md5('PART/PACKAGE/DIMS'.$partnumber.'0 shipping dims package'.'manual report run');
     if(!$pim->getIssueByHash($issuehash))
     {
-     $pim->recordIssue('PART/PACKAGE/DIMS',$partnumber,0,'0 shipping dims package','manual report run', $issuehash);
+     $pim->recordIssue('PART/PACKAGE/DIMS',$partnumber,1,'0 shipping dims package','manual report run', $issuehash);
     }
    }
   }

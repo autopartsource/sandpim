@@ -37,7 +37,7 @@ foreach($partnumbers as $partnumber)
         $issuehash=md5('PART/REFERENCE/INVALID PARTTYPEID'.$partnumber.'0'.'invalid parttype id ('.$part['parttypeid'].')'.'background auditor');
         if(!$pim->getIssueByHash($issuehash))
         {// this issue is not already recorded 
-            $pim->recordIssue('PART/REFERENCE/INVALID PARTTYPEID',$partnumber,0,'invalid parttype id ('.$part['parttypeid'].')','background auditor', $issuehash);
+            $pim->recordIssue('PART/REFERENCE/INVALID PARTTYPEID',$partnumber,1,'invalid parttype id ('.$part['parttypeid'].')','background auditor', $issuehash);
         }
     }
    
@@ -52,7 +52,7 @@ foreach($partnumbers as $partnumber)
                $issuehash=md5('PART/GTIN/DUPLICATE'.$partnumber.'0'.'another part ('.$otherpartnumber.') shares the same GTIN'.'background auditor');
                if(!$pim->getIssueByHash($issuehash))
                {// this issue is not already recorded 
-                   $pim->recordIssue('PART/GTIN/DUPLICATE',$partnumber,0,'another part ('.$otherpartnumber.') shares the same GTIN','background auditor', $issuehash);
+                   $pim->recordIssue('PART/GTIN/DUPLICATE',$partnumber,1,'another part ('.$otherpartnumber.') shares the same GTIN','background auditor', $issuehash);
                }
            }
        }
@@ -69,7 +69,7 @@ foreach($partnumbers as $partnumber)
                 $issuehash=md5('PART/GTIN/CHECKDIGIT'.$partnumber.'0'.'GTIN check digit is wrong ('.$part['GTIN'].'). It should be '.$correctcheck.'background auditor');
                 if(!$pim->getIssueByHash($issuehash))
                 {// this issue is not already recorded 
-                    $pim->recordIssue('PART/GTIN/CHECKDIGIT',$partnumber,0,'GTIN check digit is wrong ('.$part['GTIN'].'). It should be '.$correctcheck,'background auditor', $issuehash);
+                    $pim->recordIssue('PART/GTIN/CHECKDIGIT',$partnumber,1,'GTIN check digit is wrong ('.$part['GTIN'].'). It should be '.$correctcheck,'background auditor', $issuehash);
                 }
             }
         }
