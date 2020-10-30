@@ -21,9 +21,8 @@ $logs = new logs;
 if (isset($_POST['submit']) && $_POST['submit']=='Add' && isset($_POST['categoryname']) && trim($_POST['categoryname'])!='') 
 {
     $name = $_POST['categoryname'];
-    $id = $_POST['categoryid'];
-    $pim->createPartcategory($name,$id);
-    $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Partcategory '.$id.' ('.$name.') was created');
+    $pim->createPartcategory($name,'');
+    $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Partcategory ('.$name.') was created');
 }
 
 if (isset($_POST['submit']) && $_POST['submit']=='Delete') 
@@ -62,18 +61,23 @@ $partcategories = $pim->getPartCategories();
 
                         <div class="card-body">
                             <table>
-                                <tr><th>Name</th><th>ID</th><th>Part Count</th><th>Action</th></tr>
+                                <tr><th>Name</th><th>Part Count</th><th></th></tr>
                                 <?php
                                 foreach ($partcategories as $partcategory) 
                                 {
                                     $count=$pim->countPartsByPartcategory($partcategory['id']);
-                                    echo '<tr><td><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a></td><td>' . $partcategory['id'] . '</td><td>'.$count.'</td><td>';
+                                    echo '<tr><td><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a></td><td>'.$count.'</td><td>';
                                     if(!$count){echo '<form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form>';}
                                     echo '</td></tr>';
                                 }
                                 ?>
-                                <tr><form method="post"><td><input type="text" name="categoryname" size="30"/></td><td><input type="text" name="categoryid" /><input type="submit" name="submit" value="Add"/></td><td></td><td></td></form></tr>
                             </table>
+                            <div style="padding:10px;">
+                                <form method="post">
+                                    <input type="text" name="categoryname"/>
+                                    <input type="submit" name="submit" value="Add"/>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     

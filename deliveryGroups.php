@@ -13,12 +13,11 @@ if (!isset($_SESSION['userid'])) {
 $pim = new pim;
 $logs = new logs;
 
-
 if (isset($_POST['submit']) && $_POST['submit']=='Add' && isset($_POST['deliverygroupname']) && trim($_POST['deliverygroupname'])!='') 
 {
     $name = $_POST['deliverygroupname'];
-    $pim->createDeliverygroupName($name);
-    $logs->logSystemEvent('deliverygroup', $_SESSION['userid'], 'Deliverygroup ('.$name.') was created');
+    $id=$pim->createDeliverygroup($name);
+    $logs->logSystemEvent('deliverygroup', $_SESSION['userid'], 'Deliverygroup '.$id.' ('.$name.') was created');
 }
 
 $deliverygroups = $pim->getDeliverygroups();

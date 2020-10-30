@@ -108,7 +108,6 @@ $allpartcategories=$pim->getPartCategories();
 
                         <div class="card-body">
                                 <table>
-                                    <tr><th>ID</th><td><?php echo $deliverygroup['id'];?><input type="hidden" name="id" value="<?php echo $deliverygroup['id'];?>"/></td></tr>
                                     <tr><th>Description</th><td><input type="text" id="deliverygroupdescription" value="<?php echo $deliverygroup['description'];?>"/><button onclick="updateDescription();">Update</button></td></tr>
                                     <tr><th>Part Categories</th>
                                         <td>

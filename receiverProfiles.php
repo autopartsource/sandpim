@@ -15,8 +15,7 @@ $logs = new logs;
 
 if (isset($_POST['submit']) && $_POST['submit']=='Add') 
 {
-    
- $pim->createReceiverprofile($_POST['profilename'],$_POST['profiledata']);
+ $pim->createReceiverprofile($_POST['profilename'],'');
  $logs->logSystemEvent('SETTINGS', $_SESSION['userid'], 'Receiver Profice '.$_POST['profilename'].' was created');
 }
 
@@ -52,23 +51,16 @@ $profiles = $pim->getReceiverprofiles();
                     <div class="card shadow-sm">
 			<!-- Header -->
                         <h3 class="card-header text-left">Receiver Profiles</h3>
-
                         <div class="card-body">
-                            <table>
-                                <tr><th>Name</th><th>Data</th></tr>
-                                <?php
-                                foreach ($profiles as $profile) 
-                                {
-                                    echo '<tr><td><a href="./receiverProfile.php?id='.$profile['id'].'">'.$profile['name'].'</a></td>';
-                                    echo '<td><div>'.$profile['data'].'</div></td>';
-                                    echo '</tr>';
-                                }
-                                ?>
-                                <tr><form method="post"><td><input type="text" name="profilename" /></td><td><textarea name="profiledata" style="width:95%;"/></textarea><div><input type="submit" name="submit" value="Add"/></div></td></form></tr>
-                            </table>
+                            <?php
+                            foreach ($profiles as $profile) 
+                            {
+                                echo '<div style="text-align:left;background:#d0d0d0;margin:2px;padding:5px;"><a href="./receiverProfile.php?id='.$profile['id'].'">' . $profile['name'].'</a></div>';
+                            }
+                            ?>
+                            <div><form method="post"><input type="text" name="profilename"/><input type="submit" name="submit" value="Add"/></form></div>
                         </div>
                     </div>
-                    
                 </div>
                 <!-- End of Main Content -->
                 

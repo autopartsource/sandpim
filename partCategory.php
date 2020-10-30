@@ -13,6 +13,13 @@ if (!isset($_SESSION['userid'])) {
 $pim = new pim;
 $logs = new logs;
 
+if (isset($_POST['submit']) && $_POST['submit']=='Cancel') 
+{
+ echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./partCategories.php'\" /></head><body></body></html>";
+ exit;
+}
+
+
 if (isset($_POST['submit']) && $_POST['submit']=='Save') 
 {
  if($_POST['name']!=$_POST['oldname'])   
@@ -73,13 +80,13 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
                         <div class="card-body">
                             <form action="" method="post">
                                 <table>
-                                    <tr><th>ID</th><td><?php echo $partcategory['id'];?><input type="hidden" name="id" value="<?php echo $partcategory['id'];?>"/></td></tr>
                                     <tr><th>Name</th><td><input type="text" name="name" value="<?php echo $partcategory['name'];?>"/></td></tr>
                                     <tr><th>BrandAAIAID</th><td><input type="text" name="brandID" value="<?php echo $partcategory['brandID'];?>"/></td></tr>
                                     <tr><th>SubBrandAAIAID</th><td><input type="text" name="subbrandID" value="<?php echo $partcategory['subbrandID'];?>"/></td></tr>
                                     <tr><th>MfrLabel (ACES)</th><td><input type="text" name="mfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/></td></tr>
-                                    <tr><th></th><td><input name="submit" type="submit" value="Save"/></td></tr>
+                                    <tr><th></th><td><input name="submit" type="submit" value="Cancel"/> <input name="submit" type="submit" value="Save"/></td></tr>
                                 </table>
+                                <input type="hidden" name="id" value="<?php echo $partcategory['id'];?>"/>
                                 <input type="hidden" name="oldname" value="<?php echo $partcategory['name'];?>"/>
                                 <input type="hidden" name="oldbrandID" value="<?php echo $partcategory['brandID'];?>"/>
                                 <input type="hidden" name="oldsubbrandID" value="<?php echo $partcategory['subbrandID'];?>"/>
