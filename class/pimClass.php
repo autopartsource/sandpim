@@ -1034,13 +1034,13 @@ function countAppsByPartcategories($partcategories)
  {
   $categories=array();
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('select id,`name`,logouri from partcategory order by name'))
+  if($stmt=$db->conn->prepare('select id,`name`,logouri,sandpipersliceuuid,sandpiperslicetype, sandpipercontenthash, sandpipercontentcount, sandpipercontentdatetime from partcategory order by name'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $categories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri']);
+    $categories[]=array('id'=>$row['id'],'name'=>$row['name'],'logouri'=>$row['logouri'], 'sandpipersliceuuid'=>$row['sandpipersliceuuid'],'sandpiperslicetype'=>$row['sandpiperslicetype'],'sandpipercontenthash'=>$row['sandpipercontenthash'],'sandpipercontentcount'=>$row['sandpipercontentcount'],'sandpipercontentdatetime'=>$row['sandpipercontentdatetime']);
    }
   }
   $db->close();
@@ -1059,7 +1059,7 @@ function countAppsByPartcategories($partcategories)
     $db->result = $stmt->get_result();
     if($row = $db->result->fetch_assoc())
     {
-     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID'],'subbrandID'=>$row['subbrandID'],'mfrlabel'=>$row['mfrlabel']);
+     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID'],'subbrandID'=>$row['subbrandID'],'mfrlabel'=>$row['mfrlabel'],'logouri'=>$row['logouri'], 'sandpipersliceuuid'=>$row['sandpipersliceuuid'],'sandpiperslicetype'=>$row['sandpiperslicetype'],'sandpipercontenthash'=>$row['sandpipercontenthash'],'sandpipercontentcount'=>$row['sandpipercontentcount'],'sandpipercontentdatetime'=>$row['sandpipercontentdatetime']);
     }
    }
   }

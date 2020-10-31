@@ -546,6 +546,11 @@ class setup
         subbrandID varchar(255) not null,
         mfrlabel varchar(255) not null,
         logouri varchar(255) not null,
+        sandpipersliceuuid varchar(255) NOT NULL,
+        sandpiperslicetype varchar(255) NOT NULL,
+        sandpipercontenthash varchar(255) NOT NULL,
+        sandpipercontentcount int unsigned NOT NULL,
+        sandpipercontentdatetime datetime NOT NULL,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - partcategory ('.$db->conn->error.')';}
 
@@ -717,11 +722,6 @@ class setup
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         receiverprofileid int UNSIGNED NOT NULL,
         deliverygroupid int unsigned not null,
-        sandpipersliceuuid varchar(255) NOT NULL,
-        sandpiperslicetype varchar(255) NOT NULL,
-        sandpipercontenthash varchar(255) NOT NULL,
-        sandpipercontentcount int unsigned NOT NULL,
-        sandpipercontentdatetime datetime NOT NULL,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}
 

@@ -84,6 +84,7 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
                                     <tr><th>BrandAAIAID</th><td><input type="text" name="brandID" value="<?php echo $partcategory['brandID'];?>"/></td></tr>
                                     <tr><th>SubBrandAAIAID</th><td><input type="text" name="subbrandID" value="<?php echo $partcategory['subbrandID'];?>"/></td></tr>
                                     <tr><th>MfrLabel (ACES)</th><td><input type="text" name="mfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/></td></tr>
+                                    <tr><th>Sandpiper Slice UUID</th><td><?php echo $partcategory['sandpipersliceuuid'];?></td></tr>
                                     <tr><th></th><td><input name="submit" type="submit" value="Cancel"/> <input name="submit" type="submit" value="Save"/></td></tr>
                                 </table>
                                 <input type="hidden" name="id" value="<?php echo $partcategory['id'];?>"/>
