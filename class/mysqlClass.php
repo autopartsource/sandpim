@@ -6,8 +6,8 @@ class mysql
  var $passwd = 'OsBBVrgJKw';
  var $dbname = 'pim';
  var $vcdbname= 'vcdb';
- var $pcdbname= 'pcadb';
- var $padbname= 'pcadb';
+ var $pcdbname= 'pcdb';
+ var $padbname= 'padb';
  var $qdbname= 'qdb';
  var $debug;
  var $conn;
