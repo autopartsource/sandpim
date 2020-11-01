@@ -2435,6 +2435,18 @@ function gtinCheckDigit($barcode)
   return $databases;
  }
 
+ function recordAutocareDatabaseList($name,$type,$versiondate)
+ {
+  $db=new mysql; $db->connect(); 
+  if($stmt=$db->conn->prepare('insert into autocare_databases values(?,?,?)'))
+  {
+   $stmt->bind_param('sss',$name,$type,$versiondate);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ 
 
  function recordIssue($issuetype,$issuekeyalpha,$issuekeynumeric,$description,$source,$issuehash)
  {
@@ -2605,6 +2617,42 @@ function gtinCheckDigit($barcode)
  }
  
  
+ function createAutoCareDatabase($newdatabasename,$databaseuser)
+ {
+  $db=new mysql; $db->connect(); $resulttext='';
+  if($stmt=$db->conn->prepare('create database '.$newdatabasename))
+  {
+   if($stmt->execute())
+   { // grant myself select privileges on the new (empty) database
+    if($stmt=$db->conn->prepare("grant select on ".$newdatabasename.".* to '".$databaseuser."'@'localhost'"))
+    {
+     if($stmt->execute())
+     {
+      $resulttext='success';
+     }
+     else
+     {// problem with execute
+      $resulttext='execute error on db user permission grant - '.$db->conn->error;         
+     }  
+    }
+    else
+    {// problem with prepare
+     $resulttext='prepare error on db user permission grant - '.$db->conn->error;
+    }
+   }
+   else
+   {// problem with execute
+    $resulttext='execute error on db create - '.$db->conn->error;
+   }
+  }
+  else
+  {// problem with prepare
+   $resulttext='prepare error on db create - '.$db->conn->error;       
+  }
+   
+  $db->close();
+  return $resulttext;
+ }
  
  
  
