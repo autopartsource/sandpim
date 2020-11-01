@@ -19,6 +19,40 @@ $logs=new logs;
 $config=new configGet;
 
 $dbversion='20201030';
+
+
+$resourcelistURI='https://aps.dev/sandpim/AutoCareTechnology.php';//getConfigValue('AutoCareResourceListURI');
+$listJSON= @file_get_contents($resourcelistURI);
+
+if($listJSON!==false)
+{
+ if(substr($listJSON,0,1)=='{')
+ {// looks like a JSON-encoded string (starts with a "{")
+     
+  $listdata= json_decode($listJSON,true);  
+  if(array_key_exists('PCdb', $listdata))
+  {
+   $currentversiondate=$listdata['PCdb']['MySQL']['current']['versiondate'];
+   $currentversionuri=$listdata['PCdb']['MySQL']['current']['uri'];      
+  }
+  else
+  {
+   echo "resource list does not does not contain a top-level key of VCdb\n";      
+  }
+ }
+ else
+ {
+  echo "resource list does not look like JSON\n";    
+ }
+}
+else
+{
+ echo "error getting resource list\n";    
+}
+
+exit;
+
+
 $host=$config->getConfigValue('AutoCareFTPserver');
 $username=$config->getConfigValue('AutoCareFTPusername');
 $password=$config->getConfigValue('AutoCareFTPpassword');
@@ -39,7 +73,10 @@ if($host===false || $username ===false || $password===false || $downloadsdirecto
 $randomint= random_int(1000000, 9000000);
 $randomfilename= $randomint.'.zip';
 echo "Downloading MySQL package (".$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.").........";
-exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate ftps://'.$host.'/download_pcdb/MySQL/AAIA%20PCdb%20MySQL%20'.$dbversion.'.zip --output-document='.$downloadsdirectory.'/'.$randomfilename);
+
+$uri='wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate ftps://'.$host.'/download_pcdb/MySQL/AAIA%20PCdb%20MySQL%20'.$dbversion.'.zip --output-document='.$downloadsdirectory.'/'.$randomfilename;
+
+exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate '.$uri.' --output-document='.$downloadsdirectory.'/'.$randomfilename);
 echo "Done\n";
 
 // test file size for 0 to see if the download failed

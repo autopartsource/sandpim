@@ -616,12 +616,15 @@ class setup
         PRIMARY KEY (configname))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - config_options ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - config_options ('.$db->conn->error.')';}
    
+        $sql="insert into config_options values('AutoCareResourceListURI','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareFTPserver','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareFTPusername','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareFTPpassword','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareDownloadsDirectory','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('defaultDescriptionLanguageCode','A1/255','','EN','This code will be auto-selected on the parts page for creating a new description');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('defaultDescriptionTypeCode','A1/255','','LAB','This code will be auto-selected on the parts page for creating a new description');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        
         
         
         $sql="CREATE TABLE issue (
