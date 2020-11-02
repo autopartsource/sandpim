@@ -143,6 +143,14 @@ foreach ($issues as $issue) {
                     removePreviousSelection();
                     renderSelectedTree(issueObject);
                     
+                    var url = window.location.href;
+                    if(url.toString().includes('&showclosed')) {
+                        document.getElementById("toggleClosed").className = "btn btn-success";
+                    }
+                    else {
+                        document.getElementById("toggleClosed").className = "btn btn-secondary";
+                    }
+                    
                 } else {
                     document.getElementById("IssueContent").setAttribute("style","display:none;");
                 }
@@ -249,6 +257,21 @@ foreach ($issues as $issue) {
 //                    console.log(selectedArray[i].getAttribute('id'));
                     document.getElementById(selectedArray[i].getAttribute('id')).setAttribute("class", "dropdown-btn");
                 }
+            }
+            
+            function toggleClosed() {
+                var url = window.location.href;
+                if(url.toString().includes('showclosed')) {
+                    url = url.toString().replace('showclosed','');
+                }
+                else {
+                    if (url.indexOf('?') > -1){
+                       url += '&showclosed'
+                    }else{
+                       url += '?showclosed'
+                    } 
+                }
+                window.location.href = url;
             }
 
         </script>
@@ -411,7 +434,7 @@ foreach ($issues as $issue) {
                             <span id="issueBreadcrumb"></span>
                             <div class="btn-group-toggle" data-toggle="buttons" style="float:right;">
                                 <label id="toggleClosed" class="btn btn-secondary">
-                                    <input type="checkbox" autocomplete="off" onclick=""> Show Closed
+                                    <input type="checkbox" autocomplete="off" onclick="toggleClosed()"> Show Closed
                                 </label>
                             </div>
                         </div>
@@ -423,13 +446,13 @@ foreach ($issues as $issue) {
                                 <form id="IssueSetStatus" style="float:right;" >
                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                         <label id="label_status_open" class="btn">
-                                            <input type="radio" name="status" id="input_open" value="0" onclick="updateIssueStatus(1)"> Open
+                                            <input type="radio" name="status" id="input_open" value="1" onclick="updateIssueStatus(1)"> Open
                                         </label>
                                         <label id="label_status_review" class="btn">
                                             <input type="radio" name="status" id="input_review" value="2" onclick="updateIssueStatus(2)"> In Review
                                         </label>
                                         <label id="label_status_closed" class="btn">
-                                            <input type="radio" name="status" id="input_closed" value="1" onclick="updateIssueStatus(0)"> Closed
+                                            <input type="radio" name="status" id="input_closed" value="0" onclick="updateIssueStatus(0)"> Closed
                                         </label>
                                     </div>
                                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
