@@ -19,7 +19,8 @@ if(isset($_SESSION['userid']) && isset($_GET['issueid']) && isset($_GET['element
    $pim->updateIssueNotes($issueid,$_GET['value']);
   break;
 
-  case 'snoozeuntil':
+  case 'snoozedays':
+      $pim->snoozeIssue($issueid, intval($_GET['value']));
   break;
 
   default:

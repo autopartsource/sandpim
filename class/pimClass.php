@@ -2558,6 +2558,19 @@ function gtinCheckDigit($barcode)
         $db->close();
  }
  
+ function snoozeIssue($id, $days)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update issue set status=3, snoozeduntil=add_date(NOW(),INTERVAL '.intval($days).' DAY) where id=?'))
+  {
+   $stmt->bind_param('i',$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ 
+ 
 /* "path" and "language" together make up the primary key for the documentation table
  * ex: 'EN','APPS/FITMENT ASSETS/REPRESENTATION'
  *  is the record that describes the backstory and implications of this 
