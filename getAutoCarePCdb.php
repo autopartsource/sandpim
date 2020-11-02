@@ -18,8 +18,8 @@ $mysql=new mysql;
 $logs=new logs;
 $config=new configGet;
 
-$dbversion='20201030';
-
+$dbversion='';
+$uri='';
 
 $resourcelistURI='https://aps.dev/sandpim/AutoCareTechnology.php';//getConfigValue('AutoCareResourceListURI');
 $listJSON= @file_get_contents($resourcelistURI);
@@ -33,11 +33,19 @@ if($listJSON!==false)
   if(array_key_exists('PCdb', $listdata))
   {
    $currentversiondate=$listdata['PCdb']['MySQL']['current']['versiondate'];
-   $currentversionuri=$listdata['PCdb']['MySQL']['current']['uri'];      
+   $uri=$listdata['PCdb']['MySQL']['current']['uri'];      
+   if(strlen($currentversiondate)==10)
+   {
+    $dbversion=substr($currentversiondate,0,4).'-'.substr($currentversiondate,5,2).'-'.substr($currentversiondate,8,2);
+   }
+   else
+   {
+    echo "versiondate is not in the correct format\n";           
+   }
   }
   else
   {
-   echo "resource list does not does not contain a top-level key of VCdb\n";      
+   echo "resource list does not does not contain a top-level key of PCdb\n";      
   }
  }
  else
@@ -50,7 +58,6 @@ else
  echo "error getting resource list\n";    
 }
 
-exit;
 
 
 $host=$config->getConfigValue('AutoCareFTPserver');
@@ -65,16 +72,13 @@ if($host===false || $username ===false || $password===false || $downloadsdirecto
 }
 
 
-
-
-
 // -----  PCdb -----
 
 $randomint= random_int(1000000, 9000000);
 $randomfilename= $randomint.'.zip';
 echo "Downloading MySQL package (".$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.").........";
 
-$uri='wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate ftps://'.$host.'/download_pcdb/MySQL/AAIA%20PCdb%20MySQL%20'.$dbversion.'.zip --output-document='.$downloadsdirectory.'/'.$randomfilename;
+//$uri='wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate ftps://'.$host.'/download_pcdb/MySQL/AAIA%20PCdb%20MySQL%20'.$dbversion.'.zip --output-document='.$downloadsdirectory.'/'.$randomfilename;
 
 exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate '.$uri.' --output-document='.$downloadsdirectory.'/'.$randomfilename);
 echo "Done\n";
