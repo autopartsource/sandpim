@@ -478,12 +478,12 @@ foreach ($issues as $issue) {
                                     </div>
                                     <div class="btn-group">
                                         <button id="label_status_snooze" type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Snooze Until
+                                            Snooze
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" value="1" onclick="snoozeIssue(1)">Tomorrow</a>
-                                            <a class="dropdown-item" value="7" onclick="snoozeIssue(7)">Next Week</a>
-                                            <a class="dropdown-item" value="30" onclick="snoozeIssue(30)">Next Month</a>
+                                            <a class="dropdown-item" value="1" onclick="snoozeIssue(1)">Until Tomorrow</a>
+                                            <a class="dropdown-item" value="7" onclick="snoozeIssue(7)">Until Next Week</a>
+                                            <a class="dropdown-item" value="30" onclick="snoozeIssue(30)">Until Next Month</a>
                                         </div>
                                     </div>
                                 </form>
