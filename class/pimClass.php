@@ -2561,7 +2561,7 @@ function gtinCheckDigit($barcode)
  function snoozeIssue($id, $days)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update issue set status=3, snoozeduntil=add_date(NOW(),INTERVAL '.intval($days).' DAY) where id=?'))
+  if($stmt=$db->conn->prepare('update issue set status=3, snoozeduntil=date_add(NOW(),INTERVAL '.intval($days).' DAY) where id=?'))
   {
    $stmt->bind_param('i',$id);
    $stmt->execute();

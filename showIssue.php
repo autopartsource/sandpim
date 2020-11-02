@@ -20,7 +20,7 @@ $tree = array();
 if(isset($_GET['showclosed'])) {
     $statuses=array(0,1,2,3);
 } else {
-    $statuses=array(1,2,3);
+    $statuses=array(1,2);
 }
 
 $issues = $pim->getIssues('%', '%', '%', $statuses ,9999);
@@ -112,7 +112,7 @@ foreach ($issues as $issue) {
                     document.getElementById("issueDatetime").innerHTML = issueObject.issuedatetime;
                     document.getElementById("issueNotes").innerHTML = issueObject.notes;
                     
-                    updateIssueStatus(issueObject.status); // sets current status state
+                    renderStatusButtons(issueObject.status); // sets current status state
 
                     if(issueObject.issuetype.substring(0, 5)=='PART/')
                     {
@@ -179,7 +179,24 @@ foreach ($issues as $issue) {
                 {
                 };
                 xhr.send();
+                
+                renderStatusButtons(value);
+            }
+            
+            function snoozeIssue(value) {
+                var id = document.getElementById("issueId").getAttribute("data-issueid");
 
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'ajaxUpdateIssue.php?issueid=' + id + '&elementid=snoozedays&value=' + value);
+                xhr.onload = function ()
+                {
+                };
+                xhr.send();
+                
+                renderStatusButtons(3);
+            }
+            
+            function renderStatusButtons(value) {
                 if (value == 1) {
                     document.getElementById("label_status_closed").className = "btn btn-danger";
                     document.getElementById("label_status_review").className = "btn btn-danger";
@@ -195,11 +212,11 @@ foreach ($issues as $issue) {
                     document.getElementById("input_review").checked = true;
 
                 } else if (value == 3) {
-                    document.getElementById("label_status_closed").className = "btn btn-secondary";
-                    document.getElementById("label_status_review").className = "btn btn-secondary";
-                    document.getElementById("label_status_open").className = "btn btn-secondary";
-                    document.getElementById("label_status_snooze").className = "btn btn-secondary active";
-                    document.getElementById("input_snooze").checked = true;
+                    document.getElementById("label_status_closed").className = "btn btn-info";
+                    document.getElementById("label_status_review").className = "btn btn-info";
+                    document.getElementById("label_status_open").className = "btn btn-info";
+                    document.getElementById("label_status_snooze").className = "btn btn-info active";
+//                    document.getElementById("input_snooze").checked = true;
                 } else {
                     document.getElementById("label_status_closed").className = "btn btn-success active";
                     document.getElementById("label_status_review").className = "btn btn-success";
@@ -262,7 +279,11 @@ foreach ($issues as $issue) {
             function toggleClosed() {
                 var url = window.location.href;
                 if(url.toString().includes('showclosed')) {
-                    url = url.toString().replace('showclosed','');
+                    if(url.toString().includes('&showclosed')) {
+                        url = url.toString().replace('&showclosed','');
+                    } else {
+                        url = url.toString().replace('showclosed','');
+                    }
                 }
                 else {
                     if (url.indexOf('?') > -1){
@@ -455,10 +476,15 @@ foreach ($issues as $issue) {
                                             <input type="radio" name="status" id="input_closed" value="0" onclick="updateIssueStatus(0)"> Closed
                                         </label>
                                     </div>
-                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                        <label id="label_status_snooze" class="btn">
-                                            <input type="radio" name="status" id="input_snooze" value="3" onclick="updateIssueStatus(3)"> Snooze 
-                                        </label>
+                                    <div class="btn-group">
+                                        <button id="label_status_snooze" type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Snooze Until
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" value="1" onclick="snoozeIssue(1)">Tomorrow</a>
+                                            <a class="dropdown-item" value="7" onclick="snoozeIssue(7)">Next Week</a>
+                                            <a class="dropdown-item" value="30" onclick="snoozeIssue(30)">Next Month</a>
+                                        </div>
                                     </div>
                                 </form>
                              </h5>

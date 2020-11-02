@@ -112,6 +112,11 @@ body {
     text-decoration: none;
 }
 
+.btn-snooze {
+    background-color: #FF00FF;
+    color:white;
+}
+
 .colMain {
     text-align: center;
     justify-content: center;
