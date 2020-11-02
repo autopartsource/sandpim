@@ -20,6 +20,8 @@ $config=new configGet;
 
 $dbversion='';
 $uri='';
+$newlinechars="<br/>\n";
+
 
 $resourcelistURI='https://aps.dev/sandpim/AutoCareTechnology.php';//getConfigValue('AutoCareResourceListURI');
 $listJSON= @file_get_contents($resourcelistURI);
@@ -36,26 +38,26 @@ if($listJSON!==false)
    $uri=$listdata['PCdb']['MySQL']['current']['uri'];      
    if(strlen($currentversiondate)==10)
    {
-    $dbversion=substr($currentversiondate,0,4).'-'.substr($currentversiondate,5,2).'-'.substr($currentversiondate,8,2);
+    $dbversion=substr($currentversiondate,0,4).substr($currentversiondate,5,2).substr($currentversiondate,8,2);
    }
    else
    {
-    echo "versiondate is not in the correct format\n";           
+    echo 'versiondate is not in the correct format'.$newlinechars;           
    }
   }
   else
   {
-   echo "resource list does not does not contain a top-level key of PCdb\n";      
+   echo 'resource list does not does not contain a top-level key of PCdb'.$newlinechars;      
   }
  }
  else
  {
-  echo "resource list does not look like JSON\n";    
+  echo 'resource list does not look like JSON'.$newlinechars;    
  }
 }
 else
 {
- echo "error getting resource list\n";    
+ echo 'error getting resource list'.$newlinechars;    
 }
 
 
@@ -76,12 +78,12 @@ if($host===false || $username ===false || $password===false || $downloadsdirecto
 
 $randomint= random_int(1000000, 9000000);
 $randomfilename= $randomint.'.zip';
-echo "Downloading MySQL package (".$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.").........";
+echo 'Downloading MySQL package ('.$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.').........';
 
 //$uri='wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate ftps://'.$host.'/download_pcdb/MySQL/AAIA%20PCdb%20MySQL%20'.$dbversion.'.zip --output-document='.$downloadsdirectory.'/'.$randomfilename;
 
 exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate '.$uri.' --output-document='.$downloadsdirectory.'/'.$randomfilename);
-echo "Done\n";
+echo 'Done'.$newlinechars;
 
 // test file size for 0 to see if the download failed
 $archivesize=filesize($downloadsdirectory.'/'.$randomfilename);
@@ -90,7 +92,7 @@ if($archivesize>0)
 {
  echo "Extracting MySQL package.........";
  exec('unzip -o '.$downloadsdirectory.'/'.$randomfilename.' -d '.$downloadsdirectory);
- echo "Done\n";
+ echo 'Done'.$newlinechars;
 
  // verify they filename extracted is to the expected pattern
  if(file_exists($downloadsdirectory.'/'.'AAIA PCdb MySQL '.$dbversion.'.sql'))
@@ -102,7 +104,7 @@ if($archivesize>0)
    // import the sql file into the mysql client
    echo "Importing database to MySQL server.........";
    exec('mysql --user='.$mysql->user.' --password='.$mysql->passwd.' pcdb'.$dbversion." < '".$downloadsdirectory.'/AAIA PCdb MySQL '.$dbversion.'.sql'."'");
-   echo "Done\n";
+   echo 'Done'.$newlinechars;
 
    $pcdb=new pcdb('pcdb'.$dbversion); // test the new version as ask it for its versiondate
    $versiondate=$pcdb->version();
@@ -111,7 +113,7 @@ if($archivesize>0)
   }
   else
   {// database create failed
-   echo 'database create failed: '.$dbcreationresult."\n";
+   echo 'database create failed: '.$dbcreationresult.$newlinechars;
    $logs->logSystemEvent('autocareupdate', 0, 'PCdb import failed ('.$dbcreationresult.')');
   }
  
@@ -120,13 +122,14 @@ if($archivesize>0)
  }
  else
  {
-  echo "did not find the epected SQL in the downloaded zip file\n";    
+  echo 'did not find the expected SQL file inside the downloaded zip file'.$newlinechars;    
   $logs->logSystemEvent('autocareupdate', 0, 'PCdb import failed - archive did not contain expected .sql filename');
  }
 
 }
 else
 {// downloaded zipfile filesiize is 0
+ echo 'Dowload is empty'.$newlinechars;   
  $logs->logSystemEvent('autocareupdate', 0, 'PCdb import failed - filesize 0');
 }
 
