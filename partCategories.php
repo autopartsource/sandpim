@@ -60,18 +60,21 @@ $partcategories = $pim->getPartCategories();
                         <h3 class="card-header text-left">Part Categories</h3>
 
                         <div class="card-body">
-                            <table>
-                                <tr><th>Name</th><th>Part Count</th><th></th></tr>
-                                <?php
-                                foreach ($partcategories as $partcategory) 
-                                {
-                                    $count=$pim->countPartsByPartcategory($partcategory['id']);
-                                    echo '<tr><td><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a></td><td>'.$count.'</td><td>';
-                                    if(!$count){echo '<form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form>';}
-                                    echo '</td></tr>';
-                                }
-                                ?>
-                            </table>
+                            <?php
+                            foreach ($partcategories as $partcategory) 
+                            {
+                                $count=$pim->countPartsByPartcategory($partcategory['id']);
+                                echo '<div class="card">';
+                                    echo '<h6 class="card-header text-left"><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a>';
+                                    if(!$count){echo '<div style="float:right;"><form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form></div>';}
+                                    echo '</h6>';
+                                    echo '<div class="card-body text-left">';
+                                        echo 'Part Count: <span style="font-weight: bold;">'.$count.'<span>';
+                                    echo '</div>';
+                                echo '</div>';
+                            }
+                            ?>
+                            <hr>
                             <div style="padding:10px;">
                                 <form method="post">
                                     <input type="text" name="categoryname"/>

@@ -55,9 +55,10 @@ $profiles = $pim->getReceiverprofiles();
                             <?php
                             foreach ($profiles as $profile) 
                             {
-                                echo '<div style="text-align:left;background:#d0d0d0;margin:2px;padding:5px;"><a href="./receiverProfile.php?id='.$profile['id'].'">' . $profile['name'].'</a></div>';
+                                echo '<div class="groupButton"><a class="btn btn-block btn-secondary my-btn" role="button" aria-disabled="true" href="./receiverProfile.php?id='.$profile['id'].'">' . $profile['name'].'</a></div>';
                             }
                             ?>
+                            <hr>
                             <div><form method="post"><input type="text" name="profilename"/><input type="submit" name="submit" value="Add"/></form></div>
                         </div>
                     </div>

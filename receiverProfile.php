@@ -97,38 +97,62 @@ $alldeliverygroups=$pim->getDeliverygroups();
 
                         <div class="card-body">
                             <form action="" method="post">
-                                <table>
-                                    <tr><th>Name</th><td><input type="text" name="profilename" value="<?php echo $profile['name']; ?>"/></td></tr>
-                                    <tr><th>Notes</th><td><textarea name="notes" rows="10" cols="50"><?php echo $profile['notes']; ?></textarea></td></tr>
-                                    <tr><th>Parameters</th><td><textarea name="profiledata" rows="20" cols="50"><?php echo $profile['data']; ?></textarea></td></tr>
-                                    <tr><th>Delivery Groups</th>
-                                        <td>
-                                            <div id="applieddeliverygroups">
-                                            <?php
-                                            foreach ($applieddeliverygroupids as $deliverygroupid) 
-                                            {
-                                                $deliverygroup=$pim->getDeliverygroup($deliverygroupid);
-                                                echo '<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'.$deliverygroupid.'">'.$deliverygroup['description'].' <button  onclick="removeDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')">x</button></div>';
-                                            }
-                                            ?>
+                                <div class="card">
+                                    <h5 class="card-header text-left">
+                                        Name: <input type="text" name="profilename" value="<?php echo $profile['name']; ?>"/>
+                                        <span style="float:right"><input name="submit" type="submit" value="Save"/> <input name="submit" type="submit" value="Delete"/></span>
+                                    </h5>
+                                    <div class="card-body">
+                                        <div class="row padding">
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <h6 class="card-header">Parameters</h6>
+                                                    <div class="card-body">
+                                                        <textarea name="profiledata" rows="15" style="width: 100%; max-width: 100%;"><?php echo $profile['data']; ?></textarea>
+                                                    </div>
+                                                </div>
                                             </div>
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <h6 class="card-header">Delivery Groups</h6>
+                                                    <div class="card-body">
+                                                        <div id="applieddeliverygroups">
+                                                        <?php
+                                                        foreach ($applieddeliverygroupids as $deliverygroupid) 
+                                                        {
+                                                            $deliverygroup=$pim->getDeliverygroup($deliverygroupid);
+                                                            echo '<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'.$deliverygroupid.'">'.$deliverygroup['description'].' <button  onclick="removeDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')">x</button></div>';
+                                                        }
+                                                        ?>
+                                                        </div>
 
-                                            <hr/>
+                                                        <hr/>
 
-                                            <div id="unapplieddeliverygroups">
-                                            <?php
-                                            foreach ($alldeliverygroups as $deliverygroup) 
-                                            {   
-                                                if(in_array($deliverygroup['id'], $applieddeliverygroupids)){continue;}
-                                                echo '<div style="text-align:left;padding:3px;" id="unapplieddeliverygroupid_'.$deliverygroup['id'].'">'.$deliverygroup['description'] . ' <button  onclick="addDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')">+</button></div>';
-                                            }
-                                            ?>
+                                                        <div id="unapplieddeliverygroups">
+                                                        <?php
+                                                        foreach ($alldeliverygroups as $deliverygroup) 
+                                                        {   
+                                                            if(in_array($deliverygroup['id'], $applieddeliverygroupids)){continue;}
+                                                            echo '<div style="text-align:left;padding:3px;" id="unapplieddeliverygroupid_'.$deliverygroup['id'].'">'.$deliverygroup['description'] . ' <button  onclick="addDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')">+</button></div>';
+                                                        }
+                                                        ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-
-                                        </td>
-                                    </tr>
-                                    <tr><th></th><td><input name="submit" type="submit" value="Save"/> <input name="submit" type="submit" value="Delete"/></td></tr>
-                                </table>
+                                        </div>
+                                        <div class="row padding">
+                                            <div class="col-md-12">
+                                                <div class="card">
+                                                    <h6 class="card-header">Notes</h6>
+                                                    <div class="card-body">
+                                                        <textarea name="notes" rows="10" style="width: 100%; max-width: 100%;"><?php echo $profile['notes']; ?></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <input type="hidden" name="id" value="<?php echo $profile['id']; ?>"/>
                                 <input type="hidden" name="oldname" value="<?php echo $profile['name']; ?>"/>
                             </form>
