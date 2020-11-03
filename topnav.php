@@ -68,6 +68,7 @@
                     <a class="dropdown-item" href="./importInterchangeText.php">Import Competitor Interchange from structured text</a>
                     <a class="dropdown-item" href="./importBrandTableText.php">Import Brand Table text</a>
                     <a class="dropdown-item" href="./backgroundJobs.php">Manage background import/export jobs</a>
+                    <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads</a>
                     <a class="dropdown-item" href="./rhubarb7_1Index.php">Rhubarb 7.1</a>
                 </div>
             </li>

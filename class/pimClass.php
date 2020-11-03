@@ -2446,6 +2446,41 @@ function gtinCheckDigit($barcode)
   $db->close();
  }
  
+
+ function getAvailableAutoCareDatabaseList($type)
+ {
+  $db=new mysql; $db->connect();
+  $uri=false; $list=array();
+ 
+  if($stmt=$db->conn->prepare("select * from config where configname='AutoCareResourceListURI'"))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $uri=$row['configvalue'];
+   }
+  }
+       
+  if($uri)
+  {  
+   $listJSON= @file_get_contents($uri);
+   if($listJSON!==false)
+   {
+    if(substr($listJSON,0,1)=='{')
+    {// looks like a JSON-encoded string (starts with a "{")
+     $listdata= json_decode($listJSON,true);  
+     if(array_key_exists($type, $listdata))
+     {
+      $list=$listdata[$type]['MySQL']['releases'];      
+     }
+    }
+   }
+  }
+  return $list;
+ }
+ 
+ 
  
 
  function recordIssue($issuetype,$issuekeyalpha,$issuekeynumeric,$description,$source,$issuehash)
