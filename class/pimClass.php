@@ -2420,7 +2420,7 @@ function gtinCheckDigit($barcode)
  function getAutocareDatabaseList($type)
  {
   $db=new mysql; $db->connect();
-  $events=array();
+  $databases=array();
   if($stmt=$db->conn->prepare('select * from autocare_databases where databasetype like ? order by versiondate desc'))
   {
    $stmt->bind_param('s',$type);

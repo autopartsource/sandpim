@@ -58,15 +58,46 @@ $pricesheets=$pricing->getPricesheets();
                         <h3 class="card-header text-left">Price Sheets</h3>
 
                         <div class="card-body">
-                            <table>
-                                <tr><th>Name</th><th>Description</th><th>Currency</th><th>Price Type</th><th>Effective From</th><th>Effective To</th></tr>
-                                <?php
+                            <?php
                                 foreach($pricesheets as $pricesheet)
                                 {
-                                    echo '<tr><td>'.$pricesheet['number'].'</td><td>'.$pricesheet['description'].'</td><td>'.$pricesheet['currency'].'</td><td>'.$pricesheet['pricetype'].'</td><td>'.$pricesheet['effectivedate'].'</td><td>'.$pricesheet['expirationdate'].'</td></tr>';
+                                    echo '<div class="card">';
+                                        echo '<h6 class="card-header text-left">Name: '.$pricesheet['number'].'</h6>';
+                                        echo '<div class="card-body">';
+                                            echo '<div class="form-group row">';
+                                                echo '<label for="staticDescription" class="col-sm-2 col-form-label">Description</label>';
+                                                echo '<div class="col-sm-10">';
+                                                    echo '<input id="staticDescription" readonly type="text" class="form-control" name="description" value="'.$pricesheet['description'].'"/>';
+                                                echo '</div>';
+                                            echo '</div>';
+                                            echo '<div class="form-group row">';
+                                                echo '<label for="staticCurrency" class="col-sm-2 col-form-label">Currency</label>';
+                                                echo '<div class="col-sm-10">';
+                                                    echo '<input id="staticCurrency" readonly type="text" class="form-control" name="currency" value="'.$pricesheet['currency'].'"/>';
+                                                echo '</div>';
+                                            echo '</div>';
+                                            echo '<div class="form-group row">';
+                                                echo '<label for="staticPricetype" class="col-sm-2 col-form-label">Price Type</label>';
+                                                echo '<div class="col-sm-10">';
+                                                    echo '<input id="staticPricetype" readonly type="text" class="form-control" name="pricetype" value="'.$pricesheet['pricetype'].'"/>';
+                                                echo '</div>';
+                                            echo '</div>';
+                                            echo '<div class="form-group row">';
+                                                echo '<label for="staticEffectivefrom" class="col-sm-2 col-form-label">Effective From</label>';
+                                                echo '<div class="col-sm-10">';
+                                                    echo '<input id="staticEffectivefrom" readonly type="text" class="form-control" name="effectivedate" value="'.$pricesheet['effectivedate'].'"/>';
+                                                echo '</div>';
+                                            echo '</div>';
+                                            echo '<div class="form-group row">';
+                                                echo '<label for="staticExpiration" class="col-sm-2 col-form-label">Effective To</label>';
+                                                echo '<div class="col-sm-10">';
+                                                    echo '<input id="staticExpiration" readonly type="text" class="form-control" name="expirationdate" value="'.$pricesheet['expirationdate'].'"/>';
+                                                echo '</div>';
+                                            echo '</div>';
+                                        echo '</div>';
+                                    echo '</div>';
                                 }
-                                ?>
-                            </table>
+                            ?>
                         </div>
                     </div>
                     
