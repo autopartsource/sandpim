@@ -15,7 +15,9 @@ $pim = new pim;
 $logs = new logs;
 
 
-$vcdbsinstalled=$pim->getAutocareDatabaseList('vcdb');
+$temps=$pim->getAutocareDatabaseList('vcdb');
+$vcdbsinstalled=array();
+foreach($temps as $temp){$vcdbsinstalled[]=$temp['versiondate'];}
 
 
 $temps=$pim->getAutocareDatabaseList('pcdb');
@@ -28,6 +30,9 @@ foreach($temps as $temp){$pcdbsinstalled[]=$temp['versiondate'];}
 $padbsinstalled=$pim->getAutocareDatabaseList('padb');
 $qdbsinstalled=$pim->getAutocareDatabaseList('qdb');
 
+
+
+$vcdbsavailable=$pim->getAutoCareReleaseList('VCdb');
 $pcdbsavailable=$pim->getAutoCareReleaseList('PCdb');
 
 
@@ -47,7 +52,6 @@ $pcdbsavailable=$pim->getAutoCareReleaseList('PCdb');
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
-                    <?php print_r($pcdbsavailable);?>
                 </div>
                 
                 <!-- Main Content -->
@@ -58,10 +62,7 @@ $pcdbsavailable=$pim->getAutoCareReleaseList('PCdb');
                         <div>
                             <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;">
                                 <div style="background-color: #c0c0c0;">VCdb</div>
-                                <div>
-                                    <form action="getAutoCareVCdb.php"><select name="vcdb"><option value="">2020-10-31</option></select><br/><input type="submit" name="submit" value="Install"/></form>
-                                </div>
-                                <?php foreach($vcdbsinstalled as $vcdbinstalled){echo '<div>'.$vcdbinstalled['versiondate'].'</div>';}?>
+                                <?php foreach($vcdbsavailable as $vcdbavailable){if(in_array($vcdbavailable['versiondate'], $vcdbsinstalled)){echo  '<div>'.$vcdbavailable['versiondate'].'</div>';}else{echo '<div><a href="./getAutoCareVCdb.php?versiondate='.$vcdbavailable['versiondate'].'">'.$vcdbavailable['versiondate'].'</a></div>';}}?>
                             </div>
                             
                             <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;">

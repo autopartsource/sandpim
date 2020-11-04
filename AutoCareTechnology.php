@@ -6,6 +6,19 @@ $data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-10-3
 $data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-09-25','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020200925.zip','sha256'=>'');
 $data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-08-28','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020200828.zip','sha256'=>'');
 $data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-07-31','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020200731.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-06-26','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020200626.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-05-29','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020200529.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-04-24','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020200424.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-03-27','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020200327.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-02-28','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020200228.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2020-01-31','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020200131.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2019-12-20','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020191220.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2019-11-22','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020191122.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2019-10-25','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020191025.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2019-09-27','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020190927.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2019-08-30','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020190830.zip','sha256'=>'');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2019-07-26','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020190726.zip','sha256'=>'');
+
 
 $data['PCdb']['MySQL']['current']=array('versiondate'=>'2020-10-30','uri'=>'ftps://52.168.10.67/download_pcdb/MySql/AAIA%20PCdb%20MySQL%2020201030.zip','sha256'=>'50E4684F9178BA6C4B309DE1DE248FFD50534FA28C453D346880EEE66DD8ABA8');
 $data['PCdb']['MySQL']['releases'][]=array('versiondate'=>'2020-10-30','uri'=>'ftps://52.168.10.67/download_pcdb/MySql/AAIA%20PCdb%20MySQL%2020201030.zip','sha256'=>'50E4684F9178BA6C4B309DE1DE248FFD50534FA28C453D346880EEE66DD8ABA8');
