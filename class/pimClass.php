@@ -2447,7 +2447,7 @@ function gtinCheckDigit($barcode)
  }
  
 
- function getAvailableAutoCareDatabaseList($type)
+ function getAutoCareReleaseList($type)
  {
   $db=new mysql; $db->connect();
   $uri=false; $list=array();
@@ -2469,11 +2469,50 @@ function gtinCheckDigit($barcode)
    {
     if(substr($listJSON,0,1)=='{')
     {// looks like a JSON-encoded string (starts with a "{")
-     $listdata= json_decode($listJSON,true);  
-     if(array_key_exists($type, $listdata))
+     $listdata= json_decode($listJSON,true);
+     
+     
+     switch($type)
      {
-      $list=$listdata[$type]['MySQL']['releases'];      
+      case 'VCdb':
+       if(isset($type, $listdata))
+       {
+        $list=$listdata[$type]['MySQL']['complete']['releases'];
+       }
+       break;
+         
+      case 'PCdb':
+       if(isset($type, $listdata))
+       {
+        $list=$listdata[$type]['MySQL']['releases'];
+       }
+       break;
+
+      case 'PAdb':
+       if(isset($type, $listdata))
+       {
+        $list=$listdata[$type]['MySQL']['releases'];
+       }
+       break;
+
+      case 'Qdb':
+       if(isset($type, $listdata))
+       {
+        $list=$listdata[$type]['MySQL']['releases'];
+       }
+       break;
+         
+         default :
+             break;
+         
      }
+     
+     
+     
+     
+     
+     
+     
     }
    }
   }

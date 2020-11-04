@@ -16,9 +16,19 @@ $logs = new logs;
 
 
 $vcdbsinstalled=$pim->getAutocareDatabaseList('vcdb');
-$pcdbsinstalled=$pim->getAutocareDatabaseList('pcdb');
+
+
+$temps=$pim->getAutocareDatabaseList('pcdb');
+$pcdbsinstalled=array();
+foreach($temps as $temp){$pcdbsinstalled[]=$temp['versiondate'];}
+
+
+
+
 $padbsinstalled=$pim->getAutocareDatabaseList('padb');
 $qdbsinstalled=$pim->getAutocareDatabaseList('qdb');
+
+$pcdbsavailable=$pim->getAutoCareReleaseList('PCdb');
 
 
 ?>
@@ -37,7 +47,7 @@ $qdbsinstalled=$pim->getAutocareDatabaseList('qdb');
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
-                    
+                    <?php print_r($pcdbsavailable);?>
                 </div>
                 
                 <!-- Main Content -->
@@ -56,10 +66,8 @@ $qdbsinstalled=$pim->getAutocareDatabaseList('qdb');
                             
                             <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;">
                                 <div style="background-color: #c0c0c0;">PCdb</div>
-                                <div>
-                                    <form action="getAutoCarePCdb.php"><select name="vcdb"><option value="">2020-10-31</option></select><br/><input type="submit" name="submit" value="Install"/></form>
-                                </div>
-                                <?php foreach($pcdbsinstalled as $pcdbinstalled){echo '<div>'.$pcdbinstalled['versiondate'].'</div>';}?>
+                                <?php foreach($pcdbsavailable as $pcdbavailable){if(in_array($pcdbavailable['versiondate'], $pcdbsinstalled)){echo  '<div>'.$pcdbavailable['versiondate'].'</div>';}else{echo '<div><a href="./getAutoCarePCdb.php?versiondate='.$pcdbavailable['versiondate'].'">'.$pcdbavailable['versiondate'].'</a></div>';}}?>
+
                             </div>
                             <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;"><div style="background-color: #c0c0c0;">PAdb</div>
                                 <?php foreach($padbsinstalled as $padbinstalled){echo '<div>'.$padbinstalled['versiondate'].'</div>';}?>
