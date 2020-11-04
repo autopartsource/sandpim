@@ -44,6 +44,7 @@
                     <a class="dropdown-item" href="./competitiveBrandBrowser.php">Competitive Brands</a>
                     <a class="dropdown-item" href="./priceSheets.php">Price Sheets</a>
                     <a class="dropdown-item" href="./noteManager.php">Fitment Note Management</a>
+                    <hr>
                     <a class="dropdown-item" href="./users.php">Users</a>
                     <a class="dropdown-item" href="./config.php">Configuration</a>
                 </div>
@@ -60,6 +61,7 @@
                     <a class="dropdown-item" href="./exportFlatAppsSelect.php">Export flattened applications files</a>
                     <a class="dropdown-item" href="./exportForPrintSelect.php">Export for print publishing</a>
                     <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a>
+                    <hr>
                     <a class="dropdown-item" href="./importACESupload.php">Import ACES xml file</a>
                     <a class="dropdown-item" href="./importACEStext.php">Import applications from structured text</a>
                     <a class="dropdown-item" href="./importPartText.php">Import parts from structured text</a>
@@ -67,6 +69,7 @@
                     <a class="dropdown-item" href="./importPartAttributeText.php">Import part attributes from structured text</a>
                     <a class="dropdown-item" href="./importInterchangeText.php">Import Competitor Interchange from structured text</a>
                     <a class="dropdown-item" href="./importBrandTableText.php">Import Brand Table text</a>
+                    <hr>
                     <a class="dropdown-item" href="./backgroundJobs.php">Manage background import/export jobs</a>
                     <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads</a>
                     <a class="dropdown-item" href="./rhubarb7_1Index.php">Rhubarb 7.1</a>

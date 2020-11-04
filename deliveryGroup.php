@@ -116,18 +116,19 @@ $allpartcategories=$pim->getPartCategories();
                                             $appliedpartcategoryidlist[]=$partcategory['id'];
                                             echo '<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'.$partcategory['id'].'">'.$partcategory['name'].' <button  onclick="removePartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')">x</button></div>';
                                         }
-                                        ?>
-                                        </div>
+                                    ?>
+                                    </div>
 
-                                        <hr/>
+                                    <hr/>
 
-                                        <div id="unappliedpartcategories">
-                                        <?php
+                                    <div id="unappliedpartcategories">
+                                    <?php
                                         foreach ($allpartcategories as $partcategory) 
                                         {   if(in_array($partcategory['id'], $appliedpartcategoryidlist)){continue;}
                                             echo '<div style="text-align:left;padding:3px;" id="unappliedpartcategoryid_'.$partcategory['id'].'">'.$pim->partCategoryName($partcategory['id']) . ' <button  onclick="addPartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')">+</button></div>';
                                         }
                                     ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>

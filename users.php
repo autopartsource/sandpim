@@ -90,28 +90,77 @@ $users=$user->getUsers();
                             </ul>
                             <div class="tab-content" id="myTabContent">
                                 <div class="tab-pane fade mt-3 show active" id="existing" role="tabpanel" aria-labelledby="existing-tab">
-                                    <table>
-                                        <tr><th>Username</th><th>Real Name</th><th>Status</th><th>Application Category Permissions</th><th>System Permissions</th></tr>
-                                        <?php
-                                        foreach ($users as $user) {
-                                            $nicestatus = 'Inactive';
-                                            if ($user['status'] == 1) {
-                                                $nicestatus = 'Active';
-                                            }
-                                            echo '<tr><td><a href="./user.php?userid=' . $user['id'] . '">' . $user['username'] . '</a></td><td>' . $user['name'] . '</td><td>' . $nicestatus . '</td><td></td><td></td></tr>';
+                                    <div style="padding:4px;color:red;"><?php echo $error; ?></div>
+                                    <?php
+                                    foreach ($users as $user) {
+                                        $nicestatus = 'Inactive';
+                                        if ($user['status'] == 1) {
+                                            $nicestatus = 'Active';
                                         }
-                                        ?>
-                                    </table>
+                                        echo '<div class="card">';
+                                            echo '<h6 class="card-header text-left">Username: <a href="./user.php?userid=' . $user['id'] . '">' . $user['username'] . '</a></h6>';
+                                            echo '<div class="card-body">';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="staticRealName" class="col-sm-2 col-form-label">Real Name</label>';
+                                                    echo '<div class="col-sm-10">';
+                                                        echo '<input id="staticRealName" readonly type="text" class="form-control" name="realname" value="'.$user['name'].'"/>';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="staticStatus" class="col-sm-2 col-form-label">Status</label>';
+                                                    echo '<div class="col-sm-10">';
+                                                        echo '<input id="staticStatus" readonly type="text" class="form-control" name="realname" value="'.$nicestatus.'"/>';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="staticAppCatPerms" class="col-sm-2 col-form-label">Application Category Permissions</label>';
+                                                    echo '<div class="col-sm-10">';
+                                                        echo '<input id="staticAppCatPerms" readonly type="text" class="form-control" name="realname" value=""/>';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="staticSysPerms" class="col-sm-2 col-form-label">System Permissions</label>';
+                                                    echo '<div class="col-sm-10">';
+                                                        echo '<input id="staticSysPerms" readonly type="text" class="form-control" name="realname" value=""/>';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        echo '<hr>';
+                                    }
+                                    ?>
                                 </div>
                                 <div class="tab-pane fade mt-3" id="create" role="tabpanel" aria-labelledby="create-tab">
                                     <form method="post">
-                                        <div style="width:350px;padding:3px;border:1px solid;">
-                                            <div style="padding:3px;"><div style="float:left;">Username</div> <div style="float:right;"><input type="text" name="username"/></div><div style="clear:both;"></div></div>
-                                            <div style="padding:3px;"><div style="float:left;">Real Name</div> <div style="float:right;"><input type="text" name="realname"/></div><div style="clear:both;"></div></div>
-                                            <div style="padding:3px;"><div style="float:left;">Password</div> <div style="float:right;"><input type="password" name="password"/></div><div style="clear:both;"></div></div>
-                                            <div style="padding:3px;"><div style="float:left;">Confirm Password</div> <div style="float:right;"><input type="password" name="repassword"/></div><div style="clear:both;"></div></div>
-                                            <div style="padding:3px;"><div style="float:right;"><input type="submit" name="submit" value="Create User"/></div><div style="clear:both;"></div></div>
-                                            <div style="padding:4px;color:red;"><?php echo $error; ?></div>
+                                        <div class="form-group row">
+                                            <label for="inputUsername" class="col-sm-2 col-form-label">Username</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputUsername" type="text" class="form-control" name="username"/></td></tr>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputRealName" class="col-sm-2 col-form-label">Real Name</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputRealName" type="text" class="form-control" name="realname"/></td></tr>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputPassword" type="password" class="form-control" name="password"/></td></tr>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="inputConfirmPass" class="col-sm-2 col-form-label">Confirm Password</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputConfirmPass" type="password" class="form-control" name="repassword"/></td></tr>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col">
+                                                <input type="submit" name="submit" value="Create User"/>
+                                                <div style="padding:4px;color:red;"><?php echo $error; ?></div>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>

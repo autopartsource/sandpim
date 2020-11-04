@@ -77,16 +77,51 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
 			<!-- Header -->
                         <h3 class="card-header text-left">Part Category</h3>
 
-                        <div class="card-body">
+                        <div class="card-body text-left">
                             <form action="" method="post">
-                                <table>
-                                    <tr><th>Name</th><td><input type="text" name="name" value="<?php echo $partcategory['name'];?>"/></td></tr>
-                                    <tr><th>BrandAAIAID</th><td><input type="text" name="brandID" value="<?php echo $partcategory['brandID'];?>"/></td></tr>
-                                    <tr><th>SubBrandAAIAID</th><td><input type="text" name="subbrandID" value="<?php echo $partcategory['subbrandID'];?>"/></td></tr>
-                                    <tr><th>MfrLabel (ACES)</th><td><input type="text" name="mfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/></td></tr>
-                                    <tr><th>Sandpiper Slice UUID</th><td><?php echo $partcategory['sandpipersliceuuid'];?></td></tr>
-                                    <tr><th></th><td><input name="submit" type="submit" value="Cancel"/> <input name="submit" type="submit" value="Save"/></td></tr>
-                                </table>
+                                <div class="card">
+                                    <h6 class="card-header">
+                                        <div class="form-group row">
+                                            <label for="inputName" class="col-sm-2 col-form-label">Name:</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputName" type="text" class="form-control" type="text" name="name" value="<?php echo $partcategory['name'];?>"/>
+                                            </div>
+                                        </div>
+                                    </h6>
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <label for="inputBrandAAIAID" class="col-sm-2 col-form-label">BrandAAIAID</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputBrandAAIAID" type="text" class="form-control" name="brandID" value="<?php echo $partcategory['brandID'];?>"/>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group row">
+                                            <label for="inputSubBrandAAIAID" class="col-sm-2 col-form-label">SubBrandAAIAID</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputSubBrandAAIAID" type="text" class="form-control" name="subbrandID" value="<?php echo $partcategory['subbrandID'];?>"/></td></tr>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group row">
+                                            <label for="inputMfrLabel" class="col-sm-2 col-form-label">MfrLabel (ACES)</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputMfrLabel" type="text" class="form-control" name="mfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/></td></tr>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group row">
+                                            <label for="staticSandpiperSliceUUID" class="col-sm-2 col-form-label">Sandpiper Slice UUID</label>
+                                            <div class="col-sm-10">
+                                                <input id="staticSandpiperSliceUUID" readonly type="text" class="form-control" value="<?php echo $partcategory['sandpipersliceuuid'];?>"/></td></tr>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div>
+                                            <input name="submit" type="submit" value="Cancel"/> <input name="submit" type="submit" value="Save"/>
+                                        </div>
+                                    </div>
+                                </div>
                                 <input type="hidden" name="id" value="<?php echo $partcategory['id'];?>"/>
                                 <input type="hidden" name="oldname" value="<?php echo $partcategory['name'];?>"/>
                                 <input type="hidden" name="oldbrandID" value="<?php echo $partcategory['brandID'];?>"/>
