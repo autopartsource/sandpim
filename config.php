@@ -58,15 +58,29 @@ $configoptions=$configGet->getConfigOptions();
 
                         <div class="card-body">
                             <form method="post">
-                                <table>
-                                    <tr><th>Parameter</th><th>Value</th></tr>
-                                    <?php
+                                <?php
                                     foreach ($configs as $config) {
-                                        echo '<tr><td>' . $config['configname'] . '</td><td>' . $config['configvalue'] . '</td></tr>';
+                                        echo '<div class="form-group row">';
+                                            echo '<label for="static'.$config['configname'].'" class="col-sm-3 col-form-label text-left">'.$config['configname'].'</label>';
+                                            echo '<div class="col-sm-9">';
+                                                echo '<input type="text" readonly class="form-control" id="static'.$config['configname'].'" value="'.$config['configvalue'].'">';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        echo '<hr>';
                                     }
-                                    ?>
-                                    <tr><td><select name="configname"><?php foreach($configoptions as $configoption){echo '<option value="'.$configoption['configname'].'">'.$configoption['configname'].'</option>';}?></select></td><td><input type="text" name="configvalue" size="50"/><input type="submit" name="submit" value="Add/Update"/></td></tr>
-                                </table>
+                                ?>
+                                <div class="form-group row">
+                                    <select name="configname" class="custom-select col-sm-4">
+                                        <option selected disabled value="">Parameter...</option>
+                                        <?php foreach($configoptions as $configoption){echo '<option value="'.$configoption['configname'].'">'.$configoption['configname'].'</option>';}?>
+                                    </select>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="configvalue" class="form-control"/>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <input type="submit" name="submit" value="Add/Update"/>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
