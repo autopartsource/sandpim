@@ -1,6 +1,8 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
+include_once('./class/configGetClass.php');
+
 
 $navCategory = 'import/export';
 
@@ -13,12 +15,38 @@ if (!isset($_SESSION['userid'])) {
 
 $pim = new pim;
 $logs = new logs;
+$config=new configGet;
 
 
-$vcdbsinstalled=$pim->getAutocareDatabaseList('vcdb');
-$pcdbsinstalled=$pim->getAutocareDatabaseList('pcdb');
-$padbsinstalled=$pim->getAutocareDatabaseList('padb');
-$qdbsinstalled=$pim->getAutocareDatabaseList('qdb');
+$downloadsdirectory=$config->getConfigValue('AutoCareDownloadsDirectory');
+
+$temps=$pim->getAutocareDatabaseList('vcdb');
+$vcdbsinstalled=array();
+foreach($temps as $temp){$vcdbsinstalled[]=$temp['versiondate'];}
+
+
+$temps=$pim->getAutocareDatabaseList('pcdb');
+$pcdbsinstalled=array();
+foreach($temps as $temp){$pcdbsinstalled[]=$temp['versiondate'];}
+
+
+
+$temps=$pim->getAutocareDatabaseList('padb');
+$padbsinstalled=array();
+foreach($temps as $temp){$padbsinstalled[]=$temp['versiondate'];}
+
+
+$temps=$pim->getAutocareDatabaseList('qdb');
+$qdbsinstalled=array();
+foreach($temps as $temp){$qdbsinstalled[]=$temp['versiondate'];}
+
+
+
+
+$vcdbsavailable=$pim->getAutoCareReleaseList('VCdb');
+$pcdbsavailable=$pim->getAutoCareReleaseList('PCdb');
+$padbsavailable=$pim->getAutoCareReleaseList('PAdb');
+$qdbsavailable=$pim->getAutoCareReleaseList('Qdb');
 
 
 ?>
@@ -37,7 +65,12 @@ $qdbsinstalled=$pim->getAutocareDatabaseList('qdb');
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
-                    
+                <?php if($downloadsdirectory)
+                {
+                    $freespace=disk_free_space($downloadsdirectory);
+                    echo 'Free Space: '.number_format( $freespace/1000000000, 1).'GB'; 
+                }?>
+
                 </div>
                 
                 <!-- Main Content -->
@@ -48,24 +81,21 @@ $qdbsinstalled=$pim->getAutocareDatabaseList('qdb');
                         <div>
                             <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;">
                                 <div style="background-color: #c0c0c0;">VCdb</div>
-                                <div>
-                                    <form action="getAutoCareVCdb.php"><select name="vcdb"><option value="">2020-10-31</option></select><br/><input type="submit" name="submit" value="Install"/></form>
-                                </div>
-                                <?php foreach($vcdbsinstalled as $vcdbinstalled){echo '<div>'.$vcdbinstalled['versiondate'].'</div>';}?>
+                                <?php foreach($vcdbsavailable as $vcdbavailable){if(in_array($vcdbavailable['versiondate'], $vcdbsinstalled)){echo  '<div>'.$vcdbavailable['versiondate'].'</div>';}else{echo '<div><a href="./getAutoCareVCdb.php?versiondate='.$vcdbavailable['versiondate'].'">'.$vcdbavailable['versiondate'].'</a></div>';}}?>
                             </div>
                             
                             <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;">
                                 <div style="background-color: #c0c0c0;">PCdb</div>
-                                <div>
-                                    <form action="getAutoCarePCdb.php"><select name="vcdb"><option value="">2020-10-31</option></select><br/><input type="submit" name="submit" value="Install"/></form>
-                                </div>
-                                <?php foreach($pcdbsinstalled as $pcdbinstalled){echo '<div>'.$pcdbinstalled['versiondate'].'</div>';}?>
+                                <?php foreach($pcdbsavailable as $pcdbavailable){if(in_array($pcdbavailable['versiondate'], $pcdbsinstalled)){echo  '<div>'.$pcdbavailable['versiondate'].'</div>';}else{echo '<div><a href="./getAutoCarePCdb.php?versiondate='.$pcdbavailable['versiondate'].'">'.$pcdbavailable['versiondate'].'</a></div>';}}?>
+
                             </div>
-                            <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;"><div style="background-color: #c0c0c0;">PAdb</div>
-                                <?php foreach($padbsinstalled as $padbinstalled){echo '<div>'.$padbinstalled['versiondate'].'</div>';}?>
+                            <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;">
+                                <div style="background-color: #c0c0c0;">PAdb</div>
+                                <?php foreach($padbsavailable as $padbavailable){if(in_array($padbavailable['versiondate'], $padbsinstalled)){echo  '<div>'.$padbavailable['versiondate'].'</div>';}else{echo '<div><a href="./getAutoCarePAdb.php?versiondate='.$padbavailable['versiondate'].'">'.$padbavailable['versiondate'].'</a></div>';}}?>
                             </div>
-                            <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;"><div style="background-color: #c0c0c0;">Qdb</div>
-                                <?php foreach($qdbsinstalled as $qdbinstalled){echo '<div>'.$qdbinstalled['versiondate'].'</div>';}?>
+                            <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;">
+                                <div style="background-color: #c0c0c0;">Qdb</div>
+                                <?php foreach($qdbsavailable as $qdbavailable){if(in_array($qdbavailable['versiondate'], $qdbsinstalled)){echo  '<div>'.$qdbavailable['versiondate'].'</div>';}else{echo '<div><a href="./getAutoCareQdb.php?versiondate='.$qdbavailable['versiondate'].'">'.$qdbavailable['versiondate'].'</a></div>';}}?>
                             </div>
                             <div style="clear:both;"></div>
                         </div>
