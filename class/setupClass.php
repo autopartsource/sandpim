@@ -616,15 +616,20 @@ class setup
         PRIMARY KEY (configname))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - config_options ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - config_options ('.$db->conn->error.')';}
    
-        $sql="insert into config_options values('AutoCareResourceListURI','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into config_options values('AutoCareFTPserver','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into config_options values('AutoCareFTPusername','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into config_options values('AutoCareFTPpassword','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into config_options values('AutoCareDownloadsDirectory','','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('AutoCareResourceListURI','A1/255','','https://aps.dev/sandpim/AutoCareTechnology.php','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('AutoCareFTPserver','A1/255','','52.168.10.67','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('AutoCareFTPusername','A1/255','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('AutoCareFTPpassword','A1/255','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('AutoCareDownloadsDirectory','A1/255','','/var/www/html/autocaredownloads','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('defaultDescriptionLanguageCode','A1/255','','EN','This code will be auto-selected on the parts page for creating a new description');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('defaultDescriptionTypeCode','A1/255','','LAB','This code will be auto-selected on the parts page for creating a new description');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        
-        
+        $sql="insert into config_options values('localImageStorePath','A1/255','','/var/www/html/images','absolute path for storing image assets');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('logPreviewDescriptionLength','','','80','how many characters are displayed from log entry in a preview list');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('photoAssetHostURI','','','https://s3.amazonaws.com/autopartsourceimages/parts/','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('storeImageAssetsLocally','','','1','0 or 1 indicating local saving of image assets');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('systemDocRootRUL','','','/var/www/html','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+
+
         
         
         $sql="CREATE TABLE issue (
