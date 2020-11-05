@@ -59,6 +59,7 @@ if(isset($_GET['versiondate']) && $pim->validAutoCareVersionFormat($_GET['versio
    {
     $found=true;
     $uri=$vcdbavailable['uri'];
+    $hash=$vcdbavailable['sha256'];
     $versiondate=$vcdbavailable['versiondate']; // with slashes (2020-10-30)
     $dbversion=substr($versiondate,0,4).substr($versiondate,5,2).substr($versiondate,8,2);
    }
@@ -107,7 +108,8 @@ if($uri && $havewriteaccess && $username && $password)
    $localhashchunks= explode(' ', $localhashreturn[0]);
    if(strlen($localhashchunks[0])==64){$localhash=$localhashchunks[0];}   
   }
-  echo 'SHA256:'.$localhash.$newlinechars;
+  echo 'SHA256:'.$localhash;
+  if($hash==$localhash){echo ' (valid)'.$newlinechars;}else{echo ' (NOT VALID)'.$newlinechars;}       
 
   echo "Extracting MySQL package.........";
   exec('unzip -o '.$downloadsdirectory.'/'.$randomfilename.' -d '.$downloadsdirectory);
