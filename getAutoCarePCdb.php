@@ -103,6 +103,17 @@ if($uri && $havewriteaccess && $username && $password)
 
  if($archivesize>0)
  {
+   // calc the file's sha256 hash
+  $localhash=''; $localhashreturn=array();
+  exec('sha256sum '.$downloadsdirectory.'/'.$randomfilename,$localhashreturn);
+  if(isset($localhashreturn[0]))
+  {
+   $localhashchunks= explode(' ', $localhashreturn[0]);
+   if(strlen($localhashchunks[0])==64){$localhash=$localhashchunks[0];}   
+  }
+  echo 'SHA256:'.$localhash.$newlinechars;
+
+     
   echo "Extracting MySQL package.........";
   exec('unzip -o '.$downloadsdirectory.'/'.$randomfilename.' -d '.$downloadsdirectory);
   echo 'Done'.$newlinechars;

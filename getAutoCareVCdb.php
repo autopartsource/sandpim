@@ -45,9 +45,6 @@ else
  $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'file create failed - apache needs to have write access to:'.$downloadsdirectory); 
 }
 
-
-
-
 $dbversion=''; // no dashes (20201030)
 $uri=false;
 $found=false;
@@ -91,61 +88,66 @@ if($username ===false || $password===false)
 if($uri && $havewriteaccess && $username && $password)
 {
 
-$randomint= random_int(1000000, 9000000);
-$randomfilename= $randomint.'.zip';
-echo "Downloading MySQL package (".$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.").........";
-//exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate ftps://'.$host.'/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%20'.$dbversion.'.zip --output-document='.$downloadsdirectory.'/'.$randomfilename);
-
+ $randomint= random_int(1000000, 9000000);
+ $randomfilename= $randomint.'.zip';
+ echo "Downloading MySQL package (".$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.").........";
  exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate '.$uri.' --output-document='.$downloadsdirectory.'/'.$randomfilename);
-
-echo "Done".$newlinechars;;
-
-// test file size for 0 to see if the download failed
-$archivesize=filesize($downloadsdirectory.'/'.$randomfilename);
-
-if($archivesize>0)
-{
- echo "Extracting MySQL package.........";
- exec('unzip -o '.$downloadsdirectory.'/'.$randomfilename.' -d '.$downloadsdirectory);
  echo "Done".$newlinechars;;
 
- // verify they filename extracted is to the expected pattern
- if(file_exists($downloadsdirectory.'/'.'AAIA VCdb2009 MySQL Complete VCDB '.$dbversion.'.sql'))
- {
-  // create the new database
-  $dbcreationresult=$pim->createAutoCareDatabase('vcdb'.$dbversion, $mysql->user);
-  if($dbcreationresult=='success')
-  {
-   // import the sql file into the mysql client
-   echo "Importing database to MySQL server.........";
-   exec('mysql --user='.$mysql->user.' --password='.$mysql->passwd.' vcdb'.$dbversion." < '".$downloadsdirectory.'/AAIA VCdb2009 MySQL Complete VCDB '.$dbversion.'.sql'."'");
-   echo "Done".$newlinechars;;
+ // test file size for 0 to see if the download failed
+ $archivesize=filesize($downloadsdirectory.'/'.$randomfilename);
 
-   $vcdb=new vcdb('vcdb'.$dbversion); // test the new version as ask it for its versiondate
-   $versiondate=$vcdb->version();
-   $pim->recordAutocareDatabaseList('vcdb'.$dbversion, 'vcdb', $versiondate);   // catalog the new version
-   $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'VCdb '.$dbversion.' imported');
+ if($archivesize>0)
+ {
+  // calc the file's sha256 hash
+  $localhash=''; $localhashreturn=array();
+  exec('sha256sum '.$downloadsdirectory.'/'.$randomfilename,$localhashreturn);
+  if(isset($localhashreturn[0]))
+  {
+   $localhashchunks= explode(' ', $localhashreturn[0]);
+   if(strlen($localhashchunks[0])==64){$localhash=$localhashchunks[0];}   
+  }
+  echo 'SHA256:'.$localhash.$newlinechars;
+
+  echo "Extracting MySQL package.........";
+  exec('unzip -o '.$downloadsdirectory.'/'.$randomfilename.' -d '.$downloadsdirectory);
+  echo "Done".$newlinechars;;
+
+  // verify they filename extracted is to the expected pattern
+  if(file_exists($downloadsdirectory.'/'.'AAIA VCdb2009 MySQL Complete VCDB '.$dbversion.'.sql'))
+  {
+   // create the new database
+   $dbcreationresult=$pim->createAutoCareDatabase('vcdb'.$dbversion, $mysql->user);
+   if($dbcreationresult=='success')
+   {
+    // import the sql file into the mysql client
+    echo "Importing database to MySQL server.........";
+    exec('mysql --user='.$mysql->user.' --password='.$mysql->passwd.' vcdb'.$dbversion." < '".$downloadsdirectory.'/AAIA VCdb2009 MySQL Complete VCDB '.$dbversion.'.sql'."'");
+    echo "Done".$newlinechars;;
+
+    $vcdb=new vcdb('vcdb'.$dbversion); // test the new version as ask it for its versiondate
+    $versiondate=$vcdb->version();
+    $pim->recordAutocareDatabaseList('vcdb'.$dbversion, 'vcdb', $versiondate);   // catalog the new version
+    $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'VCdb '.$dbversion.' imported');
+   }
+   else
+   {// database create failed
+    echo 'database create failed: '.$dbcreationresult."".$newlinechars;;
+    $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'VCdb import failed ('.$dbcreationresult.')');
+   } 
+   exec('rm -f '.$downloadsdirectory.'/AAIA\ VCdb2009\ MySQL\ Complete\ VCDB\ '.$dbversion.'.sql');
   }
   else
-  {// database create failed
-   echo 'database create failed: '.$dbcreationresult."".$newlinechars;;
-   $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'VCdb import failed ('.$dbcreationresult.')');
+  {
+   echo "did not find the epected SQL in the downloaded zip file".$newlinechars;;    
+   $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'VCdb import failed - archive did not contain expected .sql filename');
   }
- 
-  exec('rm -f '.$downloadsdirectory.'/AAIA\ VCdb2009\ MySQL\ Complete\ VCDB\ '.$dbversion.'.sql');
-
  }
  else
- {
-  echo "did not find the epected SQL in the downloaded zip file".$newlinechars;;    
-  $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'VCdb import failed - archive did not contain expected .sql filename');
+ {// downloaded zipfile filesiize is 0
+  echo "download failed - filesize is 0".$newlinechars;;    
+  $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'VCdb import failed - filesize 0');
  }
-}
-else
-{// downloaded zipfile filesiize is 0
- echo "download failed - filesize is 0".$newlinechars;;    
- $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'VCdb import failed - filesize 0');
-}
-exec('rm -f '.$downloadsdirectory.'/'.$randomfilename);
+ exec('rm -f '.$downloadsdirectory.'/'.$randomfilename);
 }
 ?>

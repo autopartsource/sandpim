@@ -21,7 +21,7 @@ $mysql=new mysql;
 $logs=new logs;
 $config=new configGet;
 
-$newlinechars="<br/>".$newlinechars;
+$newlinechars="<br/>";
 $errormessage=array();
 $havewriteaccess=false;
 
@@ -102,6 +102,16 @@ if($uri && $havewriteaccess && $username && $password)
 
  if($archivesize>0)
  {
+  // calc the file's sha256 hash
+  $localhash=''; $localhashreturn=array();
+  exec('sha256sum '.$downloadsdirectory.'/'.$randomfilename,$localhashreturn);
+  if(isset($localhashreturn[0]))
+  {
+   $localhashchunks= explode(' ', $localhashreturn[0]);
+   if(strlen($localhashchunks[0])==64){$localhash=$localhashchunks[0];}   
+  }
+  echo 'SHA256:'.$localhash.$newlinechars;
+     
   echo "Extracting MySQL package.........";
   exec('unzip -o '.$downloadsdirectory.'/'.$randomfilename.' -d '.$downloadsdirectory);
   echo "Done".$newlinechars;
@@ -121,24 +131,24 @@ if($uri && $havewriteaccess && $username && $password)
     $padb=new padb('padb'.$dbversion); // test the new version as ask it for its versiondate
     $versiondate=$padb->version();
     $pim->recordAutocareDatabaseList('padb'.$dbversion, 'padb', $versiondate);   // catalog the new version
-    $logs->logSystemEvent('autocareupdate', 0, 'PAdb '.$dbversion.' imported');
+    $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'PAdb '.$dbversion.' imported');
    }
    else
    {// database create failed
     echo 'database create failed: '.$dbcreationresult."".$newlinechars;
-    $logs->logSystemEvent('autocareupdate', 0, 'PAdb import failed ('.$dbcreationresult.')');
+    $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'PAdb import failed ('.$dbcreationresult.')');
    }
    exec('rm -f '.$downloadsdirectory.'/'.'AAIA\ PAdb\ MySQL\ '.$dbversion.'.sql');
   }
   else
   {
    echo "did not find the epected SQL in the downloaded zip file".$newlinechars;    
-   $logs->logSystemEvent('autocareupdate', 0, 'PAdb import failed - archive did not contain expected .sql filename');
+   $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'PAdb import failed - archive did not contain expected .sql filename');
   }
  }
  else
  {// downloaded zipfile filesiize is 0
-  $logs->logSystemEvent('autocareupdate', 0, 'PAdb import failed - filesize 0');
+  $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'PAdb import failed - filesize 0');
  }
  exec('rm -f '.$downloadsdirectory.'/'.$randomfilename);    
 }

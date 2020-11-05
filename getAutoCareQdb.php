@@ -1,94 +1,156 @@
 <?php
-/*
- * To be run on a cron schedule (php CLI) every day
- * 
- * 
- * 
- * 
- */
+include_once('./class/pimClass.php');  
+include_once('./class/qdbClass.php');  
+include_once('./class/mysqlClass.php');  
+include_once('./class/logsClass.php');  
+include_once('./class/configGetClass.php');
 
-include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
-include_once(__DIR__.'/class/qdbClass.php');  
-include_once(__DIR__.'/class/mysqlClass.php');  
-include_once(__DIR__.'/class/logsClass.php');  
-include_once(__DIR__.'/class/configGetClass.php');
+
+$navCategory = 'import/export';
+
+session_start();
+if (!isset($_SESSION['userid']))
+{
+    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
+    exit;
+}
+
 
 $pim=new pim;
 $mysql=new mysql;
 $logs=new logs;
 $config=new configGet;
 
-$dbversion='20201030';
-$host=$config->getConfigValue('AutoCareFTPserver');
-$username=$config->getConfigValue('AutoCareFTPusername');
-$password=$config->getConfigValue('AutoCareFTPpassword');
-$downloadsdirectory=$config->getConfigValue('AutoCareDownloadsDirectory');//'/var/www/html/autocaredownloads';
+$newlinechars="<br/>";
+$errormessage=array();
+$havewriteaccess=false;
 
-if($host===false || $username ===false || $password===false || $downloadsdirectory===false)
+//do a test write to verify apache has permissions to write to the downloads folder
+$downloadsdirectory=$config->getConfigValue('AutoCareDownloadsDirectory');//'/var/www/html/autocaredownloads';
+if(!$downloadsdirectory)
 {
- $logs->logSystemEvent('autocareupdate', 0, 'Qdb import skipped (host,user,password or downloads directory are not configured)');
- exit;
+ $errormessage[]='AutoCareDownloadsDirectory configuration value is not set';
 }
 
-
-
-
-
-// -----  Qdb -----
-
-$randomint= random_int(1000000, 9000000);
-$randomfilename= $randomint.'.zip';
-echo "Downloading MySQL package (".$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.").........";
-exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate ftps://'.$host.'/download_qdb/MySQL/AAIA%20Qdb%20MySQL%20'.$dbversion.'.zip --output-document='.$downloadsdirectory.'/'.$randomfilename);
-echo "Done\n";
-
-// test file size for 0 to see if the download failed
-$archivesize=filesize($downloadsdirectory.'/'.$randomfilename);
-
-if($archivesize>0)
-{
- echo "Extracting MySQL package.........";
- exec('unzip -o '.$downloadsdirectory.'/'.$randomfilename.' -d '.$downloadsdirectory);
- echo "Done\n";
-
- // verify they filename extracted is to the expected pattern
- if(file_exists($downloadsdirectory.'/'.'AAIA Qdb MySQL '.$dbversion.'.sql'))
- {
-  // create the new database
-  $dbcreationresult=$pim->createAutoCareDatabase('qdb'.$dbversion, $mysql->user);
-  if($dbcreationresult=='success')
-  {
-   // import the sql file into the mysql client
-   echo "Importing database to MySQL server.........";
-   exec('mysql --user='.$mysql->user.' --password='.$mysql->passwd.' qdb'.$dbversion." < '".$downloadsdirectory.'/AAIA Qdb MySQL '.$dbversion.'.sql'."'");
-   echo "Done\n";
-
-   $qdb=new qdb('qdb'.$dbversion); // test the new version as ask it for its versiondate
-   $versiondate=$qdb->version();
-   $pim->recordAutocareDatabaseList('qdb'.$dbversion, 'qdb', $versiondate);   // catalog the new version
-   $logs->logSystemEvent('autocareupdate', 0, 'qdb '.$dbversion.' imported');
-  }
-  else
-  {// database create failed
-   echo 'database create failed: '.$dbcreationresult."\n";
-   $logs->logSystemEvent('autocareupdate', 0, 'qdb import failed ('.$dbcreationresult.')');
-  }
- 
-  exec('rm -f '.$downloadsdirectory.'/'.'AAIA\ Qdb\ MySQL\ '.$dbversion.'.sql');
-
- }
- else
- {
-  echo "did not find the epected SQL in the downloaded zip file\n";    
-  $logs->logSystemEvent('autocareupdate', 0, 'Qdb import failed - archive did not contain expected .sql filename');
- }
-
+$testfile= $downloadsdirectory.'/'.random_int(1000000, 9000000).'.txt';
+$testwriteresults= file_put_contents($testfile, 'testing 123');
+if($testwriteresults)
+{// test write to downloads directory was succdssful
+ unlink($testfile);   // delete the test file
+ $havewriteaccess=true;
 }
 else
-{// downloaded zipfile filesiize is 0
- $logs->logSystemEvent('autocareupdate', 0, 'Qdb import failed - filesize 0');
+{// write failed
+ $errormessage[]='file create failed - apache needs to have write access to:'.$downloadsdirectory;
+ $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'file create failed - apache needs to have write access to:'.$downloadsdirectory); 
 }
 
-exec('rm -f '.$downloadsdirectory.'/'.$randomfilename);
 
+
+
+$dbversion=''; // no dashes (20201030)
+$uri=false;
+$found=false;
+if(isset($_GET['versiondate']) && $pim->validAutoCareVersionFormat($_GET['versiondate']))
+{//2020-10-30
+ $qdbsavailable=$pim->getAutoCareReleaseList('Qdb');
+ if(count($qdbsavailable)>0)
+ {
+  foreach($qdbsavailable as $qdbavailable)
+  {
+   if($_GET['versiondate']==$qdbavailable['versiondate'])
+   {
+    $found=true;
+    $uri=$qdbavailable['uri'];
+    $versiondate=$qdbavailable['versiondate']; // with slashes (2020-10-30)
+    $dbversion=substr($versiondate,0,4).substr($versiondate,5,2).substr($versiondate,8,2);
+   }
+  }
+ }
+ else
+ {// something went wrong getting the list 
+  $errormessage[]='error getting AutoCare resource list'; 
+ }
+}
+else 
+{// bogus/hostile input 
+    exit;
+}
+
+echo 'Download URI:'.$uri.'<br/>';
+
+$username=$config->getConfigValue('AutoCareFTPusername');
+$password=$config->getConfigValue('AutoCareFTPpassword');
+
+if($username ===false || $password===false)
+{
+ $errormessage[]='config values for AutoCareFTPusername and AutoCareFTPpassword must be set in Settings > Config';
+ echo 'config values for AutoCareFTPusername and AutoCareFTPpassword must be set in Settings > Config';
+}
+
+if($uri && $havewriteaccess && $username && $password)
+{
+ $randomint= random_int(1000000, 9000000);
+ $randomfilename= $randomint.'.zip';
+ echo "Downloading MySQL package (".$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.").........";
+ ob_flush();
+ exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate '.$uri.' --output-document='.$downloadsdirectory.'/'.$randomfilename);
+ echo "Done".$newlinechars;
+
+ // test file size for 0 to see if the download failed
+ $archivesize=filesize($downloadsdirectory.'/'.$randomfilename);
+
+ if($archivesize>0)
+ {
+  // calc the file's sha256 hash
+  $localhash=''; $localhashreturn=array();
+  exec('sha256sum '.$downloadsdirectory.'/'.$randomfilename,$localhashreturn);
+  if(isset($localhashreturn[0]))
+  {
+   $localhashchunks= explode(' ', $localhashreturn[0]);
+   if(strlen($localhashchunks[0])==64){$localhash=$localhashchunks[0];}   
+  }
+  echo 'SHA256:'.$localhash.$newlinechars;
+     
+     
+  echo "Extracting MySQL package.........";
+  exec('unzip -o '.$downloadsdirectory.'/'.$randomfilename.' -d '.$downloadsdirectory);
+  echo "Done".$newlinechars;
+
+  // verify they filename extracted is to the expected pattern
+  if(file_exists($downloadsdirectory.'/'.'AAIA Qdb MySQL '.$dbversion.'.sql'))
+  {
+   // create the new database
+   $dbcreationresult=$pim->createAutoCareDatabase('qdb'.$dbversion, $mysql->user);
+   if($dbcreationresult=='success')
+   {
+    // import the sql file into the mysql client
+    echo "Importing database to MySQL server.........";
+    exec('mysql --user='.$mysql->user.' --password='.$mysql->passwd.' qdb'.$dbversion." < '".$downloadsdirectory.'/AAIA Qdb MySQL '.$dbversion.'.sql'."'");
+    echo "Done".$newlinechars; 
+
+    $qdb=new qdb('qdb'.$dbversion); // test the new version as ask it for its versiondate
+    $versiondate=$qdb->version();
+    $pim->recordAutocareDatabaseList('qdb'.$dbversion, 'qdb', $versiondate);   // catalog the new version
+    $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'qdb '.$dbversion.' imported');
+   }
+   else
+   {// database create failed
+    echo 'database create failed: '.$dbcreationresult."".$newlinechars;
+    $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'qdb import failed ('.$dbcreationresult.')');
+   }
+   exec('rm -f '.$downloadsdirectory.'/'.'AAIA\ Qdb\ MySQL\ '.$dbversion.'.sql');
+  }
+  else
+  {
+   echo "did not find the epected SQL in the downloaded zip file".$newlinechars;    
+   $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'Qdb import failed - archive did not contain expected .sql filename');
+  }
+ }
+ else
+ {// downloaded zipfile filesiize is 0
+  $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'Qdb import failed - filesize 0');
+ }
+ exec('rm -f '.$downloadsdirectory.'/'.$randomfilename);    
+}
 ?>
