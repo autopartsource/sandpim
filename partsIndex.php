@@ -93,7 +93,16 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                                     </table>
                                 </div>
                             </div>
-                            <?php } ?>
+                            <?php 
+                            } else { // no results found
+                                    if(isset($_GET['submit']))
+                                    { // user submitted a search
+                                        echo '<hr>';
+                                        echo '<div class="alert alert-danger m-2">No Results Found</div>';
+                                    }
+                                }
+                            ?>
+                            
                         </div>
                     </div>
                     

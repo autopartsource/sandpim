@@ -122,7 +122,13 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                             }
                                             
                                             echo '</div></div>';
-                                        }?>
+                                        } else { // no results found
+                                            if (isset($_GET['submit'])) { // user submitted a search
+                                                echo '<hr>';
+                                                echo '<div class="alert alert-danger m-2">No Results Found</div>';
+                                            }
+                                        }
+                                        ?>
                                     </div>
                                     </div>
                                 </div>
