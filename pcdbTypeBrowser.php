@@ -97,30 +97,60 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                                 <?php if(count($alltypes)){?>
                                 <div class="card">
                                     <!-- Header -->
-                                    <h6 class="card-header text-left">Search Results</h6>
+                                    <h6 class="card-header">
+                                        Search Results
+                                    </h6>
 
                                     <div class="card-body scroll">
-                                        <table><tr><th>Name</th><th>ID</th><th>Favorite</th></tr>
-                                            <?php foreach ($alltypes as $type)
-                                             {
-                                                $checked=''; if(array_key_exists($type['id'], $idkeyedmytypes)){$checked=' checked';}
-                                                 echo '<tr><td style="text-align:left;">'.$type['name'].'</td><td>'.$type['id'].'</td>';
-                                                 echo '<td align="center"><input type="checkbox" id="parttypeid_'.$type['id'].'" name="parttypeid_'.$type['id'].'" onclick="addRemoveType(\''.$type['id'].'\')"  '.$checked.'></td>';
-                                                 echo '</tr>';
-                                             }
-                                            }
-                                            else
-                                            { // no results found
-                                                if(isset($_GET['submit']))
-                                                { // user submitted a search
-                                                    echo '<div style="padding:10px;">No Results Found</div>';
-                                                }
-                                            }
-                                            ?>
-                                        </table>
+                                        <div class="card">
+                                            <!-- Header -->
+                                            <h6 class="card-header alert-primary">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        Name
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        ID
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        Favorite
+                                                    </div>
+                                                </div>
+                                            </h6>
+                                        </div>
+                                        <?php foreach ($alltypes as $type)
+                                        {
+                                            $checked=''; if(array_key_exists($type['id'], $idkeyedmytypes)){$checked=' checked';}
+                                            echo '<div class="card">';
+                                                echo '<h6 class="card-header">';
+                                                    echo '<div class="row">';
+                                                        echo '<div class="col-md-6">';
+                                                            echo $type['name'];
+                                                        echo '</div>';
+                                                        echo '<div class="col-md-3">';
+                                                            echo $type['id'];
+                                                        echo '</div>';
+                                                        echo '<div class="col-md-3">';
+                                                            echo '<input type="checkbox" id="parttypeid_'.$type['id'].'" name="parttypeid_'.$type['id'].'" onclick="addRemoveType(\''.$type['id'].'\')"  '.$checked.'>';
+                                                        echo '</div>';
+                                                    echo '</div>';
+                                                echo '</h6>';
+                                            echo '</div>';
+                                        }
+                                        ?>
                                     </div>
                                 </div>
-                                    
+                                <?php
+                                }
+                                else
+                                { // no results found
+                                    if(isset($_GET['submit']))
+                                    { // user submitted a search
+                                        echo '<hr>';
+                                        echo '<div class="alert alert-danger m-2">No Results Found</div>';
+                                    }
+                                }
+                                ?>
                             </form>
                         </div>
                     </div>
