@@ -244,6 +244,25 @@ class setup
         $db->dbname=$dbname;
         $db->connect(); // will return empty string if successful
 
+        
+        
+        $sql="CREATE TABLE allowedhosts (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        address varchar(255) not null,
+        description varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_address(address))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - allowedhosts ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - allowedhosts ('.$db->conn->error.')';}
+        $sql="insert into allowedhosts values(null,'*.*.*.*','Allow All (delete this rule to restrict clients by address)');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into allowedhosts values(null,'127.0.0.1','Allow localhost');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into allowedhosts values(null,'10.*.*.*','Allow any address in Bogon Class A Networks');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into allowedhosts values(null,'172.12.*.*','Allow any address in Bogon /12 Networks');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into allowedhosts values(null,'192.168.*.*','Allow any address in Bogon Class B Networks');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into allowedhosts values(null,'192.168.1.*','Allow any address in Bogon Class C Networks');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into allowedhosts values(null,'192.168.1.100','Allow a specific address');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        
+        
         $sql="CREATE TABLE application (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         oid varchar(255) not null default '',
@@ -262,7 +281,6 @@ class setup
         INDEX idx_partnumber (partnumber),
         INDEX idx_basevehicleid (basevehicleid)
         )";
-
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - application ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed ('.$db->conn->error.')';}
 
         $sql="CREATE TABLE application_attribute (
@@ -554,12 +572,14 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - partcategory ('.$db->conn->error.')';}
 
+/* 11/7/2020 - probably won't need this 
+
         $sql="CREATE TABLE peer (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         `name` varchar(255) not null,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - peer ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - peer ('.$db->conn->error.')';}
-
+*/
         $sql="CREATE TABLE Make (
         MakeID int UNSIGNED NOT NULL,
         MakeName varchar(255) not null,
@@ -723,17 +743,8 @@ class setup
         languagecode varchar(255) not null,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}
-
         
-        
-    /*    $sql="CREATE TABLE receiverprofile_partcategory (
-        id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        receiverprofileid int UNSIGNED NOT NULL,
-        partcategory int unsigned not null default 0,
-        PRIMARY KEY (id))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_parttype ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_parttype ('.$db->conn->error.')';}
-*/
-
+        // sandpiper subscription is tied here
         $sql="CREATE TABLE receiverprofile_deliverygroup (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         receiverprofileid int UNSIGNED NOT NULL,
@@ -741,6 +752,18 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE subscription (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofile_deliverygroupid int UNSIGNED NOT NULL,
+        metadataname varchar(255) NOT NULL,
+        metadatavalue varchar(255) NOT NULL,
+        PRIMARY KEY (id),
+        unique key idx_username(receiverprofile_deliverygroupid,metadataname))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - subscription ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - subscription ('.$db->conn->error.')';}
+
+
+        
+        
         // a collections of partcategories that go together 
         // "send me your brand X data" would likely require multiple (maybe dozens) of part categories
         // putting them in a collection (deliverygroup) allows repeatability over
@@ -748,6 +771,7 @@ class setup
         $sql="CREATE TABLE deliverygroup (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         description varchar(255) not null,
+        
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - deliverygroup ('.$db->conn->error.')';}
 

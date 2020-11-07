@@ -2742,6 +2742,65 @@ function gtinCheckDigit($barcode)
  }
  
  
+function allowedHost($address)
+{
+ $db = new mysql; $db->connect();
+ $returnval=true;
+ if($stmt=$db->conn->prepare('select * from allowedhosts'))
+ {
+  if($stmt->execute())
+  {
+   if($db->result = $stmt->get_result())
+   {
+    $returnval=false; // we have a working database connection, so we are in in lock-it-down mode
+    while($row = $db->result->fetch_assoc())
+    {
+     $hosts[]=$row['address'];
+    }
+   }
+  }
+  
+  $foundmatch=true;
+  while($foundmatch)
+  {
+   $foundmatch=false;
+   // look for a verbatim entry for this address in the table
+   if(in_array($address, $hosts))
+   {
+    $returnval=true;
+    break;
+   }
+
+   // no exact match was found - if it's dot-notation numeric IPV4 address, do a wildcard compare on each record
+   $addressoctets=explode('.',$address);
+   if(count($addressoctets)==4)
+   {// this is an a.b.c.d (IPV4) address 
+
+     foreach($hosts as $allowed)
+     {
+      $allowedoctets=explode('.',$allowed);
+      if(count($allowedoctets)==4)
+      {// this database entry is for an a.b.c.d notation address
+        if(($addressoctets[0]==$allowedoctets[0] || $allowedoctets[0]=='*')&&
+         ($addressoctets[1]==$allowedoctets[1] || $allowedoctets[1]=='*')&&
+         ($addressoctets[2]==$allowedoctets[2] || $allowedoctets[2]=='*')&&
+         ($addressoctets[3]==$allowedoctets[3] || $allowedoctets[3]=='*'))
+        {
+         $returnval=true;
+         break;
+        }
+       }       
+     }
+   }
+   else
+   {// some other address notation (IPV6?
+    break;   
+   }
+  }
+ }
+ $db->close();
+ return $returnval;
+}
  
  
  

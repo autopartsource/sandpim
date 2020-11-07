@@ -1,7 +1,19 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/sandpiperClass.php');
+
+$sandpiper=new sandpiper;
 $pim=new pim;
 
+
+
+
+
+
+
+
+
+/*
 $branch_oids=json_decode($_POST['oids']);
 $sliceid=$_POST['sliceid'];
 
@@ -15,4 +27,10 @@ $drop_oids=array(); foreach($oids as $trash=>$oid){$drop_oids[]=$oid;}
 
 $response=array('adds'=>$add_oids,'drops'=>$drop_oids);
 echo json_encode($response);
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 ?>
