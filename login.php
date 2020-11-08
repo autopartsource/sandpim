@@ -2,15 +2,23 @@
 include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/configGetClass.php');
+include_once('./class/pimClass.php');
+
 session_start();
-$user = new user;
+
+$pim = new pim;
 $logs = new logs;
+
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
+$user = new user;
 $configGet = new configGet;
 
 $installationtate = $user->installationState();
-
-//$user->sabotageSetupUser();
-
 
 $error = '';
 if (isset($_POST['username']) && isset($_POST['password'])) {

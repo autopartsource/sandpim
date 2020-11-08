@@ -1,4 +1,5 @@
 <?php
+include_once('./includes/loginCheck.php');
 include_once('./class/vcdbClass.php');
 include_once('./class/padbClass.php');
 include_once('./class/pcdbClass.php');
@@ -11,22 +12,25 @@ include_once('./class/configGetClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'parts';
 
-session_start();
-if (!isset($_SESSION['userid'])) {
-    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
-    exit;
+$pim = new pim;
+$logs=new logs;
+
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
 }
+
+
 
 $vcdb = new vcdb;
 $padb = new padb;
 $pcdb = new pcdb;
-$pim = new pim;
 $asset = new asset;
 $pricing = new pricing;
 $interchange = new interchange;
 $packaging = new packaging;
 $configGet = new configGet;
-$logs=new logs;
 
 
 
