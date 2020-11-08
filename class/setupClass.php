@@ -744,7 +744,6 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_marketingcopy ('.$db->conn->error.')';}
         
-        // sandpiper subscription is tied here
         $sql="CREATE TABLE receiverprofile_deliverygroup (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         receiverprofileid int UNSIGNED NOT NULL,
@@ -752,13 +751,25 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}
 
-        $sql="CREATE TABLE subscription (
+        $sql="CREATE TABLE plan (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        receiverprofile_deliverygroupid int UNSIGNED NOT NULL,
-        metadataname varchar(255) NOT NULL,
-        metadatavalue varchar(255) NOT NULL,
+        receiverprofileid int UNSIGNED NOT NULL,
+        partcategory int unsigned not null,
+        plannmetadata text not null,
         PRIMARY KEY (id),
         unique key idx_username(receiverprofile_deliverygroupid,metadataname))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - subscription ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - subscription ('.$db->conn->error.')';}
+
+
+        //each record here is a subscription
+        $sql="CREATE TABLE plan_partcategory (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        planid int UNSIGNED NOT NULL,
+        partcategory int unsigned not null,
+        subscriptionUUID varchar(255) not null,
+        subscriptionmetadata text not null,
+        PRIMARY KEY (id),
+        index idx_planid(planid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - subscription ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - subscription ('.$db->conn->error.')';}
 
 

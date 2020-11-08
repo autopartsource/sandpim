@@ -9,10 +9,13 @@ class sandpiper
     // by the sandpiper official (GO pgsql) schema, a subscription only contains 1 slice.
     
     // slice = partcategory
-    // the same slice (identified by UUID) can be in multiple subscriptions
+    // the same slice (partcategory identified by sandpiper with a UUID) can be in multiple subscriptions
+    // slices (parttypes) connect (multiple) to a plan
+    // 
     // grain = aces-item (collections of "Apps" that would be in an ACES file)    or    pies-item (an individual "Item" segment that would be on a PIES file)
     // querying the data for a grain:?
-    // receiverprofile_deliverygroup.id Becomes a foreign-key to another table (subscriptionmetadata) is name/value pairs that incudes the subscription UUID
+
+
     
     
     

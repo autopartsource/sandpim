@@ -8,6 +8,14 @@ include_once("mysqlClass.php");
 class pim
 {
 
+ function uuidv4()
+ {
+  $randodata = file_get_contents('/dev/urandom', NULL, NULL, 0, 16);
+  return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($randodata), 4));
+ }
+    
+    
+    
  function getAppsByBasevehicleid($basevehicleid,$partcategories)
  {
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
