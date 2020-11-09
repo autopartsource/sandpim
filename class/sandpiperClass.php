@@ -43,6 +43,60 @@ class sandpiper
     
  
  // object history
+
+
+
+ function getPlans()
+ {
+  $db = new mysql; $db->connect(); $plans=array();
+  if($stmt=$db->conn->prepare('select * from plan'))
+  {
+   if($stmt->execute())
+   {
+    if($db->result = $stmt->get_result())
+    {
+     while($row = $db->result->fetch_assoc())
+     {
+      $plans[]=array('id'=>$row['id'],'description'=>$row['description'],'planUUID'=>$row['planUUID'],'receiverprofileid'=>$row['receiverprofileid'],'plannmetadata'=>$row['plannmetadata']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $plans;
+ }
+
+
+function getPlanPartcategories($planid)
+ {
+  $db = new mysql; $db->connect(); $partcategories=array();
+  if($stmt=$db->conn->prepare('select * from plan_partcategory where planid=?'))
+  {
+   if($stmt->execute())
+   {
+    if($stmt->bind_param('i', $planid))
+    {
+     if($db->result = $stmt->get_result())
+     {
+      while($row = $db->result->fetch_assoc())
+      {
+       $partcategories[]=array('id'=>$row['id'],'partcategory'=>$row['partcategory'],'subscriptionUUID'=>$row['subscriptionUUID'],'subscriptionmetadata'=>$row['subscriptionmetadata']);
+      }
+     }
+    }
+   }
+  }
+  $db->close();
+  return $partcategories;
+ }
+ 
+ 
+
+
+
+
+
+
     
     
     

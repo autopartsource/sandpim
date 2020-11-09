@@ -753,12 +753,14 @@ class setup
 
         $sql="CREATE TABLE plan (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        description varchar(255) not null,      
         receiverprofileid int UNSIGNED NOT NULL,
-        partcategory int unsigned not null,
+        planUUID varchar(255) not null,
         plannmetadata text not null,
         PRIMARY KEY (id),
-        unique key idx_username(receiverprofile_deliverygroupid,metadataname))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - subscription ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - subscription ('.$db->conn->error.')';}
+        unique key idx_planUUID(planUUID),
+        index idx_receiverprofileid(receiverprofileid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan ('.$db->conn->error.')';}
 
 
         //each record here is a subscription
@@ -769,8 +771,9 @@ class setup
         subscriptionUUID varchar(255) not null,
         subscriptionmetadata text not null,
         PRIMARY KEY (id),
+        unique key idx_subscriptionUUID(subscriptionUUID),
         index idx_planid(planid))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - subscription ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - subscription ('.$db->conn->error.')';}
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_partcategory ('.$db->conn->error.')';}
 
 
         
@@ -781,8 +784,7 @@ class setup
         // many receivers without having to manually maintain lists of part categories for each.
         $sql="CREATE TABLE deliverygroup (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        description varchar(255) not null,
-        
+        description varchar(255) not null,      
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - deliverygroup ('.$db->conn->error.')';}
 

@@ -22,9 +22,8 @@ if(isset($_GET['count'])){
 $count=intval($_GET['count']);
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en" xml:lang="en">
     <head>
         <?php include('./includes/header.php'); ?>
     </head>
