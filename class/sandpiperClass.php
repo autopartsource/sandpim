@@ -72,9 +72,9 @@ function getPlanPartcategories($planid)
   $db = new mysql; $db->connect(); $partcategories=array();
   if($stmt=$db->conn->prepare('select * from plan_partcategory where planid=?'))
   {
-   if($stmt->execute())
+   if($stmt->bind_param('i', $planid))
    {
-    if($stmt->bind_param('i', $planid))
+    if($stmt->execute())
     {
      if($db->result = $stmt->get_result())
      {

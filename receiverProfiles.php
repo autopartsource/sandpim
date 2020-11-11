@@ -1,17 +1,19 @@
 <?php
+include_once('./includes/loginCheck.php');
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 
 $navCategory = 'settings';
 
-session_start();
-if (!isset($_SESSION['userid'])) {
-    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
-    exit;
-}
 
 $pim = new pim;
 $logs = new logs;
+
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'receiverProfiles.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
 
 if (isset($_POST['submit']) && $_POST['submit']=='Add') 
 {

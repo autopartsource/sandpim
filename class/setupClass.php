@@ -768,6 +768,7 @@ class setup
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         planid int UNSIGNED NOT NULL,
         partcategory int unsigned not null,
+        slicetype varchar(255) not null,        
         subscriptionUUID varchar(255) not null,
         subscriptionmetadata text not null,
         PRIMARY KEY (id),

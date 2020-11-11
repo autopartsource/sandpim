@@ -19,6 +19,9 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 $sandpiper=new sandpiper;
 
 
+$plans=$sandpiper->getPlans();
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en" xml:lang="en">
@@ -30,7 +33,7 @@ $sandpiper=new sandpiper;
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h1>Sandpiper</h1>
+        <h1>Sandpiper Plans</h1>
         
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -42,22 +45,42 @@ $sandpiper=new sandpiper;
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
+                <?php
+                foreach($plans as $plan)
+                {
+                    $receiverprofile=$pim->getReceiverprofileById($plan['receiverprofileid']);
+                    $planpartcategories=$sandpiper->getPlanPartcategories($plan['id']);
+                    ?>
+                    
+                    
                     
                    <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Subscription Management</h3>
+                        <h3 class="card-header text-left"><?php echo $plan['description']?></h3>
                         <div class="card-body">
-                            <div><a href="./plans.php">Plans</a></div>                            
+<?php
+                    echo '<div>Receiver Profile: <a href="./receiverProfile.php?id='.$receiverprofile['id'].'">'.$receiverprofile['name'].'</a></div>';
+                    echo '<div>Plan UUID: '.$plan['planUUID'].'</div>';
+                    echo '<div>Metadata: '.$plan['plannmetadata'].'</div>';
+?>
+                        <h3 class="card-header text-left">Slice Subscriptions (Part Categories)</h3>
+                        <div class="card-body">
+                        <?php
+                        foreach($planpartcategories as $planpartcategory)
+                        {
+                            $partcategory=$pim->getPartCategory($planpartcategory['partcategory']);
+                            echo '<div><a href="./partCategory.php?id='.$partcategory['id'].'">'.$partcategory['name'].'</a> ('.$planpartcategory['subscriptionUUID'].')</div>';
+                        }
+                        ?>
                         </div>
-                    </div>
 
-                   <div class="card shadow-sm">
-			<!-- Header -->
-                        <h3 class="card-header text-left">Activity</h3>
-                        <div class="card-body">
-                            <div><a href="./sandpiperLog.php">Activity Logs</a></div>
+
+
                         </div>
+                                              
                     </div>
+                     
+                <?php }?>
                 </div>
                 <!-- End of Main Content -->
                 
