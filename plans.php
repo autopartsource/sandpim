@@ -53,36 +53,100 @@ $plans=$sandpiper->getPlans();
                     ?>
                     
                     
-                    
                    <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left"><?php echo $plan['description']?></h3>
+                        <h4 class="card-header text-left"><?php echo $plan['description']?></h4>
                         <div class="card-body">
-<?php
-                    echo '<div>Receiver Profile: <a href="./receiverProfile.php?id='.$receiverprofile['id'].'">'.$receiverprofile['name'].'</a></div>';
-                    echo '<div>Plan UUID: '.$plan['planuuid'].'</div>';
-                    echo '<div>Metadata: '.$plan['plannmetadata'].'</div>';
-?>
-                        <h3 class="card-header text-left">Slice Subscriptions (Part Categories)</h3>
-                        <div class="card-body">
-                        <?php
-                        foreach($slices as $slice)
-                        {
-                            $partcategory=$pim->getPartCategory($slice['partcategory']);
-                            echo '<div class="card-header text-left">';
-                            echo '<div><a href="./partCategory.php?id='.$slice['id'].'">'.$slice['description'].'</a></div>';
-                            echo '<div style="padding-left:10px;">Slice Type: '.$slice['slicetype'].'</div>';
-                            echo '<div style="padding-left:10px;">Hash of grain UUIDs: '.$slice['slicehash'].'</div>';
-                            echo '<div style="padding-left:10px;">Subscription UUID: '.$slice['subscriptionuuid'].'</div>';
-                            echo '<div style="padding-left:10px;">Slice UUID: '.$slice['sliceuuid'].'</div>';
-                            echo '<div style="padding-left:10px;">Subscription Metadata: '.$slice['subscriptionmetadata'].'</div>';
-                            echo '</div>';
-                        }
-                        ?>
-                        </div>
-
-
-
+                            <div class="card">
+                                <h6 class="card-header text-left">Receiver Profile: <?php echo'<a href="./receiverProfile.php?id='.$receiverprofile['id'].'">'.$receiverprofile['name'].'</a></h6>';?>
+                                <div class="card-body">
+                                    <?php
+                                        echo '<div class="form-group row">';
+                                            echo '<label for="static'.$plan['planuuid'].'" class="col-sm-3 col-form-label">Plan UUID:</label>';
+                                            echo '<div class="col-sm-9">';
+                                                echo '<input type="text" readonly class="form-control" id="static'.$plan['planuuid'].'" value="'.$plan['planuuid'].'">';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        echo '<div class="form-group row">';
+                                            echo '<label for="staticLastSync" class="col-sm-3 col-form-label">Last Sync: </label>';
+                                            echo '<div class="col-sm-9">';
+                                                echo '<input type="text" readonly class="form-control" id="staticLastSync" value="'.date('y-m-d').'">';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        echo '<div class="card">';
+                                            echo '<h6 class="card-header">Plan Metadata</h6>';
+                                            echo '<div class="card-body">';
+                                                echo '<textarea name="profiledata" rows="5" style="width: 100%; max-width: 100%;">'.$plan['plannmetadata'].'</textarea>';
+                                                echo '<div><button type="button" class="btn btn-outline-primary">Update</button></div>';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        
+                                    ?>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <h6 class="card-header text-left">Slice Subscriptions (Part Categories)</h6>
+                                <div class="card-body">
+                                <?php
+                                    
+                                    
+                                foreach($slices as $slice)
+                                {
+                                    $partcategory=$pim->getPartCategory($slice['partcategory']);
+                                    
+                                    echo '<div class="card">';
+                                        echo '<h6 class="card-header text-left">';
+                                            echo '<button type="button" class="btn btn-outline-primary" href="./partCategory.php?id='.$slice['partcategory'].'">'.$slice['description'].'</button>';
+                                            echo '<span style="float:right;">';
+                                                echo '<button class="btn btn btn-outline-dark" type="button" data-toggle="collapse" data-target="#collapse'.$slice['id'].'" aria-expanded="false">';
+                                                    echo '+';
+                                                echo '</button>';
+                                            echo '</span>';
+                                        echo '</h6>';
+                                        echo '<div class="collapse" id="collapse'.$slice['id'].'">';
+                                            echo '<div id="" class="card-body">';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="static'.$slice['slicetype'].'" class="col-sm-3 col-form-label text-left">Slice Type</label>';
+                                                    echo '<div class="col-sm-9">';
+                                                        echo '<input type="text" readonly class="form-control" id="static'.$slice['slicetype'].'" value="'.$slice['slicetype'].'">';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                                echo '<hr>';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="static'.$slice['subscriptionuuid'].'" class="col-sm-3 col-form-label text-left">Subscription UUID:</label>';
+                                                    echo '<div class="col-sm-9">';
+                                                        echo '<input type="text" readonly class="form-control" id="static'.$slice['subscriptionuuid'].'" value="'.$slice['subscriptionuuid'].'">';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                                echo '<hr>';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="static'.$slice['subscriptionmetadata'].'" class="col-sm-3 col-form-label text-left">Subscription Metadata:</label>';
+                                                    echo '<div class="col-sm-9">';
+                                                        echo '<input type="text" readonly class="form-control" id="static'.$slice['subscriptionmetadata'].'" value="'.$slice['subscriptionmetadata'].'">';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                                echo '<hr>';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="static'.$slice['slicehash'].'" class="col-sm-3 col-form-label text-left">Hash of grain UUIDs:</label>';
+                                                    echo '<div class="col-sm-9">';
+                                                        echo '<input type="text" readonly class="form-control" id="static'.$slice['slicehash'].'" value="'.$slice['slicehash'].'">';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                                echo '<hr>';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="static'.$slice['sliceuuid'].'" class="col-sm-3 col-form-label text-left">Slice UUID:</label>';
+                                                    echo '<div class="col-sm-9">';
+                                                        echo '<input type="text" readonly class="form-control" id="static'.$slice['sliceuuid'].'" value="'.$slice['sliceuuid'].'">';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                            echo '</div>';
+                                        echo '</div>';
+                                    echo '</div>';
+                                }
+                                ?>
+                                </div>
+                            </div>
                         </div>
                                               
                     </div>
