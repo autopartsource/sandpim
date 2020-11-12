@@ -114,7 +114,17 @@ $alldeliverygroups=$pim->getDeliverygroups();
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="card">
-                                                    <h6 class="card-header">Delivery Groups</h6>
+                                                    <h6 class="card-header">Notes</h6>
+                                                    <div class="card-body">
+                                                        <textarea name="notes" rows="15" style="width: 100%; max-width: 100%;"><?php echo $profile['notes']; ?></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row padding">
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <h6 class="card-header">Applied Delivery Groups</h6>
                                                     <div class="card-body">
                                                         <div id="applieddeliverygroups">
                                                         <?php
@@ -125,9 +135,13 @@ $alldeliverygroups=$pim->getDeliverygroups();
                                                         }
                                                         ?>
                                                         </div>
-
-                                                        <hr/>
-
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <h6 class="card-header">Available Delivery Groups</h6>
+                                                    <div class="card-body">
                                                         <div id="unapplieddeliverygroups">
                                                         <?php
                                                         foreach ($alldeliverygroups as $deliverygroup) 
@@ -137,16 +151,6 @@ $alldeliverygroups=$pim->getDeliverygroups();
                                                         }
                                                         ?>
                                                         </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row padding">
-                                            <div class="col-md-12">
-                                                <div class="card">
-                                                    <h6 class="card-header">Notes</h6>
-                                                    <div class="card-body">
-                                                        <textarea name="notes" rows="10" style="width: 100%; max-width: 100%;"><?php echo $profile['notes']; ?></textarea>
                                                     </div>
                                                 </div>
                                             </div>
