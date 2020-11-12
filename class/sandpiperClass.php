@@ -57,7 +57,7 @@ class sandpiper
     {
      while($row = $db->result->fetch_assoc())
      {
-      $plans[]=array('id'=>$row['id'],'description'=>$row['description'],'planUUID'=>$row['planUUID'],'receiverprofileid'=>$row['receiverprofileid'],'plannmetadata'=>$row['plannmetadata']);
+      $plans[]=array('id'=>$row['id'],'description'=>$row['description'],'planuuid'=>$row['planuuid'],'receiverprofileid'=>$row['receiverprofileid'],'plannmetadata'=>$row['plannmetadata']);
      }
     }
    }
@@ -67,10 +67,10 @@ class sandpiper
  }
 
 
-function getPlanPartcategories($planid)
- {
-  $db = new mysql; $db->connect(); $partcategories=array();
-  if($stmt=$db->conn->prepare('select * from plan_partcategory where planid=?'))
+function getPlanSlices($planid)
+{
+  $db = new mysql; $db->connect(); $slices=array();
+  if($stmt=$db->conn->prepare('select plan_slice.id as id, description, sliceid, partcategory, subscriptionuuid, sliceuuid, subscriptionmetadata,slicetype,slicehash from slice, plan_slice where plan_slice.sliceid=slice.id and plan_slice.planid=?'))
   {
    if($stmt->bind_param('i', $planid))
    {
@@ -80,18 +80,26 @@ function getPlanPartcategories($planid)
      {
       while($row = $db->result->fetch_assoc())
       {
-       $partcategories[]=array('id'=>$row['id'],'partcategory'=>$row['partcategory'],'subscriptionUUID'=>$row['subscriptionUUID'],'subscriptionmetadata'=>$row['subscriptionmetadata']);
+       $slices[]=array('id'=>$row['id'],'description'=>$row['description'],'sliceid'=>$row['sliceid'],'partcategory'=>$row['partcategory'],'subscriptionuuid'=>$row['subscriptionuuid'],'sliceuuid'=>$row['sliceuuid'],'subscriptionmetadata'=>$row['subscriptionmetadata'],'slicetype'=>$row['slicetype'],'slicehash'=>$row['slicehash']);
       }
      }
     }
    }
   }
   $db->close();
-  return $partcategories;
+  return $slices;
  }
  
- 
 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
 
 

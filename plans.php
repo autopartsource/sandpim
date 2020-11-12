@@ -49,7 +49,7 @@ $plans=$sandpiper->getPlans();
                 foreach($plans as $plan)
                 {
                     $receiverprofile=$pim->getReceiverprofileById($plan['receiverprofileid']);
-                    $planpartcategories=$sandpiper->getPlanPartcategories($plan['id']);
+                    $slices=$sandpiper->getPlanSlices($plan['id']);
                     ?>
                     
                     
@@ -60,16 +60,23 @@ $plans=$sandpiper->getPlans();
                         <div class="card-body">
 <?php
                     echo '<div>Receiver Profile: <a href="./receiverProfile.php?id='.$receiverprofile['id'].'">'.$receiverprofile['name'].'</a></div>';
-                    echo '<div>Plan UUID: '.$plan['planUUID'].'</div>';
+                    echo '<div>Plan UUID: '.$plan['planuuid'].'</div>';
                     echo '<div>Metadata: '.$plan['plannmetadata'].'</div>';
 ?>
                         <h3 class="card-header text-left">Slice Subscriptions (Part Categories)</h3>
                         <div class="card-body">
                         <?php
-                        foreach($planpartcategories as $planpartcategory)
+                        foreach($slices as $slice)
                         {
-                            $partcategory=$pim->getPartCategory($planpartcategory['partcategory']);
-                            echo '<div><a href="./partCategory.php?id='.$partcategory['id'].'">'.$partcategory['name'].'</a> ('.$planpartcategory['subscriptionUUID'].')</div>';
+                            $partcategory=$pim->getPartCategory($slice['partcategory']);
+                            echo '<div class="card-header text-left">';
+                            echo '<div><a href="./partCategory.php?id='.$slice['id'].'">'.$slice['description'].'</a></div>';
+                            echo '<div style="padding-left:10px;">Slice Type: '.$slice['slicetype'].'</div>';
+                            echo '<div style="padding-left:10px;">Hash of grain UUIDs: '.$slice['slicehash'].'</div>';
+                            echo '<div style="padding-left:10px;">Subscription UUID: '.$slice['subscriptionuuid'].'</div>';
+                            echo '<div style="padding-left:10px;">Slice UUID: '.$slice['sliceuuid'].'</div>';
+                            echo '<div style="padding-left:10px;">Subscription Metadata: '.$slice['subscriptionmetadata'].'</div>';
+                            echo '</div>';
                         }
                         ?>
                         </div>

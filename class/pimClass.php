@@ -1067,7 +1067,7 @@ function countAppsByPartcategories($partcategories)
     $db->result = $stmt->get_result();
     if($row = $db->result->fetch_assoc())
     {
-     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID'],'subbrandID'=>$row['subbrandID'],'mfrlabel'=>$row['mfrlabel'],'logouri'=>$row['logouri'], 'sandpipersliceuuid'=>$row['sandpipersliceuuid'],'sandpiperslicetype'=>$row['sandpiperslicetype'],'sandpipercontenthash'=>$row['sandpipercontenthash'],'sandpipercontentcount'=>$row['sandpipercontentcount'],'sandpipercontentdatetime'=>$row['sandpipercontentdatetime']);
+     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID'],'subbrandID'=>$row['subbrandID'],'mfrlabel'=>$row['mfrlabel'],'logouri'=>$row['logouri']);
     }
    }
   }

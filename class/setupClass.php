@@ -564,11 +564,6 @@ class setup
         subbrandID varchar(255) not null,
         mfrlabel varchar(255) not null,
         logouri varchar(255) not null,
-        sandpipersliceuuid varchar(255) NOT NULL,
-        sandpiperslicetype varchar(255) NOT NULL,
-        sandpipercontenthash varchar(255) NOT NULL,
-        sandpipercontentcount int unsigned NOT NULL,
-        sandpipercontentdatetime datetime NOT NULL,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - partcategory ('.$db->conn->error.')';}
 
@@ -754,29 +749,42 @@ class setup
         $sql="CREATE TABLE plan (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         description varchar(255) not null,      
+        planuuid varchar(255) not null,
         receiverprofileid int UNSIGNED NOT NULL,
-        planUUID varchar(255) not null,
         plannmetadata text not null,
         PRIMARY KEY (id),
-        unique key idx_planUUID(planUUID),
+        unique key idx_planuuid(planuuid),
         index idx_receiverprofileid(receiverprofileid))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan ('.$db->conn->error.')';}
-
-
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan ('.$db->conn->error.')';}      
+        
         //each record here is a subscription
-        $sql="CREATE TABLE plan_partcategory (
+        $sql="CREATE TABLE plan_slice (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         planid int UNSIGNED NOT NULL,
-        partcategory int unsigned not null,
-        slicetype varchar(255) not null,        
-        subscriptionUUID varchar(255) not null,
+        sliceid int unsigned not null,
+        subscriptionuuid varchar(255) not null,
         subscriptionmetadata text not null,
         PRIMARY KEY (id),
-        unique key idx_subscriptionUUID(subscriptionUUID),
+        unique key idx_subscriptionuuid(subscriptionuuid),
         index idx_planid(planid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_partcategory ('.$db->conn->error.')';}
 
 
+        $sql="CREATE TABLE slice (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        description varchar(255) not null,
+        sliceuuid varchar(255) not null,
+        slicetype varchar(255) not null,        
+        partcategory int unsigned not null,
+        slicemetadata text not null,
+        slicehash varchar(255) not null,        
+        PRIMARY KEY (id),
+        unique key idx_sliceuuid(sliceuuid),
+        index idx_partcategory(partcategory))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_partcategory ('.$db->conn->error.')';}
+        
+        
+        
         
         
         // a collections of partcategories that go together 
