@@ -97,15 +97,17 @@ $plans=$sandpiper->getPlans();
                                     $grainlist=$sandpiper->getSliceGrainList($slice['sliceid']);
                                     echo '<div class="card">';
                                         echo '<h6 class="card-header text-left">';
-                                            echo '<button type="button" class="btn btn-outline-primary" href="./partCategory.php?id='.$slice['partcategory'].'">'.$slice['description'].'</button>';
-                                            echo '<span style="float:right;">';
-                                                echo '<button class="btn btn btn-outline-dark" type="button" data-toggle="collapse" data-target="#collapse'.$slice['id'].'" aria-expanded="false">';
-                                                    echo '+';
-                                                echo '</button>';
-                                            echo '</span>';
+                                            echo '<button type="button" class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#collapse'.$slice['id'].'" aria-expanded="false">'.$slice['description'].'</button>';
                                         echo '</h6>';
                                         echo '<div class="collapse" id="collapse'.$slice['id'].'">';
                                             echo '<div id="" class="card-body">';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="static'.$slice['slicetype'].'" class="col-sm-3 col-form-label text-left">PIM Part Category</label>';
+                                                    echo '<div class="col-sm-9 text-left">';
+                                                        echo '<a class="btn btn-secondary" href="./partCategory.php?id='.$slice['partcategory'].'">'.$partcategory['name'].'</a>';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                                echo '<hr>';
                                                 echo '<div class="form-group row">';
                                                     echo '<label for="static'.$slice['slicetype'].'" class="col-sm-3 col-form-label text-left">Slice Type</label>';
                                                     echo '<div class="col-sm-9">';
@@ -143,7 +145,7 @@ $plans=$sandpiper->getPlans();
 
                                                 echo '<hr>';
                                                 echo '<div class="form-group row">';
-                                                    echo '<div class="col-sm-9"><a href="./sliceGrains.php?sliceid='.$slice['sliceid'].'">Grain List</a></div>';
+                                                    echo '<div class="col-sm-12"><a class="btn btn-outline-secondary" href="./sliceGrains.php?sliceid='.$slice['sliceid'].'">Grain List</a></div>';
                                                 echo '</div>';
 
                                                 

@@ -156,6 +156,10 @@ a.btn-link:active {color: white; text-decoration: none;}
 a.btn:link { color: white; }
 a.btn:visited { color: white; }
 
+a.btn-outline-secondary:link { color: grey; }
+a.btn-outline-secondary:visited { color: grey; }
+a.btn-outline-secondary:hover { color: white; }
+
 .card { margin: 10px;}
 
 table { margin: 0 auto; }
