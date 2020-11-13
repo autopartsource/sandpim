@@ -94,7 +94,7 @@ $plans=$sandpiper->getPlans();
                                 foreach($slices as $slice)
                                 {
                                     $partcategory=$pim->getPartCategory($slice['partcategory']);
-                                    
+                                    $grainlist=$sandpiper->getSliceGrainList($slice['sliceid']);
                                     echo '<div class="card">';
                                         echo '<h6 class="card-header text-left">';
                                             echo '<button type="button" class="btn btn-outline-primary" href="./partCategory.php?id='.$slice['partcategory'].'">'.$slice['description'].'</button>';
@@ -140,6 +140,13 @@ $plans=$sandpiper->getPlans();
                                                         echo '<input type="text" readonly class="form-control" id="static'.$slice['sliceuuid'].'" value="'.$slice['sliceuuid'].'">';
                                                     echo '</div>';
                                                 echo '</div>';
+
+                                                echo '<hr>';
+                                                echo '<div class="form-group row">';
+                                                    echo '<div class="col-sm-9"><a href="./sliceGrains.php?sliceid='.$slice['sliceid'].'">Grain List</a></div>';
+                                                echo '</div>';
+
+                                                
                                             echo '</div>';
                                         echo '</div>';
                                     echo '</div>';

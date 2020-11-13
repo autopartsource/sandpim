@@ -90,23 +90,166 @@ function getPlanSlices($planid)
   return $slices;
  }
  
+ function sliceIdofSubscription($subscriptionuuid)
+ {
+     
+     
+     
+ }
+ 
+ 
+ 
+ 
+ function getSlice($sliceid)
+ {
+  $db = new mysql; $db->connect(); $slice=false;
+  if($stmt=$db->conn->prepare('select * from slice where id=?'))
+  {
+   if($stmt->bind_param('i', $sliceid))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      if($row = $db->result->fetch_assoc())
+      {// got slice record
+       $slice=array('description'=>$row['description'], 'sliceuuid'=>$row['sliceuuid'], 'slicetype'=>$row['slicetype'], 'slicemetadata'=>$row['slicemetadata'], 'partcategory'=>$row['partcategory'],'slicehash'=>$row['slicehash']);
+      }
+     }
+    }
+   }
+  }
+  $db->close();
+  return $slice;
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+
+ function getSliceGrainList($sliceid)
+ {
+   // slice carries type (aces-item,pies-item,asset)
+  $db = new mysql; $db->connect(); $list=array();
+  if($stmt=$db->conn->prepare('select sliceuuid,slicetype,partcategory from slice where id=?'))
+  {
+   if($stmt->bind_param('i', $sliceid))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      if($row = $db->result->fetch_assoc())
+      {// got slice record
+       $sliceuuid=$row['sliceuuid'];
+       $slicetype=$row['slicetype'];
+       $partcategory=$row['partcategory'];
+          
+       switch ($slicetype)
+       {
+        case 'pies-item':
+            //get part oids for the parts in slice's partcategory 
+            $list= $this->getPartOIDsByPartcategory($partcategory);       
+         break;
+     
+        case 'aces-item':
+            // get app oids for the apps connected to the parts in slice's partcategory
+            $list=$this->getAppOIDsByPartcategory($partcategory);
+         break;
+     
+        case 'asset':
+            // get asset oids for the assets connected to the parts  in slice's partcategory
+            $list=$this->getAssetOIDsByPartcategory($partcategory);
+         break;
+     
+        default: break;
+       }   
+      }
+     }
+    }
+   }     
+  }
+  $db->close();
+  return $list;
+ }
 
  
  
  
- 
- 
- 
- 
- 
- 
+function getPartOIDsByPartcategory($partcategory)
+{
+  $db = new mysql; $db->connect(); $oids=array();
+  if($stmt=$db->conn->prepare('select oid from part where partcategory=?'))
+  {
+   if($stmt->bind_param('i', $partcategory))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      while($row = $db->result->fetch_assoc())
+      {
+       $oids[]=$row['oid'];
+      }
+     }
+    }
+   }
+  }
+  $db->close();
+  return $oids;
+ }
 
 
+function getAppOIDsByPartcategory($partcategory)
+{
+  $db = new mysql; $db->connect(); $oids=array();
+  if($stmt=$db->conn->prepare('select application.oid from application, part where application.partnumber =part.partnumber and part.partcategory=?'))
+  {
+   if($stmt->bind_param('i', $partcategory))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      while($row = $db->result->fetch_assoc())
+      {
+       $oids[]=$row['oid'];
+      }
+     }
+    }
+   }
+  }
+  $db->close();
+  return $oids;
+ }
 
-
-
-    
-    
+function getAssetOIDsByPartcategory($partcategory)
+{
+  $db = new mysql; $db->connect(); $oids=array();
+  if($stmt=$db->conn->prepare('select distinct asset.oid from part,part_asset,asset where part.partnumber=part_asset.partnumber and part_asset.assetid=asset.assetid and part.partcategory=?'))
+  {
+   if($stmt->bind_param('i', $partcategory))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      while($row = $db->result->fetch_assoc())
+      {
+       $oids[]=$row['oid'];
+      }
+     }
+    }
+   }
+  }
+  $db->close();
+  return $oids;
+ }
+ 
+ 
+ 
     
  // get data hooked to an oid   
  function getOIDdata($oid)
@@ -115,32 +258,28 @@ function getPlanSlices($planid)
   $db = new mysql; $db->connect();
 
   // see if this oid is attched to an app
-  if($stmt=$db->conn->prepare('select id from application where oid=?'))
+  if($stmt=$db->conn->prepare('select * from application where oid=?'))
   {
    $stmt->bind_param('s', $oid);
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    { // found a hit in applications - call the getApp function to get the actual data
-    $appid=$row['id'];
-    $app=$this->getApp($appid);
-    $data=array('oid'=>$oid,'type'=>'app',$data=$app);
+    $data=$row;
     $db->close();
     return $data;
    }
   }
 
   // see if this oid is attached to a part
-  if($stmt=$db->conn->prepare('select partnumber from part where oid=?'))
+  if($stmt=$db->conn->prepare('select * from part where oid=?'))
   {
    $stmt->bind_param('s', $oid);
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    { // found a hit in part - call the getPart function to get the actual data
-    $partnumber=$row['partnumber'];
-    $part=$this->getPart($partnumber);
-    $data=array('oid'=>$oid,'type'=>'part',$data=$part);
+    $data=$row;
     $db->close();
     return $data;
    }
@@ -148,6 +287,23 @@ function getPlanSlices($planid)
 
   // see if this oid is attached to an asset
 
+  if($stmt=$db->conn->prepare('select * from asset where oid=?'))
+  {
+   $stmt->bind_param('s', $oid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   { // found a hit in part - call the getPart function to get the actual data
+    $data=$row;
+    $db->close();
+    return $data;
+   }
+  }
+ 
+  
+  
+  
+  
   $db->close();
   return $data;
  }
