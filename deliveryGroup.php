@@ -112,7 +112,22 @@ $allpartcategories=$pim->getPartCategories();
                                 <div class="row padding">
                                     <div class="col-md-6">
                                         <div class="card">
-                                            <h6 class="card-header">Selected Parameters</h6>
+                                            <h6 class="card-header">Available Categories</h6>
+                                            <div class="card-body">
+                                                <div id="unappliedpartcategories">
+                                                <?php
+                                                    foreach ($allpartcategories as $partcategory) 
+                                                    {   if(in_array($partcategory['id'], $appliedpartcategoryidlist)){continue;}
+                                                        echo '<div style="text-align:left;padding:3px;" id="unappliedpartcategoryid_'.$partcategory['id'].'">'.$pim->partCategoryName($partcategory['id']) . ' <button  onclick="addPartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')">+</button></div>';
+                                                    }
+                                                ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <h6 class="card-header">Included Categories</h6>
                                             <div class="card-body">
                                                 <div id="appliedpartcategories" class="card-body">
                                                 <?php $appliedpartcategoryidlist=array();
@@ -123,21 +138,7 @@ $allpartcategories=$pim->getPartCategories();
                                                     }
                                                 ?>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="card">
-                                            <h6 class="card-header">Available Parameters</h6>
-                                            <div class="card-body">
-                                                <div id="unappliedpartcategories">
-                                                <?php
-                                                    foreach ($allpartcategories as $partcategory) 
-                                                    {   if(in_array($partcategory['id'], $appliedpartcategoryidlist)){continue;}
-                                                        echo '<div style="text-align:left;padding:3px;" id="unappliedpartcategoryid_'.$partcategory['id'].'">'.$pim->partCategoryName($partcategory['id']) . ' <button  onclick="addPartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')">+</button></div>';
-                                                    }
-                                                ?>
-                                                </div>
+                                                
                                             </div>
                                         </div>
                                     </div>

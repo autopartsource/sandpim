@@ -110,13 +110,6 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
                                             </div>
                                         </div>
                                         <hr>
-                                        <div class="form-group row">
-                                            <label for="staticSandpiperSliceUUID" class="col-sm-2 col-form-label">Sandpiper Slice UUID</label>
-                                            <div class="col-sm-10">
-                                                <input id="staticSandpiperSliceUUID" readonly type="text" class="form-control" value=""/></td></tr>
-                                            </div>
-                                        </div>
-                                        <hr>
                                         <div>
                                             <input name="submit" type="submit" value="Cancel"/> <input name="submit" type="submit" value="Save"/>
                                         </div>

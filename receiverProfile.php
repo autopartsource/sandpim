@@ -124,22 +124,6 @@ $alldeliverygroups=$pim->getDeliverygroups();
                                         <div class="row padding">
                                             <div class="col-md-6">
                                                 <div class="card">
-                                                    <h6 class="card-header">Applied Delivery Groups</h6>
-                                                    <div class="card-body">
-                                                        <div id="applieddeliverygroups">
-                                                        <?php
-                                                        foreach ($applieddeliverygroupids as $deliverygroupid) 
-                                                        {
-                                                            $deliverygroup=$pim->getDeliverygroup($deliverygroupid);
-                                                            echo '<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'.$deliverygroupid.'">'.$deliverygroup['description'].' <button  onclick="removeDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')">x</button></div>';
-                                                        }
-                                                        ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="card">
                                                     <h6 class="card-header">Available Delivery Groups</h6>
                                                     <div class="card-body">
                                                         <div id="unapplieddeliverygroups">
@@ -151,6 +135,23 @@ $alldeliverygroups=$pim->getDeliverygroups();
                                                         }
                                                         ?>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <h6 class="card-header">Applied Delivery Groups</h6>
+                                                    <div class="card-body">
+                                                        <div id="applieddeliverygroups">
+                                                        <?php
+                                                        foreach ($applieddeliverygroupids as $deliverygroupid) 
+                                                        {
+                                                            $deliverygroup=$pim->getDeliverygroup($deliverygroupid);
+                                                            echo '<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'.$deliverygroupid.'">'.$deliverygroup['description'].' <button  onclick="removeDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')">x</button></div>';
+                                                        }
+                                                        ?>
+                                                        </div>
+                                                        
                                                     </div>
                                                 </div>
                                             </div>
