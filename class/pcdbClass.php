@@ -57,7 +57,8 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname; $valid=false;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select * from PartPosition where PartTerminologyID=? and PositionID=?'))
+//  if($stmt=$db->conn->prepare('select * from PartPosition where PartTerminologyID=? and PositionID=?')) // Only the PCAdb has this table 
+  if($stmt=$db->conn->prepare('select * from CodeMaster where PartTerminologyID=? and PositionID=?'))
   {
    $stmt->bind_param('ii', $parttypeid, $positionid);
    $stmt->execute();

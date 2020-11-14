@@ -27,6 +27,14 @@ $assetshistory = $logs->getAssetsEvents(20);
 $partshistory = $logs->getPartsEvents(20);
 $systemhistory = $logs->getSystemEvents('%', false, 20);
 
+$partissues=$pim->getIssues('PART/%','%',0,array(1,2),20);
+$appissues=$pim->getIssues('APP/%','%','%',array(1,2),20);
+$assetissues=$pim->getIssues('ASSET/%','%','%',array(1,2),20);
+$systemissues=$pim->getIssues('SYSTEM/%','%','%',array(1,2),20);
+
+$issuescount=count($partissues)+count($appissues)+count($assetissues)+count($systemissues);
+
+
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
 <!DOCTYPE html>
@@ -69,7 +77,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                         <div class="card-body">
                             
                             <div class="card">
-                                <h5 class="card-header text-left">Issues</h5>
+                                <h5 class="card-header text-left">Issues <?php if($issuescount>0){echo '<span style="border-radius: 15px 15px 10px 1px;background: #dd0000;padding:10px;width:30px;height:15px;color:#ffffff;">'.$issuescount.'</span>'; }?></h5>
                                 <div class="card-body">
                                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                                         <li class="nav-item">
@@ -93,7 +101,6 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         
                                         <div class="tab-pane fade mt-3" id="partissues" role="tabpanel" aria-labelledby="partissues-tab">
                                         <?php
-                                        $partissues=$pim->getIssues('PART/%','%',0,array(1,2),20);
                                         foreach($partissues as $partissue)
                                         {
                                          echo '<div style="padding:2px;" id="issue_'.$partissue['id'].'"><a href="./showPart.php?partnumber='.$partissue['issuekeyalpha'].'">'.$partissue['issuekeyalpha'].'</a>: '.$partissue['description'].' <button onclick="deleteIssue(\''.$partissue['id'].'\')">x</button></div>';
@@ -103,7 +110,6 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
 
                                         <div class="tab-pane fade mt-3" id="appissues" role="tabpanel" aria-labelledby="appissues-tab">
                                         <?php
-                                        $appissues=$pim->getIssues('APP/%','%','%',array(1,2),20);
                                         foreach($appissues as $appissue)
                                         {
                                          echo '<div style="padding:2px;" id="issue_'.$appissue['id'].'"><a href="./showApp.php?appid='.$appissue['issuekeynumeric'].'">App ID '.$appissue['issuekeynumeric'].'</a>: '.$appissue['description'].' <button onclick="deleteIssue(\''.$appissue['id'].'\')">x</button></div>';
@@ -113,7 +119,6 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
 
                                         <div class="tab-pane fade mt-3" id="assetissues" role="tabpanel" aria-labelledby="assetissues-tab">'
                                         <?php
-                                        $assetissues=$pim->getIssues('ASSET/%','%','%',array(1,2),20);
                                         foreach($assetissues as $assetissue)
                                         {
                                          echo '<div style="padding:2px;" id="issue_'.$assetissue['id'].'"><a href="./showAsset.php?assetid='.$assetissue['issuekeyalpha'].'">'.$assetissue['issuekeyalpha'].'</a>: '.$assetissue['description'].' <button onclick="deleteIssue(\''.$assetissue['id'].'\')">x</button></div>';
@@ -124,14 +129,12 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         
                                         <div class="tab-pane fade mt-3" id="systemissues" role="tabpanel" aria-labelledby="systemissues-tab">'
                                         <?php
-                                        $systemissues=$pim->getIssues('SYSTEM/%','%','%',array(1,2),20);
                                         foreach($systemissues as $systemissue)
                                         {
                                          echo '<div style="padding:2px;" id="issue_'.$systemissue['id'].'">'.$systemissue['description'].' <button onclick="deleteIssue(\''.$systemissue['id'].'\')">x</button></div>';
                                         }?>
                                         </div>
-                                        
-                                        
+                                                                               
                                         
                                     </div>
 

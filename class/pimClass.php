@@ -2533,7 +2533,7 @@ function gtinCheckDigit($barcode)
  function recordIssue($issuetype,$issuekeyalpha,$issuekeynumeric,$description,$source,$issuehash)
  {
   $db=new mysql; $db->connect(); $id=false;
-  if($stmt=$db->conn->prepare("insert into issue (id,status,issuedatetime,issuetype,issuekeyalpha,issuekeynumeric,description,notes,source,issuehash) values(null,0,NOW(),?,?,?,?,'',?,?)"))
+  if($stmt=$db->conn->prepare("insert into issue (id,status,issuedatetime,issuetype,issuekeyalpha,issuekeynumeric,description,notes,resolvedby,resolvedon,snoozeduntil,source,issuehash) values(null,1,NOW(),?,?,?,?,'',0,'0000-00-00 00:00:00','0000-00-00 00:00:00',?,?)"))
   {
    $stmt->bind_param('ssisss', $issuetype,$issuekeyalpha,$issuekeynumeric,$description,$source,$issuehash);
    $stmt->execute();
