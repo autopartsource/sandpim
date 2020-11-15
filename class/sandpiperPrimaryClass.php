@@ -1,10 +1,10 @@
 <?php
 include_once("mysqlClass.php");
 
-class sandpiper
+class sandpiperPrimary
 {
     
-    // back-end methods for sandpiper interaction 
+    // back-end methods for sandpiper interaction as primary 
 
     // by the sandpiper official (GO pgsql) schema, a subscription only contains 1 slice.
     
@@ -26,6 +26,26 @@ class sandpiper
  // compute and update slice hashes
  // This is generally done by a housekeeping background process. It could potentially
  // be invoked during a sync 
+ function updateSliceHash($sliceid)
+ {
+  $db = new mysql; $db->connect(); $returnval=false;
+  $grainlist=$this->getSliceGrainList($sliceid);
+  $hash=md5(implode('',$grainlist));
+  if($stmt=$db->conn->prepare('update slice set slicehash=? where id=?'))
+  {
+   if($stmt->bind_param('si', $hash,$sliceid))
+   {      
+    if($stmt->execute())
+    {
+     $returnval=$hash;
+    }
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
+
+
     
  // get slices in subscription
     
@@ -66,9 +86,33 @@ class sandpiper
   return $plans;
  }
 
+ 
+ function getPlanById($id)
+ {
+  $db = new mysql; $db->connect(); $plan=false;
+  if($stmt=$db->conn->prepare('select * from plan where id=?'))
+  {
+   if($stmt->bind_param('i', $id))
+   {      
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      while($row = $db->result->fetch_assoc())
+      {
+       $plan=array('id'=>$row['id'],'description'=>$row['description'],'planuuid'=>$row['planuuid'],'receiverprofileid'=>$row['receiverprofileid'],'plannmetadata'=>$row['plannmetadata']);
+      }
+     }
+    }
+   }
+  }
+  $db->close();
+  return $plan;
+ }
 
-function getPlanSlices($planid)
-{
+
+ function getPlanSlices($planid)
+ {
   $db = new mysql; $db->connect(); $slices=array();
   if($stmt=$db->conn->prepare('select plan_slice.id as id, description, sliceid, partcategory, subscriptionuuid, sliceuuid, subscriptionmetadata,slicetype,slicehash from slice, plan_slice where plan_slice.sliceid=slice.id and plan_slice.planid=?'))
   {
@@ -89,6 +133,29 @@ function getPlanSlices($planid)
   $db->close();
   return $slices;
  }
+ 
+ function getAllSlices()
+ {
+  $db = new mysql; $db->connect(); $slices=array();
+  if($stmt=$db->conn->prepare('select * from slice'))
+  {
+   if($stmt->execute())
+   {
+    if($db->result = $stmt->get_result())
+    {
+     while($row = $db->result->fetch_assoc())
+     {
+      $slices[]=array('id'=>$row['id'],'description'=>$row['description'],'partcategory'=>$row['partcategory'],'sliceuuid'=>$row['sliceuuid'],'slicemetadata'=>$row['slicemetadata'],'slicetype'=>$row['slicetype'],'slicehash'=>$row['slicehash']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $slices;
+ }
+ 
+ 
+ 
  
  function sliceIdofSubscription($subscriptionuuid)
  {

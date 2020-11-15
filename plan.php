@@ -2,7 +2,7 @@
 include_once('./includes/loginCheck.php');
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
-include_once('./class/sandpiperClass.php');
+include_once('./class/sandpiperPrimaryClass.php');
 
 
 $navCategory = 'import/export';
@@ -16,11 +16,16 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
-$sandpiper=new sandpiper;
+$sandpiperPrimary=new sandpiperPrimary;
 
+$id=intval($_GET['id']);
 
-$plans=$sandpiper->getPlans();
-
+$plan=$sandpiperPrimary->getPlanById($id);
+$receiverprofile=$pim->getReceiverprofileById($plan['receiverprofileid']);
+$slices=$sandpiperPrimary->getPlanSlices($id);
+    
+        
+        
 
 ?>
 <!DOCTYPE html>
@@ -33,7 +38,7 @@ $plans=$sandpiper->getPlans();
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h1>Sandpiper Plans</h1>
+        <h2><a href="./sandpiper.php">Plans</a> >> <?php echo $plan['description']?></h2>
         
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -45,17 +50,8 @@ $plans=$sandpiper->getPlans();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                <?php
-                foreach($plans as $plan)
-                {
-                    $receiverprofile=$pim->getReceiverprofileById($plan['receiverprofileid']);
-                    $slices=$sandpiper->getPlanSlices($plan['id']);
-                    ?>
                     
                     
-                   <div class="card shadow-sm">
-			<!-- Header -->
-                        <h4 class="card-header text-left"><?php echo $plan['description']?></h4>
                         <div class="card-body">
                             <div class="card">
                                 <h6 class="card-header text-left">Receiver Profile: <?php echo'<a href="./receiverProfile.php?id='.$receiverprofile['id'].'">'.$receiverprofile['name'].'</a></h6>';?>
@@ -94,7 +90,12 @@ $plans=$sandpiper->getPlans();
                                 foreach($slices as $slice)
                                 {
                                     $partcategory=$pim->getPartCategory($slice['partcategory']);
-                                    $grainlist=$sandpiper->getSliceGrainList($slice['sliceid']);
+                                    $grainlist=$sandpiperPrimary->getSliceGrainList($slice['sliceid']);
+                                        
+                                    $grainlisthash= $sandpiperPrimary->updateSliceHash($slice['sliceid']);
+                                    
+                                    
+                                    
                                     echo '<div class="card">';
                                         echo '<h6 class="card-header text-left">';
                                             echo '<button type="button" class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#collapse'.$slice['id'].'" aria-expanded="false">'.$slice['description'].'</button>';
@@ -132,7 +133,14 @@ $plans=$sandpiper->getPlans();
                                                 echo '<div class="form-group row">';
                                                     echo '<label for="static'.$slice['slicehash'].'" class="col-sm-3 col-form-label text-left">Hash of grain UUIDs:</label>';
                                                     echo '<div class="col-sm-9">';
-                                                        echo '<input type="text" readonly class="form-control" id="static'.$slice['slicehash'].'" value="'.$slice['slicehash'].'">';
+                                                        echo '<input type="text" readonly class="form-control" id="static'.$slice['slicehash'].'" value="'.$grainlisthash.'">';
+                                                    echo '</div>';
+                                                echo '</div>';
+                                                echo '<hr>';
+                                                echo '<div class="form-group row">';
+                                                    echo '<label for="static'.$slice['slicehash'].'" class="col-sm-3 col-form-label text-left">Grain Count:</label>';
+                                                    echo '<div class="col-sm-9">';
+                                                        echo '<input type="text" readonly class="form-control" id="static'.$slice['slicehash'].'" value="'.count($grainlist).'">';
                                                     echo '</div>';
                                                 echo '</div>';
                                                 echo '<hr>';
@@ -152,15 +160,14 @@ $plans=$sandpiper->getPlans();
                                             echo '</div>';
                                         echo '</div>';
                                     echo '</div>';
-                                }
-                                ?>
+                                }?>
                                 </div>
                             </div>
                         </div>
                                               
-                    </div>
+                    
                      
-                <?php }?>
+                
                 </div>
                 <!-- End of Main Content -->
                 

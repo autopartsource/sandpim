@@ -783,6 +783,18 @@ class setup
         index idx_partcategory(partcategory))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_partcategory ('.$db->conn->error.')';}
         
+        $sql="CREATE TABLE sandpiperactivity (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        planuuid varchar(255) not null,
+        subscriptionuuid varchar(255) not null,
+        grainuuid varchar(255) not null,
+        action varchar(255) not null,
+        timestamp datetime not null,
+        PRIMARY KEY (id),
+        index idx_planuuid(planuuid),
+        index idx_subscriptionuuid(subscriptionuuid),
+        index idx_grainuuid(grainuuid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - sandpiperactivity ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - sandpiperactivity ('.$db->conn->error.')';}
         
         
         

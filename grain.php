@@ -2,7 +2,7 @@
 include_once('./includes/loginCheck.php');
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
-include_once('./class/sandpiperClass.php');
+include_once('./class/sandpiperPrimaryClass.php');
 
 
 $navCategory = 'import/export';
@@ -16,9 +16,9 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
-$sandpiper=new sandpiper;
+$sandpiperPrimary=new sandpiperPrimary;
 
-$grain=$sandpiper->getOIDdata($_GET['id']);
+$grain=$sandpiperPrimary->getOIDdata($_GET['id']);
 
 
 ?>

@@ -2,7 +2,7 @@
 include_once('./includes/loginCheck.php');
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
-include_once('./class/sandpiperClass.php');
+include_once('./class/sandpiperPrimaryClass.php');
 
 
 $navCategory = 'import/export';
@@ -16,7 +16,11 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
-$sandpiper=new sandpiper;
+$sandpiperPrimary=new sandpiperPrimary;
+
+$plans=$sandpiperPrimary->getPlans();
+
+$issues=$pim->getIssues('SANDPIPER/%','%',0,array(1,2),20);
 
 
 ?>
@@ -45,17 +49,33 @@ $sandpiper=new sandpiper;
                     
                    <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Subscription Management</h3>
+                        <h3 class="card-header text-left">Plans</h3>
                         <div class="card-body">
-                            <div><a href="./plans.php">Plans</a></div>                            
+                            <?php foreach ($plans as $plan){
+                            echo '<div><a href="./plan.php?id='.$plan['id'].'">'.$plan['description'].'</a></div>';
+                            } ?>       
                         </div>
                     </div>
 
-                   <div class="card shadow-sm">
+
+                    <div class="card shadow-sm">
+                        <h3 class="card-header text-left">Issues</h3>
+                        <div class="card-body">
+
+                            <?php foreach($issues as $issue)
+                            {
+                                echo '<div style="padding:2px;" id="issue_'.$issue['id'].'">'.$issue['description'].' <button onclick="deleteIssue(\''.$issue['id'].'\')">x</button></div>';
+                            }?>
+                            
+                        </div>
+                    </div>
+
+                    
+                    
+                    <div class="card shadow-sm">
 			<!-- Header -->
                         <h3 class="card-header text-left">Activity</h3>
                         <div class="card-body">
-                            <div><a href="./sandpiperLog.php">Activity Logs</a></div>
                         </div>
                     </div>
                 </div>

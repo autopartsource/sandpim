@@ -10,6 +10,16 @@ class pcdb
      $this->pcdbversion=$_pcdbversion;
  }
     
+ function addIndexes()
+ {
+     //create index idx_PartTerminologyID_PositionID on CodeMaster (PartTerminologyID,PositionID);
+     
+     
+     
+ }
+ 
+ 
+ 
  function positionName($positionid)
  {
   $name='not found';
@@ -54,6 +64,9 @@ class pcdb
  function validParttypePosition($parttypeid,$positionid)
  {
      
+     // the native MySQL published database from ACA does not have an index on CodeMaster that makes this query fast
+     // add this index after installation
+     //create index idx_PartTerminologyID_PositionID on CodeMaster (PartTerminologyID,PositionID);
   $db = new mysql; $db->dbname=$db->pcdbname; $valid=false;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();

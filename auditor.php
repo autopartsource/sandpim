@@ -11,10 +11,15 @@
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/vcdbClass.php');
 include_once(__DIR__.'/class/pcdbClass.php');
+include_once(__DIR__.'/class/logsClass.php');
+include_once(__DIR__.'/class/sandpiperPrimaryClass.php');
+
 
 $pim=new pim;
 $pcdb=new pcdb();
 $vcdb=new vcdb();
+$logs=new logs();
+$sandpiperPrimary=new sandpiperPrimary();
 
 // part audits - grab random groups of parts
     // missing packages
@@ -26,7 +31,7 @@ $vcdb=new vcdb();
 // --- get a random group of items to examine 
 //$pim->recordIssue('SYSTEM/HEARTBEAT','test',1,'testtest','background auditor', '1234567890');
 
-$partnumbergroupsize=50;
+$partnumbergroupsize=10;
 $partnumbers=$pim->getPartnumbersByRandom($partnumbergroupsize);
 
 foreach($partnumbers as $partnumber)
@@ -92,6 +97,7 @@ foreach($partnumbers as $partnumber)
 $appids=$pim->getAppIDsByRandom(250);
 foreach($appids as $appid)
 {
+    echo $appid."\n";
     $app=$pim->getApp($appid);
     
     // validate parttype/position combination
@@ -147,9 +153,24 @@ foreach($appids as $appid)
 
 
 
+// sandpiper housekeeping
 
 
+// update slice hashes
 
+$slices=$sandpiperPrimary->getAllSlices();
+foreach ($slices as $slice)
+{
+ $hash=$sandpiperPrimary->updateSliceHash($slice['id']);   
+ if($slice['slicehash']!=$hash)
+ {
+  $logs->logSystemEvent('sandpiper', 0, 'slice ['.$slice['description'].'] hash updated to ['.$hash.']');
+ }
+}
+
+
+// update issue snoozes. look for status3 records with a snoozeduntil before now and set them back to status1
+$pim->updateSnoozes();
 
 
 

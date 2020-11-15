@@ -31,9 +31,8 @@ $partissues=$pim->getIssues('PART/%','%',0,array(1,2),20);
 $appissues=$pim->getIssues('APP/%','%','%',array(1,2),20);
 $assetissues=$pim->getIssues('ASSET/%','%','%',array(1,2),20);
 $systemissues=$pim->getIssues('SYSTEM/%','%','%',array(1,2),20);
-
-$issuescount=count($partissues)+count($appissues)+count($assetissues)+count($systemissues);
-
+$sandpiperissues=$pim->getIssues('SANDPIPER/%','%','%',array(1,2),20);
+$issuescount=count($partissues)+count($appissues)+count($assetissues)+count($systemissues)+count($sandpiperissues);
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
@@ -92,6 +91,9 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         <li class="nav-item">
                                             <a class="nav-link" id="systemissues-tab" data-toggle="tab" href="#systemissues" role="tab" aria-controls="systemissues" aria-selected="true">System</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="sandpiperissues-tab" data-toggle="tab" href="#sandpiperissues" role="tab" aria-controls="sandpiperissues" aria-selected="true">Sandpiper</a>
+                                        </li>
                                     </ul>
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active mt-3" id="main" role="tabpanel" aria-labelledby="main-tab">
@@ -135,6 +137,14 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         }?>
                                         </div>
                                                                                
+                                        
+                                        <div class="tab-pane fade mt-3" id="sandpiperissues" role="tabpanel" aria-labelledby="sandpiperissues-tab">'
+                                        <?php
+                                        foreach($sandpiperissues as $sandpiperissue)
+                                        {
+                                         echo '<div style="padding:2px;" id="issue_'.$sandpiperissue['id'].'">'.$sandpiperissue['description'].' <button onclick="deleteIssue(\''.$sandpiperissue['id'].'\')">x</button></div>';
+                                        }?>
+                                        </div>
                                         
                                     </div>
 

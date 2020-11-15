@@ -61,14 +61,25 @@ class pim
  function getAppIDsByRandom($limit)
  {
   $db = new mysql; $db->connect(); $ids=array();
-  if($stmt=$db->conn->prepare('select id from application order by rand() limit ?'))
+  if($stmt=$db->conn->prepare('SELECT ROUND(RAND() * (SELECT COUNT(*) FROM application)) as rando'))
   {
-   $stmt->bind_param('i', $limit);
    $stmt->execute();
    $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
-   {
-    $ids[]=$row['id'];
+   if($row = $db->result->fetch_assoc())
+   {   
+    $offset=$row['rando'];
+    if($stmt=$db->conn->prepare('SELECT id FROM application LIMIT ? OFFSET ?'))
+    {
+     if($stmt->bind_param('ii', $limit,$offset))
+     {
+      $stmt->execute();
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $ids[]=$row['id'];    
+      }
+     }     
+    }
    }
   }
   $db->close();
@@ -2651,7 +2662,17 @@ function gtinCheckDigit($barcode)
   $db->close();
  }
  
+ function updateSnoozes()
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update issue set status=1 where status=3 and snoozeduntil<now()'))
+  {
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
+  
  
 /* "path" and "language" together make up the primary key for the documentation table
  * ex: 'EN','APPS/FITMENT ASSETS/REPRESENTATION'
