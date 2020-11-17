@@ -71,6 +71,7 @@
                     <a class="dropdown-item" href="./importPartAttributeText.php">Import part attributes from structured text</a>
                     <a class="dropdown-item" href="./importInterchangeText.php">Import Competitor Interchange from structured text</a>
                     <a class="dropdown-item" href="./importBrandTableText.php">Import Brand Table text</a>
+                    <a class="dropdown-item" href="./importAssetText.php">Import Digital Asset metadata from text</a>
                     <hr>
                     <a class="dropdown-item" href="./backgroundJobs.php">Manage background import/export jobs</a>
                     <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads</a>

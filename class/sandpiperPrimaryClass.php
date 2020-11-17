@@ -1,6 +1,99 @@
 <?php
 include_once("mysqlClass.php");
 
+class activity
+{
+ private $requesturi;
+ private $events=array();
+ public $response;
+         
+ function __construct($_requesturi) 
+ {
+    $this->requesturi=$_requesturi;
+    $limit=999;
+    $sort='timestamp';
+    $sortdirection='asc';
+    $keyedparms=array();
+    $temp=explode('?',$this->requesturi[3]);
+    
+    
+    if(isset($temp[1]) && trim($temp[1])!='')
+    {// there is stuff to the right of the ?mark like:  /sandpiper/v1/activity?limit=10&sort=xyz    chop it up by & character
+        $parms=explode('&',$temp[1]);
+        foreach($parms as $parm)
+        {
+            $parmparts=explode('=',$parm);
+            $keyedparms[$parmparts[0]]=@$parmparts[1];
+        }
+
+        if(array_key_exists('limit', $keyedparms)){$limit=intval($keyedparms['limit']);}
+        if(array_key_exists('sort', $keyedparms)){$sort=$keyedparms['sort'];}
+        if(array_key_exists('sortdirection', $keyedparms)){$sortdirection=$keyedparms['sortdirection'];}
+    }
+    
+    $this->getEvents($limit,$sort,$sortdirection);
+      
+    if(array_key_exists('nice', $keyedparms))
+    {
+        $this->response='<pre>'.print_r($this->events,true).'</pre>';
+    }
+    else
+    {
+        $this->response=json_encode($this->events);
+    }
+ }
+    
+
+ 
+ function getEvents($limit,$sorton,$sortdirection)
+ {
+  $db = new mysql; $db->connect(); $success=false;
+    
+  $orderby='id';
+  $direction='desc';
+  
+  if($sorton=='planuuid' || $sorton=='subscriptionuuid' || $sorton=='timestamp')
+  {
+   $orderby=$sorton;
+  }
+  if($sortdirection=='asc')
+  {
+   $direction=$sortdirection;
+  }      
+  
+  
+  if($stmt=$db->conn->prepare('select * from sandpiperactivity order by '.$orderby.' '.$direction.' limit ?'))
+  { 
+   if($stmt->bind_param('i', $limit))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      $success=true;
+      while($row = $db->result->fetch_assoc())
+      {
+       $this->events[]=array('id'=>$row['id'],'planuuid'=>$row['planuuid'],'subscriptionuuid'=>$row['subscriptionuuid'],'action'=>$row['action'],'timestamp'=>$row['timestamp']);
+      }
+     }
+    }
+   }
+  }
+  $db->close();
+  return $success;
+ }
+
+ 
+ 
+ 
+    
+    
+}
+
+
+
+
+
 class sandpiperPrimary
 {
     
