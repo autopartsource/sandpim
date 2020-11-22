@@ -20,10 +20,17 @@ $sandpiperPrimary=new sandpiperPrimary;
 
 $id=intval($_GET['id']);
 
+if(isset($_POST['submit']) && $_POST['submit']=='Add')
+{
+   
+    
+}
+
+
 $plan=$sandpiperPrimary->getPlanById($id);
 $receiverprofile=$pim->getReceiverprofileById($plan['receiverprofileid']);
 $slices=$sandpiperPrimary->getPlanSlices($id);
-    
+$partcategories=$pim->getPartCategories();
         
         
 
@@ -161,6 +168,18 @@ $slices=$sandpiperPrimary->getPlanSlices($id);
                                         echo '</div>';
                                     echo '</div>';
                                 }?>
+                                    
+                                    
+                                    <div>
+                                        <form method="post">
+                                            <div>Part Category <select name="partcategory"><?php foreach($partcategories as $partcategory){echo '<option value="'.$partcategory['id'].'">'.$partcategory['name'].'</option>';} ?></select></div>
+                                            <div>Slice Type <select name="slicetype"><option value="pies-item">pies-item</option><option value="pies-item">aces-item</option><option value="pies-item">aces-app</option><option value="pies-item">asset</option></select></div>
+                                            <div>Subscription Metadata <input type="text" name="metadata"/></div>
+                                            <input type="submit" name="submit" value="Add"/>
+                                        </form>
+                                    </div>
+                                    
+                                    
                                 </div>
                             </div>
                         </div>
