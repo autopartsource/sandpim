@@ -36,6 +36,8 @@ class sandpiper
   
   function extractParms($input)
   {// input is a string like: "activity?limit=10&sort=xyz&nice&sortdirection=desc"
+      //name/value pairs will be added to $this->keyedparms, and several specific reserved name will be handled (limit,sort,sortdirection,nice)
+      // return value will be everything before the first '?'
       
     $temp=explode('?',$input);
     if(isset($temp[1]) && trim($temp[1])!='')
@@ -54,7 +56,8 @@ class sandpiper
       if(array_key_exists('sort', $this->keyedparms)){$this->sort=$this->keyedparms['sort'];}
       if(array_key_exists('sortdirection', $this->keyedparms)){$this->sortdirection=$this->keyedparms['sortdirection'];}
       if(array_key_exists('nice', $this->keyedparms)){$this->nice=true;}
-     }        
+     }
+     return $temp[0]; // the original input with the parms stripped off 
    }
 
 
@@ -166,6 +169,19 @@ class sandpiper
      return $secret;
     }
     
+    function looksLikeAUUID($input)
+    {//10000000-0000-0000-0000-000000000000
+     $parts=explode('-',$input);
+     if(count($parts)==5)
+     {
+      if(strlen($parts[0])==8 && strlen($parts[1])==4 && strlen($parts[2])==4 && strlen($parts[3])==4 && strlen($parts[4])==12)
+      {
+       return true;
+      }
+     }
+     return false;      
+    }
+    
     
 }
 
@@ -222,14 +238,69 @@ class grains extends sandpiper
     {
         case 'GET':
 
-            //no arguments
-            $this->response='get:'. print_r($this->requesturi,true);
-     
-            //specific grainUUID
+            if(isset($this->requesturi[4]))
+            { //more slashed levels exist after the grains verb. 
 
+                if($this->looksLikeAUUID($this->requesturi[4]))
+                {// level after the verb smells like a UUID. It is either a specific grain ID or a sliceid (depending on the next slashed level)
+                    
+                    
+                    if(isset($this->requesturi[5]))
+                    {// grain by key within a given slice 
+                     // /v1/grains/2bea8308-1840-4802-ad38-72b53e31594c/level-1
+                            $this->response='grain within slice: '.$this->requesturi[4].' that has grain-key: '.$this->requesturi[5];
+                    }
+                    else
+                    {// specific grain by UUID
+
+                        $this->response='specific grain: '.$this->requesturi[4];
+                    }
+                }
+                else
+                {// something other than a UUID was one level after the verb. likely "slice"
+
+                    if($this->requesturi[4]=='slice')
+                    {
+                        if(isset($this->requesturi[5]))
+                        {
+                            $uripart=$this->extractParms($this->requesturi[5]);
+                            if($this->looksLikeAUUID($uripart))
+                            {//
+                                $this->response='grain within slice: '.$uripart.' with parms:'. print_r($this->keyedparms,true);
+                            }
+                            else
+                            {// unexpected - /v1/grains/slice/not-a-uuid
+                                $this->response='expected a UUID representing a slice. got this insteaad: '.$this->requesturi[5];
+                            }
+                        }
+                    }
+                    else
+                    {// someing other than "slice" 
+                        $this->response='expected slice verb, got this instead:'.$this->requesturi[4];
+                    }                   
+                }
+                
+            } 
+            else
+            {// no more levels past the grains verb
+                if(count($this->keyedparms)>0)
+                {// parms exist (example: /v1/grains?payload=yes)
+  
+                    
+                        $this->response='grains list with parms '.print_r($this->keyedparms,true);
+                       
+                }
+                else
+                {// no parms exist(example: /v1/grains)
+                    
+                        $this->response='grains list without parms';                    
+                }
+            }
+            
              break;
          
         case 'POST':
+            // post to the grains endpoint
 
             if(isset($this->requesturi[4]))
             {
