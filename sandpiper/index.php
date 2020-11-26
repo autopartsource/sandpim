@@ -2,28 +2,28 @@
 include_once('../class/sandpiperAPIclass.php');
 include_once('../class/pimClass.php');
 
- //ip-based ACL 
 $pim = new pim;
 
+ //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
-{
+{// bail out if this is a clinet we don't like
  $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
 
-
+// split the request URI into an array of levels by "/"
 $uriparts= explode('/', $_SERVER['REQUEST_URI']);
 $method=$_SERVER['REQUEST_METHOD'];
 $bodyraw=file_get_contents('php://input');
 $postbody= json_decode($bodyraw,true);
 
-$jwt='';
+$jwtpresented='';
 if(array_key_exists('HTTP_AUTHORIZATION',$_SERVER))
 {
  if(substr($_SERVER['HTTP_AUTHORIZATION'], 0, 7)=='Bearer ')
  {
-  $jwt=substr($_SERVER['HTTP_AUTHORIZATION'], 7);
+  $jwtpresented=substr($_SERVER['HTTP_AUTHORIZATION'], 7);
  }    
 }
 
@@ -63,7 +63,7 @@ switch($uriparts[2])
         switch($root)
         {
             case 'activity':
-                $activity=new activity($uriparts,$jwt);
+                $activity=new activity($uriparts,$jwtpresented);
                 if($activity->userIdOfRequest()!==false)
                 {// jtw validated, process request and send response
                     $activity->processRequest();
@@ -84,7 +84,7 @@ switch($uriparts[2])
                 break;
                 
             case 'grains':
-                $grains=new grains($uriparts,$method,$postbody,$jwt);
+                $grains=new grains($uriparts,$method,$postbody,$jwtpresented);
                 if($grains->userIdOfRequest()!==false)
                 {// jtw validated, process request
                     $grains->processRequest();
@@ -97,7 +97,7 @@ switch($uriparts[2])
                 break;
             
             case 'slices':
-                $slices=new slices($uriparts,$method,$postbody,$jwt);
+                $slices=new slices($uriparts,$method,$postbody,$jwtpresented);
                 if($slices->userIdOfRequest()!==false)
                 {// jtw validated, process request
                     $slices->processRequest();
@@ -110,7 +110,7 @@ switch($uriparts[2])
                 break;
             
             case 'subs':
-                $subs=new subs($uriparts,$method,$postbody,$jwt);
+                $subs=new subs($uriparts,$method,$postbody,$jwtpresented);
                 if($subs->userIdOfRequest()!==false)
                 {// jtw validated, process request
                     $subs->processRequest();
@@ -124,7 +124,7 @@ switch($uriparts[2])
                 break;
 
             case 'tags':
-                $tags=new tags($uriparts,$method,$postbody,$jwt);
+                $tags=new tags($uriparts,$method,$postbody,$jwtpresented);
                 if($tags->userIdOfRequest()!==false)
                 {// jtw validated, process request
                     $tags->processRequest();
