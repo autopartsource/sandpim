@@ -1,5 +1,17 @@
 <?php
 include_once('../class/sandpiperAPIclass.php');
+include_once('../class/pimClass.php');
+
+ //ip-based ACL 
+$pim = new pim;
+
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 
 $uriparts= explode('/', $_SERVER['REQUEST_URI']);
 $method=$_SERVER['REQUEST_METHOD'];
