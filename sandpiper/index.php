@@ -98,6 +98,16 @@ switch($uriparts[2])
                 break;
             
             case 'subs':
+                $subs=new subs($uriparts,$method,$postbody,$jwt);
+                if($subs->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $subs->processRequest();
+                    echo $subs->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
 
                 break;
                 
