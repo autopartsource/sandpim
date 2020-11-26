@@ -148,6 +148,17 @@ switch($uriparts[2])
                 break;
                 
             case 'users':
+                $users=new users($uriparts,$method,$postbody,$jwtpresented);
+                if($users->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $users->processRequest();
+                    echo $users->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
+
 
                 break;
     

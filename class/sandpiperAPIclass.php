@@ -659,6 +659,72 @@ class tags extends sandpiper
 
 
 
+class users extends sandpiper
+{
+ private $usersdata=array();
+    
+ function __construct($_requesturi, $_method, $_body, $_jwt) 
+ {
+    $this->requesturi=$_requesturi;
+    $this->body=$_body;
+    $this->method=$_method;
+    $this->jwtpresented=$_jwt;
+    $this->verifyJWT($_jwt,true);
+ }    
+    
+    
+ function processRequest()
+ {
+     switch($this->method)
+    {
+        case 'GET':
+            //ele 3 is "users"
+            
+            if(isset($this->requesturi[4]))
+            {// more levels exist after the subs verb 
+                //  /v1/users/1
+                $uripart=$this->extractParms($this->requesturi[4]);
+                $this->response='user id:'.$uripart;
+            }
+            else
+            {// no more slashed levels after users verb
+                //  /v1/users
+
+                $this->extractParms($this->requesturi[3]);
+                if(count($this->keyedparms)>0)
+                {
+                    // /v1/users?erere=34
+                    $this->response='get users with parms: '.print_r($this->keyedparms,true);
+                }
+                else
+                {// no parms
+                    // /v1/user
+                    $this->response='get users (no parms)';
+                }
+            }
+            
+            break;
+        
+        
+        case 'POST':
+            
+            
+            break;
+        
+        
+        
+        default:
+            // unhandled method
+            
+            break;;
+    }
+ }
+ 
+}
+
+
+
+
 
 
 
