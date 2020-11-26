@@ -216,13 +216,43 @@ class companies extends sandpiper
                 {// /v1/companies/20000000-0000-0000-0000-000000000000/subs
                  // /v1/companies/20000000-0000-0000-0000-000000000000/subs/2bea8308-1840-4802-ad38-72b53e31594c
                     
-                    
-                    
-                    $this->response='companies name:'.$uripart;
+                    $companyuuid=$uripart;
+  
+                    if(isset($this->requesturi[5]))
+                    {
+                        $uripart=$this->extractParms($this->requesturi[5]);
+                        if($uripart=='subs')
+                        {
+                            if(isset($this->requesturi[6]))
+                            {// /v1/companies/20000000-0000-0000-0000-000000000000/subs/2bea8308-1840-4802-ad38-72b53e31594c
+                                
+                                $uripart=$this->extractParms($this->requesturi[6]);
+                                if($this->looksLikeAUUID($uripart))
+                                {
+                                    $this->response='get subscription: '.$uripart.' for company '.$companyuuid;
+                                }
+                                else
+                                {// /v1/companies/20000000-0000-0000-0000-000000000000/subs/not-a-uuid
+                                    
+                                    $this->response='unexpected input. expected a UUID representing a subscription for company '.$companyuuid.'.  got this instead:'.$uripart;
+                                }
+                            }
+                            else
+                            {// /v1/companies/20000000-0000-0000-0000-000000000000/subs
+                                // this implies all subs
+                                $this->response='get all subs for company:'.$companyuuid;                                
+                            }
+                        }
+                        else
+                        {//something else besides "subs" after /v1/companies/20000000-0000-0000-0000-000000000000
+                            
+                            $this->response='unexpected input - expected subs, got this instead:'.$uripart;
+                        }
+                    }
                 }
                 else
                 {// /v1/companies/not-a-uuid
-                    $this->response='unexpect input. expected a UUID representing a company go this instead:'.$uripart;
+                    $this->response='unexpected input. expected a UUID representing a company got this instead:'.$uripart;
                 }
             }
             else
