@@ -80,6 +80,16 @@ switch($uriparts[2])
                 break;
             
             case 'companies':
+                $companies=new companies($uriparts,$method,$postbody,$jwtpresented);
+                if($companies->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $companies->processRequest();
+                    echo $companies->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
 
                 break;
                 
