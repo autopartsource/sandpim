@@ -85,6 +85,16 @@ switch($uriparts[2])
                 break;
             
             case 'slices':
+                $slices=new slices($uriparts,$method,$postbody,$jwt);
+                if($slices->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $slices->processRequest();
+                    echo $slices->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
                 break;
             
             case 'subs':

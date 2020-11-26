@@ -199,15 +199,91 @@ class slices extends sandpiper
 {
  private $slicesdata=array();
     
- function __construct($_requesturi, $_method, $_body) 
+ function __construct($_requesturi, $_method, $_body, $_jwt) 
  {
     $this->requesturi=$_requesturi;
-    
-    
-    
+    $this->body=$_body;
+    $this->method=$_method;
+    $this->jwtpresented=$_jwt;
+    $this->verifyJWT($_jwt,true);
  }    
     
     
+ function processRequest()
+ {
+     switch($this->method)
+    {
+        case 'GET':
+            //ele 3 is "slices"
+
+            
+            if(isset($this->requesturi[4]))
+            {// more levels exist after the slices verb 
+                //  /v1/slices/name/slice2
+                //  /v1/slices/2bea8308-1840-4802-ad38-72b53e31594c
+                $uripart=$this->extractParms($this->requesturi[4]);
+
+                if($uripart=='name')
+                {
+                    if(isset($this->requesturi[5]) && trim($this->requesturi[5])!='')
+                    {
+                        $slicename=trim($this->requesturi[5]);
+                        $this->response='get grains in slice named:'.$slicename;
+                    }
+                    else
+                    {// missing name
+                        $this->response='missing name after slices/name/...';
+                    }
+                }
+                else
+                {// something other than "name" after the slices verb - likely a UUID
+                    
+                    if($this->looksLikeAUUID($uripart))
+                    {//
+                        $sliceuuid=$uripart;
+                        $this->response='get grains in slice:'.$uripart;
+                        
+                    }
+                    else
+                    {// not a UUID 
+                        
+                        $this->response='expected a UUID got something else ('.$uripart.')';
+                    }
+                }
+            }
+            else
+            {// no more slashed levels after slice verb
+                $this->extractParms($this->requesturi[3]);
+                if(count($this->keyedparms)>0)
+                {
+                    // /v1/slices?tags=brake_products
+                    $this->response='get slices with parms: '.print_r($this->keyedparms,true);
+                }
+                else
+                {// no parms
+                    // /v1/slices
+                    $this->response='get slices (no parms)';
+                }
+            }
+            
+            break;
+        
+        
+        case 'POST':
+            
+            
+            break;
+        
+        
+        
+        default:
+            // unhandled method
+            
+            break;;
+    }
+ }
+ 
+ 
 }
 
 
@@ -225,8 +301,7 @@ class grains extends sandpiper
     $this->body=$_body;
     $this->method=$_method;
     $this->jwtpresented=$_jwt;
-    $this->verifyJWT($_jwt,true);
-   
+    $this->verifyJWT($_jwt,true);  
  }
 
  
