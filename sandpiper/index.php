@@ -110,6 +110,20 @@ switch($uriparts[2])
                 }
 
                 break;
+
+            case 'tags':
+                $tags=new tags($uriparts,$method,$postbody,$jwt);
+                if($tags->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $tags->processRequest();
+                    echo $tags->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
+
+                break;
                 
             case 'users':
 
