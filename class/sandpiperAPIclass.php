@@ -26,7 +26,7 @@ class sandpiper
   protected $keyedparms=array();
     
   
-  protected $limit=1;
+  protected $limit=10;
   protected $sort='id';
   protected $sortdirection='asc';
   protected $nice=false;
@@ -183,6 +183,23 @@ class sandpiper
     }
     
     
+    function logEvent($planuuid,$subscriptionuuid,$grainuuid,$action)
+    {
+     $db = new mysql; $db->connect(); $success=false;
+
+     if($stmt=$db->conn->prepare('insert into sandpiperactivity (id,planuuid,subscriptionuuid,grainuuid,action,timestamp) values(null,?,?,?,?,now())'))
+     { 
+      if($stmt->bind_param('ssss', $planuuid,$subscriptionuuid,$grainuuid,$action))
+      {
+       $success=$stmt->execute();
+      }
+     }
+     $db->close();
+     return $success;
+    }
+    
+    
+    
 }
 // ----------------- end of base sandpiper class ---------------------------
  
@@ -292,16 +309,6 @@ class companies extends sandpiper
 }
 
 
-
-
- 
- 
-    
-    
-
-
-
-
 class slices extends sandpiper
 {
  private $slicesdata=array();
@@ -336,6 +343,7 @@ class slices extends sandpiper
                     {
                         $slicename=trim($this->requesturi[5]);
                         $this->response='get grains in slice named:'.$slicename;
+                        $this->logEvent('', '', '', 'get grains in slice named:'.$slicename);
                     }
                     else
                     {// missing name
