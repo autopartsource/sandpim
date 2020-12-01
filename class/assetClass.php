@@ -25,7 +25,7 @@ class asset
 
  function getAssetRecordsByAssetid($assetid)
  {
-  $records=false;
+  $records=array();
   $db=new mysql; 
   $db->connect();
   

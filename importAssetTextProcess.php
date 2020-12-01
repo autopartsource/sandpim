@@ -102,12 +102,28 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
    if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$asset['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
    
    
-   if(@$asset['AssetID']==''){continue;}
-   
-   $existingassets=$assetclass->getAssetRecordsByAssetid($asset['AssetID']);
-   if($pim->validPart($PartNumber) && count($existingassets)==0)
+   if(!array_key_exists('AssetID',$asset) || $asset['AssetID']=='')
    {
-    $items[$PartNumber]['assets'][]=$asset;
+    continue;
+   }
+   
+   if($pim->validPart($PartNumber))
+   {// valid item
+    $existingassets=$assetclass->getAssetRecordsByAssetid($asset['AssetID']);
+    if(count($existingassets)==0)
+    {// this assetID is not already existing
+        
+     $items[$PartNumber]['assets'][]=$asset;
+    }
+    else
+    {// assetID is already in use
+        
+     $parseerrors[]='AssetID ['.$asset['AssetID'].'] already exists for partnumber:'.$PartNumber;       
+    }       
+   }
+   else
+   {// invalid item
+    $parseerrors[]='invalid partnumber: '.$PartNumber;
    }
    
   }
