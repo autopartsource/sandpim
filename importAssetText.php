@@ -1,6 +1,14 @@
 <?php
 include_once('./class/pimClass.php');
 
+$navCategory = 'import/export';
+
+session_start();
+if (!isset($_SESSION['userid'])) {
+    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
+    exit;
+}
+
 $pim = new pim;
 $partcategories = $pim->getPartCategories();
 
@@ -16,7 +24,7 @@ $partcategories = $pim->getPartCategories();
 
         <!-- Header -->
         <h1>Digital Assets (metadata) import from structured text</h1>
-        <h3>Step 1: copy/paste data from the template spreadsheet</h3>
+        <h3>Step 1: copy/paste data from the template spreadsheet (include header row)</h3>
 
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -35,6 +43,8 @@ $partcategories = $pim->getPartCategories();
                         </div>
 
                         <input type="checkbox" name="doimport"/>Do import (uncheck for test run)<div style="padding:10px;"><input name="submit" type="submit" value="Next"/></div>
+                        <div>Assets with non-existent partnumbers will be skipped</div>
+                        <div>Assets with existing AssetID's will be skipped</div>
                     </form>
                 
                 </div>

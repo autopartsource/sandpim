@@ -13,6 +13,7 @@ class sandpiper
   protected $requesturi;
   protected $method;
   protected $body;
+  protected $planuuid;
   protected $jwtpresented; // supplied by the client with the request to the endpoint
 
 
@@ -61,8 +62,24 @@ class sandpiper
    }
 
 
-   function authenticateUser($username, $password, $address=false)
+   function authenticateUser($username, $password, $plandocumentencoded, $address=false)
    {// uses the same users as the rest of the PIM system
+
+     $planuuid=''; $resources='activity';
+     if($plandocumentencoded)
+     {
+         $plandocument= json_decode(base64_decode($plandocumentencoded),true);
+         if(array_key_exists('plan', $plandocument))
+         {
+             if(true)
+             {// decide here if we actually like the plan presented
+                $planuuid=$plandocument['plan'];
+                $resources='activity,slices,grains,sync';
+             }
+         }
+     }
+      
+       
      $returnvalue=false;
      $logs=new logs;
      $configGet=new configGet;
@@ -76,8 +93,8 @@ class sandpiper
         $this->username=$username;
         $expiresepoch=(mktime()+900); // 15 minutes from now
         $secret=$this->getJWTsecret();
-        $jwt= $this->generateJWT($this->userid, $this->username, '9f937bf7-ac59-490a-9632-45ed9562f0b3', $expiresepoch, $secret);
-        $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address);
+        $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
+        $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
         $returnvalue= json_encode(['token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'refresh_token'=>'xxxx']);
       } 
       else
@@ -97,11 +114,11 @@ class sandpiper
     }
  
     
-    function generateJWT($userid,$username,$companyuuid,$expiration,$secret)
+    function generateJWT($userid,$username,$planuuid,$resources,$expiration,$secret)
     {
       // generate JWT  -  based on the example at https://dev.to/robdwaller/how-to-create-a-json-web-token-using-php-3gml
      $encodedjwtheader = $this->base64url_encode(json_encode(['typ' => 'JWT', 'alg' => 'HS256']));
-     $encodedjwtpayload = $this->base64url_encode(json_encode(['c'=>$companyuuid, 'id' => $userid,'u'=> $username,'exp'=>$expiration]));
+     $encodedjwtpayload = $this->base64url_encode(json_encode(['c'=>$companyuuid, 'id' => $userid,'u'=> $username,'exp'=>$expiration,'plan'=>$planuuid,'resources'=>$resources]));
      $encodedjwtsignature = $this->base64url_encode(hash_hmac('sha256', $encodedjwtheader . "." . $encodedjwtpayload, $secret, true));
      return $encodedjwtheader . "." . $encodedjwtpayload . "." . $encodedjwtsignature;
     }
@@ -136,7 +153,11 @@ class sandpiper
         {// apply payload identy to properties of this instance of the class
             
          $this->userid=$payload_array['id'];
-         $this->secondarycompanyuuid=$payload_array['c'];            
+         $this->secondarycompanyuuid=$payload_array['c'];
+         if(array_key_exists('plan', $payload_array) && $this->looksLikeAUUID($payload_array['plan']))
+         {
+          $this->planuuid=$payload_array['plan'];
+         }
         }
        }
       }
@@ -197,6 +218,40 @@ class sandpiper
      $db->close();
      return $success;
     }
+    
+    function getSubscribedFilegrains($planuuid,$sliceuuid,$grainuuid,$includepayload)
+    {
+        //plan is required
+        // slice and grain optional and add additional "where" constraints to the query
+        
+     $db = new mysql; $db->connect(); $grains=array();
+     $sql="select slice.description, grainuuid,sliceuuid,slicetype,source,encoding,grainkey,'' as payload,length(payload) as payloadsize,slicemetadata from plan,plan_slice,slice, slice_filegrain, filegrain where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and slice.id=slice_filegrain.sliceid and slice_filegrain.grainid=filegrain.id and plan.planuuid=? and slice.sliceuuid like ? and filegrain.grainuuid like ?";
+
+     if($includepayload)
+     {
+      $sql="select slice.description, grainuuid,sliceuuid,slicetype,source,encoding,grainkey,payload,length(payload) as payloadsize,slicemetadata from plan,plan_slice,slice, slice_filegrain, filegrain where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and slice.id=slice_filegrain.sliceid and slice_filegrain.grainid=filegrain.id and plan.planuuid=? and slice.sliceuuid like ? and filegrain.grainuuid like ?";
+     }
+     
+     if($stmt=$db->conn->prepare($sql))
+     {
+      if($stmt->bind_param('sss', $planuuid,$sliceuuid,$grainuuid))
+      {
+       if($stmt->execute())
+       {
+        if($db->result = $stmt->get_result())
+        {
+         while($row = $db->result->fetch_assoc())
+         {
+          $grains[]=array('id'=>$row['grainuuid'],'description'=>$row['description'],'slice_id'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'source'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$row['payload'],'payload_len'=>$row['payloadsize']);
+         }
+        }
+       }
+      }         
+     }
+     return $grains;
+    }
+    
+    
     
     
     
@@ -377,7 +432,7 @@ class slices extends sandpiper
                 else
                 {// no parms
                     // /v1/slices
-                    $this->response='get slices (no parms)';
+                    $this->response='get slices. plan presented in JWT:'.$this->planuuid;
                 }
             }
             
@@ -385,6 +440,9 @@ class slices extends sandpiper
         
         
         case 'POST':
+  
+            
+            $this->response=print_r($this->body,true);
             
             
             break;
@@ -443,7 +501,15 @@ class grains extends sandpiper
                     else
                     {// specific grain by UUID
 
-                        $this->response='specific grain: '.$this->requesturi[4];
+                        $includepayload=false;
+                        if(array_key_exists('payload',$this->keyedparms) && $this->keyedparms['payload']=='yes')
+                        {//  /v1/grains?payload=yes)
+                               $includepayload=true;
+                        }
+                        
+                        $this->response= json_encode($this->getSubscribedFilegrains($this->planuuid,'%',$this->requesturi[4], $includepayload));
+
+                        //$this->response='specific grain: '.$this->requesturi[4];
                     }
                 }
                 else
@@ -469,22 +535,16 @@ class grains extends sandpiper
                         $this->response='expected slice verb, got this instead:'.$this->requesturi[4];
                     }                   
                 }
-                
             } 
             else
             {// no more levels past the grains verb
-                if(count($this->keyedparms)>0)
-                {// parms exist (example: /v1/grains?payload=yes)
-  
-                    
-                        $this->response='grains list with parms '.print_r($this->keyedparms,true);
-                       
+                // report all grains in the provided plan
+                $includepayload=false;
+                if(array_key_exists('payload',$this->keyedparms) && $this->keyedparms['payload']=='yes')
+                {//  /v1/grains?payload=yes)
+                       $includepayload=true;
                 }
-                else
-                {// no parms exist(example: /v1/grains)
-                    
-                        $this->response='grains list without parms';                    
-                }
+                $this->response= json_encode($this->getSubscribedFilegrains($this->planuuid,'%','%', $includepayload));
             }
             
              break;
@@ -664,6 +724,45 @@ class tags extends sandpiper
  }
  
 }
+
+
+
+class sync extends sandpiper
+{
+ private $syncdata=array();
+    
+ function __construct($_requesturi, $_method, $_body, $_jwt) 
+ {
+    $this->requesturi=$_requesturi;
+    $this->body=$_body;
+    $this->method=$_method;
+    $this->jwtpresented=$_jwt;
+    $this->verifyJWT($_jwt,true);
+ }    
+    
+    
+ function processRequest()
+ {
+     switch($this->method)
+    {
+        case 'GET':
+            //ele 3 is "sync"
+            $this->response='sync GET method';
+            break;
+        
+        case 'POST':
+            $this->response='sync POST method';
+            break;
+        
+        default:
+            // unhandled method
+            $this->response='sync - unhandled HTTP method';
+            break;;
+    }
+ }
+ 
+}
+
 
 
 

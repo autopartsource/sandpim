@@ -498,7 +498,7 @@ class PIESgenerator
  }
 
     
- function importPIESdata($items,$partcategory,$doimport)
+ function importPIESdata($items,$createparts,$partcategory,$doimport)
  {
   $pricing = new pricing;
   $asset = new asset;
@@ -507,11 +507,27 @@ class PIESgenerator
   $results=array();  $actiondescription='would have been imported'; if($doimport){$actiondescription='was imported';}
   foreach($items as $partnumber=>$item)
   {
-   $results[]='Item '.$partnumber.' '.$actiondescription.' to partcategory '.$partcategory;
-   
-   $partcreateresult=$pim->createPart($partnumber, $partcategory, $item['PartTerminologyID']);
-   
-   if($partcreateresult){echo 'create success';}else{echo 'create failure';}
+
+   if(!$pim->validPart($partnumber))
+   {
+       if($createparts)
+       {
+            $partcreateresult=$pim->createPart($partnumber, $partcategory, $item['PartTerminologyID']);
+            if($partcreateresult)
+            {
+                $results[]='Item '.$partnumber.' '.$actiondescription.' to partcategory '.$partcategory;
+            }
+            else
+            {// part create failed
+                $results[]='Item '.$partnumber.' create failed';
+            }
+       }
+       else
+       { // we're not creating parts as part of the import - skip this item
+           continue;
+       }
+   }
+
    
    
    // ----------------- prices --------------------

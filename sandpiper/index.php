@@ -44,7 +44,9 @@ switch($uriparts[2])
         $sandpiper=new sandpiper;
         if(array_key_exists('username',$postbody) &&  array_key_exists('password',$postbody))
         {// user and pass were provided
-            echo $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $_SERVER['REMOTE_ADDR']);
+            $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
+            
+            echo $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
         }
         else
         {// username or password not present in login post body
@@ -158,8 +160,19 @@ switch($uriparts[2])
                 {// send the "not authorized" code
                     http_response_code(401);
                 }
+                break;
 
-
+            case 'sync':
+                $sync=new sync($uriparts,$method,$postbody,$jwtpresented);
+                if($sync->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $sync->processRequest();
+                    echo $sync->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
                 break;
     
             default: break;

@@ -782,6 +782,34 @@ class setup
         unique key idx_sliceuuid(sliceuuid),
         index idx_partcategory(partcategory))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_partcategory ('.$db->conn->error.')';}
+
+        
+        $sql="CREATE TABLE slice_filegrain (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        sliceid int unsigned not null,
+        grainid int unsigned not null,
+        PRIMARY KEY (id),
+        index idx_(sliceid),
+        index idx_grain(grainid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - slice_filegrain ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - slice_filegrain ('.$db->conn->error.')';}
+        
+        // grains that are full files
+        // Only level-1 grains (files) are literally stored - and this table is what they stored as base64 text.
+        // Level2 grains are synthesized on the fly from PIM content and not store in a tabel.
+        $sql="CREATE TABLE filegrain (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        grainuuid varchar(255) not null,
+        grainkey  varchar(255) not null,
+        source  varchar(255) not null,
+        encoding  varchar(255) not null,
+        payload text not null,
+        timestamp datetime not null,
+        PRIMARY KEY (id),
+        index idx_grainkey(grainkey),
+        index idx_grainuuid(grainuuid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - sandpiperlevel1grains ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - sandpiperlevel1grains ('.$db->conn->error.')';}
+
+
         
         $sql="CREATE TABLE sandpiperactivity (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -795,7 +823,6 @@ class setup
         index idx_subscriptionuuid(subscriptionuuid),
         index idx_grainuuid(grainuuid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - sandpiperactivity ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - sandpiperactivity ('.$db->conn->error.')';}
-        
         
         
         

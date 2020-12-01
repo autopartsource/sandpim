@@ -1,5 +1,6 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/assetClass.php');
 include_once('./class/PIES7_1GeneratorClass.php');
 $navCategory = 'import/export';
 
@@ -10,6 +11,7 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $pim = new pim;
+$assetclass=new asset;
 $PIESgenerator=new PIESgenerator();
 
 if(isset($_POST['submit']) && $_POST['submit']=='Next') 
@@ -18,7 +20,8 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
  
  $assetsrecords = explode("\r\n", $_POST['assets']);
  $headerfields=explode("\t",$assetsrecords[0]);
-
+ $items=array();
+ 
  $PartNumberFieldIndex=-1; $FileNameFieldIndex=-1; $AssetIDFieldIndex=-1; $AssetTypeFieldIndex=-1; $FileTypeFieldIndex=-1; $RepresentationFieldIndex=-1; $FileSizeFieldIndex=-1; $ResolutionFieldIndex=-1; $ColorModeFieldIndex=-1; $BackgroundFieldIndex=-1; $OrientationViewFieldIndex=-1; $AssetHeightFieldIndex=-1; $AssetWidthFieldIndex=-1; $UOMFieldIndex=-1; $FilePathFieldIndex=-1; $URIFieldIndex=-1; $DurationFieldIndex=-1; $DurationUOMFieldIndex=-1; $FrameFieldIndex=-1; $TotalFramesFieldIndex=-1; $PlaneFieldIndex=-1; $HemisphereFieldIndex=-1; $PlungeFieldIndex=-1; $TotalPlanesFieldIndex=-1; $DescriptionFieldIndex=-1; $DescriptionCodeFieldIndex=-1; $DescriptionLanguageCodeFieldIndex=-1; $AssetDateFieldIndex=-1; $AssetDateTypeFieldIndex=-1; $CountryFieldIndex=-1; $LanguageCodeFieldIndex=-1;
 
  for($i=0; $i<=count($headerfields)-1; $i++)
@@ -57,7 +60,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
  } 
   
  $recordnumber=0;
- if($PartNumberFieldIndex==0)
+ if($PartNumberFieldIndex>=0)
  {
   foreach($assetsrecords as $record)
   {
@@ -98,12 +101,22 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
    if($CountryFieldIndex>=0 && trim($fields[$CountryFieldIndex])!=''){$asset['Country']=trim($fields[$CountryFieldIndex]);}
    if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$asset['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
    
-   $items[$PartNumber]['assets'][]=$asset;
+   
+   if(@$asset['AssetID']==''){continue;}
+   
+   $existingassets=$assetclass->getAssetRecordsByAssetid($asset['AssetID']);
+   if($pim->validPart($PartNumber) && count($existingassets)==0)
+   {
+    $items[$PartNumber]['assets'][]=$asset;
+   }
+   
   }
  }
  
  $doimport=false; if(isset($_POST['doimport'])){$doimport=true;}
- $importresults=$PIESgenerator->importPIESdata($items,intval($_POST['partcategory']),$doimport);
+ $partcategory=0; $createparts=false;
+// print_r($items);
+ $importresults=$PIESgenerator->importPIESdata($items,$createparts,$partcategory,$doimport);
 }
 ?>
 <!DOCTYPE html>

@@ -1,36 +1,13 @@
 <?php
-include_once('./class/pimClass.php');
-include_once('./class/sandpiperClass.php');
 
-$sandpiper=new sandpiper;
-$pim=new pim;
+       $plan=array(
+           'plan'=>'c1b1e557-f893-f2d0-6d75-1a0aeb3d520e',
+           'description'=>'Agreement between A & B to convey beautiful data every day',
+           'period'=>86400,
+           'primary'=>array('company'=>'9aaad6b0-6f9d-3b3d-d9ef-2416f74149b5','admin'=>'soandso@suchandsuch.com','internal'=>'product categories and various private PIM minutia'),
+           'secondary'=>array('company'=>'71194449-5032-e993-cf65-34dd8c759f61','admin'=>'thatguy@thatcompany.com','internal'=>'linecodes and various private syndication minutia')
+           );
 
+       echo base64_encode(json_encode($plan));
 
-
-
-
-
-
-
-
-/*
-$branch_oids=json_decode($_POST['oids']);
-$sliceid=$_POST['sliceid'];
-
-$origin_oids=$pim->getOIDsInSlice($sliceid,1000000);
-
-$oids=array_diff($origin_oids,$branch_oids);
-$add_oids=array(); foreach($oids as $trash=>$oid){$add_oids[]=$oid;}
-
-$oids=array_diff($branch_oids,$origin_oids);
-$drop_oids=array(); foreach($oids as $trash=>$oid){$drop_oids[]=$oid;}
-
-$response=array('adds'=>$add_oids,'drops'=>$drop_oids);
-echo json_encode($response);
- * 
- * 
- * 
- * 
- * 
- */
 ?>
