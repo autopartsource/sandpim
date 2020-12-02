@@ -65,13 +65,13 @@
                     <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a>
                     <hr>
                     <a class="dropdown-item" href="./importACESupload.php">Import ACES xml file</a>
-                    <a class="dropdown-item" href="./importACEStext.php">Import applications from structured text</a>
-                    <a class="dropdown-item" href="./importPartText.php">Import parts from structured text</a>
-                    <a class="dropdown-item" href="./importPricesText.php">Import prices from structured text</a>
-                    <a class="dropdown-item" href="./importPartAttributeText.php">Import part attributes from structured text</a>
-                    <a class="dropdown-item" href="./importInterchangeText.php">Import Competitor Interchange from structured text</a>
+                    <a class="dropdown-item" href="./importACEStext.php">Import applications from text</a>
+                    <a class="dropdown-item" href="./importPartText.php">Import parts from text</a>
+                    <a class="dropdown-item" href="./importPricesText.php">Import prices from text</a>
+                    <a class="dropdown-item" href="./importPartAttributeText.php">Import part attributes from text</a>
+                    <a class="dropdown-item" href="./importInterchangeText.php">Import Competitor Interchange from text</a>
                     <a class="dropdown-item" href="./importBrandTableText.php">Import Brand Table text</a>
-                    <a class="dropdown-item" href="./importAssetText.php">Import Digital Asset metadata from text</a>
+                    <a class="dropdown-item" href="./importAssetText.php">Import Asset metadata from text</a>
                     <hr>
                     <a class="dropdown-item" href="./backgroundJobs.php">Manage background import/export jobs</a>
                     <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads</a>

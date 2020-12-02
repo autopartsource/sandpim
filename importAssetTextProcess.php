@@ -22,8 +22,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
  $headerfields=explode("\t",$assetsrecords[0]);
  $items=array();
  
- $PartNumberFieldIndex=-1; $FileNameFieldIndex=-1; $AssetIDFieldIndex=-1; $AssetTypeFieldIndex=-1; $FileTypeFieldIndex=-1; $RepresentationFieldIndex=-1; $FileSizeFieldIndex=-1; $ResolutionFieldIndex=-1; $ColorModeFieldIndex=-1; $BackgroundFieldIndex=-1; $OrientationViewFieldIndex=-1; $AssetHeightFieldIndex=-1; $AssetWidthFieldIndex=-1; $UOMFieldIndex=-1; $FilePathFieldIndex=-1; $URIFieldIndex=-1; $DurationFieldIndex=-1; $DurationUOMFieldIndex=-1; $FrameFieldIndex=-1; $TotalFramesFieldIndex=-1; $PlaneFieldIndex=-1; $HemisphereFieldIndex=-1; $PlungeFieldIndex=-1; $TotalPlanesFieldIndex=-1; $DescriptionFieldIndex=-1; $DescriptionCodeFieldIndex=-1; $DescriptionLanguageCodeFieldIndex=-1; $AssetDateFieldIndex=-1; $AssetDateTypeFieldIndex=-1; $CountryFieldIndex=-1; $LanguageCodeFieldIndex=-1;
-
+ $PartNumberFieldIndex=-1; $FileNameFieldIndex=-1; $AssetIDFieldIndex=-1; $AssetTypeFieldIndex=-1; $FileTypeFieldIndex=-1; $RepresentationFieldIndex=-1; $FileSizeFieldIndex=-1; $ResolutionFieldIndex=-1; $ColorModeFieldIndex=-1; $BackgroundFieldIndex=-1; $OrientationViewFieldIndex=-1; $AssetHeightFieldIndex=-1; $AssetWidthFieldIndex=-1; $UOMFieldIndex=-1; $FilePathFieldIndex=-1; $URIFieldIndex=-1; $DurationFieldIndex=-1; $DurationUOMFieldIndex=-1; $FrameFieldIndex=-1; $TotalFramesFieldIndex=-1; $PlaneFieldIndex=-1; $HemisphereFieldIndex=-1; $PlungeFieldIndex=-1; $TotalPlanesFieldIndex=-1; $DescriptionFieldIndex=-1; $DescriptionCodeFieldIndex=-1; $DescriptionLanguageCodeFieldIndex=-1; $CreatedDateFieldIndex=-1; $AssetDateTypeFieldIndex=-1; $CountryFieldIndex=-1; $LanguageCodeFieldIndex=-1; $PublicFieldIndex=-1;
  for($i=0; $i<=count($headerfields)-1; $i++)
  { // identify the named columns' IDs
   if($headerfields[$i]=='PartNumber'){$PartNumberFieldIndex=$i;}
@@ -53,10 +52,11 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
   if($headerfields[$i]=='Description'){$DescriptionFieldIndex=$i;}
   if($headerfields[$i]=='DescriptionCode'){$DescriptionCodeFieldIndex=$i;}
   if($headerfields[$i]=='DescriptionLanguageCode'){$DescriptionLanguageCodeFieldIndex=$i;}
-  if($headerfields[$i]=='AssetDate'){$AssetDateFieldIndex=$i;}
+  if($headerfields[$i]=='CreatedDate'){$CreatedDateFieldIndex=$i;}
   if($headerfields[$i]=='AssetDateType'){$AssetDateTypeFieldIndex=$i;}
   if($headerfields[$i]=='Country'){$CountryFieldIndex=$i;}
   if($headerfields[$i]=='LanguageCode'){$LanguageCodeFieldIndex=$i;}
+  if($headerfields[$i]=='Public'){$PublicFieldIndex=$i;}
  } 
   
  $recordnumber=0;
@@ -96,10 +96,11 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
    if($DescriptionFieldIndex>=0 && trim($fields[$DescriptionFieldIndex])!=''){$asset['Description']=trim($fields[$DescriptionFieldIndex]);}
    if($DescriptionCodeFieldIndex>=0 && trim($fields[$DescriptionCodeFieldIndex])!=''){$asset['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
    if($DescriptionLanguageCodeFieldIndex>=0 && trim($fields[$DescriptionLanguageCodeFieldIndex])!=''){$asset['DescriptionLanguageCode']=trim($fields[$DescriptionLanguageCodeFieldIndex]);}
-   if($AssetDateFieldIndex>=0 && trim($fields[$AssetDateFieldIndex])!=''){$asset['AssetDate']=trim($fields[$AssetDateFieldIndex]);}
+   if($CreatedDateFieldIndex>=0 && trim($fields[$CreatedDateFieldIndex])!=''){$asset['CreatedDate']=trim($fields[$CreatedDateFieldIndex]);}
    if($AssetDateTypeFieldIndex>=0 && trim($fields[$AssetDateTypeFieldIndex])!=''){$asset['AssetDateType']=trim($fields[$AssetDateTypeFieldIndex]);}
    if($CountryFieldIndex>=0 && trim($fields[$CountryFieldIndex])!=''){$asset['Country']=trim($fields[$CountryFieldIndex]);}
    if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$asset['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
+   if($PublicFieldIndex>=0 && trim($fields[$PublicFieldIndex])!=''){$asset['Public']=trim($fields[$PublicFieldIndex]);}
    
    
    if(!array_key_exists('AssetID',$asset) || $asset['AssetID']=='')

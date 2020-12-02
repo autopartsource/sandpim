@@ -4,14 +4,18 @@ include_once("mysqlClass.php");
 class asset
 {
 
- function addAsset($assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic)
+ function addAsset($assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic,$createddate=false)
  {
   $id=false;
   $db=new mysql; 
   $db->connect();
-  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,localpath,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,resolution,background,fileType,createdDate,public,approved,description,oid,fileHashMD5,filesize,uripublic) values(null,?,?,?,?,?,?,?,?,?,?,?,?,date(now()),?,?,?,?,?,?,?)'))
+
+  $created=date('Y-m-d');
+  if($createddate){$created=$createddate;}
+  
+  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,localpath,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,resolution,background,fileType,createdDate,public,approved,description,oid,fileHashMD5,filesize,uripublic) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'))
   {
-   if($stmt->bind_param('ssssssiisissiisssii',$assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic))
+   if($stmt->bind_param('ssssssiisisssiisssii',$assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$created,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic))
    {
     if($stmt->execute())
     {
