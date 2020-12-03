@@ -118,7 +118,7 @@ class sandpiper
     {
       // generate JWT  -  based on the example at https://dev.to/robdwaller/how-to-create-a-json-web-token-using-php-3gml
      $encodedjwtheader = $this->base64url_encode(json_encode(['typ' => 'JWT', 'alg' => 'HS256']));
-     $encodedjwtpayload = $this->base64url_encode(json_encode(['c'=>$companyuuid, 'id' => $userid,'u'=> $username,'exp'=>$expiration,'plan'=>$planuuid,'resources'=>$resources]));
+     $encodedjwtpayload = $this->base64url_encode(json_encode(['c'=>'', 'id' => $userid,'u'=> $username,'exp'=>$expiration,'plan'=>$planuuid,'resources'=>$resources]));
      $encodedjwtsignature = $this->base64url_encode(hash_hmac('sha256', $encodedjwtheader . "." . $encodedjwtpayload, $secret, true));
      return $encodedjwtheader . "." . $encodedjwtpayload . "." . $encodedjwtsignature;
     }
@@ -256,12 +256,100 @@ class sandpiper
         $returnvalue=true;
         return $returnvalue;
     }
-
-    function isGrainInPlan($grainuuid)
+    
+    function grainExists($grainuuid)
     {
-        $returnvalue=true;
+        $db = new mysql; $db->connect(); $recordid=false;
+        if($stmt=$db->conn->prepare('select id from filegrain where grainuuid=?'))
+        {
+            if($stmt->bind_param('s', $grainuuid))
+            {
+                if($stmt->execute())
+                {
+                    if($db->result = $stmt->get_result())
+                    {
+                        if($row = $db->result->fetch_assoc())
+                        {
+                            $recordid=$row['id'];           
+                        }
+                    }
+                }
+            }
+        }
+        $db->close();
+        return $recordid;
+    }
+
+    function isGrainInPlan($planuuid,$grainuuid)
+    {
+        $grains=$this->getSubscribedFilegrains($planuuid, '%', $grainuuid, false);
+        if(count($grains)>0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    function isSliceInPlan($planuuid,$sliceuuid)
+    {
+        $db = new mysql; $db->connect(); $returnvalue=false;
+        if($stmt=$db->conn->prepare('select slice.description from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=? and slice.sliceuuid=?'))
+        {
+            if($stmt->bind_param('ss', $planuuid,$sliceuuid))
+            {
+                if($stmt->execute())
+                {
+                    if($db->result = $stmt->get_result())
+                    {
+                        if($row = $db->result->fetch_assoc())
+                        {
+                            $returnvalue=true;
+                        }
+                    }
+                }
+            }
+        }
+        $db->close();
         return $returnvalue;
     }
+
+
+    function addGrain($data,$replace)
+    {
+        
+//    $data was presented in the POST body JSON-encoded like this and then converted to an associative array  
+//      "id": "10000000-1111-0000-0000-000000000000",
+//	"slice_id": "2bea8308-1840-4802-ad38-72b53e31594c",
+//	"grain_key": "level-1",
+//	"encoding": "raw",
+//	"payload": "Sandpiper Rocks!"
+
+        $db = new mysql; $db->connect(); $recordid=false;
+        
+        
+        $grainuuid=$data['id'];
+        $grainkey=$data['grainkey'];
+        $source='';//$data['source'];
+        $encoding=$data['encoding'];
+        $payload=$data['payload'];
+        
+        if($stmt=$db->conn->prepare('insert into filegrain values(null,?,?,?,?,?,now())'))
+        {
+            if($stmt->bind_param('sssss', $grainuuid,$grainkey,$source,$encoding,$payload))
+            {
+                if($stmt->execute())
+                {
+                    $recordid=$db->conn->insert_id;
+                }
+            }         
+        }        
+        $db->close();
+        return $recordid;
+    }
+    
     
 }
 // ----------------- end of base sandpiper class ---------------------------
@@ -565,14 +653,8 @@ class grains extends sandpiper
                 {
                     if(array_key_exists('id', $this->body) && array_key_exists('slice_id', $this->body) && array_key_exists('grain_key', $this->body) && array_key_exists('encoding', $this->body) && array_key_exists('payload', $this->body))
                     {// body data elements are present
-                        if(count($this->keyedparms)>0)
-                        {// parms exist (example: /v1/grains?replace=yes)
-                            
-                            
-                        }
                         
-                        /*
-                         * 
+                                                /*
                          * {
 	"id": "10000000-1111-0000-0000-000000000000",
 	"slice_id": "2bea8308-1840-4802-ad38-72b53e31594c",
@@ -580,11 +662,35 @@ class grains extends sandpiper
 	"encoding": "raw",
 	"payload": "Sandpiper Rocks!"
 }
-                         * 
                          */
+
                         
-                        
-                        $this->response='payload (with parms):'.$this->body['payload'];
+                        if($this->isSliceInPlan($this->planuuid,$this->body['slice_id']))
+                        { // the specified slice is within the scope of the plan
+                            if($this->grainExists($this->body['id']))
+                            {
+                                if(array_key_exists('replace',$this->keyedparms) && $this->keyedparms['replace']=='yes')
+                                {// replace the existing grain
+
+                                    $this->response='replace the existing grain';
+                                    //$this->addGrain($this->body,true);
+                                }
+                                else
+                                {// "replace" parameter was not specified and the grain already exists
+                                    $this->response='you must specify the replace=yes when writing a grain that already exists';                            
+                                }
+                            }
+                            else
+                            {// grain UUID does not already exist
+                                
+                          //      $this->response='add grain that did not exist';
+                                $this->addGrain($this->body,false);
+                            }
+                        }
+                        else
+                        {// slice specificed is not in our plan
+                            $this->response='request to add a grain to a slice that is not in the plan ('.$this->planuuid.')';                            
+                        }
                     }
                     else
                     {// we're missing elements from the body data
@@ -613,7 +719,7 @@ class grains extends sandpiper
                     }
                     else
                     {// requested grain does not exist to delete
-                        $this->response='request to delete a grain that is not in your plan';
+                        $this->response='request to delete a grain that is not in the plan';
                     }
                 }
                 else
