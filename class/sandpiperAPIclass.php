@@ -251,9 +251,17 @@ class sandpiper
      return $grains;
     }
     
-    
-    
-    
+    function isClientPrimary()
+    {// look at the current plan to determine is the client is the primary actor in the relationship. This is for determining if they are allowed to do things like add and drop my grains
+        $returnvalue=true;
+        return $returnvalue;
+    }
+
+    function isGrainInPlan($grainuuid)
+    {
+        $returnvalue=true;
+        return $returnvalue;
+    }
     
 }
 // ----------------- end of base sandpiper class ---------------------------
@@ -491,16 +499,12 @@ class grains extends sandpiper
 
                 if($this->looksLikeAUUID($this->requesturi[4]))
                 {// level after the verb smells like a UUID. It is either a specific grain ID or a sliceid (depending on the next slashed level)
-                    
-                    
                     if(isset($this->requesturi[5]))
-                    {// grain by key within a given slice 
-                     // /v1/grains/2bea8308-1840-4802-ad38-72b53e31594c/level-1
+                    {// grain by key within a given slice /v1/grains/2bea8308-1840-4802-ad38-72b53e31594c/level-1
                             $this->response='grain within slice: '.$this->requesturi[4].' that has grain-key: '.$this->requesturi[5];
                     }
                     else
-                    {// specific grain by UUID
-
+                    {// specific grain by UUID 
                         $includepayload=false;
                         if(array_key_exists('payload',$this->keyedparms) && $this->keyedparms['payload']=='yes')
                         {//  /v1/grains?payload=yes)
@@ -508,8 +512,6 @@ class grains extends sandpiper
                         }
                         
                         $this->response= json_encode($this->getSubscribedFilegrains($this->planuuid,'%',$this->requesturi[4], $includepayload));
-
-                        //$this->response='specific grain: '.$this->requesturi[4];
                     }
                 }
                 else
@@ -537,8 +539,7 @@ class grains extends sandpiper
                 }
             } 
             else
-            {// no more levels past the grains verb
-                // report all grains in the provided plan
+            {// no more levels past the grains verb - report all grains in the provided plan
                 $includepayload=false;
                 if(array_key_exists('payload',$this->keyedparms) && $this->keyedparms['payload']=='yes')
                 {//  /v1/grains?payload=yes)
@@ -550,7 +551,7 @@ class grains extends sandpiper
              break;
          
         case 'POST':
-            // post to the grains endpoint
+            // add a grain
 
             if(isset($this->requesturi[4]))
             {
@@ -559,26 +560,74 @@ class grains extends sandpiper
             }
             else
             {
-                    // we expect some body data
+                
+                if($this->isClientPrimary())
+                {
                     if(array_key_exists('id', $this->body) && array_key_exists('slice_id', $this->body) && array_key_exists('grain_key', $this->body) && array_key_exists('encoding', $this->body) && array_key_exists('payload', $this->body))
-                    {
+                    {// body data elements are present
                         if(count($this->keyedparms)>0)
                         {// parms exist (example: /v1/grains?replace=yes)
-                                $this->response='payload (with parms):'.$this->body['payload'];
+                            
+                            
                         }
-                        else
-                        {// no parms exist(example: /v1/grains)
-                                $this->response='payload (with no parms):'.$this->body['payload'];
-                        }
+                        
+                        /*
+                         * 
+                         * {
+	"id": "10000000-1111-0000-0000-000000000000",
+	"slice_id": "2bea8308-1840-4802-ad38-72b53e31594c",
+	"grain_key": "level-1",
+	"encoding": "raw",
+	"payload": "Sandpiper Rocks!"
+}
+                         * 
+                         */
+                        
+                        
+                        $this->response='payload (with parms):'.$this->body['payload'];
                     }
                     else
                     {// we're missing elements from the body data
                         $this->response='POST body is missing elements. Expected: id, slice_id, grain_key, encoding, payload';                     
                     }
+                }
+                else
+                {// client is not primary in the plan - not allowed to add a grain
+                    $this->response='Client is not primary in this plan - It is not authorized to add grains.';
+                }
             }
              
             break;
-         
+            
+        case 'DELETE':
+
+            if($this->looksLikeAUUID($this->requesturi[4]))
+            {// level after the verb smells like a UUID. It is a grain ID
+                // verify that the plan actually included this grain and that the plan stipulates that the client is primary
+                               
+                if($this->isClientPrimary())
+                {// connecting client is the primary - they are allowed to add/drop grains
+                    if($this->isGrainInPlan($this->requesturi[4]))
+                    {
+                        $this->response='delete grain';
+                    }
+                    else
+                    {// requested grain does not exist to delete
+                        $this->response='request to delete a grain that is not in your plan';
+                    }
+                }
+                else
+                {// client is not primary in the plan - not allowed to delete this grain
+                    $this->response='Client is not primary in this plan - It is not authorized to delete grains.';
+                }
+            }
+            else
+            {// something other than a grainid was after the verb
+                $this->response='expected a grain uuid after grains/ got this instead:'.$this->requesturi[4];
+            }
+            
+            break;
+        
         default :
         // un-handled method
             break;
