@@ -257,6 +257,30 @@ class sandpiper
         return $returnvalue;
     }
     
+    function sliceExists($sliceuuid)
+    {
+        $db = new mysql; $db->connect(); $recordid=false;
+        if($stmt=$db->conn->prepare('select id from slice where sliceuuid=?'))
+        {
+            if($stmt->bind_param('s', $sliceuuid))
+            {
+                if($stmt->execute())
+                {
+                    if($db->result = $stmt->get_result())
+                    {
+                        if($row = $db->result->fetch_assoc())
+                        {
+                            $recordid=$row['id'];
+                        }
+                    }
+                }
+            }
+        }
+        $db->close();
+        return $recordid;
+    }
+
+    
     function grainExists($grainuuid)
     {
         $db = new mysql; $db->connect(); $recordid=false;
@@ -314,8 +338,8 @@ class sandpiper
         }
         $db->close();
         return $returnvalue;
-    }
-
+    }    
+    
 
     function addGrain($data,$replace)
     {
@@ -327,11 +351,11 @@ class sandpiper
 //	"encoding": "raw",
 //	"payload": "Sandpiper Rocks!"
 
-        $db = new mysql; $db->connect(); $recordid=false;
+        $db = new mysql; $db->connect(); $grainrecordid=false;
         
-        
+        $sliceuuid=$data['slice_id'];
         $grainuuid=$data['id'];
-        $grainkey=$data['grainkey'];
+        $grainkey=$data['grain_key'];
         $source='';//$data['source'];
         $encoding=$data['encoding'];
         $payload=$data['payload'];
@@ -342,13 +366,63 @@ class sandpiper
             {
                 if($stmt->execute())
                 {
-                    $recordid=$db->conn->insert_id;
+                    $grainrecordid=$db->conn->insert_id;
                 }
             }         
-        }        
+        }
+        
+        if($grainrecordid)
+        {// seccessful grain create            
+            // figure out what the recordid of the slice is 
+            $slicerecordid=$this->sliceExists($sliceuuid);
+            
+            if($stmt=$db->conn->prepare('insert into slice_filegrain values(null,?,?)'))
+            {
+                if($stmt->bind_param('ss', $slicerecordid, $grainrecordid))
+                {
+                    $stmt->execute();
+                }         
+            }
+        }
+        
         $db->close();
-        return $recordid;
+        return $grainrecordid;
     }
+    
+
+    function deleteGrain($grainuuid)
+    {
+        $db = new mysql; $db->connect();  
+        if($grainrecordid=$this->grainExists($grainuuid))
+        {
+            
+            if($stmt=$db->conn->prepare('delete from filegrain where grainuuid=?'))
+            {
+                if($stmt->bind_param('s', $grainuuid))
+                {
+                    $stmt->execute();
+                }         
+            }
+
+            if($stmt=$db->conn->prepare('delete from slice_filegrain where grainid=?'))
+            {
+                if($stmt->bind_param('i', $grainrecordid))
+                {
+                    $stmt->execute();
+                }         
+            }
+        }
+        $db->close();
+    }
+
+
+
+
+
+
+
+
+    
     
     
 }
@@ -683,13 +757,13 @@ class grains extends sandpiper
                             else
                             {// grain UUID does not already exist
                                 
-                          //      $this->response='add grain that did not exist';
+                                $this->response='added grain that did not exist';
                                 $this->addGrain($this->body,false);
                             }
                         }
                         else
                         {// slice specificed is not in our plan
-                            $this->response='request to add a grain to a slice that is not in the plan ('.$this->planuuid.')';                            
+                            $this->response='request to add a grain to a slice ('.$this->body['slice_id'].') that is not in the plan ('.$this->planuuid.')';                            
                         }
                     }
                     else
@@ -713,9 +787,10 @@ class grains extends sandpiper
                                
                 if($this->isClientPrimary())
                 {// connecting client is the primary - they are allowed to add/drop grains
-                    if($this->isGrainInPlan($this->requesturi[4]))
+                    if($this->isGrainInPlan($this->planuuid,$this->requesturi[4]))
                     {
-                        $this->response='delete grain';
+                        $this->deleteGrain($this->requesturi[4]);
+                        $this->response='grain deleted';
                     }
                     else
                     {// requested grain does not exist to delete
