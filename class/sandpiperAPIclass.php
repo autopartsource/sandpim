@@ -415,15 +415,6 @@ class sandpiper
         $db->close();
     }
 
-
-
-
-
-
-
-
-    
-    
     
 }
 // ----------------- end of base sandpiper class ---------------------------
@@ -471,30 +462,30 @@ class companies extends sandpiper
                                 $uripart=$this->extractParms($this->requesturi[6]);
                                 if($this->looksLikeAUUID($uripart))
                                 {
-                                    $this->response='get subscription: '.$uripart.' for company '.$companyuuid;
+                                    $this->response= json_encode(array('message'=>'get subscription: '.$uripart.' for company '.$companyuuid));
                                 }
                                 else
                                 {// /v1/companies/20000000-0000-0000-0000-000000000000/subs/not-a-uuid
                                     
-                                    $this->response='unexpected input. expected a UUID representing a subscription for company '.$companyuuid.'.  got this instead:'.$uripart;
+                                    $this->response= json_encode(array('message'=>'unexpected input. expected a UUID representing a subscription for company '.$companyuuid.'.  got this instead:'.$uripart));
                                 }
                             }
                             else
                             {// /v1/companies/20000000-0000-0000-0000-000000000000/subs
                                 // this implies all subs
-                                $this->response='get all subs for company:'.$companyuuid;                                
+                                $this->response= json_encode(array('message'=>'get all subs for company:'.$companyuuid));
                             }
                         }
                         else
                         {//something else besides "subs" after /v1/companies/20000000-0000-0000-0000-000000000000
                             
-                            $this->response='unexpected input - expected subs, got this instead:'.$uripart;
+                            $this->response= json_encode(array('message'=>'unexpected input - expected subs, got this instead:'.$uripart));
                         }
                     }
                 }
                 else
                 {// /v1/companies/not-a-uuid
-                    $this->response='unexpected input. expected a UUID representing a company got this instead:'.$uripart;
+                    $this->response= json_encode(array('message'=>'unexpected input. expected a UUID representing a company got this instead:'.$uripart));
                 }
             }
             else
@@ -505,12 +496,12 @@ class companies extends sandpiper
                 if(count($this->keyedparms)>0)
                 {
                     // /v1/companies?erere=34
-                    $this->response='get companies with parms: '.print_r($this->keyedparms,true);
+                    $this->response= json_encode(array('message'=>'get companies with parms: '.print_r($this->keyedparms,true)));
                 }
                 else
                 {// no parms
                     // /v1/companies
-                    $this->response='get companies (no parms)';
+                    $this->response= json_encode(array('message'=>'get companies (no parms)'));
                 }
             }
             
@@ -567,12 +558,12 @@ class slices extends sandpiper
                     if(isset($this->requesturi[5]) && trim($this->requesturi[5])!='')
                     {
                         $slicename=trim($this->requesturi[5]);
-                        $this->response='get grains in slice named:'.$slicename;
-                        $this->logEvent('', '', '', 'get grains in slice named:'.$slicename);
+                        $this->response= json_encode(array('message'=>'get grains in slice named:'.$slicename));
+                        $this->logEvent($this->planuuid, '', '', 'get grains in slice named:'.$slicename);
                     }
                     else
                     {// missing name
-                        $this->response='missing name after slices/name/...';
+                        $this->response= json_encode(array('message'=>'missing name after slices/name/...'));
                     }
                 }
                 else
@@ -581,13 +572,13 @@ class slices extends sandpiper
                     if($this->looksLikeAUUID($uripart))
                     {//
                         $sliceuuid=$uripart;
-                        $this->response='get grains in slice:'.$uripart;
+                        $this->response= json_encode(array('message'=>'get grains in slice:'.$uripart));
                         
                     }
                     else
                     {// not a UUID 
                         
-                        $this->response='expected a UUID got something else ('.$uripart.')';
+                        $this->response= json_encode(array('message'=>'expected a UUID got something else ('.$uripart.')'));
                     }
                 }
             }
@@ -597,12 +588,12 @@ class slices extends sandpiper
                 if(count($this->keyedparms)>0)
                 {
                     // /v1/slices?tags=brake_products
-                    $this->response='get slices with parms: '.print_r($this->keyedparms,true);
+                    $this->response= json_encode(array('message'=>'get slices with parms: '.print_r($this->keyedparms,true)));
                 }
                 else
                 {// no parms
                     // /v1/slices
-                    $this->response='get slices. plan presented in JWT:'.$this->planuuid;
+                    $this->response= json_encode(array('message'=>'get slices. plan presented in JWT:'.$this->planuuid));
                 }
             }
             
@@ -663,7 +654,7 @@ class grains extends sandpiper
                 {// level after the verb smells like a UUID. It is either a specific grain ID or a sliceid (depending on the next slashed level)
                     if(isset($this->requesturi[5]))
                     {// grain by key within a given slice /v1/grains/2bea8308-1840-4802-ad38-72b53e31594c/level-1
-                            $this->response='grain within slice: '.$this->requesturi[4].' that has grain-key: '.$this->requesturi[5];
+                            $this->response= json_encode(array('message'=>'grain within slice: '.$this->requesturi[4].' that has grain-key: '.$this->requesturi[5]));
                     }
                     else
                     {// specific grain by UUID 
@@ -686,17 +677,17 @@ class grains extends sandpiper
                             $uripart=$this->extractParms($this->requesturi[5]);
                             if($this->looksLikeAUUID($uripart))
                             {//
-                                $this->response='grain within slice: '.$uripart.' with parms:'. print_r($this->keyedparms,true);
+                                $this->response= json_encode(array('message'=>'grain within slice: '.$uripart.' with parms:'. print_r($this->keyedparms,true)));
                             }
                             else
                             {// unexpected - /v1/grains/slice/not-a-uuid
-                                $this->response='expected a UUID representing a slice. got this insteaad: '.$this->requesturi[5];
+                                $this->response= json_encode(array('message'=>'expected a UUID representing a slice. got this insteaad: '.$this->requesturi[5]));
                             }
                         }
                     }
                     else
                     {// someing other than "slice" 
-                        $this->response='expected slice verb, got this instead:'.$this->requesturi[4];
+                        $this->response= json_encode(array('message'=>'expected slice verb, got this instead:'.$this->requesturi[4]));
                     }                   
                 }
             } 
@@ -718,7 +709,7 @@ class grains extends sandpiper
             if(isset($this->requesturi[4]))
             {
              //more slashed levels exist after the grains verb - should not happen                
-                $this->response =  'unexpected input - more elements after the grains verb ('.$this->requesturi[4].')';                
+                $this->response= json_encode(array('message'=>'unexpected input - more elements after the grains verb ('.$this->requesturi[4].')'));
             }
             else
             {
@@ -746,34 +737,35 @@ class grains extends sandpiper
                                 if(array_key_exists('replace',$this->keyedparms) && $this->keyedparms['replace']=='yes')
                                 {// replace the existing grain
 
-                                    $this->response='replace the existing grain';
-                                    //$this->addGrain($this->body,true);
+                                    $this->addGrain($this->body,true);
+                                    $this->response= json_encode(array('message'=>'grain replaced'));
                                 }
                                 else
                                 {// "replace" parameter was not specified and the grain already exists
-                                    $this->response='you must specify the replace=yes when writing a grain that already exists';                            
+                                    $this->response= json_encode(array('message'=>'you must specify replace=yes when writing a grain that already exists'));
                                 }
                             }
                             else
                             {// grain UUID does not already exist
                                 
-                                $this->response='added grain that did not exist';
+                                $this->response= json_encode(array('message'=>'grain added'));
                                 $this->addGrain($this->body,false);
+                                $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'grain added');
                             }
                         }
                         else
                         {// slice specificed is not in our plan
-                            $this->response='request to add a grain to a slice ('.$this->body['slice_id'].') that is not in the plan ('.$this->planuuid.')';                            
+                            $this->response= json_encode(array('message'=>'request to add a grain to a slice ('.$this->body['slice_id'].') that is not in the plan ('.$this->planuuid.')'));                            
                         }
                     }
                     else
                     {// we're missing elements from the body data
-                        $this->response='POST body is missing elements. Expected: id, slice_id, grain_key, encoding, payload';                     
+                        $this->response= json_encode(array('message'=>'POST body is missing elements. Expected: id, slice_id, grain_key, encoding, payload'));
                     }
                 }
                 else
                 {// client is not primary in the plan - not allowed to add a grain
-                    $this->response='Client is not primary in this plan - It is not authorized to add grains.';
+                    $this->response= json_encode(array('message'=>'Client is not primary in this plan - It is not authorized to add grains.'));
                 }
             }
              
@@ -790,21 +782,22 @@ class grains extends sandpiper
                     if($this->isGrainInPlan($this->planuuid,$this->requesturi[4]))
                     {
                         $this->deleteGrain($this->requesturi[4]);
-                        $this->response='grain deleted';
+                        $this->response= json_encode(array('message'=>'grain deleted'));
+                        $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'grain deleted');
                     }
                     else
                     {// requested grain does not exist to delete
-                        $this->response='request to delete a grain that is not in the plan';
+                        $this->response= json_encode(array('message'=>'request to delete a grain that is not in the plan'));
                     }
                 }
                 else
                 {// client is not primary in the plan - not allowed to delete this grain
-                    $this->response='Client is not primary in this plan - It is not authorized to delete grains.';
+                    $this->response= json_encode(array('message'=>'Client is not primary in this plan - It is not authorized to delete grains.'));
                 }
             }
             else
             {// something other than a grainid was after the verb
-                $this->response='expected a grain uuid after grains/ got this instead:'.$this->requesturi[4];
+                $this->response= json_encode(array('message'=>'expected a grain uuid after grains/ got this instead:'.$this->requesturi[4]));
             }
             
             break;
@@ -849,11 +842,11 @@ class subs extends sandpiper
                 if($this->looksLikeAUUID($uripart))
                 {//
                     $subscriptionuuid=$uripart;
-                    $this->response='subscription UUID:'.$subscriptionuuid;
+                    $this->response= json_encode(array('message'=>'subscription UUID:'.$subscriptionuuid));
                 }
                 else
                 {// not a UUID - must be a subscription name
-                    $this->response='subscription name:'.$uripart;
+                    $this->response= json_encode(array('message'=>'subscription name:'.$uripart));
                 }
             }
             else
@@ -864,7 +857,7 @@ class subs extends sandpiper
                 if(count($this->keyedparms)>0)
                 {
                     // /v1/slices?tags=brake_products
-                    $this->response='get subs with parms: '.print_r($this->keyedparms,true);
+                    $this->response= json_encode(array('message'=>'get subs with parms: '.print_r($this->keyedparms,true)));
                 }
                 else
                 {// no parms
@@ -949,7 +942,7 @@ class tags extends sandpiper
         default:
             // unhandled method
             
-            break;;
+            break;
     }
  }
  
