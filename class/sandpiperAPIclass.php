@@ -218,6 +218,34 @@ class sandpiper
      $db->close();
      return $success;
     }
+
+    function getSubscribedSlices($planuuid)
+    {
+     $db = new mysql; $db->connect(); $slices=array();
+
+     if($stmt=$db->conn->prepare('select slice.description, sliceuuid,slicetype,slicemetadata from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=?'))
+     {
+      if($stmt->bind_param('s', $planuuid))
+      {
+       if($stmt->execute())
+       {
+        if($db->result = $stmt->get_result())
+        {
+         while($row = $db->result->fetch_assoc())
+         {
+          $slices[]=array('slice_id'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'name'=>$row['description'],'slicemetadata'=>$row['slicemetadata']);
+         }
+        }
+       }
+      }         
+     }
+     return $slices;
+    }
+
+
+
+
+
     
     function getSubscribedFilegrains($planuuid,$sliceuuid,$grainuuid,$includepayload)
     {
@@ -416,6 +444,51 @@ class sandpiper
     }
 
     
+    function addSlice($data)
+    {
+//    $data was presented in the POST body JSON-encoded like this and then converted to an associative array  
+        
+        $db = new mysql; $db->connect(); $slicerecordid=false;
+        
+//    {
+//	"id": "2bea8308-1840-4802-ad38-72b53e31594c",
+//	"name": "Slice2",
+//	"slice_type": "aces-file",
+//	"created_at": "2020-01-05T03:56:36.373565Z",
+//	"updated_at": "2020-01-05T03:56:36.373565Z",
+//	"metadata": {
+//		"pcdb-version": "2019-09-27",
+//		"vcdb-version": "2019-09-27"
+//	}
+//    }            
+
+        $sliceuuid=$data['id'];
+        $description=$description=$data['name'];
+        $slicetype=$data['slice_type'];
+        $slicemetadata=$data['metadata'];
+        $slicehash='';
+        
+        if($stmt=$db->conn->prepare('insert into slice values(null,?,?,?,0,?,?)'))
+        {
+            if($stmt->bind_param('sssss',$description,$sliceuuid,$slicetype,$slicemetadata,$slicehash))
+            {
+                if($stmt->execute())
+                {
+                    $slicerecordid=$db->conn->insert_id;
+                }
+            }         
+        }
+              
+        $db->close();
+        return $slicerecordid;
+    }
+
+    function isSliceTypeValid($type)
+    {
+        $validtypes=array('aces-file','pies-file');
+        return in_array($type, $validtypes);
+    }
+    
 }
 // ----------------- end of base sandpiper class ---------------------------
  
@@ -584,27 +657,83 @@ class slices extends sandpiper
             }
             else
             {// no more slashed levels after slice verb
-                $this->extractParms($this->requesturi[3]);
-                if(count($this->keyedparms)>0)
-                {
-                    // /v1/slices?tags=brake_products
-                    $this->response= json_encode(array('message'=>'get slices with parms: '.print_r($this->keyedparms,true)));
-                }
-                else
-                {// no parms
-                    // /v1/slices
-                    $this->response= json_encode(array('message'=>'get slices. plan presented in JWT:'.$this->planuuid));
-                }
+                // get all slices in plan
+                $slices=$this->getSubscribedSlices($this->planuuid);
+                $this->response= json_encode($slices);
+                $this->logEvent($this->planuuid, '', '', 'list slices');
             }
             
             break;
         
         
         case 'POST':
-  
+            // create (or refresh) a slice
             
-            $this->response=print_r($this->body,true);
-            
+            if(isset($this->requesturi[4]))
+            {// more levels exist after the slices verb 
+                //maybe   /v1/slices/refresh/2bea8308-1840-4802-ad38-72b53e31594c
+                $uripart=$this->extractParms($this->requesturi[4]);
+
+                if($uripart=='refresh')
+                {
+                    if(isset($this->requesturi[5]) && $this->looksLikeAUUID($this->requesturi[5]))
+                    {
+                        $sliceuuid=trim($this->requesturi[5]);
+                        $this->response= json_encode(array('message'=>'refresh slice:'.$sliceuuid));
+//                        $this->logEvent($this->planuuid, '', '', 'get grains in slice named:'.$slicename);
+                    }
+                    else
+                    {// missing uuid
+                        $this->response= json_encode(array('message'=>'missing sliceid after slices/refresh/...'));
+                    }
+                }
+                else
+                {// something other than "refresh" after the slices verb - likely a UUID
+                    
+                    $this->response= json_encode(array('message'=>'expected refresh after the slices verb. Got something else ('.$uripart.')'));
+                }
+            }
+            else
+            {// no more slashed levels after slice verb
+                // we are creating a new slice from the contents of the body
+                
+                $this->extractParms($this->requesturi[4]);
+//    {
+//	"id": "2bea8308-1840-4802-ad38-72b53e31594c",
+//	"name": "Slice2",
+//	"slice_type": "aces-file",
+//	"created_at": "2020-01-05T03:56:36.373565Z",
+//	"updated_at": "2020-01-05T03:56:36.373565Z",
+//	"metadata": {
+//		"pcdb-version": "2019-09-27",
+//		"vcdb-version": "2019-09-27"
+//	}
+//    }         
+                if($this->looksLikeAUUID($this->body['id']))
+                {
+                    if($this->sliceExists($this->body['id']))
+                    {// alice already exists
+                        $this->response= json_encode(array('message'=>'slice id ('.$this->body['id'].') already exists.'));
+                    }
+                    else
+                    {// slice does not already exist
+
+                        if($this->isSliceTypeValid($this->body['slice_type']))
+                        {
+                            $slicerecordid=$this->addSlice($this->body);
+                            $this->response= json_encode(array('message'=>'slice added (internal record ID:'.$slicerecordid.')'));
+                        }
+                        else
+                        {// not a valid slice_type
+                            $this->response= json_encode(array('message'=>'slice_type ('.$this->body['slice_type'].') is not valid'));
+                        }
+                    }
+                }
+                else
+                {// id given in the body is not formatted as a UUID                    
+                    $this->response= json_encode(array('message'=>'id does not appear to be a UUID'));
+                }                
+            }
             
             break;
         
@@ -910,7 +1039,7 @@ class tags extends sandpiper
             {// more levels exist after the subs verb 
                 //  /v1/tags/1
                 $uripart=$this->extractParms($this->requesturi[4]);
-                $this->response='tag name:'.$uripart;
+                $this->response= json_encode(array('message'=>'tag name:'.$uripart));
             }
             else
             {// no more slashed levels after tags verb
@@ -920,12 +1049,12 @@ class tags extends sandpiper
                 if(count($this->keyedparms)>0)
                 {
                     // /v1/tags?erere=34
-                    $this->response='get tags with parms: '.print_r($this->keyedparms,true);
+                    $this->response= json_encode(array('message'=>'get tags with parms: '.print_r($this->keyedparms,true)));
                 }
                 else
                 {// no parms
                     // /v1/tags
-                    $this->response='get tags (no parms)';
+                    $this->response= json_encode(array('message'=>'get tags (no parms)'));
                 }
             }
             
@@ -970,16 +1099,16 @@ class sync extends sandpiper
     {
         case 'GET':
             //ele 3 is "sync"
-            $this->response='sync GET method';
+            $this->response= json_encode(array('message'=>'sync GET method'));
             break;
         
         case 'POST':
-            $this->response='sync POST method';
+            $this->response= json_encode(array('message'=>'sync POST method'));
             break;
         
         default:
             // unhandled method
-            $this->response='sync - unhandled HTTP method';
+            $this->response= json_encode(array('message'=>'sync - unhandled HTTP method'));
             break;;
     }
  }
@@ -1014,7 +1143,7 @@ class users extends sandpiper
             {// more levels exist after the subs verb 
                 //  /v1/users/1
                 $uripart=$this->extractParms($this->requesturi[4]);
-                $this->response='user id:'.$uripart;
+                $this->response= json_encode(array('message'=>'user id:'.$uripart));
             }
             else
             {// no more slashed levels after users verb
@@ -1024,12 +1153,12 @@ class users extends sandpiper
                 if(count($this->keyedparms)>0)
                 {
                     // /v1/users?erere=34
-                    $this->response='get users with parms: '.print_r($this->keyedparms,true);
+                    $this->response= json_encode(array('message'=>'get users with parms: '.print_r($this->keyedparms,true)));
                 }
                 else
                 {// no parms
                     // /v1/user
-                    $this->response='get users (no parms)';
+                    $this->response= json_encode(array('message'=>'get users (no parms)'));
                 }
             }
             
