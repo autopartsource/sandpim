@@ -247,7 +247,7 @@ class sandpiper
 
 
     
-    function getSubscribedFilegrains($planuuid,$sliceuuid,$grainuuid,$includepayload)
+    function getSubscribedFilegrains($planuuid,$sliceuuid,$grainuuid,$includepayload,$inflatepayload)
     {
         //plan is required
         // slice and grain optional and add additional "where" constraints to the query
@@ -270,7 +270,14 @@ class sandpiper
         {
          while($row = $db->result->fetch_assoc())
          {
-          $grains[]=array('id'=>$row['grainuuid'],'description'=>$row['description'],'slice_id'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'source'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$row['payload'],'payload_len'=>$row['payloadsize']);
+          $payload=$row['payload'];
+          
+          if($row['encoding']=='z64' && strlen($payload)>0 && $inflatepayload)
+          {
+           $payload= $this->unZ64($payload);
+          }
+          
+          $grains[]=array('id'=>$row['grainuuid'],'description'=>$row['description'],'slice_id'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'source'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
          }
         }
        }
@@ -334,7 +341,7 @@ class sandpiper
 
     function isGrainInPlan($planuuid,$grainuuid)
     {
-        $grains=$this->getSubscribedFilegrains($planuuid, '%', $grainuuid, false);
+        $grains=$this->getSubscribedFilegrains($planuuid, '%', $grainuuid, false,false);
         if(count($grains)>0)
         {
             return true;
@@ -369,7 +376,7 @@ class sandpiper
     }    
     
 
-    function addGrain($data,$replace)
+    function addGrain($data,$replace,$compressrawpayload)
     {
         
 //    $data was presented in the POST body JSON-encoded like this and then converted to an associative array  
@@ -386,7 +393,15 @@ class sandpiper
         $grainkey=$data['grain_key'];
         $source='';//$data['source'];
         $encoding=$data['encoding'];
-        $payload=$data['payload'];
+        if($encoding=='raw' && $compressrawpayload)
+        {
+            $payload= $this->Z64($data['payload']);
+            $encoding='z64';
+        }
+        else
+        {
+            $payload=$data['payload'];
+        }
         
         if($stmt=$db->conn->prepare('insert into filegrain values(null,?,?,?,?,?,now())'))
         {
@@ -488,6 +503,20 @@ class sandpiper
         $validtypes=array('aces-file','pies-file');
         return in_array($type, $validtypes);
     }
+    
+    function unZ64($input)
+    {
+        return gzinflate(base64_decode($input));   
+    }
+    
+    
+    function Z64($input)
+    {
+        return base64_encode(gzdeflate($input));
+    }
+    
+    
+    
     
 }
 // ----------------- end of base sandpiper class ---------------------------
@@ -770,7 +799,6 @@ class grains extends sandpiper
  
  function processRequest()
  {
-    $this->extractParms($this->requesturi[3]);
 
     switch($this->method)
     {
@@ -779,7 +807,8 @@ class grains extends sandpiper
             if(isset($this->requesturi[4]))
             { //more slashed levels exist after the grains verb. 
 
-                if($this->looksLikeAUUID($this->requesturi[4]))
+                $uripart=$this->extractParms($this->requesturi[4]);
+                if($this->looksLikeAUUID($uripart))
                 {// level after the verb smells like a UUID. It is either a specific grain ID or a sliceid (depending on the next slashed level)
                     if(isset($this->requesturi[5]))
                     {// grain by key within a given slice /v1/grains/2bea8308-1840-4802-ad38-72b53e31594c/level-1
@@ -792,14 +821,30 @@ class grains extends sandpiper
                         {//  /v1/grains?payload=yes)
                                $includepayload=true;
                         }
+                        $inflatepayload=false;
+                        if(array_key_exists('inflatepayload', $this->keyedparms) && $this->keyedparms['inflatepayload']=='yes')
+                        {
+                            $inflatepayload=true;
+                        }
                         
-                        $this->response= json_encode($this->getSubscribedFilegrains($this->planuuid,'%',$this->requesturi[4], $includepayload));
+                        
+                        $grains=$this->getSubscribedFilegrains($this->planuuid,'%',$uripart, $includepayload,$inflatepayload);
+                        
+                        if(array_key_exists('payloadonly', $this->keyedparms) && $this->keyedparms['payloadonly']=='yes' && count($grains)==1)
+                        {
+                            $this->response=$grains[0]['payload'];
+                        }
+                        else
+                        {
+                            $this->response=json_encode($grains);
+                        }
+                        
                     }
                 }
                 else
                 {// something other than a UUID was one level after the verb. likely "slice"
 
-                    if($this->requesturi[4]=='slice')
+                    if($uripart=='slice')
                     {
                         if(isset($this->requesturi[5]))
                         {
@@ -816,18 +861,20 @@ class grains extends sandpiper
                     }
                     else
                     {// someing other than "slice" 
-                        $this->response= json_encode(array('message'=>'expected slice verb, got this instead:'.$this->requesturi[4]));
+                        $this->response= json_encode(array('message'=>'expected slice verb, got this instead:'.$uripart));
                     }                   
                 }
             } 
             else
             {// no more levels past the grains verb - report all grains in the provided plan
-                $includepayload=false;
+                $includepayload=false; $inflatepayload=false;
+                $this->extractParms($this->requesturi[3]);
+
                 if(array_key_exists('payload',$this->keyedparms) && $this->keyedparms['payload']=='yes')
                 {//  /v1/grains?payload=yes)
                        $includepayload=true;
                 }
-                $this->response= json_encode($this->getSubscribedFilegrains($this->planuuid,'%','%', $includepayload));
+                $this->response= json_encode($this->getSubscribedFilegrains($this->planuuid,'%','%', $includepayload,$inflatepayload));
             }
             
              break;
@@ -835,10 +882,12 @@ class grains extends sandpiper
         case 'POST':
             // add a grain
 
+            
             if(isset($this->requesturi[4]))
             {
-             //more slashed levels exist after the grains verb - should not happen                
-                $this->response= json_encode(array('message'=>'unexpected input - more elements after the grains verb ('.$this->requesturi[4].')'));
+             //more slashed levels exist after the grains verb - should not happen 
+                $uripart= $this->extractParms($this->requesturi[4]);
+                $this->response= json_encode(array('message'=>'unexpected input - more elements after the grains verb ('.$uripart.')'));
             }
             else
             {
@@ -866,7 +915,7 @@ class grains extends sandpiper
                                 if(array_key_exists('replace',$this->keyedparms) && $this->keyedparms['replace']=='yes')
                                 {// replace the existing grain
 
-                                    $this->addGrain($this->body,true);
+                                    $this->addGrain($this->body,true,true);
                                     $this->response= json_encode(array('message'=>'grain replaced'));
                                 }
                                 else
@@ -878,7 +927,7 @@ class grains extends sandpiper
                             {// grain UUID does not already exist
                                 
                                 $this->response= json_encode(array('message'=>'grain added'));
-                                $this->addGrain($this->body,false);
+                                $this->addGrain($this->body,false,true);
                                 $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'grain added');
                             }
                         }
