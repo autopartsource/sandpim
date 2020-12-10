@@ -506,13 +506,13 @@ class sandpiper
     
     function unZ64($input)
     {
-        return gzinflate(base64_decode($input));   
+        return gzdecode(base64_decode($input));   
     }
     
     
     function Z64($input)
     {
-        return base64_encode(gzdeflate($input));
+        return base64_encode(gzencode($input));
     }
     
     
