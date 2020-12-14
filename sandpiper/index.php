@@ -42,16 +42,29 @@ switch($uriparts[2])
 
     case 'login':
         $sandpiper=new sandpiper;
-        if(array_key_exists('username',$postbody) &&  array_key_exists('password',$postbody))
-        {// user and pass were provided
-            $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
-            
-            echo $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
+
+
+
+        if($method=='POST')
+        {
+            if(array_key_exists('username',$postbody) &&  array_key_exists('password',$postbody))
+            {// user and pass were provided
+                $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
+
+                echo $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
+            }
+            else
+            {// username or password not present in login post body
+                echo 'bad request ('. print_r($bodyraw,true).')' ;
+            }
         }
-        else
-        {// username or password not present in login post body
-            echo 'bad request';
+
+        if($method=='GET')
+        {
+            echo 'API OK';
         }
+
+        
         break;
     
     

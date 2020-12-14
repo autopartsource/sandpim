@@ -910,12 +910,15 @@ class grains extends sandpiper
                         
                         if($this->isSliceInPlan($this->planuuid,$this->body['slice_id']))
                         { // the specified slice is within the scope of the plan
+                            
+                            $compresspayload=false; if(array_key_exists('deflate',$this->keyedparms) && $this->keyedparms['deflate']=='yes'){$compresspayload=true;}
+                            
                             if($this->grainExists($this->body['id']))
                             {
                                 if(array_key_exists('replace',$this->keyedparms) && $this->keyedparms['replace']=='yes')
                                 {// replace the existing grain
 
-                                    $this->addGrain($this->body,true,true);
+                                    $this->addGrain($this->body,true,$compresspayload);
                                     $this->response= json_encode(array('message'=>'grain replaced'));
                                 }
                                 else
@@ -927,7 +930,7 @@ class grains extends sandpiper
                             {// grain UUID does not already exist
                                 
                                 $this->response= json_encode(array('message'=>'grain added'));
-                                $this->addGrain($this->body,false,true);
+                                $this->addGrain($this->body,false,$compresspayload);
                                 $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'grain added');
                             }
                         }
