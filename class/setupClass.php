@@ -802,7 +802,7 @@ class setup
         grainkey  varchar(255) not null,
         source  varchar(255) not null,
         encoding  varchar(255) not null,
-        payload text not null,
+        payload mediumtext not null,
         timestamp datetime not null,
         PRIMARY KEY (id),
         index idx_grainkey(grainkey),
