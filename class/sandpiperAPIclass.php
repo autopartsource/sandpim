@@ -15,7 +15,7 @@ class sandpiper
   protected $body;
   protected $planuuid;
   protected $jwtpresented; // supplied by the client with the request to the endpoint
-
+  protected $planschemaresults;
 
   public $response;
   protected $userid=false;
@@ -68,15 +68,8 @@ class sandpiper
      $planuuid=''; $resources='activity';
      if($plandocumentencoded)
      {
-         $plandocument= json_decode(base64_decode($plandocumentencoded),true);
-         if(array_key_exists('plan', $plandocument))
-         {
-             if(true)
-             {// decide here if we actually like the plan presented
-                $planuuid=$plandocument['plan'];
-                $resources='activity,slices,grains,sync';
-             }
-         }
+         $plandocument=$this->getPlanFromPlandocument(base64_decode($plandocumentencoded));
+         $planuuid=$plandocument['planuuid'];
      }
       
        
@@ -95,7 +88,7 @@ class sandpiper
         $secret=$this->getJWTsecret();
         $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
         $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
-        $returnvalue= json_encode(['token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'refresh_token'=>'xxxx']);
+        $returnvalue= json_encode(['token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful authentication with plan: '.$planuuid]);
       } 
       else
       {// log the failure event
@@ -283,7 +276,7 @@ class sandpiper
        }
       }         
      }
-     return $grains;
+     return array('grains'=>$grains);
     }
     
     function isClientPrimary()
@@ -391,7 +384,7 @@ class sandpiper
         $sliceuuid=$data['slice_id'];
         $grainuuid=$data['id'];
         $grainkey=$data['grain_key'];
-        $source='';//$data['source'];
+        $source=$data['source'];
         $encoding=$data['encoding'];
         if($encoding=='raw' && $compressrawpayload)
         {
@@ -513,6 +506,80 @@ class sandpiper
     function Z64($input)
     {
         return base64_encode(gzencode($input));
+    }
+    
+    
+    
+    
+    //consume a plandocument into an array structure and validate it against the sandpiper plan xsd
+    function getPlanFromPlandocument($xml)
+    {
+        $plandocument=array('planuuid'=>'', 'primary'=>'','secondary'=>'', 'subscriptions'=>array(),'schemaerrors'=>'');
+                
+        $doc=new DOMDocument();
+        $doc->loadXML($xml); 
+        $schemaresults=array();
+ 
+        libxml_use_internal_errors(true);
+        if($doc->schemaValidateSource('<?xml version="1.0" encoding="UTF-8"?><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" vc:minVersion="1.1" elementFormDefault="qualified"><xs:simpleType name="uuid"><xs:restriction base="xs:string"><xs:length value="36" fixed="true"/><xs:pattern value="[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}"/>          </xs:restriction></xs:simpleType><xs:simpleType name="String_Medium"><xs:restriction base="xs:string"><xs:maxLength value="255"/></xs:restriction></xs:simpleType><xs:simpleType name="String_Short"><xs:restriction base="xs:string"><xs:maxLength value="40"/></xs:restriction></xs:simpleType><xs:simpleType name="Email"><xs:restriction base="xs:string"><xs:maxLength value="255"/><xs:pattern value="[^\s]+@[^\s]+"/></xs:restriction></xs:simpleType><xs:simpleType name="FieldName"><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="63"/><xs:pattern value="[A-Za-z][A-Za-z0-9_\-]+"/></xs:restriction></xs:simpleType><xs:simpleType name="FieldValue"><xs:restriction base="xs:string"><xs:minLength value="1"/><xs:maxLength value="255"/></xs:restriction></xs:simpleType><xs:simpleType name="Levels"><xs:restriction base="xs:string"><xs:enumeration value="1-1"/><xs:enumeration value="1-2"/><xs:enumeration value="2"/><xs:enumeration value="3"/></xs:restriction></xs:simpleType><xs:attributeGroup name="Model"><xs:attribute name="uuid" type="uuid" use="required"/></xs:attributeGroup><xs:attributeGroup name="Description_Main"><xs:attribute name="description" type="String_Medium" use="required"/></xs:attributeGroup><xs:attributeGroup name="Description_Optional"><xs:attribute name="description" type="String_Medium" use="optional"/></xs:attributeGroup><xs:complexType name="LinkGroup"><xs:sequence><xs:element name="UniqueLink" minOccurs="0" maxOccurs="unbounded"><xs:complexType><xs:attributeGroup ref="Model"/><xs:attribute name="keyfield" type="FieldName" use="required"/><xs:attribute name="keyvalue" type="FieldValue" use="required"/><xs:attributeGroup ref="Description_Optional"/></xs:complexType></xs:element><xs:element name="MultiLink" minOccurs="0" maxOccurs="unbounded"><xs:complexType><xs:sequence><xs:element name="MultLinkEntry" minOccurs="1" maxOccurs="unbounded"><xs:complexType><xs:attributeGroup ref="Model"/><xs:attribute name="keyvalue" type="FieldValue" use="required"/><xs:attributeGroup ref="Description_Optional"/></xs:complexType></xs:element>                       </xs:sequence><xs:attribute name="keyfield" type="FieldName" use="required"/></xs:complexType></xs:element></xs:sequence></xs:complexType>    <xs:complexType name="Instance"><xs:sequence><xs:element name="Software" minOccurs="1" maxOccurs="1"><xs:complexType><xs:attributeGroup ref="Description_Main"/><xs:attribute name="version" type="String_Short" use="required"/></xs:complexType></xs:element><xs:element name="Capability" minOccurs="1" maxOccurs="1"><xs:complexType><xs:sequence><xs:element name="Response" minOccurs="0" maxOccurs="1"><xs:complexType><xs:attribute name="uri" type="xs:string" use="required"/><xs:attribute name="role"><xs:simpleType><xs:restriction base="xs:string"><xs:enumeration value="Synchronization"/><xs:enumeration value="Authentication"/></xs:restriction></xs:simpleType></xs:attribute><xs:attribute name="description" type="String_Medium" use="optional"/></xs:complexType></xs:element></xs:sequence><xs:attribute name="level" type="Levels"/></xs:complexType></xs:element></xs:sequence><xs:attributeGroup ref="Model"/></xs:complexType><xs:element name="Plan"><xs:complexType><xs:sequence><xs:element name="Primary" minOccurs="1" maxOccurs="1"><xs:complexType><xs:sequence><xs:element name="Instance" type="Instance" minOccurs="1" maxOccurs="1"/><xs:element name="Controller" minOccurs="1" maxOccurs="1"><xs:complexType><xs:sequence><xs:element name="Admin"><xs:complexType><xs:attribute name="contact" type="String_Medium" /><xs:attribute name="email" type="Email"/></xs:complexType></xs:element>    </xs:sequence><xs:attributeGroup ref="Model"/><xs:attributeGroup ref="Description_Main"/></xs:complexType></xs:element><xs:element name="Links" type="LinkGroup"><xs:unique name="PrimaryInstanceLinkUniqueKeyField"><xs:selector xpath="MultiLink|UniqueLink"/><xs:field xpath="@keyfield"/></xs:unique></xs:element><xs:element name="Pools" maxOccurs="1"><xs:complexType><xs:sequence><xs:element name="Pool" minOccurs="1"><xs:complexType><xs:sequence><xs:element name="Links" type="LinkGroup"><xs:unique name="PrimaryPoolLinkUniqueKeyField"><xs:selector xpath="MultiLink|UniqueLink"/><xs:field xpath="@keyfield"/></xs:unique></xs:element><xs:element name="Slices" minOccurs="0"><xs:complexType><xs:sequence><xs:element name="Slice" minOccurs="1"><xs:complexType><xs:sequence><xs:element name="Links" type="LinkGroup"><xs:unique name="SliceLinkUniqueKeyField"><xs:selector xpath="MultiLink|UniqueLink"/><xs:field xpath="@keyfield"/></xs:unique></xs:element></xs:sequence><xs:attributeGroup ref="Model"/><xs:attributeGroup ref="Description_Main"/></xs:complexType></xs:element></xs:sequence></xs:complexType></xs:element></xs:sequence><xs:attributeGroup ref="Model"/><xs:attributeGroup ref="Description_Main"/></xs:complexType></xs:element></xs:sequence></xs:complexType></xs:element></xs:sequence><xs:attributeGroup ref="Model"/></xs:complexType></xs:element><xs:element name="Communal" minOccurs="1" maxOccurs="1"><xs:complexType><xs:sequence><xs:element name="Subscriptions" minOccurs="0" maxOccurs="1"><xs:complexType><xs:sequence><xs:element name="Subscription" minOccurs="1" maxOccurs="unbounded"><xs:complexType><xs:sequence><xs:element name="DeliveryProfiles" minOccurs="0" maxOccurs="1"><xs:complexType><xs:sequence><xs:element name="DeliveryProfile" minOccurs="1" maxOccurs="unbounded"><xs:complexType><xs:attributeGroup ref="Model"/></xs:complexType></xs:element></xs:sequence></xs:complexType></xs:element></xs:sequence><xs:attributeGroup ref="Model"/><xs:attribute name="sliceuuid" type="uuid"/></xs:complexType></xs:element></xs:sequence></xs:complexType></xs:element></xs:sequence></xs:complexType></xs:element><xs:element name="Secondary" minOccurs="1" maxOccurs="1"><xs:complexType><xs:sequence><xs:element name="Instance" type="Instance" minOccurs="1" maxOccurs="1"/><xs:element name="Links" type="LinkGroup"><xs:unique name="SecondaryInstanceLinkUniqueKeyField"><xs:selector xpath="MultiLink|UniqueLink"/><xs:field xpath="@keyfield"/></xs:unique></xs:element></xs:sequence><xs:attributeGroup ref="Model"/></xs:complexType></xs:element></xs:sequence><xs:attribute name="uuid" type="uuid"/></xs:complexType></xs:element></xs:schema>'))
+        {// xml passes xsd validation. extract the meaningful bits
+            
+            $xpath = new DOMXpath($doc);
+
+            $planElements=$xpath->query("/Plan");
+            foreach($planElements as $planElement)
+            {
+             $plandocument['planuuid']=$planElement->getAttribute('uuid');
+            }
+            
+            $subscriptionElements=$xpath->query("/Plan/Communal/Subscriptions/Subscription");
+            foreach($subscriptionElements as $subscriptionElement)
+            {
+             $plandocument['subscriptions'][]=$subscriptionElement->getAttribute('uuid');
+            }
+            
+            $primaryElements=$xpath->query("/Plan/Primary");
+            foreach($primaryElements as $primaryElement)
+            {
+             $plandocument['primary']=$primaryElement->getAttribute('uuid');
+            }
+            
+            $secondaryElements=$xpath->query("/Plan/Secondary");
+            foreach($secondaryElements as $secondaryElement)
+            {
+             $plandocument['secondary']=$secondaryElement->getAttribute('uuid');
+            }
+            
+        }
+        else
+        {
+            $schemaerrors = libxml_get_errors();
+            foreach ($schemaerrors as $schemaerror)
+            {
+                $errormessage='';
+                switch ($schemaerror->level) 
+                {
+                    case LIBXML_ERR_WARNING:
+                        //$errormessage .= 'Warning code '. $schemaerror->code;
+                        break;
+                    case LIBXML_ERR_ERROR:
+                    //$errormessage .= 'Error code '.$schemaerror->code;
+                        break;
+                   case LIBXML_ERR_FATAL:
+                    //$errormessage .= 'Fatal Error code '.$schemaerror->code;
+                    break;
+                }
+                $errormessage.= trim($schemaerror->message);
+                $schemaresults[]=$errormessage;   
+            }
+            libxml_clear_errors();
+        }
+        
+        $plandocument['schemaerrors']=implode('; ',$schemaresults);
+        return $plandocument; 
+        
+        
+        
     }
     
     
