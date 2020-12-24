@@ -11,11 +11,13 @@ session_start();
 $pim = new pim();
 $logs = new logs;
 
+/*
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
  $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'UUIDgenerator.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
+*/
 
 $count=1;
 if(isset($_GET['count'])){
