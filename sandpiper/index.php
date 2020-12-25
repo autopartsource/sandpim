@@ -14,6 +14,19 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 
 // split the request URI into an array of levels by "/"
 $uriparts= explode('/', $_SERVER['REQUEST_URI']);
+
+
+// because the logic downstream of here depends on specific sections of the uri be reliably in specific absolute positions in the path
+// we need to shift the shift the elements left until the APIS's root is in the right element. The entire sandpim app could be deeper than docroot on the server
+for($i=0; $i<4; $i++)
+{
+ if($uriparts[1]=='sandpiper')
+ {
+  break;
+ }
+ array_splice($uriparts,0,1);
+}
+
 $method=$_SERVER['REQUEST_METHOD'];
 $bodyraw=file_get_contents('php://input');
 $postbody= json_decode($bodyraw,true);
