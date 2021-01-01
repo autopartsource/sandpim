@@ -16,12 +16,12 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 $uriparts= explode('/', $_SERVER['REQUEST_URI']);
 
 
-// because the logic downstream of here depends on specific sections of the uri be reliably in specific absolute positions in the path
-// we need to shift the shift the elements left until the APIS's root is in the right element. The entire sandpim app could be deeper than docroot on the server
+// because the logic downstream of here depends on specific sections of the uri being reliably in specific absolute positions in the path,
+// we potentially need to shift the elements left until the APIS's root is in the right array element. The entire sandpim app could be deeper than docroot on the server.
 for($i=0; $i<4; $i++)
 {
  if($uriparts[1]=='sandpiper')
- {
+ {// API root is now aligned to the right spot in the array
   break;
  }
  array_splice($uriparts,0,1);

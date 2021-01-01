@@ -164,6 +164,33 @@ class sandpiper
         return $this->userid;
     }
 
+    
+    function planRecord($planuuid)
+    {
+        //ccc
+        $db = new mysql; $db->connect(); $returnvalue=false;
+        if($stmt=$db->conn->prepare('select * from plan where planuuid=?'))
+        {
+            if($stmt->bind_param('s', $planuuid))
+            {
+                if($stmt->execute())
+                {
+                    if($db->result = $stmt->get_result())
+                    {
+                        if($row = $db->result->fetch_assoc())
+                        {
+                            $returnvalue=array('id'=>$row['id'],'description'=>$row['description'],'plannmetadata'=>$row['plannmetadata'],'receiverprofileid'=>$row['receiverprofileid']);
+                        }
+                    }
+                }
+            }
+        }
+        $db->close();
+        return $returnvalue;     
+    }
+    
+    
+    
 
     function base64url_encode($str) 
     {
@@ -451,11 +478,11 @@ class sandpiper
         $db->close();
     }
 
-    
-    function addSlice($data)
+    //ccc 
+    function addSlice($data,$planuuid)
     {
 //    $data was presented in the POST body JSON-encoded like this and then converted to an associative array  
-        
+//    connect (subscribe) this new slice to the plan (if provided)        
         $db = new mysql; $db->connect(); $slicerecordid=false;
         
 //    {
@@ -482,11 +509,31 @@ class sandpiper
             {
                 if($stmt->execute())
                 {
-                    $slicerecordid=$db->conn->insert_id;
+                    $slicerecordid=$db->conn->insert_id;                    
+                    $planrecord=$this->getPlanRecord($planuuid);
+                    
+                    // plan was provieded - subscribe this new slice to it                     
+                    if($planrecord)
+                    {
+                        $planrecordid=$planrecord['id'];
+                        $subscriptionuuid= $this->uuidv4();
+                        $subscriptionmetadata='';
+
+                        if($stmt=$db->conn->prepare('insert into  plan_slice values (null,?,?,?,?)'))
+                        {
+                            if($stmt->bind_param('iiss',$planrecordid,$slicerecordid,$subscriptionuuid,$subscriptionmetadata))
+                            {
+                                if($stmt->execute())
+                                {
+                                    $subscriptionrecordid=$db->conn->insert_id;
+                                }
+                            }         
+                        }
+                    }
                 }
-            }         
+            } 
         }
-              
+        
         $db->close();
         return $slicerecordid;
     }
@@ -583,8 +630,12 @@ class sandpiper
     }
     
     
-    
-    
+    function uuidv4()
+    {
+        $randodata = file_get_contents('/dev/urandom', NULL, NULL, 0, 16);
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($randodata), 4));
+    }
+      
 }
 // ----------------- end of base sandpiper class ---------------------------
  
@@ -994,10 +1045,11 @@ class grains extends sandpiper
                                 }
                             }
                             else
-                            {// grain UUID does not already exist
+                            {// grain UUID does not already exist. Add it.
                                 
                                 $this->response= json_encode(array('message'=>'grain added'));
                                 $this->addGrain($this->body,false,$compresspayload);
+                                
                                 $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'grain added');
                             }
                         }
