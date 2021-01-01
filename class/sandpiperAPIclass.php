@@ -165,7 +165,7 @@ class sandpiper
     }
 
     
-    function planRecord($planuuid)
+    function getPlanRecord($planuuid)
     {
         //ccc
         $db = new mysql; $db->connect(); $returnvalue=false;
