@@ -844,7 +844,7 @@ class slices extends sandpiper
             {// no more slashed levels after slice verb
                 // we are creating a new slice from the contents of the body
                 
-                $this->extractParms($this->requesturi[4]);
+                $this->extractParms($this->requesturi[3]);// was 4 before 1/1/2021
 //    {
 //	"id": "2bea8308-1840-4802-ad38-72b53e31594c",
 //	"name": "Slice2",
@@ -867,7 +867,7 @@ class slices extends sandpiper
 
                         if($this->isSliceTypeValid($this->body['slice_type']))
                         {
-                            $slicerecordid=$this->addSlice($this->body);
+                            $slicerecordid=$this->addSlice($this->body, $this->planuuid);
                             $this->response= json_encode(array('message'=>'slice added (internal record ID:'.$slicerecordid.')'));
                         }
                         else
