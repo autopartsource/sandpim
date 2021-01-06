@@ -148,13 +148,14 @@ class pcdb
  }
 
 
- function getPartTypes($searchstring)
+ function getPartTypes($searchstring, $_limit=false)
  {
   $types=array();
   $db = new mysql; $db->dbname=$db->pcdbname; 
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  $limit=1000;
+  
+  if($_limit===false){$limit=250;}else{$limit=intval($_limit);}
   
   if($stmt=$db->conn->prepare('select PartTerminologyID, PartTerminologyName from Parts where PartTerminologyName like ? order by PartTerminologyName limit ?'))
   {
