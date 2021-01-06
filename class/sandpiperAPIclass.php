@@ -519,7 +519,7 @@ class sandpiper
                         $subscriptionuuid= $this->uuidv4();
                         $subscriptionmetadata='';
 
-                        if($stmt=$db->conn->prepare('insert into  plan_slice values (null,?,?,?,?)'))
+                        if($stmt=$db->conn->prepare('insert into plan_slice values (null,?,?,?,?)'))
                         {
                             if($stmt->bind_param('iiss',$planrecordid,$slicerecordid,$subscriptionuuid,$subscriptionmetadata))
                             {
