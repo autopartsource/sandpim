@@ -16,7 +16,7 @@ $pcdbVersion=$pcdb->version();
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
-$validPartTypes=array(); $partTypes=$pcdb->getPartTypes('%'); foreach($partTypes as $partType){$validPartTypes[$partType['id']]=$partType['name'];}
+$validPartTypes=array(); $partTypes=$pcdb->getPartTypes('%',999999); foreach($partTypes as $partType){$validPartTypes[$partType['id']]=$partType['name'];}
 
 $piesxmlstring='';
 $streamXML=true;
