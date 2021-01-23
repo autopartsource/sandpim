@@ -1048,9 +1048,9 @@ class grains extends sandpiper
                             {// grain UUID does not already exist. Add it.
                                 
                                 $this->response= json_encode(array('message'=>'grain added'));
-                                $this->addGrain($this->body,false,$compresspayload);
+                                $grainrecordid=$this->addGrain($this->body,false,$compresspayload);
                                 
-                                $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'grain added');
+                                $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'grain added (record id:'.$grainrecordid.')');
                             }
                         }
                         else
