@@ -207,13 +207,13 @@ if(isset($_GET['source']) && $_GET['source']=='noteManager')
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Migrate a fitment note to Qdb</h3>
+                        <h3 class="card-header text-start">Migrate a fitment note to Qdb</h3>
                         
                         <div class="card-body">
                             <!-- Note to Migrate Card -->
                             <div class="card">
                                 <!-- Header -->
-                                <h6 class="card-header text-left">
+                                <h6 class="card-header text-start">
                                     Note to Migrate
                                     <div style="float:right">Total Uses: <?php echo $usecount; ?></div>
                                 </h6>
@@ -227,7 +227,7 @@ if(isset($_GET['source']) && $_GET['source']=='noteManager')
                             <!-- Search Card -->
                             <div class="card">
                                 <!-- Header -->
-                                <h6 class="card-header text-left">
+                                <h6 class="card-header text-start">
                                     <div style="float:left;">
                                         <input type="text" id="qdbsearchterm"/>
                                         <button id="qdbsearch" onclick="searchQdb()">Search</button>

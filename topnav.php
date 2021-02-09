@@ -9,10 +9,10 @@
             <li<?php if ($navCategory == 'applications') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="appsIndex.php" class="nav-link">Applications</a></li>
             <li<?php if ($navCategory == 'assets') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="assetsIndex.php" class="nav-link">Assets</a></li>
             <li<?php if ($navCategory == 'reports') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownReports" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Reports
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownReports">
                     <a class="dropdown-item" href="partReferencesReportForm.php">Invalid Part Data</a>
                     <a class="dropdown-item" href="applicationReferencesReportForm.php">Invalid Application Data</a>
                     <a class="dropdown-item" href="missingProductDataReportForm.php">Product Data Holes</a>
@@ -22,10 +22,10 @@
                 </div>
             </li>
             <li<?php if ($navCategory == 'utilities') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUtilities" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Utilities
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownUtilities">
                     <a class="dropdown-item" href="basevidsToMMYinput.php">Convert BaseVehicleIDs to Makes/Models/Years</a>
                     <a class="dropdown-item" href="MMYtoBasevidsInput.php">Convert Makes/Models/Years to BaseVehicleIDs</a>
                     <a class="dropdown-item" href="convertAiExcelToACES4_1upload.php">Convert coded-value spreadsheet to ACES</a>
@@ -34,10 +34,10 @@
                 </div>
             </li>
             <li<?php if ($navCategory == 'settings') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownSettings" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Settings
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownSettings">
                     <a class="dropdown-item" href="./partCategories.php">Part Categories</a>
                     <a class="dropdown-item" href="./deliveryGroups.php">Delivery Groups</a>
                     <a class="dropdown-item" href="./receiverProfiles.php">Receiver Profiles</a>
@@ -52,10 +52,10 @@
                 </div>
             </li>
             <li<?php if ($navCategory == 'import/export') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownIO" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Import/Export
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownIO">
                     <a class="dropdown-item" href="./exportPIESselect.php">Export PIES xml</a>
                     <a class="dropdown-item" href="./exportACESselect.php">Export ACES xml</a>
                     <a class="dropdown-item" href="./exportFlatPartsSelect.php">Export flattened parts file</a>
@@ -79,7 +79,7 @@
                 </div>
             </li>
         </ul>
-        <div class="ml-auto">
+        <div class="ms-auto">
         <ul class="nav navbar-nav">
             <a href="logout.php" class="nav-link">Logout (<?php echo $_SESSION['name'];?>)</a>
         </ul>

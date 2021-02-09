@@ -21,10 +21,7 @@ $receiverprofiles=$pim->getReceiverprofiles();
     <body>
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
-        
-        <!-- Header -->
-        <h1>Export ACES xml - select source and options</h1>
-        
+                
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -35,13 +32,21 @@ $receiverprofiles=$pim->getReceiverprofiles();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form action="exportACESstream.php" method="post">
-                        <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
-                            Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
-                            <input type="submit" name="submit" value="Export"/>
-                            <input type="hidden" name="exporttype" value="profile"/>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Export ACES xml - select source and options</h3>
+
+                        <div class="card-body">
+                            <form action="exportACESstream.php" method="post">
+                                <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
+                                    Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+                                    <input type="submit" name="submit" value="Export"/>
+                                    <input type="hidden" name="exporttype" value="profile"/>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 

@@ -52,7 +52,7 @@ $profiles = $pim->getReceiverprofiles();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Receiver Profiles</h3>
+                        <h3 class="card-header text-start">Receiver Profiles</h3>
                         <div class="card-body">
                             <?php
                             foreach ($profiles as $profile) 

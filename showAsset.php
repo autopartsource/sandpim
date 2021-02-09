@@ -126,7 +126,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                          if(strlen($assetrecord['localpath'])>0){$imgsrc=$configGet->getConfigValue('localImageStorePath').'/'.$assetrecord['localpath'];}
                          ?>
                         <div class="card shadow-sm">
-                            <h3 class="card-header text-left">Record for Asset: <span class="text-info"><?php echo $assetid;?></span><div style="float:right;"><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></div></h3>
+                            <h3 class="card-header text-start">Record for Asset: <span class="text-info"><?php echo $assetid;?></span><div style="float:right;"><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></div></h3>
                             <div class="row no-gutters">
                                 <div class="card-body">
                                     <table>
@@ -159,15 +159,15 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                         <h5 class="card-header">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="connected-tab" data-toggle="tab" href="#connected" role="tab" aria-controls="connected" aria-selected="true">Connected</a>
+                                    <a class="nav-link active" id="connected-tab" data-bs-toggle="tab" href="#connected" role="tab" aria-controls="connected" aria-selected="true">Connected</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="newconnection-tab" data-toggle="tab" href="#newconnection" role="tab" aria-controls="newconnection" aria-selected="false">New Connection</a>
+                                    <a class="nav-link" id="newconnection-tab" data-bs-toggle="tab" href="#newconnection" role="tab" aria-controls="newconnection" aria-selected="false">New Connection</a>
                                 </li>
                             </ul>
                         </h5>
                         <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active text-left m-3" id="connected" role="tabpanel" aria-labelledby="connected-tab">
+                            <div class="tab-pane fade show active text-start m-3" id="connected" role="tabpanel" aria-labelledby="connected-tab">
                                 <?php foreach($connectedparts as $connectedpart){?>
                                 <div id="assetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
                                    <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a> <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>

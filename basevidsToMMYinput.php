@@ -71,7 +71,7 @@ if (isset($_POST['submit']) && strlen($_POST['input'])>0)
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Convert VCdb BaseVehicle IDs to make/model/year text</h3>
+                        <h3 class="card-header text-start">Convert VCdb BaseVehicle IDs to make/model/year text</h3>
 
                         <div class="card-body">
                             <form method="post">

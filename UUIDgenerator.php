@@ -45,7 +45,7 @@ $count=intval($_GET['count']);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">UUID Generator</h3>
+                        <h3 class="card-header text-start">UUID Generator</h3>
                             <form>
                                 <div style="padding:5px;">
                                 <input name="submit" type="submit" value="Generate"/> <select name="count"><option value="1">1</option><option value="10">10</option><option value="100">100</option></select> UUIDs</div>

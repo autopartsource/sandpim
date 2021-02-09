@@ -45,7 +45,7 @@ $deliverygroups = $pim->getDeliverygroups();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Delivery Groups</h3>
+                        <h3 class="card-header text-start">Delivery Groups</h3>
 
                         <div class="card-body">
                             

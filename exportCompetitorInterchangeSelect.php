@@ -23,9 +23,6 @@ $competitors=$interchange->getCompetitors();
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
-        <!-- Header -->
-        <h1>Export competitor interchange to a spreadsheet</h1>
-        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -36,13 +33,21 @@ $competitors=$interchange->getCompetitors();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form action="exportCompetitorInterchangeStream.php" method="get">
-                        <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
-                            <div style="padding: 10px;">Competitor</div>
-                            <select name="competitorBrandAAIAID"><?php foreach ($competitors as $competitor) { ?><option value="<?php echo $competitor['brandAAIAID']; ?>"><?php echo $competitor['name']; ?></option><?php } ?></select>
-                            <input type="submit" name="submit" value="Export"/>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Export competitor interchange to a spreadsheet</h3>
+
+                        <div class="card-body">
+                            <form action="exportCompetitorInterchangeStream.php" method="get">
+                                <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
+                                    <div style="padding: 10px;">Competitor</div>
+                                    <select name="competitorBrandAAIAID"><?php foreach ($competitors as $competitor) { ?><option value="<?php echo $competitor['brandAAIAID']; ?>"><?php echo $competitor['name']; ?></option><?php } ?></select>
+                                    <input type="submit" name="submit" value="Export"/>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 

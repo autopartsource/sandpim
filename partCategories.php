@@ -57,7 +57,7 @@ $partcategories = $pim->getPartCategories();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Part Categories</h3>
+                        <h3 class="card-header text-start">Part Categories</h3>
 
                         <div class="card-body">
                             <?php
@@ -65,10 +65,10 @@ $partcategories = $pim->getPartCategories();
                             {
                                 $count=$pim->countPartsByPartcategory($partcategory['id']);
                                 echo '<div class="card">';
-                                    echo '<h6 class="card-header text-left"><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a>';
+                                    echo '<h6 class="card-header text-start"><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a>';
                                     if(!$count){echo '<div style="float:right;"><form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form></div>';}
                                     echo '</h6>';
-                                    echo '<div class="card-body text-left">';
+                                    echo '<div class="card-body text-start">';
                                         echo 'Part Count: <span style="font-weight: bold;">'.$count.'<span>';
                                     echo '</div>';
                                 echo '</div>';

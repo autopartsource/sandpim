@@ -451,33 +451,33 @@ foreach ($issues as $issue) {
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-10 my-col colMain">
                     <div id="IssueContent" class="card shadow-sm my-col" style="">
-                        <div class="card-header text-left">
+                        <div class="card-header text-start">
                             <span id="issueBreadcrumb"></span>
-                            <div class="btn-group-toggle" data-toggle="buttons" style="float:right;">
+                            <div class="btn-group" role="group" style="float:right;">
                                 <label id="toggleClosed" class="btn btn-secondary">
-                                    <input type="checkbox" autocomplete="off" onclick="toggleClosed()"> Show Closed
+                                    <input type="radio" class="btn-check" autocomplete="off" onclick="toggleClosed()"> Show Closed
                                 </label>
                             </div>
                         </div>
 
                         <div class="card shadow-sm">
                             <!-- Header -->
-                            <h5 class="card-header text-left">
+                            <h5 class="card-header text-start">
                                 Issue ID: <span id="issueId" class="text-info" data-issueid="<?php echo $selectedissue['id']; ?>"><?php echo $selectedissue['id']; ?></span>
                                 <form id="IssueSetStatus" style="float:right;" >
-                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <div class="btn-group" role="group">
                                         <label id="label_status_open" class="btn">
-                                            <input type="radio" name="status" id="input_open" value="1" onclick="updateIssueStatus(1)"> Open
+                                            <input type="radio" class="btn-check"  name="status" id="input_open" value="1" onclick="updateIssueStatus(1)"> Open
                                         </label>
                                         <label id="label_status_review" class="btn">
-                                            <input type="radio" name="status" id="input_review" value="2" onclick="updateIssueStatus(2)"> In Review
+                                            <input type="radio" class="btn-check"  name="status" id="input_review" value="2" onclick="updateIssueStatus(2)"> In Review
                                         </label>
                                         <label id="label_status_closed" class="btn">
-                                            <input type="radio" name="status" id="input_closed" value="0" onclick="updateIssueStatus(0)"> Closed
+                                            <input type="radio" class="btn-check"  name="status" id="input_closed" value="0" onclick="updateIssueStatus(0)"> Closed
                                         </label>
                                     </div>
-                                    <div class="btn-group">
-                                        <button id="label_status_snooze" type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div class="btn-group" role="group">
+                                        <button id="label_status_snooze" type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Snooze
                                         </button>
                                         <div class="dropdown-menu">
@@ -494,13 +494,13 @@ foreach ($issues as $issue) {
                                     <div class="col md-6">
                                         <div class="card shadow-sm">
                                             <!-- Header -->
-                                            <h6 class="card-header text-left"><div id="issuekeydisplay"></div></h6>
+                                            <h6 class="card-header text-start"><div id="issuekeydisplay"></div></h6>
                                         </div>
                                     </div>
                                     <div class="col md-6">
                                         <div class="card shadow-sm">
                                             <!-- Header -->
-                                            <h6 class="card-header text-left">Reported by: <span id="issueSource" class="text-info"></span>
+                                            <h6 class="card-header text-start">Reported by: <span id="issueSource" class="text-info"></span>
                                                 <div>on <span id="issueDatetime" class="text-info"></span><div>
                                             </h6>
                                         </div>
@@ -509,13 +509,13 @@ foreach ($issues as $issue) {
                                 <div class="row padding my-row">
                                     <div class="col md-6">
                                         <div class="card shadow-sm">
-                                            <h6 class="card-header text-left">Description</h6>
+                                            <h6 class="card-header text-start">Description</h6>
                                             <div id="issueDescription" class="card-body"></div>
                                         </div>
                                     </div>
                                     <div class="col md-6">
                                         <div class="card shadow-sm">
-                                            <h6 class="card-header text-left">Notes</h6>
+                                            <h6 class="card-header text-start">Notes</h6>
 
                                             <div class="card-body">
                                                 <textarea id="issueNotes"></textarea>

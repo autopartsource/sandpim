@@ -104,7 +104,7 @@ $allpartcategories=$pim->getPartCategories();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h4 class="card-header text-left">Delivery Group: <input type="text" id="deliverygroupdescription" value="<?php echo $deliverygroup['description'];?>"/><button onclick="updateDescription();">Update</button></h4>
+                        <h4 class="card-header text-start">Delivery Group: <input type="text" id="deliverygroupdescription" value="<?php echo $deliverygroup['description'];?>"/><button onclick="updateDescription();">Update</button></h4>
 
                         <div class="card-body">
                             <div class="card">

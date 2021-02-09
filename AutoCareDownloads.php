@@ -66,9 +66,15 @@ $qdbsavailable=$pim->getAutoCareReleaseList('Qdb');
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
                 <?php if($downloadsdirectory)
-                {
+                { 
                     $freespace=disk_free_space($downloadsdirectory);
-                    echo 'Free Space: '.number_format( $freespace/1000000000, 1).'GB'; 
+                    echo '<div class="card shadow-sm">';
+                        echo '<h3 class="card-header text-start">Free Space</h3>';
+                        echo '<div class="card-body">';
+                            echo number_format( $freespace/1000000000, 1).'GB'; 
+                        echo '</div>';
+                            
+                    echo '</div>';
                 }?>
 
                 </div>
@@ -77,7 +83,7 @@ $qdbsavailable=$pim->getAutoCareReleaseList('Qdb');
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">AutoCare Reference Databases</h3>
+                        <h3 class="card-header text-start">AutoCare Reference Databases</h3>
                         <div>
                             <div style="float:left;margin:20px;padding:5px;border:1px solid #d0d0d0;">
                                 <div style="background-color: #c0c0c0;">VCdb</div>

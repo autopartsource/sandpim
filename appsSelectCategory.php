@@ -160,15 +160,15 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Applications (<?php echo $vcdb->makeName($makeid).', '.$vcdb->modelName($modelid).', '.$yearid;?>)</h3>
+                        <h3 class="card-header text-start">Applications (<?php echo $vcdb->makeName($makeid).', '.$vcdb->modelName($modelid).', '.$yearid;?>)</h3>
 
                         <div class="card-body">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="existing-tab" data-toggle="tab" href="#existing" role="tab" aria-controls="existing" aria-selected="true">Existing Apps</a>
+                                    <a class="nav-link active" id="existing-tab" data-bs-toggle="tab" href="#existing" role="tab" aria-controls="existing" aria-selected="true">Existing Apps</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="create-tab" data-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Application</a>
+                                    <a class="nav-link" id="create-tab" data-bs-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Application</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">

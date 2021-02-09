@@ -55,14 +55,14 @@ $pricesheets=$pricing->getPricesheets();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Price Sheets</h3>
+                        <h3 class="card-header text-start">Price Sheets</h3>
 
                         <div class="card-body">
                             <?php
                                 foreach($pricesheets as $pricesheet)
                                 {
                                     echo '<div class="card">';
-                                        echo '<h6 class="card-header text-left">Name: '.$pricesheet['number'].'</h6>';
+                                        echo '<h6 class="card-header text-start">Name: '.$pricesheet['number'].'</h6>';
                                         echo '<div class="card-body">';
                                             echo '<div class="form-group row">';
                                                 echo '<label for="staticDescription" class="col-sm-2 col-form-label">Description</label>';

@@ -43,7 +43,7 @@ $history = $logs->getPartEvents($partnumber, 25);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
                         <!-- Header -->
-                        <h3 class="card-header text-left">History for <a href="./showPart.php?partnumber=<?php echo $partnumber?>"><span class="text-info"><?php echo $partnumber?></span></a></h3>
+                        <h3 class="card-header text-start">History for <a href="./showPart.php?partnumber=<?php echo $partnumber?>"><span class="text-info"><?php echo $partnumber?></span></a></h3>
                         <div class="card-body">
                             <?php
                             if ($part && count($history)) {

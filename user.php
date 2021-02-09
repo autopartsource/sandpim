@@ -122,7 +122,7 @@ $user->getUserByID($userid);
                         <div class="col-md-6 my-col">
                             <div class="card shadow-sm">
                                 <!-- Header -->
-                                <h3 class="card-header text-left">Edit User Account - <?php echo $user->name;?></h3>
+                                <h3 class="card-header text-start">Edit User Account - <?php echo $user->name;?></h3>
 
                                 <div class="card-body">
                                     <form method="post" action="./user.php?userid=<?php echo $userid; ?>">
@@ -147,7 +147,7 @@ $user->getUserByID($userid);
                         <div class="col-md-6 my-col">
                             <div class="card shadow-sm">
                                 <!-- Header -->
-                                <h3 class="card-header text-left">Application Category Permissions</h3>
+                                <h3 class="card-header text-start">Application Category Permissions</h3>
 
                                 <div class="card-body">
                                     <?php foreach($partcategories as $partcategory){
@@ -159,7 +159,7 @@ $user->getUserByID($userid);
                                         else {
                                             $buttonClass = 'btn btn-secondary';
                                         }
-                                        echo '<div><label id="categorySelectButton_' . $partcategory['id'] . '" class="'. $buttonClass .'" for="partcategory_'.$partcategory['id'].'">'.$partcategory['name'].'<input type="checkbox" id="partcategory_'.$partcategory['id'].'" onclick="addRemovePartcategory(\''.$userid.'\',\''.$partcategory['id'].'\')" name="partcategory_'.$partcategory['id'].'" '.$checked.' style="display:none"></label></div>';}?>
+                                        echo '<div style="margin:5px"><label id="categorySelectButton_' . $partcategory['id'] . '" class="'. $buttonClass .'" for="partcategory_'.$partcategory['id'].'">'.$partcategory['name'].'<input type="checkbox" id="partcategory_'.$partcategory['id'].'" onclick="addRemovePartcategory(\''.$userid.'\',\''.$partcategory['id'].'\')" name="partcategory_'.$partcategory['id'].'" '.$checked.' style="display:none"></label></div>';}?>
                                 </div>
                             </div>
                         </div>

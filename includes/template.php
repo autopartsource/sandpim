@@ -22,7 +22,7 @@
                     
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left"></h3>
+                        <h3 class="card-header text-start"></h3>
 
                         <div class="card-body">
                             

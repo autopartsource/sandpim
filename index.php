@@ -70,29 +70,29 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                     <div class="card shadow-sm">
                         
                         <!-- Header -->
-                        <h3 class="card-header text-left">Dashboard</h3>
+                        <h3 class="card-header text-start">Dashboard</h3>
                         
                         <!-- Main Content -->
                         <div class="card-body">
                             
                             <div class="card">
-                                <h5 class="card-header text-left">Issues <?php if($issuescount>0){echo '<span style="border-radius: 15px 15px 10px 1px;background: #dd0000;padding:10px;width:30px;height:15px;color:#ffffff;">'.$issuescount.'</span>'; }?></h5>
+                                <h5 class="card-header text-start">Issues <?php if($issuescount>0){echo '<span style="border-radius: 15px 15px 10px 1px;background: #dd0000;padding:10px;width:30px;height:15px;color:#ffffff;">'.$issuescount.'</span>'; }?></h5>
                                 <div class="card-body">
                                     <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="partissues-tab" data-toggle="tab" href="#partissues" role="tab" aria-controls="partissues" aria-selected="true">Parts</a>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" id="partissues-tab" data-bs-toggle="tab" href="#partissues" role="tab" aria-controls="partissues" aria-selected="true">Parts</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="appissues-tab" data-toggle="tab" href="#appissues" role="tab" aria-controls="appissues" aria-selected="true">Apps</a>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" id="appissues-tab" data-bs-toggle="tab" href="#appissues" role="tab" aria-controls="appissues" aria-selected="true">Apps</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="assetissues-tab" data-toggle="tab" href="#assetissues" role="tab" aria-controls="assetissues" aria-selected="true">Assets</a>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" id="assetissues-tab" data-bs-toggle="tab" href="#assetissues" role="tab" aria-controls="assetissues" aria-selected="true">Assets</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="systemissues-tab" data-toggle="tab" href="#systemissues" role="tab" aria-controls="systemissues" aria-selected="true">System</a>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" id="systemissues-tab" data-bs-toggle="tab" href="#systemissues" role="tab" aria-controls="systemissues" aria-selected="true">System</a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="sandpiperissues-tab" data-toggle="tab" href="#sandpiperissues" role="tab" aria-controls="sandpiperissues" aria-selected="true">Sandpiper</a>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" id="sandpiperissues-tab" data-bs-toggle="tab" href="#sandpiperissues" role="tab" aria-controls="sandpiperissues" aria-selected="true">Sandpiper</a>
                                         </li>
                                     </ul>
                                     <div class="tab-content" id="myTabContent">
@@ -158,30 +158,30 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                             <?php
                             if(count($appshistory) || count($assetshistory) || count($partshistory) || count($systemhistory)) {
                             echo '<div class="card">
-                                <h5 class="card-header text-left">History</h5>
+                                <h5 class="card-header text-start">History</h5>
                                 <div class="card-body">';
                                 echo '<ul class="nav nav-tabs" id="myTab" role="tablist">';
                                     if(count($appshistory)) {
                                     echo '<li class="nav-item">
-                                        <a class="nav-link" id="applications-tab" data-toggle="tab" href="#applications" role="tab" aria-controls="applications" aria-selected="true">Applications</a>
+                                        <a class="nav-link" id="applications-tab" data-bs-toggle="tab" href="#applications" role="tab" aria-controls="applications" aria-selected="true">Applications</a>
                                     </li>';
                                     }
 
                                     if(count($assetshistory)) {
                                     echo '<li class="nav-item">
-                                        <a class="nav-link" id="assets-tab" data-toggle="tab" href="#assets" role="tab" aria-controls="assets" aria-selected="false">Assets</a>
+                                        <a class="nav-link" id="assets-tab" data-bs-toggle="tab" href="#assets" role="tab" aria-controls="assets" aria-selected="false">Assets</a>
                                     </li>';
                                     }
 
                                     if(count($partshistory)) {
                                     echo '<li class="nav-item">
-                                        <a class="nav-link" id="parts-tab" data-toggle="tab" href="#parts" role="tab" aria-controls="parts" aria-selected="false">Parts</a>
+                                        <a class="nav-link" id="parts-tab" data-bs-toggle="tab" href="#parts" role="tab" aria-controls="parts" aria-selected="false">Parts</a>
                                     </li>';
                                     }
 
                                     if(count($systemhistory)) {
                                     echo '<li class="nav-item">
-                                        <a class="nav-link" id="system-tab" data-toggle="tab" href="#system" role="tab" aria-controls="system" aria-selected="false">System</a>
+                                        <a class="nav-link" id="system-tab" data-bs-toggle="tab" href="#system" role="tab" aria-controls="system" aria-selected="false">System</a>
                                     </li>';
                                     }
                                         
@@ -255,7 +255,6 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                         </div>
                         <!-- End of Main Content -->
                     </div>
-                    Little Turd
                 </div>
             </div>
         </div>

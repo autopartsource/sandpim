@@ -67,14 +67,14 @@ $history = $pim->getAppEvents($appid, 25);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">History for application <a href="./showApp.php?appid=<?php echo $appid?>"><span class="text-info"><?php echo $appid?></span></a></h3>
+                        <h3 class="card-header text-start">History for application <a href="./showApp.php?appid=<?php echo $appid?>"><span class="text-info"><?php echo $appid?></span></a></h3>
 
                         <div class="card-body">
                             
                             <!-- Vehicle and Attributes -->
                             <div class="card">
                                 <!-- Header -->
-                                <h4 class="card-header text-left"><?php echo $vcdb->niceMMYofBasevid($app['basevehicleid'])?></h4>
+                                <h4 class="card-header text-start"><?php echo $vcdb->niceMMYofBasevid($app['basevehicleid'])?></h4>
 
                                 <div class="card-body">
                                     <?php echo niceAppAttributes($app['attributes']);?>
@@ -84,7 +84,7 @@ $history = $pim->getAppEvents($appid, 25);
                             <!-- Logs -->
                             <div class="card shadow-sm">
                                 <!-- Header -->
-                                <h5 class="card-header text-left">Logs</h5>
+                                <h5 class="card-header text-start">Logs</h5>
 
                                 <div class="card-body scroll">
                                     <?php

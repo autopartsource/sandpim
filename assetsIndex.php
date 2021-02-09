@@ -50,22 +50,22 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                 <div class="col-xs-12 col-md-7 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Assets</h3>
+                        <h3 class="card-header text-start">Assets</h3>
 
                         <div class="card-body">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="search-tab" data-toggle="tab" href="#search" role="tab" aria-controls="search" aria-selected="true">Search</a>
+                                    <a class="nav-link active" id="search-tab" data-bs-toggle="tab" href="#search" role="tab" aria-controls="search" aria-selected="true">Search</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="upload-tab" data-toggle="tab" href="#upload" role="tab" aria-controls="upload" aria-selected="false">Upload Asset</a>
+                                    <a class="nav-link" id="upload-tab" data-bs-toggle="tab" href="#upload" role="tab" aria-controls="upload" aria-selected="false">Upload Asset</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="uri-tab" data-toggle="tab" href="#uri" role="tab" aria-controls="contact" aria-selected="false">Upload from URI</a>
+                                    <a class="nav-link" id="uri-tab" data-bs-toggle="tab" href="#uri" role="tab" aria-controls="contact" aria-selected="false">Upload from URI</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active text-left" id="search" role="tabpanel" aria-labelledby="search-tab">
+                                <div class="tab-pane fade show active text-start" id="search" role="tabpanel" aria-labelledby="search-tab">
                                     <div style="padding:10px;">
                                     <form method="get" action="assetsIndex.php">
                                         <div style="padding:3px;">Asset ID's
@@ -114,8 +114,8 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                             echo '
                                                 <div class="card shadow-sm">
                                                     <!-- Header -->
-                                                    <h5 class="card-header text-left">Search Results</h5>
-                                                    <div class="card-body">';
+                                                    <h5 class="card-header text-start">Search Results</h5>
+                                                    <div class="card-body scroll">';
                                         
                                             foreach($assetrecords as $assetrecord){
                                                 echo '<div style="padding: 5px;"><a href="./showAsset.php?assetid='.$assetrecord['assetid'].'" class="btn btn-secondary">'.$assetrecord['assetid'].'</a></div>';
@@ -156,7 +156,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                 <div class="col-xs-12 col-md-3 my-col colRight">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Recent Assets</h3>
+                        <h3 class="card-header text-start">Recent Assets</h3>
 
                         <div class="card-body scroll">
                             <?php

@@ -93,12 +93,12 @@ $alldeliverygroups=$pim->getDeliverygroups();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Receiver Profile</h3>
+                        <h3 class="card-header text-start">Receiver Profile</h3>
 
                         <div class="card-body">
                             <form action="" method="post">
                                 <div class="card">
-                                    <h5 class="card-header text-left">
+                                    <h5 class="card-header text-start">
                                         Name: <input type="text" name="profilename" value="<?php echo $profile['name']; ?>"/>
                                         <span style="float:right"><input name="submit" type="submit" value="Save"/> <input name="submit" type="submit" value="Delete"/></span>
                                     </h5>

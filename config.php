@@ -49,14 +49,14 @@ $configoptions=$configGet->getConfigOptions();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Configuration Parameters</h3>
+                        <h3 class="card-header text-start">Configuration Parameters</h3>
 
                         <div class="card-body">
                             <form method="post">
                                 <?php
                                     foreach ($configs as $config) {
                                         echo '<div class="form-group row">';
-                                            echo '<label for="static'.$config['configname'].'" class="col-sm-3 col-form-label text-left">'.$config['configname'].'</label>';
+                                            echo '<label for="static'.$config['configname'].'" class="col-sm-3 col-form-label text-start">'.$config['configname'].'</label>';
                                             echo '<div class="col-sm-9">';
                                                 echo '<input type="text" readonly class="form-control" id="static'.$config['configname'].'" value="'.$config['configvalue'].'">';
                                             echo '</div>';

@@ -67,7 +67,7 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
                         <!-- Header -->
-                        <h3 class="card-header text-left">Create A New Part</h3>
+                        <h3 class="card-header text-start">Create A New Part</h3>
                         <div class="card-body">
                             <form method="post">
                             <table border="1" cellpadding="5">

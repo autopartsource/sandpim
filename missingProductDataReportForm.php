@@ -34,7 +34,7 @@ $receiverprofiles=$pim->getReceiverprofiles();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Report parts missing product data</h3>
+                        <h3 class="card-header text-start">Report parts missing product data</h3>
 
                         <div class="card-body">
                             <form action="missingProductDataReportStream.php" method="get">

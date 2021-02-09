@@ -49,7 +49,7 @@ $issues=$pim->getIssues('SANDPIPER/%','%',0,array(1,2),20);
                     
                    <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Plans</h3>
+                        <h3 class="card-header text-start">Plans</h3>
                         <div class="card-body">
                             <?php foreach ($plans as $plan){
                             echo '<div><a href="./plan.php?id='.$plan['id'].'">'.$plan['description'].'</a></div>';
@@ -59,7 +59,7 @@ $issues=$pim->getIssues('SANDPIPER/%','%',0,array(1,2),20);
 
 
                     <div class="card shadow-sm">
-                        <h3 class="card-header text-left">Issues</h3>
+                        <h3 class="card-header text-start">Issues</h3>
                         <div class="card-body">
 
                             <?php foreach($issues as $issue)
@@ -74,7 +74,7 @@ $issues=$pim->getIssues('SANDPIPER/%','%',0,array(1,2),20);
                     
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Activity</h3>
+                        <h3 class="card-header text-start">Activity</h3>
                         <div class="card-body">
                         </div>
                     </div>

@@ -57,18 +57,18 @@ $groupedMakesCount = count($groupedmakes);
                     <div class="card shadow-sm">
                         
                         <!-- Header -->
-                        <h3 class="card-header text-left">Applications</h3>
+                        <h3 class="card-header text-start">Applications</h3>
                         
                         <div class="card-body">
-                            <div class="row padding my-row groupCol">
+                            <div class="d-flex flex-row justify-content-center">
                                 <?php
-                                    for($y = 0;$y < $groupedMakesCount;$y++) {
-                                        echo '<div class="my-col inner-col">';
-                                        foreach ($groupedmakes[$y] as $make) {
-                                            echo '<div class="groupButton"><a href="mmySelectModel.php?makeid=' . $make['id'] . '"class="btn btn-block btn-secondary my-btn" role="button" aria-disabled="true">' . $make['name'] . '</a></div>';
-                                        }   
-                                        echo '</div>';
-                                    }
+                                for($y = 0;$y < $groupedMakesCount;$y++) {
+                                    echo '<div class="d-flex flex-column align-items-stretch">';
+                                    foreach ($groupedmakes[$y] as $make) {
+                                        echo '<div class="groupButton"><a href="mmySelectModel.php?makeid=' . $make['id'] . '"class="btn btn-block btn-secondary my-btn" role="button" aria-disabled="true">' . $make['name'] . '</a></div>';
+                                    }   
+                                    echo '</div>';
+                                }
                                 ?>
                             </div>
                         </div>

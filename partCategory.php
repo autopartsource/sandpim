@@ -75,9 +75,9 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Part Category</h3>
+                        <h3 class="card-header text-start">Part Category</h3>
 
-                        <div class="card-body text-left">
+                        <div class="card-body text-start">
                             <form action="" method="post">
                                 <div class="card">
                                     <h6 class="card-header">

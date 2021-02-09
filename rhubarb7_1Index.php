@@ -16,8 +16,7 @@ $logs=new logs();
         <?php if (isset($_SESSION['userid'])){include('topnav.php');} ?>
         
         <!-- Header -->
-        <h1>Rhubarb 7.1</h1>
-        <h3>Tools for converting between Excel spreadsheets and PIES xml</h3>
+        <h3></h3>
         
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -29,8 +28,19 @@ $logs=new logs();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <div style="padding:10px;"><a href="convertExcelToPIES7_1upload.php">Create PIES xml from spreadsheet</a></div>
-                    <div style="padding:10px;"><a href="convertPIES7_1toExcelUpload.php">Flatten PIES xml to spreadsheet</a></div>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Rhubarb 7.1</h3>
+                            
+                        <div class="card-body">
+                            <h5 class="card-subtitle text-muted text-start">Tools for converting between Excel spreadsheets and PIES xml</h5>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <a class="btn btn-secondary" href="convertExcelToPIES7_1upload.php" style="margin:5px">Create PIES xml from spreadsheet</a>
+                            <a class="btn btn-secondary" href="convertPIES7_1toExcelUpload.php" style="margin:5px">Flatten PIES xml to spreadsheet</a>
+                        </div>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 

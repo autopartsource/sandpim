@@ -37,7 +37,7 @@ $notes=$pim->getAppNoteAttributeCounts();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-left">Fitment Notes</h3>
+                        <h3 class="card-header text-start">Fitment Notes</h3>
 
                         <div class="card-body scroll">
                             <table>

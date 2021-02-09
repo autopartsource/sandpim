@@ -486,7 +486,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-7 my-col colMain">
                     <div class="card shadow-sm">
-                        <h3 class="card-header text-left">
+                        <h3 class="card-header text-start">
                             Part Number <span class="text-info"><?php echo $part['partnumber']; ?></span>
                             <div style="float:right;">
                                 <?php if(count($history)){echo '<div><a class="btn btn-secondary" href="./partHistory.php?partnumber='.$partnumber.'">History</a></div>';} ?>
@@ -616,10 +616,10 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-3 my-col colRight">
                     <div class="card shadow-sm">
-                        <h4 class="card-header text-left">Applications</h4>
-                        <div class="card-body flex-column scroll">
+                        <h4 class="card-header text-start">Applications</h4>
+                        <div class="card-body d-flex flex-column scroll">
                             <?php foreach ($apps as $app) {
-                                echo '<a class="btn btn-block btn-secondary" href="showApp.php?appid=' . $app['id'] . '">' . $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']) . '</a>';} 
+                                echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">' . $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']) . '</a>';} 
                             ?>
                         </div>
                     </div>

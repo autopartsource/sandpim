@@ -61,11 +61,11 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
-                        <h3 class="card-header text-left">Parts<div style="float:right;"><a href="./newPart.php" class="btn btn-secondary">Create a new part</a></div></h3>
+                        <h3 class="card-header text-start">Parts<div style="float:right;"><a href="./newPart.php" class="btn btn-secondary">Create a new part</a></div></h3>
                         <div class="card-body">
                             
                             
-                            <div class="card text-left">
+                            <div class="card text-start">
                                 <h6 class="card-header">Find Existing Parts</h6>
                                 <div class="card-body">
                                     <form method="get" action="partsIndex.php">
@@ -82,7 +82,7 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                             <?php if (count($parts) > 0) { ?>
                             <div class="card">
                                 <h6 class="card-header">Search Results</h6>
-                                <div class="card-body">
+                                <div class="card-body scroll">
                                     <table border="1">
                                         <tr><th>Part Number</th><th>Type</th><th>Category</th><th>Description</th><th>Status</th></tr>
                                         <?php

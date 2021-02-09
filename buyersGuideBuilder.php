@@ -144,9 +144,6 @@ else
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
 
-        <!-- Header -->
-        <h3>Build Buyer's Guide for a list of partnumbers</h3>
-
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -157,14 +154,22 @@ else
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form method="post">
-                        <div>Partnumbers (one per line)</div>
-                        <div><textarea name="input" rows="10" cols="80"><?php echo $tabbedoutput;?></textarea></div>
-                        <div><input type="checkbox" id="renderxlsx" name="renderxlsx"/><label for="renderxlsx">Download As Excel Spreadsheet</label></div>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Build Buyer's Guide for a list of partnumbers</h3>
+
+                        <div class="card-body">
+                            <form method="post">
+                                <div>Partnumbers (one per line)</div>
+                                <div><textarea name="input" rows="10" cols="80"><?php echo $tabbedoutput;?></textarea></div>
+                                <div><input type="checkbox" id="renderxlsx" name="renderxlsx"/><label for="renderxlsx">Download As Excel Spreadsheet</label></div>
 
 
-                        <div style="padding:5px;"><input type="submit" name="submit" value="Generate"/></div>
-                    </form>
+                                <div style="padding:5px;"><input type="submit" name="submit" value="Generate"/></div>
+                            </form>
+                        </div>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 
