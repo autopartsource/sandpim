@@ -105,7 +105,7 @@ $partcategories=$pim->getPartCategories();
                                     
                                     echo '<div class="card">';
                                         echo '<h6 class="card-header text-start">';
-                                            echo '<button type="button" class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target="#collapse'.$slice['id'].'" aria-expanded="false">'.$slice['description'].'</button>';
+                                            echo '<button type="button" class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.$slice['id'].'" aria-expanded="false">'.$slice['description'].'</button>';
                                         echo '</h6>';
                                         echo '<div class="collapse" id="collapse'.$slice['id'].'">';
                                             echo '<div id="" class="card-body">';
@@ -170,13 +170,15 @@ $partcategories=$pim->getPartCategories();
                                 }?>
                                     
                                     
-                                    <div>
-                                        <form method="post">
-                                            <div>Part Category <select name="partcategory"><?php foreach($partcategories as $partcategory){echo '<option value="'.$partcategory['id'].'">'.$partcategory['name'].'</option>';} ?></select></div>
-                                            <div>Slice Type <select name="slicetype"><option value="pies-item">pies-item</option><option value="pies-item">aces-item</option><option value="pies-item">aces-app</option><option value="pies-item">asset</option></select></div>
-                                            <div>Subscription Metadata <input type="text" name="metadata"/></div>
-                                            <input type="submit" name="submit" value="Add"/>
-                                        </form>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <form method="post">
+                                                <div>Part Category <select name="partcategory"><?php foreach($partcategories as $partcategory){echo '<option value="'.$partcategory['id'].'">'.$partcategory['name'].'</option>';} ?></select></div>
+                                                <div>Slice Type <select name="slicetype"><option value="pies-item">pies-item</option><option value="pies-item">aces-item</option><option value="pies-item">aces-app</option><option value="pies-item">asset</option></select></div>
+                                                <div>Subscription Metadata <input type="text" name="metadata"/></div>
+                                                <input type="submit" name="submit" value="Add"/>
+                                            </form>
+                                        </div>
                                     </div>
                                     
                                     

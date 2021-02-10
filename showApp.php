@@ -609,9 +609,11 @@ if(isset($_GET['categories']))
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
-                        <h6 class="card-header text-start">
-                            <div style="float:right"><?php if(count($history)){echo '<a class="btn btn-secondary" href="./appHistory.php?appid='.$appid.'">History</a>';}?></div>
-                        </h6>
+                        <?php if(count($history)){
+                        echo '<h6 class="card-header text-start">';
+                            echo '<div style="float:right"><a class="btn btn-secondary" href="./appHistory.php?appid='.$appid.'">History</a>';
+                        echo '</h6>';
+                        }?>
                         <div class="card-body">
                             <?php if($app) {;?>
                             <div style="padding:10px;">

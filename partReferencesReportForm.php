@@ -1,4 +1,4 @@
-<?php
+c<?php
 include_once('./class/pimClass.php');
 $navCategory = 'reports';
 
