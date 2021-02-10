@@ -243,7 +243,7 @@ class sandpiper
     {
      $db = new mysql; $db->connect(); $slices=array();
 
-     if($stmt=$db->conn->prepare('select slice.description, sliceuuid,slicetype,slicemetadata from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=?'))
+     if($stmt=$db->conn->prepare('select slice.description, sliceuuid,slicetype,slicemetadata,slicehash from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=?'))
      {
       if($stmt->bind_param('s', $planuuid))
       {
@@ -253,7 +253,7 @@ class sandpiper
         {
          while($row = $db->result->fetch_assoc())
          {
-          $slices[]=array('slice_id'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'name'=>$row['description'],'slicemetadata'=>$row['slicemetadata']);
+          $slices[]=array('slice_id'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'name'=>$row['description'],'slicemetadata'=>$row['slicemetadata'],'hash'=>$row['slicehash']);
          }
         }
        }
