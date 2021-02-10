@@ -243,7 +243,7 @@ class sandpiper
     {
      $db = new mysql; $db->connect(); $slices=array();
 
-     if($stmt=$db->conn->prepare('select slice.description, sliceuuid,slicetype,slicemetadata,slicehash from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=?'))
+     if($stmt=$db->conn->prepare('select slice.id, slice.description, sliceuuid,slicetype,slicemetadata,slicehash from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=?'))
      {
       if($stmt->bind_param('s', $planuuid))
       {
@@ -253,7 +253,8 @@ class sandpiper
         {
          while($row = $db->result->fetch_assoc())
          {
-          $slices[]=array('slice_id'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'name'=>$row['description'],'slicemetadata'=>$row['slicemetadata'],'hash'=>$row['slicehash']);
+          $hash=$this->calculateSliceHash($row['id']);
+          $slices[]=array('slice_id'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'name'=>$row['description'],'slicemetadata'=>$row['slicemetadata'],'hash'=>$hash);
          }
         }
        }
@@ -649,6 +650,32 @@ class sandpiper
         
         
     }
+    
+    
+    function calculateSliceHash($sliceid)
+    {// id is the local record id of the the slice (not the UUID)
+        
+        $db = new mysql; $db->connect(); $idstring='';
+        if($stmt=$db->conn->prepare('select grainuuid from slice_filegrain, filegrain where slice_filegrain.grainid =filegrain.id and slice_filegrain.sliceid=? order by grainuuid'))
+        {
+            if($stmt->bind_param('i', $sliceid))
+            {
+                if($stmt->execute())
+                {
+                    if($db->result = $stmt->get_result())
+                    {
+                        while($row = $db->result->fetch_assoc())
+                        {
+                            $idstring.=$row['grainuuid'];           
+                        }
+                    }
+                }
+            }
+        }
+        $db->close();
+        return md5($idstring);
+    }
+    
     
     
     function uuidv4()
