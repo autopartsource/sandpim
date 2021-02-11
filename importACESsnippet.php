@@ -56,10 +56,7 @@ if (isset($_POST['input'])) {
     <body>
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
-
-        <!-- Header -->
-        <h1>Import small ACES xml</h1>
-
+        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -70,12 +67,19 @@ if (isset($_POST['input'])) {
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form method="post">
-                        <div style="padding:10px;"><div>Paste ACES XML text to import</div>
-                            <textarea name="input" rows="20" cols="100"></textarea>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Import small ACES xml</h3>
+
+                        <div class="card-body">
+                            <h5 class="card-subtitle mb-2 text-muted">Paste ACES XML text to import</h5>
+                            <form method="post">
+                                <textarea name="input" rows="20" cols="100"></textarea>
+                                <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
+                            </form>
                         </div>
-                        <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
-                    </form>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 

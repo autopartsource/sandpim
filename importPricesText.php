@@ -69,10 +69,7 @@ if (isset($_POST['input']))
     </head>
     <body>
         <!-- Navigation Bar -->
-<?php include('topnav.php'); ?>
-
-        <!-- Header -->
-        <h1>Import Part Prices</h1>
+        <?php include('topnav.php'); ?>
 
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -84,13 +81,25 @@ if (isset($_POST['input']))
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <?php foreach($errors as $error){echo '<div style="color:red;">'.$error.'</div>';}?>
-                    <form method="post">
-                        <div style="padding:10px;"><div>Paste tab-delimited data:<br/>Partnumber, <a href="./priceSheets.php">Pricesheet Number</a>, Amount, Currency Code, UoM, Price Type,  Effective Date, Expiration Date</div>
-                            <textarea name="input" rows="20" cols="100"></textarea>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Import Part Prices</h3>
+
+                        <div class="card-body">
+                            <?php foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}?>
+                            <form method="post">
+                                <div class="alert alert-secondary" role="alert">
+                                    <h6 class="alert-heading">Paste tab-delimited data:</h6>
+                                    <p>Partnumber, <a href="./priceSheets.php">Pricesheet Number</a>, Amount, Currency Code, UoM, Price Type,  Effective Date, Expiration Date</p>
+                                </div>
+                                    
+                                <textarea name="input" rows="20" cols="100"></textarea>
+                                
+                                <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
+                            </form>
                         </div>
-                        <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
-                    </form>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 

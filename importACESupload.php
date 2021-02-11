@@ -107,7 +107,7 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
                             <div class="card shadow-sm">
 
                                 <div class="card-body">
-                                    <?php if($error_msg){echo $error_msg;}?>
+                                    <?php if($error_msg){echo '<div class="alert alert-danger" role="alert">'.$error_msg.'</div>';}?>
                                     <form method="post" enctype="multipart/form-data">
                                         <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
 

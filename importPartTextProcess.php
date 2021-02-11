@@ -562,11 +562,7 @@ $importresults=$PIESgenerator->importPIESdata($items,$createparts,intval($_POST[
     </head>
     <body>
         <!-- Navigation Bar -->
-<?php include('topnav.php'); ?>
-
-        <!-- Header -->
-        <h1>Import part data from spreadsheet template</h1>
-        <h2>Step 2: Results</h2>
+        <?php include('topnav.php'); ?>
 
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -578,30 +574,37 @@ $importresults=$PIESgenerator->importPIESdata($items,$createparts,intval($_POST[
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Import part data from spreadsheet template</h3>
+
+                        <div class="card-body">
+                            <h5 class="card-subtitle mb-2 text-muted">Step 2: Results</h5>
+                            <?php if(count($parseerrors)>0){?>
+                            <div class="alert alert-danger" role="alert">Logic Problems</div>
+                            <table><?php
+                            foreach($parseerrors as $error)
+                            {
+                                echo '<tr><td style="text-align:left;">'.$error.'</td></tr>';
+                            }
+                            ?>
+                            </table>
+                            <?php }?>
+
+                            <?php if(count($importresults)>0){?>
+                            <div style="padding:10px;">Actions</div>
+                            <table><?php
+                            foreach($importresults as $importresult)
+                            {
+                                echo '<tr><td style="text-align:left;">'.$importresult.'</td></tr>';
+                            }
+                            ?>
+                            </table>
+                            <?php }?>
+                        </div>
+                    </div>
                 
-                    <?php if(count($parseerrors)>0){?>
-                    <div style="padding:10px;">Logic Problems</div>
-                    <table><?php
-                    foreach($parseerrors as $error)
-                    {
-                        echo '<tr><td style="text-align:left;">'.$error.'</td></tr>';
-                    }
-                    ?>
-                    </table>
-                    <?php }?>
-
-
-
-                    <?php if(count($importresults)>0){?>
-                    <div style="padding:10px;">Actions</div>
-                    <table><?php
-                    foreach($importresults as $importresult)
-                    {
-                        echo '<tr><td style="text-align:left;">'.$importresult.'</td></tr>';
-                    }
-                    ?>
-                    </table>
-                    <?php }?>
+                    
 
                 </div>
                 <!-- End of Main Content -->

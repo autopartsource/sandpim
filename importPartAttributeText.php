@@ -107,12 +107,29 @@ if (isset($_POST['input'])) {
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form method="post">
-                        <div style="padding:10px;"><div>Paste three or four tab delimited columns: Partnumber, attributename or PAdbID, value [, UoM]</div><div>Part numbers are validated. If the second column is a number, it is assumed to be a PAdb ID. Non-numeric values are assumed to be user-defined attribute names. Attribute names GTIN, parttypeid, lifecyclestatus are special cases that will apply to the part if used.</div>
-                            <textarea name="input" rows="20" cols="100"></textarea>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Import Part Attributes</h3>
+
+                        <div class="card-body">
+                            <form method="post">
+                                <div class="alert alert-secondary" role="alert">
+                                    <h6 class="alert-heading">Paste three or four tab delimited columns:</h6>
+                                    <p>Partnumber, attributename or PAdbID, value [, UoM]</p>
+                                </div>
+                                    <hr>
+                                    <p>Part numbers are validated. If the second column is a number, it is assumed to be a PAdb ID.
+                                    <br>Non-numeric values are assumed to be user-defined attribute names.
+                                    <br>Attribute names GTIN, parttypeid, lifecyclestatus are special cases that will apply to the part if used.</p>
+                                
+                                
+                                <textarea name="input" rows="20" cols="100"></textarea>
+                                
+                                <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
+                            </form>
                         </div>
-                        <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
-                    </form>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
                 
