@@ -92,10 +92,7 @@ if (isset($_POST['input'])) {
     </head>
     <body>
         <!-- Navigation Bar -->
-<?php include('topnav.php'); ?>
-
-        <!-- Header -->
-        <h1>Import Part Attributes</h1>
+        <?php include('topnav.php'); ?>
 
         <!-- Content Container -->
         <div class="container-fluid padding my-container">

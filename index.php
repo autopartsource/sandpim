@@ -193,7 +193,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         </div>';
                                         if(count($appshistory)) {
                                             echo '<div class="tab-pane fade mt-3" id="applications" role="tabpanel" aria-labelledby="applications-tab">'
-                                            . '<table><tr><th>Date/Time</th><th>User</th><th>AppID</th><th>Change Description</th></tr>';
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>AppID</th><th>Change Description</th></tr>';
                                                 foreach ($appshistory as $record) {
                                                     $nicedescription = $record['description'];
                                                     if (strlen($nicedescription) > $logpreviewlength) {
@@ -208,7 +208,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         if (count($assetshistory)) 
                                         {
                                             echo '<div class="tab-pane fade mt-3" id="assets" role="tabpanel" aria-labelledby="assets-tab">'
-                                            . '<table><tr><th>Date/Time</th><th>User</th><th>AssetID</th><th>Change Description</th></tr>';
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>AssetID</th><th>Change Description</th></tr>';
                                                 foreach ($assetshistory as $record) {
                                                     $nicedescription = $record['description'];
                                                     if (strlen($nicedescription) > $logpreviewlength) {
@@ -223,7 +223,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         if (count($partshistory)) 
                                         {
                                             echo '<div class="tab-pane fade mt-3" id="parts" role="tabpanel" aria-labelledby="parts-tab">'
-                                            . '<table><tr><th>Date/Time</th><th>User</th><th>Partnumber</th><th>Change Description</th></tr>';
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Partnumber</th><th>Change Description</th></tr>';
                                             foreach ($partshistory as $record) {
                                                 $nicedescription = $record['description'];
                                                 if (strlen  ($nicedescription) > $logpreviewlength) {
@@ -237,7 +237,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         if(count($systemhistory))
                                         {
                                             echo '<div class="tab-pane fade mt-3" id="system" role="tabpanel" aria-labelledby="system-tab">'
-                                            . '<table><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Change Description</th></tr>';
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Change Description</th></tr>';
                                             foreach ($systemhistory as $record) {
                                                 $nicedescription = $record['description'];
                                                 if (strlen  ($nicedescription) > $logpreviewlength) {

@@ -54,14 +54,16 @@ $profiles = $pim->getReceiverprofiles();
 			<!-- Header -->
                         <h3 class="card-header text-start">Receiver Profiles</h3>
                         <div class="card-body">
+                            <div class="d-grid gap-2 col-4 mx-auto">
                             <?php
                             foreach ($profiles as $profile) 
                             {
-                                echo '<div class="groupButton"><a class="btn btn-block btn-secondary my-btn" role="button" aria-disabled="true" href="./receiverProfile.php?id='.$profile['id'].'">' . $profile['name'].'</a></div>';
+                                echo '<a class="btn btn-secondary" role="button" aria-disabled="true" href="./receiverProfile.php?id='.$profile['id'].'">' . $profile['name'].'</a>';
                             }
                             ?>
                             <hr>
                             <div><form method="post"><input type="text" name="profilename"/><input type="submit" name="submit" value="Add"/></form></div>
+                            </div>
                         </div>
                     </div>
                 </div>

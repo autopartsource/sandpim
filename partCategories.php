@@ -61,18 +61,38 @@ $partcategories = $pim->getPartCategories();
 
                         <div class="card-body">
                             <?php
+                            echo '<table class="table">';
+                            echo '<thead><tr><th scope="col">Category</th><th scope="col">Part Count</th><th scope="col"></th></tr></thead>';
+                            
                             foreach ($partcategories as $partcategory) 
                             {
                                 $count=$pim->countPartsByPartcategory($partcategory['id']);
-                                echo '<div class="card">';
-                                    echo '<h6 class="card-header text-start"><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a>';
-                                    if(!$count){echo '<div style="float:right;"><form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form></div>';}
-                                    echo '</h6>';
-                                    echo '<div class="card-body text-start">';
-                                        echo 'Part Count: <span style="font-weight: bold;">'.$count.'<span>';
-                                    echo '</div>';
-                                echo '</div>';
+                                echo '<tr>';
+                                    echo '<td><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a></td>';
+                                    echo '<td><strong>'.$count.'<strong></td>';
+                                    echo '<td>';
+                                        if(!$count){
+                                            echo '<form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form>';
+                                        }
+                                    echo '</td>';
+                                echo '</tr>';
                             }
+                            
+                            echo '</table>';
+                            ?>
+                            <?php
+//                            foreach ($partcategories as $partcategory) 
+//                           {
+//                                $count=$pim->countPartsByPartcategory($partcategory['id']);
+//                                echo '<div class="card">';
+//                                    echo '<h6 class="card-header text-start"><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a>';
+//                                    if(!$count){echo '<div style="float:right;"><form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form></div>';}
+//                                    echo '</h6>';
+//                                    echo '<div class="card-body text-start">';
+//                                        echo 'Part Count: <span style="font-weight: bold;">'.$count.'<span>';
+//                                    echo '</div>';
+//                                echo '</div>';
+//                            }
                             ?>
                             <hr>
                             <div style="padding:10px;">

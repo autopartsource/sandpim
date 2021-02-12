@@ -46,16 +46,19 @@ $count=intval($_GET['count']);
                     <div class="card shadow-sm">
 			<!-- Header -->
                         <h3 class="card-header text-start">UUID Generator</h3>
+                            
+                        <div class="card-body">
                             <form>
                                 <div style="padding:5px;">
                                 <input name="submit" type="submit" value="Generate"/> <select name="count"><option value="1">1</option><option value="10">10</option><option value="100">100</option></select> UUIDs</div>
                             </form>
-                        <div class="card-body">
+                            <div class="scroll">
                             <?php for($i=0; $i<=$count-1; $i++)
                             {
-                                echo '<div>'.$pim->uuidv4().'</div>';
+                                echo '<ul class="list-group list-group-flush"><li class="list-group-item">'.$pim->uuidv4().'</li></ul>';
                             }
                             ?>
+                            </div>
                         </div>
                     </div>
                 </div>

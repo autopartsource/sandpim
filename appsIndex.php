@@ -60,16 +60,20 @@ $groupedMakesCount = count($groupedmakes);
                         <h3 class="card-header text-start">Applications</h3>
                         
                         <div class="card-body">
-                            <div class="d-flex flex-row justify-content-center">
+                            <div class="container">
+                                <div class="row">
                                 <?php
                                 for($y = 0;$y < $groupedMakesCount;$y++) {
-                                    echo '<div class="d-flex flex-column align-items-stretch">';
+                                    echo '<div class="col-sm">';
+                                    echo '<div class="d-grid gap-2 mx-auto">';
                                     foreach ($groupedmakes[$y] as $make) {
-                                        echo '<div class="groupButton"><a href="mmySelectModel.php?makeid=' . $make['id'] . '"class="btn btn-block btn-secondary my-btn" role="button" aria-disabled="true">' . $make['name'] . '</a></div>';
+                                        echo '<a href="mmySelectModel.php?makeid=' . $make['id'] . '"class="btn btn-secondary" role="button" aria-disabled="true">' . $make['name'] . '</a>';
                                     }   
+                                    echo '</div>';
                                     echo '</div>';
                                 }
                                 ?>
+                                </div>
                             </div>
                         </div>
                     </div>

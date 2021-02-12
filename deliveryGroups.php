@@ -48,16 +48,16 @@ $deliverygroups = $pim->getDeliverygroups();
                         <h3 class="card-header text-start">Delivery Groups</h3>
 
                         <div class="card-body">
-                            
+                            <div class="d-grid gap-2 col-4 mx-auto">
                             <?php 
                             foreach ($deliverygroups as $deliverygroup) 
                             {
-                                echo '<div class="groupButton"><a class="btn btn-block btn-secondary my-btn" role="button" aria-disabled="true" href="./deliveryGroup.php?id='.$deliverygroup['id'].'">' . $deliverygroup['description'].'</a></div>';
+                                echo '<a class="btn btn-secondary" role="button" aria-disabled="true" href="./deliveryGroup.php?id='.$deliverygroup['id'].'">' . $deliverygroup['description'].'</a>';
                             }
                             ?>
                             <hr>
                             <div><form method="post"><input type="text" name="deliverygroupname" size="30"/><input type="submit" name="submit" value="Add"/></form></div>
-                            
+                            </div>
                         </div>
                     </div>
                     

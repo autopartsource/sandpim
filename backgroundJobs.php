@@ -35,7 +35,7 @@ $jobs=$pim->getBackgroundjobs('%', '%');
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
 
-                    <table>
+                    <table class="table">
                         <tr><th>ID</th><th>Type</th><th>Status</th><th>Completed on</th></tr>
                         <?php
                         foreach ($jobs as $job) 

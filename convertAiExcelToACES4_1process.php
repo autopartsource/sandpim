@@ -318,11 +318,6 @@ if(isset($_POST['showtext']) || count($errors)>0 || count($schemaresults)>0 || !
     <body>
         <!-- Navigation Bar -->
         <?php if (isset($_SESSION['userid'])){include('topnav.php');} ?>
-
-        <!-- Header -->
-        <h1>Build ACES xml from spreadsheet</h1>
-        <h2>Step 2: Analyze results and download XML</h2>
-        <div style="font-style: italic;">Validation done against VCdb: <?php echo $pcdbVersion;?> and PCdb version: <?php echo $vcdbVersion;?></div>
         
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -334,40 +329,51 @@ if(isset($_POST['showtext']) || count($errors)>0 || count($schemaresults)>0 || !
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <?php
-                    if(!$validUpload){?>
-                    <div style="padding:10px;background-color:#FF0000;font-size:1.5em;">Your input file has problems:</div>
-                    <table><?php
-                    foreach($inputFileLog as $result)
-                    { // render each element of schema problems into a table
-                        echo '<tr><td style="text-align:left;background-color:#FF0000;">'.$result.'</td></tr>';
-                    }
-                    ?>
-                    </table>
-                    <?php }?>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Build ACES xml from spreadsheet</h3>
 
-                    <?php if(count($schemaresults)>0){?>
-                    <div style="padding:10px;background-color:#FF8800;font-size:1.5em;">Your input data causes schema (XSD) problems. Here they are:</div>
-                    <table><?php
-                    foreach($schemaresults as $result)
-                    { // render each element of schema problems into a table
-                     echo '<tr><td style="text-align:left;background-color:#FF8800;">'.$result.'</td></tr>';
-                    } ?>
-                    </table>
-                    <?php }else{if(strlen($acesxmlstring)>0){?>
-                    <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $acesxmlstring;?></textarea></div>
-                    <?php }}?>
+                        <div class="card-body">
+                            <h5 class="alert alert-secondary">Step 2: Analyze results and download XML</h5>
+                            <div class="alert alert-info"><em>Validation done against VCdb: <?php echo $pcdbVersion;?> and PCdb version: <?php echo $vcdbVersion;?></em></div>
+                            
+                            <?php
+                            if(!$validUpload){?>
+                            <div style="padding:10px;background-color:#FF0000;font-size:1.5em;">Your input file has problems:</div>
+                            <table class="table"><?php
+                            foreach($inputFileLog as $result)
+                            { // render each element of schema problems into a table
+                                echo '<tr><td style="text-align:left;background-color:#FF0000;">'.$result.'</td></tr>';
+                            }
+                            ?>
+                            </table>
+                            <?php }?>
 
-                    <?php if(count($errors)>0){?>
-                    <div style="padding:10px;background-color:yellow;font-size:1.5em;margin: 10px;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was produced and rendered to the text box above. You could copy/paste it into a text editor and save that as a .xml file. However, ';} ?>your input data contains invalid references (included in the xml above) to the AutoCare database versions selected. Here are the ones we detected:</div>
-                    <table><?php
-                    foreach($errors as $error)
-                    {
-                        echo '<tr><td style="text-align:left;background-color:yellow;">'.$error.'</td></tr>';
-                    }
-                    ?>
-                    </table>
-                    <?php }?>
+                            <?php if(count($schemaresults)>0){?>
+                            <div style="padding:10px;background-color:#FF8800;font-size:1.5em;">Your input data causes schema (XSD) problems. Here they are:</div>
+                            <table class="table"><?php
+                            foreach($schemaresults as $result)
+                            { // render each element of schema problems into a table
+                             echo '<tr><td style="text-align:left;background-color:#FF8800;">'.$result.'</td></tr>';
+                            } ?>
+                            </table>
+                            <?php }else{if(strlen($acesxmlstring)>0){?>
+                            <div style="padding:10px;"><textarea rows="20" cols="150"><?php echo $acesxmlstring;?></textarea></div>
+                            <?php }}?>
+
+                            <?php if(count($errors)>0){?>
+                            <div style="padding:10px;background-color:yellow;font-size:1.5em;margin: 10px;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was produced and rendered to the text box above. You could copy/paste it into a text editor and save that as a .xml file. However, ';} ?>your input data contains invalid references (included in the xml above) to the AutoCare database versions selected. Here are the ones we detected:</div>
+                            <table class="table"><?php
+                            foreach($errors as $error)
+                            {
+                                echo '<tr><td style="text-align:left;background-color:yellow;">'.$error.'</td></tr>';
+                            }
+                            ?>
+                            </table>
+                            <?php }?>
+                        </div>
+                    </div>
+                    
                  
                 </div>
                 <!-- End of Main Content -->

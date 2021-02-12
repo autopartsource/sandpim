@@ -56,13 +56,16 @@ $groupedModelsCount = count($groupedmodels);
                         <h3 class="card-header text-start">Applications (<?php echo $vcdb->makeName($makeid); ?>)</h3>
 
                         <div class="card-body">
-                            <div class="d-flex flex-row justify-content-center">
+                            <div class="container">
+                                <div class="row">
                                 <?php
                                     for($y = 0;$y < $groupedModelsCount;$y++) {
-                                        echo '<div class="d-flex flex-column align-items-stretch">';
+                                        echo '<div class="col-sm">';
+                                        echo '<div class="d-grid gap-2 mx-auto">';
                                         foreach ($groupedmodels[$y] as $model) {
-                                            echo '<div class="groupButton" style="padding:5px;"><a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$model['name'].'</a></div>';
+                                            echo '<a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$model['id'].'"class="btn btn-secondary" role="button" aria-disabled="true">'.$model['name'].'</a>';
                                         }
+                                        echo '</div>';
                                         echo '</div>';
                                     }
                                 ?>

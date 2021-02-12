@@ -49,7 +49,7 @@ foreach($content as $make => $models)
     foreach($models as $model=>$blocks)
     {
         echo '<br/>'.$model.'<br/>';
-        echo '<table border="1">';
+        echo '<table class="table" border="1">';
         echo '<tr><th>Years</th><th>Notes</th>';
         foreach($columnkeys as $key=>$trash)
         {

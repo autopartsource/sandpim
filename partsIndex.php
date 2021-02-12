@@ -83,7 +83,7 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                             <div class="card">
                                 <h6 class="card-header">Search Results</h6>
                                 <div class="card-body scroll">
-                                    <table border="1">
+                                    <table class="table" border="1">
                                         <tr><th>Part Number</th><th>Type</th><th>Category</th><th>Description</th><th>Status</th></tr>
                                         <?php
                                         foreach ($parts as $part) {

@@ -115,13 +115,14 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                                 <div class="card shadow-sm">
                                                     <!-- Header -->
                                                     <h5 class="card-header text-start">Search Results</h5>
-                                                    <div class="card-body scroll">';
+                                                    <div class="card-body scroll">
+                                                    <div class="d-grid gap-2 col-6 mx-auto">';
                                         
                                             foreach($assetrecords as $assetrecord){
-                                                echo '<div style="padding: 5px;"><a href="./showAsset.php?assetid='.$assetrecord['assetid'].'" class="btn btn-secondary">'.$assetrecord['assetid'].'</a></div>';
+                                                echo '<a href="./showAsset.php?assetid='.$assetrecord['assetid'].'" class="btn btn-secondary">'.$assetrecord['assetid'].'</a>';
                                             }
                                             
-                                            echo '</div></div>';
+                                            echo '</div></div></div>';
                                         } else { // no results found
                                             if (isset($_GET['submit'])) { // user submitted a search
                                                 echo '<hr>';
@@ -161,7 +162,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                         <div class="card-body scroll">
                             <?php
                                 if (count($assets)) {
-                                    echo '<table><tr><th>AssetID</th><th>Description</th></tr>';
+                                    echo '<table class="table"><tr><th>AssetID</th><th>Description</th></tr>';
                                     foreach ($assets as $record) {
                                         echo '<tr><td><a href="showAsset.php?assetid='.$record['assetid'].'" class="btn btn-secondary">' . $record['assetid'] . '</a></td><td>' . $record['description'] . '</td></tr>';
                                     }

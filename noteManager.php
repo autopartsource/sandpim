@@ -40,7 +40,7 @@ $notes=$pim->getAppNoteAttributeCounts();
                         <h3 class="card-header text-start">Fitment Notes</h3>
 
                         <div class="card-body scroll">
-                            <table>
+                            <table class="table">
                                 <div id="top"></div>
                                 <tr><th>Note</th><th>Use Count</th><th>Action</th></tr>
                                 <?php

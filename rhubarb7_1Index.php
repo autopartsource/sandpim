@@ -33,11 +33,12 @@ $logs=new logs();
                         <h3 class="card-header text-start">Rhubarb 7.1</h3>
                             
                         <div class="card-body">
-                            <h5 class="card-subtitle text-muted text-start">Tools for converting between Excel spreadsheets and PIES xml</h5>
-                        </div>
-                        <div class="d-flex flex-column">
-                            <a class="btn btn-secondary" href="convertExcelToPIES7_1upload.php" style="margin:5px">Create PIES xml from spreadsheet</a>
-                            <a class="btn btn-secondary" href="convertPIES7_1toExcelUpload.php" style="margin:5px">Flatten PIES xml to spreadsheet</a>
+                            <h5 class="alert alert-secondary" type="alert">Tools for converting between Excel spreadsheets and PIES xml</h5>
+                        
+                            <div class="d-grid gap-2 col-6 mx-auto">
+                                <a class="btn btn-secondary" href="convertExcelToPIES7_1upload.php" style="margin:5px">Create PIES xml from spreadsheet</a>
+                                <a class="btn btn-secondary" href="convertPIES7_1toExcelUpload.php" style="margin:5px">Flatten PIES xml to spreadsheet</a>
+                            </div>
                         </div>
                     </div>
                     

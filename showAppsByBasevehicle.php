@@ -313,7 +313,7 @@ ksort($fitmentcolumnkeys);
 
                                 echo '<label><input type="checkbox" id="copymove" name="copymove"/>Copy mode</label>';
 
-                                echo '<table><tr><td></td>';
+                                echo '<table class="table"><tr><td></td>';
                                 foreach ($fitmentcolumnkeys as $fitmentcolumnkey => $trash) {
                                     echo '<td><div style="padding:5px;">' . $fitmentcolumnkey . '</div></td>';
                                 } echo '</tr>';

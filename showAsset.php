@@ -129,7 +129,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                             <h3 class="card-header text-start">Record for Asset: <span class="text-info"><?php echo $assetid;?></span><div style="float:right;"><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></div></h3>
                             <div class="row no-gutters">
                                 <div class="card-body">
-                                    <table>
+                                    <table class="table">
                                         <tr><th>Description</th>
                                             <td><?php echo $assetrecord['description']; ?></td>
                                             <td class="mobile" rowspan="13"><img width="<?php echo $configGet->getConfigValue('imageAssetTumbnailRenderWidth', 350); ?>" src="<?php echo $imgsrc; ?>"/></td></tr>

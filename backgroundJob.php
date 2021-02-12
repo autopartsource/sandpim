@@ -48,7 +48,7 @@ $job = $pim->getBackgroundjob(intval($_GET['id']));
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <form action="" method="post">
-                        <table>
+                        <table class="table">
                             <tr><th>ID</th><td><?php echo $job['id']; ?></td></tr>
                             <tr><th>Type</th><td><?php echo $job['jobtype']; ?></td></tr>
                             <tr><th>Status</th><td><?php echo $job['status']; ?></td></tr>

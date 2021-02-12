@@ -89,7 +89,7 @@ $history = $pim->getAppEvents($appid, 25);
                                 <div class="card-body scroll">
                                     <?php
                                     if ($app && count($history)) {
-                                        echo '<table><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
+                                        echo '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
                                         foreach ($history as $record) {
                                             echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $record['description'] . '</td><td>' . $record['new_oid'] . '</td></tr>';
                                         }

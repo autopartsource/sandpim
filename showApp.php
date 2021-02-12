@@ -622,7 +622,7 @@ if(isset($_GET['categories']))
                               if($pcdb->positionName($app['positionid'])=='not found'){echo '<div style="color:red;">Position id '.$app['positionid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
                              ?>
 
-                            <table border="1" cellpadding="5">
+                            <table class="table" border="1" cellpadding="5">
                                     <tr><th><a href="./showAppsByBasevehicle.php?<?php echo implode('&', $selectedcategoriesurlvars); ?>&makeid=<?php echo $mmy['MakeID']; ?>&modelid=<?php echo $mmy['ModelID']; ?>&yearid=<?php echo $mmy['year']; ?>&submit=Show+Applications" class="btn btn-secondary">Base Vehicle</a></th><td align="left"><?php echo '<a href="appsIndex.php"  class="btn btn-secondary">' . $vcdb->makeName($mmy['MakeID']) . '</a>  <a href="mmySelectModel.php?makeid=' . $mmy['MakeID'] . '" class="btn btn-secondary">' . $vcdb->modelName($mmy['ModelID']) . '</a> <a href="mmySelectYear.php?makeid=' . $mmy['MakeID'] . '&modelid=' . $mmy['ModelID'] . '" class="btn btn-secondary">' . $mmy['year'] . '</a>'; ?></td></tr>
                                     <tr><th>Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber']; ?>" class="btn btn-secondary"><?php echo $app['partnumber']; ?></a></td></tr>
                                     <tr><th>Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid; ?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach ($favoriteparttypes as $parttype) { ?> <option value="<?php echo $parttype['id']; ?>"<?php if ($parttype['id'] == $app['parttypeid']) {

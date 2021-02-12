@@ -23,8 +23,8 @@ $partcategories = $pim->getPartCategories();
 <?php include('topnav.php'); ?>
 
         <!-- Header -->
-        <h1>Digital Assets (metadata) import from structured text</h1>
-        <h3>Step 1: copy/paste data from the template spreadsheet (include header row)</h3>
+        <h1></h1>
+        <h3></h3>
 
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
@@ -36,16 +36,23 @@ $partcategories = $pim->getPartCategories();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form method="post" action="importAssetTextProcess.php">
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Digital Assets (metadata) import from structured text</h3>
 
-                        <div style="padding:10px;"><div>Tab-delimited text</div>
-                            <textarea name="assets" rows="6" cols="130"></textarea>
+                        <div class="card-body">
+                            <form method="post" action="importAssetTextProcess.php">
+                                <div class="alert alert-secondary" role="alert">Step 1: copy/paste data from the template spreadsheet (include header row)</div>
+                                <div style="padding:10px;"><div>Tab-delimited text</div>
+                                    <textarea name="assets" rows="6" cols="130"></textarea>
+                                </div>
+                                
+                                <input type="checkbox" name="doimport"/>Do import (uncheck for test run)<div style="padding:10px;"><input name="submit" type="submit" value="Next"/></div>
+                                <div class="alert alert-warning">Assets with non-existent partnumbers will be skipped</div>
+                                <div class="alert alert-warning">Assets with existing AssetID's will be skipped</div>
+                            </form>
                         </div>
-
-                        <input type="checkbox" name="doimport"/>Do import (uncheck for test run)<div style="padding:10px;"><input name="submit" type="submit" value="Next"/></div>
-                        <div>Assets with non-existent partnumbers will be skipped</div>
-                        <div>Assets with existing AssetID's will be skipped</div>
-                    </form>
+                    </div>
                 
                 </div>
                 <!-- End of Main Content -->

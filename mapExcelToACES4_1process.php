@@ -511,7 +511,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelookup
                     <?php
                     if(!$validUpload){?>
                     <div style="padding:10px;background-color:#FF0000;font-size:1.5em;">Your input file has problems:</div>
-                    <table><?php
+                    <table class="table"><?php
                     foreach($inputFileLog as $result)
                     { // render each element of schema problems into a table
                         echo '<tr><td style="text-align:left;background-color:#FF0000;">'.$result.'</td></tr>';
@@ -522,7 +522,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelookup
 
                     <?php if(count($schemaresults)>0){?>
                     <div style="padding:10px;background-color:#FF8800;font-size:1.5em;">Your input data causes schema (XSD) problems. Here they are:</div>
-                    <table><?php
+                    <table class="table"><?php
                     foreach($schemaresults as $result)
                     { // render each element of schema problems into a table
                      echo '<tr><td style="text-align:left;background-color:#FF8800;">'.$result.'</td></tr>';
@@ -534,7 +534,7 @@ if(isset($_POST['showtext']) || (count($errors)>0 && !isset($_POST['ignorelookup
 
                     <?php if(count($errors)>0 && !isset($_POST['ignorelookupfails'])){?>
                     <div style="padding:10px;background-color:yellow;font-size:1.5em;"><?php if(count($schemaresults)==0){echo 'XSD-validated output was (or could be) produced. However, ';} ?>your input data contains logic problems. Here are the ones we detected:</div>
-                    <table><?php
+                    <table class="table"><?php
                     foreach($errors as $error)
                     {
                         echo '<tr><td style="text-align:left;background-color:yellow;">'.$error.'</td></tr>';

@@ -145,10 +145,6 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
         <!-- Navigation Bar -->
 <?php include('topnav.php'); ?>
 
-        <!-- Header -->
-        <h1>Import part data from spreadsheet template</h1>
-        <h2>Step 2: Results</h2>
-
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -159,30 +155,35 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                
-                    <?php if(count($parseerrors)>0){?>
-                    <div style="padding:10px;">Logic Problems</div>
-                    <table><?php
-                    foreach($parseerrors as $error)
-                    {
-                        echo '<tr><td style="text-align:left;">'.$error.'</td></tr>';
-                    }
-                    ?>
-                    </table>
-                    <?php }?>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Import part data from spreadsheet template</h3>
 
+                        <div class="card-body">
+                            <div class="alert alert-secondary">Step 2: Results</div>
+                            <?php if(count($parseerrors)>0){?>
+                            <div class="alert alert-danger">Logic Problems</div>
+                            <table class="table"><?php
+                            foreach($parseerrors as $error)
+                            {
+                                echo '<tr><td style="text-align:left;">'.$error.'</td></tr>';
+                            }
+                            ?>
+                            </table>
+                            <?php }?>
 
-
-                    <?php if(count($importresults)>0){?>
-                    <div style="padding:10px;">Actions</div>
-                    <table><?php
-                    foreach($importresults as $importresult)
-                    {
-                        echo '<tr><td style="text-align:left;">'.$importresult.'</td></tr>';
-                    }
-                    ?>
-                    </table>
-                    <?php }?>
+                            <?php if(count($importresults)>0){?>
+                            <div class="alert alert-success">Actions</div>
+                            <table class="table"><?php
+                            foreach($importresults as $importresult)
+                            {
+                                echo '<tr><td style="text-align:left;">'.$importresult.'</td></tr>';
+                            }
+                            ?>
+                            </table>
+                            <?php }?>
+                        </div>
+                    </div>
 
                 </div>
                 <!-- End of Main Content -->

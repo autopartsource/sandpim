@@ -52,9 +52,6 @@ if(isset($_POST['input']))
         <!-- Navigation Bar -->
 <?php include('topnav.php'); ?>
 
-        <!-- Header -->
-        <h1>Import Part Prices</h1>
-
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -65,13 +62,22 @@ if(isset($_POST['input']))
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <?php foreach($errors as $error){echo '<div style="color:red;">'.$error.'</div>';}?>
-                    <form method="post">
-                        <div style="padding:10px;"><div>Paste pipe-delimited data:<br/>BrandID|BrandName|BrandOwnerID|BrandOwner|ParentID|ParentCompany</div>
-                            <textarea name="input" rows="20" cols="100"></textarea>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">Import Part Prices</h3>
+
+                        <div class="card-body">
+                            <?php foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}?>
+                            <form method="post">
+                                <div class="alert alert-secondary" role="alert">
+                                    <h6 class="alert-heading">Paste pipe-delimited data:</h6>
+                                    <p>BrandID|BrandName|BrandOwnerID|BrandOwner|ParentID|ParentCompany</p>
+                                </div>
+                                <textarea name="input" rows="20" cols="100"></textarea>
+                                <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
+                            </form>
                         </div>
-                        <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
-                    </form>
+                    </div>
                 </div>
                 <!-- End of Main Content -->
                 

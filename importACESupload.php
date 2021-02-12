@@ -91,7 +91,7 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
 
                                 <div class="card-body">
                                     <?php if($jobs){ ?>
-                                    <table border="1">
+                                    <table class="table" border="1">
                                         <tr><th>Job Type</th><th>Status</th><th>File</th><th>Created On</th><th>Actions</th></tr>
                                         <?php foreach ($jobs as $job) { ?>
                                             <form method="post"><input type="hidden" name="jobid" value="<?php echo $job['id']; ?>"/><tr><td><?php echo $job['jobtype']; ?></td><td><?php echo $job['status']; ?></td><td><?php echo basename($job['inputfile']); ?> <?php echo basename($job['outputfile']); ?></td><td><?php echo $job['datetimecreated']; ?></td><td><?php if ($job['status'] == 'uploaded') {

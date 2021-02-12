@@ -58,13 +58,16 @@ $groupedYearsCount = count($groupedyears);
                         <h3 class="card-header text-start">Applications (<?php echo $vcdb->makeName($makeid).' '.$vcdb->modelName($modelid);?>)</h3>
 
                         <div class="card-body">
-                            <div class="d-flex flex-row justify-content-center">
+                            <div class="container">
+                                <div class="row">
                                 <?php
                                     for($y = 0;$y < $groupedYearsCount;$y++) {
-                                        echo '<div class="d-flex flex-column align-items-stretch">';
+                                        echo '<div class="col-sm">';
+                                        echo '<div class="d-grid gap-2 mx-auto">';
                                         foreach ($groupedyears[$y] as $year) {
-                                            echo '<div class="groupButton" style="padding:5px;"><a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary btn-block" role="button" aria-disabled="true">'.$year['id'].'</a></div>';
+                                            echo '<a href="appsSelectCategory.php?makeid='.$makeid.'&modelid='.$modelid.'&yearid='.$year['id'].'"class="btn btn-secondary" role="button" aria-disabled="true">'.$year['id'].'</a>';
                                         }
+                                        echo '</div>';
                                         echo '</div>';
                                     }
                                 ?>

@@ -579,10 +579,10 @@ $importresults=$PIESgenerator->importPIESdata($items,$createparts,intval($_POST[
                         <h3 class="card-header text-start">Import part data from spreadsheet template</h3>
 
                         <div class="card-body">
-                            <h5 class="card-subtitle mb-2 text-muted">Step 2: Results</h5>
+                            <h5 class="alert alert-secondary">Step 2: Results</h5>
                             <?php if(count($parseerrors)>0){?>
                             <div class="alert alert-danger" role="alert">Logic Problems</div>
-                            <table><?php
+                            <table class="table"><?php
                             foreach($parseerrors as $error)
                             {
                                 echo '<tr><td style="text-align:left;">'.$error.'</td></tr>';
@@ -592,8 +592,8 @@ $importresults=$PIESgenerator->importPIESdata($items,$createparts,intval($_POST[
                             <?php }?>
 
                             <?php if(count($importresults)>0){?>
-                            <div style="padding:10px;">Actions</div>
-                            <table><?php
+                            <div class="alert alert-success">Actions</div>
+                            <table class="table"><?php
                             foreach($importresults as $importresult)
                             {
                                 echo '<tr><td style="text-align:left;">'.$importresult.'</td></tr>';
