@@ -560,6 +560,83 @@ class sandpiper
         return $slicerecordid;
     }
 
+    /***
+     * Delete a slice by UUID
+     * 
+     * Arguments
+     *  $sliceuuid - UUID string representing a slice
+     * 
+     * Returns: nothing
+     * 
+     * Does not consider context of a plan or user or permission or any kind.
+     * Any grains in this slice are unlinked and then garbage-collected if the
+     * un-linking orphans the grain.
+     */
+    function deleteSlice($sliceuuid)
+    {
+        
+        if($slicerecordid=$this->sliceExists($sliceuuid))
+        {
+            $db = new mysql; $db->connect();
+            if($stmt=$db->conn->prepare('delete from slice_filegrain where sliceid=?'))
+            {
+                if($stmt->bind_param('i', $slicerecordid))
+                {
+                    if($stmt->execute())
+                    {                        
+                        $this->logEvent('',  '',  'all grains unlinked from slice '.$sliceuuid);   
+                    }
+                }         
+            }
+ 
+            if($stmt=$db->conn->prepare('delete from slice where sliceid=?'))
+            {
+                if($stmt->bind_param('i', $slicerecordid))
+                {
+                    if($stmt->execute())
+                    {
+                        $this->logEvent('',  '',  'slice '.$sliceuuid.' (record id '.$slicerecordid.')');   
+                    }
+                }
+            }
+            
+            $db->close();
+            $this->deleteOrphanFilegrains();
+        }
+    }
+    
+    
+    /**
+     * Deletes records from filegrains table that have not reference in slice_filegrain
+     * Logs the activity 
+     * 
+     * Returns the number of records deleted
+     */
+    function deleteOrphanFilegrains()
+    {
+        // quantify the records that will be deleted so we can log them
+        $db = new mysql; $db->connect(); $recordcount=0;
+        if($stmt=$db->conn->prepare('select grainuuid, source from filegrain where filegrain.id not in (select grainid from slice_filegrain)'))
+        {
+            if($stmt->execute())
+            {
+                if($db->result = $stmt->get_result())
+                {
+                    while($row = $db->result->fetch_assoc())
+                    {
+                        $this->deleteGrain($row['grainuuid']);
+                        $this->logEvent('',  '',  $row['grainuuid'], 'grain ('.$row['source'].') was found to be orphaned and delted');
+                        $recordcount++;
+                    } 
+                }
+            }
+        }
+        $db->close();
+        return $recordcount;
+    }
+    
+    
+    
     function isSliceTypeValid($type)
     {
         $validtypes=array('aces-file','pies-file');
@@ -952,8 +1029,39 @@ class slices extends sandpiper
             
             break;
         
+        case 'DELETE':
+
+            if($this->looksLikeAUUID($this->requesturi[4]))
+            {// level after the verb smells like a UUID. It is a grain ID
+                // verify that the plan actually included this grain and that the plan stipulates that the client is primary
+                               
+                if($this->isClientPrimary())
+                {// connecting client is the primary - they are allowed to drop slices
+                    if($this->isSliceInPlan($this->planuuid,$this->requesturi[4]))
+                    {
+                        $this->deleteSlice($this->requesturi[4]);
+                        $this->response= json_encode(array('message'=>'slice deleted'));
+                        $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'slice deleted');
+                    }
+                    else
+                    {// requested grain does not exist to delete
+                        $this->response= json_encode(array('message'=>'request to delete a slices that is not in the plan'));
+                    }
+                }
+                else
+                {// client is not primary in the plan - not allowed to delete this grain
+                    $this->response= json_encode(array('message'=>'Client is not primary in this plan - It is not authorized to delete slices.'));
+                }
+            }
+            else
+            {// something other than a sliceid was after the verb
+                $this->response= json_encode(array('message'=>'expected a slice uuid after slices/ got this instead:'.$this->requesturi[4]));
+            }
+            
+            break;
+
         
-        
+            
         default:
             // unhandled method
             
