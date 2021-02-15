@@ -1152,8 +1152,7 @@ class grains extends sandpiper
                                 {//
                                     $inflatepayload=true;
                                 }
-
-                                $this->response= json_encode($this->getSubscribedFilegrains($this->planuuid,'%','%', $detaillevel, $inflatepayload));                        
+                                $this->response= json_encode($this->getSubscribedFilegrains($this->planuuid, $uripart, '%' ,$detaillevel, $inflatepayload));                        
                             }
                             else
                             {// unexpected - /v1/grains/slice/not-a-uuid
