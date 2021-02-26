@@ -21,9 +21,6 @@ $jobs=$pim->getBackgroundjobs('%', '%');
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
 
-        <!-- Header -->
-        <h1>ACES background export jobs</h1>
-
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -34,21 +31,33 @@ $jobs=$pim->getBackgroundjobs('%', '%');
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start">ACES background export jobs</h3>
 
-                    <table class="table">
-                        <tr><th>ID</th><th>Type</th><th>Status</th><th>Completed on</th></tr>
-                        <?php
-                        foreach ($jobs as $job) 
-                        {
-                            echo '<tr>';
-                            echo '<td><a href="./backgroundJob.php?id='.$job['id'].'">'.$job['id'].'</a></td>';
-                            echo '<td>'.$job['jobtype'].'</td>';
-                            echo '<td>'.$job['status'].'</td>';
-                            echo '<td>'.$job['datetimeended'].'</td>';
-                            echo '</tr>';
-                        }
-                        ?>
-                    </table>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr><th>ID</th><th>Type</th><th>Status</th><th>Completed on</th></tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                foreach ($jobs as $job) 
+                                {
+                                    echo '<tr>';
+                                    echo '<td><a href="./backgroundJob.php?id='.$job['id'].'">'.$job['id'].'</a></td>';
+                                    echo '<td>'.$job['jobtype'].'</td>';
+                                    echo '<td>'.$job['status'].'</td>';
+                                    echo '<td>'.$job['datetimeended'].'</td>';
+                                    echo '</tr>';
+                                }
+                                ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    
 
                 </div>
                 <!-- End of Main Content -->

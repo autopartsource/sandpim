@@ -570,7 +570,7 @@ if(isset($_GET['categories']))
                 xhr.open('GET', 'ajaxGetDocumentation.php?path='+btoa(path));
                 xhr.onload = function()
                 {
-                    docdiv.setAttribute("data-original-title",xhr.responseText);
+                    docdiv.setAttribute("title",xhr.responseText);
                 };
                 console.log(xhr.responseText);
                 xhr.send();
@@ -580,7 +580,7 @@ if(isset($_GET['categories']))
 
         </script>
     </head>
-    <body onload="setStatusColor();populateDoc()">
+    <body onload="setStatusColor();populateDoc();">
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
@@ -715,7 +715,7 @@ if(isset($_GET['categories']))
                                     <tr><th>Quantity<br/>(on this vehicle)</th>
                                         <td align="right">
                                             <input id="quantityperapp" type="text" name="quantityperapp" size="1" value="<?php echo $app['quantityperapp']; ?>"/><button onclick='updateApp(<?php echo $appid; ?>,"text","quantityperapp");'>Update Qty</button>
-                                            <button id="doc-qty" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Fitment Quantity" data-toggle="tooltip" data-placement="top">?</button>
+                                            <button id="doc-qty" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Fitment Quantity" data-bs-toggle="tooltip" data-bs-placement="top">?</button>
                                         </td></tr>
                                     <tr><th>Fitment<br/>Assets</th>
                                         <td align="right">
@@ -736,13 +736,13 @@ if(isset($_GET['categories']))
                                                 <button onclick="addAsset();">+</button>
                                             </div>
                                             <?php }?>
-                                            <button id="doc-asset" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Fitment Assets/Representation" data-toggle="tooltip" data-placement="top">?</button>
+                                            <button id="doc-asset" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Fitment Assets/Representation" data-bs-toggle="tooltip" data-bs-placement="top">?</button>
                                         </td>
                                     </tr>
                                     <tr><th>Internal<br/>Notes</th>
                                         <td>
                                             <textarea id="internalnotes" cols="60" rows="5"><?php echo $app['internalnotes']; ?></textarea><div><button onclick='updateApp(<?php echo $appid; ?>,"text","internalnotes");'>Save</button></div>
-                                            <button id="doc-internalnotes" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Internal Notes" data-toggle="tooltip" data-placement="top">?</button>
+                                            <button id="doc-internalnotes" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Internal Notes" data-bs-toggle="tooltip" data-bs-placement="top">?</button>
                                         </td>
                                     <tr>
                                 <tr><th>IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id']; ?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid']; ?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid']; ?></div><div style="clear:both;"></div></td><tr>
@@ -751,7 +751,7 @@ if(isset($_GET['categories']))
                                     <td id="value-cosmetic" class="appcosmetic-noncosmetic" align="right">
                                         <div id="cosmetic-text"></div>
                                         <button onclick='updateApp(<?php echo $appid; ?>,"button","cosmetic");'>Cosmetic</button>
-                                        <button id="doc-cosmetic" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Cosmetic" data-toggle="tooltip" data-placement="top">?</button>
+                                        <button id="doc-cosmetic" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Cosmetic" data-bs-toggle="tooltip" data-bs-placement="top">?</button>
                                     </td>
                                 </tr>
                                 <tr><th id="label-status" class="apppart-active">Status</th><td id="value-status" class="apppart-active" align="right"><select id="status" onchange="updateApp(<?php echo $appid; ?>,'select','status');"><option value="0">Active</option><option value="1"<?php if ($app['status'] == 1) {

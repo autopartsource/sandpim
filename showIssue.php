@@ -259,11 +259,11 @@ foreach ($issues as $issue) {
 
                 for (var i = 0; i < selectedEndNode.length; i++) {
 //                    console.log(selectedEndNode[i].getAttribute('id'));
-                    document.getElementById(selectedEndNode[i].getAttribute('id')).setAttribute("class", "navbarEndNode pl-5");
+                    document.getElementById(selectedEndNode[i].getAttribute('id')).setAttribute("class", "navbarEndNode ps-5");
                 }
                 for (var i = 0; i < selectedEndNode.length; i++) {
 //                    console.log(selectedEndNode[i].getAttribute('id'));
-                    document.getElementById(selectedEndNode[i].getAttribute('id')).setAttribute("class", "navbarEndNode pl-5");
+                    document.getElementById(selectedEndNode[i].getAttribute('id')).setAttribute("class", "navbarEndNode ps-5");
                 }
 
                 for (var i = 0; i < selectedArray.length; i++) {
@@ -310,35 +310,35 @@ foreach ($issues as $issue) {
                     <?php
                     foreach ($tree as $key0 => $data0) {
                         if (is_array($data0) && array_key_exists('issuehash', $data0)) {
-                            echo '<a id="issue_' . $data0['id'] . '" data-issue="' . base64_encode(json_encode($data0)) . '" class="navbarEndNode pl-2" onclick="renderIssue(\'' . intval($data0['id']) . '\');">' . $data0['description'] . '</a>';
+                            echo '<a id="issue_' . $data0['id'] . '" data-issue="' . base64_encode(json_encode($data0)) . '" class="navbarEndNode ps-2" onclick="renderIssue(\'' . intval($data0['id']) . '\');">' . $data0['description'] . '</a>';
                         } else {
-                            echo '<button id="nav_'.$key0.'" class="dropdown-btn pl-2" data-toggle="collapse" data-target="#' . $key0 . '">' . $key0 . '<i class="fa fa-caret-down"></i></button>';
+                            echo '<button id="nav_'.$key0.'" class="dropdown-btn ps-2" data-toggle="collapse" data-target="#' . $key0 . '">' . $key0 . '<i class="fa fa-caret-down"></i></button>';
                             echo '<div class="collapse" id="' . $key0 . '" aria-expanded="false">';
 
                             foreach ($data0 as $key1 => $data1) {
                                 if (is_array($data1) && array_key_exists('issuehash', $data1)) {// this is an end-node
-                                    echo '<a id="issue_' . $data1['id'] . '" data-issue="' . base64_encode(json_encode($data1)) . '" class="navbarEndNode pl-3" onclick="renderIssue(\'' . intval($data1['id']) . '\');">' . $data1['description'] . '</a>';
+                                    echo '<a id="issue_' . $data1['id'] . '" data-issue="' . base64_encode(json_encode($data1)) . '" class="navbarEndNode ps-3" onclick="renderIssue(\'' . intval($data1['id']) . '\');">' . $data1['description'] . '</a>';
                                 } else {
-                                    echo '<button id="nav_' . $key0 . '-' . $key1 . '" class="dropdown-btn pl-3" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '">' . $key1 . '<i class="fa fa-caret-down"></i></button>';
+                                    echo '<button id="nav_' . $key0 . '-' . $key1 . '" class="dropdown-btn ps-3" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '">' . $key1 . '<i class="fa fa-caret-down"></i></button>';
                                     echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '" aria-expanded="false">';
 
                                     foreach ($data1 as $key2 => $data2) {
                                         if (is_array($data2) && array_key_exists('issuehash', $data2)) {// this is an end-node
-                                            echo '<a id="issue_' . $data2['id'] . '" data-issue="' . base64_encode(json_encode($data2)) . '" class="navbarEndNode pl-4" onclick="renderIssue(\'' . intval($data2['id']) . '\');">' . $data2['description'] . '</a>';
+                                            echo '<a id="issue_' . $data2['id'] . '" data-issue="' . base64_encode(json_encode($data2)) . '" class="navbarEndNode ps-4" onclick="renderIssue(\'' . intval($data2['id']) . '\');">' . $data2['description'] . '</a>';
                                         } else {
-                                            echo '<button id="nav_' . $key0 . '-' . $key1 . '-' . $key2 . '" class="dropdown-btn pl-4" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '-' . $key2 . '">' . $key2 . '<i class="fa fa-caret-down"></i></button>';
+                                            echo '<button id="nav_' . $key0 . '-' . $key1 . '-' . $key2 . '" class="dropdown-btn ps-4" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '-' . $key2 . '">' . $key2 . '<i class="fa fa-caret-down"></i></button>';
                                             echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '-' . $key2 . '" aria-expanded="false">';
 
                                             foreach ($data2 as $key3 => $data3) {
                                                 if (is_array($data3) && array_key_exists('issuehash', $data3)) {// this is an end-node
-                                                    echo '<a id="issue_' . $data3['id'] . '" data-issue="' . base64_encode(json_encode($data3)) . '" class="navbarEndNode pl-5" onclick="renderIssue(\'' . intval($data3['id']) . '\');">' . $data3['description'] . '</a>';
+                                                    echo '<a id="issue_' . $data3['id'] . '" data-issue="' . base64_encode(json_encode($data3)) . '" class="navbarEndNode ps-5" onclick="renderIssue(\'' . intval($data3['id']) . '\');">' . $data3['description'] . '</a>';
                                                 } else {
-                                                    echo '<button id="nav_' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '" class="dropdown-btn pl-5" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '">' . $key3 . '<i class="fa fa-caret-down"></i></button>';
+                                                    echo '<button id="nav_' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '" class="dropdown-btn ps-5" data-toggle="collapse" data-target="#' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '">' . $key3 . '<i class="fa fa-caret-down"></i></button>';
                                                     echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '" aria-expanded="false">';
 
                                                     foreach ($data3 as $key4 => $data4) {
                                                         if (is_array($data4) && array_key_exists('issuehash', $data4)) {// this is an end-node
-                                                            echo '<a id="issue_' . $data4['id'] . '" data-issue="' . base64_encode(json_encode($data4)) . '" class="navbarEndNode pl-6" onclick="renderIssue(\'' . intval($data4['id']) . '\');">' . $data4['description'] . '</a>';
+                                                            echo '<a id="issue_' . $data4['id'] . '" data-issue="' . base64_encode(json_encode($data4)) . '" class="navbarEndNode ps-6" onclick="renderIssue(\'' . intval($data4['id']) . '\');">' . $data4['description'] . '</a>';
                                                         } 
                                                     }//end of 4th inner loop
                                                     echo '</div>';
@@ -369,7 +369,7 @@ foreach ($issues as $issue) {
 //                                echo '<div class="collapse" id="' . $key0 . '" aria-expanded="false">';
 //                            
 //                                foreach ($data0 as $key1 => $data1) {
-//                                    echo '<ul class="flex-column pl-1 nav">';
+//                                    echo '<ul class="flex-column ps-1 nav">';
 //
 //                                    if (is_array($data1) && array_key_exists('issuehash', $data1)) {// this is an end-node
 //                                        echo '<li class="nav-item">';
@@ -381,7 +381,7 @@ foreach ($issues as $issue) {
 //                                        echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '" aria-expanded="false">';
 //
 //                                        foreach ($data1 as $key2 => $data2) {
-//                                            echo '<ul class="flex-column nav pl-2">';
+//                                            echo '<ul class="flex-column nav ps-2">';
 //
 //                                            if (is_array($data2) && array_key_exists('issuehash', $data2)) {// this is an end-node
 //                                                echo '<li class="nav-item">';
@@ -394,7 +394,7 @@ foreach ($issues as $issue) {
 //                                                echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '-' . $key2 . '" aria-expanded="false">';
 //
 //                                                foreach ($data2 as $key3 => $data3) {
-//                                                    echo '<ul class="flex-column nav pl-3">';
+//                                                    echo '<ul class="flex-column nav ps-3">';
 //
 //                                                    if (is_array($data3) && array_key_exists('issuehash', $data3)) {// this is an end-node
 //                                                        echo '<li class="nav-item">';
@@ -406,7 +406,7 @@ foreach ($issues as $issue) {
 //                                                        echo '<div class="collapse" id="' . $key0 . '-' . $key1 . '-' . $key2 . '-' . $key3 . '" aria-expanded="false">';
 //
 //                                                        foreach ($data3 as $key4 => $data4) {
-//                                                            echo '<ul class="flex-column nav pl-4">';
+//                                                            echo '<ul class="flex-column nav ps-4">';
 //
 //                                                            if (is_array($data4) && array_key_exists('issuehash', $data4)) {// this is an end-node
 //                                                                echo '<li class="nav-item">';

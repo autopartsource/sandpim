@@ -61,9 +61,9 @@ $profiles = $pim->getReceiverprofiles();
                                 echo '<a class="btn btn-secondary" role="button" aria-disabled="true" href="./receiverProfile.php?id='.$profile['id'].'">' . $profile['name'].'</a>';
                             }
                             ?>
+                            </div>
                             <hr>
                             <div><form method="post"><input type="text" name="profilename"/><input type="submit" name="submit" value="Add"/></form></div>
-                            </div>
                         </div>
                     </div>
                 </div>

@@ -19,10 +19,6 @@ $databaseversions=$pim->getAutocareDatabaseList('pcdb');
         <!-- Navigation Bar -->
         <?php if (isset($_SESSION['userid'])){include('topnav.php');} ?>
 
-        <!-- Header -->
-        <div style="padding:5px;"><img src="./rhubarb_from_pies.png" width="120"/></div>
-        <h1>Flatten PIES (7.1) xml file to an Excel spreadsheet</h1>
-
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -33,13 +29,22 @@ $databaseversions=$pim->getAutocareDatabaseList('pcdb');
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    <form method="post" action="convertPIES7_1toExcelProcess.php" enctype="multipart/form-data">
-                        <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" accept=".xml"/></div>
-                        <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
-                        <div style="padding:5px;text-align: left;">PCdb Version for validation <select name="pcdbversion"><?php foreach($databaseversions as $databaseversion){ echo '<option value="'.$databaseversion['name'].'">'.$databaseversion['versiondate'].'</option>';}?></select></div>
-                        <div style="padding:5px;"><input name="submit" type="submit" value="Generate Excel file"/></div>
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header text-start"><img src="./rhubarb_from_pies.png" class="img-thumbnail" width="120"/>Flatten PIES (7.1) xml file to an Excel spreadsheet</h3>
 
-                    </form>
+                        <div class="card-body">
+                            <form method="post" action="convertPIES7_1toExcelProcess.php" enctype="multipart/form-data">
+                                <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" accept=".xml"/></div>
+                                <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
+                                <div style="padding:5px;text-align: left;">PCdb Version for validation <select name="pcdbversion"><?php foreach($databaseversions as $databaseversion){ echo '<option value="'.$databaseversion['name'].'">'.$databaseversion['versiondate'].'</option>';}?></select></div>
+                                <hr>
+                                <div style="padding:5px;"><input name="submit" type="submit" value="Generate Excel file"/></div>
+
+                            </form>
+                        </div>
+                    </div>
+                    
                 </div>
                 <!-- End of Main Content -->
 

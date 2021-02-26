@@ -44,9 +44,6 @@ $partcategories=$pim->getPartCategories();
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
-        <!-- Header -->
-        <h2><a href="./sandpiper.php">Plans</a> >> <?php echo $plan['description']?></h2>
-        
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -57,8 +54,9 @@ $partcategories=$pim->getPartCategories();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                    
-                    
+                    <div class="card shadow-sm">
+			<!-- Header -->
+                        <h3 class="card-header"><a href="./sandpiper.php">Plans</a> >> <?php echo $plan['description']?></h3>
                         <div class="card-body">
                             <div class="card">
                                 <h6 class="card-header text-start">Receiver Profile: <?php echo'<a href="./receiverProfile.php?id='.$receiverprofile['id'].'">'.$receiverprofile['name'].'</a></h6>';?>
@@ -83,26 +81,26 @@ $partcategories=$pim->getPartCategories();
                                                 echo '<div><button type="button" class="btn btn-outline-primary">Update</button></div>';
                                             echo '</div>';
                                         echo '</div>';
-                                        
+
                                     ?>
                                 </div>
                             </div>
-                            
+
                             <div class="card">
                                 <h6 class="card-header text-start">Slice Subscriptions (Part Categories)</h6>
                                 <div class="card-body">
                                 <?php
-                                    
-                                    
+
+
                                 foreach($slices as $slice)
                                 {
                                     $partcategory=$pim->getPartCategory($slice['partcategory']);
                                     $grainlist=$sandpiperPrimary->getSliceGrainList($slice['sliceid']);
-                                        
+
                                     $grainlisthash= $sandpiperPrimary->updateSliceHash($slice['sliceid']);
-                                    
-                                    
-                                    
+
+
+
                                     echo '<div class="card">';
                                         echo '<h6 class="card-header text-start">';
                                             echo '<button type="button" class="btn btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.$slice['id'].'" aria-expanded="false">'.$slice['description'].'</button>';
@@ -163,32 +161,31 @@ $partcategories=$pim->getPartCategories();
                                                     echo '<div class="col-sm-12"><a class="btn btn-outline-secondary" href="./sliceGrains.php?sliceid='.$slice['sliceid'].'">Grain List</a></div>';
                                                 echo '</div>';
 
-                                                
+
                                             echo '</div>';
                                         echo '</div>';
                                     echo '</div>';
                                 }?>
-                                    
-                                    
+
+
                                     <div class="card">
                                         <div class="card-body">
                                             <form method="post">
                                                 <div>Part Category <select name="partcategory"><?php foreach($partcategories as $partcategory){echo '<option value="'.$partcategory['id'].'">'.$partcategory['name'].'</option>';} ?></select></div>
                                                 <div>Slice Type <select name="slicetype"><option value="pies-item">pies-item</option><option value="pies-item">aces-item</option><option value="pies-item">aces-app</option><option value="pies-item">asset</option></select></div>
                                                 <div>Subscription Metadata <input type="text" name="metadata"/></div>
+                                                <hr>
                                                 <input type="submit" name="submit" value="Add"/>
                                             </form>
                                         </div>
                                     </div>
-                                    
-                                    
+
                                 </div>
                             </div>
+                            
                         </div>
-                                              
-                    
-                     
-                
+                        
+                    </div>
                 </div>
                 <!-- End of Main Content -->
                 
