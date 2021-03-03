@@ -68,7 +68,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
    if(count($fields)==1){continue;} // empty row
    if($recordnumber==0){$recordnumber++;continue;}
    $asset=array();
-   $PartNumber=trim($fields[0]);
+   $PartNumber=trim($fields[$PartNumberFieldIndex]);
 
    if($FileNameFieldIndex>=0 && trim($fields[$FileNameFieldIndex])!=''){$asset['FileName']=trim($fields[$FileNameFieldIndex]);}
    if($AssetIDFieldIndex>=0 && trim($fields[$AssetIDFieldIndex])!=''){$asset['AssetID']=trim($fields[$AssetIDFieldIndex]);}
