@@ -76,7 +76,7 @@ class asset
    $stmt->bind_param('sssis',$part,$assetid,$assettypecode,$sequence,$representation);
    $stmt->execute();
    $id=$db->conn->insert_id;
-  }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }//else{echo $db->conn->error;}//$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
   
   return $id;   
