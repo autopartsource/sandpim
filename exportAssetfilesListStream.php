@@ -1,23 +1,39 @@
 <?php
+/* stream a txt file of space-delimited list of assset filenames (ex: PRC914_1.jpg)
+ * for use in compiling a zip script to build an asset bundle for a receiver profile.
+ * If a filename contains a space, it will be wrapped in double-quotes.
+ *
+ * 
+ * 
+ */
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/logsClass.php');
 
 $pim = new pim;
+$assets = new asset;
+$logs = new logs;
+
+session_start();
+
+if(isset($_SESSION['userid']))
+{
+ $userid=$_SESSION['userid'];
+}
+else
+{// no session exists - user not logged in
+ $logs->logSystemEvent('accesscontrol',0, 'exportAssetfilesListStream.php - access denied to unauthenticated user from '.$_SERVER['REMOTE_ADDR']);
+ exit; 
+}
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
- $logs = new logs;
- $userid=0;
- if(isset($_SESSION['userid'])){$userid=$_SESSION['userid'];}
  $logs->logSystemEvent('accesscontrol',$userid, 'exportAssetfilesListStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
 
-$assets = new asset;
-$filecontents='';
 $filenamekeyedlist=array();
 $filenamelist=array();
-
 
 $profile=$pim->getReceiverprofileById(intval($_GET['receiverprofile']));
 
