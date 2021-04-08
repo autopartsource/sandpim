@@ -333,6 +333,7 @@ class setup
         fileHashMD5 varchar(255) not null,
         filesize int unsigned not null,
 	uripublic tinyint unsigned not null,
+        languagecode varchar(255) NOT NULL,
         PRIMARY KEY (id),
         INDEX idx_assetid (assetid),
         INDEX idx_oid (oid),
