@@ -2,6 +2,7 @@
 include_once('./class/vcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/pricingClass.php');
+include_once('./class/interchangeClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/packagingClass.php');
 include_once('./class/PIES7_1GeneratorClass.php');
@@ -9,6 +10,7 @@ include_once('./class/PIES7_1GeneratorClass.php');
 $vcdb = new vcdb;
 $pim = new pim;
 $pricing = new pricing;
+$interchange= new interchange;
 $assets = new asset;
 $packaging=new packaging;
 $PIESgenerator=new PIESgenerator();
@@ -153,64 +155,101 @@ foreach($partnumbers as $partnumber)
     }
     
  //--------------------- packages -------------------------------    
- $packages=$packaging->getPackagesByPartnumber($partnumber);
-// print_r($packages);
-    
-    
-    
+  $packages=$packaging->getPackagesByPartnumber($partnumber);
+
+  foreach($packages as $package)  
+  {
+   $itempackage=array();   
+   $itempackage['PackageUOM']=$package['packageuom'];
+   $itempackage['QuantityofEaches']=round($package['quantityofeaches'],0);
+   $itempackage['InnerQuantity']=$package['innerquantity'];
+   $itempackage['InnerQuantityUOM']=$package['innerquantityuom'];
+   $itempackage['Weight']=$package['weight'];
+   $itempackage['WeightsUOM']=$package['weightsuom'];
+   $itempackage['PackageLevelGTIN']=$package['packagelevelGTIN'];
+   $itempackage['PackageBarCodeCharacters']=$package['packagebarcodecharacters'];
+   $itempackage['ShippingHeight']=$package['shippingheight'];
+   $itempackage['ShippingWidth']=$package['shippingwidth'];
+   $itempackage['ShippingLength']=$package['shippinglength'];
+   $itempackage['DimensionsUOM']=$package['dimensionsuom'];
+   
+   $item['packages'][]=$itempackage;   
+  }
+   
     
  //--------------------- kits -------------------------------    
  
  //--------------------- interchanges -------------------------------    
 
+  $interchanges=$interchange->getInterchangeByPartnumber($partnumber);
+  //    $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],
+  //    'competitorpartnumber'=>$row['competitorpartnumber'],
+  //    'brandAAIAID'=>$row['brandAAIAID'],
+  //    'interchangequantity'=>$row['interchangequantity'],
+  //    'uom'=>$row['uom'],
+  //    'interchangenotes'=>base64_decode($row['interchangenotes']),
+  //    'internalnotes'=>base64_decode($row['internalnotes']));
+
+  
+  foreach($interchanges as $interchangerecord)
+  {
+   $iteminterchange=array();
+   $iteminterchange['CompetitorPartNumber']=$interchangerecord['competitorpartnumber'];
+   $iteminterchange['BrandAAIAID']=$interchangerecord['brandAAIAID'];
+   $iteminterchange['InterchangeQuantity']=$interchangerecord['interchangequantity'];
+   $iteminterchange['UOM']=$interchangerecord['uom'];
+   $iteminterchange['InterchangeNotes']=$interchangerecord['interchangenotes'];
+   $item['interchanges'][]=$iteminterchange;         
+  }
+  
+  
  //--------------------- assets -------------------------------    
     
-    $digialassetconnections=$assets->getAssetsConnectedToPart($partnumber);
-    if($digialassetconnections && count($digialassetconnections))
-    {
-     foreach($digialassetconnections as $digitalassetconnection)
-     {
-      $digitalassetrecords=$assets->getAssetRecordsByAssetid($digitalassetconnection['assetid']);
-      foreach($digitalassetrecords as $digitalassetrecord)
-      {  
-       $asset=array();
-
-       $digitalasset['FileName']=$digitalassetrecord['filename'];
-       $digitalasset['AssetID']=$digitalassetrecord['assetid'];
-       $digitalasset['AssetType']=$digitalassetconnection['assettypecode'];
-       $digitalasset['FileType']=$digitalassetrecord['fileType'];
-       $digitalasset['Representation']=$digitalassetconnection['representation'];
-       $digitalasset['FileSize']=$digitalassetrecord['filesize'];
-       $digitalasset['Resolution']=$digitalassetrecord['resolution'];
-       $digitalasset['ColorMode']=$digitalassetrecord['colorModeCode'];
-       $digitalasset['Background']=$digitalassetrecord['background'];
-       $digitalasset['OrientationView']=$digitalassetrecord['orientationViewCode'];
-       $digitalasset['AssetHeight']=$digitalassetrecord['assetHeight'];
-       $digitalasset['AssetWidth']=$digitalassetrecord['assetWidth'];
-       $digitalasset['UOM']=$digitalassetrecord['dimensionUOM'];
-       //$digitalasset['FilePath']=$digitalassetrecord[''];
-       $digitalasset['URI']=$digitalassetrecord['uri'];
-       //$digitalasset['Duration']=$digitalassetrecord[''];
-       //$digitalasset['DurationUOM']=$digitalassetrecord[''];
-       //$digitalasset['Frame']=$digitalassetrecord[''];
-       //$digitalasset['TotalFrames']=$digitalassetrecord[''];
-       //$digitalasset['Plane']=$digitalassetrecord[''];
-       //$digitalasset['Hemisphere']=$digitalassetrecord[''];
-       //$digitalasset['Plunge']=$digitalassetrecord[''];
-       //$digitalasset['TotalPlanes']=$digitalassetrecord[''];
-       //$digitalasset['Description']=$digitalassetrecord[''];
-       //$digitalasset['DescriptionCode']=$digitalassetrecord[''];
-       //$digitalasset['DescriptionLanguageCode']=$digitalassetrecord[''];
-       $digitalasset['AssetDate']=$digitalassetrecord['createdDate'];
-       $digitalasset['AssetDateType']='XXX';//$digitalassetrecord[''];
-       //$digitalasset['Country']=$digitalassetrecord[''];
-       //$digitalasset['LanguageCode']=$digitalassetrecord[''];
+  $digialassetconnections=$assets->getAssetsConnectedToPart($partnumber);
+  if($digialassetconnections && count($digialassetconnections))
+  {
+   foreach($digialassetconnections as $digitalassetconnection)
+   {
+    $digitalassetrecords=$assets->getAssetRecordsByAssetid($digitalassetconnection['assetid']);
+    foreach($digitalassetrecords as $digitalassetrecord)
+    {  
+     $digitalasset=array();
+     $digitalasset['FileName']=$digitalassetrecord['filename'];
+     $digitalasset['AssetID']=$digitalassetrecord['assetid'];
+     $digitalasset['AssetType']=$digitalassetconnection['assettypecode'];
+     $digitalasset['FileType']=$digitalassetrecord['fileType'];
+     $digitalasset['Representation']=$digitalassetconnection['representation'];
+     $digitalasset['FileSize']=$digitalassetrecord['filesize'];
+     $digitalasset['Resolution']=$digitalassetrecord['resolution'];
+     $digitalasset['ColorMode']=$digitalassetrecord['colorModeCode'];
+     $digitalasset['Background']=$digitalassetrecord['background'];
+     $digitalasset['OrientationView']=$digitalassetrecord['orientationViewCode'];
+     $digitalasset['AssetHeight']=$digitalassetrecord['assetHeight'];
+     $digitalasset['AssetWidth']=$digitalassetrecord['assetWidth'];
+     $digitalasset['AssetDimensionsUOM']=$digitalassetrecord['dimensionUOM'];
+     //$digitalasset['FilePath']=$digitalassetrecord[''];
+     $digitalasset['URI']=$digitalassetrecord['uri'];
+     //$digitalasset['Duration']=$digitalassetrecord[''];
+     //$digitalasset['DurationUOM']=$digitalassetrecord[''];
+     //$digitalasset['Frame']=$digitalassetrecord[''];
+     //$digitalasset['TotalFrames']=$digitalassetrecord[''];
+     //$digitalasset['Plane']=$digitalassetrecord[''];
+     //$digitalasset['Hemisphere']=$digitalassetrecord[''];
+     //$digitalasset['Plunge']=$digitalassetrecord[''];
+     //$digitalasset['TotalPlanes']=$digitalassetrecord[''];
+     //$digitalasset['Description']=$digitalassetrecord[''];
+     //$digitalasset['DescriptionCode']=$digitalassetrecord[''];
+     //$digitalasset['DescriptionLanguageCode']=$digitalassetrecord[''];
+     $digitalasset['AssetDate']=$digitalassetrecord['createdDate'];
+     $digitalasset['AssetDateType']='CRE';// according to PCdb20201030, valid options are: MOD="Modified", EXP="Expired", EFF="Effective", CRE="Created"
+     //$digitalasset['Country']=$digitalassetrecord[''];
+     $digitalasset['LanguageCode']=$digitalassetrecord['languagecode'];
             
-       $item['assets'][]=$digitalasset;
-      }
-     }
+     $item['assets'][]=$digitalasset;
     }
-    
+   }
+  }
+   
  $items[$partnumber]=$item;    
 }
 

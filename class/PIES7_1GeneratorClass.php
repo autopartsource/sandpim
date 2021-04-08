@@ -235,9 +235,9 @@ class PIESgenerator
      $PackageElement=$doc->createElement('Package');
      $PackageElement->setAttribute('MaintenanceType','A');
 
-     if(array_key_exists('PackageLevelGTIN',$package)){$PackageLevelGTINelement=$doc->createElement('PackageLevelGTIN',$package['PackageLevelGTIN']); $PackageElement->appendChild($PackageLevelGTINelement);}
+     if(array_key_exists('PackageLevelGTIN',$package) && trim($package['PackageLevelGTIN'])!=''){$PackageLevelGTINelement=$doc->createElement('PackageLevelGTIN',$package['PackageLevelGTIN']); $PackageElement->appendChild($PackageLevelGTINelement);}
      if(array_key_exists('ElectronicProductCode',$package)){$ElectronicProductCodeElement=$doc->createElement('ElectronicProductCode',$package['ElectronicProductCode']); $PackageElement->appendChild($ElectronicProductCodeElement);}
-     if(array_key_exists('PackageBarCodeCharacters',$package)){$PackageBarCodeCharactersElement=$doc->createElement('PackageBarCodeCharacters',$package['PackageBarCodeCharacters']); $PackageElement->appendChild($PackageBarCodeCharactersElement);}
+     if(array_key_exists('PackageBarCodeCharacters',$package) && trim($package['PackageBarCodeCharacters'])!=''){$PackageBarCodeCharactersElement=$doc->createElement('PackageBarCodeCharacters',$package['PackageBarCodeCharacters']); $PackageElement->appendChild($PackageBarCodeCharactersElement);}
      if(array_key_exists('PackageUOM',$package)){$PackageUOMelement=$doc->createElement('PackageUOM',$package['PackageUOM']); $PackageElement->appendChild($PackageUOMelement);}
      if(array_key_exists('QuantityofEaches',$package)){$QuantityofEachesElement=$doc->createElement('QuantityofEaches',$package['QuantityofEaches']); $PackageElement->appendChild($QuantityofEachesElement);}
 
@@ -252,9 +252,9 @@ class PIESgenerator
      if(array_key_exists('MerchandisingWidth',$package)){$MerchandisingWidthElement=$doc->createElement('MerchandisingWidth',$package['MerchandisingWidth']); $DimensionsElement->appendChild($MerchandisingWidthElement);}
      if(array_key_exists('MerchandisingLength',$package)){$MerchandisingLengthElement=$doc->createElement('MerchandisingLength',$package['MerchandisingLength']); $DimensionsElement->appendChild($MerchandisingLengthElement);}
      
-     if(array_key_exists('ShippingHeight',$package)){$ShippingHeightElement=$doc->createElement('ShippingHeight',$package['ShippingHeight']); $DimensionsElement->appendChild($ShippingHeightElement);}
-     if(array_key_exists('ShippingWidth',$package)){$ShippingWidthElement=$doc->createElement('ShippingWidth',$package['ShippingWidth']); $DimensionsElement->appendChild($ShippingWidthElement);}
-     if(array_key_exists('ShippingLength',$package)){$ShippingLengthElement=$doc->createElement('ShippingLength',$package['ShippingLength']); $DimensionsElement->appendChild($ShippingLengthElement); $PackageElement->appendChild($DimensionsElement);}
+     if(array_key_exists('ShippingHeight',$package) && $package['ShippingHeight']>0){$ShippingHeightElement=$doc->createElement('ShippingHeight',$package['ShippingHeight']); $DimensionsElement->appendChild($ShippingHeightElement);}
+     if(array_key_exists('ShippingWidth',$package) && $package['ShippingWidth']>0){$ShippingWidthElement=$doc->createElement('ShippingWidth',$package['ShippingWidth']); $DimensionsElement->appendChild($ShippingWidthElement);}
+     if(array_key_exists('ShippingLength',$package) && $package['ShippingLength']>0){$ShippingLengthElement=$doc->createElement('ShippingLength',$package['ShippingLength']); $DimensionsElement->appendChild($ShippingLengthElement); $PackageElement->appendChild($DimensionsElement);}
 
      if(array_key_exists('Weight',$package) && array_key_exists('WeightsUOM',$package))
      {
@@ -406,7 +406,7 @@ class PIESgenerator
      if(array_key_exists('ReferenceItem',$interchange)){$InterchangePartNumberElement->setAttribute('ReferenceItem', $interchange['ReferenceItem']);}
      if(array_key_exists('InterchangeQuantity',$interchange)){$InterchangePartNumberElement->setAttribute('InterchangeQuantity', $interchange['InterchangeQuantity']);}
      if(array_key_exists('UOM',$interchange)){$InterchangePartNumberElement->setAttribute('UOM', $interchange['UOM']);}
-     if(array_key_exists('InterchangeNotes',$interchange)){$InterchangePartNumberElement->setAttribute('InterchangeNotes', $interchange['InterchangeNotes']);}
+     if(array_key_exists('InterchangeNotes',$interchange) && trim($interchange['InterchangeNotes'])!=''){$InterchangePartNumberElement->setAttribute('InterchangeNotes', $interchange['InterchangeNotes']);}
      
      $PartInterchangeElement->appendChild($InterchangePartNumberElement);
      $PartInterchangeInfoElement->appendChild($PartInterchangeElement);
@@ -426,7 +426,7 @@ class PIESgenerator
      $DigitalFileInformationElement=$doc->createElement('DigitalFileInformation');
      $DigitalFileInformationElement->setAttribute('MaintenanceType','A');
      if(array_key_exists('AssetID',$asset)){$DigitalFileInformationElement->setAttribute('AssetID',$asset['AssetID']);}
-     if(array_key_exists('LanguageCode',$asset)){$DigitalFileInformationElement->setAttribute('LanguageCode',$asset['LanguageCode']);}
+     if(array_key_exists('LanguageCode',$asset) && trim($asset['LanguageCode'])!=''){$DigitalFileInformationElement->setAttribute('LanguageCode',$asset['LanguageCode']);}
      if(array_key_exists('FileName',$asset)){$FileNameElement=$doc->createElement('FileName',$asset['FileName']); $DigitalFileInformationElement->appendChild($FileNameElement);}
      if(array_key_exists('AssetType',$asset)){$AssetTypeElement=$doc->createElement('AssetType',$asset['AssetType']); $DigitalFileInformationElement->appendChild($AssetTypeElement);}
      if(array_key_exists('FileType',$asset)){$FileTypeElement=$doc->createElement('FileType',$asset['FileType']); $DigitalFileInformationElement->appendChild($FileTypeElement);}
