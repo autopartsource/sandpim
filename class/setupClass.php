@@ -747,6 +747,15 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE receiverprofile_parttranslation (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        internalpart varchar(255) not null,
+        externalpart varchar(255) not null,
+        PRIMARY KEY (id),
+        unique key idx_receiver_internalpart(receiverprofileid,internalpart))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_parttranslation ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_parttranslation ('.$db->conn->error.')';}
+        
         $sql="CREATE TABLE plan (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         description varchar(255) not null,      

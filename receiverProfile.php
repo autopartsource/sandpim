@@ -37,6 +37,9 @@ $profile['data']=str_replace(';',"\r\n",$profile['data']);
 $applieddeliverygroupids=$pim->getReceiverprofileDeliverygroupids($profile['id']);
 $alldeliverygroups=$pim->getDeliverygroups();
 
+$parttranslations=array(array('internalpart'=>'MG3004','externalpart'=>'3004'),array('internalpart'=>'MG3005','externalpart'=>'3005'),array('internalpart'=>'MG3006','externalpart'=>'3006'));
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -112,6 +115,9 @@ $alldeliverygroups=$pim->getDeliverygroups();
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        
+                                        <div class="row padding">
                                             <div class="col-md-6">
                                                 <div class="card">
                                                     <h6 class="card-header">Notes</h6>
@@ -121,6 +127,7 @@ $alldeliverygroups=$pim->getDeliverygroups();
                                                 </div>
                                             </div>
                                         </div>
+                                        
                                         <div class="row padding">
                                             <div class="col-md-6">
                                                 <div class="card">
@@ -156,6 +163,22 @@ $alldeliverygroups=$pim->getDeliverygroups();
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                        
+                                        
+                                        <div class="row padding">
+                                            <div class="col-md-6">
+                                                <div class="card">
+                                                    <h6 class="card-header">Part Translation</h6>
+                                                    <div class="card-body">
+                                                        <textarea><?php foreach ($parttranslations as $parttranslation){echo $parttranslation['internalpart']."\t".$parttranslation['externalpart']."\r\n";} ?></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                       
+                                        
+                                        
                                     </div>
                                 </div>
                                 <input type="hidden" name="id" value="<?php echo $profile['id']; ?>"/>
