@@ -2244,10 +2244,6 @@ function countAppsByPartcategories($partcategories)
   return $deliverygroupids;
  }
 
-
-
-
-
  function createReceiverprofile($name, $data)
  {
   $db = new mysql; $db->connect();
@@ -2271,6 +2267,48 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ 
+ function getReceiverprofileParttranslations($receiverprofileid)
+ {  // return and array of partcategory id's for a given receiverprofile
+  $translations=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from receiverprofile_parttranslation where receiverprofileid=?'))
+  {
+   $stmt->bind_param('i',$receiverprofileid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $translations[$row['internalpart']]=$row['externalpart'];
+   }
+  }
+  $db->close();
+  return $translations;
+ }
+ 
+ 
+ function writeReceiverprofileParttranslation($id, $translations)
+ {
+  $db = new mysql; $db->connect(); $internalpart=''; $externalpart='';
+    //delete all the old translation recs for this profile first
+  $stmt=$db->conn->prepare('delete from receiverprofile_parttranslation where receiverprofileid=?');
+  $stmt->bind_param('i',$id);
+  $stmt->execute();
+  
+  if($stmt=$db->conn->prepare('insert into receiverprofile_parttranslation values(null,?,?,?)'))
+  {
+   if($stmt->bind_param('iss',$id,$internalpart,$externalpart))
+   { 
+    foreach($translations as $key=>$value)
+    {
+     $internalpart=$key; $externalpart=$value;
+     $stmt->execute();
+    }   
+   }
+  }
+  $db->close();
+ }
+ 
  function deleteReceiverprofile($id)
  {
   $db = new mysql; $db->connect();

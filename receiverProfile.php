@@ -19,6 +19,21 @@ if (isset($_POST['submit']) && $_POST['submit']=='Save')
  $profiledata=str_replace("\r\n",';',$_POST['profiledata']);
 
  $pim->updateReceiverprofile(intval($_POST['id']), $_POST['profilename'],$profiledata,$_POST['notes']);
+ 
+ // part translation
+ $translations=array();
+ $records = explode("\r\n", $_POST['parttranslation']);
+ foreach ($records as $record) 
+ {
+  $fields = explode("\t", $record);
+  if(count($fields)==2 && trim($fields[0])!='' && trim($fields[1])!='' && strlen($fields[0])<=20 && strlen($fields[1])<=20)
+  {
+   $translations[trim($fields[0])]=trim($fields[1]);
+  }
+ }  
+ $pim->writeReceiverprofileParttranslation(intval($_POST['id']),$translations);
+ 
+ 
  $logs->logSystemEvent('receiverprofilechange', $_SESSION['userid'], 'Receiver Profile '.$_POST['id'].' was changed.');
  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./receiverProfiles.php'\" /></head><body></body></html>";
  exit;
@@ -37,9 +52,8 @@ $profile['data']=str_replace(';',"\r\n",$profile['data']);
 $applieddeliverygroupids=$pim->getReceiverprofileDeliverygroupids($profile['id']);
 $alldeliverygroups=$pim->getDeliverygroups();
 
-$parttranslations=array(array('internalpart'=>'MG3004','externalpart'=>'3004'),array('internalpart'=>'MG3005','externalpart'=>'3005'),array('internalpart'=>'MG3006','externalpart'=>'3006'));
-
-
+$parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
+        
 ?>
 <!DOCTYPE html>
 <html>
@@ -169,9 +183,9 @@ $parttranslations=array(array('internalpart'=>'MG3004','externalpart'=>'3004'),a
                                         <div class="row padding">
                                             <div class="col-md-6">
                                                 <div class="card">
-                                                    <h6 class="card-header">Part Translation</h6>
+                                                    <h6 class="card-header">Partnumber Translation Table (internal TAB external)</h6>
                                                     <div class="card-body">
-                                                        <textarea><?php foreach ($parttranslations as $parttranslation){echo $parttranslation['internalpart']."\t".$parttranslation['externalpart']."\r\n";} ?></textarea>
+                                                        <textarea style="width: 100%; max-width: 100%;" rows="15" name="parttranslation"><?php foreach ($parttranslations as $internalpart=>$externalpart){echo $internalpart."\t".$externalpart."\r\n";} ?></textarea>
                                                     </div>
                                                 </div>
                                             </div>
