@@ -109,7 +109,16 @@ class PIESgenerator
    if(array_key_exists('BaseItemID', $item)){$BaseItemIDelement= $doc->createElement('BaseItemID',$item['BaseItemID']); $ItemElement->appendChild($BaseItemIDelement);}
    if(array_key_exists('ItemLevelGTIN',$item) && trim($item['ItemLevelGTIN'])!=''){$ItemLevelGTINelement=$doc->createElement('ItemLevelGTIN',$item['ItemLevelGTIN']); $ItemElement->appendChild($ItemLevelGTINelement); $ItemLevelGTINelement->setAttribute('GTINQualifier', $item['GTINQualifier']);}
  
-   $PartNumberElement= $doc->createElement('PartNumber',$PartNumber);  $ItemElement->appendChild($PartNumberElement);
+   if(array_key_exists('externalpart', $item) && $item['externalpart']!=false)
+   {// there is a receiverprofile-specific part translation (internalpart=externalpart) in play us it
+       $PartNumberElement= $doc->createElement('PartNumber',$item['externalpart']);
+   }
+   else
+   {// no part translation in play. use the native partnumber
+       $PartNumberElement= $doc->createElement('PartNumber',$PartNumber);       
+   }
+   
+   $ItemElement->appendChild($PartNumberElement);
    $BrandAAIAIDelement= $doc->createElement('BrandAAIAID',$item['BrandAAIAID']); $ItemElement->appendChild($BrandAAIAIDelement);
    if(array_key_exists('BrandLabel', $item)){$BrandLabelElement= $doc->createElement('BrandLabel',$item['BrandLabel']); $ItemElement->appendChild($BrandLabelElement); }
    if(array_key_exists('VMRSBrandID', $item)){$VMRSBrandIDelement= $doc->createElement('VMRSBrandID',$item['VMRSBrandID']); $ItemElement->appendChild($VMRSBrandIDelement); }

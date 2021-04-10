@@ -2309,6 +2309,32 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
  
+ function receiverPart($receiverprofileid, $internalpart)
+ {
+  $db = new mysql; $db->connect(); $externalpart=false;
+  if($stmt=$db->conn->prepare('select externalpart from receiverprofile_parttranslation where receiverprofileid=? and internalpart=?'))
+  {
+   if($stmt->bind_param('is',$receiverprofileid,$internalpart))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $externalpart=$row['externalpart'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $externalpart;
+ }
+ 
+ 
+ 
+ 
+ 
+ 
  function deleteReceiverprofile($id)
  {
   $db = new mysql; $db->connect();

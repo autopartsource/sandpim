@@ -85,7 +85,7 @@ foreach($partnumbers as $partnumber)
 {
     $item=array();
     $part=$pim->getPart($partnumber);
-    
+    $item['externalpart']=$pim->receiverPart($profile['id'], $partnumber);
     
     if($part['GTIN']!='')
     {
