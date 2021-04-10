@@ -129,6 +129,11 @@ foreach($partnumbers as $partnumber)
     }
  //--------------------- EXPI -------------------------------    
 
+    if(trim($part['lifecyclestatus'])!='')
+    {
+        $item['expis'][]=array('EXPICode'=>'LIF','EXPIValue'=>trim($part['lifecyclestatus']));   
+    }
+    
  //--------------------- attributes -------------------------------    
     $partattributes=$pim->getPartAttributes($partnumber);
     if($partattributes && count($partattributes)>0)
