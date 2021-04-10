@@ -109,7 +109,18 @@ foreach($partnumbers as $partnumber)
 //'UNSPSC'
 
 //--------------------- descriptions -------------------------------    
-
+    
+    $descriptions=$pim->getPartDescriptions($partnumber);
+    foreach($descriptions as $description)
+    {
+     $partdescription=array();
+     $partdescription['Description']=$description['description'];
+     $partdescription['DescriptionCode']=$description['descriptioncode'];
+     $partdescription['Sequence']=$description['sequence'];
+     $partdescription['LanguageCode']=$description['languagecode'];
+     $item['descriptions'][]=$partdescription;   
+    }
+    
 //--------------------- prices -------------------------------    
     $prices=$pricing->getPricesByPartnumber($partnumber);
     if($prices && count($prices))

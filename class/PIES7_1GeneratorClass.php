@@ -163,9 +163,9 @@ class PIESgenerator
     {
      $DescriptionElement=$doc->createElement('Description', $description['Description']);
      $DescriptionElement->setAttribute('MaintenanceType','A');
-     if(array_key_exists('DescriptionCode',$description)){$DescriptionElement->setAttribute('DescriptionCode',$description['DescriptionCode']);}
-     if(array_key_exists('LanguageCode',$description)){$DescriptionElement->setAttribute('LanguageCode',$description['LanguageCode']);}
-     if(array_key_exists('Sequence',$description)){$DescriptionElement->setAttribute('Sequence',$description['Sequence']);}
+     if(array_key_exists('DescriptionCode',$description) && trim($description['DescriptionCode'])!=''){$DescriptionElement->setAttribute('DescriptionCode',$description['DescriptionCode']);}
+     if(array_key_exists('LanguageCode',$description) && trim($description['LanguageCode'])!=''){$DescriptionElement->setAttribute('LanguageCode',$description['LanguageCode']);}
+     if(array_key_exists('Sequence',$description) && trim($description['Sequence'])!=''){$DescriptionElement->setAttribute('Sequence',$description['Sequence']);}
      $DescriptionsElement->appendChild($DescriptionElement);
     }
     $ItemElement->appendChild($DescriptionsElement);
