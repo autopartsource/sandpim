@@ -14,12 +14,21 @@ $pim = new pim;
 
 $partcategories = $pim->getPartCategories();
 $receiverprofiles=$pim->getReceiverprofiles();
+
 ?>
 
 <!DOCTYPE html>
 <html>
     <head>
         <?php include('./includes/header.php'); ?>
+        <script>
+            function updateSelectedID() {
+                var selectedBox = document.getElementById("selectBox");
+                var selectedValue = selectBox.options[selectedBox.selectedIndex].value;
+                document.getElementById("assetFilesDownload").setAttribute("href",'/exportAssetfilesListStream.php?receiverprofile='+selectedValue);
+                document.getElementById("partsListDownload").setAttribute("href",'/exportPartsListStream.php?receiverprofile='+selectedValue);
+            }
+        </script>
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -40,17 +49,28 @@ $receiverprofiles=$pim->getReceiverprofiles();
                         <h3 class="card-header text-start">Export PIES xml</h3>
 
                         <div class="card-body">
-                            <form action="exportPIESstream.php" method="get">
-                                <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
-                                    Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
-                                    <div><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
-                                    <div><input type="checkbox" id="showxml" name="showxml"/><label for="showxml">Display XML in a text area</label></div>
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <form action="exportPIESstream.php" method="get">
+                                        <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
+                                            Receiver Profile <select id="selectBox" name="receiverprofile" onclick="updateSelectedID();"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+
+                                            <div><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
+                                            <div><input type="checkbox" id="showxml" name="showxml"/><label for="showxml">Display XML in a text area</label></div>
 
 
-                                    <input type="submit" name="submit" value="Export"/>
+                                            <input type="submit" name="submit" value="Export"/>
 
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
+                                <div class="col-md-3">
+                                    <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
+                                        <a id="assetFilesDownload" href="">Asset Files List</a><br>
+                                        <a id="partsListDownload" href="" target="_blank">Parts List</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
