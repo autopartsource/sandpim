@@ -25,9 +25,18 @@ $receiverprofiles=$pim->getReceiverprofiles();
             function updateSelectedID() {
                 var selectedBox = document.getElementById("selectBox");
                 var selectedValue = selectBox.options[selectedBox.selectedIndex].value;
-                document.getElementById("assetFilesDownload").setAttribute("href",'/exportAssetfilesListStream.php?receiverprofile='+selectedValue);
-                document.getElementById("partsListDownload").setAttribute("href",'/exportPartsListStream.php?receiverprofile='+selectedValue);
+                var asset = document.getElementById("assetFilesDownload");
+                var part = document.getElementById("partsListDownload");
+                asset.setAttribute("href",'exportAssetfilesListStream.php?receiverprofile='+selectedValue);
+                part.setAttribute("href",'exportPartListStream.php?receiverprofile='+selectedValue);
+                asset.style.display = "inline";
+                part.style.display = "inline";
             }
+            
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+              return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
         </script>
     </head>
     <body>
@@ -49,28 +58,20 @@ $receiverprofiles=$pim->getReceiverprofiles();
                         <h3 class="card-header text-start">Export PIES xml</h3>
 
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <form action="exportPIESstream.php" method="get">
-                                        <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
-                                            Receiver Profile <select id="selectBox" name="receiverprofile" onclick="updateSelectedID();"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
-
-                                            <div><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
-                                            <div><input type="checkbox" id="showxml" name="showxml"/><label for="showxml">Display XML in a text area</label></div>
-
-
-                                            <input type="submit" name="submit" value="Export"/>
-
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="col-md-3">
-                                    <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
-                                        <a id="assetFilesDownload" href="">Asset Files List</a><br>
-                                        <a id="partsListDownload" href="" target="_blank">Parts List</a>
+                            <form action="exportPIESstream.php" method="get">
+                                <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
+                                    <div>
+                                        Receiver Profile <select id="selectBox" name="receiverprofile" onclick="updateSelectedID();"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+                                        <a id="assetFilesDownload" href="" style="display:none;" role="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Asset File List">A</a>
+                                        <a id="partsListDownload" href="" style="display:none;" role="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Parts List">P</a>
                                     </div>
+                                    <div><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
+                                    <div><input type="checkbox" id="showxml" name="showxml"/><label for="showxml">Display XML in a text area</label></div>
+
+                                    <input type="submit" name="submit" value="Export"/>
+
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                     
