@@ -13,9 +13,8 @@
                     Reports
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownReports">
-                    <a class="dropdown-item" href="partReferencesReportForm.php">Invalid Part Data</a>
-                    <a class="dropdown-item" href="applicationReferencesReportForm.php">Invalid Application Data</a>
-                    <a class="dropdown-item" href="missingProductDataReportForm.php">Product Data Holes</a>
+                    <a class="dropdown-item" href="missingProductDataReportForm.php">Missing/Invalid Part Data</a>
+                    <a class="dropdown-item" href="invalidApplicationsReportForm.php">Invalid Applications</a>
                     <a class="dropdown-item" href="applicationHolesReportForm.php">Application Holes</a>
                     <a class="dropdown-item" href="applicationOverlapsReportForm.php">Application Overlaps</a>
                     <a class="dropdown-item" href="applicationNotesReportForm.php">Application Note Usage</a>

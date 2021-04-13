@@ -1,4 +1,4 @@
-c<?php
+<?php
 include_once('./class/pimClass.php');
 $navCategory = 'reports';
 
@@ -34,10 +34,10 @@ $receiverprofiles=$pim->getReceiverprofiles();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Report parts with invalid PCdb references</h3>
+                        <h3 class="card-header text-start">Report invalid applications</h3>
 
                         <div class="card-body">
-                            <form action="missingProductDataReportStream.php" method="get">
+                            <form action="invalidApplicationsReportStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
                                     <div style="padding: 10px;">Receiver Profile</div>
                                     <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
