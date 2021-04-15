@@ -29,14 +29,9 @@ $receiverprofiles=$pim->getReceiverprofiles();
                 var part = document.getElementById("partsListDownload");
                 asset.setAttribute("href",'exportAssetfilesListStream.php?receiverprofile='+selectedValue);
                 part.setAttribute("href",'exportPartListStream.php?receiverprofile='+selectedValue);
-                asset.style.display = "inline";
-                part.style.display = "inline";
+                asset.className = "btn btn-secondary btn-sm";
+                part.className = "btn btn-secondary btn-sm";
             }
-            
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-              return new bootstrap.Tooltip(tooltipTriggerEl)
-            })
         </script>
     </head>
     <body>
@@ -62,10 +57,11 @@ $receiverprofiles=$pim->getReceiverprofiles();
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
                                     <div>
                                         Receiver Profile <select id="selectBox" name="receiverprofile" onclick="updateSelectedID();"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
-                                        <a id="assetFilesDownload" href="" style="display:none;" role="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Asset File List">A</a>
-                                        <a id="partsListDownload" href="" style="display:none;" role="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Parts List">P</a>
+                                        <a id="assetFilesDownload" href="" role="button" class="btn btn-secondary btn-sm disabled" aria-disabled="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Asset File List for Export">Assets</a>
+                                        <a id="partsListDownload" href="" role="button" class="btn btn-secondary btn-sm disabled" aria-disabled="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Parts List">Parts</a>
                                     </div>
                                     <div><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
+                                    
                                     <div><input type="checkbox" id="showxml" name="showxml"/><label for="showxml">Display XML in a text area</label></div>
 
                                     <input type="submit" name="submit" value="Export"/>
