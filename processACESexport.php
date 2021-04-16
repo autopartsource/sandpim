@@ -49,7 +49,8 @@ if($jobs)
  $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
  $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
  $apps=$pim->getAppsByPartcategories($partcategories);
-
+ $parttranslations=$pim->getReceiverprofileParttranslations($receiverprofileid);
+ 
  $filename=$jobs[0]['outputfile'];
  $profileelements=explode(';',$profiledata);
  $keyedprofile=array();
@@ -72,7 +73,7 @@ if($jobs)
  $assetapps=array();
  $generatoroptions=array('IncludeCosmeticApps'=>true,'IncludeCosmeticAttributes'=>true,);
 
- $doc=$generator->createACESdoc($header,$apps,$assetapps,$generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
+ $doc=$generator->createACESdoc($header,$apps,$assetapps, $parttranslations, $generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
 
  $schemaresults=array();
  libxml_use_internal_errors(true);

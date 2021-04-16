@@ -45,7 +45,7 @@ foreach($profileelements as $profileelement)
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $appscount=$pim->countAppsByPartcategories($partcategories);
 
-if($appscount>5000)
+if($appscount>10000)
 { // dataset is too big - this export will be handled by the housekeeper (cron) and written to a temp directory for download
  $streamXML=false;
  
@@ -75,7 +75,9 @@ else
  $assetapps=array();
  $generatoroptions=array('IncludeCosmeticApps'=>true,'IncludeCosmeticAttributes'=>true,);
 
- $doc=$generator->createACESdoc($header,$apps,$assetapps,$generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
+ $parttranslations=$pim->getReceiverprofileParttranslations($receiverprofileid);
+
+ $doc=$generator->createACESdoc($header,$apps,$assetapps, $parttranslations, $generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
  $doc->formatOutput=true;
  $acesxml=$doc->saveXML();
 

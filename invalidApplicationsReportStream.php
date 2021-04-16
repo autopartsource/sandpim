@@ -35,6 +35,9 @@ $positioncache=array();
 $parttypenamecache=array();
 $partnumbercache=array();
 $validparttypepositioncache=array();
+$validAttributesCache=array();
+
+
 
 foreach($applications as $app)
 {
@@ -53,25 +56,27 @@ foreach($applications as $app)
   $validparttypepositioncache[$parttypeid.'-'.$positionid]=$pcdb->validParttypePosition($parttypeid, $positionid);
  }
 
- if(array_key_exists($positionid, $positioncache))
+ if(!array_key_exists($positionid, $positioncache))
  {
-  $positionname=$positioncache[$positionid];
+  $positioncache[$positionid]=$pcdb->positionName($positionid);
  }
- else  
- {
-  $positionname=$pcdb->positionName($positionid);
-  $positioncache[$positionid]=$positionname;
- }
+ $positionname=$positioncache[$positionid];
  
- if(array_key_exists($parttypeid, $parttypenamecache))
+ 
+ if(!array_key_exists($parttypeid, $parttypenamecache))
  {
-  $parttypename=$parttypenamecache[$parttypeid];
+  $parttypenamecache[$parttypeid]=$pcdb->parttypeName($parttypeid);
  }
- else  
+ $parttypename=$parttypenamecache[$parttypeid];
+  
+ 
+ if(!array_key_exists($basevehicleid,$validAttributesCache))
  {
-  $parttypename=$pcdb->parttypeName($parttypeid);
-  $parttypenamecache[$parttypeid]=$parttypename;
+  $validAttributesCache[$basevehicleid]=$vcdb->getACESattributesForBasevehicle($basevehicleid); 
  }
+ $validAttributes=$validAttributesCache[$basevehicleid];
+ 
+ 
  
  
  
@@ -126,7 +131,7 @@ foreach($applications as $app)
  
  
 }
-
+/*
 $writer->setAuthor('SandPIM'); 
 $xlsxdata=$writer->writeToString();
 $streamXLSX=true;
@@ -143,4 +148,6 @@ if($streamXLSX)
  header('Cache-Control: must-revalidate');
  header('Pragma: public');
  echo $xlsxdata;
-}?>
+  }
+ */
+?>

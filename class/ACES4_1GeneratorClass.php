@@ -4,7 +4,7 @@ include_once(__DIR__."/qdbClass.php");
 class ACESgenerator
 {
     
- function createACESdoc($header,$apps,$assets,$options)
+ function createACESdoc($header,$apps,$assets,$parttranslations,$options)
  {
      /* options keys
       * 'IncludeCosmeticApps' (boolenan)
@@ -52,6 +52,12 @@ class ACESgenerator
    { // major app problems that would cause an XSD violation //$app['positionid']==0 ||
     continue;
    }
+   
+   // use receiverprofile part translation list
+   
+   
+   
+   
    
    $appElement=new DOMElement('App');
    $root->appendChild($appElement);
@@ -158,7 +164,16 @@ class ACESgenerator
     $positionElement->setAttribute('id', $app['positionid']);
    }
    
-   $partElement=new DOMElement('Part',$app['partnumber']);
+
+   if(array_key_exists($app['partnumber'], $parttranslations))
+   {// traanslation exist for this app's partnumber - flip it
+    $partElement=new DOMElement('Part',$parttranslations[$app['partnumber']]);    
+   }
+   else
+   {// no traanslation exist for this app's partnumber 
+    $partElement=new DOMElement('Part',$app['partnumber']);
+   }
+
    $appElement->appendChild($partElement);
    
    if(array_key_exists('assetname', $app) && trim($app['assetname'])!=''){
