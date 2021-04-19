@@ -20,7 +20,7 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 $user = new user;
 $asset=new asset;
 
-
+$config = new configGet;
 $configGet = new configGet;
 $appshistory = $logs->getAppsEvents(20);
 $assetshistory = $logs->getAssetsEvents(20);
@@ -33,6 +33,25 @@ $assetissues=$pim->getIssues('ASSET/%','%','%',array(1,2),20);
 $systemissues=$pim->getIssues('SYSTEM/%','%','%',array(1,2),20);
 $sandpiperissues=$pim->getIssues('SANDPIPER/%','%','%',array(1,2),20);
 $issuescount=count($partissues)+count($appissues)+count($assetissues)+count($systemissues)+count($sandpiperissues);
+
+
+$downloadsdirectory=$config->getConfigValue('AutoCareDownloadsDirectory');
+
+$temps=$pim->getAutocareDatabaseList('vcdb');
+$vcdbsinstalled=array();
+foreach($temps as $temp){$vcdbsinstalled[]=$temp['versiondate'];}
+
+$temps=$pim->getAutocareDatabaseList('pcdb');
+$pcdbsinstalled=array();
+foreach($temps as $temp){$pcdbsinstalled[]=$temp['versiondate'];}
+
+$temps=$pim->getAutocareDatabaseList('padb');
+$padbsinstalled=array();
+foreach($temps as $temp){$padbsinstalled[]=$temp['versiondate'];}
+
+$temps=$pim->getAutocareDatabaseList('qdb');
+$qdbsinstalled=array();
+foreach($temps as $temp){$qdbsinstalled[]=$temp['versiondate'];}
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
@@ -76,84 +95,111 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                         <div class="card-body">
                             
                             <div class="card">
-                                <h5 class="card-header text-start">Issues <?php if($issuescount>0){echo '<span style="border-radius: 15px 15px 10px 1px;background: #dd0000;padding:10px;width:30px;height:15px;color:#ffffff;">'.$issuescount.'</span>'; }?></h5>
+                                <h5 class="card-header text-start">AutoCare Reference Databases</h5>
                                 <div class="card-body">
-                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <a class="nav-link" id="partissues-tab" data-bs-toggle="tab" href="#partissues" role="tab" aria-controls="partissues" aria-selected="true">Parts</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">VCdb</th>
+                                                <th scope="col">PCdb</th>
+                                                <th scope="col">PAdb</th>
+                                                <th scope="col">Qdb</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><?php echo $vcdbsinstalled[0];?></td>
+                                                <td><?php echo $pcdbsinstalled[0];?></td>
+                                                <td><?php echo $padbsinstalled[0];?></td>
+                                                <td><?php echo $qdbsinstalled[0];?></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <?php if ($issuescount>0) {
+                            echo '<div class="card">
+                                <h5 class="card-header text-start">Issues <span style="border-radius: 15px 15px 10px 1px;background: #dd0000;padding:10px;width:30px;height:15px;color:#ffffff;">'.$issuescount.'</span></h5>
+                                <div class="card-body">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">';
+                                        if (count($partissues) > 0) {
+                                            echo '<li class="nav-item" role="presentation">
+                                                <a class="nav-link" id="partissues-tab" data-bs-toggle="tab" href="#partissues" role="tab" aria-controls="partissues" aria-selected="true">Parts</a>
+                                            </li>';
+                                        }
+                                        if (count($appissues) > 0) {
+                                            echo '<li class="nav-item" role="presentation">
                                             <a class="nav-link" id="appissues-tab" data-bs-toggle="tab" href="#appissues" role="tab" aria-controls="appissues" aria-selected="true">Apps</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
+                                        </li>';
+                                        }
+                                        if (count($assetissues) > 0) {
+                                            echo '<li class="nav-item" role="presentation">
                                             <a class="nav-link" id="assetissues-tab" data-bs-toggle="tab" href="#assetissues" role="tab" aria-controls="assetissues" aria-selected="true">Assets</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
+                                        </li>';
+                                        }
+                                        if (count($systemissues) > 0) {
+                                            echo '<li class="nav-item" role="presentation">
                                             <a class="nav-link" id="systemissues-tab" data-bs-toggle="tab" href="#systemissues" role="tab" aria-controls="systemissues" aria-selected="true">System</a>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
+                                        </li>';
+                                        }
+                                        if (count($sandpiperissues) > 0) {
+                                            echo '<li class="nav-item" role="presentation">
                                             <a class="nav-link" id="sandpiperissues-tab" data-bs-toggle="tab" href="#sandpiperissues" role="tab" aria-controls="sandpiperissues" aria-selected="true">Sandpiper</a>
-                                        </li>
-                                    </ul>
+                                        </li>';
+                                        }
+                                        
+                                    echo'</ul>
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active mt-3" id="main" role="tabpanel" aria-labelledby="main-tab">
                                             Open Issues (from all sources)
-                                        </div>
+                                        </div>';
 
+                                        if (count($partissues) > 0) {
+                                            echo '<div class="tab-pane fade mt-3" id="partissues" role="tabpanel" aria-labelledby="partissues-tab">';
+                                            foreach($partissues as $partissue)
+                                            {
+                                             echo '<div style="padding:2px;" id="issue_'.$partissue['id'].'"><a href="./showPart.php?partnumber='.$partissue['issuekeyalpha'].'">'.$partissue['issuekeyalpha'].'</a>: '.$partissue['description'].' <button onclick="deleteIssue(\''.$partissue['id'].'\')">x</button></div>';
+                                            }
+                                            echo '</div>';
+                                        }
+                                        if (count($appissues) > 0) {
+                                            echo '<div class="tab-pane fade mt-3" id="appissues" role="tabpanel" aria-labelledby="appissues-tab">';
+                                            foreach($appissues as $appissue)
+                                            {
+                                             echo '<div style="padding:2px;" id="issue_'.$appissue['id'].'"><a href="./showApp.php?appid='.$appissue['issuekeynumeric'].'">App ID '.$appissue['issuekeynumeric'].'</a>: '.$appissue['description'].' <button onclick="deleteIssue(\''.$appissue['id'].'\')">x</button></div>';
+                                            }
+                                            echo '</div>';
+                                        }
+                                        if (count($assetissues) > 0) {
+                                            echo '<div class="tab-pane fade mt-3" id="assetissues" role="tabpanel" aria-labelledby="assetissues-tab">';
+                                            foreach($assetissues as $assetissue)
+                                            {
+                                             echo '<div style="padding:2px;" id="issue_'.$assetissue['id'].'"><a href="./showAsset.php?assetid='.$assetissue['issuekeyalpha'].'">'.$assetissue['issuekeyalpha'].'</a>: '.$assetissue['description'].' <button onclick="deleteIssue(\''.$assetissue['id'].'\')">x</button></div>';
+                                            }
+                                            echo '</div>';
+                                        }
+                                        if (count($systemissues) > 0) {
+                                            echo '<div class="tab-pane fade mt-3" id="systemissues" role="tabpanel" aria-labelledby="systemissues-tab">';
+                                            foreach($systemissues as $systemissue)
+                                            {
+                                             echo '<div style="padding:2px;" id="issue_'.$systemissue['id'].'">'.$systemissue['description'].' <button onclick="deleteIssue(\''.$systemissue['id'].'\')">x</button></div>';
+                                            }
+                                            echo '</div>';
+                                        }
+                                        if (count($sandpiperissues) > 0) {
+                                            echo '<div class="tab-pane fade mt-3" id="sandpiperissues" role="tabpanel" aria-labelledby="sandpiperissues-tab">';
+                                            foreach($sandpiperissues as $sandpiperissue)
+                                            {
+                                             echo '<div style="padding:2px;" id="issue_'.$sandpiperissue['id'].'">'.$sandpiperissue['description'].' <button onclick="deleteIssue(\''.$sandpiperissue['id'].'\')">x</button></div>';
+                                            }
+                                            echo '</div>';
+                                        }
                                         
-                                        <div class="tab-pane fade mt-3" id="partissues" role="tabpanel" aria-labelledby="partissues-tab">
-                                        <?php
-                                        foreach($partissues as $partissue)
-                                        {
-                                         echo '<div style="padding:2px;" id="issue_'.$partissue['id'].'"><a href="./showPart.php?partnumber='.$partissue['issuekeyalpha'].'">'.$partissue['issuekeyalpha'].'</a>: '.$partissue['description'].' <button onclick="deleteIssue(\''.$partissue['id'].'\')">x</button></div>';
-                                        }?>
-
-                                        </div>
-
-                                        <div class="tab-pane fade mt-3" id="appissues" role="tabpanel" aria-labelledby="appissues-tab">
-                                        <?php
-                                        foreach($appissues as $appissue)
-                                        {
-                                         echo '<div style="padding:2px;" id="issue_'.$appissue['id'].'"><a href="./showApp.php?appid='.$appissue['issuekeynumeric'].'">App ID '.$appissue['issuekeynumeric'].'</a>: '.$appissue['description'].' <button onclick="deleteIssue(\''.$appissue['id'].'\')">x</button></div>';
-                                        }?>
-                                        </div>
-                                        
-
-                                        <div class="tab-pane fade mt-3" id="assetissues" role="tabpanel" aria-labelledby="assetissues-tab">'
-                                        <?php
-                                        foreach($assetissues as $assetissue)
-                                        {
-                                         echo '<div style="padding:2px;" id="issue_'.$assetissue['id'].'"><a href="./showAsset.php?assetid='.$assetissue['issuekeyalpha'].'">'.$assetissue['issuekeyalpha'].'</a>: '.$assetissue['description'].' <button onclick="deleteIssue(\''.$assetissue['id'].'\')">x</button></div>';
-                                        }?>
-                                        </div>
-
-                                        
-                                        
-                                        <div class="tab-pane fade mt-3" id="systemissues" role="tabpanel" aria-labelledby="systemissues-tab">'
-                                        <?php
-                                        foreach($systemissues as $systemissue)
-                                        {
-                                         echo '<div style="padding:2px;" id="issue_'.$systemissue['id'].'">'.$systemissue['description'].' <button onclick="deleteIssue(\''.$systemissue['id'].'\')">x</button></div>';
-                                        }?>
-                                        </div>
-                                                                               
-                                        
-                                        <div class="tab-pane fade mt-3" id="sandpiperissues" role="tabpanel" aria-labelledby="sandpiperissues-tab">'
-                                        <?php
-                                        foreach($sandpiperissues as $sandpiperissue)
-                                        {
-                                         echo '<div style="padding:2px;" id="issue_'.$sandpiperissue['id'].'">'.$sandpiperissue['description'].' <button onclick="deleteIssue(\''.$sandpiperissue['id'].'\')">x</button></div>';
-                                        }?>
-                                        </div>
-                                        
-                                    </div>
-
+                                echo '</div>
                                 </div>
-                                
-                                
-                                
-                            </div>
-                            
+                            </div>';
+                            }?>
                             
                             <?php
                             if(count($appshistory) || count($assetshistory) || count($partshistory) || count($systemhistory)) {
