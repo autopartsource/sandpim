@@ -5,6 +5,10 @@ include_once('./class/userClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/logsClass.php');
+include_once('./class/vcdbClass.php');
+include_once('./class/pcdbClass.php');
+include_once('./class/padbClass.php');
+include_once('./class/qdbClass.php');
 
 $navCategory = 'dashboard';
 
@@ -20,7 +24,12 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 $user = new user;
 $asset=new asset;
 
-$config = new configGet;
+$pcdb = new pcdb();
+$vcdb = new vcdb();
+$padb = new padb();
+$qdb = new qdb();
+
+
 $configGet = new configGet;
 $appshistory = $logs->getAppsEvents(20);
 $assetshistory = $logs->getAssetsEvents(20);
@@ -33,25 +42,6 @@ $assetissues=$pim->getIssues('ASSET/%','%','%',array(1,2),20);
 $systemissues=$pim->getIssues('SYSTEM/%','%','%',array(1,2),20);
 $sandpiperissues=$pim->getIssues('SANDPIPER/%','%','%',array(1,2),20);
 $issuescount=count($partissues)+count($appissues)+count($assetissues)+count($systemissues)+count($sandpiperissues);
-
-
-$downloadsdirectory=$config->getConfigValue('AutoCareDownloadsDirectory');
-
-$temps=$pim->getAutocareDatabaseList('vcdb');
-$vcdbsinstalled=array();
-foreach($temps as $temp){$vcdbsinstalled[]=$temp['versiondate'];}
-
-$temps=$pim->getAutocareDatabaseList('pcdb');
-$pcdbsinstalled=array();
-foreach($temps as $temp){$pcdbsinstalled[]=$temp['versiondate'];}
-
-$temps=$pim->getAutocareDatabaseList('padb');
-$padbsinstalled=array();
-foreach($temps as $temp){$padbsinstalled[]=$temp['versiondate'];}
-
-$temps=$pim->getAutocareDatabaseList('qdb');
-$qdbsinstalled=array();
-foreach($temps as $temp){$qdbsinstalled[]=$temp['versiondate'];}
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
@@ -95,7 +85,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                         <div class="card-body">
                             
                             <div class="card">
-                                <h5 class="card-header text-start">AutoCare Reference Databases</h5>
+                                <h5 class="card-header text-start">Active AutoCare Reference Databases</h5>
                                 <div class="card-body">
                                     <table class="table">
                                         <thead>
@@ -108,10 +98,10 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td><?php echo $vcdbsinstalled[0];?></td>
-                                                <td><?php echo $pcdbsinstalled[0];?></td>
-                                                <td><?php echo $padbsinstalled[0];?></td>
-                                                <td><?php echo $qdbsinstalled[0];?></td>
+                                                <td><?php echo $vcdb->version();?></td>
+                                                <td><?php echo $pcdb->version();?></td>
+                                                <td><?php echo $padb->version();?></td>
+                                                <td><?php echo $qdb->version();?></td>
                                             </tr>
                                         </tbody>
                                     </table>
