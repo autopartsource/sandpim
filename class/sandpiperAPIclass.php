@@ -197,7 +197,10 @@ class sandpiper
         return rtrim(strtr(base64_encode($str), '+/', '-_'), '=');
     }
         
-    
+    /*** Get the local server's secret that is used to sign all JWT's
+     * if it has not been set in the config table, this function will set it 
+     * to a random value
+     */
     function getJWTsecret()
     {
      $configGet=new configGet;
@@ -331,6 +334,13 @@ class sandpiper
 
     function isClientPrimary()
     {// look at the current plan to determine is the client is the primary actor in the relationship. This is for determining if they are allowed to do things like add and drop my grains
+        
+        // the only way to know who's who in the relationship is to parse the our copy 
+        // of the plandocument and see which side (primary / secondary)
+        
+        
+        
+        
         $returnvalue=true;
         return $returnvalue;
     }
