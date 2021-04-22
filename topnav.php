@@ -66,6 +66,7 @@
                     <a class="dropdown-item" href="./importACESupload.php">Import ACES xml file</a>
                     <a class="dropdown-item" href="./importACEStext.php">Import applications from text</a>
                     <a class="dropdown-item" href="./importPartText.php">Import parts from text</a>
+                    <a class="dropdown-item" href="./importPackagingText.php">Import packaging from text</a>
                     <a class="dropdown-item" href="./importPricesText.php">Import prices from text</a>
                     <a class="dropdown-item" href="./importPartAttributeText.php">Import part attributes from text</a>
                     <a class="dropdown-item" href="./importInterchangeText.php">Import Competitor Interchange from text</a>
