@@ -170,7 +170,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                             <div class="tab-pane fade show active text-start m-3" id="connected" role="tabpanel" aria-labelledby="connected-tab">
                                 <?php foreach($connectedparts as $connectedpart){?>
                                 <div id="assetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
-                                   <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a> <button onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')">x</button>
+                                   <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a> <button type="button" class="btn btn-light" onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')"><i class="bi bi-x"></i></button>
                                 </div>
                                 <?php }?>
                             </div>

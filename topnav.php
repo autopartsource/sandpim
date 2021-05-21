@@ -80,10 +80,26 @@
             </li>
         </ul>
         <div class="ms-auto">
+        
+        </div>
+        <div class="ms-auto">
         <ul class="nav navbar-nav">
+            <a class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#clipboard" aria-controls="clipboard"><i class="bi bi-clipboard"></i></a>
             <a href="logout.php" class="nav-link">Logout (<?php echo $_SESSION['name'];?>)</a>
         </ul>
             
         </div>
     </div> 
 </nav>
+
+<div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="clipboard" aria-labelledby="clipboard">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="clipboardLabel">Clipboard</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <p>Application:Type</p>
+    <p>Part:Type</p>
+    <p>Asset:Type</p>
+  </div>
+</div>
