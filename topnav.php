@@ -1,3 +1,46 @@
+<script>    
+    function refreshClipboard() {
+        document.getElementById("clipboardBody").innerHTML = "<p></p>";
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'ajaxGetClipboard.php');
+        xhr.onload = function ()
+        {
+            var response = JSON.parse(xhr.responseText);
+            for (var i = 0; i < response.length; i++) {
+                document.getElementById("clipboardBody").innerHTML += '<p id=clipboardObject_' + response[i].id + '>' + response[i].objectkey + '<a type="button" class="btn btn-light" onclick="deleteClipboardObject(\'clipboardObject_' + response[i].id + '\')"><i class="bi bi-x"></a></p>';
+            }
+            console.log(response);
+            
+        };
+        xhr.send();
+    }
+
+    function deleteClipboardObject(id) {
+        var clipboardObject = document.getElementById(id);
+        var chunks = id.split("_");
+        clipboardObject.parentNode.removeChild(clipboardObject);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'ajaxDeleteClipboard.php?id=' + chunks[1]);
+        xhr.onload = function ()
+        {
+        };
+        xhr.send();
+    }
+
+    function clearClipboard() {
+        document.getElementById("clipboardBody").innerHTML = "<p></p>";
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'ajaxDeleteClipboard.php');
+        xhr.onload = function ()
+        {
+        };
+        xhr.send();
+    }
+
+</script>
+
 <nav class="navbar can-stick navbar-expand-md navbar-dark bg-dark">
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -84,7 +127,7 @@
         </div>
         <div class="ms-auto">
         <ul class="nav navbar-nav">
-            <a class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#clipboard" aria-controls="clipboard"><i class="bi bi-clipboard"></i></a>
+            <a id="clipboardButton" class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#clipboard" aria-controls="clipboard" onclick="refreshClipboard()"><i class="bi bi-clipboard"></i></a>
             <a href="logout.php" class="nav-link">Logout (<?php echo $_SESSION['name'];?>)</a>
         </ul>
             
@@ -94,12 +137,11 @@
 
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="clipboard" aria-labelledby="clipboard">
   <div class="offcanvas-header">
+    <span class="btn btn-danger" id="clearClipboard" onclick="clearClipboard()">CLEAR</span>
     <h5 class="offcanvas-title" id="clipboardLabel">Clipboard</h5>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
-  <div class="offcanvas-body">
-    <p>Application:Type</p>
-    <p>Part:Type</p>
-    <p>Asset:Type</p>
+  <div id="clipboardBody" class="offcanvas-body">
   </div>
+  
 </div>

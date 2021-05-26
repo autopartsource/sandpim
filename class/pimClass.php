@@ -2918,7 +2918,7 @@ function allowedHost($address)
  }
 
  
- function getClipboard($userid,$objectype)
+ function getClipboard($userid,$objecttype)
  {
   $db=new mysql; $db->connect(); $objects=array();
   
@@ -2936,14 +2936,25 @@ function allowedHost($address)
   return $objects;
  }
 
-
- 
- function deleteClipboardObject($userid,$id)
+  function deleteClipboardObject($userid,$id)
  {
   $db=new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('delete from clipboard userid=? and id=?'))
+  if($stmt=$db->conn->prepare('delete from clipboard where userid=? and id=?'))
   {
    $stmt->bind_param('ii', $userid, $id);
+   $stmt->execute();
+  } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+
+ 
+ function deleteClipboardObjects($userid)
+ {
+  $db=new mysql; $db->connect();
+  
+  if($stmt=$db->conn->prepare('delete from clipboard where userid=?'))
+  {
+   $stmt->bind_param('i', $userid);
    $stmt->execute();
   } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
