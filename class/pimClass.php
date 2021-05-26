@@ -2895,6 +2895,68 @@ function allowedHost($address)
  return $returnval;
 }
  
+
+
+
+
+ function addClipboardObject($userid,$objecttype,$objectkey,$objectdata)
+ {
+  $db=new mysql; $db->connect(); $id=false; 
+  $encodedobjectdata= base64_encode($objectdata);
+  if($stmt=$db->conn->prepare('insert into clipboard (id,userid,objecttype,objectkey,objectdata,capturedate) values(null,?,?,?,?,now() )'))
+  {
+   if($stmt->bind_param('isss', $userid,$objecttype,$objectkey,$encodedobjectdata))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;        
+    }
+   }
+  } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+  return $id;
+ }
+
  
+ function getClipboard($userid,$objectype)
+ {
+  $db=new mysql; $db->connect(); $objects=array();
+  
+  if($stmt=$db->conn->prepare('select * from clipboard where userid=? and objecttype like ? order by objecttype,id desc'))
+  {
+   $stmt->bind_param('is',$userid, $objecttype);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $objects[]=array('id'=>$row['id'],'objecttype'=>$row['objecttype'],'objectkey'=>$row['objectkey'],'objectdata'=>base64_decode($row['objectdata']));
+   }
+  }
+  $db->close();
+  return $objects;
+ }
+
+
+ 
+ function deleteClipboardObject($userid,$id)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from clipboard userid=? and id=?'))
+  {
+   $stmt->bind_param('ii', $userid, $id);
+   $stmt->execute();
+  } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+ 
+
+
+
+
+
+
+
+
+
  
 }?>

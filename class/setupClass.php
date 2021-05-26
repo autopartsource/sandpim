@@ -910,6 +910,19 @@ class setup
         PRIMARY KEY (databasename))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - autocare_databases ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - autocare_databases ('.$db->conn->error.')';}
   
+
+        $sql="CREATE TABLE clipboard (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        userid int unsigned null,
+        objecttype varchar(255) not null,
+        objectkey varchar(255) not null,
+        objectdata text not null,
+        capturedate date not null,
+        PRIMARY KEY (id),
+        INDEX idx_userid_objecttype (userid,objecttype))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - clipboard ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - clipboard ('.$db->conn->error.')';}
+
+
         
         $sql="CREATE TABLE documentation (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,

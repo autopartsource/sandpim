@@ -449,7 +449,18 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
 
 
 
-
+            function addPartToClipboard()
+            {
+             var objectdata='sdfsdgarqgevdfave';
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddToClipboard.php?objecttype=part&objectkey=<?php echo $partnumber;?>&objectdata='+objectdata);
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              console.log(response);
+             };
+             xhr.send();
+            }
 
 
 
@@ -489,6 +500,14 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                         <h3 class="card-header text-start">
                             Part Number <span class="text-info"><?php echo $part['partnumber']; ?></span>
                             <div style="float:right;">
+                                
+                                <div>
+                                    
+                                    <button onclick="addPartToClipboard()">Copy</button>
+                                    
+                                </div>
+                                
+                                
                                 <?php if(count($history)){echo '<div><a class="btn btn-secondary" href="./partHistory.php?partnumber='.$partnumber.'">History</a></div>';} ?>
                             </div>
                         </h3>
