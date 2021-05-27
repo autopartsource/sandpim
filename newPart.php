@@ -67,16 +67,31 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
                         <!-- Header -->
-                        <h3 class="card-header text-start">Create A New Part</h3>
+                        <h3 class="card-header text-start">Parts</h3>
                         <div class="card-body">
-                            <form method="post">
-                            <table border="1" cellpadding="5">
-                                <tr><th>Partnumber</th><td><input type="text" name="partnumber"/></td></tr>
-                                <tr><th>Part Type</th><td><select name="parttypeid"><?php foreach ($favoriteparttypes as $parttype) { ?> <option value="<?php echo $parttype['id']; ?>"><?php echo $parttype['name']; ?></option><?php } ?></select></td></tr>
-                                <tr><th>Part Category</th><td><select name="partcategory"><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
-                            </table>
-                            <div style="padding-top:15px;"><input type="submit" name="submit" value="Next"/></div>
-                            </form>
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="create-tab" data-bs-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="true">Create Part</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="create" aria-selected="false">Paste Part</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="create" role="tabpanel" aria-labelledby="create-tab">
+                                    <form method="post">
+                                        <table border="1" cellpadding="5">
+                                            <tr><th>Partnumber</th><td><input type="text" name="partnumber"/></td></tr>
+                                            <tr><th>Part Type</th><td><select name="parttypeid"><?php foreach ($favoriteparttypes as $parttype) { ?> <option value="<?php echo $parttype['id']; ?>"><?php echo $parttype['name']; ?></option><?php } ?></select></td></tr>
+                                            <tr><th>Part Category</th><td><select name="partcategory"><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
+                                        </table>
+                                        <div style="padding-top:15px;"><input type="submit" name="submit" value="Next"/></div>
+                                    </form>
+                                </div>
+                                <div class="tab-pane fade" id="paste" role="tabpanel" aria-labelledby="paste-tab">
+                                    
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
