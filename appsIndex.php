@@ -61,7 +61,7 @@ $groupedMakesCount = count($groupedmakes);
                         
                         <div class="card-body">
                             <div class="container">
-                                <div class="row">
+                                <div class="row row-cols-1 row-cols-sm-2 <?php if($groupedMakesCount > 4) {echo "row-cols-md-"; echo $groupedMakesCount-2;} else {echo "row-cols-md-"+$groupedMakesCount;} echo" row-cols-lg-"; echo $groupedMakesCount;?>">
                                 <?php
                                 for($y = 0;$y < $groupedMakesCount;$y++) {
                                     echo '<div class="col-sm">';

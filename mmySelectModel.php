@@ -57,7 +57,7 @@ $groupedModelsCount = count($groupedmodels);
 
                         <div class="card-body">
                             <div class="container">
-                                <div class="row">
+                                <div class="row row-cols-1 row-cols-sm-2 <?php if($groupedModelsCount > 4) {echo "row-cols-md-"; echo $groupedModelsCount-2;} else {echo "row-cols-md-"+$groupedModelsCount;} echo" row-cols-lg-"; echo $groupedModelsCount;?>">
                                 <?php
                                     for($y = 0;$y < $groupedModelsCount;$y++) {
                                         echo '<div class="col-sm">';
