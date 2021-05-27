@@ -1,4 +1,4 @@
-<script>    
+<script>
     function refreshClipboard() {
         document.getElementById("clipboardBody").innerHTML = "<p></p>";
 
@@ -7,11 +7,18 @@
         xhr.onload = function ()
         {
             var response = JSON.parse(xhr.responseText);
-            for (var i = 0; i < response.length; i++) {
-                document.getElementById("clipboardBody").innerHTML += '<p id=clipboardObject_' + response[i].id + '>' + response[i].description + '<a type="button" class="btn btn-light" onclick="deleteClipboardObject(\'clipboardObject_' + response[i].id + '\')"><i class="bi bi-x"></a></p>';
+            console.log(response.length);
+            if (parseInt(response.length) > 0) {
+                document.getElementById("clipboardButton").removeAttribute("hidden");
+                document.getElementById("clipboardButton").setAttribute("class", "btn btn-success position-relative");
+                for (var i = 0; i < response.length; i++) {
+                    document.getElementById("clipboardBody").innerHTML += '<p id=clipboardObject_' + response[i].id + '>' + response[i].description + ' <a type="button" class="btn btn-sm btn-outline-danger" onclick="deleteClipboardObject(\'clipboardObject_' + response[i].id + '\')"><i class="bi bi-x"></a></p>';
+                }
+                document.getElementById("clipboardBadge").innerHTML=response.length;
             }
-            console.log(response);
-            
+            else {
+                document.getElementById("clipboardButton").setAttribute("hidden", "");
+            } 
         };
         xhr.send();
     }
@@ -25,6 +32,7 @@
         xhr.open('GET', 'ajaxDeleteClipboard.php?id=' + chunks[1]);
         xhr.onload = function ()
         {
+            refreshClipboard();
         };
         xhr.send();
     }
@@ -37,6 +45,7 @@
         {
         };
         xhr.send();
+        document.getElementById("clipboardButton").setAttribute("hidden", "");
     }
 
 </script>
@@ -127,7 +136,9 @@
         </div>
         <div class="ms-auto">
         <ul class="nav navbar-nav">
-            <a id="clipboardButton" class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#clipboard" aria-controls="clipboard" onclick="refreshClipboard()"><i class="bi bi-clipboard"></i></a>
+            <button id="clipboardButton" type="button" class="btn btn-primary position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#clipboard" aria-controls="clipboard" onclick="refreshClipboard()" hidden>
+                <i class="bi bi-clipboard"></i> <span id="clipboardBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary"><span class="visually-hidden"> </span></span>
+            </button>
             <a href="logout.php" class="nav-link">Logout (<?php echo $_SESSION['name'];?>)</a>
         </ul>
             
@@ -137,11 +148,15 @@
 
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="clipboard" aria-labelledby="clipboard">
   <div class="offcanvas-header">
-    <span class="btn btn-danger" id="clearClipboard" onclick="clearClipboard()">CLEAR</span>
-    <h5 class="offcanvas-title" id="clipboardLabel">Clipboard</h5>
+    <span class="btn btn-sm btn-outline-danger" id="clearClipboard" onclick="clearClipboard()">CLEAR</span>
+    <h5 class="offcanvas-title" id="clipboardLabel" style="margin-left:10px;">Clipboard</h5>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div id="clipboardBody" class="offcanvas-body">
   </div>
   
 </div>
+<script>
+    var el = document.getElementById("clipboardButton");
+    el.addEventListener("onload", refreshClipboard());
+</script>
