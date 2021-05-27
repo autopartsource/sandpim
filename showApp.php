@@ -118,6 +118,9 @@ $partassets=$asset->getAssetsConnectedToPart($app['partnumber']);
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $favoritepositions=$pim->getFavoritePositions();
 $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+$makename=$vcdb->makeName($mmy['MakeID']);
+$modelname=$vcdb->modelName($mmy['ModelID']);
+$year=$mmy['year'];
 $pcdbversion=$pcdb->version();
 $historylimit=10;
 $history=$pim->getAppEvents($appid,$historylimit);
@@ -577,6 +580,21 @@ if(isset($_GET['categories']))
              
             }
 
+            function addAppToClipboard()
+            {
+             var description = '<?php echo $makename.' '.$modelname.', '.$year.' ('.$app['partnumber'].')';?>';
+             var objectdata='';
+             var objectkey='<?php echo $appid;?>';
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddToClipboard.php?objecttype=app&description='+btoa(description)+'&objectkey='+objectkey+'&objectdata='+btoa(objectdata));
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+             };
+             xhr.send();
+            }
+
+
 
         </script>
     </head>
@@ -609,11 +627,17 @@ if(isset($_GET['categories']))
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
-                        <?php if(count($history)){
-                        echo '<h6 class="card-header text-start">';
-                            echo '<div style="float:right"><a class="btn btn-secondary" href="./appHistory.php?appid='.$appid.'">History</a>';
-                        echo '</h6>';
-                        }?>
+                        <h6 class="card-header text-start">
+                            <div style="float:right">
+                                <span class="btn btn-info" onclick="addAppToClipboard(),refreshClipboard()">Copy</span>
+                                <?php if(count($history)){echo '<a class="btn btn-secondary" href="./appHistory.php?appid='.$appid.'">History</a>';}?>
+                            </div>
+                            <div style="clear:both;"></div>
+                        </h6>
+                        
+                        
+
+                        
                         <div class="card-body">
                             <?php if($app) {;?>
                             <div style="padding:10px;">
@@ -623,7 +647,7 @@ if(isset($_GET['categories']))
                              ?>
 
                             <table class="table" border="1" cellpadding="5">
-                                    <tr><th><a href="./showAppsByBasevehicle.php?<?php echo implode('&', $selectedcategoriesurlvars); ?>&makeid=<?php echo $mmy['MakeID']; ?>&modelid=<?php echo $mmy['ModelID']; ?>&yearid=<?php echo $mmy['year']; ?>&submit=Show+Applications" class="btn btn-secondary">Base Vehicle</a></th><td align="left"><?php echo '<a href="appsIndex.php"  class="btn btn-secondary">' . $vcdb->makeName($mmy['MakeID']) . '</a>  <a href="mmySelectModel.php?makeid=' . $mmy['MakeID'] . '" class="btn btn-secondary">' . $vcdb->modelName($mmy['ModelID']) . '</a> <a href="mmySelectYear.php?makeid=' . $mmy['MakeID'] . '&modelid=' . $mmy['ModelID'] . '" class="btn btn-secondary">' . $mmy['year'] . '</a>'; ?></td></tr>
+                                    <tr><th><a href="./showAppsByBasevehicle.php?<?php echo implode('&', $selectedcategoriesurlvars); ?>&makeid=<?php echo $mmy['MakeID']; ?>&modelid=<?php echo $mmy['ModelID']; ?>&yearid=<?php echo $year; ?>&submit=Show+Applications" class="btn btn-secondary">Base Vehicle</a></th><td align="left"><?php echo '<a href="appsIndex.php"  class="btn btn-secondary">'.$makename.'</a>  <a href="mmySelectModel.php?makeid=' . $mmy['MakeID'] . '" class="btn btn-secondary">'.$modelname.'</a> <a href="mmySelectYear.php?makeid=' . $mmy['MakeID'] . '&modelid=' . $mmy['ModelID'] . '" class="btn btn-secondary">'.$year.'</a>'; ?></td></tr>
                                     <tr><th>Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber']; ?>" class="btn btn-secondary"><?php echo $app['partnumber']; ?></a></td></tr>
                                     <tr><th>Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid; ?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach ($favoriteparttypes as $parttype) { ?> <option value="<?php echo $parttype['id']; ?>"<?php if ($parttype['id'] == $app['parttypeid']) {
                                     echo ' selected';

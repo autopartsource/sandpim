@@ -8,7 +8,7 @@
         {
             var response = JSON.parse(xhr.responseText);
             for (var i = 0; i < response.length; i++) {
-                document.getElementById("clipboardBody").innerHTML += '<p id=clipboardObject_' + response[i].id + '>' + response[i].objectkey + '<a type="button" class="btn btn-light" onclick="deleteClipboardObject(\'clipboardObject_' + response[i].id + '\')"><i class="bi bi-x"></a></p>';
+                document.getElementById("clipboardBody").innerHTML += '<p id=clipboardObject_' + response[i].id + '>' + response[i].description + '<a type="button" class="btn btn-light" onclick="deleteClipboardObject(\'clipboardObject_' + response[i].id + '\')"><i class="bi bi-x"></a></p>';
             }
             console.log(response);
             

@@ -914,6 +914,7 @@ class setup
         $sql="CREATE TABLE clipboard (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         userid int unsigned null,
+        description varchar(255) not null,
         objecttype varchar(255) not null,
         objectkey varchar(255) not null,
         objectdata text not null,

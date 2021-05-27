@@ -451,13 +451,15 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
 
             function addPartToClipboard()
             {
-             var objectdata='sdfsdgarqgevdfave';
+             var description='<?php echo $partnumber;?>';
+             var objectkey='<?php echo $partnumber;?>';
+             var objectdata='';
+             
              var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxAddToClipboard.php?objecttype=part&objectkey=<?php echo $partnumber;?>&objectdata='+objectdata);
+             xhr.open('GET', 'ajaxAddToClipboard.php?objecttype=part&description='+btoa(description)+'&objectkey='+objectkey+'&objectdata='+btoa(objectdata)+'&submit');
              xhr.onload = function()
              {
               var response=JSON.parse(xhr.responseText);
-              console.log(response);
              };
              xhr.send();
             }
