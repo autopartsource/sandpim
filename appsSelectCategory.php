@@ -170,6 +170,9 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                                 <li class="nav-item">
                                     <a class="nav-link" id="create-tab" data-bs-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Application</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="create" aria-selected="false">Paste Application</a>
+                                </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
                                 <div class="tab-pane fade show active" id="existing" role="tabpanel" aria-labelledby="existing-tab">
@@ -215,6 +218,9 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                                             <input type="hidden" name="makeid" value="<?php echo $makeid;?>"/><input type="hidden" name="modelid" value="<?php echo $modelid;?>"/><input type="hidden" name="yearid" value="<?php echo $yearid;?>"/>
                                         </div>
                                     </form>
+                                </div>
+                                <div class="tab-pane fade" id="paste" role="tabpanel" aria-labelledby="paste-tab">
+                                    
                                 </div>
                             </div>
                         </div>
