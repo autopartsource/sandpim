@@ -50,8 +50,7 @@ $allpartcategories=$pim->getPartCategories();
              };
              xhr.send();
              
-             document.getElementById('unappliedpartcategories').innerHTML+='<div style="text-align:left;padding:3px;" id="unappliedpartcategoryid_'+partcategoryid+'">'+partcategoryname+' <button  onclick="addPartcategory(\''+partcategoryid+'\',\''+partcategoryname+'\')">+</button></div>';
-
+             document.getElementById('unappliedpartcategories').innerHTML+='<div style="text-align:right;padding:3px;" id="unappliedpartcategoryid_'+partcategoryid+'">'+partcategoryname+' <button class="btn btn-outline-success" onclick="addPartcategory(\''+partcategoryid+'\',\''+partcategoryname+'\')"><i class="bi bi-arrow-bar-right"></i></button></div>'
             }
             
             function addPartcategory(partcategoryid,partcategoryname)
@@ -66,8 +65,7 @@ $allpartcategories=$pim->getPartCategories();
              };
              xhr.send();
              
-             document.getElementById('appliedpartcategories').innerHTML+='<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'+partcategoryid+'">'+partcategoryname+' <button  onclick="removePartcategory(\''+partcategoryid+'\',\''+partcategoryname+'\')">x</button></div>';
-                          
+             document.getElementById('appliedpartcategories').innerHTML+='<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'+partcategoryid+'"><button class="btn btn-outline-danger" onclick="removePartcategory(\''+partcategoryid+'\',\''+partcategoryname+'\')"><i class="bi bi-arrow-bar-left"></i></button> '+partcategoryname+'</div>';
             }
             
             function updateDescription()
@@ -81,10 +79,6 @@ $allpartcategories=$pim->getPartCategories();
              };
              xhr.send();
             }
-
-            
-            
-            
         </script>
         <?php include('./includes/header.php'); ?>
     </head>
@@ -118,7 +112,7 @@ $allpartcategories=$pim->getPartCategories();
                                                 <?php
                                                     foreach ($allpartcategories as $partcategory) 
                                                     {   if(in_array($partcategory['id'], $appliedpartcategoryidlist)){continue;}
-                                                        echo '<div style="text-align:left;padding:3px;" id="unappliedpartcategoryid_'.$partcategory['id'].'">'.$pim->partCategoryName($partcategory['id']) . ' <button  onclick="addPartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')">+</button></div>';
+                                                        echo '<div style="text-align:right;padding:3px;" id="unappliedpartcategoryid_'.$partcategory['id'].'">'.$pim->partCategoryName($partcategory['id']) . ' <button class="btn btn-outline-success" onclick="addPartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')"><i class="bi bi-arrow-bar-right"></i></button></div>';
                                                     }
                                                 ?>
                                                 </div>
@@ -134,7 +128,7 @@ $allpartcategories=$pim->getPartCategories();
                                                     foreach ($appliedpartcategories as $partcategory) 
                                                     {
                                                         $appliedpartcategoryidlist[]=$partcategory['id'];
-                                                        echo '<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'.$partcategory['id'].'">'.$partcategory['name'].' <button  onclick="removePartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')">x</button></div>';
+                                                        echo '<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'.$partcategory['id'].'"><button class="btn btn-outline-danger" onclick="removePartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')"><i class="bi bi-arrow-bar-left"></i></button> '.$partcategory['name'].'</div>';
                                                     }
                                                 ?>
                                                 </div>
