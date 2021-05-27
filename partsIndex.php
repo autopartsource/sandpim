@@ -81,7 +81,7 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
 
                             <?php if (count($parts) > 0) { ?>
                             <div class="card">
-                                <h6 class="card-header">Search Results</h6>
+                                <h6 class="card-header">Search Results <?php echo '<span class="badge bg-primary rounded-pill">'.count($parts).'</span>'; ?></h6>
                                 <div class="card-body scroll">
                                     <table class="table" border="1">
                                         <tr><th>Part Number</th><th>Type</th><th>Category</th><th>Description</th><th>Status</th></tr>
