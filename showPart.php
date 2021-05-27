@@ -462,6 +462,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
               var response=JSON.parse(xhr.responseText);
              };
              xhr.send();
+             refreshClipboard();
             }
 
 
@@ -632,7 +633,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-3 my-col colRight">
                     <div class="card shadow-sm">
-                        <h4 class="card-header text-start">Applications</h4>
+                        <h4 class="card-header text-start">Applications <?php echo '<span class="badge bg-primary rounded-pill">'.count($apps).'</span>'; ?></h4>
                         <div class="card-body d-flex flex-column scroll">
                             <?php foreach ($apps as $app) {
                                 echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">' . $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']) . '</a>';} 
