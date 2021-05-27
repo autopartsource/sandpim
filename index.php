@@ -110,32 +110,32 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                             
                             <?php if ($issuescount>0) {
                             echo '<div class="card">
-                                <h5 class="card-header text-start">Issues <span style="border-radius: 15px 15px 10px 1px;background: #dd0000;padding:10px;width:30px;height:15px;color:#ffffff;">'.$issuescount.'</span></h5>
+                                <h5 class="card-header text-start">Issues <span class="badge rounded-pill bg-danger">'.$issuescount.'</span></h5>
                                 <div class="card-body">
                                     <ul class="nav nav-tabs" id="myTab" role="tablist">';
                                         if (count($partissues) > 0) {
                                             echo '<li class="nav-item" role="presentation">
-                                                <a class="nav-link" id="partissues-tab" data-bs-toggle="tab" href="#partissues" role="tab" aria-controls="partissues" aria-selected="true">Parts</a>
+                                                <a class="nav-link" id="partissues-tab" data-bs-toggle="tab" href="#partissues" role="tab" aria-controls="partissues" aria-selected="true">Parts <span class="badge rounded-pill bg-danger">'.count($partissues).'</span></a>
                                             </li>';
                                         }
                                         if (count($appissues) > 0) {
                                             echo '<li class="nav-item" role="presentation">
-                                            <a class="nav-link" id="appissues-tab" data-bs-toggle="tab" href="#appissues" role="tab" aria-controls="appissues" aria-selected="true">Apps</a>
+                                            <a class="nav-link" id="appissues-tab" data-bs-toggle="tab" href="#appissues" role="tab" aria-controls="appissues" aria-selected="true">Apps <span class="badge rounded-pill bg-danger">'.count($appissues).'</span></a>
                                         </li>';
                                         }
                                         if (count($assetissues) > 0) {
                                             echo '<li class="nav-item" role="presentation">
-                                            <a class="nav-link" id="assetissues-tab" data-bs-toggle="tab" href="#assetissues" role="tab" aria-controls="assetissues" aria-selected="true">Assets</a>
+                                            <a class="nav-link" id="assetissues-tab" data-bs-toggle="tab" href="#assetissues" role="tab" aria-controls="assetissues" aria-selected="true">Assets <span class="badge rounded-pill bg-danger">'.count($assetissues).'</span></a>
                                         </li>';
                                         }
                                         if (count($systemissues) > 0) {
                                             echo '<li class="nav-item" role="presentation">
-                                            <a class="nav-link" id="systemissues-tab" data-bs-toggle="tab" href="#systemissues" role="tab" aria-controls="systemissues" aria-selected="true">System</a>
+                                            <a class="nav-link" id="systemissues-tab" data-bs-toggle="tab" href="#systemissues" role="tab" aria-controls="systemissues" aria-selected="true">System <span class="badge rounded-pill bg-danger">'.count($systemissues).'</span></a>
                                         </li>';
                                         }
                                         if (count($sandpiperissues) > 0) {
                                             echo '<li class="nav-item" role="presentation">
-                                            <a class="nav-link" id="sandpiperissues-tab" data-bs-toggle="tab" href="#sandpiperissues" role="tab" aria-controls="sandpiperissues" aria-selected="true">Sandpiper</a>
+                                            <a class="nav-link" id="sandpiperissues-tab" data-bs-toggle="tab" href="#sandpiperissues" role="tab" aria-controls="sandpiperissues" aria-selected="true">Sandpiper <span class="badge rounded-pill bg-danger">'.count($sandpiperissues).'</span></a>
                                         </li>';
                                         }
                                         
