@@ -41,13 +41,13 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
-                <!-- Left Column -->
+<!--                 Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
                     
                 </div>
                 
                 <!-- Main Content -->
-                <div class="col-xs-12 col-md-7 my-col colMain">
+                <div class="col-xs-12 col-md-6 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
                         <h3 class="card-header text-start">Assets</h3>
@@ -61,7 +61,10 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                     <a class="nav-link" id="upload-tab" data-bs-toggle="tab" href="#upload" role="tab" aria-controls="upload" aria-selected="false">Upload Asset</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="uri-tab" data-bs-toggle="tab" href="#uri" role="tab" aria-controls="contact" aria-selected="false">Upload from URI</a>
+                                    <a class="nav-link" id="uri-tab" data-bs-toggle="tab" href="#uri" role="tab" aria-controls="uri" aria-selected="false">Upload from URI</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="paste" aria-selected="false">Paste Asset</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
@@ -114,7 +117,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                             echo '
                                                 <div class="card shadow-sm">
                                                     <!-- Header -->
-                                                    <h5 class="card-header text-start">Search Results</h5>
+                                                    <h6 class="card-header">Search Results <span class="badge bg-primary rounded-pill">'.count($assetrecords).'</span></h5>
                                                     <div class="card-body scroll">
                                                     <div class="d-grid gap-2 col-6 mx-auto">';
                                         
@@ -146,6 +149,9 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                         <div style="padding:5px;"><input type="submit" name="submit" value="Retrieve"/></div>
                                     </form>
                                 </div>
+                                <div class="tab-pane fade" id="paste" role="tabpanel" aria-labelledby="paste-tab">
+                                    
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -154,7 +160,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                 <!-- End of Main Content -->
                 
                 <!-- Right Column -->
-                <div class="col-xs-12 col-md-3 my-col colRight">
+                <div class="col-xs-12 col-md-4 my-col colRight">
                     <div class="card shadow-sm">
 			<!-- Header -->
                         <h3 class="card-header text-start">Recent Assets</h3>
