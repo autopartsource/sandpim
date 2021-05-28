@@ -67,14 +67,14 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
                         <!-- Header -->
-                        <h3 class="card-header text-start">Parts</h3>
+                        <h3 class="card-header text-start">Create Parts</h3>
                         <div class="card-body">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="create-tab" data-bs-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="true">Create Part</a>
+                                    <a class="nav-link active" id="create-tab" data-bs-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="true">New Part Form</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="create" aria-selected="false">Paste Part</a>
+                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="create" aria-selected="false">New Part From Clipboard</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">

@@ -529,15 +529,31 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                                             </div>
                                         </td>
                                     <tr>
-                                    <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></td><tr>
-                                    <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></td><tr>
-                                    <tr><th>Replaced By</th><td><input type="text" id="replacedby" value="<?php echo $part['replacedby']?>"/><button onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></td><tr>
-                                    <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
+                                    <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><button class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></td><tr>
+                                    <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><button class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></td><tr>
+                                    <tr><th>Replaced By</th><td><input type="text" id="replacedby" value="<?php echo $part['replacedby']?>"/><button class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></td><tr>
+                                    <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
                                     <tr>
                                         <th>Interchange</th>
                                         <td>
                                             <div id="interchanges">
-                                            <?php foreach($competitorparts as $competitorpart){;?><div id="interchangeid_<?php echo $competitorpart['id'];?>" style="font-size: 80%;"><?php echo $interchange->brandName($competitorpart['brandAAIAID']).': '.$competitorpart['competitorpartnumber'].' <button onclick="deleteInterchange(\''.$competitorpart['id'].'\')">x</button>';?></div><?php }?>
+                                            
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                          <th scope="col">Competitor</th>
+                                                          <th scope="col">Part Number</th>
+                                                          <th scope="col">Delete</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <?php foreach($competitorparts as $competitorpart){;?>
+                                                    <tr style="font-size: 80%;">
+                                                        <th scope="row" id="interchangeid_<?php echo $competitorpart['id'];?>"><?php echo $interchange->brandName($competitorpart['brandAAIAID'])?></td>
+                                                        <td><?php echo $competitorpart['competitorpartnumber'] ?></td>
+                                                        <td><?php echo '<button class="btn btn-sm btn-outline-danger" onclick="deleteInterchange(\''.$competitorpart['id'].'\')">x</button>';?></td>
+                                                    </tr>
+                                                    <?php }?>
+                                                </table>
                                             </div>
                                             <div onclick="showhideNewInterchange()">...</div>
                                             <div id="newinterchange" style="display:none; padding-top: 10px;"><div style="float:left;padding-right: 10px;"><a href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="float:left;"><select id="competitivebrand"><?php foreach($competitivebrands as $competitivebrand){echo '<option value="'.$competitivebrand['brandAAIAID'].'">'.$competitivebrand['description'].'</option>';}?></select><input type="text" id="competitivepartnumber" size="10"/><button id="addinterchange" onclick="addInterchange()">+</button></div><div style="clear:both;"></div></div>
@@ -582,11 +598,11 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                                                 {
                                                     if($attribute['PAID']==0)
                                                     {
-                                                        echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$attribute['name'].':<span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                        echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button class="btn btn-sm btn-outline-danger" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$attribute['name'].':<span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
                                                     }
                                                     else
                                                     {
-                                                        echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).':<span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                        echo '<div id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button class="btn btn-sm btn-outline-danger" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$padb->PAIDname($attribute['PAID']).':<span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
                                                     }
                                                 } ?>
                                             </div>
@@ -601,19 +617,19 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
                                     <tr>
                                         <th>Assets</th>
                                         <td>
-                                        <?php 
-                                        foreach($connectedassets as $connectedasset)
-                                        {
-                                            echo '<div>';
-                                            if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='')
+                                            <?php 
+                                            foreach($connectedassets as $connectedasset)
                                             {
-                                                echo '<div><img src="'.$connectedasset['uri'].'" width="400px"/></div>';
-                                            }
-                                            echo '<div id="assetconnectionid_'.$connectedasset['connectionid'].'" style="padding:2px;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> <button onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')"><span aria-hidden="true">&times;</span></button></div>';
-                                            echo '</div>';
+                                                echo '<div>';
+                                                if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='')
+                                                {
+                                                    echo '<div><img class="img-thumbnail" src="'.$connectedasset['uri'].'" width="400px"/></div>';
+                                                }
+                                                echo '<div id="assetconnectionid_'.$connectedasset['connectionid'].'" style="padding:2px;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> <button class="btn btn-sm btn-outline-danger" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')"><span aria-hidden="true">&times;</span></button></div>';
+                                                echo '</div>';
 
-                                        };
-                                        ?>
+                                            };
+                                            ?>
                                         </td>
                                     <tr>
                                     <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>

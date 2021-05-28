@@ -149,7 +149,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                             echo '<div class="tab-pane fade mt-3" id="partissues" role="tabpanel" aria-labelledby="partissues-tab">';
                                             foreach($partissues as $partissue)
                                             {
-                                             echo '<div style="padding:2px;" id="issue_'.$partissue['id'].'"><a href="./showPart.php?partnumber='.$partissue['issuekeyalpha'].'">'.$partissue['issuekeyalpha'].'</a>: '.$partissue['description'].' <button onclick="deleteIssue(\''.$partissue['id'].'\')">x</button></div>';
+                                             echo '<div style="padding:2px;" id="issue_'.$partissue['id'].'"><a href="./showPart.php?partnumber='.$partissue['issuekeyalpha'].'">'.$partissue['issuekeyalpha'].'</a>: '.$partissue['description'].' <button class="btn btn-sm btn-outline-danger" onclick="deleteIssue(\''.$partissue['id'].'\')"><i class="bi bi-x"></i></button></div>';
                                             }
                                             echo '</div>';
                                         }
@@ -157,7 +157,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                             echo '<div class="tab-pane fade mt-3" id="appissues" role="tabpanel" aria-labelledby="appissues-tab">';
                                             foreach($appissues as $appissue)
                                             {
-                                             echo '<div style="padding:2px;" id="issue_'.$appissue['id'].'"><a href="./showApp.php?appid='.$appissue['issuekeynumeric'].'">App ID '.$appissue['issuekeynumeric'].'</a>: '.$appissue['description'].' <button onclick="deleteIssue(\''.$appissue['id'].'\')">x</button></div>';
+                                             echo '<div style="padding:2px;" id="issue_'.$appissue['id'].'"><a href="./showApp.php?appid='.$appissue['issuekeynumeric'].'">App ID '.$appissue['issuekeynumeric'].'</a>: '.$appissue['description'].' <button class="btn btn-sm btn-outline-danger" onclick="deleteIssue(\''.$appissue['id'].'\')"><i class="bi bi-x"></i></button></div>';
                                             }
                                             echo '</div>';
                                         }
@@ -165,7 +165,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                             echo '<div class="tab-pane fade mt-3" id="assetissues" role="tabpanel" aria-labelledby="assetissues-tab">';
                                             foreach($assetissues as $assetissue)
                                             {
-                                             echo '<div style="padding:2px;" id="issue_'.$assetissue['id'].'"><a href="./showAsset.php?assetid='.$assetissue['issuekeyalpha'].'">'.$assetissue['issuekeyalpha'].'</a>: '.$assetissue['description'].' <button onclick="deleteIssue(\''.$assetissue['id'].'\')">x</button></div>';
+                                             echo '<div style="padding:2px;" id="issue_'.$assetissue['id'].'"><a href="./showAsset.php?assetid='.$assetissue['issuekeyalpha'].'">'.$assetissue['issuekeyalpha'].'</a>: '.$assetissue['description'].' <button class="btn btn-sm btn-outline-danger" onclick="deleteIssue(\''.$assetissue['id'].'\')"><i class="bi bi-x"></i></button></div>';
                                             }
                                             echo '</div>';
                                         }
@@ -173,7 +173,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                             echo '<div class="tab-pane fade mt-3" id="systemissues" role="tabpanel" aria-labelledby="systemissues-tab">';
                                             foreach($systemissues as $systemissue)
                                             {
-                                             echo '<div style="padding:2px;" id="issue_'.$systemissue['id'].'">'.$systemissue['description'].' <button onclick="deleteIssue(\''.$systemissue['id'].'\')">x</button></div>';
+                                             echo '<div style="padding:2px;" id="issue_'.$systemissue['id'].'">'.$systemissue['description'].' <button class="btn btn-sm btn-outline-danger" onclick="deleteIssue(\''.$systemissue['id'].'\')"><i class="bi bi-x"></i></button></div>';
                                             }
                                             echo '</div>';
                                         }
@@ -181,7 +181,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                             echo '<div class="tab-pane fade mt-3" id="sandpiperissues" role="tabpanel" aria-labelledby="sandpiperissues-tab">';
                                             foreach($sandpiperissues as $sandpiperissue)
                                             {
-                                             echo '<div style="padding:2px;" id="issue_'.$sandpiperissue['id'].'">'.$sandpiperissue['description'].' <button onclick="deleteIssue(\''.$sandpiperissue['id'].'\')">x</button></div>';
+                                             echo '<div style="padding:2px;" id="issue_'.$sandpiperissue['id'].'">'.$sandpiperissue['description'].' <button class="btn btn-sm btn-outline-danger" onclick="deleteIssue(\''.$sandpiperissue['id'].'\')"><i class="bi bi-x"></i></button></div>';
                                             }
                                             echo '</div>';
                                         }

@@ -310,7 +310,7 @@ ksort($fitmentcolumnkeys);
                             
 
                             <?php if ($prevyearexists) {
-                                echo buildModelYearLink($makeid, $modelid, ($yearid - 1), $partcategories, '<<');
+                                echo buildModelYearLink($makeid, $modelid, ($yearid - 1), $partcategories, '<i class="bi bi-chevron-double-left"></i>');
                             } else {
                                 echo '....';
                             } echo ' ';
@@ -318,7 +318,7 @@ ksort($fitmentcolumnkeys);
                             <?php echo $makename.', '.$modelname.', '.$yearid; ?>
                             <?php 
                             if ($nextyearexists) {
-                                echo buildModelYearLink($makeid, $modelid, ($yearid + 1), $partcategories, '>>');
+                                echo buildModelYearLink($makeid, $modelid, ($yearid + 1), $partcategories, '<i class="bi bi-chevron-double-right"></i>');
                             } else {
                                 echo '....';
                             } ?>

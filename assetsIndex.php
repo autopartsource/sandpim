@@ -64,7 +64,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                     <a class="nav-link" id="uri-tab" data-bs-toggle="tab" href="#uri" role="tab" aria-controls="uri" aria-selected="false">Upload from URI</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="paste" aria-selected="false">Paste Asset</a>
+                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="paste" aria-selected="false">Create from Clipboard</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">

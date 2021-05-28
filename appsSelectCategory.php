@@ -76,7 +76,7 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
               var xhr = new XMLHttpRequest();
               console.log(partcategory);
               
-              document.getElementById('categorySelectButton_'+partcategory).className = "btn btn-secondary";
+              document.getElementById('categorySelectButton_'+partcategory).className = "btn btn-outline-secondary";
               console.log(document.getElementById('categorySelectButton_'+partcategory).className);
 
               xhr.open('GET', 'ajaxSelectUnselectUserPartcategory.php?userid='+userid+'&partcategory='+partcategory+'&action=unselect');
@@ -186,7 +186,7 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                                                     $buttonClass = 'btn btn-success';
                                                 }
                                                 else {
-                                                    $buttonClass = 'btn btn-secondary';
+                                                    $buttonClass = 'btn btn-outline-secondary';
                                                 }
                                                 echo '<div style="padding:5px"><label id="categorySelectButton_' . $partcategory['id'] . '" class="'. $buttonClass .'" style="padding:5px;border: 1px solid;margin:3px; border-radius:5px"for="partcategory_' . $partcategory['id'] . '">' . $partcategory['name'] . '<img style="padding:0px 5px 0px" height="17px" src="' . $partcategory['logouri'] . '"><input type="checkbox" id="partcategory_' . $partcategory['id'] . '" onclick="selectUnselectPartcategory(\'' . $userid . '\',\'' . $partcategory['id'] . '\')" name="partcategory_' . $partcategory['id'] . '"' . $checked . ' style="display:none"></label></div>';
                                             }

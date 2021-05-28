@@ -110,13 +110,6 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                         </div>
                     </div>
                     <?php }?>
-
-
-
-
-
-
-
                 </div>
                 
                 <!-- Main Content -->
@@ -127,25 +120,31 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                          ?>
                         <div class="card shadow-sm">
                             <h3 class="card-header text-start">Record for Asset: <span class="text-info"><?php echo $assetid;?></span><div style="float:right;"><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></div></h3>
-                            <div class="row no-gutters">
-                                <div class="card-body">
-                                    <table class="table">
-                                        <tr><th>Description</th>
-                                            <td><?php echo $assetrecord['description']; ?></td>
-                                            <td class="mobile" rowspan="13"><img width="<?php echo $configGet->getConfigValue('imageAssetTumbnailRenderWidth', 350); ?>" src="<?php echo $imgsrc; ?>"/></td></tr>
-                                        <tr><th>File Type</th><td><?php echo $assetrecord['fileType']; ?></td></tr>
-                                        <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
-                                        <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
-                                        <tr><th>Background</th><td><?php echo $assetrecord['background']; ?></td></tr>
-                                        <tr><th>File Size</th><td><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></td></tr>
-                                        <tr><th>URI</th><td><div style="font-size:50%;"><?php echo $assetrecord['uri']; ?></div></td></tr>
-                                        <tr><th>Local Path</th><td><?php echo $assetrecord['localpath']; ?></td></tr>
-                                        <tr><th>Orientation</th><td><?php echo $assetrecord['orientationViewCode']; ?></td></tr>
-                                        <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode']; ?></td></tr>
-                                        <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
-                                        <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'], 'Public', 'Private'); ?></td></tr>
-                                        <tr><th>File Hash</th><td><div style="font-size:50%;"><?php echo $assetrecord['fileHashMD5']; ?></div></td></tr>
-                                    </table>
+                            
+                            <div class="card-body">
+                                <div class="row g-0">
+                                    <div class="col-xs-12 col-md-7">
+                                        <table class="table">
+                                            <tr><th>Description</th>
+                                                <td><?php echo $assetrecord['description']; ?></td>
+                                                <td class="mobile" rowspan="13"></td></tr>
+                                            <tr><th>File Type</th><td><?php echo $assetrecord['fileType']; ?></td></tr>
+                                            <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
+                                            <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
+                                            <tr><th>Background</th><td><?php echo $assetrecord['background']; ?></td></tr>
+                                            <tr><th>File Size</th><td><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></td></tr>
+                                            <tr><th>URI</th><td><div style="font-size:50%;"><?php echo $assetrecord['uri']; ?></div></td></tr>
+                                            <tr><th>Local Path</th><td><?php echo $assetrecord['localpath']; ?></td></tr>
+                                            <tr><th>Orientation</th><td><?php echo $assetrecord['orientationViewCode']; ?></td></tr>
+                                            <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode']; ?></td></tr>
+                                            <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
+                                            <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'], 'Public', 'Private'); ?></td></tr>
+                                            <tr><th>File Hash</th><td><div style="font-size:50%;"><?php echo $assetrecord['fileHashMD5']; ?></div></td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-xs-12 col-md-5">
+                                        <img class="img-thumbnail" src="<?php echo $imgsrc; ?>"/>
+                                    </div>
                                 </div>
                             </div>
                         </div>

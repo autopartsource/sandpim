@@ -72,7 +72,7 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
              };
              xhr.send();
              
-             document.getElementById('unapplieddeliverygroups').innerHTML+='<div style="text-align:left;padding:3px;" id="unapplieddeliverygroupid_'+deliverygroupid+'">'+deliverygroupdescription+' <button  onclick="addDeliverygroup(\''+deliverygroupid+'\',\''+deliverygroupdescription+'\')">+</button></div>';
+             document.getElementById('unapplieddeliverygroups').innerHTML+='<div style="text-align:right;padding:3px;" id="unapplieddeliverygroupid_'+deliverygroupid+'">'+deliverygroupdescription+' <button class="btn btn-outline-success" onclick="addDeliverygroup(\''+deliverygroupid+'\',\''+deliverygroupdescription+'\')"> <i class="bi bi-arrow-bar-right"></i></button></div>';
 
             }
             
@@ -88,7 +88,7 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
              };
              xhr.send();
              
-             document.getElementById('applieddeliverygroups').innerHTML+='<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'+deliverygroupid+'">'+deliverygroupdescription+' <button  onclick="removeDeliverygroup(\''+deliverygroupid+'\',\''+deliverygroupdescription+'\')">x</button></div>';
+             document.getElementById('applieddeliverygroups').innerHTML+='<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'+deliverygroupid+'"><button class="btn btn-outline-danger" onclick="removeDeliverygroup(\''+deliverygroupid+'\',\''+deliverygroupdescription+'\')"><i class="bi bi-arrow-bar-left"></i></button> '+deliverygroupdescription+'</div>';
             }
                         
         </script>
@@ -121,7 +121,7 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
                                     </h5>
                                     <div class="card-body">
                                         <div class="row padding">
-                                            <div class="col-md-6">
+                                            <div class="col">
                                                 <div class="card">
                                                     <h6 class="card-header">Parameters</h6>
                                                     <div class="card-body">
@@ -132,7 +132,7 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
                                         </div>
                                         
                                         <div class="row padding">
-                                            <div class="col-md-6">
+                                            <div class="col">
                                                 <div class="card">
                                                     <h6 class="card-header">Notes</h6>
                                                     <div class="card-body">
@@ -152,7 +152,7 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
                                                         foreach ($alldeliverygroups as $deliverygroup) 
                                                         {   
                                                             if(in_array($deliverygroup['id'], $applieddeliverygroupids)){continue;}
-                                                            echo '<div style="text-align:left;padding:3px;" id="unapplieddeliverygroupid_'.$deliverygroup['id'].'">'.$deliverygroup['description'] . ' <button  onclick="addDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')">+</button></div>';
+                                                            echo '<div style="text-align:right;padding:3px;" id="unapplieddeliverygroupid_'.$deliverygroup['id'].'">'.$deliverygroup['description'] . ' <button class="btn btn-outline-success" onclick="addDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')"><i class="bi bi-arrow-bar-right"></i></button></div>';
                                                         }
                                                         ?>
                                                         </div>
@@ -168,7 +168,7 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
                                                         foreach ($applieddeliverygroupids as $deliverygroupid) 
                                                         {
                                                             $deliverygroup=$pim->getDeliverygroup($deliverygroupid);
-                                                            echo '<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'.$deliverygroupid.'">'.$deliverygroup['description'].' <button  onclick="removeDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')">x</button></div>';
+                                                            echo '<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'.$deliverygroupid.'"><button class="btn btn-outline-danger" onclick="removeDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')"><i class="bi bi-arrow-bar-left"></i></button> '.$deliverygroup['description'].'</div>';
                                                         }
                                                         ?>
                                                         </div>
@@ -181,7 +181,7 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
                                         
                                         
                                         <div class="row padding">
-                                            <div class="col-md-6">
+                                            <div class="col">
                                                 <div class="card">
                                                     <h6 class="card-header">Partnumber Translation Table (internal TAB external)</h6>
                                                     <div class="card-body">
