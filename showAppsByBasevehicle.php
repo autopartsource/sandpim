@@ -51,6 +51,11 @@ foreach ($_GET as $getname => $getval) {
 }
 
 $basevehicleid = $vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid);
+
+$makename = $vcdb->makeName($makeid);
+$modelname = $vcdb->modelName($modelid);
+
+
 $apps = $pim->getAppsByBasevehicleid($basevehicleid,$partcategories);
 $fitmentrowkeys = array();
 $fitmentcolumnkeys = array();
@@ -257,6 +262,32 @@ ksort($fitmentcolumnkeys);
                 }
             })
 
+
+
+            function addAppsToClipboard()
+            {
+                var nodes = document.getElementById('appids').getElementsByTagName("div");
+                for(var i=0; i<nodes.length; i++) 
+                {
+                    //                    console.log(nodes[i].getAttribute('data-appid') + ' - ' + nodes[i].getAttribute('data-description'));
+                    var description = nodes[i].getAttribute('data-description');
+                    var objectdata='';
+                    var objectkey=nodes[i].getAttribute('data-appid');
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', 'ajaxAddToClipboard.php?objecttype=app&description='+btoa(description)+'&objectkey='+objectkey+'&objectdata='+btoa(objectdata));
+                    xhr.onload = function()
+                    {
+                    };
+                    xhr.send();             
+                }
+            }
+
+
+
+
+
+
+
         </script>
     </head>
     <body>
@@ -276,19 +307,39 @@ ksort($fitmentcolumnkeys);
                     <div class="card shadow-sm">
 			<!-- Header -->
                         <h3 class="card-header">
+                            
+
                             <?php if ($prevyearexists) {
                                 echo buildModelYearLink($makeid, $modelid, ($yearid - 1), $partcategories, '<<');
                             } else {
                                 echo '....';
                             } echo ' ';
                             ?>
-                            <?php echo $vcdb->makeName($makeid); ?>, <?php echo $vcdb->modelName($modelid); ?> <?php echo $yearid; ?>
+                            <?php echo $makename.', '.$modelname.', '.$yearid; ?>
                             <?php 
                             if ($nextyearexists) {
                                 echo buildModelYearLink($makeid, $modelid, ($yearid + 1), $partcategories, '>>');
                             } else {
                                 echo '....';
                             } ?>
+
+                    
+                            <?php if(count($apps))
+                            {
+                                echo '<div style="float:right">';
+                                echo '<div style="display:none;" id="appids">';
+
+                                foreach ($apps as $app)
+                                {
+                                    echo '<div data-appid="'.$app['id'].'" data-description="'.$makename.', '.$modelname.', '.$yearid.' ('.  $app['partnumber'].')">'.$app['id'].'</div>';
+                                }
+
+                                echo '</div>';                        
+                                echo '<span class="btn btn-info" onclick="addAppsToClipboard(),refreshClipboard()">Copy</span>';
+                                echo '</div>';
+                                echo '<div style="clear:both;"></div>';
+                            }?>
+
                         </h3>
 
                         <div class="card-body">
@@ -363,12 +414,19 @@ ksort($fitmentcolumnkeys);
                 
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
+                
                     
                 </div>
             </div>
         </div>    
         <!-- End of Content Container -->
-                
+
+        
+        
+        
+        
+        
+        
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
     </body>
