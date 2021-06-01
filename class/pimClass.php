@@ -1808,15 +1808,17 @@ function countAppsByPartcategories($partcategories)
   return $success;
  }
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
+ function cloneApps($basevehicleid,$appids)
+ {
+     // duplicate every app in the array of app id's to the given new basevehilce
+  $newappids=array();
+  foreach($appid as $appid)
+  {
+   $existingapp=$this->getApp($appid);
+   $newappids[]=$this->newApp($basevehicleid, $existingapp['parttypeid'], $existingapp['positionid'], $existingapp['quantityperapp'], $existingapp['partnumber'], $existingapp['cosmetic'], $existingapp['attributes']);         
+  }
+  return $newappids;
+ }
  
  function newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$attributes)
  {
@@ -2960,7 +2962,6 @@ function allowedHost($address)
   $db->close();
  }
  
-
 
 
 

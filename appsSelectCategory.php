@@ -48,6 +48,33 @@ if(isset($_GET['submit']) && $_GET['submit']=='Create' )
  }
 }
 
+if(isset($_GET['submit']) && $_GET['submit']=='Create from clipboard' )
+{
+ if($basevehicleid=$vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid))
+ {
+  $clipboardapps=$pim->getClipboard($userid, 'app');
+  $appids=array();
+  foreach($clipboardapps as $clipboardapp)
+  {
+   $appids[]=$clipboardapp['objectkey'];
+  }
+  
+  if(count($appids)>0)
+  {
+   $newappids=$pim->cloneApps($basevehicleid, $appids);
+   if(count($newappids)>0)
+   {
+    foreach($newappids as $newappid)
+    {
+     $appoid=$pim->getOIDofApp($newappid);
+     $pim->logAppEvent($newappid, $userid, 'app cloned with appsSelectCategory.php form clipboard', $appoid);        
+    }
+   }
+   echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./showApp.php?appid=".$appid."'\" /></head><body></body></html>"; exit;
+  }
+ }
+}
+
 $partcategories=$user->getUserVisiblePartcategories($userid);
 $favoritepositions=$pim->getFavoritePositions();
 $favoriteparttypes=$pim->getFavoriteParttypes();
