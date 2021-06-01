@@ -267,6 +267,9 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                                 </div>
                                 <div class="tab-pane fade" id="paste" role="tabpanel" aria-labelledby="paste-tab">
                                     <form>
+                                        <input type="hidden" name="makeid" value="<?php echo $makeid;?>"/>
+                                        <input type="hidden" name="modelid" value="<?php echo $modelid;?>"/>
+                                        <input type="hidden" name="yearid" value="<?php echo $yearid;?>"/>
                                         <input type="submit" name="submit" value="Create from clipboard"/>
                                     </form>
                                 </div>
