@@ -1812,7 +1812,7 @@ function countAppsByPartcategories($partcategories)
  {
      // duplicate every app in the array of app id's to the given new basevehilce
   $newappids=array();
-  foreach($appid as $appid)
+  foreach($appids as $appid)
   {
    $existingapp=$this->getApp($appid);
    $newappids[]=$this->newApp($basevehicleid, $existingapp['parttypeid'], $existingapp['positionid'], $existingapp['quantityperapp'], $existingapp['partnumber'], $existingapp['cosmetic'], $existingapp['attributes']);         
