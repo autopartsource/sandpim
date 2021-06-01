@@ -451,7 +451,7 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
 
             function addPartToClipboard()
             {
-             var description='<?php echo $partnumber;?>';
+             var description='<a href="showApp.php'+ window.location.search +'"><?php echo $partnumber;?></a>';
              var objectkey='<?php echo $partnumber;?>';
              var objectdata='';
              

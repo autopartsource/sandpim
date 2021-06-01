@@ -266,7 +266,9 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                                     </form>
                                 </div>
                                 <div class="tab-pane fade" id="paste" role="tabpanel" aria-labelledby="paste-tab">
-                                    
+                                    <form>
+                                        <input type="submit" name="submit" value="Create from clipboard"/>
+                                    </form>
                                 </div>
                             </div>
                         </div>
