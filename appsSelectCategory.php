@@ -70,7 +70,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='Create from clipboard' )
      $pim->logAppEvent($newappid, $userid, 'app cloned with appsSelectCategory.php form clipboard', $appoid);        
     }
    }
-   echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./showApp.php?appid=".$appid."'\" /></head><body></body></html>"; exit;
+//   echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./showApp.php?appid=".$appid."'\" /></head><body></body></html>"; exit;
   }
  }
 }
