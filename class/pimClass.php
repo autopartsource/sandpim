@@ -1550,7 +1550,7 @@ function countAppsByPartcategories($partcategories)
       * the "name" field in application_attribute will hold the numeric Qdb ID. the "value" 
       * field will hold parameter/uom pairs delimited by semicolon like this 3-parameter example
       * 4000,lbs;Bendix,;X7R,;
-      * The second and third parms are unitless
+      * (The second and third parms in this examplare unitless)
       */
     
   $db=new mysql; $db->connect();
@@ -1727,7 +1727,7 @@ function countAppsByPartcategories($partcategories)
      $this->addNoteAttributeToApp($appid,$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
      break;
     case 'qdb':
-//      $this->addQdbAttributeToApp($appid,...
+     $this->addQdbAttributeToApp($appid, $attribute['name'], $attribute['value'], $attribute['sequence'], $attribute['cosmetic']);        
      break;
     default: break;
    }
