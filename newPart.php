@@ -50,8 +50,30 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
 <html>
     <head>
         <?php include('./includes/header.php'); ?>
+        
+        <script>
+            function populatePasteDiv() {
+                var pasteDiv = document.getElementById("paste");
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'ajaxGetClipboard.php?objecttype=part');
+                xhr.onload = function ()
+                {
+                    var response = JSON.parse(xhr.responseText);
+                    if (parseInt(response.length) > 0) {
+                        for (var i = 0; i < response.length; i++) {
+                            pasteDiv.innerHTML += '<p id=pasteObject_' + response[i].id + '>' + response[i].description + '</p>';
+                        }
+                    }
+                    else {
+                        
+                    } 
+                };
+                xhr.send();
+            }
+        </script>
     </head>
-    <body>
+    <body onload="populatePasteDiv()">
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
                 
@@ -74,7 +96,7 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
                                     <a class="nav-link active" id="create-tab" data-bs-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="true">New Part Form</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="create" aria-selected="false">New Part From Clipboard</a>
+                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="create" aria-selected="false">Create from Clipboard</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">

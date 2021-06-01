@@ -582,7 +582,8 @@ if(isset($_GET['categories']))
 
             function addAppToClipboard()
             {
-             var description = '<?php echo $makename.' '.$modelname.', '.$year.' ('.$app['partnumber'].')';?>';
+             var description = '<a href="showApp.php'+ window.location.search +'"><?php echo $makename.' '.$modelname.', '.$year.' ('.$app['partnumber'].')';?></a>';
+             console.log(window.location.search);
              var objectdata='';
              var objectkey='<?php echo $appid;?>';
              var xhr = new XMLHttpRequest();

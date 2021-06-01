@@ -33,8 +33,30 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
 <html>
     <head>
         <?php include('./includes/header.php'); ?>
+        
+        <script>
+            function populatePasteDiv() {
+                var pasteDiv = document.getElementById("paste");
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'ajaxGetClipboard.php?objecttype=asset');
+                xhr.onload = function ()
+                {
+                    var response = JSON.parse(xhr.responseText);
+                    if (parseInt(response.length) > 0) {
+                        for (var i = 0; i < response.length; i++) {
+                            pasteDiv.innerHTML += '<p id=pasteObject_' + response[i].id + '>' + response[i].description + '</p>';
+                        }
+                    }
+                    else {
+                        
+                    } 
+                };
+                xhr.send();
+            }
+        </script>
     </head>
-    <body>
+    <body onload="populatePasteDiv()">
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
                 

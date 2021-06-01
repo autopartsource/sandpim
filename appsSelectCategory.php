@@ -143,9 +143,28 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                 xhr.send();
             }
             
+            function populatePasteDiv() {
+                var pasteDiv = document.getElementById("paste");
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'ajaxGetClipboard.php?objecttype=app');
+                xhr.onload = function ()
+                {
+                    var response = JSON.parse(xhr.responseText);
+                    if (parseInt(response.length) > 0) {
+                        for (var i = 0; i < response.length; i++) {
+                            pasteDiv.innerHTML += '<p id=pasteObject_' + response[i].id + '>' + response[i].description + '</p>';
+                        }
+                    }
+                    else {
+                        
+                    } 
+                };
+                xhr.send();
+            }
         </script>
     </head>
-    <body>
+    <body onload="populatePasteDiv()">
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
         
@@ -171,7 +190,7 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                                     <a class="nav-link" id="create-tab" data-bs-toggle="tab" href="#create" role="tab" aria-controls="create" aria-selected="false">Create Application</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="create" aria-selected="false">Paste Application</a>
+                                    <a class="nav-link" id="paste-tab" data-bs-toggle="tab" href="#paste" role="tab" aria-controls="create" aria-selected="false">Create from Clipboard</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
