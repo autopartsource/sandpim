@@ -257,7 +257,7 @@ class sandpiper
          while($row = $db->result->fetch_assoc())
          {
           $hash=$this->calculateSliceHash($row['id']);
-          $slices[]=array('slice_id'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'name'=>$row['description'],'slicemetadata'=>$row['slicemetadata'],'hash'=>$hash);
+          $slices[]=array('slice_uuid'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'slice_description'=>$row['description'],'slice_meta_data'=>$row['slicemetadata'],'slice_grainlist_hash'=>$hash);
          }
         }
        }
@@ -320,7 +320,7 @@ class sandpiper
           }
           else   
           {// return a structure of full verbosity
-           $grains[]=array('id'=>$row['grainuuid'],'description'=>$row['description'],'slice_id'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'source'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
+           $grains[]=array('grain_uuid'=>$row['grainuuid'],'slice_uuid'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'file_name'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
           }
          }
         }
@@ -433,18 +433,18 @@ class sandpiper
     {
         
 //    $data was presented in the POST body JSON-encoded like this and then converted to an associative array  
-//      "id": "10000000-1111-0000-0000-000000000000",
-//	"slice_id": "2bea8308-1840-4802-ad38-72b53e31594c",
+//      "grain_uuid": "10000000-1111-0000-0000-000000000000",
+//	"slice_uuid": "2bea8308-1840-4802-ad38-72b53e31594c",
 //	"grain_key": "level-1",
 //	"encoding": "raw",
 //	"payload": "Sandpiper Rocks!"
 
         $db = new mysql; $db->connect(); $grainrecordid=false;
         
-        $sliceuuid=$data['slice_id'];
-        $grainuuid=$data['id'];
+        $sliceuuid=$data['slice_uuid'];
+        $grainuuid=$data['grain_uuid'];
         $grainkey=$data['grain_key'];
-        $source=$data['source'];
+        $source='';
         $encoding=$data['encoding'];
         if($encoding=='raw' && $compressrawpayload)
         {
@@ -526,7 +526,7 @@ class sandpiper
          if($row = $db->result->fetch_assoc())
          {
           $hash=$this->calculateSliceHash($row['id']);
-          $slice=array('slice_id'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'name'=>$row['description'],'slicemetadata'=>$row['slicemetadata'],'hash'=>$hash);
+          $slice=array('slice_uuid'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'slice_description'=>$row['description'],'slice_meta_data'=>$row['slicemetadata'],'slice_grainlist_hash'=>$hash);
          }
         }
        }
@@ -866,7 +866,7 @@ class slices extends sandpiper
                     break;
                 
                 case 6:
-                //            /slices/[uuid]/grains  (detail=GRAIN_WITH_PAYLOAD|GRAIN_WITHOUT_PAYLOAD)
+                //            /slices/[uuid]/grains  (detail=GRAIN_WITH_PAYLOAD|GRAIN_WITHOUT_PAYLOAD|GRAIN_ID)
                     
                     $uripart=$this->extractParms($this->requesturi[5]);
                     if($uripart=='grains')
@@ -879,7 +879,7 @@ class slices extends sandpiper
                             
                                 
                                 $detaillevel='GRAIN_ID_ONLY';
-                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_WITHOUT_PAYLOAD'))
+                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_ID_OLNY'))
                                 {
                                     $detaillevel=$this->keyedparms['detail'];
                                 }                        
@@ -1043,17 +1043,17 @@ class slices extends sandpiper
                                     {
                                         if(!$this->grainExists($grainuuid))
                                         {
-                                            if(array_key_exists('id', $this->body) && array_key_exists('slice_id', $this->body) && array_key_exists('grain_key', $this->body) && array_key_exists('encoding', $this->body) && array_key_exists('payload', $this->body))
+                                            if(array_key_exists('grain_uuid', $this->body) && array_key_exists('slice_uuid', $this->body) && array_key_exists('grain_key', $this->body) && array_key_exists('encoding', $this->body) && array_key_exists('payload', $this->body))
                                             {// body data elements are present
 
                                             
                                                 $this->response= json_encode(array('message'=>'grain added'));
                                                 $grainrecordid=$this->addGrain($this->body,false,false);
-                                                $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'grain added (record id:'.$grainrecordid.')');                                            
+                                                $this->logEvent($this->planuuid, $this->body['slice_uuid'], $this->body['grain_uuid'], 'grain added (record id:'.$grainrecordid.')');                                            
                                             }
                                             else
                                             {// body element(s) missing
-                                                $this->response= json_encode(array('message'=>'POST body is missing elements. Expected: id, slice_id, grain_key, encoding, payload'));
+                                                $this->response= json_encode(array('message'=>'POST body is missing elements. Expected: grain_uuid, slice_uuid, grain_key, encoding, payload'));
                                             }
                                         }
                                         else
