@@ -982,7 +982,6 @@ class slices extends sandpiper
             switch(count($this->requesturi))
             {
                 case 6:
-            
                     //   /slices/[uuid]/grains
 
                     $uripart=$this->extractParms($this->requesturi[5]);
@@ -994,10 +993,16 @@ class slices extends sandpiper
                         {
                             if($this->isSliceInPlan($this->planuuid, $sliceuuid))
                             {
-                                //write a pile of grains to the given slice
-                                
-                                
-                                
+                                //write multiple (array) grains to the given slice
+                                if($this->isClientPrimary())
+                                {
+                                    $this->response= json_encode(array('message'=>'bulk grains add - not implimented yet.'));
+                                }
+                                else
+                                {// client is not primary in this plan
+
+                                    $this->response= json_encode(array('message'=>'client is not primary in this plan - it cannot bulk add grains to a slice.'));
+                                }                        
                                 
                             }
                             else
@@ -1022,7 +1027,72 @@ class slices extends sandpiper
                 
                 
                 case 7:
-            
+                    //   /slices/[uuid]/grains/[uuid]
+
+                    if($this->requesturi[5]=='grains')
+                    {
+                        $sliceuuid=$this->requesturi[4];
+                        if($this->looksLikeAUUID($sliceuuid))
+                        {
+                            if($this->isSliceInPlan($this->planuuid, $sliceuuid))
+                            {
+                                $grainuuid=$this->extractParms($this->requesturi[6]);
+                                if($this->looksLikeAUUID($grainuuid))
+                                {
+                                    if($this->isClientPrimary())
+                                    {
+                                        if(!$this->grainExists($grainuuid))
+                                        {
+                                            if(array_key_exists('id', $this->body) && array_key_exists('slice_id', $this->body) && array_key_exists('grain_key', $this->body) && array_key_exists('encoding', $this->body) && array_key_exists('payload', $this->body))
+                                            {// body data elements are present
+
+                                            
+                                                $this->response= json_encode(array('message'=>'grain added'));
+                                                $grainrecordid=$this->addGrain($this->body,false,false);
+                                                $this->logEvent($this->planuuid, $this->body['slice_id'], $this->body['id'], 'grain added (record id:'.$grainrecordid.')');                                            
+                                            }
+                                            else
+                                            {// body element(s) missing
+                                                $this->response= json_encode(array('message'=>'POST body is missing elements. Expected: id, slice_id, grain_key, encoding, payload'));
+                                            }
+                                        }
+                                        else
+                                        {// grain already exists 
+                                            
+                                            $this->response= json_encode(array('message'=>'Grain ('.$grainuuid.') already exists - cannot over-write.'));
+                                        }
+                                    }
+                                    else
+                                    {// client is not primary in this plan
+
+                                        $this->response= json_encode(array('message'=>'client is not primary in this plan - it cannot add a grain to a slice.'));
+                                    }
+                                }
+                                else
+                                {// grainuuid not fromatted right
+                                    
+                                    $this->response= json_encode(array('message'=>'expected a grain uuid after grains/ got this instead:'.$grainuuid));
+                                }
+                            }
+                            else
+                            {// specificd slice is not in plan
+                                
+                                $this->response= json_encode(array('message'=>'slice UUID ('.$sliceuuid.') is not part of the current plan'));
+                            }        
+                        }
+                        else
+                        {// sliceuuid is not formatted like a uuid
+                            
+                            $this->response= json_encode(array('message'=>'Unexpected input. Expected a uuid representing a specific slice. Got this instead:'.$sliceuuid));
+                        } 
+                    }
+                    else
+                    {//   /slices/[uuid]/grains<- was not "grains"
+                        
+                        $this->response= json_encode(array('message'=>'Unexpected input. Expected grains verb (like: /slices/[uuid]/grains). Got this instead:'.$this->requesturi[5]));
+                    }
+                    
+                                
                     break;
   
                 
@@ -1038,12 +1108,114 @@ class slices extends sandpiper
         case 'DELETE':
         // /v1/slices/[uuid]/grains/[uuid]
             
+            switch(count($this->requesturi))
+            {
+                case 6:
+                    // /v1/slices/[uuid]/grains            
+                    // delete all grains from given slice
+                    
+                    $sliceuuid=$this->requesturi[4];
+                    if($this->looksLikeAUUID($sliceuuid))
+                    {
+                        if($this->isSliceInPlan($this->planuuid,$sliceuuid))
+                        {
+                            $uripart=$this->extractParms($this->requesturi[5]);
+                            if($uripart=='grains')
+                            {
+
+                                if($this->isClientPrimary())
+                                {
+                                    $this->response= json_encode(array('message'=>'bulk grains delete - not implimented yet.'));
+                                }
+                                else
+                                {// client is not primary in this plan
+
+                                    $this->response= json_encode(array('message'=>'client is not primary in this plan - it cannot bulk delete grains from a slice.'));
+                                }                        
+                            }
+                            else
+                            {// missing "grains" verb
+                                $this->response= json_encode(array('message'=>'Unexpected input. expected [uuid]/grains/[uuid]. Got '.$this->requesturi[5].' instead of grains.'));                                
+                            }
+                        }
+                        else
+                        {// slice is not in plan                            
+                            $this->response= json_encode(array('message'=>'request to delete a slices that is not in the plan'));
+                        }
+                    }
+                    else
+                    {// slice uuid not formatted right
+                        $this->response= json_encode(array('message'=>'expected a slice uuid after slices/ got this instead:'.$sliceuuid));
+                    }
+                    
+                    break;
+                
+                
+                case 7:
+                    // /v1/slices/[uuid]/grains/[uuid]
+                    // delete a specific grain from a specific slice
+                    
+                    $sliceuuid=$this->requesturi[4];
+                    if($this->looksLikeAUUID($sliceuuid))
+                    {
+                        if($this->isSliceInPlan($this->planuuid,$sliceuuid))
+                        {
+                            if($this->requesturi[5]=='grains')
+                            {
+                                $grainuuid=$this->extractParms($this->requesturi[6]);
+                                if($this->looksLikeAUUID($grainuuid))
+                                {
+                                    if($this->isClientPrimary())
+                                    {
+                                        if($this->isGrainInPlan($this->planuuid, $grainuuid))
+                                        {
+                                            $this->deleteGrain($grainuuid);
+                                            $this->response= json_encode(array('message'=>'grain '.$grainuuid.' deleted'));
+                                            $this->logEvent($this->planuuid, $sliceuuid, $grainuuid, 'grain deleted');
+                                        }
+                                        else
+                                        {// grain is not in plan
+                                            $this->response= json_encode(array('message'=>'request to delete a grain ('.$grainuuid.') that is not in plan.'));
+                                        }
+                                    }
+                                    else
+                                    {// client is not primary in this plan
+                                        $this->response= json_encode(array('message'=>'client is not primary in this plan - it cannot delte a grain.'));
+                                    }
+                                }
+                                else
+                                {// grainuuid is not formatted as a uuid
+                                    $this->response= json_encode(array('message'=>'expected a grain uuid after grains/ got this instead:'.$grainuuid));
+                                }
+                            }
+                            else
+                            {// missing "grains" verb
+                                $this->response= json_encode(array('message'=>'Unexpected input. expected [uuid]/grains/[uuid]. Got '.$this->requesturi[5].' instead of grains.'));                                
+                            }
+                        }
+                        else
+                        {// slice is not in plan
+                            $this->response= json_encode(array('message'=>'request to delete a slices that is not in the plan'));
+                        }
+                    }
+                    else
+                    {// slice uuid not formatted right
+                        $this->response= json_encode(array('message'=>'expected a slice uuid after slices/ got this instead:'.$this->requesturi[4]));
+                    }
+                    break;
+
+                default:
+                    $this->response= json_encode(array('message'=>'Unexpected input. Got more or less parts than expected.'));               
+                    break;                
+            }            
+            
             break;
 
         
             
         default:
             // unhandled method
+            $this->response= json_encode(array('message'=>'Un-handled http method'));               
             
             break;;
     }
