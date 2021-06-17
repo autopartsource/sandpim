@@ -250,8 +250,13 @@ class PIESgenerator
      if(array_key_exists('PackageUOM',$package)){$PackageUOMelement=$doc->createElement('PackageUOM',$package['PackageUOM']); $PackageElement->appendChild($PackageUOMelement);}
      if(array_key_exists('QuantityofEaches',$package)){$QuantityofEachesElement=$doc->createElement('QuantityofEaches',$package['QuantityofEaches']); $PackageElement->appendChild($QuantityofEachesElement);}
 
-     if(array_key_exists('InnerQuantity',$package)){$InnerQuantityElement=$doc->createElement('InnerQuantity',$package['InnerQuantity']); $PackageElement->appendChild($InnerQuantityElement);}
-     if(array_key_exists('InnerQuantityUOM',$package)){$InnerQuantityElement->setAttribute('InnerQuantityUOM',$package['InnerQuantityUOM']);}
+     
+     if(array_key_exists('InnerQuantity',$package) && array_key_exists('InnerQuantityUOM',$package) && $package['InnerQuantity']!=0 && trim($package['InnerQuantityUOM'])!='')
+     {
+         $InnerQuantityElement=$doc->createElement('InnerQuantity',$package['InnerQuantity']);
+         $PackageElement->appendChild($InnerQuantityElement);
+         $InnerQuantityElement->setAttribute('InnerQuantityUOM',$package['InnerQuantityUOM']);   
+     }
 
      $DimensionsElement=$doc->createElement('Dimensions');
      if(array_key_exists('DimensionsUOM',$package)){$DimensionsElement->setAttribute('UOM', $package['DimensionsUOM']);}
@@ -265,7 +270,7 @@ class PIESgenerator
      if(array_key_exists('ShippingWidth',$package) && $package['ShippingWidth']>0){$ShippingWidthElement=$doc->createElement('ShippingWidth',$package['ShippingWidth']); $DimensionsElement->appendChild($ShippingWidthElement);}
      if(array_key_exists('ShippingLength',$package) && $package['ShippingLength']>0){$ShippingLengthElement=$doc->createElement('ShippingLength',$package['ShippingLength']); $DimensionsElement->appendChild($ShippingLengthElement); $PackageElement->appendChild($DimensionsElement);}
 
-     if(array_key_exists('Weight',$package) && array_key_exists('WeightsUOM',$package))
+     if(array_key_exists('Weight',$package) && $package['Weight']!=0 && array_key_exists('WeightsUOM',$package) && trim($package['WeightsUOM'])!='')
      {
       $WeightsElement=$doc->createElement('Weights'); 
       if(array_key_exists('WeightsUOM',$package)){$WeightsElement->setAttribute('UOM',$package['WeightsUOM']);}

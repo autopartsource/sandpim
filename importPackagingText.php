@@ -1,6 +1,6 @@
 <?php
 include_once('./class/pimClass.php');
-include_once('./class/interchangeClass.php');
+include_once('./class/packagingClass.php');
 $navCategory = 'import/export';
 
 session_start();
@@ -11,6 +11,7 @@ if (!isset($_SESSION['userid'])) {
 
 
 $pim = new pim;
+$packaging=new packaging;
 
 $importcount=0; $invalidcount=0; $recordnumber=0;
 
@@ -19,7 +20,7 @@ if (isset($_POST['input']))
  $input = $_POST['input'];
  $records = explode("\r\n", $_POST['input']);
 
- $PartNumberFieldIndex=-1; $PackageUOMFieldIndex=-1; $QuantityofEachesFieldIndex=-1; $WeightFieldIndex=-1; $WeightsUOMFieldIndex=-1; $InnerQuantityFieldIndex=-1; $InnerQuantityUOMFieldIndex=-1; $MerchandisingHeightFieldIndex=-1; $MerchandisingWidthFieldIndex=-1;  $MerchandisingLengthFieldIndex=-1; $DimensionsUOMFieldIndex=-1;
+ $PartNumberFieldIndex=-1; $PackageUOMFieldIndex=-1; $QuantityofEachesFieldIndex=-1; $WeightFieldIndex=-1; $WeightsUOMFieldIndex=-1; $InnerQuantityFieldIndex=-1; $InnerQuantityUOMFieldIndex=-1; $ShippingHeightFieldIndex=-1; $ShippingWidthFieldIndex=-1;  $ShippingLengthFieldIndex=-1; $DimensionsUOMFieldIndex=-1;
 
  $headerfields=explode("\t",$records[0]);
 
@@ -33,9 +34,9 @@ if (isset($_POST['input']))
   if($headerfields[$i]=='WeightsUOM'){$WeightsUOMFieldIndex=$i;}
   if($headerfields[$i]=='InnerQuantity'){$InnerQuantityFieldIndex=$i;}
   if($headerfields[$i]=='InnerQuantityUOM'){$InnerQuantityUOMFieldIndex=$i;}
-  if($headerfields[$i]=='MerchandisingHeight'){$MerchandisingHeightFieldIndex=$i;}
-  if($headerfields[$i]=='MerchandisingWidth'){$MerchandisingWidthFieldIndex=$i;}
-  if($headerfields[$i]=='MerchandisingLength'){$MerchandisingLengthFieldIndex=$i;}
+  if($headerfields[$i]=='ShippingHeight'){$ShippingHeightFieldIndex=$i;}
+  if($headerfields[$i]=='ShippingWidth'){$ShippingWidthFieldIndex=$i;}
+  if($headerfields[$i]=='ShippingLength'){$ShippingLengthFieldIndex=$i;}
   if($headerfields[$i]=='DimensionsUOM'){$DimensionsUOMFieldIndex=$i;}   
  } 
 
@@ -64,12 +65,22 @@ if (isset($_POST['input']))
   if ($pim->validPart($partnumber)) 
   { // partnumber is valid
    
+   $packageuom=trim($fields[$PackageUOMFieldIndex]);
+   $quantityofeaches=trim($fields[$QuantityofEachesFieldIndex]);
+   $innerquantity=trim($fields[$InnerQuantityFieldIndex]);
+   $innerquantityuom=trim($fields[$InnerQuantityUOMFieldIndex]);
+   $weight=0; if(isset($fields[$WeightFieldIndex]) && is_numeric(trim($fields[$WeightFieldIndex]))){$weight=trim($fields[$WeightFieldIndex]);}
+   $weightsuom='PG'; if(isset($fields[$WeightsUOMFieldIndex]) && trim($fields[$WeightsUOMFieldIndex])!=''){$weightsuom=trim($fields[$WeightsUOMFieldIndex]);}
+   $packagelevelGTIN='';
+   $packagebarcodecharacters='';
+   $shippingheight=0; if(isset($fields[$ShippingHeightFieldIndex]) && is_numeric(trim($fields[$ShippingHeightFieldIndex]))){$shippingheight=trim($fields[$ShippingHeightFieldIndex]);}
+   $shippingwidth=0; if(isset($fields[$ShippingWidthFieldIndex]) && is_numeric(trim($fields[$ShippingWidthFieldIndex]))){$shippingwidth=trim($fields[$ShippingWidthFieldIndex]);}
+   $shippinglength=0; if(isset($fields[$ShippingLengthFieldIndex]) && is_numeric(trim($fields[$ShippingLengthFieldIndex]))){$shippinglength=trim($fields[$ShippingLengthFieldIndex]);}
+   $dimensionsuom='IN'; if(isset($fields[$DimensionsUOMFieldIndex]) && trim($fields[$DimensionsUOMFieldIndex])!=''){$dimensionsuom=trim($fields[$DimensionsUOMFieldIndex]);}
       
+   $packaging->addPackage($partnumber, $packageuom, $quantityofeaches, $innerquantity, $innerquantityuom, $weight, $weightsuom, $packagelevelGTIN, $packagebarcodecharacters, $shippingheight, $shippingwidth, $shippinglength, $dimensionsuom);
       
-      
-      
-      
-   $pim->logPartEvent($partnumber,$_SESSION['userid'],'packaging record imported: ','');
+   $pim->logPartEvent($partnumber,$_SESSION['userid'],'packaging record imported ('.$innerquantity.' '.$packageuom.'; '.$weight.' '.$weightsuom.'; ' .$shippinglength.'x'.$shippingwidth.'x'.$shippingheight.'x '.$dimensionsuom.')','');
    $importcount++;
   }
   else
@@ -79,7 +90,7 @@ if (isset($_POST['input']))
   }
     
  }
- $finalresultmessage='Imported '.$importcount.' interchange records';
+ $finalresultmessage='Imported '.$importcount.' package records';
  if($invalidcount>0){$finalresultmessage.='. '.$invalidcount.' records were ignored because of invalid data.';};
  $errors[]=$finalresultmessage;
 }
@@ -118,7 +129,7 @@ if (isset($_POST['input']))
                             <form method="post">
                                 <div class="alert alert-secondary" role="alert">
                                     <h6 class="alert-heading">Paste tab-delimited data (including header row):</h6>
-                                    <p>PartNumber, PackageUOM,	QuantityofEaches, [Weight], [WeightsUOM], [InnerQuantity], [InnerQuantityUOM], [MerchandisingHeight], [MerchandisingWidth], [MerchandisingLength], [DimensionsUOM]</p>
+                                    <p>PartNumber, PackageUOM,	QuantityofEaches, [Weight], [WeightsUOM], [InnerQuantity], [InnerQuantityUOM], [ShippingHeight], [ShippingWidth], [ShippingLength], [DimensionsUOM]</p>
                                 </div>
                                     
                                 <textarea name="input" rows="20" cols="100"></textarea>
