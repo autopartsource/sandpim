@@ -77,6 +77,7 @@
                     Utilities
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownUtilities">
+                    <a class="dropdown-item" href="buyersGuideBuilder.php">Buyers Guide Builder</a>
                     <a class="dropdown-item" href="basevidsToMMYinput.php">Convert BaseVehicleIDs to Makes/Models/Years</a>
                     <a class="dropdown-item" href="MMYtoBasevidsInput.php">Convert Makes/Models/Years to BaseVehicleIDs</a>
                     <a class="dropdown-item" href="convertAiExcelToACES4_1upload.php">Convert coded-value spreadsheet to ACES</a>
@@ -110,7 +111,6 @@
                     <a class="dropdown-item" href="./exportPIESselect.php">Export PIES xml</a>
                     <a class="dropdown-item" href="./exportACESselect.php">Export ACES xml</a>
                     <a class="dropdown-item" href="./exportFlatPartsSelect.php">Export flattened parts file</a>
-                    <a class="dropdown-item" href="buyersGuideBuilder.php">Export Buyers Guide</a>
                     <a class="dropdown-item" href="./exportFlatAppsSelect.php">Export flattened applications files</a>
                     <a class="dropdown-item" href="./exportForPrintSelect.php">Export for print publishing</a>
                     <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a>
