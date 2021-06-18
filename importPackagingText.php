@@ -76,11 +76,10 @@ if (isset($_POST['input']))
    $shippingheight=0; if(isset($fields[$ShippingHeightFieldIndex]) && is_numeric(trim($fields[$ShippingHeightFieldIndex]))){$shippingheight=trim($fields[$ShippingHeightFieldIndex]);}
    $shippingwidth=0; if(isset($fields[$ShippingWidthFieldIndex]) && is_numeric(trim($fields[$ShippingWidthFieldIndex]))){$shippingwidth=trim($fields[$ShippingWidthFieldIndex]);}
    $shippinglength=0; if(isset($fields[$ShippingLengthFieldIndex]) && is_numeric(trim($fields[$ShippingLengthFieldIndex]))){$shippinglength=trim($fields[$ShippingLengthFieldIndex]);}
-   $dimensionsuom='IN'; if(isset($fields[$DimensionsUOMFieldIndex]) && trim($fields[$DimensionsUOMFieldIndex])!=''){$dimensionsuom=trim($fields[$DimensionsUOMFieldIndex]);}
-      
+   $dimensionsuom='IN'; if(isset($fields[$DimensionsUOMFieldIndex]) && trim($fields[$DimensionsUOMFieldIndex])!=''){$dimensionsuom=trim($fields[$DimensionsUOMFieldIndex]);}      
    $packaging->addPackage($partnumber, $packageuom, $quantityofeaches, $innerquantity, $innerquantityuom, $weight, $weightsuom, $packagelevelGTIN, $packagebarcodecharacters, $shippingheight, $shippingwidth, $shippinglength, $dimensionsuom);
-      
-   $pim->logPartEvent($partnumber,$_SESSION['userid'],'packaging record imported ('.$innerquantity.' '.$packageuom.'; '.$weight.' '.$weightsuom.'; ' .$shippinglength.'x'.$shippingwidth.'x'.$shippingheight.'x '.$dimensionsuom.')','');
+   $oid=$pim->updatePartOID($partnumber);
+   $pim->logPartEvent($partnumber,$_SESSION['userid'],'packaging record imported ('.$innerquantity.' '.$packageuom.'; '.$weight.' '.$weightsuom.'; ' .$shippinglength.'x'.$shippingwidth.'x'.$shippingheight.'x '.$dimensionsuom.')',$oid);
    $importcount++;
   }
   else
