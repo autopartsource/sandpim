@@ -109,7 +109,7 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
     }
     
     
-    $tabbedoutputrecord=$fields[0]."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$summary;
+    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$summary;
     $tabbedoutputrecords[]=$tabbedoutputrecord;
     $tabbedoutput.=$tabbedoutputrecord."\r\n";
    }
@@ -119,8 +119,8 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
  if(isset($_POST['renderxlsx']))
  {
   $writer = new XLSXWriter();
-  $writer->setAuthor('SandPIM'); 
-  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Part Type'=>'string','Applications'=>'string'), array('widths'=>array(20,40,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+  $writer->setAuthor('SandPIM');
+  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','Applications'=>'string'), array('widths'=>array(18,20,13,30,20,18,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
   foreach($tabbedoutputrecords as $tabbedoutputrecord)
   {
    $row=explode("\t",$tabbedoutputrecord);
