@@ -207,7 +207,7 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Applications (<?php echo $vcdb->makeName($makeid).', '.$vcdb->modelName($modelid).', '.$yearid;?>)</h3>
+                        <h3 class="card-header text-start">Apps > <?php echo '<a href="appsIndex.php">'.$vcdb->makeName($makeid).'</a> > <a href="mmySelectModel.php?makeid='.$makeid.'">'.$vcdb->modelName($modelid).'</a> > <a href="mmySelectYear.php?makeid='.$makeid.'&modelid='.$modelid.'">'.$yearid;?></a></h3>
 
                         <div class="card-body">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">

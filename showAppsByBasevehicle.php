@@ -349,19 +349,15 @@ ksort($fitmentcolumnkeys);
                             <div style="padding:5px;float:left">
                                 <a class="btn btn-secondary" href="appsSelectCategory.php?makeid=<?php echo $makeid;?>&modelid=<?php echo $modelid;?>&yearid=<?php echo $yearid;?>">Categories</a>
                             </div>
+                            
+                            
+                            <?php echo '<a href="appsIndex.php">'.$makename.'</a>, <a href="mmySelectModel.php?makeid='.$makeid.'">'.$modelname.'</a> ';
+                            
+                            if ($prevyearexists) {echo selfLink($makeid, $modelid, ($yearid - 1), $partcategories, '', '<i class="bi bi-chevron-double-left"></i>');}
 
+                            echo $yearid;
                             
-                            <?php if ($prevyearexists) {
-                                echo selfLink($makeid, $modelid, ($yearid - 1), $partcategories, '', '<i class="bi bi-chevron-double-left"></i>');
-                            }?>
-                            
-                            <?php echo $makename.', '.$modelname.', '.$yearid; ?>
-                            
-                            <?php 
-                            if ($nextyearexists) {
-                                echo selfLink($makeid, $modelid, ($yearid + 1), $partcategories, '', '<i class="bi bi-chevron-double-right"></i>');
-                            }?>
-
+                            if ($nextyearexists) {echo selfLink($makeid, $modelid, ($yearid + 1), $partcategories, '', '<i class="bi bi-chevron-double-right"></i>');}?>
 
                             <div style="padding:5px;float:right">
                                 
@@ -375,8 +371,7 @@ ksort($fitmentcolumnkeys);
                                     echo '<input type="hidden" name="paste" value=""/>'; 
                                     echo '<input class="btn btn-secondary" type="submit" name="submit" value="Paste"/>'; 
                                     echo '</form>';
-                                }
-                                ?>
+                                } ?>
                             </div>
 
 
