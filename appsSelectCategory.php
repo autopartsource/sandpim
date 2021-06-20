@@ -18,6 +18,8 @@ if(isset($_GET['modelid'])){$modelid=intval($_GET['modelid']);}
 if(isset($_GET['yearid'])){$yearid=intval($_GET['yearid']);}
 if(isset($_GET['equipmentid'])){$equipmentid=intval($_GET['equipmentid']);}
 
+$clipboardapps=$pim->getClipboard($userid, 'app');
+
 if(isset($_GET['submit']) && $_GET['submit']=='Create' )
 {
  $makeid=intval($_GET['makeid']);
@@ -52,7 +54,6 @@ if(isset($_GET['submit']) && $_GET['submit']=='Create from clipboard' )
 {
  if($basevehicleid=$vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid))
  {
-  $clipboardapps=$pim->getClipboard($userid, 'app');
   $appids=array();
   foreach($clipboardapps as $clipboardapp)
   {
@@ -223,6 +224,7 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                             <div class="tab-content" id="myTabContent">
                                 <div class="tab-pane fade show active" id="existing" role="tabpanel" aria-labelledby="existing-tab">
                                     <form action="showAppsByBasevehicle.php">
+                                        <div style="padding:20px;"><input type="submit" name="submit" value="Show Applications"/></div>
                                         <?php
                                             echo '<div class="btn-group-toggle">';
                                             foreach ($partcategories as $partcategory) {
@@ -250,7 +252,6 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                                                 echo '<input type="hidden" name="equipmentid" value="' . $equipmentid . '"/>';
                                             }
                                         ?>
-                                        <div style="padding-top:10px;"><input type="submit" name="submit" value="Show Applications"/></div>
                                     </form>
                                 </div>
                                 <div class="tab-pane fade" id="create" role="tabpanel" aria-labelledby="create-tab">
@@ -265,14 +266,21 @@ $favoriteparttypes=$pim->getFavoriteParttypes();
                                         </div>
                                     </form>
                                 </div>
+                                
                                 <div class="tab-pane fade" id="paste" role="tabpanel" aria-labelledby="paste-tab">
+                                    <?php if(count($clipboardapps)>0){?>
                                     <form>
                                         <input type="hidden" name="makeid" value="<?php echo $makeid;?>"/>
                                         <input type="hidden" name="modelid" value="<?php echo $modelid;?>"/>
                                         <input type="hidden" name="yearid" value="<?php echo $yearid;?>"/>
-                                        <input type="submit" name="submit" value="Create from clipboard"/>
+                                        <div style="padding:20px;"><input type="submit" name="submit" value="Create from clipboard"/></div>
                                     </form>
+                                    <?php }else{?>
+                                    <div style="padding:20px;">There are no apps on the clipboard.</div>
+                                    
+                                    <?php }?>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>

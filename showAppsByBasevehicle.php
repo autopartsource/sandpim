@@ -3,6 +3,29 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/pimClass.php');
+
+
+function selfURL($makeid, $modelid, $yearid, $partcategories)
+{
+    $catsstring = '';
+    if (count($partcategories)) {
+        foreach ($partcategories as $partcategory) {
+            $catsstring .= '&partcategory_' . $partcategory . '=on';
+        }
+    }
+    return 'showAppsByBasevehicle.php?makeid=' . $makeid . '&modelid=' . $modelid . '&yearid=' . $yearid . $catsstring;
+}
+
+
+function selfLink($makeid, $modelid, $yearid, $partcategories, $class, $displaytext)
+{
+    $url=selfURL($makeid, $modelid, $yearid, $partcategories);
+    if($class!=''){$classparm='class="'.$class.'"';}
+    return '<a '.$classparm.' href="'.$url.'">' . $displaytext . '</a>';
+}
+
+
+
 $navCategory = 'applications';
 
 session_start();
@@ -11,39 +34,32 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
+$userid = $_SESSION['userid'];
+
 header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
 header("Pragma: no-cache"); // HTTP 1.0.
 header("Expires: 0"); // Proxies.
 
-function buildModelYearLink($makeid, $modelid, $yearid, $partcategories, $displaytext) {
-    $catsstring = '';
-    if (count($partcategories)) {
-        foreach ($partcategories as $partcategory) {
-            $catsstring .= '&partcategory_' . $partcategory . '=on';
-        }
-    }
-    return '<a href="showAppsByBasevehicle.php?makeid=' . $makeid . '&modelid=' . $modelid . '&yearid=' . $yearid . $catsstring . '">' . $displaytext . '</a>';
-}
 
 $vcdb = new vcdb;
 $pcdb = new pcdb;
 $qdb = new qdb;
 $pim = new pim;
 
-$makeid = intval($_GET['makeid']);
-if (isset($_GET['modelid'])) {
-    $modelid = intval($_GET['modelid']);
+$makeid = intval($_REQUEST['makeid']);
+if (isset($_REQUEST['modelid'])) {
+    $modelid = intval($_REQUEST['modelid']);
 }
-if (isset($_GET['yearid'])) {
-    $yearid = intval($_GET['yearid']);
+if (isset($_REQUEST['yearid'])) {
+    $yearid = intval($_REQUEST['yearid']);
 }
-if (isset($_GET['equipmentid'])) {
-    $equipmentid = intval($_GET['equipmentid']);
+if (isset($_REQUEST['equipmentid'])) {
+    $equipmentid = intval($_REQUEST['equipmentid']);
 }
 
 
 $partcategories = array();
-foreach ($_GET as $getname => $getval) {
+foreach ($_REQUEST as $getname => $getval) {
     if (strpos($getname, 'partcategory_') === 0) {
         $bits = explode('_', $getname);
         $partcategories[] = $bits[1];
@@ -54,6 +70,28 @@ $basevehicleid = $vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid)
 
 $makename = $vcdb->makeName($makeid);
 $modelname = $vcdb->modelName($modelid);
+
+$clipboardapps=$pim->getClipboard($userid, 'app');
+
+if(isset($_REQUEST['submit']) && $_REQUEST['submit']=='Paste' )
+{
+ $clipboardappids=array();
+ foreach($clipboardapps as $clipboardapp){$clipboardappids[]=$clipboardapp['objectkey'];}
+  
+ if(count($clipboardappids)>0)
+ {
+  $newappids=$pim->cloneApps($basevehicleid, $clipboardappids);
+  if(count($newappids)>0)
+  {
+   foreach($newappids as $newappid)
+   {
+    $appoid=$pim->getOIDofApp($newappid);
+    $pim->logAppEvent($newappid, $userid, 'app cloned with showAppsByBasevehicle.php from clipboard', $appoid);        
+   }
+  }
+ }
+}
+
 
 
 $apps = $pim->getAppsByBasevehicleid($basevehicleid,$partcategories);
@@ -307,39 +345,56 @@ ksort($fitmentcolumnkeys);
                     <div class="card shadow-sm">
 			<!-- Header -->
                         <h3 class="card-header">
-                            
 
+                            <div style="padding:5px;float:left">
+                                <a class="btn btn-secondary" href="appsSelectCategory.php?makeid=<?php echo $makeid;?>&modelid=<?php echo $modelid;?>&yearid=<?php echo $yearid;?>">Categories</a>
+                            </div>
+
+                            
                             <?php if ($prevyearexists) {
-                                echo buildModelYearLink($makeid, $modelid, ($yearid - 1), $partcategories, '<i class="bi bi-chevron-double-left"></i>');
-                            } else {
-                                echo '....';
-                            } echo ' ';
-                            ?>
+                                echo selfLink($makeid, $modelid, ($yearid - 1), $partcategories, '', '<i class="bi bi-chevron-double-left"></i>');
+                            }?>
+                            
                             <?php echo $makename.', '.$modelname.', '.$yearid; ?>
+                            
                             <?php 
                             if ($nextyearexists) {
-                                echo buildModelYearLink($makeid, $modelid, ($yearid + 1), $partcategories, '<i class="bi bi-chevron-double-right"></i>');
-                            } else {
-                                echo '....';
-                            } ?>
-
-                    
-                            <?php if(count($apps))
-                            {
-                                echo '<div style="float:right">';
-                                echo '<div style="display:none;" id="appids">';
-
-                                foreach ($apps as $app)
-                                {
-                                    echo '<div data-appid="'.$app['id'].'" data-description="'.$makename.', '.$modelname.', '.$yearid.' ('.  $app['partnumber'].')">'.$app['id'].'</div>';
-                                }
-
-                                echo '</div>';                        
-                                echo '<span class="btn btn-info" onclick="addAppsToClipboard(),refreshClipboard()">Copy</span>';
-                                echo '</div>';
-                                echo '<div style="clear:both;"></div>';
+                                echo selfLink($makeid, $modelid, ($yearid + 1), $partcategories, '', '<i class="bi bi-chevron-double-right"></i>');
                             }?>
 
+
+                            <div style="padding:5px;float:right">
+                                
+                                <?php if(count($clipboardapps)>0)
+                                {
+                                    echo '<form method="post" action="showAppsByBasevehicle.php">';
+                                    echo '<input type="hidden" name="makeid" value="'.$makeid.'"/>'; 
+                                    echo '<input type="hidden" name="modelid" value="'.$modelid.'"/>'; 
+                                    echo '<input type="hidden" name="yearid" value="'.$yearid.'"/>';
+                                    foreach($partcategories as $partcategory){echo '<input type="hidden" name="partcategory_'.$partcategory.'" value="on"/>';}
+                                    echo '<input type="hidden" name="paste" value=""/>'; 
+                                    echo '<input class="btn btn-secondary" type="submit" name="submit" value="Paste"/>'; 
+                                    echo '</form>';
+                                }
+                                ?>
+                            </div>
+
+
+                            <div style="padding:5px;float:right">
+                                
+                                <?php if(count($apps))
+                                {
+                                    echo '<div style="display:none;" id="appids">';
+                                    foreach ($apps as $app)
+                                    {
+                                        echo '<div data-appid="'.$app['id'].'" data-description="'.$makename.', '.$modelname.', '.$yearid.' ('.  $app['partnumber'].')">'.$app['id'].'</div>';
+                                    }
+                                    echo '</div>';                        
+                                    echo '<span class="btn btn-info" onclick="addAppsToClipboard(),refreshClipboard()">Copy</span>';
+                                    echo '</div>';
+                                }?>
+
+                            <div style="clear:both;"></div>
                         </h3>
 
                         <div class="card-body">
