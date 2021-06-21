@@ -12,7 +12,8 @@ $pcdb=new pcdb;
 $pim=new pim;
 
  $alltypes=array();
- $mytypes=$pim->getFavoriteParttypes(); $idkeyedmytypes=array(); foreach($mytypes as $mytype){$idkeyedmytypes[$mytype['id']]=$mytype['name'];}
+ $mytypes=$pim->getFavoriteParttypes(); 
+ $idkeyedmytypes=array(); foreach($mytypes as $mytype){$idkeyedmytypes[$mytype['id']]=$mytype['name'];}
 
 $searchtype='';
 if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchterm']))
@@ -87,8 +88,8 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                             <form method="get">
                                 Part Type Name
                                 <select name="searchtype">
-                                    <option value="begins"<?php if($searchtype=='begins'){echo ' selected';}?>>Begins with</option>
                                     <option value="contains"<?php if($searchtype=='contains'){echo ' selected';}?>>Contains</option>
+                                    <option value="begins"<?php if($searchtype=='begins'){echo ' selected';}?>>Begins with</option>
                                     <option value="ends"<?php if($searchtype=='ends'){echo ' selected';}?>>Ends with</option>
                                 </select>
                                 <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
