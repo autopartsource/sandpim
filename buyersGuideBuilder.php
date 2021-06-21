@@ -34,70 +34,82 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
  {
   $fields = explode("\t", $record);
   if(count($fields)>=1)
-  {
+  {   
    if($part=$pim->getPart(trim($fields[0])))
    {
-    $apps=$pim->getAppsByPartnumber($fields[0]);
+    $summarytemp=$pim->getAppSummary($part['partnumber']);  
+    if($summarytemp['age']>30 || $summarytemp['age']<0)
+    {// existing summary is stale or missing - recapture it
+           
+     $apps=$pim->getAppsByPartnumber($fields[0]);
     
-    $temp=array();
-    foreach($apps as $app)
-    {
-     $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
-     $key=$mmy['makename'].'_'.$mmy['modelname'];
-     if(array_key_exists($key, $temp))
-     {// make_model exists in the array. See if year is compatible with an existing entry
-         
-      for($i=0; $i<=count($temp[$key])-1; $i++)
-      {// look inside each existing year range for this make/mode entry
-       if($mmy['year']<$temp[$key][$i]['start'] || $mmy['year']>$temp[$key][$i]['end'])
-       {// app is outside existing year range. see if it is contiguous with an existing range
-        $found=false;
-        
-        if($mmy['year']==($temp[$key][$i]['start'])-1)
-        {// expand the range down
-         $temp[$key][$i]['start']=$mmy['year']; $found=true;
-        }          
-
-        if($mmy['year']==($temp[$key][$i]['end'])+1)
-        {// expand the range up
-         $temp[$key][$i]['end']=$mmy['year']; $found=true;
-        }          
-        
-        if(!$found)
-        {
-         $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
-        }
-       }
-      }  
-     }
-     else
-     {// make_model does not already exist in the array - add it and set both the start and end to this apps year
-      $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
-     }
-    }
-    
-    $nicelist=array();
-    ksort($temp);
-    foreach($temp as $makemodel=>$yearranges)
-    {
-     $makemodelbits=explode('_',$makemodel);
-     $make=$makemodelbits[0]; $model=$makemodelbits[1];
-     
-     foreach($yearranges as $yearrange)
+     $temp=array();
+     foreach($apps as $app)
      {
-      if($yearrange['start']==$yearrange['end'])
-      {// range is only one year wide - render as a single year (ex: "2000")
-       $nicelist[]=$make.' '.$model.' ('.$yearrange['start'].')';
+      $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+      $key=$mmy['makename'].'_'.$mmy['modelname'];
+      if(array_key_exists($key, $temp))
+      {// make_model exists in the array. See if year is compatible with an existing entry
+          
+       for($i=0; $i<=count($temp[$key])-1; $i++)
+       {// look inside each existing year range for this make/mode entry
+        if($mmy['year']<$temp[$key][$i]['start'] || $mmy['year']>$temp[$key][$i]['end'])
+        {// app is outside existing year range. see if it is contiguous with an existing range
+         $found=false;
+        
+         if($mmy['year']==($temp[$key][$i]['start'])-1)
+         {// expand the range down
+          $temp[$key][$i]['start']=$mmy['year']; $found=true;
+         }          
+
+         if($mmy['year']==($temp[$key][$i]['end'])+1)
+         {// expand the range up
+          $temp[$key][$i]['end']=$mmy['year']; $found=true;
+         }          
+        
+         if(!$found)
+         {
+          $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
+         }
+        }
+       }   
       }
-      else 
-      {// range is wider than a single year - render as a dashed ranges (ex: "2015-2019")
-       $nicelist[]=$make.' '.$model.' ('.$yearrange['start'].'-'.$yearrange['end'].')';         
+      else
+      {// make_model does not already exist in the array - add it and set both the start and end to this apps year
+       $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
       }
      }
+    
+     $nicelist=array();
+     ksort($temp);
+     foreach($temp as $makemodel=>$yearranges)
+     {
+      $makemodelbits=explode('_',$makemodel);
+      $make=$makemodelbits[0]; $model=$makemodelbits[1];
+     
+      foreach($yearranges as $yearrange)
+      {
+       if($yearrange['start']==$yearrange['end'])
+       {// range is only one year wide - render as a single year (ex: "2000")
+        $nicelist[]=$make.' '.$model.' ('.$yearrange['start'].')';
+       }
+       else 
+       {// range is wider than a single year - render as a dashed ranges (ex: "2015-2019")
+        $nicelist[]=$make.' '.$model.' ('.$yearrange['start'].'-'.$yearrange['end'].')';         
+       }
+      }
+     }
+     
+     $summary=implode(', ',$nicelist);
+     $pim->updateAppSummary($part['partnumber'], $summary);
+    }
+    else
+    {// existing summary is usable 
+     $summary=$summarytemp['summary'];   
     }
     
     
-    $tabbedoutputrecord=$fields[0]."\t".$pcdb->parttypeName($part['parttypeid'])."\t".implode(', ',$nicelist);
+    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$summary;
     $tabbedoutputrecords[]=$tabbedoutputrecord;
     $tabbedoutput.=$tabbedoutputrecord."\r\n";
    }
@@ -107,8 +119,8 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
  if(isset($_POST['renderxlsx']))
  {
   $writer = new XLSXWriter();
-  $writer->setAuthor('SandPIM'); 
-  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Part Type'=>'string','Applications'=>'string'), array('widths'=>array(20,40,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+  $writer->setAuthor('SandPIM');
+  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','Applications'=>'string'), array('widths'=>array(18,20,13,30,20,18,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
   foreach($tabbedoutputrecords as $tabbedoutputrecord)
   {
    $row=explode("\t",$tabbedoutputrecord);

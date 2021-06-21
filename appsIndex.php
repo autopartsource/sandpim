@@ -57,7 +57,7 @@ $groupedMakesCount = count($groupedmakes);
                     <div class="card shadow-sm">
                         
                         <!-- Header -->
-                        <h3 class="card-header text-start">Applications</h3>
+                        <h3 class="card-header text-start">Apps</h3>
                         
                         <div class="card-body">
                             <div class="container">

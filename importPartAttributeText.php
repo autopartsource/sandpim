@@ -65,6 +65,19 @@ if (isset($_POST['input'])) {
                                 $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle status updated to ['.$attributevalue.'] by mass import', $newoid);
                                 break;
      
+                            case 'replacedby':
+                                
+                                $replacedby=trim(strtoupper($attributevalue));
+                                
+                                if($pim->validPart($replacedby))
+                                {                                        
+                                    $pim->setPartReplacedby($partnumber, $replacedby, true);
+                                    $newoid=$pim->getOIDofPart($partnumber);
+                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'replacedby updated to ['.$attributevalue.'] by mass import', $newoid);
+                                }
+                                break;
+                            
+                            
                             default: 
                                 // attribute name is not reserved, and not a PAdb numeric ID
                                 $pim->writePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
@@ -117,7 +130,7 @@ if (isset($_POST['input'])) {
                                     <hr>
                                     <p>Part numbers are validated. If the second column is a number, it is assumed to be a PAdb ID.
                                     <br>Non-numeric values are assumed to be user-defined attribute names.
-                                    <br>Attribute names GTIN, parttypeid, lifecyclestatus are special cases that will apply to the part if used.</p>
+                                    <br>Attribute names GTIN, parttypeid, lifecyclestatus, replacedby are special cases that will apply to the part if used.</p>
                                 
                                 
                                 <textarea name="input" rows="20" cols="100"></textarea>

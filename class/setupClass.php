@@ -374,6 +374,20 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - asset_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - asset_history ('.$db->conn->error.')';}
 
+        
+        
+        $sql="CREATE TABLE part_application_summary (
+        partnumber varchar(255) not null,
+        summary text not null,
+        capturedatetime datetime not null,
+        PRIMARY KEY (partnumber),
+        INDEX idx_capturedatetime (capturedatetime)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_application_summary ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_application_summary ('.$db->conn->error.')';}
+
+        
+        
+        
         $sql="CREATE TABLE part_history (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         partnumber varchar(255) not null,

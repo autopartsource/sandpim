@@ -67,11 +67,28 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   break;
 
   case 'replacedby':
-   $pim->setPartReplacedby($partnumber,$_GET['value'],true);
-   $pim->setPartLifecyclestatus($partnumber,'7',false);
-
-   $oid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber,$userid,'Replaced By updated to:'.$_GET['value'].' and set lifecycle status to 7',$oid);
+           
+   if($part['replacedby']!=$_GET['value'])
+   {// existing replacedby is different that new replacedby - an actual change has happened
+    if(trim($_GET['value'])=='')
+    {// 
+     $pim->setPartReplacedby($partnumber,'',true);
+     //$pim->setPartLifecyclestatus($partnumber,'2',false);
+     $oid=$pim->getOIDofPart($partnumber);
+     $pim->logPartEvent($partnumber,$userid,'Replaced By updated to null',$oid);   
+    }
+    else
+    {// 
+     if($pim->validPart($_GET['value']))
+     {
+      $pim->setPartReplacedby($partnumber,$_GET['value'],true);
+      $pim->setPartLifecyclestatus($partnumber,'7',false);
+      $oid=$pim->getOIDofPart($partnumber);
+      $pim->logPartEvent($partnumber,$userid,'Replaced By updated to:'.$_GET['value'].' and set lifecycle status to Superseded',$oid);   
+     }
+    }      
+   }
+      
   break;
 
   default:

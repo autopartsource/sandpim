@@ -2962,8 +2962,53 @@ function allowedHost($address)
   $db->close();
  }
  
+function getAppSummary($partnumber)
+{
+ $db=new mysql; $db->connect(); $returnval=array('summary'=>'','age'=>-1);
+ if($stmt=$db->conn->prepare('select summary,DATEDIFF(now(),capturedatetime) as age from part_application_summary where partnumber=?'))
+ {
+  $stmt->bind_param('s',$partnumber);
+  $stmt->execute();
+  $db->result = $stmt->get_result();
+  if($row = $db->result->fetch_assoc())
+  {
+   $returnval['summary']=$row['summary'];
+   $returnval['age']=intval($row['age']);
+  }    
+ }
+ $db->close();
+ return $returnval;
+}
 
-
+function updateAppSummary($partnumber,$summary)
+{
+ $db=new mysql; $db->connect(); $insertednew=false;
+ if($stmt=$db->conn->prepare('select summary,DATEDIFF(now(),capturedatetime) as age from part_application_summary where partnumber=?'))
+ {
+  $stmt->bind_param('s',$partnumber);
+  $stmt->execute();
+  $db->result = $stmt->get_result();
+  if($row = $db->result->fetch_assoc())
+  {// record exists for this part
+   if($stmt=$db->conn->prepare('update part_application_summary set summary=?,capturedatetime=now() where partnumber=?'))
+   {
+    $stmt->bind_param('ss',$summary, $partnumber);
+    $stmt->execute();
+   }
+  }
+  else
+  {// record does not exist for this part
+   if($stmt=$db->conn->prepare('insert into part_application_summary (partnumber,summary,capturedatetime) values(?,?,now())'))
+   {
+    $stmt->bind_param('ss', $partnumber, $summary);
+    $stmt->execute();
+    $insertednew=true;
+   }      
+  }
+ }
+ $db->close();
+ return $insertednew;
+}
 
 
 

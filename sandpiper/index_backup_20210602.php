@@ -90,35 +90,6 @@ switch($uriparts[2])
         
         switch($root)
         {
-            
-            case 'plans':
-                $plans=new plans($uriparts,$jwtpresented);
-                if($plans->userIdOfRequest()!==false)
-                {// jtw validated, process request and send response
-                    $plans->processRequest();
-                    echo $plans->response;      
-                }
-                else
-                {// send the "not authorized" code
-                    http_response_code(401);
-                }
-                break;
-
-            case 'slices':
-                $slices=new slices($uriparts,$method,$postbody,$jwtpresented);
-                if($slices->userIdOfRequest()!==false)
-                {// jtw validated, process request
-                    $slices->processRequest();
-                    echo $slices->response;      
-                }
-                else
-                {// send the "not authorized" code
-                    http_response_code(401);
-                }
-                break;
-
-            
-            
             case 'activity':
                 $activity=new activity($uriparts,$jwtpresented);
                 if($activity->userIdOfRequest()!==false)
@@ -132,39 +103,16 @@ switch($uriparts[2])
                 }
                 break;
             
-            case 'touch':
-                $touch=new touch($uriparts,$jwtpresented);
-                if($touch->userIdOfRequest()!==false)
-                {// jtw validated, process request and send response
-                    $touch->processRequest();
-                    echo $touch->response;      
-                }
-                else
-                {// send the "not authorized" code
-                    http_response_code(401);
-                }
-                break;
-           
-            case 'admin':
-                $admin=new admin($uriparts,$jwtpresented);
-                if($admin->userIdOfRequest()!==false)
-                {// jtw validated, process request and send response
-                    $admin->processRequest();
-                    echo $admin->response;      
-                }
-                else
-                {// send the "not authorized" code
-                    http_response_code(401);
-                }
-                break;
-                                
+            case 'apikey':
                 
-            case 'feedback':
-                $feedback=new feedback($uriparts,$method,$postbody,$jwtpresented);
-                if($feedback->userIdOfRequest()!==false)
+                break;
+            
+            case 'companies':
+                $companies=new companies($uriparts,$method,$postbody,$jwtpresented);
+                if($companies->userIdOfRequest()!==false)
                 {// jtw validated, process request
-                    $feedback->processRequest();
-                    echo $feedback->response;      
+                    $companies->processRequest();
+                    echo $companies->response;      
                 }
                 else
                 {// send the "not authorized" code
@@ -173,12 +121,38 @@ switch($uriparts[2])
 
                 break;
                 
-            case 'castle':
-                $castle=new castle($uriparts,$method,$postbody,$jwtpresented);
-                if($castle->userIdOfRequest()!==false)
+            case 'grains':
+                $grains=new grains($uriparts,$method,$postbody,$jwtpresented);
+                if($grains->userIdOfRequest()!==false)
                 {// jtw validated, process request
-                    $castle->processRequest();
-                    echo $castle->response;      
+                    $grains->processRequest();
+                    echo $grains->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
+                break;
+            
+            case 'slices':
+                $slices=new slices($uriparts,$method,$postbody,$jwtpresented);
+                if($slices->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $slices->processRequest();
+                    echo $slices->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
+                break;
+            
+            case 'subs':
+                $subs=new subs($uriparts,$method,$postbody,$jwtpresented);
+                if($subs->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $subs->processRequest();
+                    echo $subs->response;      
                 }
                 else
                 {// send the "not authorized" code
@@ -186,18 +160,53 @@ switch($uriparts[2])
                 }
 
                 break;
-                        
+
+            case 'tags':
+                $tags=new tags($uriparts,$method,$postbody,$jwtpresented);
+                if($tags->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $tags->processRequest();
+                    echo $tags->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
+
+                break;
+                
+            case 'users':
+                $users=new users($uriparts,$method,$postbody,$jwtpresented);
+                if($users->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $users->processRequest();
+                    echo $users->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
+                break;
+
+            case 'sync':
+                $sync=new sync($uriparts,$method,$postbody,$jwtpresented);
+                if($sync->userIdOfRequest()!==false)
+                {// jtw validated, process request
+                    $sync->processRequest();
+                    echo $sync->response;      
+                }
+                else
+                {// send the "not authorized" code
+                    http_response_code(401);
+                }
+                break;
     
-            default: 
-                http_response_code(404);
-                break;
+            default: break;
         }
         
         break;
     
     
-    default:
-        http_response_code(404);
-        break;
+    default: break;
 }
 ?>

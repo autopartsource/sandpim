@@ -53,7 +53,7 @@ $groupedModelsCount = count($groupedmodels);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Applications (<?php echo $vcdb->makeName($makeid); ?>)</h3>
+                        <h3 class="card-header text-start">Apps > <?php echo '<a href="appsIndex.php">'.$vcdb->makeName($makeid).'</a>'; ?></h3>
 
                         <div class="card-body">
                             <div class="container">
