@@ -24,22 +24,13 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
     switch ($searchtype)
     {
         case 'begins':
-            if($searchterm!='')
-            {
-                $allpositions=$pcdb->getPositions($searchterm.'%');
-            }
+            $allpositions=$pcdb->getPositions($searchterm.'%');
             break;
         case 'contains':
-            if($searchterm!='')
-            {
-                $allpositions=$pcdb->getPositions('%'.$searchterm.'%');
-            }
+            $allpositions=$pcdb->getPositions('%'.$searchterm.'%');
             break;
         case 'ends':
-            if($searchterm!='')
-            {
-                $allpositions=$pcdb->getPositions('%'.$searchterm);
-            }
+            $allpositions=$pcdb->getPositions('%'.$searchterm);
             break;
         case 'selected':
             $allpositions=$mypositions;
@@ -94,8 +85,8 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                             <form method="get">
                                 Position
                                 <select name="searchtype">
-                                    <option value="begins"<?php if($searchposition=='begins'){echo ' selected';}?>>Begins with</option>
                                     <option value="contains"<?php if($searchposition=='contains'){echo ' selected';}?>>Contains</option>
+                                    <option value="begins"<?php if($searchposition=='begins'){echo ' selected';}?>>Begins with</option>
                                     <option value="ends"<?php if($searchposition=='ends'){echo ' selected';}?>>Ends with</option>
                                 </select>
                                 <input type="text" name="searchterm" value="<?php if(isset($_GET['searchterm'])){echo $_GET['searchterm'];}?>"/> 
