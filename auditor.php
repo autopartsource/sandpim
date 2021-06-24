@@ -15,6 +15,8 @@ include_once(__DIR__.'/class/logsClass.php');
 include_once(__DIR__.'/class/sandpiperPrimaryClass.php');
 
 
+$starttime=time();
+
 $pim=new pim;
 $pcdb=new pcdb();
 $vcdb=new vcdb();
@@ -31,7 +33,7 @@ $sandpiperPrimary=new sandpiperPrimary();
 // --- get a random group of items to examine 
 //$pim->recordIssue('SYSTEM/HEARTBEAT','test',1,'testtest','background auditor', '1234567890');
 
-$partnumbergroupsize=10;
+$partnumbergroupsize=100;
 $partnumbers=$pim->getPartnumbersByRandom($partnumbergroupsize);
 
 foreach($partnumbers as $partnumber)
@@ -80,6 +82,38 @@ foreach($partnumbers as $partnumber)
             }
         }
     }
+    
+    // lifecycle vs replacedby disagreements
+    // if replacedby!='' then lifecycle status should be 7   
+    if(trim($part['replacedby'])=='' && $part['lifecyclestatus']=='7')
+    {
+        $issuehash=md5('PART/LIFECYCLE/REPLACEDBY'.$partnumber.'0'.'Lifecycle status is Superseded, but replacedby is null'.'background auditor');
+        if(!$pim->getIssueByHash($issuehash))
+        {// this issue is not already recorded 
+            $pim->recordIssue('PART/LIFECYCLE/REPLACEDBY',$partnumber,0,'Lifecycle status is Superseded, but replacedby is null','background auditor', $issuehash);
+        }
+    }
+    if(trim($part['replacedby'])!='' && $part['lifecyclestatus']!='7')
+    {
+        $issuehash=md5('PART/LIFECYCLE/REPLACEDBY'.$partnumber.'0'.'Replacedby is populated, but lifecycle status is not 7'.'background auditor');
+        if(!$pim->getIssueByHash($issuehash))
+        {// this issue is not already recorded 
+            $pim->recordIssue('PART/LIFECYCLE/REPLACEDBY',$partnumber,0,'Replacedby is populated, but lifecycle status is not 7','background auditor', $issuehash);
+        }
+    }
+
+    if(trim($part['replacedby'])!='')
+    {
+        if(!$pim->getPart(trim($part['replacedby'])))
+        {
+            $issuehash=md5('PART/REPLACEDBY/INVALID'.$partnumber.'0'.'Replacedby is not a valid partnumber'.'background auditor');
+            if(!$pim->getIssueByHash($issuehash))
+            {// this issue is not already recorded 
+                $pim->recordIssue('PART/REPLACEDBY/INVALID',$partnumber,0,'Replacedby is not a valid partnumber','background auditor', $issuehash);
+            }
+        }
+    }
+    
     
     
     
@@ -173,6 +207,10 @@ foreach ($slices as $slice)
 $pim->updateSnoozes();
 
 
-
+$runtime=time()-$starttime;
+if($runtime > 5)
+{
+ $logs->logSystemEvent('auditor', 0, 'Background auditor process ran for '.$runtime.' seconds');
+}
 
 ?>

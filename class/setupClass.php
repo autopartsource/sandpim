@@ -503,7 +503,19 @@ class setup
         INDEX idx_descriptioncode_partnumber (descriptioncode, partnumber)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_description ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_description ('.$db->conn->error.')';}
-                
+               
+        $sql="CREATE TABLE part_balance (
+        partnumber varchar(20) NOT NULL,
+        qoh decimal(10,2) not null,
+        amd decimal(10,2) not null,
+        updateddate date not null,
+        PRIMARY KEY (partnumber),
+        INDEX idx_updateddate (updateddate)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_balance ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_balance ('.$db->conn->error.')';}
+        
+        
+        
         $sql="CREATE TABLE price (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         partnumber varchar(20) NOT NULL,

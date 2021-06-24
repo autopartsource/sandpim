@@ -3011,8 +3011,60 @@ function updateAppSummary($partnumber,$summary)
 }
 
 
+ function getPartBalance($partnumber)
+ {
+  $db = new mysql; $db->connect(); $balance=false;
+  if($stmt=$db->conn->prepare('select * from part_balance where partnumber=? and updateddate >= date_sub(NOW(),INTERVAL 30 DAY)'))
+  {
+   if($stmt->bind_param('s',$partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $balance=array('qoh'=>$row['qoh'],'amd'=>$row['amd'], 'updateddate'=>$row['updateddate']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $balance;
+ }
 
 
+ 
+ function updatePartBalance($partnumber,$qoh,$amd)
+ {
+  $db=new mysql; $db->connect(); $insertednew=false;
+  if($stmt=$db->conn->prepare('select * from part_balance where partnumber=?'))
+  {
+   $stmt->bind_param('s',$partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {// record exists for this part
+    if($stmt=$db->conn->prepare('update part_balance set qoh=?, amd=?, updateddate=now() where partnumber=?'))
+    {
+     $stmt->bind_param('iis',$qoh, $amd, $partnumber);
+     $stmt->execute();
+    }
+   }
+   else
+   {// record does not exist for this part
+    if($stmt=$db->conn->prepare('insert into part_balance (partnumber,qoh,amd,updateddate) values(?,?,?,now())'))
+    {
+     $stmt->bind_param('sii', $partnumber, $qoh, $amd);
+     $stmt->execute();
+     $insertednew=true;
+    }      
+   }
+  }
+  $db->close();
+  return $insertednew;
+ }
+
+ 
 
 
  
