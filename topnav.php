@@ -124,6 +124,7 @@
                     <a class="dropdown-item" href="./importInterchangeText.php">Import Competitor Interchange from text</a>
                     <a class="dropdown-item" href="./importBrandTableText.php">Import Brand Table text</a>
                     <a class="dropdown-item" href="./importAssetText.php">Import Asset metadata from text</a>
+                    <a class="dropdown-item" href="./updatePartBalances.php">Import part balance data</a>
                     <hr>
                     <a class="dropdown-item" href="./backgroundJobs.php">Manage background import/export jobs</a>
                     <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads</a>
