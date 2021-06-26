@@ -65,7 +65,7 @@ class sandpiper
    function authenticateUser($username, $password, $plandocumentencoded, $address=false)
    {// uses the same users as the rest of the PIM system
 
-     $planuuid=''; $resources='activity';
+     $planuuid=''; $resources='/plans/*,/slices/*,/activity/*,/touch/*,/admin/*,/feedback/*,/castle/*';
      if($plandocumentencoded)
      {
          $plandocument=$this->getPlanFromPlandocument(base64_decode($plandocumentencoded));
