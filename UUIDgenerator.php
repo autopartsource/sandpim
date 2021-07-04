@@ -19,10 +19,60 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 }
 */
 
+ $digits=array(); 
+ for($i=0; $i<32; $i++)
+ {
+   $digits[$i]=array('0'=>0,'1'=>0,'2'=>0,'3'=>0,'4'=>0,'5'=>0,'6'=>0,'7'=>0,'8'=>0,'9'=>0,'a'=>0,'b'=>0,'c'=>0,'d'=>0,'e'=>0,'f'=>0);
+ }
+
+
 $count=1;
-if(isset($_GET['count'])){
-$count=intval($_GET['count']);
+if(isset($_GET['count'])){$count=intval($_GET['count']); if($count>1000000){$count=1000000;}}
+
+if($count >=1000)
+{// render the UUIDs into a download
+  
+ $uuids='';
+ for($i=0; $i<=$count-1; $i++)
+ {
+  $uuid=$pim->uuidv4(); $uuids.=$uuid."\r\n";  
+  
+  // run analysis of generated list
+  $strippeduuid= str_replace('-', '', $uuid);
+  for($pos=0;$pos<32;$pos++)
+  {
+   $digit=substr($strippeduuid, $pos,1);
+   if(array_key_exists($digit, $digits[$pos])){$digits[$pos][$digit]+=1;}else{$digits[$pos][$digit]=1;}
+  }
+ }
+
+ 
+ $uuids.="\r\n--- Statistical analysis of digit digit randomness ---\r\n ";
+ foreach($digits as $pos=>$digit)
+ {
+  $uuids.= "\r\nhex digit distribution in position ".$pos."\r\n"; 
+  foreach($digit as $symbol=>$occurrences)
+  {
+      $uuids.='   '.$symbol.': '.$occurrences.' ('. number_format((($occurrences/$count)*100), 3).'%)'."\r\n";
+  }
+ }
+
+
+    
+ $filename='SandPIM_UUIDs_'.date('Y-m-d').'.txt';
+ header('Content-Disposition: attachment; filename="'.$filename.'"');
+ header('Content-Type: text/html');
+ header('Content-Length: ' . strlen($uuids));
+ header('Content-Transfer-Encoding: binary');
+ header('Cache-Control: must-revalidate');
+ header('Pragma: public');
+ echo $uuids;
+ exit;
 }
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en" xml:lang="en">
@@ -50,7 +100,7 @@ $count=intval($_GET['count']);
                         <div class="card-body">
                             <form>
                                 <div style="padding:5px;">
-                                <input name="submit" type="submit" value="Generate"/> <select name="count"><option value="1">1</option><option value="10">10</option><option value="100">100</option></select> UUIDs</div>
+                                <input name="submit" type="submit" value="Generate"/> <select name="count"><option value="1">1</option><option value="10">10</option><option value="100">100</option><option value="1000">1,000</option><option value="10000">10,000</option><option value="100000">100,000</option></select> UUIDs</div>
                             </form>
                             <div class="scroll">
                             <?php for($i=0; $i<=$count-1; $i++)
@@ -63,9 +113,9 @@ $count=intval($_GET['count']);
                     </div>
                 </div>
                 <!-- End of Main Content -->
-                
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
+   
                     
                 </div>
             </div>
@@ -83,7 +133,7 @@ else
 {
 ?><div style="font-size: .75em; font-style: italic; color: #808080;"><?php  
  $logs->logSystemEvent('utilities', 0, 'UUID genertor used by:'.$_SERVER['REMOTE_ADDR'].' to generate '.$count.' UUIDs');
- echo 'These UUIDs are are generated from the Linux system /dev/urandom';
+ echo 'These UUIDs are are generated from the underlying Linux system /dev/urandom. They are V4 (random) and variant 10xx';
 ?></div><?php  
 }
 ?>

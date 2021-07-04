@@ -19,8 +19,18 @@ class sandpiperPrimary
     
 function uuidv4()
 {
- $randodata = file_get_contents('/dev/urandom', NULL, NULL, 0, 16);
- return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($randodata), 4));
+  $randodata = file_get_contents('/dev/urandom', NULL, NULL, 0, 16);
+  $uuid=vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($randodata), 4));
+
+  // all 128 bits are now randomly generated in the hex output. Set the "M" (version) nibble to "4" by over-writing it 
+  $uuid= substr_replace($uuid,'4', 14, 1);
+  
+  // set the "N" (variant) nibble to a,b,8 or 9 to specify the MSB as set and the second most significant bit to clear
+  $valid_n_hex_nibbles=array('a','b','8','9');
+  $n_hex_nibble=$valid_n_hex_nibbles[random_int(0, 3)];
+  $uuid= substr_replace($uuid, $n_hex_nibble, 19, 1);
+          
+  return $uuid;
 }
    
     

@@ -10,7 +10,6 @@ class pim
 
  function uuidv4()
  {
-     
   $randodata = file_get_contents('/dev/urandom', NULL, NULL, 0, 16);
   $uuid=vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($randodata), 4));
 
