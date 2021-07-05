@@ -136,7 +136,7 @@ else
 {
 ?><div style="font-size: .75em; font-style: italic; color: #808080;"><?php  
  $logs->logSystemEvent('utilities', 0, 'UUID genertor used by:'.$_SERVER['REMOTE_ADDR'].' to generate '.$count.' UUIDs');
- echo 'These UUIDs are are generated from the underlying Linux system /dev/urandom. They are V4 (random) and variant 10xx';
+ echo 'These UUIDs are generated from the underlying Linux system /dev/urandom. They are version 4 (random) and variant 10. The remaining 122 bits are random. Selecting 1,000 (or more) in the drop-down will cause the result to be downloaded to your browser as a text file that includes a tab-delimited statistical analysis after the block of UUIDs.';
 ?></div><?php  
 }
 ?>
