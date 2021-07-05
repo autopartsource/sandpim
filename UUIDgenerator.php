@@ -47,13 +47,16 @@ if($count >=1000)
  }
 
  
- $uuids.="\r\n--- Statistical analysis of digit digit randomness ---\r\n ";
+ $uuids.="\r\n--- Symbol distribution statistics by position ---\r\n";
+ $uuids.="Position\tSymbol\tOccurrences\tDeviation percentage from expected\r\n";
+ 
  foreach($digits as $pos=>$digit)
  {
-  $uuids.= "\r\nhex digit distribution in position ".$pos."\r\n"; 
+//  $uuids.= "\r\nhex digit distribution in position ".$pos."\r\n"; 
   foreach($digit as $symbol=>$occurrences)
   {
-      $uuids.='   '.$symbol.': '.$occurrences.' ('. number_format((($occurrences/$count)*100), 3).'%)'."\r\n";
+      //$uuids.='   '.$symbol.': '.$occurrences.' ('. number_format((($occurrences/$count)*100), 3).'%)'."\r\n";
+      $uuids.=$pos."\t".$symbol."\t".$occurrences."\t". number_format(($occurrences-($count/16))/($count/16)*100, 3)."\r\n";
   }
  }
 
