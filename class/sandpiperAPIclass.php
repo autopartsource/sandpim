@@ -246,7 +246,7 @@ class sandpiper
     {
      $db = new mysql; $db->connect(); $slices=array();
 
-     if($stmt=$db->conn->prepare('select slice.id, slice.description, sliceuuid,slicetype,slicemetadata,slicehash from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=?'))
+     if($stmt=$db->conn->prepare('select slice.id, slice.description, sliceuuid,slicetype,filename,slicemetadata,subscriptionmetadata,sliceorder,slicehash from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=?'))
      {
       if($stmt->bind_param('s', $planuuid))
       {
@@ -257,7 +257,7 @@ class sandpiper
          while($row = $db->result->fetch_assoc())
          {
           $hash=$this->calculateSliceHash($row['id']);
-          $slices[]=array('slice_uuid'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'slice_description'=>$row['description'],'slice_meta_data'=>$row['slicemetadata'],'slice_grainlist_hash'=>$hash);
+          $slices[]=array('slice_uuid'=>$row['sliceuuid'],'slice_description'=>$row['description'],'slice_type'=>$row['slicetype'],'file_name'=>$row['filename'],'slice_meta_data'=>$row['slicemetadata'],'subscription_meta_data'=>$row['subscriptionmetadata'],'slice_order'=>$row['sliceorder'],'slice_grainlist_hash'=>$hash);
          }
         }
        }
@@ -327,7 +327,8 @@ class sandpiper
        }
       }         
      }
-     return array('grains'=>$grains);
+     //return array('grains'=>$grains);
+     return $grains;
     }
     
     
@@ -340,8 +341,7 @@ class sandpiper
         
         
         
-        
-        $returnvalue=true;
+        $returnvalue=false;
         return $returnvalue;
     }
     

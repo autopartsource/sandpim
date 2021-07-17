@@ -813,9 +813,10 @@ class setup
         sliceid int unsigned not null,
         subscriptionuuid varchar(255) not null,
         subscriptionmetadata text not null,
+        sliceorder int UNSIGNED NOT NULL,
         PRIMARY KEY (id),
         unique key idx_subscriptionuuid(subscriptionuuid),
-        index idx_planid(planid))";
+        index idx_planid(planid,sliceorder))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_partcategory ('.$db->conn->error.')';}
 
 
@@ -823,7 +824,8 @@ class setup
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         description varchar(255) not null,
         sliceuuid varchar(255) not null,
-        slicetype varchar(255) not null,        
+        slicetype varchar(255) not null,
+        filename varchar(255) not null,
         partcategory int unsigned not null,
         slicemetadata text not null,
         slicehash varchar(255) not null,        
