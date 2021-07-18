@@ -65,14 +65,6 @@ class sandpiper
    function authenticateUser($username, $password, $plandocumentencoded, $address=false)
    {// uses the same users as the rest of the PIM system
 
-     $planuuid=''; $resources='/plans/*,/slices/*,/activity/*,/touch/*,/admin/*,/feedback/*,/castle/*';
-     if($plandocumentencoded)
-     {
-         $plandocument=$this->getPlanFromPlandocument(base64_decode($plandocumentencoded));
-         $planuuid=$plandocument['planuuid'];
-     }
-      
-       
      $returnvalue=false;
      $logs=new logs;
      $configGet=new configGet;
@@ -83,12 +75,33 @@ class sandpiper
      { // known user - now verify password
       if(password_verify($password_peppered, $user->hash))
       { // valid user and password
-        $this->username=$username;
-        $expiresepoch=(mktime()+900); // 15 minutes from now
-        $secret=$this->getJWTsecret();
-        $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
-        $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
-        $returnvalue= json_encode(['token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful authentication with plan: '.$planuuid]);
+
+          // now validate the plan presented 
+       $planuuid=''; $resources='/plans/*,/slices/*,/activity/*,/touch/*,/admin/*,/feedback/*,/castle/*';
+       if($plandocumentencoded)
+       {
+        $plandocument=$this->getPlanFromPlandocument(base64_decode($plandocumentencoded));
+        $planuuid=$plandocument['planuuid'];
+        if($plandocument['schemaerrors']=='')
+        {// plan presented has no XSD errors
+
+            
+         $this->username=$username;
+         $expiresepoch=(mktime()+900); // 15 minutes from now
+         $secret=$this->getJWTsecret();
+         $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
+         $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
+         $returnvalue= json_encode(['token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful authentication with plan: '.$planuuid]);                        
+        }
+        else
+        {// plan presented had XSD errors
+         $returnvalue='{"sandpiper status code":"3xxx",message":"Error - Plan documents presented failed XSD validation","http status":"4xx"}';         
+        }        
+       }
+       else
+       {// no plan was presented
+         $returnvalue='{"sandpiper status code":"1xxx",message":"Authenticated with no - limited resources","http status":"200"}';         
+       }
       } 
       else
       {// log the failure event
