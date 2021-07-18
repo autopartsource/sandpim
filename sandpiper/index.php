@@ -12,6 +12,8 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
+ $logs = new logs;
+
 // split the request URI into an array of levels by "/"
 $uriparts= explode('/', $_SERVER['REQUEST_URI']);
 
@@ -56,19 +58,22 @@ switch($uriparts[2])
     case 'login':
         $sandpiper=new sandpiper;
 
-
-
         if($method=='POST')
         {
             if(array_key_exists('username',$postbody) &&  array_key_exists('password',$postbody))
             {// user and pass were provided
                 $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
-
-                echo $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
+                
+                $response = $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
+                
+                if(isset($response['http response code'])){http_response_code($response['http response code']);}
+                
+                echo json_encode($response);
             }
             else
             {// username or password not present in login post body
-                echo 'bad request ('. print_r($bodyraw,true).')' ;
+                http_response_code(400);
+                $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - authentication POST malformed'.$_SERVER['REMOTE_ADDR']);
             }
         }
 
@@ -96,7 +101,7 @@ switch($uriparts[2])
                 if($plans->userIdOfRequest()!==false)
                 {// jtw validated, process request and send response
                     $plans->processRequest();
-                    echo $plans->response;      
+                    echo $plans->response;   
                 }
                 else
                 {// send the "not authorized" code

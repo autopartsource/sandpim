@@ -77,7 +77,7 @@ class sandpiper
       { // valid user and password
 
           // now validate the plan presented 
-       $planuuid=''; $resources='/plans/*,/slices/*,/activity/*,/touch/*,/admin/*,/feedback/*,/castle/*';
+       $planuuid=''; 
        if($plandocumentencoded)
        {
         $plandocument=$this->getPlanFromPlandocument(base64_decode($plandocumentencoded));
@@ -85,28 +85,39 @@ class sandpiper
         if($plandocument['schemaerrors']=='')
         {// plan presented has no XSD errors
 
-            
+         $resources='/plans/*,/slices/*,/activity/*,/touch/*,/admin/*,/feedback/*,/castle/*';
+         
+         // determine and modify resource list here
+         
          $this->username=$username;
          $expiresepoch=(mktime()+900); // 15 minutes from now
          $secret=$this->getJWTsecret();
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
-         $returnvalue= json_encode(['token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful Authentication with plan: '.$planuuid]);                        
+         $returnvalue= array('sandpiper response code'=>'1xxx','token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful Authentication with plan: '.$planuuid,'http response code'=>200);
         }
         else
         {// plan presented had XSD errors
-         $returnvalue='{"sandpiper status code":"3xxx","message":"Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')","http status":"4xx"}';         
+         //$returnvalue='{"sandpiper status code":"3xxx","message":"Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')","http status":"4xx"}';         
+         $returnvalue=array('sandpiper response code'=>'3xxx','message'=>'Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')','http response code'=>400);
         }        
        }
        else
-       {// no plan was presented
-         $returnvalue='{"sandpiper status code":"1xxx",message":"Authenticated with no - limited resources","http status":"200"}';         
-       }
+       {// no plan was presented - issue resource-limited JWT
+         $resources='/plans/*,/activity/*';
+
+         $this->username=$username;
+         $expiresepoch=(mktime()+900); // 15 minutes from now
+         $secret=$this->getJWTsecret();
+         $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
+         $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' with null plan');
+         $returnvalue= array('sandpiper response code'=>'12xx','token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'Authenticated with null plan - limited resources avail','http response code'=>200);
+        }
       } 
       else
       {// log the failure event
         $logs->logSystemEvent('loginfailure', $this->userid, 'sandpiper API login failed from '.$address);
-        $returnvalue='{"message":"Authentication Error."}';
+        $returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
       }
      }
      else
@@ -114,7 +125,7 @@ class sandpiper
        //  burn the amount of time that a password verification would have taken had this been a known username. This is to thwart a timing attack: Baddie could determine validity of arbitrary usernames thrown at the api because they all take a similar hmac time (several hundred mS)
        $trash= password_verify('asdkjflkasjdfkl', '$argon2id$v=19$m=65536,t=4,p=1$NnBsSTgvZmpNbmdoeXo2eA$LWpqCgHuxVmgEwDMSf3o5SM1AWT7qbCtkV8ckxBCr94');      
        $logs->logSystemEvent('loginfailure', 0, 'sandpiper API unknown user ('.$username.') from '.$address);
-       $returnvalue='{"message":"Authentication Error."}';
+       $returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
      }
      return $returnvalue; 
     }
