@@ -839,8 +839,9 @@ class setup
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         sliceid int unsigned not null,
         grainid int unsigned not null,
+        grainorder int unsigned not null,        
         PRIMARY KEY (id),
-        index idx_(sliceid),
+        index idx_sliceid(sliceid,grainorder),
         index idx_grain(grainid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - slice_filegrain ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - slice_filegrain ('.$db->conn->error.')';}
         

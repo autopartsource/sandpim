@@ -246,7 +246,7 @@ class sandpiper
     {
      $db = new mysql; $db->connect(); $slices=array();
 
-     if($stmt=$db->conn->prepare('select slice.id, slice.description, sliceuuid,slicetype,filename,slicemetadata,subscriptionmetadata,sliceorder,slicehash from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=?'))
+     if($stmt=$db->conn->prepare('select slice.id, slice.description, sliceuuid,slicetype,filename,slicemetadata,subscriptionmetadata,sliceorder,slicehash from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=? order by sliceorder'))
      {
       if($stmt->bind_param('s', $planuuid))
       {
@@ -290,11 +290,11 @@ class sandpiper
 
      if($detaillevel=='GRAIN_WITH_PAYLOAD')
      {
-      $sql="select slice.description, grainuuid,sliceuuid,slicetype,source,encoding,grainkey,payload,length(payload) as payloadsize,slicemetadata from plan,plan_slice,slice, slice_filegrain, filegrain where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and slice.id=slice_filegrain.sliceid and slice_filegrain.grainid=filegrain.id and plan.planuuid=? and slice.sliceuuid like ? and filegrain.grainuuid like ?";
+      $sql="select slice.description, grainuuid,sliceuuid,slicetype,source,encoding,grainkey,grainorder,payload,length(payload) as payloadsize,slicemetadata from plan,plan_slice,slice, slice_filegrain, filegrain where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and slice.id=slice_filegrain.sliceid and slice_filegrain.grainid=filegrain.id and plan.planuuid=? and slice.sliceuuid like ? and filegrain.grainuuid like ? order by grainorder";
      }
      else  
      {// don't include the payload column in the query if we dont need it
-      $sql="select slice.description, grainuuid,sliceuuid,slicetype,source,encoding,grainkey,'' as payload,length(payload) as payloadsize,slicemetadata from plan,plan_slice,slice, slice_filegrain, filegrain where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and slice.id=slice_filegrain.sliceid and slice_filegrain.grainid=filegrain.id and plan.planuuid=? and slice.sliceuuid like ? and filegrain.grainuuid like ?";            
+      $sql="select slice.description, grainuuid,sliceuuid,slicetype,source,encoding,grainkey,grainorder,'' as payload,length(payload) as payloadsize,slicemetadata from plan,plan_slice,slice, slice_filegrain, filegrain where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and slice.id=slice_filegrain.sliceid and slice_filegrain.grainid=filegrain.id and plan.planuuid=? and slice.sliceuuid like ? and filegrain.grainuuid like ? order by grainorder";            
      }
      
      if($stmt=$db->conn->prepare($sql))
@@ -320,7 +320,8 @@ class sandpiper
           }
           else   
           {// return a structure of full verbosity
-           $grains[]=array('grain_uuid'=>$row['grainuuid'],'slice_uuid'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'file_name'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
+           //$grains[]=array('grain_uuid'=>$row['grainuuid'],'slice_uuid'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'file_name'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
+           $grains[]=array('grain_uuid'=>$row['grainuuid'],'grain_key'=>$row['grainkey'],'grain_reference'=>'','grain_order'=>$row['grainorder'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
           }
          }
         }
