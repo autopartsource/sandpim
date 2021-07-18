@@ -91,11 +91,11 @@ class sandpiper
          $secret=$this->getJWTsecret();
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
-         $returnvalue= json_encode(['token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful authentication with plan: '.$planuuid]);                        
+         $returnvalue= json_encode(['token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful Authentication with plan: '.$planuuid]);                        
         }
         else
         {// plan presented had XSD errors
-         $returnvalue='{"sandpiper status code":"3xxx",message":"Error - Plan documents presented failed XSD validation","http status":"4xx"}';         
+         $returnvalue='{"sandpiper status code":"3xxx","message":"Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')","http status":"4xx"}';         
         }        
        }
        else
