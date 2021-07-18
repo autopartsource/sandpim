@@ -72,8 +72,9 @@ switch($uriparts[2])
             }
             else
             {// username or password not present in login post body
+                $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - authentication POST malformed (pre response 400)'.$_SERVER['REMOTE_ADDR']);
                 http_response_code(400);
-                $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - authentication POST malformed'.$_SERVER['REMOTE_ADDR']);
+                $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - authentication POST malformed (post response 400)'.$_SERVER['REMOTE_ADDR']);
             }
         }
 
