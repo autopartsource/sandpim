@@ -71,6 +71,10 @@ switch($uriparts[2])
                 if(isset($response['http response code'])){http_response_code($response['http response code']);}
                 
                 echo json_encode($response);
+                
+                $logs->logSystemEvent('login',0, 'sandpiper index.php - authentication POST malformed (post response 400dddd)'.$_SERVER['REMOTE_ADDR']);
+                
+                
             }
             else
             {// username or password not present in login post body
