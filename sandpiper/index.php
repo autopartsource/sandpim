@@ -65,6 +65,8 @@ switch($uriparts[2])
                 $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
                 
                 $response = $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
+
+                $logs->logSystemEvent('login',0, 'sandpiper index.php - authentication POST malformed (pre response 400dddd)'.$_SERVER['REMOTE_ADDR']);
                 
                 if(isset($response['http response code'])){http_response_code($response['http response code']);}
                 
