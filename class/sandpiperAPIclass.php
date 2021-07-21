@@ -1261,7 +1261,7 @@ class slices extends sandpiper
 
 
 
-class plan extends sandpiper
+class plans extends sandpiper
 {
     private $events=array();
          
