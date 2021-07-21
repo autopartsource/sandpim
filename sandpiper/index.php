@@ -96,7 +96,7 @@ switch($uriparts[2])
         {
             
             case 'plans':
-                $plans=new plans($uriparts,$jwtpresented);
+                $plans=new plans($uriparts,$method,$postbody,$jwtpresented);
                 if($plans->userIdOfRequest()!==false)
                 {// jtw validated, process request and send response
                     $plans->processRequest();

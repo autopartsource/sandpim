@@ -1265,7 +1265,7 @@ class plans extends sandpiper
 {
     private $events=array();
          
-    function __construct($_requesturi,$_jwt) 
+    function __construct($_requesturi, $_method, $_body, $_jwt) 
     {
         $this->requesturi=$_requesturi;
         $this->body=$_body;
