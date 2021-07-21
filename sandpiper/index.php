@@ -63,24 +63,17 @@ switch($uriparts[2])
             if(array_key_exists('username',$postbody) &&  array_key_exists('password',$postbody))
             {// user and pass were provided
                 $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
-                
                 $response = $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
-
-                $logs->logSystemEvent('login',0, 'sandpiper index.php - authentication POST malformed (pre response 400dddd)'.$_SERVER['REMOTE_ADDR']);
-                
-                if(isset($response['http response code'])){http_response_code($response['http response code']);}
-                
+                if(isset($response['http response code']))
+                {
+                    http_response_code($response['http response code']);
+                    
+                }
                 echo json_encode($response);
-                
-                $logs->logSystemEvent('login',0, 'sandpiper index.php - authentication POST malformed (post response 400dddd)'.$_SERVER['REMOTE_ADDR']);
-                
-                
             }
             else
             {// username or password not present in login post body
-                $logs->logSystemEvent('login',0, 'sandpiper index.php - authentication POST malformed (pre response 400)'.$_SERVER['REMOTE_ADDR']);
                 http_response_code(400);
-                $logs->logSystemEvent('login',0, 'sandpiper index.php - authentication POST malformed (post response 400)'.$_SERVER['REMOTE_ADDR']);
             }
         }
 
@@ -88,7 +81,6 @@ switch($uriparts[2])
         {
             echo 'API OK';
         }
-
         
         break;
     

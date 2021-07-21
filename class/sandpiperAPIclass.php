@@ -111,7 +111,7 @@ class sandpiper
          $secret=$this->getJWTsecret();
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' with null plan');
-         $returnvalue= array('sandpiper response code'=>'12xx','token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'Authenticated with null plan - limited resources avail','http response code'=>200);
+         $returnvalue= array('sandpiper response code'=>'12xx','token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>'','message'=>'Authenticated with null plan - limited resources avail','http response code'=>200);
         }
       } 
       else
@@ -1258,6 +1258,59 @@ class slices extends sandpiper
  
  
 }
+
+
+
+class plan extends sandpiper
+{
+    private $events=array();
+         
+    function __construct($_requesturi,$_jwt) 
+    {
+        $this->requesturi=$_requesturi;
+        $this->body=$_body;
+        $this->method=$_method;
+        $this->jwtpresented=$_jwt;
+        $this->verifyJWT($_jwt,true);
+     }
+ 
+    function processRequest()
+    {
+        switch($this->method)
+        {
+            case 'GET':
+            
+                $this->response= json_encode(array('message'=>'GET method not yet built'));
+            
+                break;
+        
+        
+            case 'POST':        
+
+                $this->response= json_encode(array('message'=>'POST not yet built'));
+                                
+                break;
+                   
+        
+            case 'DELETE':
+                $this->response= json_encode(array('message'=>'DELETE not yet built'));               
+                break;                
+        
+            
+            default:
+                // unhandled method
+                $this->response= json_encode(array('message'=>'Un-handled http method'));               
+            
+                break;;
+        }
+
+    }
+ 
+}
+
+
+
+
 
 
 class activity extends sandpiper
