@@ -101,7 +101,8 @@ switch($uriparts[2])
                     $plans->processRequest();
                     if(isset($plans->response['http response code']))
                     {
-                        http_response_code($plans->response['http response code']);        
+                        http_response_code($plans->response['http response code']);
+                        unset($plans->response['http response code']);
                     }
                     echo $plans->response;   
                 }
