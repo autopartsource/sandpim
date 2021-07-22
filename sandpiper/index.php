@@ -66,8 +66,7 @@ switch($uriparts[2])
                 $response = $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
                 if(isset($response['http response code']))
                 {
-                    http_response_code($response['http response code']);
-                    
+                    http_response_code($response['http response code']);        
                 }
                 echo json_encode($response);
             }
@@ -100,6 +99,10 @@ switch($uriparts[2])
                 if($plans->userIdOfRequest()!==false)
                 {// jtw validated, process request and send response
                     $plans->processRequest();
+                    if(isset($plans->response['http response code']))
+                    {
+                        http_response_code($plans->response['http response code']);        
+                    }
                     echo $plans->response;   
                 }
                 else

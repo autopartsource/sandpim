@@ -1278,8 +1278,22 @@ class plans extends sandpiper
     {
         switch($this->method)
         {
+            
+            /*
+             *  these are the GET scenarios
+                /v1/plans/[uuid]
+                /v1/plans/invoke
+                /v1/plans/proposals
+                /v1/plans/proposals/[uuid]
+             */
+            
+            
             case 'GET':
             
+                
+                
+                
+                
                 $this->response= json_encode(array('message'=>'GET method not yet built'));
             
                 break;
@@ -1287,15 +1301,142 @@ class plans extends sandpiper
         
             case 'POST':        
 
-                $this->response= json_encode(array('message'=>'POST not yet built'));
+                /*
+                 * these are the POST scenatios
+                    /v1/plans/invoke
+                    /v1/plans/proposals/new
+                    /v1/plans/[uuid]/hold
+                    /v1/plans/proposals/[uuid]/approve
+                    /v1/plans/proposals/[uuid]/reject
+                 */
+                
+                
+                switch(count($this->requesturi))
+                {
+                    case 5:
+                        // /plans/invoke
+                        
+                            $uripart=$this->extractParms($this->requesturi[4]);
+                            if($uripart=='invoke')
+                            {//   /plans/invoke
+            
+                                $this->response= json_encode(array('sandpiper response code'=>'2xxx','message'=>'invoking new plan','http response code'=>200));                  
                                 
-                break;
-                   
-        
-            case 'DELETE':
-                $this->response= json_encode(array('message'=>'DELETE not yet built'));               
-                break;                
-        
+                            }
+                            else
+                            {//   /plans/???
+                                
+                                $this->response= json_encode(array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/. Expected invoke verb, got this instead: '.$uripart,'http response code'=>400));
+                            }
+                        
+                        break;
+                        
+                
+                
+                    case 6:
+                        //   /plans/[uuid]/hold
+                        //   /plans/proposals/new
+
+                        if($this->looksLikeAUUID($this->requesturi[4]))
+                        { //probably   /plans/[uuid]/hold
+                            
+                            $planuuid=$this->requesturi[4];
+                            $uripart=$this->extractParms($this->requesturi[5]);
+                            if($uripart=='hold')
+                            {//   /plans/[uuid]/hold
+            
+                                $this->response= json_encode(array('sandpiper response code'=>'2xxx','message'=>'placing plan '.$planuuid, ' on hold','http response code'=>200));                  
+                                
+                            }
+                            else
+                            {//   /plans/[uuid]/???
+                                
+                                $this->response= json_encode(array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/[uuid]/. Expected hold verb, got this instead: '.$uripart,'http response code'=>400));                  
+                            }
+                        }
+                        else
+                        {// probably /plans/proposals/new
+                        
+                            $uripart=$this->extractParms($this->requesturi[5]);
+                            if($this->requesturi[4]=='proposals' && $uripart=='new')
+                            {//   /plans/proposals/new
+            
+                                $this->response= json_encode(array('sandpiper response code'=>'2xxx','message'=>'new proposal posted','http response code'=>200));                  
+                            }
+                            else
+                            {//   /plans/???/???
+                                
+                                $this->response= json_encode(array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/. Expected proposals/new, got this instead: '.$this->requesturi[4].'/'.$uripart,'http response code'=>400));                  
+                            }
+                            
+                        }
+              
+                        break;
+                        
+                    case 7:
+                        
+                        
+                        /*
+                         *
+                            /v1/plans/proposals/[uuid]/approve
+                            /v1/plans/proposals/[uuid]/reject
+
+                         */
+           
+                        if($this->requesturi[4]=='proposals')
+                        {
+                            if($this->looksLikeAUUID($this->requesturi[5]))
+                            {
+                                $planuuid=$this->requesturi[5];
+                                $uripart=$this->extractParms($this->requesturi[6]);
+                                
+                                if($uripart=='approve' || $uripart=='reject')
+                                {
+                                    if($uripart=='approve')
+                                    {
+                                        
+                                        $this->response= json_encode(array('sandpiper response code'=>'3xxx','message'=>'plan '.$planuuid.' approved','http response code'=>200));                                    
+                                    }
+                                    else
+                                    {// reject
+                                        
+                                        $this->response= json_encode(array('sandpiper response code'=>'3xxx','message'=>'plan '.$planuuid.' rejected','http response code'=>200));
+                                    }
+                                }
+                                else
+                                {// somethinkg other than approve or reject
+                                    
+                                    
+                                    $this->response= json_encode(array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/proposals[uuid]/. Expected a approve ore reject, got this instead: '.$uripart,'http response code'=>400));
+                                }
+                            }
+                            else
+                            {// something other than a uuid after proposals
+
+                                $this->response= json_encode(array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/proposals. Expected a plan uuid, got this instead: '.$this->requesturi[5],'http response code'=>400));
+                            }
+                        }
+                        else
+                        {// something other than proposals after plans
+                            $this->response= json_encode(array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/. Expected proposals, got this instead: '.$this->requesturi[4],'http response code'=>400));
+                        }
+
+                        break;
+                    
+                    default:
+                        
+                        $this->response= json_encode(array('sandpiper response code'=>'3xxx','message'=>'unexpected input - too many url parts  after plans','http response code'=>400));                  
+                        
+                        break;
+                }
+                
+                
+                
+                
+                
+                                
+                break;  // this break closes POST method case
+                       
             
             default:
                 // unhandled method
