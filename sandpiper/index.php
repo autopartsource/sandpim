@@ -99,12 +99,13 @@ switch($uriparts[2])
                 if($plans->userIdOfRequest()!==false)
                 {// jtw validated, process request and send response
                     $plans->processRequest();
+                   
                     if(isset($plans->response['http response code']))
                     {
                         http_response_code($plans->response['http response code']);
                         unset($plans->response['http response code']);
                     }
-                    echo $plans->response;   
+                    echo json_encode($plans->response);
                 }
                 else
                 {// send the "not authorized" code
