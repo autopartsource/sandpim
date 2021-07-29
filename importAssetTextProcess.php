@@ -95,11 +95,11 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
    if($TotalPlanesFieldIndex>=0 && trim($fields[$TotalPlanesFieldIndex])!=''){$asset['TotalPlanes']=trim($fields[$TotalPlanesFieldIndex]);}
    if($DescriptionFieldIndex>=0 && trim($fields[$DescriptionFieldIndex])!=''){$asset['Description']=trim($fields[$DescriptionFieldIndex]);}
    if($DescriptionCodeFieldIndex>=0 && trim($fields[$DescriptionCodeFieldIndex])!=''){$asset['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
-   if($DescriptionLanguageCodeFieldIndex>=0 && trim($fields[$DescriptionLanguageCodeFieldIndex])!=''){$asset['DescriptionLanguageCode']=trim($fields[$DescriptionLanguageCodeFieldIndex]);}
-   if($CreatedDateFieldIndex>=0 && trim($fields[$CreatedDateFieldIndex])!=''){$asset['CreatedDate']=trim($fields[$CreatedDateFieldIndex]);}
+   if($DescriptionLanguageCodeFieldIndex>=0 && trim($fields[$DescriptionLanguageCodeFieldIndex])!=''){$asset['DescriptionLanguageCode']=trim($fields[$DescriptionLanguageCodeFieldIndex]); $asset['LanguageCode']=trim($fields[$DescriptionLanguageCodeFieldIndex]);}
+   if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$asset['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
+    if($CreatedDateFieldIndex>=0 && trim($fields[$CreatedDateFieldIndex])!=''){$asset['CreatedDate']=trim($fields[$CreatedDateFieldIndex]);}
    if($AssetDateTypeFieldIndex>=0 && trim($fields[$AssetDateTypeFieldIndex])!=''){$asset['AssetDateType']=trim($fields[$AssetDateTypeFieldIndex]);}
    if($CountryFieldIndex>=0 && trim($fields[$CountryFieldIndex])!=''){$asset['Country']=trim($fields[$CountryFieldIndex]);}
-   if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$asset['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
    if($PublicFieldIndex>=0 && trim($fields[$PublicFieldIndex])!=''){$asset['Public']=trim($fields[$PublicFieldIndex]);}
    
    
@@ -111,6 +111,9 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
    if($pim->validPart($PartNumber))
    {// valid item
     $existingassets=$assetclass->getAssetRecordsByAssetid($asset['AssetID']);
+     $items[$PartNumber]['assets'][]=$asset;
+    
+    /*
     if(count($existingassets)==0)
     {// this assetID is not already existing
         
@@ -120,7 +123,10 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
     {// assetID is already in use
         
      $parseerrors[]='AssetID ['.$asset['AssetID'].'] already exists for partnumber:'.$PartNumber;       
-    }       
+    }
+     * 
+     * 
+     */       
    }
    else
    {// invalid item

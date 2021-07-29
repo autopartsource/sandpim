@@ -543,13 +543,29 @@ class PIESgenerator
    }
 
    
+   //---------------------- descriptions -----------------
+   
+   if(isset($item['descriptions']) && count($item['descriptions']))
+   {
+    foreach($item['descriptions'] as $description)
+    {
+     if($doimport)
+     {
+         $pim->addPartDescription($partnumber, $description['Description'], $description['DescriptionCode'], $description['Sequence'], $description['LanguageCode']);
+     }
+     $results[]='description ('.$description['Description'].') added to '.$partnumber;
+    }
+   }   
    
    // ----------------- prices --------------------
    if(isset($item['prices']) && count($item['prices']))
    {
     foreach($item['prices'] as $price)
     {
-     if($doimport){$pricing->addPrice($partnumber, $price['PriceSheetNumber'], $price['Price'], $price['CurrencyCode'], $price['PriceUOM'], $price['PriceType'], $price['EffectiveDate'], $price['ExpirationDate']);}
+     if($doimport)
+     {
+         $pricing->addPrice($partnumber, $price['PriceSheetNumber'], $price['Price'], $price['CurrencyCode'], $price['PriceUOM'], $price['PriceType'], $price['EffectiveDate'], $price['ExpirationDate']);         
+     }
      $results[]=$price['PriceType'].' price ('.$price['Price'].') for item '.$partnumber.' '.$actiondescription;
     }
    }
@@ -562,8 +578,15 @@ class PIESgenerator
     {
      if($doimport)
      {
-      $oid=$pim->newoid();   
-      if($asset->addAsset($digitalasset['AssetID'], $digitalasset['FileName'], '', $digitalasset['URI'], $digitalasset['OrientationView'], $digitalasset['ColorMode'], intval($digitalasset['AssetHeight']), intval($digitalasset['AssetWidth']), $digitalasset['UOM'], intval($digitalasset['Resolution']), $digitalasset['Background'], $digitalasset['FileType'], intval($digitalasset['Public']), 1, $digitalasset['Description'], $oid, '', intval($digitalasset['FileSize']), 1,$digitalasset['LanguageCode'],$digitalasset['CreatedDate']))
+      $oid=$pim->newoid();
+      
+      //test to see if asset already exists and delete it
+      
+      $asset->deleteAssetsByAssetid($assetid);
+      $asset->disconnectPartFromAsset($partnumber);
+      
+      
+      if($asset->addAsset($digitalasset['AssetID'], $digitalasset['FileName'], '', $digitalasset['URI'], $digitalasset['OrientationView'], $digitalasset['ColorMode'], intval($digitalasset['AssetHeight']), intval($digitalasset['AssetWidth']), $digitalasset['UOM'], intval($digitalasset['Resolution']), $digitalasset['Background'], $digitalasset['FileType'], intval($digitalasset['Public']), 1, $digitalasset['Description'], $oid, '', intval($digitalasset['FileSize']), 1,$digitalasset['DescriptionLanguageCode'],$digitalasset['CreatedDate']))
       { 
        $asset->connectPartToAsset($partnumber, $digitalasset['AssetID'], $digitalasset['AssetType'], $sequence, $digitalasset['Representation']);
        $asset->logAssetEvent($digitalasset['AssetID'], 0, $partnumber.' connected to asset '.$digitalasset['AssetID'].' as type '.$digitalasset['AssetType'] , '');

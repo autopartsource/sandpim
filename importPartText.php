@@ -1,6 +1,9 @@
 <?php
 include_once('./class/pimClass.php');
 
+$navCategory = 'import/export';
+
+
 session_start();
 if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
@@ -39,39 +42,40 @@ $partcategories = $pim->getPartCategories();
                             <form method="post" action="importPartTextProcess.php">
 
                                 <div style="padding:10px;"><div>Items</div>
-                                    <textarea name="items" rows="6" cols="130"></textarea>
+                                    <textarea name="items" rows="5" cols="100"></textarea>
                                 </div>
 
                                 <div style="padding:10px;"><div>Descriptions</div>
-                                    <textarea name="descriptions" rows="6" cols="130"></textarea>
+                                    <textarea name="descriptions" rows="5" cols="100"></textarea>
                                 </div>
 
                                 <div style="padding:10px;"><div>Prices</div>
-                                    <textarea name="prices" rows="6" cols="130"></textarea>
+                                    <textarea name="prices" rows="5" cols="100"></textarea>
                                 </div>
 
                                 <div style="padding:10px;"><div>EXPI</div>
-                                    <textarea name="expi" rows="6" cols="130"></textarea>
+                                    <textarea name="expi" rows="5" cols="100"></textarea>
                                 </div>
 
                                 <div style="padding:10px;"><div>Attributes</div>
-                                    <textarea name="attributes" rows="6" cols="130"></textarea>
+                                    <textarea name="attributes" rows="5" cols="100"></textarea>
                                 </div>
 
                                 <div style="padding:10px;"><div>Packages</div>
-                                    <textarea name="packages" rows="6" cols="130"></textarea>
+                                    <textarea name="packages" rows="5" cols="100"></textarea>
                                 </div>
 
                                 <div style="padding:10px;"><div>Interchanges</div>
-                                    <textarea name="interchanges" rows="6" cols="130"></textarea>
+                                    <textarea name="interchanges" rows="5" cols="100"></textarea>
                                 </div>
 
                                 <div style="padding:10px;"><div>Digital Assets</div>
-                                    <textarea name="assets" rows="6" cols="130"></textarea>
+                                    <textarea name="assets" rows="5" cols="100"></textarea>
                                 </div>
 
-                                Category <select name="partcategory"><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select>
-                                <input type="checkbox" name="doimport"/>Do import (uncheck for test run)<div style="padding:10px;"><input name="submit" type="submit" value="Next"/></div>
+                                <div><select name="partcategory"><option value="">Do not create new parts</option><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
+                                <div><input type="checkbox" name="doimport"/>Do import (uncheck for test run)</div>
+                                <div><input name="submit" type="submit" value="Next"/></div>
                             </form>
                         </div>
                     </div>

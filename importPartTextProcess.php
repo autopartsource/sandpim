@@ -1,7 +1,20 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/PIES7_1GeneratorClass.php');
+include_once('./class/logsClass.php');
+
 $navCategory = 'import/export';
+
+
+$pim = new pim;
+
+ //ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -9,7 +22,7 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
-$pim = new pim;
+$logs = new logs;
 $PIESgenerator=new PIESgenerator();
 
 if(isset($_POST['submit']) && $_POST['submit']=='Next') 
@@ -179,15 +192,15 @@ if($PartNumberFieldIndex==0)
   $PartNumber=trim($fields[0]);
 
   if($PriceSheetNumberFieldIndex>=0 && trim($fields[$PriceSheetNumberFieldIndex])!=''){$price['PriceSheetNumber']=trim($fields[$PriceSheetNumberFieldIndex]);}
-  if($CurrencyCodeFieldIndex>=0 && trim($fields[$CurrencyCodeFieldIndex])!=''){$price['CurrencyCode']=trim($fields[$CurrencyCodeFieldIndex]);}
-  if($EffectiveDateFieldIndex>=0 && trim($fields[$EffectiveDateFieldIndex])!=''){$price['EffectiveDate']=trim($fields[$EffectiveDateFieldIndex]);}
-  if($ExpirationDateFieldIndex>=0 && trim($fields[$ExpirationDateFieldIndex])!=''){$price['ExpirationDate']=trim($fields[$ExpirationDateFieldIndex]);}
+  $price['CurrencyCode']=''; if($CurrencyCodeFieldIndex>=0 && trim($fields[$CurrencyCodeFieldIndex])!=''){$price['CurrencyCode']=trim($fields[$CurrencyCodeFieldIndex]);}
+  $price['EffectiveDate']='0000-00-00'; if($EffectiveDateFieldIndex>=0 && trim($fields[$EffectiveDateFieldIndex])!=''){$price['EffectiveDate']=trim($fields[$EffectiveDateFieldIndex]);}
+  $price['ExpirationDate']='0000-00-00'; if($ExpirationDateFieldIndex>=0 && trim($fields[$ExpirationDateFieldIndex])!=''){$price['ExpirationDate']=trim($fields[$ExpirationDateFieldIndex]);}
   if($PriceFieldIndex>=0 && trim($fields[$PriceFieldIndex])!=''){$price['Price']=trim($fields[$PriceFieldIndex]);}
   if($PriceUOMFieldIndex>=0 && trim($fields[$PriceUOMFieldIndex])!=''){$price['PriceUOM']=trim($fields[$PriceUOMFieldIndex]);}
-  if($PriceTypeDescriptionFieldIndex>=0 && trim($fields[$PriceTypeDescriptionFieldIndex])!=''){$price['PriceTypeDescription']=trim($fields[$PriceTypeDescriptionFieldIndex]);}
-  if($PriceBreakFieldIndex>=0 && trim($fields[$PriceBreakFieldIndex])!=''){$price['PriceBreak']=trim($fields[$PriceBreakFieldIndex]);}
-  if($PriceBreakUOMFieldIndex>=0 && trim($fields[$PriceBreakUOMFieldIndex])!=''){$price['PriceBreakUOM']=trim($fields[$PriceBreakUOMFieldIndex]);}
-  if($PriceMultiplierFieldIndex>=0 && trim($fields[$PriceMultiplierFieldIndex])!=''){$price['PriceMultiplier']=trim($fields[$PriceMultiplierFieldIndex]);}
+  $price['PriceTypeDescription']=''; if($PriceTypeDescriptionFieldIndex>=0 && trim($fields[$PriceTypeDescriptionFieldIndex])!=''){$price['PriceTypeDescription']=trim($fields[$PriceTypeDescriptionFieldIndex]);}
+  $price['PriceBreak']=''; if($PriceBreakFieldIndex>=0 && trim($fields[$PriceBreakFieldIndex])!=''){$price['PriceBreak']=trim($fields[$PriceBreakFieldIndex]);}
+  $price['PriceBreakUOM']=''; if($PriceBreakUOMFieldIndex>=0 && trim($fields[$PriceBreakUOMFieldIndex])!=''){$price['PriceBreakUOM']=trim($fields[$PriceBreakUOMFieldIndex]);}
+  $price['PriceMultiplier']=''; if($PriceMultiplierFieldIndex>=0 && trim($fields[$PriceMultiplierFieldIndex])!=''){$price['PriceMultiplier']=trim($fields[$PriceMultiplierFieldIndex]);}
   if($PriceTypeFieldIndex>=0 && trim($fields[$PriceTypeFieldIndex])!=''){$price['PriceType']=trim($fields[$PriceTypeFieldIndex]);}
     
   // see if this partnumber was established in the Items list
@@ -551,7 +564,7 @@ if($PartNumberFieldIndex==0)
  
  //-----------------------------------------------------
 $doimport=false; if(isset($_POST['doimport'])){$doimport=true;}
-$createparts=false;
+$createparts=true; if($_POST['partcategory']==''){$createparts=false;}
 $importresults=$PIESgenerator->importPIESdata($items,$createparts,intval($_POST['partcategory']),$doimport);
  
 ?>

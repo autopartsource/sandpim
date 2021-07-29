@@ -82,12 +82,21 @@ class asset
   return $id;   
  }
  
- function disconnectPartFromAsset($partnumber,$connectionid)
+ function disconnectPartFromAsset($partnumber,$connectionid=false)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('delete from part_asset where partnumber=? and id=?'))
+  $sql='delete from part_asset where partnumber=?';
+  if($connectionid)
   {
-   $stmt->bind_param('si',$partnumber,$connectionid);
+   $sql='delete from part_asset where partnumber=? and id=?';
+  }   
+  if($stmt=$db->conn->prepare($sql))
+  {
+   $stmt->bind_param('s',$partnumber);
+   if($connectionid)
+   {
+    $stmt->bind_param('si',$partnumber,$connectionid);
+   }
    $stmt->execute();
   } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
@@ -176,6 +185,23 @@ class asset
   // need to delete (unlink) local file if it exists
   
  }
+ 
+ 
+ 
+ function deleteAssetsByAssetid($assetid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from asset where assetid=?'))
+  {
+   $stmt->bind_param('s',$assetid);
+   $stmt->execute();
+  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+  // need to delete (unlink) local file if it exists
+ }
+  
+ 
+ 
  
  function setAssetDescription($assetid,$description)
  {
