@@ -139,7 +139,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
  $doimport=false; if(isset($_POST['doimport'])){$doimport=true;}
  $partcategory=0; $createparts=false;
 // print_r($items);
- $importresults=$PIESgenerator->importPIESdata($items,$createparts,$partcategory,$doimport);
+ $importresults=$PIESgenerator->importPIESdata($items,$createparts,$partcategory,$doimport,array('clearExistingAssetsByPart'=>1));
 }
 ?>
 <!DOCTYPE html>

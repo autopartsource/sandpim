@@ -645,6 +645,7 @@ $balance=$pim->getPartBalance($partnumber);
                             ?>
                         </div>
                     </div>
+                                       
                     
                 </div>
                 <!-- End of Main Content -->

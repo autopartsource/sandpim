@@ -161,13 +161,17 @@ class PIESgenerator
     $DescriptionsElement = $doc->createElement('Descriptions');
     foreach($item['descriptions'] as $description)
     {
-     $DescriptionElement=$doc->createElement('Description', $description['Description']);
+     $DescriptionElement=$doc->createElement('Description', htmlspecialchars($description['Description'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
      $DescriptionElement->setAttribute('MaintenanceType','A');
      if(array_key_exists('DescriptionCode',$description) && trim($description['DescriptionCode'])!=''){$DescriptionElement->setAttribute('DescriptionCode',$description['DescriptionCode']);}
      if(array_key_exists('LanguageCode',$description) && trim($description['LanguageCode'])!=''){$DescriptionElement->setAttribute('LanguageCode',$description['LanguageCode']);}
      if(array_key_exists('Sequence',$description) && trim($description['Sequence'])!=''){$DescriptionElement->setAttribute('Sequence',$description['Sequence']);}
-     $DescriptionsElement->appendChild($DescriptionElement);
+     if(trim($description['Description'])!='')
+     {
+      $DescriptionsElement->appendChild($DescriptionElement);
+     }
     }
+    
     $ItemElement->appendChild($DescriptionsElement);
    }
    //---------------------- prices ---------------------------------
@@ -185,7 +189,7 @@ class PIESgenerator
      if(array_key_exists('EffectiveDate',$price)){$EffectiveDateElement=$doc->createElement('EffectiveDate',$price['EffectiveDate']); $PricingElement->appendChild($EffectiveDateElement);}
      if(array_key_exists('ExpirationDate',$price)){$ExpirationDateElement=$doc->createElement('ExpirationDate',$price['ExpirationDate']); $PricingElement->appendChild($ExpirationDateElement);}
      if(array_key_exists('Price',$price) && array_key_exists('PriceUOM',$price)){$PriceElement=$doc->createElement('Price',$price['Price']); $PriceElement->setAttribute('UOM', $price['PriceUOM']); $PricingElement->appendChild($PriceElement);}
-     if(array_key_exists('PriceTypeDescription',$price)){$PriceTypeDescriptionElement=$doc->createElement('PriceTypeDescription',$price['PriceTypeDescription']); $PricingElement->appendChild($PriceTypeDescriptionElement);}
+     if(array_key_exists('PriceTypeDescription',$price)){$PriceTypeDescriptionElement=$doc->createElement('PriceTypeDescription', htmlspecialchars($price['PriceTypeDescription'], ENT_XML1 | ENT_COMPAT, 'UTF-8')); $PricingElement->appendChild($PriceTypeDescriptionElement);}
      if(array_key_exists('PriceBreak',$price) && array_key_exists('PriceBreakUOM',$price)){$PriceBreakElement=$doc->createElement('PriceBreak',$price['PriceBreak']); $PriceBreakElement->setAttribute('UOM', $price['PriceBreakUOM']); $PricingElement->appendChild($PriceBreakElement);}
      if(array_key_exists('PriceMultiplier',$price)){$PriceMultiplierElement=$doc->createElement('PriceMultiplier',$price['PriceMultiplier']); $PricingElement->appendChild($PriceMultiplierElement);}
      $PricesElement->appendChild($PricingElement);
@@ -219,10 +223,10 @@ class PIESgenerator
 
     foreach($item['attributes'] as $attribute)
     {
-     $ProductAttributeElement=$doc->createElement('ProductAttribute', $attribute['AttributeValue']);
+     $ProductAttributeElement=$doc->createElement('ProductAttribute', htmlspecialchars($attribute['AttributeValue'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
      $ProductAttributeElement->setAttribute('MaintenanceType','A');
      if(intval($attribute['AttributeID'])>0){$ProductAttributeElement->setAttribute('PADBAttribute','Y');}else{$ProductAttributeElement->setAttribute('PADBAttribute','N');}
-     $ProductAttributeElement->setAttribute('AttributeID',$attribute['AttributeID']);
+     $ProductAttributeElement->setAttribute('AttributeID', htmlspecialchars($attribute['AttributeID'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
      if(array_key_exists('AttributeUOM',$attribute) && trim($attribute['AttributeUOM'])!=''){$ProductAttributeElement->setAttribute('AttributeUOM',$attribute['AttributeUOM']);}
      if(array_key_exists('StyleID',$attribute) && trim($attribute['StyleID'])!=''){$ProductAttributeElement->setAttribute('StyleID',$attribute['StyleID']);}
      if(array_key_exists('RecordNumber',$attribute) && trim($attribute['RecordNumber'])!=''){$ProductAttributeElement->setAttribute('RecordNumber',$attribute['RecordNumber']);}
@@ -230,6 +234,7 @@ class PIESgenerator
      if(array_key_exists('MultiValueQuantity',$attribute) && trim($attribute['MultiValueQuantity'])!=''){$ProductAttributeElement->setAttribute('MultiValueQuantity',$attribute['MultiValueQuantity']);}
      if(array_key_exists('MultiValueSequence',$attribute) && trim($attribute['MultiValueSequence'])!=''){$ProductAttributeElement->setAttribute('StyleID',$attribute['MultiValueSequence']);}
      if(array_key_exists('LanguageCode',$attribute) && trim($attribute['LanguageCode'])!=''){$ProductAttributeElement->setAttribute('LanguageCode',$attribute['LanguageCode']);}
+     
      $ProductAttributesElement->appendChild($ProductAttributeElement);
     }
     $ItemElement->appendChild($ProductAttributesElement);
@@ -472,7 +477,7 @@ class PIESgenerator
      if(array_key_exists('Plunge',$asset)){$PlungeElement=$doc->createElement('Plunge',$asset['Plunge']); $DigitalFileInformationElement->appendChild($PlungeElement);}
      if(array_key_exists('TotalPlanes',$asset)){$TotalPlanesElement=$doc->createElement('TotalPlanes',$asset['TotalPlanes']); $DigitalFileInformationElement->appendChild($TotalPlanesElement);}
 
-     if(array_key_exists('Description',$asset) && array_key_exists('DescriptionCode',$asset))
+     if(array_key_exists('Description',$asset) && array_key_exists('DescriptionCode',$asset) && trim($asset['Description'])!='')
      {
       $AssetDescriptionsElement=$doc->createElement('AssetDescriptions');
       $DescriptionElement=$doc->createElement('Description',$asset['Description']);
@@ -512,8 +517,17 @@ class PIESgenerator
  }
 
     
- function importPIESdata($items,$createparts,$partcategory,$doimport)
+ function importPIESdata($items,$createparts,$partcategory,$doimport,$importoptions=false)
  {
+     /*import options is name:value key pair
+      * 
+      * clearExistingAssetsByPart:(any value) cause the assets in this import to completely wipe out  
+      * 
+      * 
+      * 
+      */
+     
+     
   $pricing = new pricing;
   $asset = new asset;
   $pim = new pim;
@@ -574,17 +588,24 @@ class PIESgenerator
    if(isset($item['assets']) && count($item['assets']))
    {
     $sequence=1;
+    
+    //delete assets and connects for this part if already exists
+    if($importoptions && array_key_exists('clearExistingAssetsByPart',$importoptions))
+    {
+     $asset->disconnectPartFromAsset($partnumber);
+    }
+    
     foreach($item['assets'] as $digitalasset)
     {
      if($doimport)
      {
-      $oid=$pim->newoid();
-      
-      //test to see if asset already exists and delete it
-      
-      $asset->deleteAssetsByAssetid($assetid);
-      $asset->disconnectPartFromAsset($partnumber);
-      
+      $oid=$pim->newoid();      
+          
+      //delete assets and connects for this part if already exists
+      if($importoptions && array_key_exists('clearExistingAssetsByPart',$importoptions))
+      {
+       $asset->deleteAssetsByAssetid($digitalasset['AssetID']);
+      }
       
       if($asset->addAsset($digitalasset['AssetID'], $digitalasset['FileName'], '', $digitalasset['URI'], $digitalasset['OrientationView'], $digitalasset['ColorMode'], intval($digitalasset['AssetHeight']), intval($digitalasset['AssetWidth']), $digitalasset['UOM'], intval($digitalasset['Resolution']), $digitalasset['Background'], $digitalasset['FileType'], intval($digitalasset['Public']), 1, $digitalasset['Description'], $oid, '', intval($digitalasset['FileSize']), 1,$digitalasset['DescriptionLanguageCode'],$digitalasset['CreatedDate']))
       { 

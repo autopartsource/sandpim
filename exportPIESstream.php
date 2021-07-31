@@ -118,7 +118,10 @@ foreach($partnumbers as $partnumber)
      $partdescription['DescriptionCode']=$description['descriptioncode'];
      $partdescription['Sequence']=$description['sequence'];
      $partdescription['LanguageCode']=$description['languagecode'];
-     $item['descriptions'][]=$partdescription;   
+     if(trim($partdescription['Description'])!='')
+     {
+      $item['descriptions'][]=$partdescription;   
+     }
     }
     
 //--------------------- prices -------------------------------    
@@ -135,7 +138,10 @@ foreach($partnumbers as $partnumber)
       $price['CurrencyCode']=$pricerecord['currency'];
       $price['EffectiveDate']=$pricerecord['effectivedate'];
       $price['ExpirationDate']=$pricerecord['expirationdate'];
-      $item['prices'][]=$price;
+      if($price['ExpirationDate']!='0000-00-00' && trim($price['ExpirationDate'])!='')
+      {
+       $item['prices'][]=$price;
+      }
      }
     }
  //--------------------- EXPI -------------------------------    
@@ -166,7 +172,10 @@ foreach($partnumbers as $partnumber)
       //$attribute['MultiValueSequence']=$partattributes[''];
       //$attribute['LanguageCode']=$partattributes[''];
       //$attribute['RecordNumber']=$partattributes[''];
-      if(trim($partattribute['value'])!=''){$item['attributes'][]=$attribute;}
+      if(trim($partattribute['value'])!='')
+      {
+       $item['attributes'][]=$attribute;
+      }
      }
     }
     
