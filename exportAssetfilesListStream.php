@@ -14,6 +14,16 @@ $pim = new pim;
 $assets = new asset;
 $logs = new logs;
 
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'exportAssetfilesListStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
+
+
 session_start();
 
 if(isset($_SESSION['userid']))

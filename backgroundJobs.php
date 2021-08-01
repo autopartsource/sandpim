@@ -2,13 +2,22 @@
 include_once('./class/pimClass.php');
 $navCategory = 'import/export';
 
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'backgroundJobs.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
+
 session_start();
 if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
     exit;
 }
 
-$pim = new pim;
 $jobs=$pim->getBackgroundjobs('%', '%');
 
 ?>

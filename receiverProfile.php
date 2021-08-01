@@ -4,6 +4,16 @@ include_once('./class/logsClass.php');
 
 $navCategory = 'settings';
 
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'receiverProfile.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
+
 session_start();
 if (!isset($_SESSION['userid']))
 {
@@ -11,7 +21,6 @@ if (!isset($_SESSION['userid']))
  exit;
 }
 
-$pim = new pim;
 $logs = new logs;
 
 if (isset($_POST['submit']) && $_POST['submit']=='Save') 

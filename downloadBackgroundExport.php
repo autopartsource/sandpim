@@ -1,10 +1,20 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
+
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'downloadBackgroundExport.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
+
 session_start();
 $userid=0; if(array_key_exists('userid',$_SESSION)){$userid=$_SESSION['userid'];}
 
-$pim = new pim;
 $logs = new logs;
 
 $job = $pim->getBackgroundjobByToken($_GET['token']);

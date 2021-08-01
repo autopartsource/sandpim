@@ -4,13 +4,23 @@ include_once('./class/assetClass.php');
 include_once('./class/PIES7_1GeneratorClass.php');
 $navCategory = 'import/export';
 
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
+
 session_start();
 if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
     exit;
 }
 
-$pim = new pim;
 $assetclass=new asset;
 $PIESgenerator=new PIESgenerator();
 
@@ -137,9 +147,13 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
  }
  
  $doimport=false; if(isset($_POST['doimport'])){$doimport=true;}
+ $importoptions=array();
+ if(isset($_POST['removeexisting'])){$importoptions['clearExistingAssetsByPart']=1;}
+ 
+ 
  $partcategory=0; $createparts=false;
 // print_r($items);
- $importresults=$PIESgenerator->importPIESdata($items,$createparts,$partcategory,$doimport,array('clearExistingAssetsByPart'=>1));
+ $importresults=$PIESgenerator->importPIESdata($items,$createparts,$partcategory,$doimport,$importoptions);
 }
 ?>
 <!DOCTYPE html>
@@ -163,10 +177,10 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Import part data from spreadsheet template</h3>
+                        <h3 class="card-header text-start">Digital Assets (metadata) import from structured text</h3>
 
                         <div class="card-body">
-                            <div class="alert alert-secondary">Step 2: Results</div>
+                            <div class="alert alert-secondary">Results</div>
                             <?php if(count($parseerrors)>0){?>
                             <div class="alert alert-danger">Logic Problems</div>
                             <table class="table"><?php

@@ -4,6 +4,16 @@ include_once('./class/assetClass.php');
 include_once('./class/pcdbClass.php');
 $navCategory = 'assets';
 
+$pim=new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'assetExistingResourceForm.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
+
 session_start();
 if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
@@ -12,7 +22,6 @@ if (!isset($_SESSION['userid'])) {
 
 $asset = new asset;
 $pcdb=new pcdb();
-$pim=new pim;
 $error_msg = '';
 
 $allassettypes=$pcdb->getAssetTypeCodes();

@@ -4,6 +4,16 @@ include_once('./class/pcdbClass.php');
 include_once('./class/assetClass.php');
 $navCategory = 'assets';
 
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'assetCreate.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
+
 session_start();
 if (!isset($_SESSION['userid'])) 
 {
@@ -13,7 +23,6 @@ if (!isset($_SESSION['userid']))
 
 
 $asset = new asset;
-$pim = new pim;
 $pcdb=new pcdb();
 $error_msg = false;
 

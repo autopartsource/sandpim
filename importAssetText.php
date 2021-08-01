@@ -1,7 +1,16 @@
 <?php
 include_once('./class/pimClass.php');
-
 $navCategory = 'import/export';
+
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -9,7 +18,6 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
-$pim = new pim;
 $partcategories = $pim->getPartCategories();
 
 ?>
@@ -42,14 +50,14 @@ $partcategories = $pim->getPartCategories();
 
                         <div class="card-body">
                             <form method="post" action="importAssetTextProcess.php">
-                                <div class="alert alert-secondary" role="alert">Step 1: copy/paste data from the template <a href="./Asset_import_template_3-2-2021.xlsx">spreadsheet</a> (include header row)</div>
+                                <div class="alert alert-secondary" role="alert">Copy/Paste data from the template <a href="./Asset_import_template_3-2-2021.xlsx">spreadsheet</a> (include header row)</div>
                                 <div style="padding:10px;"><div>Tab-delimited text</div>
-                                    <textarea name="assets" rows="6" cols="130"></textarea>
+                                    <textarea name="assets" rows="6" cols="100"></textarea>
                                 </div>
                                 
-                                <input type="checkbox" name="doimport"/>Do import (uncheck for test run)<div style="padding:10px;"><input name="submit" type="submit" value="Next"/></div>
-                                <div class="alert alert-warning">Assets with non-existent partnumbers will be skipped</div>
-                                <div class="alert alert-warning">Assets with existing AssetID's will be skipped</div>
+                                <div style="padding:10px;"><input type="checkbox" name="doimport"/>Do import (uncheck for test run)</div>
+                                <div style="padding:10px;"><input type="checkbox" name="removeexisting"/>Remove existing assets for the partnumbers imported</div>
+                                <div style="padding:10px;"><input name="submit" type="submit" value="Next"/></div>
                             </form>
                         </div>
                     </div>

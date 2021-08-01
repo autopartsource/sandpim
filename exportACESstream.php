@@ -8,6 +8,16 @@ include_once('./class/ACES4_1GeneratorClass.php');
 
 $navCategory = 'import/export';
 
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'exportACESstream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
+
 session_start();
 if(!isset($_SESSION['userid']))
 {
@@ -16,7 +26,6 @@ if(!isset($_SESSION['userid']))
 }
 
 
-$pim = new pim();
 $vcdb=new vcdb();
 $pcdb=new pcdb();
 $qdb=new qdb();

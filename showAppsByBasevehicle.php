@@ -28,6 +28,16 @@ function selfLink($makeid, $modelid, $yearid, $partcategories, $class, $displayt
 
 $navCategory = 'applications';
 
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'showAppsByBasevehicle.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
+
 session_start();
 if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
@@ -44,7 +54,6 @@ header("Expires: 0"); // Proxies.
 $vcdb = new vcdb;
 $pcdb = new pcdb;
 $qdb = new qdb;
-$pim = new pim;
 
 $makeid = intval($_REQUEST['makeid']);
 if (isset($_REQUEST['modelid'])) {

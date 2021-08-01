@@ -4,13 +4,22 @@ include_once('./class/logsClass.php');
 
 $navCategory = 'settings';
 
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'deliveryGroups.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 session_start();
 if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
     exit;
 }
 
-$pim = new pim;
 $logs = new logs;
 
 if (isset($_POST['submit']) && $_POST['submit']=='Add' && isset($_POST['deliverygroupname']) && trim($_POST['deliverygroupname'])!='') 

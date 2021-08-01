@@ -3,16 +3,36 @@ include_once('./class/pimClass.php');
 include_once('./class/pricingClass.php');
 $navCategory = 'import/export';
 
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'importPricesText.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 session_start();
 if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
     exit;
 }
 
-$pim = new pim;
+function validateDate($date, $format = 'Y-m-d')
+{
+    $d = DateTime::createFromFormat($format, $date);
+    // The Y ( 4 digits year ) returns TRUE for any integer with any number of digits so changing the comparison from == to === fixes the issue.
+    return $d && $d->format($format) === $date;
+}
+
+
+
 $pricing = new pricing;
 $errors=array();
-
+$importresults=array();
+$finalresultmessage='';
+        
 $importcount=0; $invalidcount=0; $recordnumber=0;
 
 if (isset($_POST['input'])) 
@@ -37,19 +57,36 @@ if (isset($_POST['input']))
    $effectivedate=trim($fields[6]);
    $expirationdate=trim($fields[7]);
 
-   if (strlen($partnumber) <= 20 && strlen($partnumber) > 0) 
-   { // partnumber is within valid length
-    if($pim->validPart($partnumber)) 
+   if(validateDate($expirationdate) && validateDate($effectivedate))
+   {   
+    if($pricing->getPricesheet($pricesheetnumber))
     {
-     $pricing->addPrice($partnumber, $pricesheetnumber, $amount, $currencycode, $uom, $pricetype, $effectivedate, $expirationdate);
-     $pim->logPartEvent($partnumber,$_SESSION['userid'],'price imported '.$pricetype.' into pricesheet '.$pricesheetnumber.', '.$amount.' '.$currencycode.'  effective from '.$effectivedate.' to '.$expirationdate,'');
-     $importcount++;
+     if (strlen($partnumber) <= 20 && strlen($partnumber) > 0) 
+     { // partnumber is within valid length
+      if($pim->validPart($partnumber)) 
+      {
+       $pricing->addPrice($partnumber, $pricesheetnumber, $amount, $currencycode, $uom, $pricetype, $effectivedate, $expirationdate);
+       $pim->logPartEvent($partnumber,$_SESSION['userid'],'price imported '.$pricetype.' into pricesheet '.$pricesheetnumber.', '.$amount.' '.$currencycode.'  effective from '.$effectivedate.' to '.$expirationdate,'');
+       $importresults[]=$pricetype.' price of '.$amount.' '.$currencycode.' for partnumber '.$partnumber.' imported to pricesheet '.$pricesheetnumber;
+       $importcount++;
+      }
+      else
+      {// invalid part - make a note of it
+       $errors[]='invalid partnumber ['.$partnumber.'] in row '.$recordnumber;
+       $invalidcount++;
+      }
+     }
     }
     else
-    {// invalid part - make a note of it
-     $errors[]='invalid partnumber ['.$partnumber.'] in row '.$recordnumber;
-     $invalidcount++;
+    {// pricesheet number was not valid
+     $errors[]='invalid pricesheet number ['.$pricesheetnumber.'] in row '.$recordnumber;
+     $invalidcount++;        
     }
+   }
+   else
+   {// date(s) were not valid format
+     $errors[]='invalid date format in row '.$recordnumber.'. Dates must be in format YYYY-MM-DD';
+     $invalidcount++;               
    }
   }
   else
@@ -59,7 +96,7 @@ if (isset($_POST['input']))
  }
  $finalresultmessage='Imported '.$importcount.' price records';
  if($invalidcount>0){$finalresultmessage.='. '.$invalidcount.' records were ignored because of invalid data.';};
- $errors[]=$finalresultmessage;
+ $finalresultmessage.='. See details at the bottom of this page.';
 }
 ?>
 <!DOCTYPE html>
@@ -86,19 +123,27 @@ if (isset($_POST['input']))
                         <h3 class="card-header text-start">Import Part Prices</h3>
 
                         <div class="card-body">
-                            <?php foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}?>
+                            <?php echo '<div>'.$finalresultmessage.'</div>'; ?>
+                            
                             <form method="post">
                                 <div class="alert alert-secondary" role="alert">
-                                    <h6 class="alert-heading">Paste tab-delimited data:</h6>
+                                    <h6 class="alert-heading">Paste 8 tab-delimited columns of data (no header row):</h6>
                                     <p>Partnumber, <a href="./priceSheets.php">Pricesheet Number</a>, Amount, Currency Code, UoM, Price Type,  Effective Date, Expiration Date</p>
+                                    <p>Date format is YYYY-MM-DD</p>
                                 </div>
                                     
-                                <textarea name="input" rows="20" cols="100"></textarea>
+                                <textarea name="input" rows="15" cols="100"></textarea>
                                 
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
                         </div>
+                            <?php
+                                foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}
+                                foreach($importresults as $importresult){echo '<div class="alert alert-success" role="alert">'.$importresult.'</div>';}
+                            ?>
+
                     </div>
+
                     
                 </div>
                 <!-- End of Main Content -->
