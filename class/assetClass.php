@@ -167,10 +167,24 @@ class asset
   return $asset;   
  }
 
- 
- 
- 
- 
+ function getUnconnecteddAssets()
+ {
+  $db=new mysql; $db->connect();
+  $assets=array();
+  if($stmt=$db->conn->prepare('select asset.id,asset.assetid,uri,filetype from asset left join part_asset on asset.assetid = part_asset.assetid where part_asset.assetid is null'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+      $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'uri'=>$row['uri'],'filetype'=>$row['filetype']);
+    }
+   }
+  }
+  $db->close();
+  return $assets;
+ }
  
  function deleteAssetRecord($id)
  {

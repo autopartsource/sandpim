@@ -9,16 +9,20 @@
  */
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
+include_once(__DIR__.'/class/assetClass.php');
 include_once(__DIR__.'/class/vcdbClass.php');
 include_once(__DIR__.'/class/pcdbClass.php');
+include_once(__DIR__.'/class/padbClass.php');
 include_once(__DIR__.'/class/logsClass.php');
 include_once(__DIR__.'/class/sandpiperPrimaryClass.php');
 
 
 $starttime=time();
 
-$pim=new pim;
+$pim=new pim();
+$asset=new asset();
 $pcdb=new pcdb();
+$padb=new padb();
 $vcdb=new vcdb();
 $logs=new logs();
 $sandpiperPrimary=new sandpiperPrimary();
@@ -93,9 +97,9 @@ foreach($partnumbers as $partnumber)
             $pim->recordIssue('PART/LIFECYCLE/REPLACEDBY',$partnumber,0,'Lifecycle status is Superseded, but replacedby is null','background auditor', $issuehash);
         }
     }
-    if(trim($part['replacedby'])!='' && $part['lifecyclestatus']!='7')
+    if(trim($part['replacedby'])!='' && ($part['lifecyclestatus']!='7' && $part['lifecyclestatus']!='8' && $part['lifecyclestatus']!='9'))
     {
-        $issuehash=md5('PART/LIFECYCLE/REPLACEDBY'.$partnumber.'0'.'Replacedby is populated, but lifecycle status is not 7'.'background auditor');
+        $issuehash=md5('PART/LIFECYCLE/REPLACEDBY'.$partnumber.'0'.'Replacedby is populated, but lifecycle status is not 7,8 or 9'.'background auditor');
         if(!$pim->getIssueByHash($issuehash))
         {// this issue is not already recorded 
             $pim->recordIssue('PART/LIFECYCLE/REPLACEDBY',$partnumber,0,'Replacedby is populated, but lifecycle status is not 7','background auditor', $issuehash);
@@ -114,7 +118,35 @@ foreach($partnumbers as $partnumber)
         }
     }
     
+    // find non-existing PAdb attributes 
+    $attributes = $pim->getPartAttributes($partnumber);
+    $attributeshashes=array();
+    foreach ($attributes as $attribute)
+    {
+        if(intval($attribute['PAID']) > 0 && $padb->PAIDname($attribute['PAID']) === false)
+        {
+            $issuehash=md5('PART/ATTRIBUTE/INVALID'.$partnumber.'0'.'PAID '.$attribute['PAID'].' is not valid'.'background auditor');
+            if(!$pim->getIssueByHash($issuehash))
+            {// this issue is not already recorded 
+                $pim->recordIssue('PART/ATTRIBUTE/INVALID',$partnumber,0,'PAID '.$attribute['PAID'].' is not valid','background auditor', $issuehash);
+            }
+        }
+        //    $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'name'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
+        $attributeshashes[$attribute['PAID'].'|'.$attribute['name'].'|'.$attribute['uom']][]=$attribute['value'];
+    }
     
+    // find duplicate attributes
+    foreach($attributeshashes as $attributeshash=>$attributevalues)
+    {
+        if(count($attributevalues)>1)
+        {
+            $issuehash=md5('PART/ATTRIBUTE/MULTIPLE'.$partnumber.'0'.'multiple entries for attribute '.$attributeshash.'background auditor');
+            if(!$pim->getIssueByHash($issuehash))
+            {// this issue is not already recorded 
+                $pim->recordIssue('PART/ATTRIBUTE/MULTIPLE',$partnumber,0,'multiple entries for attribute '.$attributeshash,'background auditor', $issuehash);
+            }            
+        }
+    }
     
     
     
@@ -182,6 +214,17 @@ foreach($appids as $appid)
     // URI files disagreeing with meta-data (filesize, hash, width/height)
     // orphaned (un-connected) assets
     
+$orphans=$asset->getUnconnecteddAssets();
+foreach($orphans as $orphan)
+{
+    $issuehash=md5('ASSET/ORPHAN'.$orphan['assetid'].'Orphan asset'.'background auditor');
+    if(!$pim->getIssueByHash($issuehash))
+    {// this issue is not already recorded 
+        $pim->recordIssue('ASSET/ORPHAN',$orphan['assetid'],0,'Orphan asset','background auditor', $issuehash);
+    }
+}
+
+
     
 
 

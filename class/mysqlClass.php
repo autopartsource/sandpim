@@ -7,7 +7,7 @@ class mysql
  var $dbname = 'pim';
  var $vcdbname= 'vcdb';
  var $pcdbname= 'pcdb';
- var $padbname= 'padb';
+ var $padbname= 'padb20210528';
  var $qdbname= 'qdb';
  var $debug;
  var $conn;

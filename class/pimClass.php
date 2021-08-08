@@ -959,7 +959,6 @@ function countAppsByPartcategories($partcategories)
   {
    $stmt->bind_param('i',$attributeid);
    $stmt->execute();
-   $this->updatePartOID($partnumber);
   } // else{print_r($db->conn->error);}
   $db->close();
  }
