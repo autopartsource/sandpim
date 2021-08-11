@@ -65,8 +65,18 @@ if (isset($_POST['input']))
      { // partnumber is within valid length
       if($pim->validPart($partnumber)) 
       {
+       //check for existing price (same item/pricesheet)
+          
+       $existingprices=$pricing->getPricesByPartnumber($partnumber, $pricesheetnumber);
+       foreach($existingprices as $existingprice)
+       {
+        $pricing->deletePriceById($existingprice['id']);
+        $pim->logPartEvent($partnumber,$_SESSION['userid'],'price ('.$existingprice['amount'].' '.$existingprice['currency'].') removed during import','');
+       }
+
+       $newoid=$pim->updatePartOID($partnumber);
        $pricing->addPrice($partnumber, $pricesheetnumber, $amount, $currencycode, $uom, $pricetype, $effectivedate, $expirationdate);
-       $pim->logPartEvent($partnumber,$_SESSION['userid'],'price imported '.$pricetype.' into pricesheet '.$pricesheetnumber.', '.$amount.' '.$currencycode.'  effective from '.$effectivedate.' to '.$expirationdate,'');
+       $pim->logPartEvent($partnumber,$_SESSION['userid'],'price imported '.$pricetype.' into pricesheet '.$pricesheetnumber.', '.$amount.' '.$currencycode.'  effective from '.$effectivedate.' to '.$expirationdate,$newoid);
        $importresults[]=$pricetype.' price of '.$amount.' '.$currencycode.' for partnumber '.$partnumber.' imported to pricesheet '.$pricesheetnumber;
        $importcount++;
       }

@@ -75,14 +75,17 @@ class pricing
   return $result;   
  }
  
- function getPricesByPartnumber($partnumber)
+ function getPricesByPartnumber($partnumber,$_pricesheetnumber=false)
  {
   $db=new mysql; $db->connect();
   $records=array();
-
-  if($stmt=$db->conn->prepare('select * from price where partnumber=?'))
+  $pricesheetnumber='%';
+  
+  if($_pricesheetnumber){$pricesheetnumber=$_pricesheetnumber;}
+  
+  if($stmt=$db->conn->prepare('select * from price where partnumber=? and pricesheetnumber like ?'))
   {
-   if($stmt->bind_param('s',$partnumber))
+   if($stmt->bind_param('ss',$partnumber,$pricesheetnumber))
    {
     if($stmt->execute())
     {

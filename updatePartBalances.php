@@ -5,6 +5,11 @@ $navCategory = 'import/export';
 
 $pim = new pim;
 $logs=new logs;
+$errors=array();
+$recordnumber=0;
+$importcount=0;
+$invalidcount=0;
+
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
@@ -34,8 +39,8 @@ if (isset($_POST['input']))
   if (count($fields) == 3) 
   {
    $partnumber = trim(strtoupper($fields[0]));
-   $qoh= floatval(trim(strtoupper($fields[1])));
-   $amd= floatval(trim(strtoupper($fields[2])));
+   $qoh= (double)filter_var($fields[1],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+   $amd= (double)filter_var($fields[2],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
    
    
    if (strlen($partnumber) <= 20 && strlen($partnumber) > 0) 

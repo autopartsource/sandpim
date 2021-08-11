@@ -3054,7 +3054,7 @@ function updateAppSummary($partnumber,$summary)
    {// record exists for this part
     if($stmt=$db->conn->prepare('update part_balance set qoh=?, amd=?, updateddate=now() where partnumber=?'))
     {
-     $stmt->bind_param('iis',$qoh, $amd, $partnumber);
+     $stmt->bind_param('dds',$qoh, $amd, $partnumber);
      $stmt->execute();
     }
    }
@@ -3062,7 +3062,7 @@ function updateAppSummary($partnumber,$summary)
    {// record does not exist for this part
     if($stmt=$db->conn->prepare('insert into part_balance (partnumber,qoh,amd,updateddate) values(?,?,?,now())'))
     {
-     $stmt->bind_param('sii', $partnumber, $qoh, $amd);
+     $stmt->bind_param('sdd', $partnumber, $qoh, $amd);
      $stmt->execute();
      $insertednew=true;
     }      
