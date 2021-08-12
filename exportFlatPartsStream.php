@@ -3,12 +3,18 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/XLSXWriterClass.php');
-$navCategory = 'import/export';
 
 session_start();
 
 $pim = new pim();
 $logs=new logs();
+
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'exportFlatPartsStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 $pcdb = new pcdb();
 $writer = new XLSXWriter();
 $pcdbVersion=$pcdb->version();

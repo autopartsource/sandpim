@@ -21,8 +21,6 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
-
-
 $vcdb = new vcdb;
 $padb = new padb;
 $pcdb = new pcdb;
@@ -31,10 +29,6 @@ $pricing = new pricing;
 $interchange = new interchange;
 $packaging = new packaging;
 $configGet = new configGet;
-
-
-
-
 
 function niceAppAttributes($appattributes) {
     $vcdb = new vcdb;

@@ -111,7 +111,8 @@
                     <a class="dropdown-item" href="./exportPIESselect.php">Export PIES xml</a>
                     <a class="dropdown-item" href="./exportACESselect.php">Export ACES xml</a>
                     <a class="dropdown-item" href="./exportFlatPartsSelect.php">Export flattened parts file</a>
-                    <a class="dropdown-item" href="./exportFlatAppsSelect.php">Export flattened applications files</a>
+                    <a class="dropdown-item" href="./exportFlatAppsSelect.php">Export flattened applications file</a>
+                    <a class="dropdown-item" href="./exportPartAttributesSelect.php">Export part attributes spreadsheet</a>
                     <a class="dropdown-item" href="./exportForPrintSelect.php">Export for print publishing</a>
                     <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a>
                     <hr>
