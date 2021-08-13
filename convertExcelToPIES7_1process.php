@@ -4,7 +4,7 @@ include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/PIES7_1GeneratorClass.php');
 include_once('./class/XLSXReaderClass.php');
-$navCategory = 'import/export';
+$navCategory = 'utilities';
 
 session_start();
 

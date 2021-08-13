@@ -6,7 +6,7 @@ include_once('./class/logsClass.php');
 include_once('./class/configGetClass.php');
 
 
-$navCategory = 'import/export';
+$navCategory = 'import';
 
 session_start();
 if (!isset($_SESSION['userid']))

@@ -4,7 +4,7 @@ include_once('./class/interchangeClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/XLSXWriterClass.php');
-$navCategory = 'import/export';
+$navCategory = 'export';
 
 
 $pim = new pim();

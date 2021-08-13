@@ -1,6 +1,6 @@
 <?php
 include_once('./class/interchangeClass.php');
-$navCategory = 'import/export';
+$navCategory = 'import';
 
 session_start();
 if (!isset($_SESSION['userid'])) {

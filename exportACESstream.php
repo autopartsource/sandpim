@@ -6,7 +6,7 @@ include_once('./class/qdbClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/ACES4_1GeneratorClass.php');
 
-$navCategory = 'import/export';
+$navCategory = 'export';
 
 $pim = new pim;
 

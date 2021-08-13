@@ -5,7 +5,7 @@ include_once('./class/logsClass.php');
 include_once('./class/sandpiperPrimaryClass.php');
 
 
-$navCategory = 'import/export';
+$navCategory = 'settings';
 
 $pim=new pim;
 $logs=new logs;

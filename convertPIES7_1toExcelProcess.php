@@ -3,7 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/XLSXWriterClass.php');
-$navCategory = 'import/export';
+$navCategory = 'utilities';
 
 $anonSizeLimit=15000000;
 session_start();

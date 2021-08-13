@@ -1,7 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 
-$navCategory = 'import/export';
+$navCategory = 'import';
 
 
 session_start();

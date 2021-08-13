@@ -2,7 +2,7 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 
-$navCategory = 'import/export';
+$navCategory = 'import';
 session_start();
 
 $logs=new logs();

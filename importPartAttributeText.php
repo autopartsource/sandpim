@@ -1,7 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/pcdbClass.php');
-$navCategory = 'import/export';
+$navCategory = 'import';
 
 session_start();
 if (!isset($_SESSION['userid'])) {

@@ -6,7 +6,7 @@ include_once('./class/vcdbClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/ACES4_1GeneratorClass.php');
 include_once('./class/XLSXReaderClass.php');
-$navCategory = 'import/export';
+$navCategory = 'import';
 
 session_start();
 

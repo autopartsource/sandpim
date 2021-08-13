@@ -101,21 +101,15 @@
                     <hr>
                     <a class="dropdown-item" href="./users.php">Users</a>
                     <a class="dropdown-item" href="./config.php">Configuration</a>
+                    <a class="dropdown-item" href="./backgroundJobs.php">Manage background import/export jobs</a>
+                    <a class="dropdown-item" href="./sandpiper.php">Sandpiper</a>
                 </div>
             </li>
-            <li<?php if ($navCategory == 'import/export') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
+            <li<?php if ($navCategory == 'import') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownIO" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Import/Export
+                    Import
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownIO">
-                    <a class="dropdown-item" href="./exportPIESselect.php">Export PIES xml</a>
-                    <a class="dropdown-item" href="./exportACESselect.php">Export ACES xml</a>
-                    <a class="dropdown-item" href="./exportFlatPartsSelect.php">Export flattened parts file</a>
-                    <a class="dropdown-item" href="./exportFlatAppsSelect.php">Export flattened applications file</a>
-                    <a class="dropdown-item" href="./exportPartAttributesSelect.php">Export part attributes spreadsheet</a>
-                    <a class="dropdown-item" href="./exportForPrintSelect.php">Export for print publishing</a>
-                    <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a>
-                    <hr>
                     <a class="dropdown-item" href="./importACESupload.php">Import ACES xml file</a>
                     <a class="dropdown-item" href="./importACEStext.php">Import applications from text</a>
                     <a class="dropdown-item" href="./importPartText.php">Import parts from text</a>
@@ -126,10 +120,21 @@
                     <a class="dropdown-item" href="./importBrandTableText.php">Import Brand Table text</a>
                     <a class="dropdown-item" href="./importAssetText.php">Import Asset metadata from text</a>
                     <a class="dropdown-item" href="./updatePartBalances.php">Import part balance data</a>
-                    <hr>
-                    <a class="dropdown-item" href="./backgroundJobs.php">Manage background import/export jobs</a>
                     <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads</a>
-                    <a class="dropdown-item" href="./sandpiper.php">Sandpiper</a>
+                </div>
+            </li>
+            <li<?php if ($navCategory == 'export') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownIO" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Export
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownIO">
+                    <a class="dropdown-item" href="./exportPIESselect.php">Export PIES xml</a>
+                    <a class="dropdown-item" href="./exportACESselect.php">Export ACES xml</a>
+                    <a class="dropdown-item" href="./exportFlatPartsSelect.php">Export flattened parts file</a>
+                    <a class="dropdown-item" href="./exportFlatAppsSelect.php">Export flattened applications file</a>
+                    <a class="dropdown-item" href="./exportPartAttributesSelect.php">Export part attributes spreadsheet</a>
+                    <a class="dropdown-item" href="./exportForPrintSelect.php">Export for print publishing</a>
+                    <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a>
                 </div>
             </li>
         </ul>

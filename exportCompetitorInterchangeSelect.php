@@ -1,7 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/interchangeClass.php');
-$navCategory = 'import/export';
+$navCategory = 'export';
 
 $pim = new pim;
 

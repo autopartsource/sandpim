@@ -1,6 +1,6 @@
 <?php
 include_once('./class/logsClass.php');
-$navCategory = 'import/export';
+$navCategory = 'utilities';
 session_start();
 
 $logs=new logs();

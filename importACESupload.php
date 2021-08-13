@@ -2,7 +2,7 @@
 include_once('./class/vcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
-$navCategory = 'import/export';
+$navCategory = 'import';
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}

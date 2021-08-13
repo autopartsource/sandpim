@@ -3,7 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/PIES7_1GeneratorClass.php');
 include_once('./class/logsClass.php');
 
-$navCategory = 'import/export';
+$navCategory = 'import';
 
 
 $pim = new pim;

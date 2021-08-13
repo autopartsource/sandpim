@@ -1,6 +1,6 @@
 <?php
 include_once('./class/pimClass.php');
-$navCategory = 'import/export';
+$navCategory = 'export';
 
 session_start();
 if (!isset($_SESSION['userid'])) {

@@ -5,7 +5,7 @@ include_once('./class/pcdbClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/logsClass.php');
 
-$navCategory = 'import/export';
+$navCategory = 'export';
 
 session_start();
 if(!isset($_SESSION['userid']))
