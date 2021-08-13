@@ -110,16 +110,16 @@
                     Import
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownIO">
-                    <a class="dropdown-item" href="./importACESupload.php">Import ACES xml file</a>
-                    <a class="dropdown-item" href="./importACEStext.php">Import applications from text</a>
-                    <a class="dropdown-item" href="./importPartText.php">Import parts from text</a>
-                    <a class="dropdown-item" href="./importPackagingText.php">Import packaging from text</a>
-                    <a class="dropdown-item" href="./importPricesText.php">Import prices from text</a>
-                    <a class="dropdown-item" href="./importPartAttributeText.php">Import part attributes from text</a>
-                    <a class="dropdown-item" href="./importInterchangeText.php">Import Competitor Interchange from text</a>
-                    <a class="dropdown-item" href="./importBrandTableText.php">Import Brand Table text</a>
-                    <a class="dropdown-item" href="./importAssetText.php">Import Asset metadata from text</a>
-                    <a class="dropdown-item" href="./updatePartBalances.php">Import part balance data</a>
+                    <a class="dropdown-item" href="./importACESupload.php">ACES xml file</a>
+                    <a class="dropdown-item" href="./importACEStext.php">Applications from text</a>
+                    <a class="dropdown-item" href="./importPartText.php">Parts from text</a>
+                    <a class="dropdown-item" href="./importPackagingText.php">Packaging from text</a>
+                    <a class="dropdown-item" href="./importPricesText.php">Prices from text</a>
+                    <a class="dropdown-item" href="./importPartAttributeText.php">Part attributes from text</a>
+                    <a class="dropdown-item" href="./importInterchangeText.php">Competitor Interchange from text</a>
+                    <a class="dropdown-item" href="./importBrandTableText.php">Brand Table text</a>
+                    <a class="dropdown-item" href="./importAssetText.php">Asset metadata from text</a>
+                    <a class="dropdown-item" href="./updatePartBalances.php">Part balance data from text</a>
                     <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads</a>
                 </div>
             </li>
@@ -128,13 +128,13 @@
                     Export
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownIO">
-                    <a class="dropdown-item" href="./exportPIESselect.php">Export PIES xml</a>
-                    <a class="dropdown-item" href="./exportACESselect.php">Export ACES xml</a>
-                    <a class="dropdown-item" href="./exportFlatPartsSelect.php">Export flattened parts file</a>
-                    <a class="dropdown-item" href="./exportFlatAppsSelect.php">Export flattened applications file</a>
-                    <a class="dropdown-item" href="./exportPartAttributesSelect.php">Export part attributes spreadsheet</a>
-                    <a class="dropdown-item" href="./exportForPrintSelect.php">Export for print publishing</a>
-                    <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Export Competitor Interchange</a>
+                    <a class="dropdown-item" href="./exportPIESselect.php">PIES xml</a>
+                    <a class="dropdown-item" href="./exportACESselect.php">ACES xml</a>
+                    <a class="dropdown-item" href="./exportFlatPartsSelect.php">Flattened parts file</a>
+                    <a class="dropdown-item" href="./exportFlatAppsSelect.php">Flattened applications file</a>
+                    <a class="dropdown-item" href="./exportPartAttributesSelect.php">Part attributes spreadsheet</a>
+                    <a class="dropdown-item" href="./exportForPrintSelect.php">Printable applications guides</a>
+                    <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Competitor Interchange</a>
                 </div>
             </li>
         </ul>
