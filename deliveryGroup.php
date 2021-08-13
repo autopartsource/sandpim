@@ -39,6 +39,16 @@ $appliedpartcategories = $pim->getDeliverygroupPartcategories(intval($_GET['id']
 $allpartcategories=$pim->getPartCategories();
 
 
+$appliedpartcategoryidlist=array();
+foreach ($appliedpartcategories as $partcategory) 
+{
+ $appliedpartcategoryidlist[]=$partcategory['id'];
+}
+
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -131,10 +141,9 @@ $allpartcategories=$pim->getPartCategories();
                                             <h6 class="card-header">Included Categories</h6>
                                             <div class="card-body">
                                                 <div id="appliedpartcategories" class="card-body">
-                                                <?php $appliedpartcategoryidlist=array();
+                                                <?php 
                                                     foreach ($appliedpartcategories as $partcategory) 
                                                     {
-                                                        $appliedpartcategoryidlist[]=$partcategory['id'];
                                                         echo '<div style="text-align:left;padding:3px;" id="appliedpartcategoryid_'.$partcategory['id'].'"><button class="btn btn-outline-danger" onclick="removePartcategory(\''.$partcategory['id'].'\',\''.$partcategory['name'].'\')"><i class="bi bi-arrow-bar-left"></i></button> '.$partcategory['name'].'</div>';
                                                     }
                                                 ?>

@@ -36,12 +36,12 @@ foreach($partnumbers as $partnumber)
   $attributes = $pim->getPartAttributes($partnumber); //    $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'name'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
   foreach($attributes as $attribute)
   {
-   if(!array_key_exists($attribute['PAID']."\t".$attribute['name'], $attributeslist))
+   if(!array_key_exists($attribute['PAID']."\t".$attribute['name']."\t".$attribute['uom'], $attributeslist))
    {
-    $attributeslist[$attribute['PAID']."\t".$attribute['name']]=0;
+    $attributeslist[$attribute['PAID']."\t".$attribute['name']."\t".$attribute['uom']]=0;
    }
    
-   $matrix[$partnumber][$attribute['PAID']."\t".$attribute['name']]=$attribute['value'];
+   $matrix[$partnumber][$attribute['PAID']."\t".$attribute['name']."\t".$attribute['uom']]=$attribute['value'];
   } 
  }
 }
@@ -51,14 +51,15 @@ foreach($attributeslist as $columname=>$trash)
 {
  $namebits= explode("\t",$columname);
  $PAID=$namebits[0];
+ $uom=$namebits[2]; if($uom!=''){$uom=' ('.$uom.')';}
  $padbname=$padb->PAIDname($PAID);
  if($PAID==0)
  {
-  $columnnames['[non-PAdb] '.$namebits[1]]='string';
+  $columnnames['[non-PAdb] '.$namebits[1].$uom]='string';
  }
  else
  {
-  $columnnames['['.$PAID.'] '.$padbname]='string';
+  $columnnames['['.$PAID.'] '.$padbname.$uom]='string';
  }
 }
  

@@ -22,7 +22,7 @@ if(isset($_SESSION['userid']) && isset($_GET['receiverprofileid']) && isset($_GE
    case 'add':
     $result['id']=$pim->addDeliverygroupToReceiverProfile($receiverprofileid, $deliverygroupid);
     $result['success']=true;
-    $logs->logSystemEvent('receiverprofile',$_SESSION['userid'],'Delivery Group: '.$deliverygroup['description'].' added to receiver profile: '.$receiverprofile['name']);
+    $logs->logSystemEvent('receiverprofile',$_SESSION['userid'],'Delivery Group: '.$deliverygroup['description'].' added to receiver profile: '.$receiverprofile['name'].'('.$result['id'].')');
    break;
 
    case 'remove':

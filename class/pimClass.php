@@ -2360,7 +2360,7 @@ function countAppsByPartcategories($partcategories)
  function addDeliverygroupToReceiverProfile($receiverprofileid,$deliverygroupid)
  {
   $db = new mysql; $db->connect(); $id=false;
-  if($stmt=$db->conn->prepare("insert into receiverprofile_deliverygroup values(null,?,?,'','','',0,now())"))
+  if($stmt=$db->conn->prepare("insert into receiverprofile_deliverygroup values(null,?,?)"))
   {
    if($stmt->bind_param('ii',$receiverprofileid,$deliverygroupid))
    {
