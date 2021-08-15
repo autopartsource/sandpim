@@ -57,8 +57,26 @@
     <div id="navbarMenu" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <li<?php if ($navCategory == 'dashboard') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="index.php" class="nav-link">Dashboard</a></li>
-            <li<?php if ($navCategory == 'parts') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="partsIndex.php" class="nav-link">Parts</a></li>
-            <li<?php if ($navCategory == 'applications') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="appsIndex.php" class="nav-link">Applications</a></li>
+            <li<?php if ($navCategory == 'parts') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownParts" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Parts
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownParts">
+                    <a class="dropdown-item" href="partsIndex.php">Search Our Parts</a>
+                    <a class="dropdown-item" href="newPart.php">Create New Part</a>
+                    <a class="dropdown-item" href="interchangeIndex.php">Search Competitor Parts</a>
+                </div>
+            </li>
+                        
+            <li<?php if ($navCategory == 'applications') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownApps" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Applications
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownApps">
+                    <a class="dropdown-item" href="appsIndex.php">Make/Model/Year apps</a>
+                    <a class="dropdown-item" href="equipmentAppsIndex.php">Make/Equipment apps</a>
+                </div>
+            </li>
             <li<?php if ($navCategory == 'assets') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="assetsIndex.php" class="nav-link">Assets</a></li>
             <li<?php if ($navCategory == 'reports') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownReports" role="button" data-bs-toggle="dropdown" aria-expanded="false">

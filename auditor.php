@@ -10,6 +10,7 @@
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/assetClass.php');
+include_once(__DIR__.'/class/interchangeClass.php');
 include_once(__DIR__.'/class/vcdbClass.php');
 include_once(__DIR__.'/class/pcdbClass.php');
 include_once(__DIR__.'/class/padbClass.php');
@@ -21,6 +22,7 @@ $starttime=time();
 
 $pim=new pim();
 $asset=new asset();
+$interchange=new interchange();
 $pcdb=new pcdb();
 $padb=new padb();
 $vcdb=new vcdb();
@@ -41,9 +43,13 @@ $partnumbergroupsize=100;
 $partnumbers=$pim->getPartnumbersByRandom($partnumbergroupsize);
 
 foreach($partnumbers as $partnumber)
-{
-    // Invalid part-type detection (according to the default PCdb)
+{       
     $part=$pim->getPart($partnumber);
+        
+    // we only care about parts in an active lifecycle status (proposed and obsolete are not audited)
+    if($part['lifecyclestatus']=='0' || $part['lifecyclestatus']=='9'){continue;} 
+ 
+    // Invalid part-type detection (according to the default PCdb)    
     if($pcdb->parttypeName($part['parttypeid'])=='not found')
     {// part type id is not valid according to default PCdb
         $issuehash=md5('PART/REFERENCE/INVALID PARTTYPEID'.$partnumber.'0'.'invalid parttype id ('.$part['parttypeid'].')'.'background auditor');
@@ -149,6 +155,25 @@ foreach($partnumbers as $partnumber)
     }
     
     
+    // find invalid competitor brand codes
+    
+    $interchangerecords=$interchange->getInterchangeByPartnumber($partnumber);  //$records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'interchangenotes'=>base64_decode($row['interchangenotes']),'internalnotes'=>base64_decode($row['internalnotes']));
+    if(count($interchangerecords))
+    {
+        foreach($interchangerecords as $interchangerecord)
+        {
+            if(!$interchange->validBrand($interchangerecord['brandAAIAID']))
+            {
+                $issuehash=md5('PART/INTERCHANGE/INVALID'.$partnumber.'0'.'brand code '.$interchangerecord['brandAAIAID'].' is not valid'.'background auditor');
+                if(!$pim->getIssueByHash($issuehash))
+                {// this issue is not already recorded 
+                    $pim->recordIssue('PART/INTERCHANGE/INVALID',$partnumber,0,'brand code '.$interchangerecord['brandAAIAID'].' is not valid','background auditor', $issuehash);
+                }
+            }
+        }
+    }
+    
+    
     
 }
 
@@ -166,8 +191,10 @@ foreach($appids as $appid)
     echo $appid."\n";
     $app=$pim->getApp($appid);
     
+    // ignore deleted or hidden apps
+    if($app['status']!=0){continue;}
+      
     // validate parttype/position combination
-    
     if($app['parttypeid']!=0 && $app['positionid']!=0 && !$pcdb->validParttypePosition($app['parttypeid'], $app['positionid']))
     {
         $issuehash=md5('APP/REFERENCE/PARTTYPE-POSITION'.$appid.'PartType/Position ('.$app['parttypeid'].'/'.$app['positionid'].') combination is not valid'.'background auditor');
@@ -194,10 +221,7 @@ foreach($appids as $appid)
             }
         }
     }
-    
     // validate attributes (vcdb, qdb)
-    
-    
     
     
 }

@@ -70,7 +70,7 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
-                        <h3 class="card-header text-start">Parts<div style="float:right;"><a href="./newPart.php" class="btn btn-secondary">Create a new part</a></div></h3>
+                        <h3 class="card-header text-start">Parts</h3>
                         <div class="card-body">
                             
                             
@@ -78,9 +78,9 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                                 <h6 class="card-header">Find Existing Parts</h6>
                                 <div class="card-body">
                                     <form method="get" action="partsIndex.php">
-                                    <div style="padding:3px;">Show parts <select name="searchtype"><option value="startswith">starting with</option><option value="contains">containing</option><option value="endswith">ending with</option><option value="equals">exactly equal to</option></select> <input type="text" name="partnumber" value="<?php if(isset($_GET['partnumber'])){echo substr(strtoupper(trim($_GET['partnumber'])),0,20); }?>"/></div>
+                                    <div style="padding:3px;">Show part numbers <select name="searchtype"><option value="startswith">starting with</option><option value="contains">containing</option><option value="endswith">ending with</option><option value="equals">exactly equal to</option></select> <input type="text" name="partnumber" value="<?php if(isset($_GET['partnumber'])){echo substr(strtoupper(trim($_GET['partnumber'])),0,20); }?>"/></div>
                                     <div style="padding:3px;">In <select name="partcategory"><option value="any">Any Category</option><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>" <?php if(isset($_GET['partcategory']) && $_GET['partcategory']==$partcategory['id']){echo ' selected';}?>><?php echo $partcategory['name']; ?></option><?php } ?> </select></div>
-                                    <div style="padding:3px;">With <select name="parttypeid"><option value="any">Any Part Type</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>" <?php if(isset($_GET['parttypeid']) && $_GET['parttypeid']==$parttype['id']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div>
+                                    <div style="padding:3px;">Of <select name="parttypeid"><option value="any">Any Part Type</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>" <?php if(isset($_GET['parttypeid']) && $_GET['parttypeid']==$parttype['id']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div>
                                     <div style="padding:3px;">With <select name="lifecyclestatus"><option value="any">Any Status</option><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>" <?php if(isset($_GET['lifecyclestatus']) && $_GET['lifecyclestatus']==$lifecyclestatus['code']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></div>
                                     <div style="padding:3px;">Limit results to <select name="limit"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option><option value="500">500</option></select></div>
                                     <div style="padding:3px;"><input type="submit" name="submit" value="Search"/></div>

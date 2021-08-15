@@ -155,7 +155,29 @@ class interchange
   $db->close();
   return $name;   
  }
-
+ 
+ function validBrand($brandAAIAID)
+ {
+  $db=new mysql; $db->connect();
+  $returnval=false;
+  if($stmt=$db->conn->prepare('select BrandName from brand where BrandID=?'))
+  {
+   if($stmt->bind_param('s',$brandAAIAID))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $returnval=true;
+     }
+    }
+   }
+  }
+  $db->close();
+  return $returnval;     
+ }
+ 
  function getBrands($searchstring)
  {
   $db = new mysql; $db->connect();
