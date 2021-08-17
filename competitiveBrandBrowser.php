@@ -61,14 +61,14 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
             function addRemoveBrand(brand)
             {
              if(document.getElementById('brand_'+brand).checked) 
-             { // parttype has been clicked on 
+             { // brand has been clicked on 
               //console.log('add:'+brand);
               var xhr = new XMLHttpRequest();
               xhr.open('GET', 'ajaxAddRemoveCompetitiveBrand.php?brand='+brand+'&action=add');
               xhr.send();
              }
              else
-             { // has been clocked off
+             { // brand has been clicked off
               //console.log('remove:'+brand);
               var xhr = new XMLHttpRequest();
               xhr.open('GET', 'ajaxAddRemoveCompetitiveBrand.php?brand='+brand+'&action=remove');
@@ -160,7 +160,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                                                         '.$brand['BrandID'].
                                                     '</div>
                                                     <div class="col-md-3">
-                                                        <input type="checkbox" id="parttypeid_'.$brand['BrandID'].'" name="parttypeid_'.$brand['BrandID'].'" onclick="addRemoveType(\''.$brand['BrandID'].'\')"  '.$checked.'>
+                                                        <input type="checkbox" id="brand_'.$brand['BrandID'].'" name="brand_'.$brand['BrandID'].'" onclick="addRemoveBrand(\''.$brand['BrandID'].'\')"  '.$checked.'>
                                                     </div>'; 
                                             if($showowners){
                                                 $brandownercolumn='
@@ -174,7 +174,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                                                         '.$brand['BrandOwner'].
                                                     '</div>
                                                     <div class="col-md-2">
-                                                        <input type="checkbox" id="parttypeid_'.$brand['BrandID'].'" name="parttypeid_'.$brand['BrandID'].'" onclick="addRemoveType(\''.$brand['BrandID'].'\')"  '.$checked.'>
+                                                        <input type="checkbox" id="brand_'.$brand['BrandID'].'" name="brand_'.$brand['BrandID'].'" onclick="addRemoveBrand(\''.$brand['BrandID'].'\')"  '.$checked.'>
                                                     </div>';
                                             }
                                             

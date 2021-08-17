@@ -63,8 +63,8 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownParts">
                     <a class="dropdown-item" href="partsIndex.php">Search Our Parts</a>
-                    <a class="dropdown-item" href="newPart.php">Create New Part</a>
                     <a class="dropdown-item" href="interchangeIndex.php">Search Competitor Parts</a>
+                    <a class="dropdown-item" href="newPart.php">Create New Part</a>
                 </div>
             </li>
                         

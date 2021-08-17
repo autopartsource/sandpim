@@ -114,6 +114,43 @@ class interchange
  }
 
  
+ function getInterchangeBySearch($competitorpartnumber,$matchtype,$brandAAIAID,$limit,$parttypeid=false)
+ {
+  $db=new mysql; $db->connect();
+  $records=array();
+  
+  $parttypeclause=''; if($parttypeid){$parttypeclause=' and part.parttypeid='.intval($parttypeid);}
+
+  $searchstring=$competitorpartnumber;
+  if($matchtype=='contains'){$searchstring='%'.$competitorpartnumber.'%';}
+  if($matchtype=='startswith'){$searchstring=$competitorpartnumber.'%';}
+  if($matchtype=='endswith'){$searchstring='%'.$competitorpartnumber;}
+
+  $sql='select id,competitorpartnumber,brandAAIAID,part.partnumber,interchangequantity,uom,partcategory,parttypeid from interchange, part where interchange.partnumber = part.partnumber and competitorpartnumber like ? and brandAAIAID like ? '.$parttypeclause.'  order by competitorpartnumber limit ?';
+
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($stmt->bind_param('ssi',$searchstring,$brandAAIAID,$limit))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'parttypeid'=>$row['parttypeid']);
+     }
+    }//else{echo ' problem with execute';}
+   }//else{echo ' problem with bind';}
+  }//else{echo ' problem with prepare';}
+  
+  $db->close();
+  return $records;   
+ }
+ 
+ 
+ 
+ 
+ 
  function getCompetitors()
  { // distinct list of competitors extracted from interchange table
      

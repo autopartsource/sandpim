@@ -193,7 +193,18 @@ foreach($appids as $appid)
     
     // ignore deleted or hidden apps
     if($app['status']!=0){continue;}
-      
+     
+    $part=$pim->getPart($app['partnumber']);
+    if(!$part)
+    {// app contains invalid part    
+        $issuehash=md5('APP/PARTNUMBER/INVALID'.$appid.'Invalid partnumber ('.$app['partnumber'].') in app'.'background auditor');
+        if(!$pim->getIssueByHash($issuehash))
+        {// this issue is not already recorded 
+            $pim->recordIssue('APP/PARTNUMBER/INVALID','',$appid,'Invalid partnumber ('.$app['partnumber'].') in app','background auditor', $issuehash);
+        }
+    }
+    
+    
     // validate parttype/position combination
     if($app['parttypeid']!=0 && $app['positionid']!=0 && !$pcdb->validParttypePosition($app['parttypeid'], $app['positionid']))
     {
