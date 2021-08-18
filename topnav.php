@@ -88,6 +88,7 @@
                     <a class="dropdown-item" href="applicationHolesReportForm.php">Application Holes</a>
                     <a class="dropdown-item" href="applicationOverlapsReportForm.php">Application Overlaps</a>
                     <a class="dropdown-item" href="applicationNotesReportForm.php">Application Note Usage</a>
+                    <a class="dropdown-item" href="assetCoverageReportForm.php">Asset Coverage</a>
                 </div>
             </li>
             <li<?php if ($navCategory == 'utilities') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
