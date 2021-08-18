@@ -2668,7 +2668,7 @@ function gtinCheckDigit($barcode)
   $db=new mysql; $db->connect(); $issues=array();
   $statuses=array();
   foreach($rawstatuses as $rawstatus){$statuses[]=intval($rawstatus);}
-  
+  // status 0=closed, status 1=open, status 2=in-review, status 3=snoozed
   
   $statusclause= 'and status in('.implode(',',$statuses).')';
   $numericclause='';
@@ -2690,6 +2690,30 @@ function gtinCheckDigit($barcode)
   $db->close();
   return $issues;     
  }
+ 
+ function getPartIssuesPrioritized($limit)
+ {
+  $db=new mysql; $db->connect(); $issues=array();
+  if($stmt=$db->conn->prepare("select issue.* from issue, part, part_balance where issue.issuekeyalpha=part.partnumber and issuekeyalpha=part_balance.partnumber and issue.issuetype like 'PART/%' and issue.status=1 and part.lifecyclestatus='2'  order by amd desc limit ?"))
+  {
+   $stmt->bind_param('i',$limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $issues[]=array('id'=>$row['id'],'status'=>$row['status'],'issuedatetime'=>$row['issuedatetime'],'issuetype'=>$row['issuetype'],'issuekeyalpha'=>$row['issuekeyalpha'],'issuekeynumeric'=>$row['issuekeynumeric'],'description'=>$row['description'],'notes'=>base64_decode($row['notes']),'source'=>$row['source'],'issuehash'=>$row['issuehash']);
+   }
+  }
+  $db->close();
+  return $issues;     
+ }
+ 
+  
+ 
+ 
+ 
+ 
+ 
  
  function deleteIssue($id)
  {

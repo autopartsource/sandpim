@@ -36,7 +36,8 @@ $assetshistory = $logs->getAssetsEvents(20);
 $partshistory = $logs->getPartsEvents(20);
 $systemhistory = $logs->getSystemEvents('%', false, 20);
 
-$partissues=$pim->getIssues('PART/%','%',0,array(1,2),20);
+//$partissues=$pim->getIssues('PART/%','%',0,array(1,2),20);
+$partissues=$pim->getPartIssuesPrioritized(20);
 $appissues=$pim->getIssues('APP/%','%','%',array(1,2),20);
 $assetissues=$pim->getIssues('ASSET/%','%','%',array(1,2),20);
 $systemissues=$pim->getIssues('SYSTEM/%','%','%',array(1,2),20);
