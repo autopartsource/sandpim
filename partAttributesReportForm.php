@@ -21,7 +21,7 @@ $receiverprofiles=$pim->getReceiverprofiles();
     <body>
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
-        
+                
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -34,10 +34,10 @@ $receiverprofiles=$pim->getReceiverprofiles();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Report Asset Coverage by part number</h3>
+                        <h3 class="card-header text-start">Report part attributes coverage by part number</h3>
 
                         <div class="card-body">
-                            <form action="assetCoverageReportStream.php" method="get">
+                            <form action="partAttributesReportStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
                                     <div style="padding: 10px;">Receiver Profile</div>
                                     <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>

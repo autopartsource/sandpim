@@ -85,10 +85,13 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownReports">
                     <a class="dropdown-item" href="missingProductDataReportForm.php">Missing/Invalid Part Data</a>
                     <a class="dropdown-item" href="invalidApplicationsReportForm.php">Invalid Applications</a>
-                    <a class="dropdown-item" href="applicationHolesReportForm.php">Application Holes</a>
+<?php /*                   <a class="dropdown-item" href="applicationHolesReportForm.php">Application Holes</a>
                     <a class="dropdown-item" href="applicationOverlapsReportForm.php">Application Overlaps</a>
                     <a class="dropdown-item" href="applicationNotesReportForm.php">Application Note Usage</a>
+ */?>
                     <a class="dropdown-item" href="assetCoverageReportForm.php">Asset Coverage</a>
+                    <a class="dropdown-item" href="partAttributesReportForm.php">Attribute Coverage</a>
+                    <a class="dropdown-item" href="interchangeCoverageReportForm.php">Interchange Coverage</a>
                 </div>
             </li>
             <li<?php if ($navCategory == 'utilities') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
@@ -151,7 +154,6 @@
                     <a class="dropdown-item" href="./exportACESselect.php">ACES xml</a>
                     <a class="dropdown-item" href="./exportFlatPartsSelect.php">Flattened parts file</a>
                     <a class="dropdown-item" href="./exportFlatAppsSelect.php">Flattened applications file</a>
-                    <a class="dropdown-item" href="./exportPartAttributesSelect.php">Part attributes spreadsheet</a>
                     <a class="dropdown-item" href="./exportForPrintSelect.php">Printable applications guides</a>
                     <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Competitor Interchange</a>
                 </div>

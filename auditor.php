@@ -184,8 +184,8 @@ foreach($partnumbers as $partnumber)
     // invalid parttype-position combinations
     // invalid VCdb references (basevehilce, etc)
     // 
-   
-$appids=$pim->getAppIDsByRandom(250);
+  
+$appids=$pim->getAppIDsByRandom(100);
 foreach($appids as $appid)
 {
     echo $appid."\n";
@@ -286,7 +286,7 @@ $pim->updateSnoozes();
 
 
 $runtime=time()-$starttime;
-if($runtime > 5)
+if($runtime > 10)
 {
  $logs->logSystemEvent('auditor', 0, 'Background auditor process ran for '.$runtime.' seconds');
 }

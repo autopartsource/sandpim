@@ -25,6 +25,7 @@ $xlsxdata='';
 $receiverprofileid=intval($_GET['receiverprofile']);
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);   
+
 $matrix=array();
 
 $attributeslist=array();
@@ -64,7 +65,7 @@ foreach($attributeslist as $columname=>$trash)
 }
  
 $columnwidths=array(12);
-foreach($attributeslist as $columname=>$trsah){$columnwidths[]=intval(strlen($columname));}
+foreach($attributeslist as $columname=>$trsah){$columnwidths[]=intval(strlen($columname))*3;}
  
 $columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0']);
 foreach($attributeslist as $columname=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
@@ -95,11 +96,11 @@ $writer->setAuthor('SandPIM');
 $xlsxdata=$writer->writeToString();
 $streamXLSX=true;
 
-$logs->logSystemEvent('export', 0, 'Exported attributes for '.count($partnumbers).' parts; by:'.$_SERVER['REMOTE_ADDR']);
+$logs->logSystemEvent('export', 0, 'Generated attribute coverage report containing '.count($partnumbers).' for delivery profile '.$receiverprofileid.'; by:'.$_SERVER['REMOTE_ADDR']);
 
 if($streamXLSX)
 {  
- $filename='parts_'.date('Y-m-d').'.xlsx';
+ $filename='attribute_coverage_'.date('Y-m-d').'.xlsx';
  header('Content-Disposition: attachment; filename="'.$filename.'"');
  header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
  header('Content-Length: ' . strlen($xlsxdata));

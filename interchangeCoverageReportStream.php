@@ -1,8 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
-include_once('./class/pcdbClass.php');
-include_once('./class/assetClass.php');
+include_once('./class/interchangeClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $pim = new pim();
@@ -24,10 +23,8 @@ if (!isset($_SESSION['userid']))
 }
 
 $logs=new logs();
-$pcdb = new pcdb();
-$asset=new asset();
+$interchange=new interchange();
 $writer = new XLSXWriter();
-$pcdbVersion=$pcdb->version();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
 
@@ -37,42 +34,34 @@ $xlsxdata='';
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
 
-// build a matrix of partnumber/asset-type
-// columns are asset types, rows are partnumbers
-// every part get a P04 (primary photo) asset - regardless of if it exists or not. This way, there will always be at least 2 columns in the output (partnumber, Primary Photo)
-// other asset types connected to any part in the population will result in that type's column in the output.
+// build a matrix of partnumber/competitor
+// columns are competitor brands, rows are partnumbers
 
 $matrix=array();
-$assettypes=array();
-$assettypes['P04']='';
+$distinctbrands=array();
 
 foreach($partnumbers as $partnumber)
 {
- $assetconnections=$asset->getAssetsConnectedToPart($partnumber); //array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename']);
-
- foreach($assetconnections as $assetconnection)
+ $matrix[$partnumber]=array();
+ $competitorparts=$interchange->getInterchangeByPartnumber($partnumber); //array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'interchangenotes'=>base64_decode($row['interchangenotes']),'internalnotes'=>base64_decode($row['internalnotes']));
+ foreach($competitorparts as $competitorpart)
  {
-  $assettypes[$assetconnection['assettypecode']]='';
-  $matrix[$partnumber][$assetconnection['assettypecode']][]=$assetconnection['assetid'];
+  $distinctbrands[$competitorpart['brandAAIAID']]='';
+  $matrix[$partnumber][$competitorpart['brandAAIAID']][]=$competitorpart['competitorpartnumber'];
  }
-
- if(!array_key_exists('P04', $matrix[$partnumber]))
- {
-  $matrix[$partnumber]['P04']=[];
- } 
 }
 
 
 $columnnames=array('Partnumber'=>'string');
-foreach($assettypes as $assettype=>$trash)
+foreach($distinctbrands as $distinctbrand=>$trash)
 {
- $columnnames[$pcdb->assetTypeCodeDescription($assettype)]='string';
+ $columnnames[$interchange->brandName($distinctbrand).' ('.$distinctbrand.')']='string';
 }
  
 $columnwidths=array(12);
-foreach($assettypes as $assettype=>$trsah){$columnwidths[]=20;} 
+foreach($distinctbrands as $distinctbrand=>$trsah){$columnwidths[]=20;} 
 $columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0']);
-foreach($assettypes as $assettype=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
+foreach($distinctbrands as $distinctbrand=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
 
 $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
 
@@ -81,11 +70,11 @@ $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
 foreach($matrix as $partnumber=>$columns)
 {
  $row=array($partnumber);
- foreach($assettypes as $assettype=>$trash)
+ foreach($distinctbrands as $distinctbrand=>$trash)
  {
-  if(array_key_exists($assettype, $columns))
+  if(array_key_exists($distinctbrand, $columns))
   {
-    $row[]= implode(',',$columns[$assettype]);
+    $row[]= implode(',',$columns[$distinctbrand]);
   }
   else
   {
@@ -100,11 +89,11 @@ $writer->setAuthor('SandPIM');
 $xlsxdata=$writer->writeToString();
 $streamXLSX=true;
 
-$logs->logSystemEvent('report', $_SESSION['userid'], 'Asset coverage report - '.count($partnumbers).' parts');
+$logs->logSystemEvent('report', $_SESSION['userid'], 'Interchange coverage report - '.count($partnumbers).' parts');
 
 if($streamXLSX)
 {   
- $filename='asset_coverage_'.date('Y-m-d').'.xlsx';
+ $filename='interchange_coverage_'.date('Y-m-d').'.xlsx';
  header('Content-Disposition: attachment; filename="'.$filename.'"');
  header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
  header('Content-Length: ' . strlen($xlsxdata));
