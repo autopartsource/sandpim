@@ -2,6 +2,7 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pricingClass.php');
+include_once('./class/pcdbClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $pim = new pim();
@@ -23,6 +24,7 @@ if (!isset($_SESSION['userid']))
 
 $logs=new logs();
 $pricing=new pricing();
+$pcdb=new pcdb();
 $writer = new XLSXWriter();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
@@ -52,7 +54,7 @@ foreach($partnumbers as $partnumber)
 }
 
 
-$columnnames=array('Partnumber'=>'string');
+$columnnames=array('Partnumber'=>'string','Lifecycle Status'=>'string');
 foreach($dictinctpricetypes as $dictinctpricetype=>$trash)
 {
  $columnnames[$dictinctpricetype]='string';
@@ -60,16 +62,17 @@ foreach($dictinctpricetypes as $dictinctpricetype=>$trash)
  
 $columnwidths=array(12);
 foreach($dictinctpricetypes as $dictinctpricetype=>$trsah){$columnwidths[]=20;} 
-$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0']);
+$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
 foreach($dictinctpricetypes as $dictinctpricetype=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
 
 $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
 
 
-
 foreach($matrix as $partnumber=>$columns)
 {
- $row=array($partnumber);
+ $part=$pim->getPart($partnumber);   
+ $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']));
+ 
  foreach($dictinctpricetypes as $dictinctpricetype=>$trash)
  {
   if(array_key_exists($dictinctpricetype, $columns))
