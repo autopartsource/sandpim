@@ -1,13 +1,21 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/padbClass.php');
+include_once('./class/pcdbClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/XLSXWriterClass.php');
 
-session_start();
-
 $pim = new pim();
-$logs=new logs();
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'partAttributeCoverageReportStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
+session_start();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
@@ -15,9 +23,10 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
+$logs=new logs();
 $padb=new padb();
+$pcdb=new pcdb();
 $writer = new XLSXWriter();
-
 
 $streamXLSX=false;
 $xlsxdata='';
@@ -43,7 +52,7 @@ foreach($partnumbers as $partnumber)
  } 
 }
 
-$columnnames=array('Partnumber'=>'string');
+$columnnames=array('Partnumber'=>'string','Lifecycle Status'=>'string');
 foreach($attributeslist as $columname=>$trash)
 {
  $namebits= explode("\t",$columname);
@@ -63,17 +72,15 @@ foreach($attributeslist as $columname=>$trash)
 $columnwidths=array(12);
 foreach($attributeslist as $columname=>$trsah){$columnwidths[]=intval(strlen($columname))*3;}
  
-$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0']);
+$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
 foreach($attributeslist as $columname=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
 
 $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
 
-
-
-
 foreach($matrix as $partnumber=>$attributes)
 {
- $row=array($partnumber);
+ $part=$pim->getPart($partnumber);
+ $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']));
  foreach($attributeslist as $columname=>$trash)
  {
   if(array_key_exists($columname, $attributes))
