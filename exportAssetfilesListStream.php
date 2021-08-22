@@ -11,9 +11,6 @@ include_once('./class/assetClass.php');
 include_once('./class/logsClass.php');
 
 $pim = new pim;
-$assets = new asset;
-$logs = new logs;
-
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
@@ -23,8 +20,15 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }    
 
-
 session_start();
+if(!isset($_SESSION['userid']))
+{
+ echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
+ exit;
+}
+
+$assets = new asset;
+$logs = new logs;
 
 if(isset($_SESSION['userid']))
 {

@@ -2,8 +2,18 @@
 include_once('./class/pimClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/logsClass.php');
-session_start();
+
 $pim= new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'ajaxAddRemoveFavoritePosition.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
+session_start();
 $pcdb=new pcdb;
 $logs= new logs;
 

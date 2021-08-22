@@ -1,12 +1,21 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
+
+$pim= new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'ajaxAddToClipboard.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 session_start();
 
-//$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true)).'*'; fclose($fp);
 if(isset($_SESSION['userid']) && isset($_GET['description']) && isset($_GET['objecttype']) && isset($_GET['objectkey']) && isset($_GET['objectdata']))
 {
- $pim= new pim;
  $logs= new logs;
  $userid=intval($_SESSION['userid']);
  $description=base64_decode($_GET['description']);

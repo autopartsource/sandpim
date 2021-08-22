@@ -11,7 +11,7 @@ $pim = new pim();
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'assetCoverageReportStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
 

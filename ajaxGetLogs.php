@@ -1,10 +1,19 @@
 <?php
 include_once('./class/logsClass.php');
+
+$pim= new pim;
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'ajaxGetLogs.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 session_start();
 $logs= new logs;
 $events=array();
 
-//$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true).'*'); fclose($fp);
 
 if(isset($_SESSION['userid']) && isset($_GET['logname']) && isset($_GET['requesttype']))
 {

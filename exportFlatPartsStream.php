@@ -4,19 +4,22 @@ include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/XLSXWriterClass.php');
 
-session_start();
-
 $pim = new pim();
-$logs=new logs();
-
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
  $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'exportFlatPartsStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
 
+session_start();
+if (!isset($_SESSION['userid'])) {
+    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
+    exit;
+}
+
 $pcdb = new pcdb();
 $writer = new XLSXWriter();
+$logs=new logs();
 $pcdbVersion=$pcdb->version();
 
 $receiverprofileid=intval($_GET['receiverprofile']);

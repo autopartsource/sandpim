@@ -1,11 +1,21 @@
 <?php
 include_once('./class/pimClass.php');
+
+$pim= new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'ajaxDeleteAppAsset.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 session_start();
 
 if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['id']))
 {
  $result=array();
- $pim= new pim;
  $appid=intval($_GET['appid']);
  $id=intval($_GET['id']);
  $userid=$_SESSION['userid'];

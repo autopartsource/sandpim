@@ -1,11 +1,18 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
-session_start();
-$pim= new pim;
-$asset=new asset;
 
-//$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true)); fclose($fp);
+$pim= new pim;
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'ajaxUpdateAssetRecord.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
+session_start();
+$asset=new asset;
 
 if(isset($_SESSION['userid']) && isset($_GET['id']) && isset($_GET['elementid']) && isset($_GET['value']))
 {

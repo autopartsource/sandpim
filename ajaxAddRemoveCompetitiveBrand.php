@@ -1,11 +1,20 @@
 <?php
 include_once('./class/interchangeClass.php');
 include_once('./class/logsClass.php');
+
+$pim=new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'ajaxAddRemoveCompetitiveBrand.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 session_start();
 $interchange= new interchange;
 $logs= new logs;
-
-//$fp = fopen('./logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true)).'*'; fclose($fp);
 
 if(isset($_SESSION['userid']) && isset($_GET['brand']) && isset($_GET['action']))
 {
