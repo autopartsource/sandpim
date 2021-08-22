@@ -670,9 +670,8 @@ class setup
         $sql="insert into config_options values('photoAssetHostURI','','','https://s3.amazonaws.com/autopartsourceimages/parts/','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('storeImageAssetsLocally','','','1','0 or 1 indicating local saving of image assets');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('systemDocRootRUL','','','/var/www/html','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('requireCredentialsForBalanceUpdate','','','/var/www/html','Controls how updatePartBalancesAutomated API operates. Is set to yes, a valid username/password are required along in the POST of balance data.');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
-
-        
         
         $sql="CREATE TABLE issue (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,

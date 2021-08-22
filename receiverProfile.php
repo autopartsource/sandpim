@@ -129,27 +129,6 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
                                         <span style="float:right"><input name="submit" type="submit" value="Save"/> <input name="submit" type="submit" value="Delete"/></span>
                                     </h5>
                                     <div class="card-body">
-                                        <div class="row padding">
-                                            <div class="col">
-                                                <div class="card">
-                                                    <h6 class="card-header">Parameters</h6>
-                                                    <div class="card-body">
-                                                        <textarea name="profiledata" rows="15" style="width: 100%; max-width: 100%;"><?php echo $profile['data']; ?></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="row padding">
-                                            <div class="col">
-                                                <div class="card">
-                                                    <h6 class="card-header">Notes</h6>
-                                                    <div class="card-body">
-                                                        <textarea name="notes" rows="15" style="width: 100%; max-width: 100%;"><?php echo $profile['notes']; ?></textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                         
                                         <div class="row padding">
                                             <div class="col-md-6">
@@ -186,15 +165,35 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
                                                 </div>
                                             </div>
                                         </div>
+                                                                                
+                                        <div class="row padding">
+                                            <div class="col">
+                                                <div class="card">
+                                                    <h6 class="card-header">ACES & PIES header parameters</h6>
+                                                    <div class="card-body">
+                                                        <textarea name="profiledata" rows="10" style="width: 100%; max-width: 100%;"><?php echo $profile['data']; ?></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         
-                                        
-                                        
+                                        <div class="row padding">
+                                            <div class="col">
+                                                <div class="card">
+                                                    <h6 class="card-header">Internal Notes</h6>
+                                                    <div class="card-body">
+                                                        <textarea name="notes" rows="10" style="width: 100%; max-width: 100%;"><?php echo $profile['notes']; ?></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                                                                
                                         <div class="row padding">
                                             <div class="col">
                                                 <div class="card">
                                                     <h6 class="card-header">Partnumber Translation Table (internal TAB external)</h6>
                                                     <div class="card-body">
-                                                        <textarea style="width: 100%; max-width: 100%;" rows="15" name="parttranslation"><?php foreach ($parttranslations as $internalpart=>$externalpart){echo $internalpart."\t".$externalpart."\r\n";} ?></textarea>
+                                                        <textarea style="width: 100%; max-width: 100%;" rows="10" name="parttranslation"><?php foreach ($parttranslations as $internalpart=>$externalpart){echo $internalpart."\t".$externalpart."\r\n";} ?></textarea>
                                                     </div>
                                                 </div>
                                             </div>

@@ -31,20 +31,16 @@ $matrix=array();
 $attributeslist=array();
 foreach($partnumbers as $partnumber)
 {
- $part=$pim->getPart($partnumber);
- if($part)
- {  
-  $attributes = $pim->getPartAttributes($partnumber); //    $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'name'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
-  foreach($attributes as $attribute)
+ $matrix[$partnumber]=array();
+ $attributes = $pim->getPartAttributes($partnumber); //    $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'name'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
+ foreach($attributes as $attribute)
+ {
+  if(!array_key_exists($attribute['PAID']."\t".$attribute['name']."\t".$attribute['uom'], $attributeslist))
   {
-   if(!array_key_exists($attribute['PAID']."\t".$attribute['name']."\t".$attribute['uom'], $attributeslist))
-   {
-    $attributeslist[$attribute['PAID']."\t".$attribute['name']."\t".$attribute['uom']]=0;
-   }
-   
-   $matrix[$partnumber][$attribute['PAID']."\t".$attribute['name']."\t".$attribute['uom']]=$attribute['value'];
-  } 
- }
+   $attributeslist[$attribute['PAID']."\t".$attribute['name']."\t".$attribute['uom']]=0;
+  }  
+  $matrix[$partnumber][$attribute['PAID']."\t".$attribute['name']."\t".$attribute['uom']]=$attribute['value'];
+ } 
 }
 
 $columnnames=array('Partnumber'=>'string');

@@ -22,8 +22,6 @@ if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
     exit;
 }
-
-
   
 if (isset($_POST['input'])) 
 {
@@ -67,6 +65,7 @@ if (isset($_POST['input']))
  $finalresultmessage='Imported '.$importcount.' balance records';
  if($invalidcount>0){$finalresultmessage.='. '.$invalidcount.' records were ignored because of invalid partnumbers.';};
  $errors[]=$finalresultmessage;
+ $logs->logSystemEvent('externalsystem', $_SESSION['userid'], 'balance data inported for '.$importcount.' parts from: '.$_SERVER['REMOTE_ADDR']);
 }
  
 
