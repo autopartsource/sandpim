@@ -2,6 +2,7 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/interchangeClass.php');
+include_once('./class/pcdbClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $pim = new pim();
@@ -24,6 +25,7 @@ if (!isset($_SESSION['userid']))
 
 $logs=new logs();
 $interchange=new interchange();
+$pcdb=new pcdb();
 $writer = new XLSXWriter();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
@@ -52,7 +54,7 @@ foreach($partnumbers as $partnumber)
 }
 
 
-$columnnames=array('Partnumber'=>'string');
+$columnnames=array('Partnumber'=>'string','Lifecycle Status'=>'string');
 foreach($distinctbrands as $distinctbrand=>$trash)
 {
  $columnnames[$interchange->brandName($distinctbrand).' ('.$distinctbrand.')']='string';
@@ -60,7 +62,7 @@ foreach($distinctbrands as $distinctbrand=>$trash)
  
 $columnwidths=array(12);
 foreach($distinctbrands as $distinctbrand=>$trsah){$columnwidths[]=20;} 
-$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0']);
+$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
 foreach($distinctbrands as $distinctbrand=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
 
 $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
@@ -69,7 +71,9 @@ $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
 
 foreach($matrix as $partnumber=>$columns)
 {
- $row=array($partnumber);
+ $part=$pim->getPart($partnumber);
+
+ $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']));
  foreach($distinctbrands as $distinctbrand=>$trash)
  {
   if(array_key_exists($distinctbrand, $columns))
