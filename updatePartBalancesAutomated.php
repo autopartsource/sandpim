@@ -7,7 +7,6 @@ include_once('./class/configGetClass.php');
 $pim = new pim;
 $logs=new logs;
 $errors=array();
-$recordnumber=0;
 $importcount=0;
 $invalidcount=0;
 
@@ -18,7 +17,6 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 }
 
 $configGet = new configGet;
-
 
 
 if($configGet->getConfigValue('requireCredentialsForBalanceUpdate')=='yes')
@@ -69,9 +67,7 @@ if(isset($_POST['input']))
  $records = explode("\r\n", $_POST['input']);
  foreach ($records as $record) 
  {
-  $recordnumber++;
-  $fields = explode("\t", $record);
-  
+  $fields = explode("\t", $record);  
   if(count($fields)==1 && $fields[0]==''){continue;}
     
   if (count($fields) == 3) 
@@ -87,7 +83,7 @@ if(isset($_POST['input']))
    }
    else
    {// invalid part - make a note of it
-    $errors[]='invalid partnumber ['.$partnumber.'] in row '.$recordnumber;
+    $errors[]='invalid partnumber ['.$partnumber.']';
     $invalidcount++;
    }
   }
@@ -99,7 +95,7 @@ if(isset($_POST['input']))
 }
 else
 {
- $errors[]='no input parm posted';
+ $errors[]='No form variable named input found. POST must be url-encoded (application/x-www-form-urlencoded) form data in a variable named input';
 }
 
 $logs->logSystemEvent('externalsystem', 0, 'Bulk import of '.$importcount.' via updatePartBalancesAutomated.php. '.implode(';',$errors));

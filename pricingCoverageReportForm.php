@@ -1,5 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/pricingClass.php');
+
 $navCategory = 'reports';
 
 $pim = new pim;
@@ -8,9 +10,9 @@ $pim = new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'interchangeCoverageReportForm.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'pricingCoverageReportForm.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
-}
+}    
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -18,7 +20,7 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
-
+$pricing=new pricing;
 $receiverprofiles=$pim->getReceiverprofiles();
 ?>
 
@@ -43,10 +45,10 @@ $receiverprofiles=$pim->getReceiverprofiles();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Report Competitor Interchange Coverage by part number</h3>
+                        <h3 class="card-header text-start">Report pricing Coverage by part number</h3>
 
                         <div class="card-body">
-                            <form action="interchangeCoverageReportStream.php" method="get">
+                            <form action="pricingCoverageReportStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
                                     <div style="padding: 10px;">Receiver Profile</div>
                                     <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>

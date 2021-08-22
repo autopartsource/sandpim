@@ -102,6 +102,44 @@ class pricing
   return $records;   
  }
  
+ 
+ function getCurrentPricesByPartnumber($partnumber,$_pricesheetnumber=false)
+ {
+  $db=new mysql; $db->connect();
+  $records=array();
+  $pricesheetnumber='%';
+  
+  if($_pricesheetnumber){$pricesheetnumber=$_pricesheetnumber;}
+  
+  if($stmt=$db->conn->prepare('select * from price where partnumber=? and pricesheetnumber like ? and effectivedate <= DATE(NOW()) and expirationdate > DATE(NOW())'))
+  {
+   if($stmt->bind_param('ss',$partnumber,$pricesheetnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $niceprice= $row['pricetype'].': '.number_format($row['amount'],2).' '.$row['currency'].' '.$row['priceuom'];
+      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'pricesheetnumber'=>$row['pricesheetnumber'],'amount'=>$row['amount'],'currency'=>$row['currency'],'priceuom'=>$row['priceuom'],'pricetype'=>$row['pricetype'],'effectivedate'=>$row['effectivedate'],'expirationdate'=>$row['expirationdate'],'niceprice'=>$niceprice);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $records;   
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  function getPricesheets()
  {
   $db=new mysql; $db->connect();
