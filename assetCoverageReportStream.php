@@ -15,7 +15,6 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
-
 session_start();
 if (!isset($_SESSION['userid']))
 {
@@ -63,7 +62,7 @@ foreach($partnumbers as $partnumber)
 }
 
 
-$columnnames=array('Partnumber'=>'string');
+$columnnames=array('Partnumber'=>'string','Lifecycle Status'=>'string');
 foreach($assettypes as $assettype=>$trash)
 {
  $columnnames[$pcdb->assetTypeCodeDescription($assettype)]='string';
@@ -71,16 +70,16 @@ foreach($assettypes as $assettype=>$trash)
  
 $columnwidths=array(12);
 foreach($assettypes as $assettype=>$trsah){$columnwidths[]=20;} 
-$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0']);
+$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
 foreach($assettypes as $assettype=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
 
 $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
 
-
-
 foreach($matrix as $partnumber=>$columns)
 {
- $row=array($partnumber);
+ $part=$pim->getPart($partnumber);
+ 
+ $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']));
  foreach($assettypes as $assettype=>$trash)
  {
   if(array_key_exists($assettype, $columns))
