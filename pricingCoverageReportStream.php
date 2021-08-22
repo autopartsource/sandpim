@@ -70,7 +70,7 @@ $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
 
 foreach($matrix as $partnumber=>$columns)
 {
- $part=$pim->getPart($partnumber);   
+ $part=$pim->getPart($partnumber);
  $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']));
  
  foreach($dictinctpricetypes as $dictinctpricetype=>$trash)
