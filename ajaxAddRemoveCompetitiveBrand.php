@@ -1,9 +1,9 @@
 <?php
+include_once('./class/pimClass.php');
 include_once('./class/interchangeClass.php');
 include_once('./class/logsClass.php');
 
 $pim=new pim;
-
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like

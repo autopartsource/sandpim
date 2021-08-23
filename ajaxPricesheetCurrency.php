@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pricingClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/logsClass.php');
 
 $pim= new pim;
 //ip-based ACL enforcement 

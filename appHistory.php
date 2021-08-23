@@ -3,6 +3,7 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/userClass.php');
+include_once('./class/logsClass.php');
 $navCategory = 'applications';
 
 $pim = new pim;

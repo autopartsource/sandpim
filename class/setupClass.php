@@ -9,6 +9,7 @@ class setup
         $db = new mysql; 
         $db->dbname=$dbname; 
         $db->connect_nodb(); // will return empty string if successful
+        $result='';
         
         if($stmt=$db->conn->prepare('create database '.$dbname))
         {

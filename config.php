@@ -1,5 +1,5 @@
 <?php
-include_once('./includes/loginCheck.php');
+include_once('./class/pimClass.php');
 include_once('./class/userClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/configSetClass.php');

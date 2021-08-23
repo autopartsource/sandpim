@@ -1,6 +1,7 @@
 <?php
 include_once('./class/bookClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/logsClass.php');
 
 
 session_start();
