@@ -48,8 +48,14 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
             function connectPart(assetid)
             {
                 var partnumber=document.getElementById('partnumber').value;
+                var assettypecodeselectionelement = document.getElementById("assettypecode");
+                var selectedassettypecode = assettypecodeselectionelement.options[assettypecodeselectionelement.selectedIndex].value;
+                
+                var representationselectionelement = document.getElementById("representation");
+                var selectedrepresentation = representationselectionelement.options[representationselectionelement.selectedIndex].value;
+                
                 var xhr = new XMLHttpRequest();
-                xhr.open('GET', 'ajaxConnectPartAsset.php?assetid='+assetid+'&partnumber='+partnumber+'&assettypecode=P04&sequence=1&representation=A');
+                xhr.open('GET', 'ajaxConnectPartAsset.php?assetid='+assetid+'&partnumber='+partnumber+'&assettypecode='+selectedassettypecode+'&sequence=1&representation='+selectedrepresentation);
                 xhr.onload = function()
                 {
                  var response=JSON.parse(xhr.responseText);

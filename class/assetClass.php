@@ -85,14 +85,23 @@ class asset
  function disconnectPartFromAsset($partnumber,$connectionid=false)
  {
   $db = new mysql; $db->connect();
-  $sql='delete from part_asset where partnumber=?';
+  $sql='delete from part_asset where partnumber=?'; // start by assuming no connection id was passed, and only select for partnumber the partnbmer (not connectionid)
   if($connectionid)
   {
    $sql='delete from part_asset where partnumber=? and id=?';
   }   
+  
   if($stmt=$db->conn->prepare($sql))
   {
-   $stmt->bind_param('s',$partnumber);
+   if($connectionid)
+   {
+    $stmt->bind_param('si',$partnumber,$connectionid);
+   }
+   else
+   {// no connection id was passed - we are binding only the partnbmer 
+    $stmt->bind_param('s',$partnumber);       
+   }
+   
    if($connectionid)
    {
     $stmt->bind_param('si',$partnumber,$connectionid);
