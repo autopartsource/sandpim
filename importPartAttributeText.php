@@ -1,7 +1,19 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/logsClass.php');
+
 $navCategory = 'import';
+
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'importPartAttributeText.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -9,91 +21,132 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
-$pim = new pim;
 $pcdb=new pcdb();
 
-if (isset($_POST['input'])) {
+$errors=array();
+$results='';
+$importcount=0;
+$failedcount=0;
+$recordnumber=0;
+
+
+if (isset($_POST['input']))
+{
     $input = $_POST['input'];
     $records = explode("\r\n", $_POST['input']);
-    foreach ($records as $record) {
+    foreach ($records as $record)
+    {
         $fields = explode("\t", $record);
-        if (count($fields) == 3 || count($fields) == 4) { // partnumber,attributename,attributevalue[,unitOfMeasure]
+        $recordnumber++;
+        
+        if(count($fields) == 3 || count($fields) == 4)
+        { // partnumber,attributename,attributevalue[,unitOfMeasure]
             $partnumber = trim(strtoupper($fields[0]));
-            if (strlen($partnumber) <= 20 && strlen($partnumber) > 0) { // partnumber is within valid length
-                if ($pim->validPart($partnumber)) {
+            if (strlen($partnumber) <= 20 && strlen($partnumber) > 0 && $pim->validPart($partnumber))
+            { // partnumber is valid
 
-                    $attributename = trim($fields[1]);
-                    $attributevalue = trim($fields[2]);
-                    $PAID=intval(trim($fields[1]));
-                    $uom = '';
-                    if (count($fields) == 4 && trim($fields[3])!='') {
-                        $uom = trim($fields[3]);
-                    }
-                    
-                    if($PAID==0)
-                    {// this is a user-defined name string
-                        
-                        // look for reserved attribute names (GTIN,parttypeid,lifecyclestatus)
-                        // these will update the part table (not the part_attribute table)
-                        
-                        switch(trim($fields[1]))
-                        {
-                            case '':
-                                // blank name. Do nothing
-                                break;
-                            
-                            case 'GTIN':
-                                // maybe should validate the checkdigit and lengthere?
+                $attributename = trim($fields[1]);
+                $attributevalue = trim($fields[2]);
+                $PAID=intval(trim($fields[1]));
+                $uom = '';
+                if (count($fields) == 4 && trim($fields[3])!='') {
+                    $uom = trim($fields[3]);
+                }
+
+                if($PAID==0)
+                {// this is a user-defined name string
+
+                    // look for reserved attribute names (GTIN,parttypeid,lifecyclestatus)
+                    // these will update the part table (not the part_attribute table)
+
+                    switch(trim($fields[1]))
+                    {
+                        case '':
+                            // blank name. Do nothing
+                            break;
+
+                        case 'GTIN':
+                            if($pim->isValidBarcode($attributevalue))
+                            {// valid check digit
                                 $pim->setPartGTIN($partnumber, $attributevalue, true);
                                 $newoid=$pim->getOIDofPart($partnumber);
                                 $pim->logPartEvent($partnumber, $_SESSION['userid'], 'GTIN updated to ['.$attributevalue.'] by mass import', $newoid);
-                                break;
+                                $importcount++;
+                            }
+                            else
+                            {
+                                $errors[]= 'Invalid GTIN ['.$attributevalue.'] for partnumber ['.$partnumber.'] on line '.$recordnumber;
+                                $failedcount++;
+                            }
+                            break;
 
-                            case 'parttypeid':
-                                $parttypename=$pcdb->parttypeName(intval($attributevalue));
-                                if($parttypename!='not found')
-                                {
-                                    $pim->setPartParttype($partnumber, intval($attributevalue), true);
-                                    $newoid=$pim->getOIDofPart($partnumber);
-                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'part type updated to ['.$parttypename.'] by mass import', $newoid);
-                                }
-                                break;
+                        case 'parttypeid':
+                            $parttypename=$pcdb->parttypeName(intval($attributevalue));
+                            if($parttypename!='not found')
+                            {
+                                $pim->setPartParttype($partnumber, intval($attributevalue), true);
+                                $newoid=$pim->getOIDofPart($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'part type updated to ['.$parttypename.'] by mass import', $newoid);
+                                $importcount++;
+                            }
+                            else
+                            {// parttype was not valid
+                                $errors[]= 'Invalid parttypeid ['.$attributevalue.'] for partnumber ['.$partnumber.'] on line '.$recordnumber;
+                                $failedcount++;
+                            }
+                            break;
 
-                            case 'lifecyclestatus':
-                                $pim->setPartLifecyclestatus($partnumber, $attributevalue, true);
+                        case 'lifecyclestatus':
+                            $pim->setPartLifecyclestatus($partnumber, $attributevalue, true);
+                            $newoid=$pim->getOIDofPart($partnumber);
+                            $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle status updated to ['.$attributevalue.'] by mass import', $newoid);
+                            $importcount++;
+                            break;
+
+                        case 'replacedby':
+
+                            $replacedby=trim(strtoupper($attributevalue));
+
+                            if($pim->validPart($replacedby))
+                            {                                        
+                                $pim->setPartReplacedby($partnumber, $replacedby, true);
                                 $newoid=$pim->getOIDofPart($partnumber);
-                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle status updated to ['.$attributevalue.'] by mass import', $newoid);
-                                break;
-     
-                            case 'replacedby':
-                                
-                                $replacedby=trim(strtoupper($attributevalue));
-                                
-                                if($pim->validPart($replacedby))
-                                {                                        
-                                    $pim->setPartReplacedby($partnumber, $replacedby, true);
-                                    $newoid=$pim->getOIDofPart($partnumber);
-                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'replacedby updated to ['.$attributevalue.'] by mass import', $newoid);
-                                }
-                                break;
-                            
-                            
-                            default: 
-                                // attribute name is not reserved, and not a PAdb numeric ID
-                                $pim->writePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
-                                $newoid=$pim->getOIDofPart($partnumber);
-                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] writted by mass import', $newoid);
-                                break;
-                        }
-                    }
-                    else
-                    {// this is a PAdb numeric ID
-                        $pim->writePartAttribute($partnumber, $PAID, '', $attributevalue, $uom);
-                        $newoid=$pim->getOIDofPart($partnumber);
-                        $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] writted by mass import', $newoid);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'replacedby updated to ['.$attributevalue.'] by mass import', $newoid);
+                                $importcount++;
+                            }
+                            else
+                            {// replacement part is not valid
+                                $errors[]= $partnumber.': replacedby ['.$replacedby.'] is not a valid partnumber on line '.$recordnumber;
+                                $failedcount++;
+                            }
+                            break;
+
+
+                        default: 
+                            // attribute name is not reserved, and not a PAdb numeric ID
+                            $pim->writePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
+                            $newoid=$pim->getOIDofPart($partnumber);
+                            $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] writted by mass import', $newoid);
+                            break;
                     }
                 }
+                else
+                {// this is a PAdb numeric ID
+                    $pim->writePartAttribute($partnumber, $PAID, '', $attributevalue, $uom);
+                    $newoid=$pim->getOIDofPart($partnumber);
+                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] writted by mass import', $newoid);
+                }
             }
+            else
+            {// partnumber is not valid
+                $errors[]='Invalid partnumber ['.$partnumber.'] on line '.$recordnumber;
+                $failedcount++;
+            }
+        }
+        else
+        {// wrong field count
+            $errors[]='Wrong field count on line '.$recordnumber.'. Input data must have 3 or 4 tab-delimited data';
+            $failedcount++;
         }
     }
 }
@@ -137,6 +190,11 @@ if (isset($_POST['input'])) {
                                 
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
+                            
+                            <?php if($importcount>0){ echo '<div>Imported '.$importcount.' records.</div>';}?>
+                            
+                            <?php foreach($errors as $error){ echo '<div>'.$error.'</div>'; }?>
+                                                        
                         </div>
                     </div>
                     

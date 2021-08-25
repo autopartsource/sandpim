@@ -43,28 +43,32 @@ if (isset($_POST['input']))
   {
    $partnumber = trim(strtoupper($fields[0]));
 
-   if (strlen($partnumber) <= 20 && strlen($partnumber) > 0) 
-   { // partnumber is within valid length
-    if($pim->validPart($partnumber)) 
+   if(strlen($partnumber) <= 20 && strlen($partnumber) > 0 && $pim->validPart($partnumber)) 
+   { // partnumber is valid
+    $partnumber=strtoupper(trim($fields[0]));
+    $brandAAIAID=strtoupper(trim($fields[1]));
+    $competitorpartnumber= strtoupper(trim($fields[2]));
+    // look for a coma in the part and slpit accordingly
+    
+    $competitorparts=explode(',',$competitorpartnumber);
+    
+    foreach($competitorparts as $competitorpart)
     {
-     $partnumber=strtoupper(trim($fields[0]));
-     $brandAAIAID=strtoupper(trim($fields[1]));
-     $competitorpartnumber= strtoupper(trim($fields[2]));
      $interchangequantity= floatval(trim($fields[3]));
      $uom=trim($fields[4]);
      $interchangenotes=$fields[5];
      $internalnotes=$fields[6];
      
-     $interchange->addInterchange($partnumber,$competitorpartnumber,$brandAAIAID,$interchangequantity,$uom,$interchangenotes,$internalnotes);
-     $importresults[]='partnumber '.$partnumber.' interchange to '.$competitorpartnumber.' imported';
-     $pim->logPartEvent($partnumber,$_SESSION['userid'],'competitor interchange to:'.$brandAAIAID.'/'.$competitorpartnumber.' imported','');
+     $interchange->addInterchange($partnumber,trim($competitorpart),$brandAAIAID,$interchangequantity,$uom,$interchangenotes,$internalnotes);
+     $importresults[]='partnumber '.$partnumber.' interchange to '.trim($competitorpart).' imported';
+     $pim->logPartEvent($partnumber,$_SESSION['userid'],'competitor interchange to:'.$brandAAIAID.'/'.trim($competitorpart).' imported','');
      $importcount++;
     }
-    else
-    {// invalid part - make a note of it
+   }
+   else
+   {// invalid part - make a note of it
      $errors[]='invalid partnumber ['.$partnumber.'] in row '.$recordnumber;
      $invalidcount++;
-    }
    }
   }
   else
@@ -107,6 +111,7 @@ if (isset($_POST['input']))
                                 <div class="alert alert-secondary" role="alert">
                                     <h6 class="alert-heading">Paste 7 columns of tab-delimited data (no header row):</h6>
                                     <p>Partnumber, <a href="./competitiveBrandBrowser.php">Competitor BrandID</a>, Competitor partnumber, Competitor Quantity, UoM, Public Notes, Internal notes</p>
+                                    <p>Note: if Competitor partnumber contains comas, it will be split by coma into multiple records on the fly</p>
                                 </div>
                                     
                                 <textarea name="input" rows="15" cols="100"></textarea>

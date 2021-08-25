@@ -83,7 +83,7 @@ if(isset($_POST['input']))
    }
    else
    {// invalid part - make a note of it
-    $errors[]='invalid partnumber ['.$partnumber.']';
+    // $errors[]='invalid partnumber ['.$partnumber.']'; // avoid filling up log storage with the hundreds of potential invalid items several times a day
     $invalidcount++;
    }
   }
