@@ -609,20 +609,30 @@ class setup
         PRIMARY KEY (MakeID),
         INDEX idx_MakeName (MakeName))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - Make ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - Make ('.$db->conn->error.')';}
-
+        $sql="insert into Make values(54,'Ford');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into Make values(47,'Chevrolet');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into Make values(39,'Chrysler');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+                
         $sql="CREATE TABLE parttype (
         id int UNSIGNED NOT NULL,
         `name` varchar(255) not null,
         PRIMARY KEY (id),
         INDEX idx_name (`name`))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - parttype ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - parttype ('.$db->conn->error.')';}
-
+        $sql="insert into parttype values(1684,'Disc Brake Pad Set');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into parttype values(1896,'Disc Brake Rotor');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into parttype values(1688,'Drum Brake Shoe');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into parttype values(1744,'Brake Drum');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        
         $sql="CREATE TABLE position (
         id int UNSIGNED NOT NULL,
         `name` varchar(255) not null,
         PRIMARY KEY (id),
         INDEX idx_name (`name`))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - position ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - position ('.$db->conn->error.')';}
+        $sql="insert into position values(22,'Front');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into position values(30,'Rear');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
         $sql="CREATE TABLE user (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
