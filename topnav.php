@@ -48,6 +48,7 @@
         document.getElementById("clipboardButton").setAttribute("hidden", "");
     }
 
+
 </script>
 
 <nav class="navbar can-stick navbar-expand-md navbar-dark bg-dark">
@@ -56,7 +57,7 @@
     </button>    
     <div id="navbarMenu" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li<?php if ($navCategory == 'dashboard') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="index.php" class="nav-link">Dashboard</a></li>
+            <li<?php if ($navCategory == 'dashboard') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="index.php" class="nav-link">Home</a></li>
             <li<?php if ($navCategory == 'parts') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownParts" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Parts
@@ -137,14 +138,14 @@
                     <a class="dropdown-item" href="./importACESupload.php">ACES xml file</a>
                     <a class="dropdown-item" href="./importACEStext.php">Applications from text</a>
                     <a class="dropdown-item" href="./importPartText.php">Parts from text</a>
+                    <a class="dropdown-item" href="./importPartAttributeText.php">Part attributes from text</a>
                     <a class="dropdown-item" href="./importPackagingText.php">Packaging from text</a>
                     <a class="dropdown-item" href="./importPricesText.php">Prices from text</a>
-                    <a class="dropdown-item" href="./importPartAttributeText.php">Part attributes from text</a>
                     <a class="dropdown-item" href="./importInterchangeText.php">Competitor Interchange from text</a>
-                    <a class="dropdown-item" href="./importBrandTableText.php">Brand Table text</a>
                     <a class="dropdown-item" href="./importAssetText.php">Asset metadata from text</a>
                     <a class="dropdown-item" href="./updatePartBalances.php">Part balance data from text</a>
-                    <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads</a>
+                    <a class="dropdown-item" href="./importBrandTableText.php">AutoCare Brand Table text</a>
+                    <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads (VCdb, PCdb, PAdb, Qdb)</a>
                 </div>
             </li>
             <li<?php if ($navCategory == 'export') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
@@ -162,8 +163,11 @@
             </li>
         </ul>
         <div class="ms-auto">
-        
+            <form action="./showPart.php">
+                <input name="partnumber" type="text" id="partsearch" size="10"/><input type="submit" name="submit" value="Go"/>
+            </form>
         </div>
+        
         <div class="ms-auto">
         <ul class="nav navbar-nav">
             <button id="clipboardButton" type="button" class="btn btn-primary position-relative" type="button" data-bs-toggle="offcanvas" data-bs-target="#clipboard" aria-controls="clipboard" onclick="refreshClipboard()" hidden>
