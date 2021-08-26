@@ -9,7 +9,7 @@ class vcdb
  {
   $this->vcdbversion=$_vcdbversion;
  }
-
+/*
  function getMakes()
  {
   $db = new mysql; $db->dbname=$db->vcdbname;
@@ -25,7 +25,37 @@ class vcdb
   $db->close();
   return $makes;
  }
+*/
+ function getMakes($name=false)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname;
+  if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;}
+  $db->connect();
+  $makes=array();
 
+  $searchterm='%'; if($name){$searchterm=$name;}
+  
+  if($stmt=$db->conn->prepare('SELECT MakeID,MakeName FROM Make where MakeName like ? order by MakeName'))
+  {
+   $stmt->bind_param('s', $searchterm);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $makes[]=array('id'=>$row['MakeID'],'name'=>$row['MakeName']);
+   }
+  }
+  $db->close();
+  return $makes;
+ }
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  function getModels($makeid)
  {
   $db = new mysql; $db->dbname=$db->vcdbname;

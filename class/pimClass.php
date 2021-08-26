@@ -2093,6 +2093,36 @@ function countAppsByPartcategories($partcategories)
   return $success;
  }
 
+ 
+ function addFavoriteMake($makeid,$myname)
+ {
+  $db = new mysql; $db->connect(); $success=false;
+  $this->removeFavoriteMake($makeid);// just in case it already exists...
+  if($stmt=$db->conn->prepare('insert into Make values(?,?)'))
+  {
+   if($stmt->bind_param('is', $makeid,$myname))
+   {
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;
+ }
+
+ function removeFavoriteMake($makeid)
+ {
+  $db = new mysql; $db->connect(); $success=false;
+  if($stmt=$db->conn->prepare('delete from Make where MakeID=?'))
+  {
+   if($stmt->bind_param('i', $makeid))
+   {
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;
+ }
+  
  function removeFavoriteParttype($parttypeid)
  {
   $db = new mysql; $db->connect(); $success=false;

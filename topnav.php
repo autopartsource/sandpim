@@ -116,6 +116,7 @@
                     <a class="dropdown-item" href="./partCategories.php">Part Categories</a>
                     <a class="dropdown-item" href="./deliveryGroups.php">Delivery Groups</a>
                     <a class="dropdown-item" href="./receiverProfiles.php">Receiver Profiles</a>
+                    <a class="dropdown-item" href="./vcdbMakeBrowser.php">Favorite VCdb Makes</a>
                     <a class="dropdown-item" href="./pcdbTypeBrowser.php">Favorite PCdb parttypes</a>
                     <a class="dropdown-item" href="./pcdbPositionBrowser.php">Favorite PCdb positions</a>
                     <a class="dropdown-item" href="./competitiveBrandBrowser.php">Competitive Brands</a>
