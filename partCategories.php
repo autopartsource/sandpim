@@ -78,7 +78,7 @@ $partcategories = $pim->getPartCategories();
                                 $count=$pim->countPartsByPartcategory($partcategory['id']);
                                 echo '<tr>';
                                     echo '<td><a href="./partCategory.php?id='.$partcategory['id'].'">' . $partcategory['name'] . '</a></td>';
-                                    echo '<td><strong>'.$count.'<strong></td>';
+                                    echo '<td><strong><a href="./partsIndex.php?searchtype=startswith&partnumber=&partcategory='.$partcategory['id'].'&parttypeid=any&lifecyclestatus=any&limit='.$count.'&submit=Search">'.$count.'</a><strong></td>';
                                     echo '<td>';
                                         if(!$count){
                                             echo '<form method="post"><input type="hidden" name="categoryid" value="'.$partcategory['id'].'"/><input type="submit" name="submit" value="Delete"/></form>';

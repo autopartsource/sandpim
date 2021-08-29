@@ -20,7 +20,7 @@ function selfURL($makeid, $modelid, $yearid, $partcategories)
 function selfLink($makeid, $modelid, $yearid, $partcategories, $class, $displaytext)
 {
     $url=selfURL($makeid, $modelid, $yearid, $partcategories);
-    if($class!=''){$classparm='class="'.$class.'"';}
+    $classparm='class=""'; if($class!=''){$classparm='class="'.$class.'"';}
     return '<a '.$classparm.' href="'.$url.'">' . $displaytext . '</a>';
 }
 

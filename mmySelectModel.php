@@ -57,7 +57,7 @@ $groupedModelsCount = count($groupedmodels);
 
                         <div class="card-body">
                             <div class="container">
-                                <div class="row row-cols-1 row-cols-sm-2 <?php if(intval($groupedModelsCount) > 4) {echo "row-cols-md-"; echo intval($groupedModelsCount-2);} else {echo "row-cols-md-"+intval($groupedModelsCount);} echo " row-cols-lg-"; echo intval($groupedModelsCount);?>">
+                                <div class="row row-cols-1 row-cols-sm-2 <?php if(intval($groupedModelsCount) > 4) {echo "row-cols-md-"; echo intval($groupedModelsCount-2);} else {echo "row-cols-md-".intval($groupedModelsCount);} echo " row-cols-lg-"; echo intval($groupedModelsCount);?>">
                                 <?php
                                     for($y = 0;$y < $groupedModelsCount;$y++) {
                                         echo '<div class="col-sm">';

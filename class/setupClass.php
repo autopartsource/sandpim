@@ -981,10 +981,55 @@ class setup
         $sql="insert into documentation values(null,'EN','Apps/Show App/Cosmetic','Marking an app as Cosmetic will prevent it from being exported in an ACES file. Cosmetic apps fill-in holes implied in a matrix (printed page) presentation of the content.',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
 
+        $sql="CREATE TABLE kpi (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        description varchar(255) NOT NULL,
+        type varchar(255) NOT NULL,
+        timeunits varchar(255) NOT NULL,
+        horizonunits int unsigned not null,
+        rangemin decimal(10,2) not null,
+        rangemax decimal(10,2) not null,
+        target decimal(10,2) not null,
+        datakey varchar(255) NOT NULL,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - kpi ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - kpi ('.$db->conn->error.')';}
              
         
-        
-        
+
+        $sql="CREATE TABLE metrics (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        datakey varchar(255) NOT NULL,
+        capturedate date not null,
+        metric decimal(10,2) not null,
+        PRIMARY KEY (id),
+        INDEX idx_datakey_capturedate (datakey,capturedate))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - metrics ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - metrics ('.$db->conn->error.')';}
+             
+        $sql="CREATE TABLE experianVIO (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        yearQuarter varchar(255) NOT NULL,
+        geography varchar(255) NOT NULL,
+        vehicleID int unsigned null,
+        baseVehicleID int unsigned null,
+        yearID int unsigned null,
+        makeID int unsigned null,
+        modelID int unsigned null,
+        subModelID int unsigned null,
+        bodyTypeID int unsigned null,
+        bodyNumDoorsID int unsigned null,
+        driveTypeID int unsigned null,
+        fuelTypeID int unsigned null,
+        engineBaseID int unsigned null,
+        engineVINID int unsigned null,
+        fuelDeliverySubTypeID int unsigned null,
+        transControlTypeID int unsigned null,
+        transNumSpeedID int unsigned null,
+        aspirationID int unsigned null,
+        vehicleTypeID int unsigned null,
+        vehicleCount int unsigned null,
+        PRIMARY KEY (id),
+        INDEX idx_yearQuarter_geography_baseVehicleID (yearQuarter,geography,baseVehicleID))";
+
         $db->close();
         return $returnvalue;
     }

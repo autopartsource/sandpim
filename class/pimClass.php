@@ -147,7 +147,14 @@ function countAppsByPartcategories($partcategories)
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
   $db = new mysql;  $db->connect();
   $count=0;
-  if($stmt=$db->conn->prepare('select count(*) as appcount from application left join part on application.partnumber=part.partnumber where part.partcategory in('.$categorylist.')'))
+  
+  $sql='select count(*) as appcount from application left join part on application.partnumber=part.partnumber where part.partcategory in('.$categorylist.') and application.status=0';
+  if(count($partcategories)==0)
+  {
+      $sql='select count(*) as appcount from application where status=0'; 
+  }
+  
+  if($stmt=$db->conn->prepare($sql))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();

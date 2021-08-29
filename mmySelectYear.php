@@ -59,7 +59,7 @@ $groupedYearsCount = count($groupedyears);
 
                         <div class="card-body">
                             <div class="container">
-                                <div class="row row-cols-1 row-cols-sm-2 <?php if($groupedYearsCount > 4) {echo "row-cols-md-"; echo $groupedYearsCount-2;} else {echo "row-cols-md-"+$groupedYearsCount;} echo" row-cols-lg-"; echo $groupedYearsCount;?>">
+                                <div class="row row-cols-1 row-cols-sm-2 <?php if($groupedYearsCount > 4) {echo "row-cols-md-"; echo $groupedYearsCount-2;} else {echo "row-cols-md-".$groupedYearsCount;} echo" row-cols-lg-"; echo $groupedYearsCount;?>">
                                 <?php
                                     for($y = 0;$y < $groupedYearsCount;$y++) {
                                         echo '<div class="col-sm">';

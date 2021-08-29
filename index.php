@@ -9,6 +9,7 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/padbClass.php');
 include_once('./class/qdbClass.php');
+include_once('./class/kpiClass.php');
 
 $navCategory = 'dashboard';
 
@@ -28,6 +29,7 @@ $pcdb = new pcdb();
 $vcdb = new vcdb();
 $padb = new padb();
 $qdb = new qdb();
+$kpi=new kpi();
 
 
 $configGet = new configGet;
@@ -43,6 +45,9 @@ $assetissues=$pim->getIssues('ASSET/%','%','%',array(1,2),20);
 $systemissues=$pim->getIssues('SYSTEM/%','%','%',array(1,2),20);
 $sandpiperissues=$pim->getIssues('SANDPIPER/%','%','%',array(1,2),20);
 $issuescount=count($partissues)+count($appissues)+count($assetissues)+count($systemissues)+count($sandpiperissues);
+$metricsACTIVEPARTCOUNT=$kpi->getMetric('ACTIVE PART COUNT', date('Y-m-d', strtotime('-3 day')), date('Y-m-d',strtotime('+1 day')));
+$metricsPUBLICASSETCOUNT=$kpi->getMetric('PUBLIC ASSET COUNT', date('Y-m-d', strtotime('-3 day')), date('Y-m-d',strtotime('+1 day')));
+$metricsACTIVEAPPLICATIONCOUNT=$kpi->getMetric('ACTIVE APPLICATION COUNT', date('Y-m-d', strtotime('-3 day')), date('Y-m-d',strtotime('+1 day')));
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
@@ -84,26 +89,32 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                         
                         <!-- Main Content -->
                         <div class="card-body">
-                            
+
                             <div class="card">
-                                <h5 class="card-header text-start">Active AutoCare Reference Databases</h5>
+                                <h5 class="card-header text-start">Metrics</h5>
+
+
                                 <div class="card-body">
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">VCdb</th>
-                                                <th scope="col">PCdb</th>
-                                                <th scope="col">PAdb</th>
-                                                <th scope="col">Qdb</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Value</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td><?php echo $vcdb->version();?></td>
-                                                <td><?php echo $pcdb->version();?></td>
-                                                <td><?php echo $padb->version();?></td>
-                                                <td><?php echo $qdb->version();?></td>
+                                                <td>Active parts</td>
+                                                <td><?php if(count($metricsACTIVEPARTCOUNT)>0){echo number_format($metricsACTIVEPARTCOUNT[count($metricsACTIVEPARTCOUNT)-1]['value'],0,'.',',');} ?></td>
                                             </tr>
+                                            <tr>
+                                                <td>Active Applications</td>
+                                                <td><?php if(count($metricsACTIVEAPPLICATIONCOUNT)){echo number_format($metricsACTIVEAPPLICATIONCOUNT[count($metricsACTIVEAPPLICATIONCOUNT)-1]['value'],0,'.',',');} ?></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Public assets</td>
+                                                <td><?php if(count($metricsPUBLICASSETCOUNT)){echo number_format($metricsPUBLICASSETCOUNT[count($metricsPUBLICASSETCOUNT)-1]['value'],0,'.',',');} ?></td>
+                                            </tr>                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -191,6 +202,35 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                 </div>
                             </div>';
                             }?>
+
+
+                            
+                            <div class="card">
+                                <h5 class="card-header text-start">Active AutoCare Reference Databases</h5>
+                                <div class="card-body">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">VCdb</th>
+                                                <th scope="col">PCdb</th>
+                                                <th scope="col">PAdb</th>
+                                                <th scope="col">Qdb</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><?php echo $vcdb->version();?></td>
+                                                <td><?php echo $pcdb->version();?></td>
+                                                <td><?php echo $padb->version();?></td>
+                                                <td><?php echo $qdb->version();?></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+
+
                             
                             <?php
                             if(count($appshistory) || count($assetshistory) || count($partshistory) || count($systemhistory)) {
