@@ -3,6 +3,7 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/configGetClass.php');
 
 
 function selfURL($makeid, $modelid, $yearid, $partcategories)
@@ -50,10 +51,10 @@ header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
 header("Pragma: no-cache"); // HTTP 1.0.
 header("Expires: 0"); // Proxies.
 
-
 $vcdb = new vcdb;
 $pcdb = new pcdb;
 $qdb = new qdb;
+$configGet=new configGet;
 
 $makeid = intval($_REQUEST['makeid']);
 if (isset($_REQUEST['modelid'])) {
@@ -77,7 +78,8 @@ foreach ($_REQUEST as $getname => $getval) {
 
 $basevehicleid = $vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid);
 
-$viogeography='US'; $vioyearquarter='2021Q2';
+$viogeography=$configGet->getConfigValue('VIOdefaultGeography');
+$vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 $viototal=$pim->experianVehicleCount($viogeography, $vioyearquarter, $basevehicleid, array());
 
 

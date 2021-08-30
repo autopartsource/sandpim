@@ -681,7 +681,9 @@ class setup
         $sql="insert into config_options values('photoAssetHostURI','','','https://s3.amazonaws.com/autopartsourceimages/parts/','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('storeImageAssetsLocally','','','1','0 or 1 indicating local saving of image assets');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('systemDocRootRUL','','','/var/www/html','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into config_options values('requireCredentialsForBalanceUpdate','','','/var/www/html','Controls how updatePartBalancesAutomated API operates. Is set to yes, a valid username/password are required along in the POST of balance data.');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('requireCredentialsForBalanceUpdate','','','/var/www/html','Controls how updatePartBalancesAutomated API operates. Is set to yes, a valid username/password (any) are required along in the POST of balance data.');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('VIOdefaultGeography','','','US','If Experian VIO is used, this is the geography used for determining application vehicle counts and PIO');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('VIOdefaultYearQuarter','','','2021Q2','If Experian VIO is used, this is the year+quarter used for determining application vehicle counts and PIO');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
         
         $sql="CREATE TABLE issue (

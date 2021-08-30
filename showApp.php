@@ -4,6 +4,8 @@ include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/configGetClass.php');
+
 $navCategory = 'applications';
 
 $pim=new pim;
@@ -23,8 +25,8 @@ $vcdb=new vcdb;
 $pcdb=new pcdb;
 $qdb=new qdb;
 $asset=new asset();
+$configGet=new configGet();
 $userid=$_SESSION['userid'];
-
 $appid=intval($_GET['appid']);
 
 if(isset($_POST))
@@ -101,9 +103,7 @@ if(isset($_POST))
 
 }
 
-
 $app=$pim->getApp($appid);
-//print_r($app);
 
 $appcolor='#d0f0c0'; if($app['cosmetic']>0){$appcolor='#33FFD7';} if($app['status']>1){$appcolor='#FFD433';} if($app['status']==1){$appcolor='#FF5533';}
 
@@ -134,8 +134,8 @@ $pcdbversion=$pcdb->version();
 $historylimit=10;
 $history=$pim->getAppEvents($appid,$historylimit);
 
-
-$viogeography='US'; $vioyearquarter='2021Q2';
+$viogeography=$configGet->getConfigValue('VIOdefaultGeography');
+$vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 $vio=$pim->appVIOexperian($appid, $viogeography, $vioyearquarter, $app['attributes']);
 
 $selectedcategories=array(); $selectedcategoriesurlvars=array();
