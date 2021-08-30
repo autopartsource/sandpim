@@ -135,6 +135,9 @@ $historylimit=10;
 $history=$pim->getAppEvents($appid,$historylimit);
 
 
+$viogeography='US'; $vioyearquarter='2021Q2';
+$vio=$pim->appVIOexperian($appid, $viogeography, $vioyearquarter, $app['attributes']);
+
 $selectedcategories=array(); $selectedcategoriesurlvars=array();
 if(isset($_GET['categories']))
 {
@@ -655,9 +658,16 @@ if(isset($_GET['categories']))
                               if($pcdb->parttypeName($app['parttypeid'])=='not found'){echo '<div style="color:red;">Part Type id '.$app['parttypeid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
                               if($pcdb->positionName($app['positionid'])=='not found'){echo '<div style="color:red;">Position id '.$app['positionid'].' is not found in the loaded ('.$pcdbversion.') PCdb</div>';}
                              ?>
-
+                                
                             <table class="table" border="1" cellpadding="5">
-                                    <tr><th><a href="./showAppsByBasevehicle.php?<?php echo implode('&', $selectedcategoriesurlvars); ?>&makeid=<?php echo $mmy['MakeID']; ?>&modelid=<?php echo $mmy['ModelID']; ?>&yearid=<?php echo $year; ?>&submit=Show+Applications" class="btn btn-secondary">Base Vehicle</a></th><td align="left"><?php echo '<a href="appsIndex.php"  class="btn btn-secondary">'.$makename.'</a>  <a href="mmySelectModel.php?makeid=' . $mmy['MakeID'] . '" class="btn btn-secondary">'.$modelname.'</a> <a href="mmySelectYear.php?makeid=' . $mmy['MakeID'] . '&modelid=' . $mmy['ModelID'] . '" class="btn btn-secondary">'.$year.'</a>'; ?></td></tr>
+                                    <tr>
+                                        <th>
+                                            <a href="./showAppsByBasevehicle.php?<?php echo implode('&', $selectedcategoriesurlvars); ?>&makeid=<?php echo $mmy['MakeID']; ?>&modelid=<?php echo $mmy['ModelID']; ?>&yearid=<?php echo $year; ?>&submit=Show+Applications" class="btn btn-secondary">Base Vehicle</a>
+                                        </th>
+                                        <td align="left">
+                                            <?php echo '<a href="appsIndex.php"  class="btn btn-secondary">'.$makename.'</a>  <a href="mmySelectModel.php?makeid=' . $mmy['MakeID'] . '" class="btn btn-secondary">'.$modelname.'</a> <a href="mmySelectYear.php?makeid=' . $mmy['MakeID'] . '&modelid=' . $mmy['ModelID'] . '" class="btn btn-secondary">'.$year.'</a>'; ?>
+                                        </td>
+                                    </tr>
                                     <tr><th>Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber']; ?>" class="btn btn-secondary"><?php echo $app['partnumber']; ?></a></td></tr>
                                     <tr><th>Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid; ?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach ($favoriteparttypes as $parttype) { ?> <option value="<?php echo $parttype['id']; ?>"<?php if ($parttype['id'] == $app['parttypeid']) {
                                     echo ' selected';
@@ -780,6 +790,8 @@ if(isset($_GET['categories']))
                                         </td>
                                     <tr>
                                 <tr><th>IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id']; ?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid']; ?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid']; ?></div><div style="clear:both;"></div></td><tr>
+                                <tr><th>VIO</th><td><div style="float:left;"><?php echo $viogeography.' '.$vioyearquarter.': '.number_format($vio,0,'.',',');?></div></td></tr>
+
                                 <tr>
                                     <th id="label-cosmetic" class="appcosmetic-noncosmetic">Cosmetic</th>
                                     <td id="value-cosmetic" class="appcosmetic-noncosmetic" align="right">

@@ -77,6 +77,10 @@ foreach ($_REQUEST as $getname => $getval) {
 
 $basevehicleid = $vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid);
 
+$viogeography='US'; $vioyearquarter='2021Q2';
+$viototal=$pim->experianVehicleCount($viogeography, $vioyearquarter, $basevehicleid, array());
+
+
 $makename = $vcdb->makeName($makeid);
 $modelname = $vcdb->modelName($modelid);
 
@@ -356,18 +360,19 @@ ksort($fitmentcolumnkeys);
                         <h3 class="card-header">
 
                             <div style="padding:5px;float:left">
-                                <a class="btn btn-secondary" href="appsSelectCategory.php?makeid=<?php echo $makeid;?>&modelid=<?php echo $modelid;?>&yearid=<?php echo $yearid;?>">Categories</a>
+                                <a class="btn btn-secondary" href="appsSelectCategory.php?makeid=<?php echo $makeid;?>&modelid=<?php echo $modelid;?>&yearid=<?php echo $yearid;?>">Part Categories</a>
                             </div>
                             
+                            <div style="padding:5px;float:left">
+                                <?php echo '<a href="appsIndex.php">'.$makename.'</a>, <a href="mmySelectModel.php?makeid='.$makeid.'">'.$modelname.'</a> ';
+                                if ($prevyearexists) {echo selfLink($makeid, $modelid, ($yearid - 1), $partcategories, '', '<i class="bi bi-chevron-double-left"></i>');}
+                                echo $yearid;
+                                if ($nextyearexists) {echo selfLink($makeid, $modelid, ($yearid + 1), $partcategories, '', '<i class="bi bi-chevron-double-right"></i>');}?>
+                                
+                                <div style="font-size:45%;"><?php echo 'VIO ('.$viogeography.' '.$vioyearquarter.'): '.number_format($viototal,0,'.',','); ?></div>
+                                
+                            </div>
                             
-                            <?php echo '<a href="appsIndex.php">'.$makename.'</a>, <a href="mmySelectModel.php?makeid='.$makeid.'">'.$modelname.'</a> ';
-                            
-                            if ($prevyearexists) {echo selfLink($makeid, $modelid, ($yearid - 1), $partcategories, '', '<i class="bi bi-chevron-double-left"></i>');}
-
-                            echo $yearid;
-                            
-                            if ($nextyearexists) {echo selfLink($makeid, $modelid, ($yearid + 1), $partcategories, '', '<i class="bi bi-chevron-double-right"></i>');}?>
-
                             <div style="padding:5px;float:right">
                                 
                                 <?php if(count($clipboardapps)>0)

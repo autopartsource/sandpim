@@ -3132,9 +3132,69 @@ function updateAppSummary($partnumber,$summary)
   $db->close();
   return $insertednew;
  }
-
  
+ function appVIOexperian($appid,$geography, $yearquarter)
+ {// get the parts-in-operation count for a scpecific app (VIO*app_qty)
+  $returnVal=0;
+  if($app=$this->getApp($appid))
+  {//look through app's attributes for stuff that would mapp to experian's data. if we don't get any usable attributes, vio will be determined by basevehicle (mmy) alone
+   $vcdbattributes=array();
+   foreach($app['attributes'] as $attribute)
+   {
+    if($attribute['type']=='vcdb')
+    {
+     $vcdbattributes[$attribute['name']]=$attribute['value']; //$attribute['name'],$attribute['value']
+    }
+   }
+   $returnVal=$this->experianVehicleCount($geography, $yearquarter, $app['basevehicleid'], $vcdbattributes);   
+  }
+  return $returnVal;
+ }
+ 
+ 
+ function experianVehicleCount($geography,$yearquarter,$basevehicleid, $vcdbattributes)
+ {
+  $returnVal=-1;
+  
+  $whereclause='';
+  foreach($vcdbattributes as $vcdbattributename=>$vcdbattributevalue)
+  {
+   switch($vcdbattributename)
+   {
+    case 'VehicleID': $whereclause.=' and vehicleID ='.intval($vcdbattributevalue); break;
+    case 'SubModel': $whereclause.=' and subModelID ='.intval($vcdbattributevalue); break;
+    case 'BodyType': $whereclause.=' and bodyTypeID ='.intval($vcdbattributevalue); break;
+    case 'BodyNumDoors': $whereclause.=' and bodyNumDoorsID ='.intval($vcdbattributevalue); break;
+    case 'DriveType': $whereclause.=' and driveTypeID ='.intval($vcdbattributevalue); break;
+    case 'FuelType': $whereclause.=' and fuelTypeID ='.intval($vcdbattributevalue); break;
+    case 'EngineBase': $whereclause.=' and engineBaseID ='.intval($vcdbattributevalue); break;
+    case 'EngineVIN': $whereclause.=' and engineVINID ='.intval($vcdbattributevalue); break;
+    case 'FuelDeliverySubType': $whereclause.=' and fuelDeliverySubTypeID ='.intval($vcdbattributevalue); break;
+    case 'TransmissionControlType': $whereclause.=' and transControlTypeID ='.intval($vcdbattributevalue); break;
+    case 'TransmissionNumSpeeds': $whereclause.=' and transNumSpeedID ='.intval($vcdbattributevalue); break;
+    case 'Aspiration': $whereclause.=' and aspirationID ='.intval($vcdbattributevalue); break;
+    default: break;
+   }
+  }
 
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select sum(vehicleCount) as vcount from experianVIO where yearQuarter=? and geography=? and baseVehicleID=? '.$whereclause))
+  {
+   if($stmt->bind_param('ssi', $yearquarter, $geography, $basevehicleid))
+   {  
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $returnVal=$row['vcount'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $returnVal;
+ }
 
  
 }?>
