@@ -790,8 +790,8 @@ if(isset($_GET['categories']))
                                         </td>
                                     <tr>
                                 <tr><th>IDs</th><td><div style="float:left;">Application ID:</div><div style="float:left;"><?php echo $app['id']; ?></div><div style="clear:both;"></div><div style="float:left;">Sandpiper OID:</div><div style="float:left;" id="sandpiperoid"><?php echo $app['oid']; ?></div><div style="clear:both;"></div><div style="float:left;">BaseVehicle ID:</div><div style="float:left;"><?php echo $app['basevehicleid']; ?></div><div style="clear:both;"></div></td><tr>
-                                <tr><th>VIO</th><td><div style="float:left;"><?php echo $viogeography.' '.$vioyearquarter.': '.number_format($vio,0,'.',',');?></div></td></tr>
-
+                                <tr><th>VIO</th><td><div style="float:left;"><?php echo $viogeography.' '.$vioyearquarter.': <a href="./ExperianVIOsnippetStream.php?basevehicleid='.$app['basevehicleid'].'">'.number_format($vio,0,'.',',').'</a>';?></div></td></tr>
+                                
                                 <tr>
                                     <th id="label-cosmetic" class="appcosmetic-noncosmetic">Cosmetic</th>
                                     <td id="value-cosmetic" class="appcosmetic-noncosmetic" align="right">

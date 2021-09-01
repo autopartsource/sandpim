@@ -371,8 +371,8 @@ ksort($fitmentcolumnkeys);
                                 echo $yearid;
                                 if ($nextyearexists) {echo selfLink($makeid, $modelid, ($yearid + 1), $partcategories, '', '<i class="bi bi-chevron-double-right"></i>');}?>
                                 
-                                <div style="font-size:45%;"><?php echo 'VIO ('.$viogeography.' '.$vioyearquarter.'): '.number_format($viototal,0,'.',','); ?></div>
-                                
+                                <div style="font-size:45%;"><?php echo 'VIO ('.$viogeography.' '.$vioyearquarter.'): <a href="./ExperianVIOsnippetStream.php?basevehicleid='.$basevehicleid.'">'.number_format($viototal,0,'.',',').'</a>'; ?></div>
+                                                                
                             </div>
                             
                             <div style="padding:5px;float:right">
@@ -480,7 +480,7 @@ ksort($fitmentcolumnkeys);
                 
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
-                
+
                     
                 </div>
             </div>

@@ -17,7 +17,7 @@ $logs=new logs;
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
- $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'showPart.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
 
@@ -634,6 +634,7 @@ $vio=$pim->partVIOexperian($partnumber, 'US', '2021Q2');
                                         </td>
                                     <tr>
                                     <tr><th>VIO (<?php echo $viogeography.' '.$vioyearquarter;?>)</th><td><?php echo number_format($vio,0,'.',',');?></td><tr>
+
                                     <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
                                 </table>
                             </div>

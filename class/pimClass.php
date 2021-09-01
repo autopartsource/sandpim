@@ -3275,6 +3275,27 @@ function updateAppSummary($partnumber,$summary)
   return $returnval;  
  }
  
+ function getExperianBasevehicleRecords($geography,$yearquarter,$basevehicleid)
+ {
+  $records=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select yearQuarter,geography,yearQuarter,geography,vehicleID,baseVehicleID,subModelID,bodyTypeID,bodyNumDoorsID,driveTypeID,fuelTypeID,engineBaseID,engineVINID,fuelDeliverySubTypeID,transControlTypeID,transNumSpeedID,aspirationID,vehicleTypeID,vehicleCount from experianVIO where yearQuarter=? and geography=? and baseVehicleID=?'))
+  {
+   if($stmt->bind_param('ssi', $yearquarter, $geography, $basevehicleid))
+   {  
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $records[]=array('yearquarter'=>$row['yearQuarter'],'geography'=>$row['geography'],'basevehicleid'=>$row['baseVehicleID'],'vehicleid'=>$row['vehicleID'],'submodelid'=>$row['subModelID'],'bodytypeid'=>$row['bodyTypeID'],'bodynumdoorsid'=>$row['bodyNumDoorsID'],'drivetypeid'=>$row['driveTypeID'],'fueltypeid'=>$row['fuelTypeID'],'enginebaseid'=>$row['engineBaseID'],'enginevinid'=>$row['engineVINID'],'fueldeliverysubtypeid'=>$row['fuelDeliverySubTypeID'],'transmissioncontroltypeid'=>$row['transControlTypeID'],'transmissionnumspeedsid'=>$row['transNumSpeedID'],'aspirationid'=>$row['aspirationID'],'vehicletypeid'=>$row['vehicleTypeID'],'vehiclecount'=>$row['vehicleCount']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $records;
+ }
  
  
  

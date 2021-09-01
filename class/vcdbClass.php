@@ -137,6 +137,28 @@ class vcdb
   $db->close();
   return $name;
  }
+ 
+ function vehicleTypeName($vehicletypeid)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname;
+  if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;}
+  $db->connect();
+  $name='not found';
+  if($stmt=$db->conn->prepare('select VehicleTypeName from VehicleType where VehicleTypeID=?'))
+  {
+   $stmt->bind_param('i', $vehicletypeid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $name=$row['VehicleTypeName'];
+   }
+  }
+  $db->close();
+  return $name;
+ }
+ 
+ 
 
  function niceMMYofBasevid($basevehicelid)
  {
