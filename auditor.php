@@ -47,8 +47,16 @@ foreach($partnumbers as $partnumber)
     $part=$pim->getPart($partnumber);
         
     // we only care about parts in an active lifecycle status (proposed and obsolete are not audited)
-    if($part['lifecyclestatus']=='0' || $part['lifecyclestatus']=='9'){continue;} 
- 
+    if($part['lifecyclestatus']=='9'){continue;} 
+
+    $partbalance=$pim->getPartBalance($partnumber);
+    $partqoh=0; if($partbalance){$partqoh=$partbalance['qoh'];}
+    
+       
+    if($part['lifecyclestatus']=='0' && $partqoh==0){continue;} 
+
+    
+    
     // Invalid part-type detection (according to the default PCdb)    
     if($pcdb->parttypeName($part['parttypeid'])=='not found')
     {// part type id is not valid according to default PCdb
@@ -123,6 +131,17 @@ foreach($partnumbers as $partnumber)
             }
         }
     }
+    
+    // find lifecycle "proposed" parts with quantity on-hand
+    if($partqoh > 0 && $part['lifecyclestatus']=='0')
+    {
+        $issuehash=md5('PART/LIFECYCLE/OBSOLETE'.$partnumber.'0'.'Lifecycle status is Proposed, but there is stock on-hand. Maybe it should be marked as available?'.'background auditor');
+        if(!$pim->getIssueByHash($issuehash))
+        {// this issue is not already recorded 
+            $pim->recordIssue('PART/LIFECYCLE/OBSOLETE',$partnumber,0,'Lifecycle status is Proposed, but there is stock on-hand. Maybe it should be marked as available?','background auditor', $issuehash);
+        }
+    }
+       
     
     // find non-existing PAdb attributes 
     $attributes = $pim->getPartAttributes($partnumber);

@@ -3197,4 +3197,86 @@ function updateAppSummary($partnumber,$summary)
  }
 
  
+
+ function partVIOexperian($partnumber, $geography, $yearquarter)
+ {
+  $viototal=0;
+     
+ // start with list of all apps for a given partnumber
+ // build a associative array keyed by basvid and the values being array of apps (basevid-keyed apps)
+ // get the vehilceCount for the basevid
+ // determine usaable vs un-usable apps within each basevid grouping. Usable are apps that have one or more Experian VCdb attributes, un-usable are apps that dont have any of the Experian attributes
+ 
+  $allappsforpart=$this->getAppsByPartnumber($partnumber);
+  $basevidkeyedapps=array(); foreach($allappsforpart as $app){$basevidkeyedapps[$app['basevehicleid']][]=$app;}
+  
+  foreach($basevidkeyedapps as $basevehicleid=>$apps)
+  {  // get the vio total for this basevid (mmy only, no qualifiers)
+   $bsaevidtotal=0;
+   $usableapps=array();
+   $unusableappexists=false;
+   
+   foreach($apps as $app)
+   {
+    if($this->attributesAreExperianUseful($app['attributes']))
+    {// this app contains experian-usable attributed
+     $usableapps[]=$app;
+    }
+    else
+    {
+     $unusableappexists=true;
+    }
+   }
+       
+   if($unusableappexists)
+   {
+    $bsaevidtotal=$this->experianVehicleCount($geography, $yearquarter, $basevehicleid, []);
+   }
+   else
+   {
+    foreach($usableapps as $usableapp)
+    {
+     $vcdbattributes=array();
+     foreach($usableapp['attributes'] as $attribute)
+     {
+      if($attribute['type']=='vcdb')
+      {
+       $vcdbattributes[$attribute['name']]=$attribute['value']; //$attribute['name'],$attribute['value']
+      }
+     }
+     $bsaevidtotal+=$this->experianVehicleCount($geography, $yearquarter, $basevehicleid, $vcdbattributes);   
+    }
+   }
+   
+   $viototal+=$bsaevidtotal;
+  }
+  return $viototal;
+  //return $basevidkeyedapps;
+ }
+ 
+ 
+ function attributesAreExperianUseful($attributes)
+ {
+  $returnval=false;
+
+  foreach($attributes as $attribute)
+  {
+   if($attribute['type']=='vcdb')
+   {
+    $n=$attribute['name'];
+    if($n=='VehicleID' || $n=='SubModel' || $n=='BodyType' || $n=='BodyNumDoors' || $n=='DriveType' || $n=='FuelType' || $n=='EngineBase' || $n=='EngineVIN' || $n=='FuelDeliverySubType' || $n=='TransmissionControlType' || $n=='TransmissionNumSpeeds' || $n=='Aspiration')
+    {// this attribute is meaningful to experian's VIO data
+     $returnval=true;
+     break;
+    }
+   }
+  }
+  
+  return $returnval;  
+ }
+ 
+ 
+ 
+ 
+ 
 }?>

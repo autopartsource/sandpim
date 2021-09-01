@@ -86,6 +86,10 @@ $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCo
 
 $balance=$pim->getPartBalance($partnumber);
 
+$viogeography=$configGet->getConfigValue('VIOdefaultGeography');
+$vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
+$vio=$pim->partVIOexperian($partnumber, 'US', '2021Q2');
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -629,6 +633,7 @@ $balance=$pim->getPartBalance($partnumber);
                                             ?>
                                         </td>
                                     <tr>
+                                    <tr><th>VIO (<?php echo $viogeography.' '.$vioyearquarter;?>)</th><td><?php echo number_format($vio,0,'.',',');?></td><tr>
                                     <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
                                 </table>
                             </div>
