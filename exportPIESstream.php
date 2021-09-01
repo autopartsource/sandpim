@@ -230,7 +230,7 @@ foreach($partnumbers as $partnumber)
   
  //--------------------- assets -------------------------------    
     
-  $digialassetconnections=$assets->getAssetsConnectedToPart($partnumber);
+  $digialassetconnections=$assets->getAssetsConnectedToPart($partnumber,true); // second arg is "$excludenonpublic". Setting it to true will cause only public=1 records to be returned
   if($digialassetconnections && count($digialassetconnections))
   {
    foreach($digialassetconnections as $digitalassetconnection)

@@ -4,6 +4,15 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'export';
 
+$pim = new pim;
+
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'exportPIESselect.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 session_start();
 if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
@@ -11,7 +20,6 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $vcdb = new vcdb;
-$pim = new pim;
 
 $partcategories = $pim->getPartCategories();
 $receiverprofiles=$pim->getReceiverprofiles();
