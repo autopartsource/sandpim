@@ -1031,11 +1031,27 @@ class setup
         vehicleCount int unsigned null,
         PRIMARY KEY (id),
         INDEX idx_yearQuarter_geography_baseVehicleID (yearQuarter,geography,baseVehicleID))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - experianVIO ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - experianVIO ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE part_VIO (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(255) NOT NULL,
+        yearQuarter varchar(255) NOT NULL,
+        geography varchar(255) NOT NULL,
+        capturedate date not null,
+        vehicleCount int unsigned null,        
+        PRIMARY KEY (id),
+        INDEX idx_part_geo_yrQtr (partnumber, geography, yearQuarter),
+        INDEX idx_capturedate (capturedate))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_VIO ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_VIO ('.$db->conn->error.')';}      
+        
         $db->close();
         return $returnvalue;
     }
 
+    
+    
+    
 
 
 // see what schema version is claimed by pim

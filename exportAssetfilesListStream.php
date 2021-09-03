@@ -57,7 +57,7 @@ if($profile)
  $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
  foreach($partnumbers as $partnumber)
  {
-  $digialassetconnections=$assets->getAssetsConnectedToPart($partnumber);
+  $digialassetconnections=$assets->getAssetsConnectedToPart($partnumber,true); // second parm cause non-public assets to be excluded from export
   if($digialassetconnections && count($digialassetconnections))
   {
    foreach($digialassetconnections as $digitalassetconnection)

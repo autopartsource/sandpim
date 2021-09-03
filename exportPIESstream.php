@@ -1,5 +1,7 @@
 <?php
 include_once('./class/vcdbClass.php');
+include_once('./class/pcdbClass.php');
+include_once('./class/padbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/pricingClass.php');
 include_once('./class/interchangeClass.php');
@@ -8,6 +10,8 @@ include_once('./class/packagingClass.php');
 include_once('./class/PIES7_1GeneratorClass.php');
 
 $vcdb = new vcdb;
+$pcdb = new pcdb;
+$padb = new padb;
 $pim = new pim;
 $pricing = new pricing;
 $interchange= new interchange;
@@ -72,8 +76,8 @@ foreach($elements as $element)
     }
 }
 $header['BlanketEffectiveDate']= date('Y-m-d');
-$header['PAdbVersionDate']=date('Y-m-d');
-$header['PCdbVersionDate']=date('Y-m-d');
+$header['PAdbVersionDate']=$padb->version();
+$header['PCdbVersionDate']=$pcdb->version();
 
 $logicerrors=array();
 

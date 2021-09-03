@@ -3250,12 +3250,82 @@ function updateAppSummary($partnumber,$summary)
    
    $viototal+=$bsaevidtotal;
   }
+  $this->updatePartVIO($partnumber,$geography,$yearquarter,$viototal);
   return $viototal;
   //return $basevidkeyedapps;
  }
  
- 
- function attributesAreExperianUseful($attributes)
+
+
+
+ function updatePartVIO($partnumber,$geography,$yearquarter,$vehiclecount)
+ {
+  $db=new mysql; $db->connect(); $insertednew=false;
+  if($stmt=$db->conn->prepare('select id from part_VIO where partnumber=? and geography=? and yearquarter=?'))
+  {
+   $stmt->bind_param('sss',$partnumber,$geography,$yearquarter);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {// record exists for this part
+    if($stmt=$db->conn->prepare('update part_VIO set capturedate=now(),vehicleCount=? where partnumber=? and geography=? and yearquarter=?'))
+    {
+     $stmt->bind_param('isss',$vehiclecount, $partnumber, $geography, $yearquarter);
+     $stmt->execute();
+    }
+   }
+   else
+   {// record does not exist for this part. Insert a new one
+    if($stmt=$db->conn->prepare('insert into part_VIO (id,partnumber,yearQuarter,geography,capturedate,vehicleCount) values(null,?,?,?,now(),?)'))
+    {
+     $stmt->bind_param('sssi', $partnumber, $yearquarter, $geography, $vehiclecount);
+     $stmt->execute();
+     $insertednew=true;
+    }      
+   }
+  }
+  $db->close();
+  return $insertednew;
+ }
+
+ function partVIO($partnumber,$geography,$yearquarter)
+ {
+  $viototal=0;
+  $records=$this->getPartVIOrecords($partnumber, $geography, $yearquarter);
+  if(count($records))
+  {
+   $viototal=$records[0]['vehiclecount'];      
+  }
+  return $viototal;
+ }
+
+ function getPartVIOrecords($partnumber,$geography,$yearquarter)
+ {
+  $db = new mysql; $db->connect(); $returnval=array();
+  if($stmt=$db->conn->prepare('select id,partnumber,yearQuarter,geography,capturedate,vehicleCount, DATEDIFF(now(),capturedate) as age from part_VIO where partnumber=? and geography=? and yearQuarter=?'))
+  {
+   if($stmt->bind_param('sss',$partnumber,$geography,$yearquarter))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $returnval[]=array('id'=>$row['id'], 'partnumber'=>$row['partnumber'], 'yearquarter'=>$row['yearQuarter'],'geography'=>$row['geography'], 'capturedate'=>$row['capturedate'],'vehiclecount'=>$row['vehicleCount'],'recordage'=>$row['age']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
+
+
+
+
+
+
+function attributesAreExperianUseful($attributes)
  {
   $returnval=false;
 

@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $pim = new pim();
@@ -27,8 +28,14 @@ $pcdb = new pcdb();
 $asset=new asset();
 $writer = new XLSXWriter();
 $pcdbVersion=$pcdb->version();
+$configGet = new configGet();
+
 
 $receiverprofileid=intval($_GET['receiverprofile']);
+
+$viogeography=$configGet->getConfigValue('VIOdefaultGeography');
+$vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
+
 
 $streamXLSX=false;
 $xlsxdata='';
@@ -47,6 +54,11 @@ $assettypes['P04']='';
 
 foreach($partnumbers as $partnumber)
 {
+ if(!array_key_exists($partnumber, $matrix))
+ {
+  $matrix[$partnumber]=array();
+ }
+    
  $assetconnections=$asset->getAssetsConnectedToPart($partnumber); //array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename']);
 
  foreach($assetconnections as $assetconnection)
@@ -62,15 +74,15 @@ foreach($partnumbers as $partnumber)
 }
 
 
-$columnnames=array('Partnumber'=>'string','Lifecycle Status'=>'string');
+$columnnames=array('Partnumber'=>'string','Lifecycle Status'=>'string','Qty On-Hand'=>'number','Monthly Demand'=>'number','VIO'=>'number');
 foreach($assettypes as $assettype=>$trash)
 {
  $columnnames[$pcdb->assetTypeCodeDescription($assettype)]='string';
 }
  
-$columnwidths=array(12);
+$columnwidths=array(15,16,12,15,10);
 foreach($assettypes as $assettype=>$trsah){$columnwidths[]=20;} 
-$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
+$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
 foreach($assettypes as $assettype=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
 
 $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
@@ -79,7 +91,14 @@ foreach($matrix as $partnumber=>$columns)
 {
  $part=$pim->getPart($partnumber);
  
- $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']));
+ $qoh=0; $amd=0;
+ $partbalance=$pim->getPartBalance($partnumber);
+ if($partbalance){$qoh=$partbalance['qoh']; $amd=$partbalance['amd'];}
+
+ $viototal=$pim->partVIO($partnumber, $viogeography, $vioyearquarter);
+ 
+ 
+ $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']),$qoh,$amd,$viototal);
  foreach($assettypes as $assettype=>$trash)
  {
   if(array_key_exists($assettype, $columns))

@@ -88,7 +88,7 @@ $balance=$pim->getPartBalance($partnumber);
 
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
-$vio=$pim->partVIOexperian($partnumber, 'US', '2021Q2');
+$vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
 
 ?>
 <!DOCTYPE html>
