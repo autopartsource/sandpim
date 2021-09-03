@@ -1302,41 +1302,44 @@ class plans extends sandpiper
             case 'POST':        
 
                 /*
-                 * these are the POST scenatios
-                    /v1/plans/invoke
-                    /v1/plans/proposals/new
-                    /v1/plans/[uuid]/hold
-                    /v1/plans/proposals/[uuid]/approve
-                    /v1/plans/proposals/[uuid]/reject
+                 * /v1/plans/invoke
+                 * /v1/plans/propose
+                 * /v1/plans/[uuid]/propose
+                 * /v1/plans/[uuid]/approve
+                 * /v1/plans/[uuid]/hold
+                 * /v1/plans/[uuid]/terminate
+                 * /v1/plans/[uuid]/obsolete
                  */
-                
-                
+                                
                 switch(count($this->requesturi))
                 {
                     case 5:
                         // /plans/invoke
-                        
+                        // /plans/propose
                             $uripart=$this->extractParms($this->requesturi[4]);
+                        
                             if($uripart=='invoke')
                             {//   /plans/invoke
-            
-                                $this->response=array('sandpiper response code'=>'2xxx','message'=>'invoking new plan','http response code'=>200);
-                                
+                                $this->response=array('sandpiper response code'=>'2xxx','message'=>'client asked for plan invocation','http response code'=>200);
                             }
-                            else
-                            {//   /plans/???
-                                
-                                $this->response=array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/. Expected invoke verb, got this instead: '.$uripart,'http response code'=>400);
+                            
+                            if($uripart=='propose')
+                            {//   /plans/invoke
+                                $this->response=array('sandpiper response code'=>'2xxx','message'=>'client proposed a new plan','http response code'=>200);
                             }
-                        
+                                                       
                         break;
                         
                 
                 
                     case 6:
-                        //   /plans/[uuid]/hold
-                        //   /plans/proposals/new
-
+                        /*
+                        * /v1/plans/[uuid]/propose
+                        * /v1/plans/[uuid]/approve
+                        * /v1/plans/[uuid]/hold
+                        * /v1/plans/[uuid]/terminate
+                        * /v1/plans/[uuid]/obsolete
+                        */
                         if($this->looksLikeAUUID($this->requesturi[4]))
                         { //probably   /plans/[uuid]/hold
                             
@@ -1354,7 +1357,7 @@ class plans extends sandpiper
                             }
                         }
                         else
-                        {// probably /plans/proposals/new
+                        {//   /v1/plans/{no-at-uuid}/xxx
                         
                             $uripart=$this->extractParms($this->requesturi[5]);
                             if($this->requesturi[4]=='proposals' && $uripart=='new')

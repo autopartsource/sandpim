@@ -56,35 +56,7 @@ switch($uriparts[2])
         
         echo '"Sandpiper API OK"';
         break;
-
-    case 'login':
-        $sandpiper=new sandpiper;
-
-        if($method=='POST')
-        {
-            if(array_key_exists('username',$postbody) &&  array_key_exists('password',$postbody))
-            {// user and pass were provided
-                $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
-                $response = $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
-                if(isset($response['http response code']))
-                {
-                    http_response_code($response['http response code']);        
-                }
-                echo json_encode($response);
-            }
-            else
-            {// username or password not present in login post body
-                http_response_code(400);
-            }
-        }
-
-        if($method=='GET')
-        {
-            echo 'API OK';
-        }
-        
-        break;
-    
+   
     
     case 'v1':
 
@@ -95,6 +67,36 @@ switch($uriparts[2])
         
         switch($root)
         {
+
+        case 'login':
+            $sandpiper=new sandpiper;
+
+            if($method=='POST')
+            {
+                if(array_key_exists('username',$postbody) &&  array_key_exists('password',$postbody))
+                {// user and pass were provided
+                    $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
+                    $response = $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
+                    if(isset($response['http response code']))
+                    {
+                        http_response_code($response['http response code']);        
+                    }
+                    echo json_encode($response);
+                }
+                else
+                {// username or password not present in login post body
+                    http_response_code(400);
+                }
+            }
+
+            if($method=='GET')
+            {
+                echo 'API is OK';
+            }
+
+            break;
+
+
             
             case 'plans':
                 $plans=new plans($uriparts,$method,$postbody,$jwtpresented);

@@ -19,6 +19,8 @@ $logs=new logs();
 // PIO re-calc for all active parts
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
+
+$updatedpartcount=0;
 if($viogeography && $vioyearquarter)
 {
  $activeparts=$pim->getParts('', 'contains', 'any', 'any', '2', 1000000); //array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
@@ -31,20 +33,26 @@ if($viogeography && $vioyearquarter)
    if($piorecord['recordage']>1){$needupdate=true;}
    $foundrecord=true;
   }
+  
   if($needupdate || !$foundrecord)
   {
    $viototal=$pim->partVIOexperian($part['partnumber'], $viogeography, $vioyearquarter);
+   $updatedpartcount++;
   }
  }
 }
 else
 {
- $logs->logSystemEvent('housekeeper', 0, 'Background houskeeper skipped parts VIO update because VIOdefaultGeography or VIOdefaultYearQuarter are not set in config.'); 
+ $logs->logSystemEvent('housekeeper', 0, 'Background housekeeper skipped part VIO updates because VIOdefaultGeography or VIOdefaultYearQuarter is not set in the config.'); 
 }
+$logs->logSystemEvent('housekeeper', 0, 'Background houskeeper updated VIO counts on '.$updatedpartcount. ' parts.'); 
+
+
+
 
 
 $runtime=time()-$starttime;
-if($runtime > 45)
+if($runtime > 30)
 {
  $logs->logSystemEvent('housekeeper', 0, 'Background houskeeper process ran for '.$runtime.' seconds');
 }
