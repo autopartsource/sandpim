@@ -95,7 +95,7 @@ class sandpiper
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
          //$returnvalue= array('message'=>array('message_code'=>'1xxx','message_text'=>'1xxx'),'token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful Authentication with plan: '.$planuuid,'http response code'=>200);
-         $returnvalue= array('token'=>$jwt,'message'=>array('message_code'=>3001,'message_text'=>'plan xml schema errors:'.$plandocument['schemaerrors']),'http response code'=>200);
+         $returnvalue= array('token'=>$jwt,'message'=>array('message_code'=>3001,'message_text'=>'authentication success'),'http response code'=>200);
          
          
         }
@@ -103,8 +103,7 @@ class sandpiper
         {// plan presented had XSD errors
          //$returnvalue='{"sandpiper status code":"3xxx","message":"Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')","http status":"4xx"}';         
 //         $returnvalue=array('message_code'=>'3xxx','message'=>'Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')','http response code'=>400);
-         $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure'),'http response code'=>401);
-
+         $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (xml schema errors):'.plandocument['schemaerrors']),'http response code'=>401);
         }        
        }
        else
@@ -124,7 +123,7 @@ class sandpiper
       {// log the failure event
         $logs->logSystemEvent('loginfailure', $this->userid, 'sandpiper API login failed from '.$address);
         //$returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
-        $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure'),'http response code'=>401);
+        $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (bad password)'),'http response code'=>401);
       }
      }
      else
@@ -133,7 +132,7 @@ class sandpiper
        $trash= password_verify('asdkjflkasjdfkl', '$argon2id$v=19$m=65536,t=4,p=1$NnBsSTgvZmpNbmdoeXo2eA$LWpqCgHuxVmgEwDMSf3o5SM1AWT7qbCtkV8ckxBCr94');      
        $logs->logSystemEvent('loginfailure', 0, 'sandpiper API unknown user ('.$username.') from '.$address);
        //$returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
-       $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure'),'http response code'=>401);
+       $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (unknown user)'),'http response code'=>401);
 
      }
      return $returnvalue; 
