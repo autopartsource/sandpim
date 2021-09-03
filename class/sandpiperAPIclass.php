@@ -1305,17 +1305,31 @@ class plans extends sandpiper
     {
         switch($this->method)
         {
+            case 'GET':
             
-            /*
-             *  these are the GET scenarios
+            /**  these are the GET scenarios
                 /v1/plans/invoke
              */
             
-            
-            case 'GET':
-            
-                
-                $this->response=array('message'=>'GET method not yet built');
+                if(count($this->requesturi)==5)
+                {
+                    $uripart=$this->extractParms($this->requesturi[4]);
+
+                    if($uripart=='invoke')
+                    {//   /v1/plans/invoke
+                        
+                        $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'plan_description'=>'fragment plan','plan_status'=>'Proposed','payload'=>'<xml></xml>'),'message'=>array('message_code'=>2000,'message_text'=>'client asked for plan invocation'),'http response code'=>200);
+                       
+                    }
+                    else
+                    {
+                        $this->response=array('message_code'=>'3000','message'=>'unexpected verb after /plans/. Expected invoke','http response code'=>400);                    
+                    }
+                }
+                else
+                {// too many uri parts
+                    $this->response=array('message_code'=>'3000','message'=>'unexpected input after /plans/. Expected invoke verb','http response code'=>400);                    
+                }
             
                 break;
         
