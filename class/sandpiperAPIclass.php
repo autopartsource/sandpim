@@ -94,12 +94,17 @@ class sandpiper
          $secret=$this->getJWTsecret();
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
-         $returnvalue= array('sandpiper response code'=>'1xxx','token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful Authentication with plan: '.$planuuid,'http response code'=>200);
+         //$returnvalue= array('message'=>array('message_code'=>'1xxx','message_text'=>'1xxx'),'token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful Authentication with plan: '.$planuuid,'http response code'=>200);
+         $returnvalue= array('token'=>$jwt,'message'=>array('message_code'=>3001,'message_text'=>'plan xml schema errors:'.$plandocument['schemaerrors']),'http response code'=>200);
+         
+         
         }
         else
         {// plan presented had XSD errors
          //$returnvalue='{"sandpiper status code":"3xxx","message":"Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')","http status":"4xx"}';         
-         $returnvalue=array('sandpiper response code'=>'3xxx','message'=>'Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')','http response code'=>400);
+//         $returnvalue=array('message_code'=>'3xxx','message'=>'Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')','http response code'=>400);
+         $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure'),'http response code'=>401);
+
         }        
        }
        else
@@ -111,13 +116,15 @@ class sandpiper
          $secret=$this->getJWTsecret();
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' with null plan');
-         $returnvalue= array('sandpiper response code'=>'12xx','token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>'','message'=>'Authenticated with null plan - limited resources avail','http response code'=>200);
+         //$returnvalue= array('message_code'=>'12xx','token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>'','message'=>'Authenticated with null plan - limited resources avail','http response code'=>200);
+         $returnvalue= array('token'=>$jwt,'message'=>array('message_code'=>1001,'message_text'=>'authentication success'),'http response code'=>200);         
         }
       } 
       else
       {// log the failure event
         $logs->logSystemEvent('loginfailure', $this->userid, 'sandpiper API login failed from '.$address);
-        $returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
+        //$returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
+        $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure'),'http response code'=>401);
       }
      }
      else
@@ -125,7 +132,9 @@ class sandpiper
        //  burn the amount of time that a password verification would have taken had this been a known username. This is to thwart a timing attack: Baddie could determine validity of arbitrary usernames thrown at the api because they all take a similar hmac time (several hundred mS)
        $trash= password_verify('asdkjflkasjdfkl', '$argon2id$v=19$m=65536,t=4,p=1$NnBsSTgvZmpNbmdoeXo2eA$LWpqCgHuxVmgEwDMSf3o5SM1AWT7qbCtkV8ckxBCr94');      
        $logs->logSystemEvent('loginfailure', 0, 'sandpiper API unknown user ('.$username.') from '.$address);
-       $returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
+       //$returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
+       $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure'),'http response code'=>401);
+
      }
      return $returnvalue; 
     }
@@ -1281,18 +1290,12 @@ class plans extends sandpiper
             
             /*
              *  these are the GET scenarios
-                /v1/plans/[uuid]
                 /v1/plans/invoke
-                /v1/plans/proposals
-                /v1/plans/proposals/[uuid]
              */
             
             
             case 'GET':
             
-                
-                
-                
                 
                 $this->response=array('message'=>'GET method not yet built');
             
@@ -1320,12 +1323,12 @@ class plans extends sandpiper
                         
                             if($uripart=='invoke')
                             {//   /plans/invoke
-                                $this->response=array('sandpiper response code'=>'2xxx','message'=>'client asked for plan invocation','http response code'=>200);
+                                $this->response=array('message_code'=>'2xxx','message'=>'client asked for plan invocation','http response code'=>200);
                             }
                             
                             if($uripart=='propose')
                             {//   /plans/invoke
-                                $this->response=array('sandpiper response code'=>'2xxx','message'=>'client proposed a new plan','http response code'=>200);
+                                $this->response=array('message_code'=>'2xxx','message'=>'client proposed a new plan','http response code'=>200);
                             }
                                                        
                         break;
@@ -1340,94 +1343,54 @@ class plans extends sandpiper
                         * /v1/plans/[uuid]/terminate
                         * /v1/plans/[uuid]/obsolete
                         */
+                        
                         if($this->looksLikeAUUID($this->requesturi[4]))
                         { //probably   /plans/[uuid]/hold
+
+                            $this->response=array('message_code'=>'3xxx','message'=>'Unknown verb after /plans/[uuid]/', 'http response code'=>400);
+
                             
                             $planuuid=$this->requesturi[4];
                             $uripart=$this->extractParms($this->requesturi[5]);
+                            
+                            if($uripart=='propose')
+                            {//   /plans/[uuid]/propose
+                                $this->response=array('message_code'=>'2xxx','message'=>'Client proposed plan '.$planuuid, 'http response code'=>200);                                
+                            }
+
+                            if($uripart=='approve')
+                            {//   /plans/[uuid]/approve
+                                $this->response=array('message_code'=>'2xxx','message'=>'Client approved plan '.$planuuid, 'http response code'=>200);                                
+                            }
+
                             if($uripart=='hold')
-                            {//   /plans/[uuid]/hold
-            
-                                $this->response=array('sandpiper response code'=>'2xxx','message'=>'placing plan '.$planuuid, ' on hold','http response code'=>200);                                
+                            {//   /plans/[uuid]/hold         
+                                $this->response=array('message_code'=>'2xxx','message'=>'Client placed plan '.$planuuid, ' on hold','http response code'=>200);                                
                             }
-                            else
-                            {//   /plans/[uuid]/???
-                                
-                                $this->response=array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/[uuid]/. Expected hold verb, got this instead: '.$uripart,'http response code'=>400);
+
+                            if($uripart=='terminate')
+                            {//   /plans/[uuid]/terminate
+                                $this->response=array('message_code'=>'2xxx','message'=>'Client terminated plan '.$planuuid, 'http response code'=>200);                                
                             }
+
+                            if($uripart=='obsolete')
+                            {//   /plans/[uuid]/obsolete
+                                $this->response=array('message_code'=>'2xxx','message'=>'Client obsoleted plan '.$planuuid, 'http response code'=>200);                                
+                            }
+                            
                         }
                         else
                         {//   /v1/plans/{no-at-uuid}/xxx
-                        
-                            $uripart=$this->extractParms($this->requesturi[5]);
-                            if($this->requesturi[4]=='proposals' && $uripart=='new')
-                            {//   /plans/proposals/new
-            
-                                $this->response=array('sandpiper response code'=>'2xxx','message'=>'new proposal posted','http response code'=>200);
-                            }
-                            else
-                            {//   /plans/???/???
-                                
-                                $this->response=array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/. Expected proposals/new, got this instead: '.$this->requesturi[4].'/'.$uripart,'http response code'=>400);
-                            }
-                            
+
+                            $this->response=array('message_code'=>'3xxx','message'=>'unexpected input after /plans/. Expected a uuid, got this instead: '.$this->requesturi[4],'http response code'=>400);
                         }
               
                         break;
                         
-                    case 7:
-                        
-                        
-                        /*
-                         *
-                            /v1/plans/proposals/[uuid]/approve
-                            /v1/plans/proposals/[uuid]/reject
-
-                         */
-           
-                        if($this->requesturi[4]=='proposals')
-                        {
-                            if($this->looksLikeAUUID($this->requesturi[5]))
-                            {
-                                $planuuid=$this->requesturi[5];
-                                $uripart=$this->extractParms($this->requesturi[6]);
-                                
-                                if($uripart=='approve' || $uripart=='reject')
-                                {
-                                    if($uripart=='approve')
-                                    {
-                                        
-                                        $this->response=array('sandpiper response code'=>'3xxx','message'=>'plan '.$planuuid.' approved','http response code'=>200);                                    
-                                    }
-                                    else
-                                    {// reject
-                                        
-                                        $this->response=array('sandpiper response code'=>'3xxx','message'=>'plan '.$planuuid.' rejected','http response code'=>200);
-                                    }
-                                }
-                                else
-                                {// somethinkg other than approve or reject
-                                    
-                                    
-                                    $this->response=array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/proposals[uuid]/. Expected a approve ore reject, got this instead: '.$uripart,'http response code'=>400);
-                                }
-                            }
-                            else
-                            {// something other than a uuid after proposals
-
-                                $this->response= array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/proposals. Expected a plan uuid, got this instead: '.$this->requesturi[5],'http response code'=>400);
-                            }
-                        }
-                        else
-                        {// something other than proposals after plans
-                            $this->response=array('sandpiper response code'=>'3xxx','message'=>'unexpected input after /plans/. Expected proposals, got this instead: '.$this->requesturi[4],'http response code'=>400);
-                        }
-
-                        break;
-                    
+               
                     default:
                         
-                        $this->response=array('sandpiper response code'=>'3xxx','message'=>'unexpected input - too many url parts  after plans','http response code'=>400);
+                        $this->response=array('message_code'=>'3xxx','message'=>'unexpected input - too many url parts after /v1/plans','http response code'=>400);
                         
                         break;
                 }
