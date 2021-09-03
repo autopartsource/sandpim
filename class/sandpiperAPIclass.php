@@ -103,7 +103,7 @@ class sandpiper
         {// plan presented had XSD errors
          //$returnvalue='{"sandpiper status code":"3xxx","message":"Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')","http status":"4xx"}';         
 //         $returnvalue=array('message_code'=>'3xxx','message'=>'Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')','http response code'=>400);
-         $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (xml schema errors):'.plandocument['schemaerrors']),'http response code'=>401);
+         $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (xml schema errors):'.$plandocument['schemaerrors']),'http response code'=>401);
         }        
        }
        else
