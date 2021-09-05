@@ -1319,7 +1319,28 @@ class plans extends sandpiper
                     case 4:
                         // /v1/plans
                             $uripart=$this->extractParms($this->requesturi[3]);
-                            $this->response=array(array('plans'=>array(array('plan_uid'=>$this->uuidv4(),'plan_description'=>'fancy plan','plan_status'=>'Active','plan_status_on'=>'','primary_approved_on'=>'','secondary_approved_on'=>'','payload'=>'<xml></xml>'),array('plan_uuid'=>$this->uuidv4(),'plan_description'=>'was a fancy plan in the past, but we killed it','plan_status'=>'Obsolete','plan_status_on'=>'','primary_approved_on'=>'','secondary_approved_on'=>'','payload'=>'<xml></xml>'))),'message'=>array('message_code'=>1000,'message_text'=>'successful plans list returned'));
+                            $this->response=array(
+                                'plans'=>array(
+                                    array('plan_uid'=>$this->uuidv4(),
+                                        'plan_description'=>'fancy plan',
+                                        'plan_status'=>'Active',
+                                        'plan_status_on'=>'',
+                                        'primary_approved_on'=>'',
+                                        'secondary_approved_on'=>'',
+                                        'payload'=>'<xml></xml>'),
+                                    
+                                    array('plan_uuid'=>$this->uuidv4(),
+                                        'plan_description'=>'was a fancy plan in the past, but we killed it',
+                                        'plan_status'=>'Obsolete',
+                                        'plan_status_on'=>'',
+                                        'primary_approved_on'=>'',
+                                        'secondary_approved_on'=>'',
+                                        'payload'=>'<xml></xml>')
+                                    ),
+                                    'message'=>array(
+                                        'message_code'=>1000,
+                                        'message_text'=>'successful plans list returned')
+                                );
                         break;
 
                     case 5:
