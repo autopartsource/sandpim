@@ -27,14 +27,20 @@ $vcdb=new vcdb();
 $configGet = new configGet();
 $writer = new XLSXWriter();
 
+$countthreshold=10000; if(isset($_GET['countthreshold'])){$countthreshold=intval($_GET['countthreshold']);}
+$hidecovered=false; if(isset($_GET['hidecovered'])){$hidecovered=true;}
+
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
-$viorecords=$pim->getExperianRecords($viogeography, $vioyearquarter,50000);
+$viorecords=$pim->getExperianRecords($viogeography, $vioyearquarter,$countthreshold);
 
 
 $receiverprofileid=intval($_GET['receiverprofile']);
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $apps=$pim->getAppsByPartcategories($partcategories);
+
+
+
 
 // grind apps into a basevid-keyed array for past lookup
 $keyedapps=array();
@@ -65,12 +71,14 @@ foreach($viorecords as $viorecord)
 {   
  // lookup vehicle in apps list to see if it's covered.
  
-
+ $recordcount++;
  $partnumbers=array();
-
+ $vehicleiscovered=false;
+ 
  if(array_key_exists($viorecord['basevehicleid'], $keyedapps))
  {
   // we have at lease one app that has this basevehcile. Now compare experian-usable vcdb attributes to see it still covers the vio vehicle
+  $vehicleiscovered=true;
 
   foreach($keyedapps[$viorecord['basevehicleid']] as $app)
   {
@@ -95,23 +103,27 @@ foreach($viorecords as $viorecord)
     
     foreach($usefulattributes as $usefulattribute)
     {
-      switch($appattribute['name'])
+      switch($usefulattribute['name'])
       {
-       case 'SubModel': if($appattribute['value']!=$viorecord['submodelid']){$vehicleiscovered=false;} break;
-       case 'BodyType':  if($appattribute['value']!=$viorecord['bodytypeid']){$vehicleiscovered=false;} break;
-       case 'BodyNumDoors':  if($appattribute['value']!=$viorecord['bodynumdoorsid']){$vehicleiscovered=false;} break;
-       case 'DriveType': if($appattribute['value']!=$viorecord['drivetypeid']){$vehicleiscovered=false;} break;
-       case 'FuelType':  if($appattribute['value']!=$viorecord['fueltypeid']){$vehicleiscovered=false;} break;
-       case 'EngineBase':  if($appattribute['value']!=$viorecord['enginebaseid']){$vehicleiscovered=false;} break;
-       case 'EngineVIN':  if($appattribute['value']!=$viorecord['enginevinid']){$vehicleiscovered=false;} break;
-       case 'FuelDeliverySubType':  if($appattribute['value']!=$viorecord['fueldeliverysubtypeid']){$vehicleiscovered=false;} break;
-       case 'TransmissionControlType':  if($appattribute['value']!=$viorecord['transmissioncontroltypeid']){$vehicleiscovered=false;} break;
-       case 'TransmissionNumSpeeds':  if($appattribute['value']!=$viorecord['transmissionnumspeedsid']){$vehicleiscovered=false;} break;
-       case 'Aspiration':  if($appattribute['value']!=$viorecord['aspirationid']){$vehicleiscovered=false;} break;
+       case 'SubModel': if($usefulattribute['value']!=$viorecord['submodelid']){$vehicleiscovered=false;} break;
+       case 'BodyType':  if($usefulattribute['value']!=$viorecord['bodytypeid']){$vehicleiscovered=false;} break;
+       case 'BodyNumDoors':  if($usefulattribute['value']!=$viorecord['bodynumdoorsid']){$vehicleiscovered=false;} break;
+       case 'DriveType': if($usefulattribute['value']!=$viorecord['drivetypeid']){$vehicleiscovered=false;} break;
+       case 'FuelType':  if($usefulattribute['value']!=$viorecord['fueltypeid']){$vehicleiscovered=false;} break;
+       case 'EngineBase':  if($usefulattribute['value']!=$viorecord['enginebaseid']){$vehicleiscovered=false;} break;
+       case 'EngineVIN':  if($usefulattribute['value']!=$viorecord['enginevinid']){$vehicleiscovered=false;} break;
+       case 'FuelDeliverySubType':  if($usefulattribute['value']!=$viorecord['fueldeliverysubtypeid']){$vehicleiscovered=false;} break;
+       case 'TransmissionControlType':  if($usefulattribute['value']!=$viorecord['transmissioncontroltypeid']){$vehicleiscovered=false;} break;
+       case 'TransmissionNumSpeeds':  if($usefulattribute['value']!=$viorecord['transmissionnumspeedsid']){$vehicleiscovered=false;} break;
+       case 'Aspiration':  if($usefulattribute['value']!=$viorecord['aspirationid']){$vehicleiscovered=false;} break;
        default: break;
       }
     }
     
+if(count($usefulattributes)>2 && $vehicleiscovered)
+{
+ $logs->logSystemEvent('accesscontrol',0, 'vioCoverageReportStream.php: '.print_r($app,true).print_r($viorecord,true));
+}
     if($vehicleiscovered)
     {
      if(!in_array($app['partnumber'], $partnumbers)){$partnumbers[]=$app['partnumber'];}   
@@ -127,10 +139,10 @@ foreach($viorecords as $viorecord)
 
  $partnumberlist=implode(',', $partnumbers);
 
- $recordcount++;
 
-if($recordcount>500){break;}
+ //if($recordcount>500){break;}
  
+ if(count($partnumbers)>0 && $hidecovered){continue;}
  
  
  $mmy=$vcdb->getMMYforBasevehicleid($viorecord['basevehicleid']); //array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID'],'MakeID'=>$row['MakeID'],'ModelID'=>$row['ModelID']);

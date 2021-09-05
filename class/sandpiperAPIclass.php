@@ -1308,29 +1308,43 @@ class plans extends sandpiper
             case 'GET':
             
             /**  these are the GET scenarios
-                /v1/plans/invoke
+             * 
+             *                 /v1/plans
+             *                 /v1/plans/invoke
              */
             
-                if(count($this->requesturi)==5)
+                
+                switch(count($this->requesturi))
                 {
-                    $uripart=$this->extractParms($this->requesturi[4]);
+                    case 4:
+                        // /v1/plans
+                            $uripart=$this->extractParms($this->requesturi[3]);
+                            $this->response=array('plans'=>array('plans'=>array(array('plan_uuid'=>$this->uuidv4(),'plan_description'=>'fancy plan','plan_status'=>'Active','payload'=>'<xml></xml>'),array('plan_uuid'=>$this->uuidv4(),'plan_description'=>'was a fancy plan in the past, but we killed it','plan_status'=>'Obsolete','payload'=>'<xml></xml>'))),'message'=>array('message_code'=>1000,'message_text'=>'successful plans list returned'));
+                        break;
 
-                    if($uripart=='invoke')
-                    {//   /v1/plans/invoke
-                        
-                        $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'plan_description'=>'fragment plan','plan_status'=>'Proposed','payload'=>'<xml></xml>'),'message'=>array('message_code'=>2000,'message_text'=>'client asked for plan invocation'),'http response code'=>200);
-                       
-                    }
-                    else
-                    {
-                        $this->response=array('message_code'=>'3000','message'=>'unexpected verb after /plans/. Expected invoke','http response code'=>400);                    
-                    }
-                }
-                else
-                {// too many uri parts
-                    $this->response=array('message_code'=>'3000','message'=>'unexpected input after /plans/. Expected invoke verb','http response code'=>400);                    
-                }
-            
+                    case 5:
+                        // /v1/plans/xxx
+                        $uripart=$this->extractParms($this->requesturi[4]);
+                        if($uripart=='invoke')
+                        {//   /v1/plans/invoke
+
+                            $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'plan_description'=>'fragment plan','plan_status'=>'Proposed','payload'=>'<xml></xml>'),'message'=>array('message_code'=>2000,'message_text'=>'client asked for plan invocation'),'http response code'=>200);
+
+                        }
+                        else
+                        {
+                            $this->response=array('message_code'=>'3000','message'=>'unexpected verb after /plans/. Expected invoke','http response code'=>400);                    
+                        }
+                        break;
+
+
+                    default:
+                        $this->response=array('message_code'=>'3000','message'=>'unexpected input after wrong number of slashed levels','http response code'=>400);                    
+                        break;
+                    
+                }                
+                
+                
                 break;
         
         

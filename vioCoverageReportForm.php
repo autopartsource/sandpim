@@ -52,7 +52,7 @@ $receiverprofiles=$pim->getReceiverprofiles();
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
                                     <div style="padding: 10px;">Receiver Profile</div>
                                     <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
-                                    <div style="padding:10px;"><label><input type="checkbox" name="hidecovered"/>Only report vehicles missing coverage</label></div>
+                                    <div style="padding:10px;"><label><input type="checkbox" name="hidecovered" checked="checked"/>Only report vehicles missing coverage</label></div>
                                     <div style="padding:10px;">Report vehicles with a count greater than <input type="number" name="countthreshold" value="10000" size="6"/></div>
                                     
                                     <input type="submit" name="submit" value="Export"/>
