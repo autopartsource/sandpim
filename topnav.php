@@ -94,6 +94,7 @@
                     <a class="dropdown-item" href="partAttributesReportForm.php">Attribute Coverage</a>
                     <a class="dropdown-item" href="interchangeCoverageReportForm.php">Interchange Coverage</a>
                     <a class="dropdown-item" href="pricingCoverageReportForm.php">Pricing Coverage</a>                    
+                    <a class="dropdown-item" href="vioCoverageReportForm.php">VIO Coverage</a>
                 </div>
             </li>
             <li<?php if ($navCategory == 'utilities') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>
