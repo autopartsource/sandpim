@@ -120,10 +120,6 @@ foreach($viorecords as $viorecord)
       }
     }
     
-if(count($usefulattributes)>2 && $vehicleiscovered)
-{
- $logs->logSystemEvent('accesscontrol',0, 'vioCoverageReportStream.php: '.print_r($app,true).print_r($viorecord,true));
-}
     if($vehicleiscovered)
     {
      if(!in_array($app['partnumber'], $partnumbers)){$partnumbers[]=$app['partnumber'];}   

@@ -18,7 +18,7 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 
 $sandpiperPrimary=new sandpiperPrimary;
 
-$id=intval($_GET['id']);
+$planid=intval($_GET['id']);
 
 if(isset($_POST['submit']) && $_POST['submit']=='Add')
 {
@@ -27,18 +27,75 @@ if(isset($_POST['submit']) && $_POST['submit']=='Add')
 }
 
 
-$plan=$sandpiperPrimary->getPlanById($id);
+$plan=$sandpiperPrimary->getPlanById($planid);
 $receiverprofile=$pim->getReceiverprofileById($plan['receiverprofileid']);
-$slices=$sandpiperPrimary->getPlanSlices($id);
+$slices=$sandpiperPrimary->getPlanSlices($planid);
 $partcategories=$pim->getPartCategories();
         
-        
+//        print_r($plan);
 
 ?>
 <!DOCTYPE html>
 <html lang="en" xml:lang="en">
     <head>
         <?php include('./includes/header.php'); ?>
+        
+        <script>
+            function updatePlanMetadata()
+            {
+             document.getElementById("updatingMetadataIndicator").innerHTML='<img src="./loading.gif" width="30"/>';
+             var planmetadata=document.getElementById("planmetadata").value;
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdatePlan.php?planid=<?php echo $planid;?>&elementid=planmetadata&value='+btoa(planmetadata));
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+              document.getElementById("updatingMetadataIndicator").innerHTML='';
+             };
+             xhr.send();
+            }
+
+            function updateStatusOn()
+            {
+             document.getElementById("staticStatusOn").value='';
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdatePlan.php?planid=<?php echo $planid;?>&elementid=planstatuson&value=1');
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+              document.getElementById("staticStatusOn").value=response;
+             };
+             xhr.send();
+            }
+
+            function updatePrimaryApprovedOn()
+            {
+             document.getElementById("staticPrimaryApprovedOn").value='';
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdatePlan.php?planid=<?php echo $planid;?>&elementid=primaryapprovedon&value=1');
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+              document.getElementById("staticPrimaryApprovedOn").value=response;
+             };
+             xhr.send();
+            }
+            
+            function updateSecondaryApprovedOn()
+            {
+             document.getElementById("staticSecondaryApprovedOn").value='';
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdatePlan.php?planid=<?php echo $planid;?>&elementid=secondaryapprovedon&value=1');
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+              document.getElementById("staticSecondaryApprovedOn").value=response;
+             };
+             xhr.send();
+            }
+
+        </Script>
+        
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -68,17 +125,43 @@ $partcategories=$pim->getPartCategories();
                                                 echo '<input type="text" readonly class="form-control" id="static'.$plan['planuuid'].'" value="'.$plan['planuuid'].'">';
                                             echo '</div>';
                                         echo '</div>';
+                                        
+                                        
+                                        
                                         echo '<div class="form-group row">';
-                                            echo '<label for="staticLastSync" class="col-sm-3 col-form-label">Last Sync: </label>';
+                                            echo '<label for="staticLastSync" class="col-sm-3 col-form-label"">Last Sync: </label>';
                                             echo '<div class="col-sm-9">';
                                                 echo '<input type="text" readonly class="form-control" id="staticLastSync" value="'.date('y-m-d').'">';
                                             echo '</div>';
                                         echo '</div>';
+                                        
+                                        echo '<div class="form-group row">';
+                                            echo '<label for="staticStatusOn" class="col-sm-3 col-form-label"  onclick="updateStatusOn();">Status Verified on: </label>';
+                                            echo '<div class="col-sm-9">';
+                                                echo '<input type="text" readonly class="form-control" id="staticStatusOn" value="'.$plan['planstatuson'].'">';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        
+                                        echo '<div class="form-group row">';
+                                            echo '<label for="staticPrimaryApprovedOn" class="col-sm-3 col-form-label" onclick="updatePrimaryApprovedOn();">Primary Approved on: </label>';
+                                            echo '<div class="col-sm-9">';
+                                                echo '<input type="text" readonly class="form-control" id="staticPrimaryApprovedOn" value="'.$plan['primaryapprovedon'].'">';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        
+                                        echo '<div class="form-group row">';
+                                            echo '<label for="staticSecondaryApprovedOn" class="col-sm-3 col-form-label" onclick="updateSecondaryApprovedOn();">Secondary Approved on: </label>';
+                                            echo '<div class="col-sm-9">';
+                                                echo '<input type="text" readonly class="form-control" id="staticSecondaryApprovedOn" value="'.$plan['secondaryapprovedon'].'">';
+                                            echo '</div>';
+                                        echo '</div>';
+                                        
                                         echo '<div class="card">';
                                             echo '<h6 class="card-header">Plan Metadata</h6>';
                                             echo '<div class="card-body">';
-                                                echo '<textarea name="profiledata" rows="5" style="width: 100%; max-width: 100%;">'.$plan['plannmetadata'].'</textarea>';
-                                                echo '<div><button type="button" class="btn btn-outline-primary">Update</button></div>';
+                                                echo '<div style="float:left;"><textarea rows="10" cols="80" id="planmetadata">'.$plan['planmetadata'].'</textarea></div>';
+                                                echo '<div style="float:left;padding-left:5px;"><button type="button" class="btn btn-outline-primary" onclick="updatePlanMetadata();">Update</button><div id="updatingMetadataIndicator"></div></div>';
+                                                echo '<div style="clear:both;"></div>';
                                             echo '</div>';
                                         echo '</div>';
 

@@ -199,7 +199,6 @@ class sandpiper
     
     function getPlanRecord($planuuid)
     {
-        //ccc
         $db = new mysql; $db->connect(); $returnvalue=false;
         if($stmt=$db->conn->prepare('select * from plan where planuuid=?'))
         {
@@ -211,7 +210,7 @@ class sandpiper
                     {
                         if($row = $db->result->fetch_assoc())
                         {
-                            $returnvalue=array('id'=>$row['id'],'description'=>$row['description'],'plannmetadata'=>$row['plannmetadata'],'receiverprofileid'=>$row['receiverprofileid']);
+                            $returnvalue=array('id'=>$row['id'],'description'=>$row['description'],'planmetadata'=>$row['planmetadata'],'receiverprofileid'=>$row['receiverprofileid']);
                         }
                     }
                 }
@@ -862,7 +861,29 @@ class sandpiper
 
         return $uuid;
     }
-      
+
+    function getPlansForUser($userid)
+    {
+        $db = new mysql; $db->connect(); $plans=array();
+        if($stmt=$db->conn->prepare('select plan.* from plan,plan_user where plan.id=plan_user.planid and plan_user.userid=?'))
+        {
+            if($stmt->bind_param('i', $userid))
+            {
+                if($stmt->execute())
+                {
+                    if($db->result = $stmt->get_result())
+                    {
+                        if($row = $db->result->fetch_assoc())
+                        {
+                            $plans[]=array('id'=>$row['id'],'planuuid'=>$row['planuuid'],'description'=>$row['description'],'planmetadata'=>$row['planmetadata'],'receiverprofileid'=>$row['receiverprofileid']);
+                        }
+                    }
+                }
+            }
+        }
+        $db->close();
+        return $plans;   
+    }
 }
 // ----------------- end of base sandpiper class ---------------------------
  
@@ -1318,29 +1339,17 @@ class plans extends sandpiper
                 {
                     case 4:
                         // /v1/plans
+                        // ?PLAN_WITH_DOUMENT or PLAN_WITHOUT_DOUMENT
                             $uripart=$this->extractParms($this->requesturi[3]);
-                            $this->response=array(
-                                'plans'=>array(
-                                    array('plan_uid'=>$this->uuidv4(),
-                                        'plan_description'=>'fancy plan',
-                                        'plan_status'=>'Active',
-                                        'plan_status_on'=>'',
-                                        'primary_approved_on'=>'',
-                                        'secondary_approved_on'=>'',
-                                        'payload'=>'<xml></xml>'),
-                                    
-                                    array('plan_uuid'=>$this->uuidv4(),
-                                        'plan_description'=>'was a fancy plan in the past, but we killed it',
-                                        'plan_status'=>'Obsolete',
-                                        'plan_status_on'=>'',
-                                        'primary_approved_on'=>'',
-                                        'secondary_approved_on'=>'',
-                                        'payload'=>'<xml></xml>')
-                                    ),
-                                    'message'=>array(
-                                        'message_code'=>1000,
-                                        'message_text'=>'successful plans list returned')
-                                );
+                            $plans=$this->getPlansForUser($this->userid);
+                            
+                            $planslist=array();
+                            foreach($plans as $plan)
+                            {
+                                $planslist[]=array('plan_uid'=>$plan['planuuid'], 'plan_description'=>$plan['descriprion'], 'plan_status'=>$plan['status'], 'plan_status_on'=>$plan['planstatuson'], 'primary_approved_on'=>$plan['primaryapprovedon'], 'secondary_approved_on'=>$plan['secondaryapprovedon'], 'payload'=>$plan['plandocument']);
+                            }
+                        
+                            $this->response=array('plans'=>$planslist, 'message'=>array('message_code'=>1000, 'message_text'=>'list of '.count($planslist).' plans returned'));
                         break;
 
                     case 5:

@@ -111,7 +111,7 @@ function createSubscription($planid, $sliceid, $slicetype, $partcategory, $metad
     {
      while($row = $db->result->fetch_assoc())
      {
-      $plans[]=array('id'=>$row['id'],'description'=>$row['description'],'planuuid'=>$row['planuuid'],'receiverprofileid'=>$row['receiverprofileid'],'plannmetadata'=>$row['plannmetadata']);
+      $plans[]=array('id'=>$row['id'],'description'=>$row['description'],'planuuid'=>$row['planuuid'],'receiverprofileid'=>$row['receiverprofileid'],'planmetadata'=>$row['planmetadata']);
      }
     }
    }
@@ -134,7 +134,7 @@ function createSubscription($planid, $sliceid, $slicetype, $partcategory, $metad
      {
       while($row = $db->result->fetch_assoc())
       {
-       $plan=array('id'=>$row['id'],'description'=>$row['description'],'planuuid'=>$row['planuuid'],'receiverprofileid'=>$row['receiverprofileid'],'plannmetadata'=>$row['plannmetadata']);
+       $plan=array('id'=>$row['id'],'description'=>$row['description'],'planuuid'=>$row['planuuid'],'receiverprofileid'=>$row['receiverprofileid'],'planmetadata'=>$row['planmetadata'],'planstatuson'=>$row['planstatuson'],'primaryapprovedon'=>$row['primaryapprovedon'],'secondaryapprovedon'=>$row['secondaryapprovedon']);
       }
      }
     }
@@ -145,6 +145,127 @@ function createSubscription($planid, $sliceid, $slicetype, $partcategory, $metad
  }
 
 
+ function updatePlanMetadata($planid,$metadata)
+ {
+  $db = new mysql; $db->connect(); $success=false;
+  if($stmt=$db->conn->prepare('update plan set planmetadata=? where id=?'))
+  {
+   if($stmt->bind_param('si', $metadata, $planid))
+   {      
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;
+ }
+
+ function updatePlanDescription($planid,$description)
+ {
+  $db = new mysql; $db->connect(); $success=false;
+  if($stmt=$db->conn->prepare('update plan set description=? where id=?'))
+  {
+   if($stmt->bind_param('si', $description, $planid))
+   {      
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;
+ }
+
+ 
+ function updatePlanStatusOn($planid,$datetime=false)
+ {
+  // id passing in an explicit date/time, do it in format produced by php date function like: date('Y-m-d H:i:s');
+     
+  $db = new mysql; $db->connect(); $success=false;  
+  $sql='update plan set planstatuson=now() where id=?';
+  if($datetime){$sql='update plan set planstatuson=? where id=?';}
+
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($datetime)
+   {
+    if($stmt->bind_param('si',$datetime, $planid))
+    {      
+     $success=$stmt->execute();
+    }   
+   }
+   else
+   {// no datetime value was passed to the function.
+    if($stmt->bind_param('i', $planid))
+    {      
+     $success=$stmt->execute();
+    }   
+   }
+  }
+  $db->close();
+  return $success;
+ }
+
+ 
+ 
+ function updatePlanPrimaryApprovedOn($planid,$datetime=false)
+ {
+  // id passing in an explicit date/time, do it in format produced by php date function like: date('Y-m-d H:i:s');
+     
+  $db = new mysql; $db->connect(); $success=false;  
+  $sql='update plan set primaryapprovedon=now() where id=?';
+  if($datetime){$sql='update plan set primaryapprovedon=? where id=?';}
+
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($datetime)
+   {
+    if($stmt->bind_param('si',$datetime, $planid))
+    {      
+     $success=$stmt->execute();
+    }   
+   }
+   else
+   {// no datetime value was passed to the function.
+    if($stmt->bind_param('i', $planid))
+    {      
+     $success=$stmt->execute();
+    }   
+   }
+  }
+  $db->close();
+  return $success;
+ }
+ 
+ 
+ function updatePlanSecondaryApprovedOn($planid,$datetime=false)
+ {
+  // id passing in an explicit date/time, do it in format produced by php date function like: date('Y-m-d H:i:s');
+     
+  $db = new mysql; $db->connect(); $success=false;  
+  $sql='update plan set secondaryapprovedon=now() where id=?';
+  if($datetime){$sql='update plan set secondaryapprovedon=? where id=?';}
+
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($datetime)
+   {
+    if($stmt->bind_param('si',$datetime, $planid))
+    {      
+     $success=$stmt->execute();
+    }   
+   }
+   else
+   {// no datetime value was passed to the function.
+    if($stmt->bind_param('i', $planid))
+    {      
+     $success=$stmt->execute();
+    }   
+   }
+  }
+  $db->close();
+  return $success;
+ }
+ 
+
+ 
  function getPlanSlices($planid)
  {
   $db = new mysql; $db->connect(); $slices=array();

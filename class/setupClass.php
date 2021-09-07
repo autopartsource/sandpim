@@ -800,6 +800,7 @@ class setup
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         planid int UNSIGNED NOT NULL,
         userid int UNSIGNED NOT NULL,
+        role varchar(255) not null,
         PRIMARY KEY (id),
         index idx_planid(planid),
         index idx_userid(userid))";
@@ -811,8 +812,12 @@ class setup
         description varchar(255) not null,      
         planuuid varchar(255) not null,
         receiverprofileid int UNSIGNED NOT NULL,
-        plannmetadata text not null,
+        planmetadata text not null,
         plandocument text not null,
+        status varchar(255) not null,
+        planstatuson datetime,
+        primaryapprovedon datetime,
+        secondaryapprovedon datetime,
         PRIMARY KEY (id),
         unique key idx_planuuid(planuuid),
         index idx_receiverprofileid(receiverprofileid))";
