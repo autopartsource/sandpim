@@ -43,7 +43,7 @@ if($job)
  
  if($job['status']=='started')
  {
-  echo 'File export has been queued for processing. Check back (refresh this page) for download of '.$job['clientfilename'];      
+  echo 'File export has been queued for processing, but is not complete. Check back (refresh this page) for download of '.$job['clientfilename'];      
  }
 
  if($job['status']=='running')
@@ -56,7 +56,7 @@ if($job)
   echo 'An error was encountered while processing '.$job['clientfilename'];      
  }
  
- echo '<br/><br/><a href="./ioIndex.php">Back to Import/Export menu</a>';
+ echo '<br/><br/><a href="./backgroundJobs.php">Back to background export jobs menu</a>';
 }
 else
 {

@@ -139,7 +139,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                             <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
                                             <tr><th>Background</th><td><?php echo $assetrecord['background']; ?></td></tr>
                                             <tr><th>File Size</th><td><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></td></tr>
-                                            <tr><th>URI</th><td><div style="font-size:50%;"><?php echo $assetrecord['uri']; ?></div></td></tr>
+                                            <tr><th>URI</th><td><a target="_blank" href="<?php echo $assetrecord['uri']; ?>">Link</a></td></tr>
                                             <tr><th>Local Path</th><td><?php echo $assetrecord['localpath']; ?></td></tr>
                                             <tr><th>Orientation</th><td><?php echo $assetrecord['orientationViewCode']; ?></td></tr>
                                             <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode']; ?></td></tr>

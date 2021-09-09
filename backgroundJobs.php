@@ -43,7 +43,7 @@ $jobs=$pim->getBackgroundjobs('%', '%');
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">ACES background export jobs</h3>
+                        <h3 class="card-header text-start">Background export jobs</h3>
 
                         <div class="card-body">
                             <table class="table">

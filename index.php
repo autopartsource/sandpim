@@ -49,6 +49,10 @@ $metricsACTIVEPARTCOUNT=$kpi->getMetric('ACTIVE PART COUNT', date('Y-m-d', strto
 $metricsPUBLICASSETCOUNT=$kpi->getMetric('PUBLIC ASSET COUNT', date('Y-m-d', strtotime('-3 day')), date('Y-m-d',strtotime('+1 day')));
 $metricsACTIVEAPPLICATIONCOUNT=$kpi->getMetric('ACTIVE APPLICATION COUNT', date('Y-m-d', strtotime('-3 day')), date('Y-m-d',strtotime('+1 day')));
 
+$jobstemp=$pim->getBackgroundjobs('%', '%');
+$myjobs=array(); foreach($jobstemp as $job){if($job['userid']==$_SESSION['userid']){$myjobs[]=$job;}}
+
+
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
 <!DOCTYPE html>
@@ -90,10 +94,33 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                         <!-- Main Content -->
                         <div class="card-body">
 
+                            <?php if(count($myjobs)){?>
+                            <div class="card">
+                                <h5 class="card-header text-start">My Background exports</h5>
+                                <div class="card-body">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Filename</th>
+                                                <th scope="col">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($myjobs as $job){?>
+                                            <tr>
+                                                <td><?php if($job['status']=='complete'){echo '<a href="./downloadBackgroundExport.php?token='.$job['token'].'">'.$job['clientfilename'].'</a>';}else{echo $job['clientfilename'];}?></td>
+                                                <td><?php echo '<a href="./backgroundJob.php?id='.$job['id'].'">'.$job['status'].'</a>';?></td>
+                                            </tr>
+                                            <?php }?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <?php }?>
+
+
                             <div class="card">
                                 <h5 class="card-header text-start">Metrics</h5>
-
-
                                 <div class="card-body">
                                     <table class="table">
                                         <thead>
@@ -119,6 +146,8 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                     </table>
                                 </div>
                             </div>
+
+
                             
                             <?php if ($issuescount>0) {
                             echo '<div class="card">
