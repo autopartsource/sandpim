@@ -90,10 +90,11 @@
                     <a class="dropdown-item" href="applicationOverlapsReportForm.php">Application Overlaps</a>
                     <a class="dropdown-item" href="applicationNotesReportForm.php">Application Note Usage</a>
  */?>
-                    <a class="dropdown-item" href="assetCoverageReportForm.php">Asset Coverage</a>
-                    <a class="dropdown-item" href="partAttributesReportForm.php">Attribute Coverage</a>
-                    <a class="dropdown-item" href="interchangeCoverageReportForm.php">Interchange Coverage</a>
-                    <a class="dropdown-item" href="pricingCoverageReportForm.php">Pricing Coverage</a>                    
+                    <a class="dropdown-item" href="assetCoverageReportForm.php">Asset Matrix</a>
+                    <a class="dropdown-item" href="partAttributesReportForm.php">Attribute Matrix</a>
+                    <a class="dropdown-item" href="interchangeCoverageReportForm.php">Interchange Matrix</a>
+                    <a class="dropdown-item" href="pricingCoverageReportForm.php">Pricing Matrix</a>                    
+                    <a class="dropdown-item" href="competitorCoverageReportForm.php">Competitor Coverage</a>
                     <a class="dropdown-item" href="vioCoverageReportForm.php">VIO Coverage</a>
                 </div>
             </li>
