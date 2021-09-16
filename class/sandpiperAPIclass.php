@@ -352,7 +352,7 @@ class sandpiper
           else   
           {// return a structure of full verbosity
            //$grains[]=array('grain_uuid'=>$row['grainuuid'],'slice_uuid'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'file_name'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
-           $grains[]=array('grain_uuid'=>$row['grainuuid'],'grain_key'=>$row['grainkey'],'grain_reference'=>'','grain_order'=>$row['grainorder'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
+           $grains[]=array('grain_uuid'=>$row['grainuuid'],'grain_order'=>$row['grainorder'],'grain_key'=>$row['grainkey'],'grain_reference'=>'','encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
           }
          }
         }
@@ -917,8 +917,8 @@ class slices extends sandpiper
                 case 4:
                     //            /slices
                     //Get list of slices available to this plan
-                    
-                    $slices=$this->getSubscribedSlices($this->planuuid);
+                    // does it make sense to give a list of slices ?
+                    //$slices=$this->getSubscribedSlices($this->planuuid);
                     $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'you must specify a slice uuid like /v1/slices/{uuid}'));
                     break;
 
@@ -947,6 +947,112 @@ class slices extends sandpiper
                     }
 
                     break;
+                    
+                case 6:
+                //             /slices/[uuid]/something   
+                    $uripart=$this->extractParms($this->requesturi[5]);
+                    if($uripart=='grains')
+                    { //             /slices/[uuid]/grains   (detail=GRAIN_WITH_PAYLOAD|GRAIN_WITHOUT_PAYLOAD|GRAIN_ID)
+                        
+                        $sliceuuid=$this->requesturi[4];
+                        if($this->looksLikeAUUID($sliceuuid))
+                        {
+                            if($this->isSliceInPlan($this->planuuid, $sliceuuid))
+                            {// slice is part of user's plan
+                            
+                                
+                                $detaillevel='GRAIN_ID_ONLY';
+                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_ID_OLNY'))
+                                {
+                                    $detaillevel=$this->keyedparms['detail'];
+                                }                        
+
+                                $inflatepayload=false;
+                                if(array_key_exists('inflate',$this->keyedparms) && $this->keyedparms['inflate']=='yes')
+                                {//
+                                    $inflatepayload=true;
+                                }
+
+                                $grains=$this->getSubscribedFilegrains($this->planuuid,$sliceuuid,'%', $detaillevel, $inflatepayload);  
+
+                                $this->response=array('http response code'=>200, 'grains'=>$grains, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your list of grains in plan '.$this->planuuid.', slice '.$sliceuuid));
+                                $this->logEvent($this->planuuid, $sliceuuid, '', 'list grains in slice. Detail:'.$detaillevel);
+                            }
+                            else
+                            {// supplied slice is not in user's plan
+                                $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice UUID ('.$sliceuuid.') is not part of the current plan'));
+                            }
+                        }
+                        else
+                        {// the expected uuid in /slices/[uuid]/grains was not formatted as a UUID
+                            $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Was expecting /v1/slices/{sliceuuid}/grains. sliceuuid was not formatted as a uuid. '));
+                        }
+                    }
+                    else
+                    {
+                        $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Was expecting grains verb after slice uuid: like /v1/slices/{sliceuuid}/grains'));
+                    }
+                    break;
+                
+                case 7:
+                //             /slices/[uuid]/something/something
+                    $grainuuidid=$this->extractParms($this->requesturi[6]);
+                    $uripart=$this->requesturi[5];
+                    $sliceuuid=$this->requesturi[4];
+ 
+                    if($uripart=='grains')
+                    {
+                        if($this->looksLikeAUUID($input) && $this->looksLikeAUUID($input))
+                        {//             /slices/[uuid]/grains/[uuid]
+                            
+                            // check to see if the client has access to this slice
+                            if($this->isSliceInPlan($this->planuuid, $sliceuuid))
+                            {// slice is part of user's plan
+                            
+                                
+                                $detaillevel='GRAIN_ID_ONLY';
+                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_ID_OLNY'))
+                                {
+                                    $detaillevel=$this->keyedparms['detail'];
+                                }                        
+
+                                $inflatepayload=false;
+                                if(array_key_exists('inflate',$this->keyedparms) && $this->keyedparms['inflate']=='yes')
+                                {//
+                                    $inflatepayload=true;
+                                }
+
+                                $grains=$this->getSubscribedFilegrains($this->planuuid,$sliceuuid,$grainuuidid, $detaillevel, $inflatepayload);
+
+                                if(count($grains))
+                                {
+                                    $this->response=array('http response code'=>200,'grain'=>$grains[0], 'message'=>array('message_code'=>1000, 'message_text'=>'here is your specific grain ('.$grainuuidid.')'));
+                                    $this->logEvent($this->planuuid, $sliceuuid, $grainuuidid, 'specific grain was requested');
+                                }
+                                else
+                                {// no grains found in the given plan/slice
+                                                                        
+                                    $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice / grain ('.$sliceuuid.' / '.$grainuuidid.') was not found'));
+                                }
+                            }
+                            else
+                            {// supplied slice is not in user's plan
+
+                                $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice ('.$sliceuuid.') is not part of plan ('. $this->planuuid.')'));
+                            }
+                        }
+                        else  
+                        {//             /slices/[non-uuid]/grains/[non-uuid]
+                            $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[grainuuid]. Did not get properly formatted uuids in grains and/or slices positions'));
+                        }
+                    }
+                    else
+                    {//             /slices/[uuid]/!grains/something
+                        $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[gtainuuid]. Did not get grains keyword'));
+                    }
+                    
+                    break;
+                
                     
                 default:
                     $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'wrong number of inputs'));
