@@ -122,7 +122,7 @@ switch($uriparts[2])
                 if($slices->userIdOfRequest()!==false)
                 {// jtw validated, process request
                     $slices->processRequest();
-                    $response=$slices->$response;
+                    $response=$slices->response;
                     if(array_key_exists('http response code',$response))
                     {
                         http_response_code($response['http response code']);
