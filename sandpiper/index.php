@@ -123,7 +123,7 @@ switch($uriparts[2])
                 {// jtw validated, process request
                     $slices->processRequest();
                     $response=$slice->$response;
-                    if(array_key_exist('http response code',$response))
+                    if(array_key_exists('http response code',$response))
                     {
                         http_response_code($response['http response code']);
                         unset($response['http response code']);
