@@ -545,9 +545,9 @@ class sandpiper
  
     function getSlice($planuuid,$sliceuuid)
     {
-     $db = new mysql; $db->connect(); $slice=false;
+     $db = new mysql; $db->connect(); $slice=array();
 
-     if($stmt=$db->conn->prepare('select slice.id, slice.description, sliceuuid,slicetype,slicemetadata,slicehash from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=? and slice.id=?'))
+     if($stmt=$db->conn->prepare('select slice.id, slice.description, sliceuuid,slicetype,slicemetadata,slicehash from plan,plan_slice,slice where plan.id=plan_slice.planid and plan_slice.sliceid=slice.id and plan.planuuid=? and slice.sliceuuid=?'))
      {
       if($stmt->bind_param('ss', $planuuid,$sliceuuid))
       {
