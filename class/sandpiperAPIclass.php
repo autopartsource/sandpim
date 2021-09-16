@@ -558,7 +558,7 @@ class sandpiper
          if($row = $db->result->fetch_assoc())
          {
           $hash=$this->calculateSliceHash($row['id']);
-          $slice=array('slice_uuid'=>$row['sliceuuid'],'slice_type'=>$row['slicetype'],'slice_description'=>$row['description'],'slice_meta_data'=>$row['slicemetadata'],'slice_grainlist_hash'=>$hash);
+          $slice=array('slice_uuid'=>$row['sliceuuid'],'slice_description'=>$row['description'],'slice_type'=>$row['slicetype'],'file_name'=>'', 'slice_meta_data'=>$row['slicemetadata'],'slice_order'=>0,'slice_grainlist_hash'=>$hash);
          }
         }
        }
@@ -1002,7 +1002,7 @@ class slices extends sandpiper
  
                     if($uripart=='grains')
                     {
-                        if($this->looksLikeAUUID($input) && $this->looksLikeAUUID($input))
+                        if($this->looksLikeAUUID($grainuuidid) && $this->looksLikeAUUID($sliceuuid))
                         {//             /slices/[uuid]/grains/[uuid]
                             
                             // check to see if the client has access to this slice
