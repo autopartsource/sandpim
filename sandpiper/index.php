@@ -125,6 +125,7 @@ switch($uriparts[2])
                     if(isset($slices->$response['http response code']))
                     {
                         http_response_code($slices->$response['http response code']);        
+                        unset($slices->response['http response code']);
                     }
                     echo json_encode($slices->response);
                 }
