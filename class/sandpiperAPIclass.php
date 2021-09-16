@@ -938,7 +938,7 @@ class slices extends sandpiper
                         }
                         else
                         {// supplied slice is not in user's plan
-                            $this->response= array('message'=>'slice UUID ('.$sliceuuid.') is not part of the current plan'); 
+                            $this->response=array('http response code'=>403, 'message'=>array('message_code'=>3000, 'message_text'=>'slice ('.$sliceuuid.') is not part of this plan ('.$this->planuuid.')'));
                         }
                     }
                     else
