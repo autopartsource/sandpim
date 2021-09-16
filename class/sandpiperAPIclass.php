@@ -1026,7 +1026,7 @@ class slices extends sandpiper
 
                                 if(count($grains))
                                 {
-                                    $this->response=array('http response code'=>200,'grain'=>$grains[0], 'message'=>array('message_code'=>1000, 'message_text'=>'here is your specific grain ('.$grainuuidid.')'));
+                                    $this->response=array('http response code'=>200,'grain'=>$grains, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your specific grain ('.$grainuuidid.')'));
                                     $this->logEvent($this->planuuid, $sliceuuid, $grainuuidid, 'specific grain was requested');
                                 }
                                 else
