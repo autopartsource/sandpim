@@ -962,9 +962,9 @@ class slices extends sandpiper
                             
                                 
                                 $detaillevel='GRAIN_ID_ONLY';
-                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_ID_OLNY'))
+                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['grain_detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_ID_OLNY'))
                                 {
-                                    $detaillevel=$this->keyedparms['detail'];
+                                    $detaillevel=$this->keyedparms['grain_detail'];
                                 }                        
 
                                 $inflatepayload=false;
@@ -1011,9 +1011,9 @@ class slices extends sandpiper
                             
                                 
                                 $detaillevel='GRAIN_ID_ONLY';
-                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['detail']=='GRAIN_ID_OLNY'))
+                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['grain_detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_ID_OLNY'))
                                 {
-                                    $detaillevel=$this->keyedparms['detail'];
+                                    $detaillevel=$this->keyedparms['grain_detail'];
                                 }                        
 
                                 $inflatepayload=false;
@@ -1026,7 +1026,7 @@ class slices extends sandpiper
 
                                 if(count($grains))
                                 {
-                                    $this->response=array('http response code'=>200,'grain'=>$grains, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your specific grain ('.$grainuuidid.')'));
+                                    $this->response=array('http response code'=>200,'grain'=>$grains[0], 'message'=>array('message_code'=>1000, 'message_text'=>'here is your specific grain ('.$grainuuidid.')'));
                                     $this->logEvent($this->planuuid, $sliceuuid, $grainuuidid, 'specific grain was requested');
                                 }
                                 else
