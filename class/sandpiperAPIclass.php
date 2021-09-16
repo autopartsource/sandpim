@@ -926,17 +926,19 @@ class slices extends sandpiper
                     //            /slices/[uuid]
                     //Get non-grain details about a specific slice
                     $sliceuuid=$this->extractParms($this->requesturi[4]);
-                    if($this->looksLikeAUUID($uripart))
+                    
+                    if($this->looksLikeAUUID($sliceuuid))
                     {// /slices/[uuid]
                         
                         if($this->isSliceInPlan($this->planuuid, $sliceuuid))
                         {// slice is part of user's plan
                             
                             $slice=$this->getSlice($this->planuuid, $sliceuuid);
+                            $this->response=array('http response code'=>200, 'message'=>array('message_code'=>1000, 'message_text'=>'here is you slice'));
                         }
                         else
                         {// supplied slice is not in user's plan
-                            $this->response= array('message'=>'slice UUID ('.$uripart.') is not part of the current plan'); 
+                            $this->response= array('message'=>'slice UUID ('.$sliceuuid.') is not part of the current plan'); 
                         }
                     }
                     else
