@@ -122,7 +122,11 @@ switch($uriparts[2])
                 if($slices->userIdOfRequest()!==false)
                 {// jtw validated, process request
                     $slices->processRequest();
-                    echo $slices->response;      
+                    if(isset($slices->$response['http response code']))
+                    {
+                        http_response_code($slices->$response['http response code']);        
+                    }
+                    echo json_encode($slices->response);
                 }
                 else
                 {// send the "not authorized" code
