@@ -962,7 +962,7 @@ class slices extends sandpiper
                             
                                 
                                 $detaillevel='GRAIN_ID_ONLY';
-                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['grain_detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_ID_OLNY'))
+                                if(array_key_exists('grain_detail',$this->keyedparms) && ($this->keyedparms['grain_detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_ID_OLNY'))
                                 {
                                     $detaillevel=$this->keyedparms['grain_detail'];
                                 }                        
@@ -1011,7 +1011,7 @@ class slices extends sandpiper
                             
                                 
                                 $detaillevel='GRAIN_ID_ONLY';
-                                if(array_key_exists('detail',$this->keyedparms) && ($this->keyedparms['grain_detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_ID_OLNY'))
+                                if(array_key_exists('grain_detail',$this->keyedparms) && ($this->keyedparms['grain_detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_ID_OLNY'))
                                 {
                                     $detaillevel=$this->keyedparms['grain_detail'];
                                 }                        
