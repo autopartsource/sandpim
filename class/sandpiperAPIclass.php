@@ -352,7 +352,7 @@ class sandpiper
           else   
           {// return a structure of full verbosity
            //$grains[]=array('grain_uuid'=>$row['grainuuid'],'slice_uuid'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'file_name'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
-           $grains[]=array('grain_uuid'=>$row['grainuuid'],'grain_order'=>$row['grainorder'],'grain_key'=>$row['grainkey'],'grain_reference'=>'','encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
+           $grains[]=array('grain_uuid'=>$row['grainuuid'],'grain_order'=>$row['grainorder'],'grain_key'=>$row['grainkey'],'grain_reference'=>'','payload'=>$payload,'payload_len'=>$row['payloadsize']);
           }
          }
         }
@@ -1062,18 +1062,227 @@ class slices extends sandpiper
             
             
             break;
+
+            
+            
+        case 'DELETE':
+            
+            //  /slices/{sliceuuid}/grains/{grainuuid}
+            
+            switch(count($this->requesturi))
+            {
+                case 7:
+
+                    $grainuuidid=$this->extractParms($this->requesturi[6]);
+                    $uripart=$this->requesturi[5];
+                    $sliceuuid=$this->requesturi[4];
+ 
+                    if($uripart=='grains')
+                    {
+                        if($this->looksLikeAUUID($grainuuidid) && $this->looksLikeAUUID($sliceuuid))
+                        {//             /slices/[uuid]/grains/[uuid]
+                            
+                            // check to see if the client has access to this slice
+                            if($this->isSliceInPlan($this->planuuid, $sliceuuid))
+                            {// slice is part of user's plan
+
+                                if($this->isClientPrimary())
+                                {
+                                    $grains=$this->getSubscribedFilegrains($this->planuuid,$sliceuuid,$grainuuidid, 'GRAIN_WITHOUT_PAYLOAD', false);
+
+                                    if(count($grains))
+                                    {
+                                        $this->response=array('http response code'=>200,'message'=>array('message_code'=>1000, 'message_text'=>'Grain '.$grainuuidid.' was disconnected from slice '.$sliceuuid));
+                                        $this->logEvent($this->planuuid, $sliceuuid, $grainuuidid, 'specific grain was deleted');
+                                    }
+                                    else
+                                    {// no grains found in the given plan/slice                                                   
+                                        $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice / grain ('.$sliceuuid.' / '.$grainuuidid.') was not found for delete. No action taken.'));
+                                    }   
+                                }
+                                else
+                                {// client is secondary in plan
+                                    $this->response=array('http response code'=>403, 'message'=>array('message_code'=>3000, 'message_text'=>'Secondary actor is not allowed to modify Content. No action taken.'));
+                                }
+                            }
+                            else
+                            {// supplied slice is not in user's plan
+
+                                $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice ('.$sliceuuid.') is not part of plan ('. $this->planuuid.')'));
+                            }
+                        }
+                        else  
+                        {//             /slices/[non-uuid]/grains/[non-uuid]
+                            $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[grainuuid]. Did not get properly formatted uuids in grains and/or slices positions'));
+                        }
+                    }
+                    else
+                    {//             /slices/[uuid]/!grains/something
+                        $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[gtainuuid]. Did not get grains keyword'));
+                    }
+                    
+                    break;
+                    
+                    
+                default:
+                    $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Expected /slices/{sliceuuid}/grains/{grainuuid}'));
+                    
+                    break;
+            }            
+                        
+            break;
+        
+        
+        
         
         case 'POST':
-            $this->response=array('http response code'=>200, 'message'=>array('message_code'=>1000, 'message_text'=>'/slices (POST) endpoint'));
+            
+            //  /slices/{sliceuuid}/grains/{grainuuid}            
+            switch(count($this->requesturi))
+            {
+                case 7:
+
+                    $grainuuidid=$this->extractParms($this->requesturi[6]);
+                    $uripart=$this->requesturi[5];
+                    $sliceuuid=$this->requesturi[4];
+ 
+                    if($uripart=='grains')
+                    {
+                        if($this->looksLikeAUUID($grainuuidid) && $this->looksLikeAUUID($sliceuuid))
+                        {//             /slices/[uuid]/grains/[uuid]
+                            
+                            // check to see if the client has access to this slice
+                            if($this->isSliceInPlan($this->planuuid, $sliceuuid))
+                            {// slice is part of user's plan
+
+                                if($this->isClientPrimary())
+                                {
+                                    if($this->grainExists($grainuuid))
+                                    {
+                                    
+                                       // verify that this slice/grain combo does not already exist
+                                        $grains=$this->getSubscribedFilegrains($this->planuuid,$sliceuuid,$grainuuidid, 'GRAIN_WITHOUT_PAYLOAD', false);
+
+                                        if(count($grains))
+                                        {// slice/grain combo already exists - do not add it again
+                                            $this->response=array('http response code'=>200,'message'=>array('message_code'=>1000, 'message_text'=>'Slice / Grain ('.$sliceuuid.' / '.$grainuuidid.') already exists. No action taken.'));
+                                        }
+                                        else
+                                        {// no grains found in the given slice, and the specified grain exist - go ahead and link it 
+                                            
+                                            $this->response=array('http response code'=>200, 'message'=>array('message_code'=>1000, 'message_text'=>'pre-existing grain ('.$grainuuidid.') was added to slice '.$sliceuuid));
+                                        }
+                                    }
+                                    else
+                                    {// specified grain does not exist
+                                        
+                                        $this->response=array('http response code'=>404, 'message'=>array('message_code'=>1000, 'message_text'=>'Grain '.$grainuuidid.' does not exist. No action taken.'));                                        
+                                    }
+                                }
+                                else
+                                {// client is secondary in plan
+                                    $this->response=array('http response code'=>403, 'message'=>array('message_code'=>3000, 'message_text'=>'Secondary actor is not allowed to modify Content. No action taken.'));
+                                }
+                            }
+                            else
+                            {// supplied slice is not in user's plan
+
+                                $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice ('.$sliceuuid.') is not part of plan ('. $this->planuuid.')'));
+                            }
+                        }
+                        else  
+                        {//             /slices/[non-uuid]/grains/[non-uuid]
+                            $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[grainuuid]. Did not get properly formatted uuids in grains and/or slices positions'));
+                        }
+                    }
+                    else
+                    {//             /slices/[uuid]/!grains/something
+                        $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[gtainuuid]. Did not get grains keyword'));
+                    }
+                    
+                    break;
+                    
+                    
+                default:
+                    $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Expected /slices/{sliceuuid}/grains/{grainuuid}'));
+                    
+                    break;
+            }            
+            
+            
             break;
         
-        case 'DELETE':
-            $this->response=array('http response code'=>200, 'message'=>array('message_code'=>1000, 'message_text'=>'/slices (DELETE) endpoint'));
-            break;
         
         case 'PUT':
-            $this->response=array('http response code'=>200, 'message'=>array('message_code'=>1000, 'message_text'=>'/slices (PUT) endpoint'));
+
+            //  /slices/{sliceuuid}/grains/{grainuuid}            
+            switch(count($this->requesturi))
+            {
+                case 7:
+
+                    $grainuuidid=$this->extractParms($this->requesturi[6]);
+                    $uripart=$this->requesturi[5];
+                    $sliceuuid=$this->requesturi[4];
+ 
+                    if($uripart=='grains')
+                    {
+                        if($this->looksLikeAUUID($grainuuidid) && $this->looksLikeAUUID($sliceuuid))
+                        {//             /slices/[uuid]/grains/[uuid]
+                            
+                            // check to see if the client has access to this slice
+                            if($this->isSliceInPlan($this->planuuid, $sliceuuid))
+                            {// slice is part of user's plan
+
+                                if($this->isClientPrimary())
+                                {
+                                    // verify that this slice/grain combo does not already exist
+                                    $grains=$this->getSubscribedFilegrains($this->planuuid,$sliceuuid,$grainuuidid, 'GRAIN_WITHOUT_PAYLOAD', false);
+
+                                    if(count($grains))
+                                    {
+                                        $this->response=array('http response code'=>200,'message'=>array('message_code'=>1000, 'message_text'=>'Slice / Grain ('.$sliceuuid.' / '.$grainuuidid.') already exists. No action taken.'));
+                                    }
+                                    else
+                                    {// no grains found in the given plan/slice - go ahead and add                                                   
+                                        
+                                        // take the body of the PUT and encode it 
+                                        
+                                        $this->response=array('http response code'=>200, 'message'=>array('message_code'=>1000, 'message_text'=>'New grain ('.$grainuuidid.') was added and linked to slice '.$sliceuuid));
+                                    }   
+                                }
+                                else
+                                {// client is secondary in plan
+                                    $this->response=array('http response code'=>403, 'message'=>array('message_code'=>3000, 'message_text'=>'Secondary actor is not allowed to modify Content. No action taken.'));
+                                }
+                            }
+                            else
+                            {// supplied slice is not in user's plan
+
+                                $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice ('.$sliceuuid.') is not part of plan ('. $this->planuuid.')'));
+                            }
+                        }
+                        else  
+                        {//             /slices/[non-uuid]/grains/[non-uuid]
+                            $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[grainuuid]. Did not get properly formatted uuids in grains and/or slices positions'));
+                        }
+                    }
+                    else
+                    {//             /slices/[uuid]/!grains/something
+                        $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[gtainuuid]. Did not get grains keyword'));
+                    }
+                    
+                    break;
+                    
+                    
+                default:
+                    $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Expected /slices/{sliceuuid}/grains/{grainuuid}'));
+                    
+                    break;
+            }            
+            
             break;
+            
+
         
         default: break;
     }
