@@ -1330,7 +1330,7 @@ class plans extends sandpiper
                             $planslist=array();
                             foreach($plans as $plan)
                             {
-                                $planslist[]=array('plan_uid'=>$plan['planuuid'], 'plan_description'=>$plan['descriprion'], 'plan_status'=>$plan['status'], 'plan_status_on'=>$plan['planstatuson'], 'primary_approved_on'=>$plan['primaryapprovedon'], 'secondary_approved_on'=>$plan['secondaryapprovedon'], 'payload'=>$plan['plandocument']);
+                                $planslist[]=array('plan_uuid'=>$plan['planuuid'], 'plan_description'=>$plan['descriprion'], 'plan_status'=>$plan['status'], 'plan_status_on'=>$plan['planstatuson'], 'primary_approved_on'=>$plan['primaryapprovedon'], 'secondary_approved_on'=>$plan['secondaryapprovedon'], 'payload'=>$plan['plandocument']);
                             }
                         
                             $this->response=array('plans'=>$planslist, 'message'=>array('message_code'=>1000, 'message_text'=>'list of '.count($planslist).' plans returned'));
