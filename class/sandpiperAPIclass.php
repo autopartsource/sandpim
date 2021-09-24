@@ -988,16 +988,16 @@ class slices extends sandpiper
                     }
                     else
                     {
-                        if($uripart=='grain_ids_list')
+                        if($uripart=='grain_id_list')
                         {
                             $inflatepayload=false; if(array_key_exists('inflate',$this->keyedparms) && $this->keyedparms['inflate']=='yes'){$inflatepayload=true;}
                             $grains=$this->getSubscribedFilegrains($this->planuuid,$sliceuuid,'%', 'GRAIN_ID_ONLY', $inflatepayload);  
-                            $this->response=array('http response code'=>200, 'grain_ids'=>$grains, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your lean list of grains (uuids only) in plan '.$this->planuuid.', slice '.$sliceuuid));                                    
+                            $this->response=array('http response code'=>200, 'grain_ids'=>$grains, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your lean list of grains (uuids only) in plan '.$this->planuuid.', slice '.$sliceuuid)); 
                             $this->logEvent($this->planuuid, $sliceuuid, '', 'list grains in slice. Detail:'.$detaillevel);
                         }
                         else
                         {
-                            $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Was expecting grains verb or grain_ids_list after slice uuid: like /v1/slices/{sliceuuid}/grains'));
+                            $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Was expecting grains verb or grain_id_list after slice uuid: like /v1/slices/{sliceuuid}/grain_id_list'));
                         }
                     }
                     break;
