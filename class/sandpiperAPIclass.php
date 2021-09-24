@@ -989,11 +989,12 @@ class slices extends sandpiper
                     else
                     {
                         if($uripart=='grain_id_list')
-                        {
+                        {   
+                            $sliceuuid=$this->requesturi[4];
                             $inflatepayload=false; if(array_key_exists('inflate',$this->keyedparms) && $this->keyedparms['inflate']=='yes'){$inflatepayload=true;}
                             $grains=$this->getSubscribedFilegrains($this->planuuid,$sliceuuid,'%', 'GRAIN_ID_ONLY', $inflatepayload);  
                             $this->response=array('http response code'=>200, 'grain_ids'=>$grains, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your lean list of grains (uuids only) in plan '.$this->planuuid.', slice '.$sliceuuid)); 
-                            $this->logEvent($this->planuuid, $sliceuuid, '', 'list grains in slice. Detail:'.$detaillevel);
+                            $this->logEvent($this->planuuid, $sliceuuid, '', 'list grains (lean) in slice');
                         }
                         else
                         {
