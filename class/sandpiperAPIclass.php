@@ -952,17 +952,16 @@ class slices extends sandpiper
                 //             /slices/[uuid]/something   
                     $uripart=$this->extractParms($this->requesturi[5]);
                     if($uripart=='grains')
-                    { //             /slices/[uuid]/grains   (detail=GRAIN_WITH_PAYLOAD|GRAIN_WITHOUT_PAYLOAD|GRAIN_ID)
+                    { //             /slices/[uuid]/grains   (detail=GRAIN_WITH_PAYLOAD|GRAIN_WITHOUT_PAYLOAD)
                         
                         $sliceuuid=$this->requesturi[4];
                         if($this->looksLikeAUUID($sliceuuid))
                         {
                             if($this->isSliceInPlan($this->planuuid, $sliceuuid))
                             {// slice is part of user's plan
-                            
-                                
-                                $detaillevel='GRAIN_ID_ONLY';
-                                if(array_key_exists('grain_detail',$this->keyedparms) && ($this->keyedparms['grain_detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_WITHOUT_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_ID_OLNY'))
+                                                            
+                                $detaillevel='GRAIN_WITHOUT_PAYLOAD';
+                                if(array_key_exists('grain_detail',$this->keyedparms) && ($this->keyedparms['grain_detail']=='GRAIN_WITH_PAYLOAD' || $this->keyedparms['grain_detail']=='GRAIN_WITHOUT_PAYLOAD'))
                                 {
                                     $detaillevel=$this->keyedparms['grain_detail'];
                                 }                        
@@ -974,8 +973,7 @@ class slices extends sandpiper
                                 }
 
                                 $grains=$this->getSubscribedFilegrains($this->planuuid,$sliceuuid,'%', $detaillevel, $inflatepayload);  
-
-                                $this->response=array('http response code'=>200, 'grains'=>$grains, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your list of grains in plan '.$this->planuuid.', slice '.$sliceuuid));
+                                $this->response=array('http response code'=>200, 'grains'=>$grains, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your list of grains in plan '.$this->planuuid.', slice '.$sliceuuid));                                    
                                 $this->logEvent($this->planuuid, $sliceuuid, '', 'list grains in slice. Detail:'.$detaillevel);
                             }
                             else
@@ -990,7 +988,17 @@ class slices extends sandpiper
                     }
                     else
                     {
-                        $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Was expecting grains verb after slice uuid: like /v1/slices/{sliceuuid}/grains'));
+                        if($uripart=='grain_ids_list')
+                        {
+                            $inflatepayload=false; if(array_key_exists('inflate',$this->keyedparms) && $this->keyedparms['inflate']=='yes'){$inflatepayload=true;}
+                            $grains=$this->getSubscribedFilegrains($this->planuuid,$sliceuuid,'%', 'GRAIN_ID_ONLY', $inflatepayload);  
+                            $this->response=array('http response code'=>200, 'grain_ids'=>$grains, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your lean list of grains (uuids only) in plan '.$this->planuuid.', slice '.$sliceuuid));                                    
+                            $this->logEvent($this->planuuid, $sliceuuid, '', 'list grains in slice. Detail:'.$detaillevel);
+                        }
+                        else
+                        {
+                            $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Was expecting grains verb or grain_ids_list after slice uuid: like /v1/slices/{sliceuuid}/grains'));
+                        }
                     }
                     break;
                 
