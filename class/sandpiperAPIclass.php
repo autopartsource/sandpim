@@ -352,7 +352,7 @@ class sandpiper
           else   
           {// return a structure of full verbosity
            //$grains[]=array('grain_uuid'=>$row['grainuuid'],'slice_uuid'=>$row['sliceuuid'],'grain_key'=>$row['grainkey'],'file_name'=>$row['source'],'encoding'=>$row['encoding'],'payload'=>$payload,'payload_len'=>$row['payloadsize']);
-           $grains[]=array('grain_uuid'=>$row['grainuuid'],'grain_order'=>$row['grainorder'],'grain_key'=>$row['grainkey'],'grain_reference'=>'','payload'=>$payload,'payload_len'=>$row['payloadsize']);
+           $grains[]=array('grain_uuid'=>$row['grainuuid'],'grain_order'=>$row['grainorder'],'grain_key'=>$row['grainkey'],'grain_reference'=>'','grain_size_bytes'=>$row['payloadsize'],'payload'=>$payload);
           }
          }
         }
