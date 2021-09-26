@@ -1332,7 +1332,6 @@ class plans extends sandpiper
                 {
                     case 4:
                         // /v1/plans
-                        // ?PLAN_WITH_DOUMENT or PLAN_WITHOUT_DOUMENT
                             $uripart=$this->extractParms($this->requesturi[3]);
                             $plans=$this->getPlansForUser($this->userid);
                             
@@ -1348,15 +1347,23 @@ class plans extends sandpiper
                     case 5:
                         // /v1/plans/xxx
                         $uripart=$this->extractParms($this->requesturi[4]);
-                        if($uripart=='invoke')
-                        {//   /v1/plans/invoke
-
-                            $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'plan_description'=>'fragment plan','plan_status'=>'Proposed','payload'=>'<xml></xml>'),'message'=>array('message_code'=>2000,'message_text'=>'client asked for plan invocation'),'http response code'=>200);
-
+                        if($this->looksLikeAUUID($uripart))
+                        {// /v1/plans/uuid
+                            $this->planuuid=$uripart;
+                            $plan=$this->getPlanRecord($this->planuuid);
+                            $this->response=array('plan'=>$plan, 'message'=>array('message_code'=>1000, 'message_text'=>'Here is the reqested plan'));                            
                         }
                         else
-                        {
-                            $this->response=array('message_code'=>'3000','message'=>'unexpected verb after /plans/. Expected invoke','http response code'=>400);                    
+                        {// // /v1/plans/non-a-uuid
+                            
+                            if($uripart=='invoke')
+                            {//   /v1/plans/invoke
+                                $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'plan_description'=>'fragment plan','plan_status'=>'Proposed','payload'=>'<xml></xml>'),'message'=>array('message_code'=>2000,'message_text'=>'client asked for plan invocation'),'http response code'=>200);
+                            }
+                            else
+                            { // /v1/plans/xxx 
+                                $this->response=array('message_code'=>'3000','message'=>'unexpected verb after /plans/. Expected invoke','http response code'=>400);                    
+                            }
                         }
                         break;
 
