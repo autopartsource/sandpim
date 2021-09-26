@@ -46,11 +46,11 @@ class mysql
 
 
  function testConnection()
- {
+ {// test connectivity with no specific databases named
   $success=false;
   try
   {
-   if($this->conn = mysqli_connect($this->host, $this->user, $this->passwd, $this->dbname))
+   if($this->conn = mysqli_connect($this->host, $this->user, $this->passwd))
    { // connection success
     $this->conn->close();
     $success=true;   
