@@ -5,6 +5,7 @@ session_start();
 
 $setup= new setup;
 $dbname='pim';
+$successfulsetup=false;
 
 // loop until database connetion answers (satisfies a race condition in docker deployments wehn this script is run by automation)
 $i=0;
@@ -35,8 +36,7 @@ if($setup->databaseNameExists($dbname))
                $results=$setup->createTables($dbname);
                if($results['success'])
                 { // created all tables needed for operations (about 60)
-                    echo 'Successfully created database tables for SandPIM in database ('.$dbname.')<br/>';
-                    echo ' Go to <a href="./login.php">login page</a> to get started with the system configuration process.';
+                   $successfulsetup=true;
                 }
                 else
                 { // something failed in the tables creation process
@@ -61,16 +61,15 @@ else
     $createresult=$setup->createDatebase($dbname);
     if($createresult=='')
     { // create empty database successful
-        echo 'Successfully created new (empty) database ('.$dbname.')<br/>';
+        //echo 'Successfully created new (empty) database ('.$dbname.')<br/>';
         $results=$setup->verifyDatabasePermissions($dbname);
         if($results['success'])
         { // successfully ran the test suite of all the interactions that SandPIM will need for operation
-            echo 'Verified needed permissions on new database ('.$dbname.')<br/>';
+            //echo 'Verified needed permissions on new database ('.$dbname.')<br/>';
             $results=$setup->createTables($dbname);
             if($results['success'])
             { // created all tables needed for operations (about 60)
-                echo 'Successfully created database tables for SandPIM in database ('.$dbname.')<br/>';
-                echo ' Go to <a href="./login.php">login page</a> to get started with the system configuration process.';
+                $successfulsetup=true;
             }
             else
             { // something failed in the tables creation process
@@ -88,4 +87,27 @@ else
         echo "problems encountered creating database:\n"; print_r($results);
     }
 }
+
+
+
+if($successfulsetup)
+{
+    echo 'Successfully created database tables for SandPIM in database ('.$dbname.')<br/>';
+ 
+    $setupuser = $user->createSetupUser();
+    echo '<div style="background-color: #FF5533">A temporary account was created for completing the setup process. Be sure to record these credentials - the password will not be shown again.  <br/>';
+    echo 'username:'.$setupuser['username'].'<br/>';
+    echo 'password:'.$setupuser['password'].'<br/>';
+    echo '</div>';
+    echo ' Go to <a href="./login.php">login page</a> to get started with the system configuration process.';
+
+    
+}
+
+
+
+
+
+
+
 ?>

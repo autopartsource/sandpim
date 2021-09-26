@@ -726,7 +726,12 @@ class setup
         configvalue varchar(255) not null,
         PRIMARY KEY (configname))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - config ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - config ('.$db->conn->error.')';}
+        $sql="insert into config values('AutoCareResourceListURI','https://aps.dev/sandpim/AutoCareTechnology.php');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config values('AutoCareFTPserver','52.168.10.67');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config values('AutoCareDownloadsDirectory','/var/www/html/autocaredownloads');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
+        
+        
         $sql="CREATE TABLE config_options (
         configname varchar(255) not null,
         format varchar(255) not null,
