@@ -4,6 +4,66 @@ include_once("mysqlClass.php");
 class setup
 {
 
+    
+    function databaseNameExists($dbname)
+    {
+        $result=false;
+        $db = new mysql;
+        $connectresult=$db->connect_nodb(); // will return empty string if successful
+        if($connectresult=='')
+        {
+            if($stmt=$db->conn->prepare('select schema_name from information_schema.schemata where schema_name =?'))
+            {
+                if($stmt->bind_param('s', $dbname))
+                {
+                    if($stmt->execute())
+                    {
+                        $db->result = $stmt->get_result();
+                        if($row = $db->result->fetch_assoc())
+                        {
+                            $result=true;
+                        }
+                    }
+                }
+            }
+            $db->close();
+        }
+        return $result;
+    }
+ 
+ 
+    function databaseTableCount($dbname)
+    {
+        $result=-1;
+        $db = new mysql;
+        $db->dbname=$dbname;
+ 
+        $connectresult=$db->connect(); // will return empty string if successful
+        if($connectresult=='')
+        {
+            if($stmt=$db->conn->prepare('select table_name from information_schema.tables where TABLE_SCHEMA=?'))
+            {
+                if($stmt->bind_param('s', $dbname))
+                {
+                    if($stmt->execute())
+                    {
+                        $result=0;
+                        $db->result = $stmt->get_result();
+                        while($row = $db->result->fetch_assoc())
+                        {
+                            $result++;
+                        }
+                    }
+                }
+            }
+            $db->close();
+        }
+        return $result;
+    }
+    
+    
+    
+    
     function createDatebase($dbname)
     {
         $db = new mysql; 
