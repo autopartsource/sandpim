@@ -18,7 +18,7 @@ $pim = new pim();
 $jobs=$pim->getBackgroundjobs('ACESxmlExport','started');
 
 
-if($jobs)
+if(count($jobs))
 {
  include_once(__DIR__.'/class/vcdbClass.php');
  include_once(__DIR__.'/class/pcdbClass.php');

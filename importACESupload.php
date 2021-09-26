@@ -90,7 +90,7 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
                                 <h5 class="card-header text-start">Existing ACES Import Jobs</h5>
 
                                 <div class="card-body">
-                                    <?php if($jobs){ ?>
+                                    <?php if(count($jobs)){ ?>
                                     <table class="table" border="1">
                                         <tr><th>Job Type</th><th>Status</th><th>File</th><th>Created On</th><th>Actions</th></tr>
                                         <?php foreach ($jobs as $job) { ?>

@@ -5,7 +5,7 @@ include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the fu
 $pim=new pim;
 $jobs=$pim->getBackgroundjobs('ACESxmlImport','started');
 
-if($jobs)
+if(count($jobs))
 {
  $file_name=$jobs[0]['inputfile'];
  $jobid=$jobs[0]['id'];

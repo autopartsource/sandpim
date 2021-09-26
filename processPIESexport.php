@@ -18,7 +18,7 @@ $pim = new pim();
 $jobs=$pim->getBackgroundjobs('PIESxmlExport','started');
 
 
-if($jobs)
+if(count($jobs))
 {
  include_once(__DIR__.'/class/pcdbClass.php');
  include_once(__DIR__.'/class/pricingClass.php');

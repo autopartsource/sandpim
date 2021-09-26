@@ -1240,7 +1240,7 @@ function countAppsByPartcategories($partcategories)
   $db = new mysql; 
   //$db->dbname='pim';
   $db->connect();
-  $jobs=false;
+  $jobs=array();
   if($stmt=$db->conn->prepare('select * from backgroundjob where jobtype like ? and status like ? order by datetimecreated'))
   {
    if($stmt->bind_param('ss', $jobtype,$status))
