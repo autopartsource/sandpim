@@ -1,5 +1,6 @@
 <?php
 include_once('./class/userClass.php');
+include_once('./class/setupClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/pimClass.php');
@@ -7,9 +8,27 @@ include_once('./class/pimClass.php');
 $user = new user;
 if(!$user->testDatabase())
 { // if database connectivity failed, redirect to setup
-    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./setup.php'\" /></head><body></body></html>";
+    echo 'backend database connection failed. Verify that MySQL is running and accepting connections.';
     exit;
 }
+
+
+$setup=new setup;
+if($setup->databaseNameExists('pim'))
+{ // we can connect to db and pim exists. See it it's actually empty
+ if($setup->databaseTableCount('pim')==0)
+ {// pim database exists, but has not tables
+  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./setup.php'\" /></head><body></body></html>";
+  exit;   
+ }
+}
+else
+{// pim database does not exist
+  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./setup.php'\" /></head><body></body></html>";
+  exit;    
+}
+
+
 session_start();
 
 $pim = new pim;
