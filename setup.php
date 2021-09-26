@@ -6,9 +6,26 @@ session_start();
 $setup= new setup;
 $dbname='pim';
 
+// loop until database connetion answers (satisfies a race condition in docker deployments wehn this script is run by automation)
+$i=0;
+while(true)
+{
+    if($setup->testDatabase()){break;}
+    if($i>=10)
+    {
+        echo " Database connection could not be established.\n";
+        exit;
+    }
+    echo 'database service is not answering. Retrying...<br/>';
+    flush();
+    sleep(2);
+    $i++;
+}
+
+
 if($setup->databaseNameExists($dbname))
 { // database exists, but we did not attemt to connect to it
-    if($setup->testDatabaseConnection($dbname)=='')
+    if($setup->testDatabaseVerbose($dbname)=='')
     { // successful connection and close to named database. now check to see if it (hopefully) has no tables inside
         if($setup->databaseTableCount($dbname)==0)
         { // named datbase has no tables inside (good)

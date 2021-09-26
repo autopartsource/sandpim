@@ -4,6 +4,12 @@ include_once('./class/logsClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/pimClass.php');
 
+$user = new user;
+if(!$user->testDatabase())
+{ // if database connectivity failed, redirect to setup
+    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./setup.php'\" /></head><body></body></html>";
+    exit;
+}
 session_start();
 
 $pim = new pim;
@@ -15,7 +21,6 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
-$user = new user;
 $configGet = new configGet;
 
 $installationtate = $user->installationState();

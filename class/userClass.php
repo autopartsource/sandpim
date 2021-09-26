@@ -272,6 +272,12 @@ class user
   $db->close();
  }
 
+ function testDatabase()
+ {
+  $db = new mysql; 
+  return $db->testConnection();   
+ }
+
  function installationState()
  {
     $configGet= new configGet;

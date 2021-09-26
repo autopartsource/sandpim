@@ -35,9 +35,6 @@ class mysql
   }
   return $error;
  }
-
- 
- 
  
  function close()
  {
@@ -48,4 +45,28 @@ class mysql
  }
 
 
+ function testConnection()
+ {
+  $success=false;
+  try
+  {
+   if($this->conn = mysqli_connect($this->host, $this->user, $this->passwd, $this->dbname))
+   { // connection success
+    $this->conn->close();
+    $success=true;   
+   }
+   else
+   {
+    throw new Exception('Unable to connect');
+   }
+  }
+  catch(Exception $e)
+  {//echo $e->getMessage();
+  }
+  return $success;
+ }
+ 
+ 
+ 
+ 
 }

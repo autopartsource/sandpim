@@ -91,7 +91,7 @@ class setup
     {
         $returnvalue=array('success'=>false,'connect'=>false,'create'=>false,'insert'=>false,'update'=>false,'delete'=>false,'drop'=>false,'log'=>array());
 
-        $result=$this->testDatabaseConnection($dbname);
+        $result=$this->testDatabaseVerbose($dbname);
         if($result=='')
         {
             $returnvalue['log'][]='successful connection to database: '.$dbname;
@@ -154,7 +154,14 @@ class setup
         return $returnvalue;
     }
     
-    function testDatabaseConnection($dbname)
+    function testDatabase()
+    {
+        $db = new mysql; 
+        return($db->testConnection());
+    }
+
+
+    function testDatabaseVerbose($dbname)
     {
         $db = new mysql; 
         $db->dbname=$dbname; 
