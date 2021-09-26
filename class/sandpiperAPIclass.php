@@ -1351,7 +1351,16 @@ class plans extends sandpiper
                         {// /v1/plans/uuid
                             $this->planuuid=$uripart;
                             $plan=$this->getPlanRecord($this->planuuid);
-                            $this->response=array('plan'=>$plan, 'message'=>array('message_code'=>1000, 'message_text'=>'Here is the reqested plan'));                            
+                            if($plan)
+                            { // plan presented exists
+                                $this->response=array('plan'=>$plan, 'message'=>array('message_code'=>1000, 'message_text'=>'Here is the reqested plan','http response code'=>200));                            
+                            }
+                            else
+                            {// plan does not exist for this user
+                                
+                                
+                                $this->response=array('message'=>array('message_code'=>3000, 'message_text'=>'Reqested plan does not exist','http response code'=>403));                                                            
+                            }
                         }
                         else
                         {// // /v1/plans/non-a-uuid
