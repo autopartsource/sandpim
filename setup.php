@@ -1,9 +1,12 @@
 <?php
 include_once('./class/setupClass.php');
+include_once('./class/userClass.php');
+
 session_start();
 
 
 $setup= new setup;
+$user = new user;
 $dbname='pim';
 $successfulsetup=false;
 
