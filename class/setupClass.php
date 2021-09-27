@@ -729,8 +729,12 @@ class setup
         $sql="insert into config values('AutoCareResourceListURI','https://aps.dev/sandpim/AutoCareTechnology.php');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config values('AutoCareFTPserver','52.168.10.67');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config values('AutoCareDownloadsDirectory','/var/www/html/autocaredownloads');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-
-        
+        $sql="insert into config values('vcdbProductionDatabase','vcdb');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config values('pcdbProductionDatabase','pcdb');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config values('padbProductionDatabase','padb');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config values('qdbProductionDatabase','qdb');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config values('defaultDescriptionLanguageCode','EN');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config values('defaultDescriptionTypeCode','LAB');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         $sql="CREATE TABLE config_options (
         configname varchar(255) not null,
