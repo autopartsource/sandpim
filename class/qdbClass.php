@@ -5,9 +5,28 @@ class qdb
 {
  public $qdbversion;
     
- function __construct($_qdbversion=false) 
+ public function __construct($_qdbversion=false) 
  {
   $this->qdbversion=$_qdbversion;
+  if(!$_qdbversion)
+  { // no secific vsersion was passed in. Consult pim database for the name
+    // of the active vcdb database. It will be something like vcdb20210827      
+   $db = new mysql; $db->connect();
+   if($stmt=$db->conn->prepare("select configvalue from config where configname='qdbProductionDatabase'"))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      if($row = $db->result->fetch_assoc())
+      {
+       $this->qdbversion=$row['configvalue'];
+      }
+     }
+    }
+    $db->close();
+   }
+  }  
  }
 
 //get the human-readable rendering of a specific QdbID. if an array of parm strings

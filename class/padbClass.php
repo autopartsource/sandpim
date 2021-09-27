@@ -5,9 +5,29 @@ class padb
 {
  public $padbversion;
  
- function __construct($_padbversion=false) 
+ public function __construct($_padbversion=false) 
  {
   $this->padbversion=$_padbversion;
+  if(!$_padbversion)
+  { // no secific vsersion was passed in. Consult pim database for the name
+    // of the active vcdb database. It will be something like vcdb20210827
+      
+   $db = new mysql; $db->connect();
+   if($stmt=$db->conn->prepare("select configvalue from config where configname='padbProductionDatabase'"))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      if($row = $db->result->fetch_assoc())
+      {
+       $this->padbversion=$row['configvalue'];
+      }
+     }
+    }
+    $db->close();
+   }
+  }  
  }
 
  
