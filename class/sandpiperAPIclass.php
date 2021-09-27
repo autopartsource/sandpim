@@ -1359,7 +1359,7 @@ class plans extends sandpiper
                             {// plan does not exist for this user
                                 
                                 
-                                $this->response=array('message'=>array('message_code'=>3000, 'message_text'=>'Reqested plan does not exist','http response code'=>403));                                                            
+                                $this->response=array('message'=>array('message_code'=>3000, 'message_text'=>'Reqested plan does not exist or you do not have access','http response code'=>403));                                                            
                             }
                         }
                         else
