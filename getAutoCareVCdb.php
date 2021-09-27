@@ -124,7 +124,7 @@ if($uri && $havewriteaccess && $username && $password)
    {
     // import the sql file into the mysql client
     echo "Importing database to MySQL server.........";
-    exec('mysql --user='.$mysql->user.' --password='.$mysql->passwd.' vcdb'.$dbversion." < '".$downloadsdirectory.'/AAIA VCdb2009 MySQL Complete VCDB '.$dbversion.'.sql'."'");
+    exec('mysql --host='.$mysql->host.' --user='.$mysql->user.' --password='.$mysql->passwd.' vcdb'.$dbversion." < '".$downloadsdirectory.'/AAIA VCdb2009 MySQL Complete VCDB '.$dbversion.'.sql'."'");
     echo "Done".$newlinechars;;
 
     $vcdb=new vcdb('vcdb'.$dbversion); // test the new version as ask it for its versiondate

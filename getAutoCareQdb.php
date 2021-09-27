@@ -128,7 +128,7 @@ if($uri && $havewriteaccess && $username && $password)
    {
     // import the sql file into the mysql client
     echo "Importing database to MySQL server.........";
-    exec('mysql --user='.$mysql->user.' --password='.$mysql->passwd.' qdb'.$dbversion." < '".$downloadsdirectory.'/AAIA Qdb MySQL '.$dbversion.'.sql'."'");
+    exec('mysql --host='.$mysql->host.' --user='.$mysql->user.' --password='.$mysql->passwd.' qdb'.$dbversion." < '".$downloadsdirectory.'/AAIA Qdb MySQL '.$dbversion.'.sql'."'");
     echo "Done".$newlinechars; 
 
     $qdb=new qdb('qdb'.$dbversion); // test the new version as ask it for its versiondate

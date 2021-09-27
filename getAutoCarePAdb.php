@@ -127,7 +127,7 @@ if($uri && $havewriteaccess && $username && $password)
    {
    // import the sql file into the mysql client
     echo "Importing database to MySQL server.........";
-    exec('mysql --user='.$mysql->user.' --password='.$mysql->passwd.' padb'.$dbversion." < '".$downloadsdirectory.'/AAIA PAdb MySQL '.$dbversion.'.sql'."'");
+    exec('mysql --host='.$mysql->host.' --user='.$mysql->user.' --password='.$mysql->passwd.' padb'.$dbversion." < '".$downloadsdirectory.'/AAIA PAdb MySQL '.$dbversion.'.sql'."'");
     echo "Done".$newlinechars;
 
     $padb=new padb('padb'.$dbversion); // test the new version as ask it for its versiondate
