@@ -2875,7 +2875,7 @@ function gtinCheckDigit($barcode)
   {
    if($stmt->execute())
    { // grant myself select privileges on the new (empty) database
-    if($stmt=$db->conn->prepare("grant select on ".$newdatabasename.".* to '".$databaseuser."'@'localhost'"))
+    if($stmt=$db->conn->prepare("grant select on ".$newdatabasename.".* to '".$databaseuser."'@'".$db->host."'"))
     {
      if($stmt->execute())
      {
