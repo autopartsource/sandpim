@@ -532,9 +532,9 @@ class setup
         INDEX idx_oid (oid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part ('.$db->conn->error.')';}
 
-        $sql="insert into part values('PRC914',10,1684,'','2','','','841929101122,'','2021-09-30','2000-01-01','2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into part values('PRC914A',10,1684,'','2','','','841929127160,'','2021-10-01','2000-01-01','2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into part values('PRC914B',10,1684,'','1','','','841929127177,'','2021-10-02','2000-01-01','2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into part values('PRC914',10,1684,'','2','','','841929101122','','2021-09-30','2000-01-01','2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into part values('PRC914A',10,1684,'','2','','','841929127160','','2021-10-01','2000-01-01','2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into part values('PRC914B',10,1684,'','1','','','841929127177','','2021-10-02','2000-01-01','2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         
         
@@ -669,6 +669,7 @@ class setup
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - partcategory ('.$db->conn->error.')';}
 
         $sql="insert into partcategory values(10,'AmeriPRO - Ceramic','BKJT','','Ceramic','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into partcategory values(11,'AmeriPRO - Metalic','BKJT','','Metalic','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
 /* 11/7/2020 - probably won't need this 
 
