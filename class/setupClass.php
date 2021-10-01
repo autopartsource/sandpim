@@ -856,7 +856,13 @@ class setup
         PRIMARY KEY (id),
         INDEX idx_name (`name`))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile ('.$db->conn->error.')';}
-
+        $sql="insert into receiverprofile values(1000,0,'Epicor','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into receiverprofile values(1001,0,'WHI','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into receiverprofile values(1002,0,'PartsTech','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into receiverprofile values(1003,0,'Show Me The Parts','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into receiverprofile values(1004,0,'OptiCat','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into receiverprofile values(1005,0,'Ozark','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
         
         $sql="CREATE TABLE receiverprofile_marketingcopy (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -996,17 +1002,21 @@ class setup
         description varchar(255) not null,      
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - deliverygroup ('.$db->conn->error.')';}
+        $sql="insert into deliverygroup values(100,'AmeriBrakes - Pads');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into deliverygroup values(101,'AmeriBrakes - Rotors');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into deliverygroup values(102,'AmeriBrakes - Pads, Rotors');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
+        
         $sql="CREATE TABLE deliverygroup_partcategory (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         deliverygroupid int unsigned not null,
         partcategory int unsigned not null,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - deliverygroup_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - deliverygroup_partcategory ('.$db->conn->error.')';}
+        $sql="insert into deliverygroup_partcategory values(500,100,10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into deliverygroup_partcategory values(501,100,11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
-        
-        
-        
+                
         $sql="CREATE TABLE user_partcategory (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         userid int UNSIGNED NOT NULL,
