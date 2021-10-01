@@ -5,10 +5,10 @@ class mysql
  var $user = 'webservice';
  var $passwd = 'OsBBVrgJKw';
  var $dbname = 'pim';
- var $vcdbname='vcdb20210730';
- var $pcdbname='pcdb20210730';
- var $padbname='padb20210730';
- var $qdbname=  'qdb20210730';
+ var $vcdbname='vcdb';
+ var $pcdbname='pcdb';
+ var $padbname='padb';
+ var $qdbname=  'qdb';
  var $debug;
  var $conn;
  var $sql;
