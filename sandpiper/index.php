@@ -54,7 +54,7 @@ switch($uriparts[2])
     //versionless requests
     case 'check':
         
-        echo '"Sandpiper API OK"';
+        echo '"Sandpiper API OK. Authentication is done with a POST at this endpoint (you used GET)"';
         break;
    
     
@@ -68,33 +68,33 @@ switch($uriparts[2])
         switch($root)
         {
 
-        case 'login':
-            $sandpiper=new sandpiper;
+            case 'login':
+                $sandpiper=new sandpiper;
 
-            if($method=='POST')
-            {
-                if(array_key_exists('username',$postbody) &&  array_key_exists('password',$postbody))
-                {// user and pass were provided
-                    $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
-                    $response = $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
-                    if(isset($response['http response code']))
-                    {
-                        http_response_code($response['http response code']);        
+                if($method=='POST')
+                {
+                    if(array_key_exists('username',$postbody) &&  array_key_exists('password',$postbody))
+                    {// user and pass were provided
+                        $plandocument=''; if(array_key_exists('plandocument',$postbody)){$plandocument=$postbody['plandocument'];}
+                        $response = $sandpiper->authenticateUser($postbody['username'], $postbody['password'], $plandocument, $_SERVER['REMOTE_ADDR']);
+                        if(isset($response['http response code']))
+                        {
+                            http_response_code($response['http response code']);        
+                        }
+                        echo json_encode($response);
                     }
-                    echo json_encode($response);
+                    else
+                    {// username or password not present in login post body
+                        http_response_code(400);
+                    }
                 }
-                else
-                {// username or password not present in login post body
-                    http_response_code(400);
+
+                if($method=='GET')
+                {
+                    echo 'API is OK';
                 }
-            }
 
-            if($method=='GET')
-            {
-                echo 'API is OK';
-            }
-
-            break;
+                break;
 
 
             
@@ -208,6 +208,7 @@ switch($uriparts[2])
                         
     
             default: 
+                echo 'Unexpected input. Was expecting a verb like login, plans, slices or activity. Got this instead: '.$root;
                 http_response_code(404);
                 break;
         }
@@ -216,6 +217,7 @@ switch($uriparts[2])
     
     
     default:
+        echo 'Unexpected input. Was expecting a version number (like v1) or the check verb.';
         http_response_code(404);
         break;
 }
