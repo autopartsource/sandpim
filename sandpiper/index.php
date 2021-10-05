@@ -54,7 +54,7 @@ switch($uriparts[2])
     //versionless requests
     case 'check':
         
-        echo '"Sandpiper API OK. Authentication is done with a POST at this endpoint (you used GET)"';
+        echo 'API OK';
         break;
    
     
@@ -91,7 +91,7 @@ switch($uriparts[2])
 
                 if($method=='GET')
                 {
-                    echo 'API is OK';
+                    echo 'API OK. Authentication is done with a POST at this endpoint (you used GET)';
                 }
 
                 break;
