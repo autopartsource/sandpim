@@ -623,6 +623,8 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - price ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - price ('.$db->conn->error.')';}
 
+        
+        
         $sql="CREATE TABLE pricesheet (
         pricesheetnumber varchar(255) NOT NULL,
         description varchar(255) NOT NULL,
@@ -633,7 +635,9 @@ class setup
         PRIMARY KEY (pricesheetnumber))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - pricesheet ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - pricesheet ('.$db->conn->error.')';}
 
-
+        $sql="insert into pricesheet values('WDNET2021','WD Net Pricelist for 2021 (USD)','NET','USD','2021-01-01','2021-12-31')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
+        
+        
         
         $sql="CREATE TABLE package (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -899,6 +903,10 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_deliverygroup ('.$db->conn->error.')';}
 
+        $sql="insert into receiverprofile_deliverygroup values(1,1000,100)"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        
+        
         $sql="CREATE TABLE receiverprofile_parttranslation (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         receiverprofileid int UNSIGNED NOT NULL,
