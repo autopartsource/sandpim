@@ -411,7 +411,12 @@ class setup
         INDEX idx_fileHashMD5(fileHashMD5)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - asset ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - asset ('.$db->conn->error.')';}
-
+        $sql="insert into asset values(30000,'PRC914','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914.jpg','','TOP','RGB',733,1500,'PX',300,'WHI','JPG','2021-10-01',1,1,'Primary photo of PRC914','','',501478,1,'EN')"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into asset values(30001,'PRC914A','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914A.jpg','','TOP','RGB',726,1500,'PX',300,'WHI','JPG','2021-10-02',1,1,'Primary photo of PRC914A','','',202050,1,'EN')"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into asset values(30002,'PRC914B','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914B.jpg','','TOP','RGB',764,1500,'PX',300,'WHI','JPG','2021-10-03',1,1,'Primary photo of PRC914B','','',213594,1,'EN')"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        
+        
         $sql="CREATE TABLE application_history (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         applicationid int unsigned null,
@@ -565,6 +570,12 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_asset ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_asset ('.$db->conn->error.')';}
         
+        $sql="insert into part_asset values(1,'PRC914','PRC914','P04',1,'A')"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
+        $sql="insert into part_asset values(2,'PRC914A','PRC914A','P04',1,'A')"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
+        $sql="insert into part_asset values(3,'PRC914B','PRC914B','P04',1,'A')"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
+        
+        
+        
         $sql="CREATE TABLE part_description (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         partnumber varchar(20) NOT NULL,
@@ -577,7 +588,11 @@ class setup
         INDEX idx_descriptioncode_partnumber (descriptioncode, partnumber)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_description ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_description ('.$db->conn->error.')';}
-               
+
+        $sql="insert into part_description values(1,'PRC914','Pad Set W/Hardware','SHO',1,'EN')"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
+        $sql="insert into part_description values(2,'PRC914','Ceraamic Pad Set With Hardware','DES',1,'EN')"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
+        
+        
         $sql="CREATE TABLE part_balance (
         partnumber varchar(20) NOT NULL,
         qoh decimal(10,2) not null,
