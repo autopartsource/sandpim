@@ -862,6 +862,7 @@ class setup
         $sql="insert into receiverprofile values(1003,0,'Show Me The Parts','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into receiverprofile values(1004,0,'OptiCat','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into receiverprofile values(1005,0,'Ozark','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into receiverprofile values(1006,0,'Sandpiper Demo Receiver','',30,'2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         
         $sql="CREATE TABLE receiverprofile_marketingcopy (
@@ -920,6 +921,8 @@ class setup
         unique key idx_planuuid(planuuid),
         index idx_receiverprofileid(receiverprofileid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan ('.$db->conn->error.')';}      
+        $sql="insert into plan values(10500,'Demo plan for Sandpiper testing','9a6deb0f-25eb-4d18-83f0-6bf118fb2fad',1006,'data1:value1;data2:value2;','<xml></xm/>','Approved','2021-10-01 14:00:00','2021-10-01 14:01:00','2021-10-01 14:02:00')";  $stmt=$db->conn->prepare($sql); $stmt->execute();
+
         
         //each record here is a subscription
         $sql="CREATE TABLE plan_slice (
@@ -934,6 +937,10 @@ class setup
         index idx_planid(planid,sliceorder))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_partcategory ('.$db->conn->error.')';}
 
+        $sql="insert into plan_slice values(1,10500,2090,'b9317fa1-e2e1-462e-ba9c-6d6bec9445cd','',1)";  $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into plan_slice values(2,10500,2091,'1ae0b318-7adb-4c37-abfd-084a170c269a','',2)";  $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into plan_slice values(3,10500,2092,'049048f4-04b6-4130-bc7a-e0a46fe50df8','',3)";  $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
 
         $sql="CREATE TABLE slice (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -948,6 +955,9 @@ class setup
         unique key idx_sliceuuid(sliceuuid),
         index idx_partcategory(partcategory))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_partcategory ('.$db->conn->error.')';}
+        $sql="insert into slice values(2090,'Slice 1','afd2b3f9-134d-4b68-ac1c-a57bafbdd3bc','aces-file','ACESfile.xml',0,'data1:value1;data2:value2;','')";  $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into slice values(2091,'Slice 1','544dd9cb-13ad-4457-8be5-2a6ab95a8b4a','pies-file','PIESfile1.xml',0,'data1:value1;data2:value2;','')";  $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into slice values(2092,'Slice 1','09c4d2d9-a17b-4a63-bb0c-f3c13cc62acb','pies-file','PIESfile2.xml',0,'data1:value1;data2:value2;','')";  $stmt=$db->conn->prepare($sql); $stmt->execute();
 
         
         $sql="CREATE TABLE slice_filegrain (
