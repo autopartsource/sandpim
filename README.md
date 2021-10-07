@@ -25,12 +25,13 @@ contributing in any way (even just offering opinions!), please don't hesitate to
 --- 
 
 
-## To-Do list (currently being worked on as-of September, 2021)
+## To-Do list (currently being worked on as-of October, 2021)
 
 - Deployment how-to document for Fedora Linux
-- Deploy docker image of demo server to DockerHub
+
 
 ---
+
 
 ## Docker images for demo server
 
