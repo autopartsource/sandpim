@@ -623,6 +623,7 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - price ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - price ('.$db->conn->error.')';}
 
+        $sql="insert into price values(1,'PRC914','WDNET2021',12.34,'USD','EA','NET','2021-01-01','2021-12-31')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
         
         
         $sql="CREATE TABLE pricesheet (
@@ -659,6 +660,7 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - packages ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - packages ('.$db->conn->error.')';}
 
+        $sql="insert into package values(1,'PRC914','EA',1,1,'EA',4.21,'PG','','',3,8,4,'IN')";  $stmt=$db->conn->prepare($sql); $stmt->execute();
 
         $sql="CREATE TABLE interchange (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
