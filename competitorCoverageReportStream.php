@@ -82,8 +82,8 @@ $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
 
 foreach($competitorpartsdict as $competitorpart=>$ourparts)
 {
+ if(count($ourparts)==0){continue;}
  $ourpartssorted=array(); foreach($ourparts as $ourpart){$ourpartssorted[$ourpart]='';} ksort($ourpartssorted);
- 
  $row=array($competitorpart, implode(',', array_keys($ourpartssorted)));
  $writer->writeSheetRow('Sheet1', $row);
 }
