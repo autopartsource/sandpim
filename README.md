@@ -35,12 +35,12 @@ contributing in any way (even just offering opinions!), please don't hesitate to
 
 ## Docker images for demo server
 
-There is are a pair of images on DockerHub for easily running pre-configured demonstration of SandPIM as without setting up a LAMP environment from scratch:
+There are a pair of images on DockerHub for easily running a pre-configured demonstration of SandPIM without setting up a LAMP environment from scratch:
 
 https://hub.docker.com/repository/docker/autopartsource/sandpimdemo-webservice
 https://hub.docker.com/repository/docker/autopartsource/sandpimdemo-database
 
-It must be run in the same network with the Apache webservice image. The easiest method is to run both containers together is with docker-compose.
+The webservice container and database container must be run together for the server to function. The easiest way to do this is with docker-compose.
 
 Create a docker-compose.yml file with this inside:
 
