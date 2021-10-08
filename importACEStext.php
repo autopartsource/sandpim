@@ -58,7 +58,7 @@ if (isset($_POST['input'])) {
                                 <div class="card-body">
                                 <form method="post">
                                     <div class="card"><div class="card-header"><i>[cosmetic (0 or 1), BaseVehicleID, Partnumber, PartTypeID, PositionID, Qty, VCdb Attributes, Qdb Qualifiers, Notes]</i></div></div>
-                                    <textarea name="input" rows="20" cols="120"></textarea>
+                                    <textarea style="width:100%;height:200px;"  name="input"></textarea>
                                     <div>Category for part creation <select name="partcategory"><option value="0">Do not create parts</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
                                     <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                                     

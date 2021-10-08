@@ -26,6 +26,10 @@ $v = new vcdb;
 $partcategories = $pim->getPartCategories();
 
 
+
+$errors=array();
+$importresults=array();
+        
 if (isset($_POST['input'])) 
 {
  $xml = simplexml_load_string($_POST['input']);
@@ -33,11 +37,11 @@ if (isset($_POST['input']))
  if($app_count)
  {
   $imported_app_count=$pim->createAppFromACESsnippet($xml,$_POST['partcategory']);
-  echo $app_count . ' apps created';
+  $importresults[]= $app_count . ' apps created';
  }
  else
  {
-  echo 'No app tags were found in input text';   
+  $errors[]='No app tags were found in input text';   
  }
 }?>
 <!DOCTYPE html>
@@ -61,23 +65,25 @@ if (isset($_POST['input']))
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Import applications from xml</h3>
-
+                        <h3 class="card-header text-start">Import applications from ACES xml</h3>
                         <div class="card-body">
-                            <div class="card shadow-sm">
-                                <h5 class="card-header">Paste ACES xml for import</h5>
-                                <div class="card-body">
-                                <form method="post">
-                                    <textarea name="input" rows="20" cols="120"></textarea>
-                                    <div>Category for part creation <select name="partcategory"><option value="0">Do not create parts</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
-                                    <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>                                    
-                                </form>
+                            <form method="post">
+
+                                <div class="alert alert-secondary" role="alert">
+                                    <h6 class="alert-heading">Paste xml content from an ACES file</h6>
                                 </div>
-                                </div>
-                            </div>
+                                <textarea style="width:100%;height:200px;" name="input"></textarea>
+                                <div>Category for part creation <select name="partcategory"><option value="0">Do not create parts</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
+                                <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>                                    
+                            </form>
                         </div>
                     </div>
                     
+                    <?php
+                    foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}
+                    foreach($importresults as $importresult){echo '<div class="alert alert-success" role="alert">'.$importresult.'</div>';}
+                    ?>
+                                        
                 </div>
                 <!-- End of Main Content -->
 

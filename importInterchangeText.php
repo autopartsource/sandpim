@@ -114,7 +114,7 @@ if (isset($_POST['input']))
                                     <p>Note: if Competitor partnumber contains comas, it will be split by coma into multiple records on the fly</p>
                                 </div>
                                     
-                                <textarea name="input" rows="15" cols="100"></textarea>
+                                <textarea style="width:100%;height:200px;" name="input"></textarea>
                                 
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
