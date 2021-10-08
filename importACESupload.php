@@ -4,11 +4,20 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'import';
 
+$pim= new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'importACESxml.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
 
 $v=new vcdb;
-$pim= new pim;
 $logs = new logs;
 $error_msg=false;
 
@@ -55,7 +64,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Import')
  }
  else
  {
-  $error_msg='File already exists';
+  $error_msg='File already exists. Change the name of the file and upload it again.';
  }
 }
 
@@ -107,7 +116,7 @@ $jobs=$pim->getBackgroundjobs('ACESxmlImport','%');
                             <div class="card shadow-sm">
 
                                 <div class="card-body">
-                                    <?php if($error_msg){echo '<div class="alert alert-danger" role="alert">'.$error_msg.'</div>';}?>
+                                    <?php if($error_msg){echo '<div class="alert alert-success" role="alert">'.$error_msg.'</div>';}?>
                                     <form method="post" enctype="multipart/form-data">
                                         <div style="padding:10px;"><input type="file" name="fileToUpload" id="fileToUpload"></div>
 
