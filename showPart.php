@@ -567,7 +567,7 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                                         <th>Packages</th>
                                         <td>
                                             <div id="packages"> 
-                                            <?php foreach($packages as $package){;?><div style="float:left;"><button class="btn btn-sm btn-outline-danger" onclick="deletePackage(<?php echo $package['id'];?>)">x</button></div><div style="float:left;background-color:#cd9f61; font-size: 100%; border:2px solid #808080;margin: 1px;padding-left:8px;" id="packageid_<?php echo $package['id'];?>" style="font-size: 80%;"><?php echo $package['nicepackage'];?></div><div style="clear:both;"></div><?php }?>
+                                            <?php foreach($packages as $package){;?><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this package from this part" onclick="deletePackage(<?php echo $package['id'];?>)">x</button></div><div style="float:left;background-color:#cd9f61;border:2px solid #808080;margin-left:4px;padding:2px;" id="packageid_<?php echo $package['id'];?>" style="font-size: 80%;"><?php echo $package['nicepackage'];?></div><div style="clear:both;"></div><?php }?>
                                             </div>
                                             <div onclick="showhideNewpackage()">...</div>
                                             <div id="newpackage" style="display: none; padding-top: 10px; text-align:left;">
@@ -577,21 +577,27 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                                                 <div style="padding-top:3px;">Inner Qty <input type="text" id="innerquantity" size="2" value="1" style="text-align:right;"/> <select id="innerquantityuom"><?php foreach($innerqtyuoms as $innerqtyuom){$selected=''; if($innerqtyuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$innerqtyuom['code'].'"'.$selected.'>'.$innerqtyuom['description'].'</option>';}?></select></div>
                                                 <div style="padding-top:3px;">Weight <input type="text" id="weight" size="2" style="text-align:right;"/> <select id="weightsuom"> <?php foreach($weightsuoms as $weightsuom){echo '<option value="'.$weightsuom['code'].'">'.$weightsuom['description'].'</option>';}?></select></div>
                                                 <div style="padding-top:3px;">L / W / H <input type="text" id="shippinglength" size="2" style="text-align:right;"/> <input type="text" id="shippingwidth" size="2" style="text-align:right;"/> <input type="text" id="shippingheight" size="2" style="text-align:right;"/> <select id="dimensionsuom"><?php foreach($dimensionsuoms as $dimensionsuom){echo '<option value="'.$dimensionsuom['code'].'">'.$dimensionsuom['description'].'</option>';}?></select></div>
-                                                <div style="padding-top:6px;"><button  class="btn btn-sm btn-success" id="addpackage" onclick="addPackage()">Add Package</button></div>
+                                                <div style="padding-top:6px;"><button  class="btn btn-sm btn-success" id="addpackage" title="Add a package to this part" onclick="addPackage()">Add Package</button></div>
                                             </div>
                                         </td>
                                     <tr>
                                     <tr><th>Prices</th>
                                         <td>
                                             <div id="prices">
-                                            <?php foreach($prices as $price){;?><div id="priceid_<?php echo $price['id'];?>" style="background-color:#85bb65; font-size: 80%; border:2px solid #808080;margin: 2px;"><?php echo $price['niceprice'];?> <button onclick="deletePrice(<?php echo $price['id'];?>)">x</button></div><?php }?>
-                                            </div>
-                                            <div onclick="showhideNewPrice()">...</div>
-                                            <div id="newprice" style="display:none; text-align: left; padding-top: 10px;">
-                                                <div style="padding-top:3px;"><div style="float:left;">Price Sheet Number <select id="pricesheetnumber" name="pricesheet" onchange="showSlectedPricesheetCurrency()"><option value="">select...</option><?php foreach($pricesheets as $pricesheet){echo '<option value="'.$pricesheet['number'].'">'.$pricesheet['description'].'</option>';}?></select></div><div style="float:left;padding-left: 5px;"><a href="./priceSheets.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> </div>
-                                                <div style="padding-top:3px;">Unit of Measure <select id="priceuom" name="priceuom"><?php foreach($priceuoms as $priceuom){$selected =''; if($priceuom['code']=='PE'){$selected=' selected';} echo '<option value="'.$priceuom['code'].'"'.$selected.'>'.$priceuom['description'].'</option>';}?></select></div>
-                                                <div style="padding-top:3px;"><div style="float:left;">Price Type: </div><div id="newpricetype" data-pricetype="" style="float:left;padding-top:1px;padding-right:5px;"></div><div style="clear:both;"></div> </div>
-                                                <div style="padding-top:3px;"><div style="float:left;">Amount <input disabled style="text-align:right;" type="text" id="priceamount" size="4"/></div> <div id="newpricecurrency" data-currency="" style="float:left;padding-top:3px;padding-right:5px;"></div> <button id="addprice" disabled onclick="addPrice()">+</button><div style="clear:both;"></div></div>
+                                                <?php foreach($prices as $price){;?>
+                                                <div id="priceid_<?php echo $price['id'];?>">
+                                                    <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this price from this part" onclick="deletePrice('+response.id+')">x</button></div>
+                                                    <div style="float:left; background-color:#85bb65;border:2px solid #808080;margin-left:4px;padding-left:2px;padding-top:3px;padding-right:5px;"><?php echo $price['niceprice'];?></div>                                                    
+                                                    <div style="clear:both;"></div>
+                                                </div>
+                                                <?php }?>
+                                                <div onclick="showhideNewPrice()">...</div>
+                                                <div id="newprice" style="display:none; text-align: left; padding-top: 10px;">
+                                                    <div style="padding-top:3px;"><div style="float:left;">Price Sheet Number <select id="pricesheetnumber" name="pricesheet" onchange="showSlectedPricesheetCurrency()"><option value="">select...</option><?php foreach($pricesheets as $pricesheet){echo '<option value="'.$pricesheet['number'].'">'.$pricesheet['description'].'</option>';}?></select></div><div style="float:left;padding-left: 5px;"><a href="./priceSheets.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> </div>
+                                                    <div style="padding-top:3px;">Unit of Measure <select id="priceuom" name="priceuom"><?php foreach($priceuoms as $priceuom){$selected =''; if($priceuom['code']=='PE'){$selected=' selected';} echo '<option value="'.$priceuom['code'].'"'.$selected.'>'.$priceuom['description'].'</option>';}?></select></div>
+                                                    <div style="padding-top:3px;"><div style="float:left;">Price Type: </div><div id="newpricetype" data-pricetype="" style="float:left;padding-top:1px;padding-right:5px;"></div><div style="clear:both;"></div> </div>
+                                                    <div style="padding-top:3px;"><div style="float:left;">Amount <input disabled style="text-align:right;" type="text" id="priceamount" size="4"/></div> <div id="newpricecurrency" data-currency="" style="float:left;padding-top:3px;padding-right:5px;"></div> <button class="btn btn-sm btn-success" title="Add a price to this part" id="addprice" disabled onclick="addPrice()">Add Price</button><div style="clear:both;"></div></div>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -602,11 +608,11 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                                                 {
                                                     if($attribute['PAID']==0)
                                                     {
-                                                        echo '<div style="padding:1px;" id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button class="btn btn-sm btn-outline-secondary" title="Remove this user-defined (non-PAdb) attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                        echo '<div style="padding:1px;" id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this user-defined (non-PAdb) attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
                                                     }
                                                     else
                                                     {
-                                                        echo '<div style="padding:1px;" id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button class="btn btn-sm btn-outline-secondary" title="Remove this PAdb ('.$attribute['PAID'].') attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:2px; margin-bottom:1px; background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                        echo '<div style="padding:1px;" id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this PAdb ('.$attribute['PAID'].') attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:2px; margin-bottom:1px; background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
                                                     }
                                                 } ?>
                                             </div>
@@ -614,7 +620,6 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                                             <div id="unappliedattributes" style="display:none; padding:5px;">
                                                     <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
                                                         echo '<div style="text-align:left;padding:3px;" id="unappliedattribute_'.$attribute['PAID'].'">'. $attribute['name'] . ' <span><input size="8" id="unappliedattributevalue_'.$attribute['PAID'].'"/>';
-                                                        //echo ' <input size="2" id="unappliedattributeuom_'.$attribute['PAID'].'"/>';
                                                         if(count($attribute['uomlist']))
                                                         {
                                                             echo ' <select id="unappliedattributeuom_'.$attribute['PAID'].'">';
