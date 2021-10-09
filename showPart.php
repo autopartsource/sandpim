@@ -157,7 +157,8 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                document.getElementById("sandpiperoid").innerHTML=response.oid;
 
                var container=document.getElementById('descriptions');
-               container.innerHTML+='<div id="descriptionid_'+response.id+'" style="font-size: 80%;">'+response.descriptioncode+': '+descriptiontext+' <button onclick="deleteDescription('+response.id+')">x</button></div>';
+               //container.innerHTML+='<div id="descriptionid_'+response.id+'" style="font-size: 80%;">'+response.descriptioncode+': '+descriptiontext+' <button onclick="deleteDescription('+response.id+')">x</button></div>';
+               container.innerHTML+='<div style="padding-bottom:3px;" id="descriptionid_'+response.id+'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this '+response.descriptioncode+' code description from this part" onclick="deleteDescription('+response.id+')">x</button></div><div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;">'+descriptiontext+'</div><div style="clear:both;"></div></div>';
               };
               xhr.send();
              }
@@ -523,12 +524,19 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                                         <th>Descriptions</th>
                                         <td>
                                             <div id="descriptions">
-                                            <?php foreach($descriptions as $description){;?><div id="descriptionid_<?php echo $description['id'];?>" style="font-size: 80%;"><?php echo $description['descriptioncode'].': '.$description['description'].' <button onclick="deleteDescription(\''.$description['id'].'\')">x</button>';?></div><?php }?>
+                                            <?php foreach($descriptions as $description){;?>
+                                                <div style="padding-bottom:3px;" id="descriptionid_<?php echo $description['id'];?>">
+                                                    <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this <?php echo $description['descriptioncode'];?> code description from this part" onclick="deleteDescription(<?php echo $description['id'];?>)">x</button></div>
+                                                    <div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;"><?php echo $description['description'];?></div>
+                                                    <div style="clear:both;"></div>
+                                                </div>
+                                            <?php }?>
                                             </div>
                                             <div onclick="showhideNewDescription()">...</div>
-                                            <div id="newdescription" style="display:none; padding-top: 10px;">
-                                                <div style="padding:5px;"><input type="text" id="descriptiontext" size="40"/><button id="adddescrption" onclick="addDescription()">Add</button></div>
-                                                <div><select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){$selected=''; if($descriptioncode['code']==$defaultdescriptiontypecode){$selected=' selected';} echo '<option value="'.$descriptioncode['code'].'"'.$selected.'>'.$descriptioncode['description'].'</option>';}?></select> <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){$selected=''; if($descriptionlanguagecode['code']==$defaultdescriptionlanguagecode){$selected=' selected';} echo '<option value="'.$descriptionlanguagecode['code'].'"'.$selected.'>'.$descriptionlanguagecode['description'].'</option>';}?></select></div>
+                                            <div id="newdescription" style="display:none; padding-top: 10px; text-align: left;">
+                                                <div style="padding-bottom:5px;"><input type="text" id="descriptiontext" size="50"/></div>
+                                                <div style="padding-bottom:5px;"><select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){$selected=''; if($descriptioncode['code']==$defaultdescriptiontypecode){$selected=' selected';} echo '<option value="'.$descriptioncode['code'].'"'.$selected.'>'.$descriptioncode['description'].'</option>';}?></select> <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){$selected=''; if($descriptionlanguagecode['code']==$defaultdescriptionlanguagecode){$selected=' selected';} echo '<option value="'.$descriptionlanguagecode['code'].'"'.$selected.'>'.$descriptionlanguagecode['description'].'</option>';}?></select></div>
+                                                <div><button class="btn btn-sm btn-success" id="adddescrption" title="Add a description to this part" onclick="addDescription()">Add Description</button></div>
                                             </div>
                                         </td>
                                     <tr>

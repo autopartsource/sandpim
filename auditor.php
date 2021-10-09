@@ -192,7 +192,7 @@ foreach($partnumbers as $partnumber)
         }
     }
     
-    
+    // find description longer than their PCdb type-code allow. Ex: description type code DES is up to 80 characters long according to the 2021-09-24 version of the PCdb
     
 }
 
