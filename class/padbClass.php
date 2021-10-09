@@ -33,20 +33,36 @@ class padb
  
  function getAttributesForParttype($parttypeid)
  {
-  $attributes=array();
+  $attributes=array(); $attributenames=array();
   $db = new mysql; $db->dbname=$db->padbname;
   if($this->padbversion!==false){$db->dbname=$this->padbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select PartAttributeAssignment.PAID,PAName,UoMList,ValidValues from PartAttributeAssignment,PartAttributes where PartAttributeAssignment.PAID=PartAttributes.PAID and PartTerminologyID=?'))
+  if($stmt=$db->conn->prepare('select PartAttributeAssignment.PAID,PAName from PartAttributeAssignment,PartAttributes where PartAttributeAssignment.PAID=PartAttributes.PAID and PartTerminologyID=?'))
   {
    $stmt->bind_param('i', $parttypeid);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $attributes[]=array('PAID'=>$row['PAID'],'name'=>$row['PAName'],'uomlist'=>$row['UoMList'],'validvalues'=>$row['ValidValues']);
+    $attributenames[]=array('PAID'=>$row['PAID'],'name'=>$row['PAName']);
    }
   }
+  
+  if($stmt=$db->conn->prepare('select UOMCode from  PartAttributeAssignment, MetaUOMCodeAssignment, MetaUOMCodes  where  PartAttributeAssignment.PAPTID=MetaUOMCodeAssignment.PAPTID and MetaUOMCodeAssignment.MetaUOMID=MetaUOMCodes.MetaUOMID and PartAttributeAssignment.PAID=? and PartAttributeAssignment.PartTerminologyID=?'))
+  {
+   $PAID=0;
+   $stmt->bind_param('ii', $PAID, $parttypeid);
+
+   foreach($attributenames as $attributename)
+   {
+    $uoms=array();
+    $PAID=$attributename['PAID'];
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc()){$uoms[]=$row['UOMCode'];}
+    $attributes[]=array('PAID'=>$attributename['PAID'],'name'=>$attributename['name'],'uomlist'=>$uoms,'validvalues'=>'');   
+   }
+  }  
   $db->close();
   return $attributes;
  }
