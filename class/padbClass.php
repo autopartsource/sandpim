@@ -104,6 +104,39 @@ function version()
   return $versiondate;
  }
 
+ function addDatabaseIndex($table,$field)
+ {
+     // AutoCare's mysql version of the PAdb (as of 10/2021) does not have all the needed indexes for effecient lookups
+     // we're using random names for the indexes that we create in case the function gets run more than once (unlikely, but possible)
+     // 
+     //create index idx_MetaUOMID on MetaUOMCodeAssignment (MetaUOMID);
+     //create index idx_PAPTID on MetaUOMCodeAssignment (PAPTID);
+     //create index idx_MetaID on PartAttributeAssignment (MetaID);
+     //create index idx_PAID on PartAttributeAssignment (PAID);
+     //create index idx_PartTerminologyID on PartAttributeAssignment (PartTerminologyID);
+     //create index idx_PAPTID on PartAttributeAssignment (PAPTID);
+
+  $result='';
+  $randoname= random_int(100000, 999999);
+  $db = new mysql; 
+  $db->dbname=$db->padbname; if($this->padbversion!==false){$db->dbname=$this->padbversion;} $db->connect();
+
+  if($stmt=$db->conn->prepare('alter table '.$table.' add index idx_'.$randoname.'('.$field.')'))
+  {
+   if(!$stmt->execute())
+   {
+    $result='problem with execute: '.$db->conn->error;;
+   }
+  }
+  else
+  {
+   $result='problem with prepare: '.$db->conn->error;;   
+  }
+  $db->close();
+  return $result;
+ }
+ 
+ 
  
 }
 ?>

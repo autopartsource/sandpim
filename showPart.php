@@ -198,7 +198,7 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
               if(response.success)
               { //add attribute to "applied" list
                var container=document.getElementById('appliedattributes');
-               container.innerHTML+='<div style="padding:1px;"  id="appliedattribute_'+response.id+'"><div style="width:2em;float:left;"><button class="btn btn-sm btn-success" onclick="deleteAttribute('+response.id+','+response.PAID+',\''+response.name+'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'+response.name+':<span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'+response.value+' '+response.uom+'</span></div><div style="clear:both;"></div></div>';
+               container.innerHTML+='<div style="padding:3px;" id="appliedattribute_'+response.id+'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" onclick="deleteAttribute('+response.id+','+response.PAID+',\''+response.name+'\')">x</button></div><div style="border:1px solid;padding:3px; margin-left:4px; background:#7ad0fe;float:left;">'+response.name+' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'+response.value+' '+response.uom+'</span></div><div style="clear:both;"></div></div>';
                //remove PAdb form "unapplied" list
                var unappliedattributediv = document.getElementById('unappliedattribute_'+PAID);
                unappliedattributediv.parentNode.removeChild(unappliedattributediv);
@@ -328,7 +328,8 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                document.getElementById("sandpiperoid").innerHTML=response.oid;
 
                var container=document.getElementById('prices');
-               container.innerHTML+='<div id="priceid_'+response.id+'" style="background-color:#85bb65; font-size: 80%; border:2px solid #808080;margin: 2px;">'+response.niceprice+' <button onclick="deletePrice('+response.id+')">x</button></div>';
+               //container.innerHTML+='<div id="priceid_'+response.id+'" style="background-color:#85bb65; font-size: 80%; border:2px solid #808080;margin: 2px;">'+response.niceprice+' <button onclick="deletePrice(' + response.id + ')">D</button></div>';
+               container.innerHTML+='<div style="padding-bottom:3px;" id="priceid_'+response.id+'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this price from this part" onclick="deletePrice('+response.id+')">x</button></div><div style="float:left; background-color:#85bb65;border:2px solid #808080;margin-left:4px;padding:2px">'+response.niceprice+'</div><div style="clear:both;"></div></div>';
               };
               xhr.send();
              }
@@ -560,7 +561,7 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                                                     </thead>
                                                     <?php foreach($competitorparts as $competitorpart){;?>
                                                     <tr style="font-size: 80%;">
-                                                        <th scope="row" id="interchangeid_<?php echo $competitorpart['id'];?>"><?php echo $interchange->brandName($competitorpart['brandAAIAID'])?></td>
+                                                        <th scope="row" id="interchangeid_<?php echo $competitorpart['id'];?>"><?php echo $interchange->brandName($competitorpart['brandAAIAID'])?></th>
                                                         <td><?php echo $competitorpart['competitorpartnumber'] ?></td>
                                                         <td><?php echo '<button class="btn btn-sm btn-outline-danger" onclick="deleteInterchange(\''.$competitorpart['id'].'\')">x</button>';?></td>
                                                     </tr>
@@ -593,34 +594,34 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                                         <td>
                                             <div id="prices">
                                                 <?php foreach($prices as $price){;?>
-                                                <div id="priceid_<?php echo $price['id'];?>">
-                                                    <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this price from this part" onclick="deletePrice('+response.id+')">x</button></div>
-                                                    <div style="float:left; background-color:#85bb65;border:2px solid #808080;margin-left:4px;padding-left:2px;padding-top:3px;padding-right:5px;"><?php echo $price['niceprice'];?></div>                                                    
+                                                <div style="padding-bottom:3px;" id="priceid_<?php echo $price['id'];?>">
+                                                    <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this price from this part" onclick="deletePrice(<?php echo $price['id'];?>)">x</button></div>
+                                                    <div style="float:left; background-color:#85bb65;border:2px solid #808080;margin-left:4px;padding:2px"><?php echo $price['niceprice'];?></div>
                                                     <div style="clear:both;"></div>
                                                 </div>
                                                 <?php }?>
-                                                <div onclick="showhideNewPrice()">...</div>
-                                                <div id="newprice" style="display:none; text-align: left; padding-top: 10px;">
-                                                    <div style="padding-top:3px;"><div style="float:left;">Price Sheet Number <select id="pricesheetnumber" name="pricesheet" onchange="showSlectedPricesheetCurrency()"><option value="">select...</option><?php foreach($pricesheets as $pricesheet){echo '<option value="'.$pricesheet['number'].'">'.$pricesheet['description'].'</option>';}?></select></div><div style="float:left;padding-left: 5px;"><a href="./priceSheets.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> </div>
-                                                    <div style="padding-top:3px;">Unit of Measure <select id="priceuom" name="priceuom"><?php foreach($priceuoms as $priceuom){$selected =''; if($priceuom['code']=='PE'){$selected=' selected';} echo '<option value="'.$priceuom['code'].'"'.$selected.'>'.$priceuom['description'].'</option>';}?></select></div>
-                                                    <div style="padding-top:3px;"><div style="float:left;">Price Type: </div><div id="newpricetype" data-pricetype="" style="float:left;padding-top:1px;padding-right:5px;"></div><div style="clear:both;"></div> </div>
-                                                    <div style="padding-top:3px;"><div style="float:left;">Amount <input disabled style="text-align:right;" type="text" id="priceamount" size="4"/></div> <div id="newpricecurrency" data-currency="" style="float:left;padding-top:3px;padding-right:5px;"></div> <button class="btn btn-sm btn-success" title="Add a price to this part" id="addprice" disabled onclick="addPrice()">Add Price</button><div style="clear:both;"></div></div>
-                                                </div>
+                                            </div>
+                                            <div onclick="showhideNewPrice()">...</div>
+                                            <div id="newprice" style="display:none; text-align: left; padding-top: 10px;">
+                                                <div style="padding-top:3px;"><div style="float:left;">Price Sheet Number <select id="pricesheetnumber" name="pricesheet" onchange="showSlectedPricesheetCurrency()"><option value="">select...</option><?php foreach($pricesheets as $pricesheet){echo '<option value="'.$pricesheet['number'].'">'.$pricesheet['description'].'</option>';}?></select></div><div style="float:left;padding-left: 5px;"><a href="./priceSheets.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div> </div>
+                                                <div style="padding-top:3px;">Unit of Measure <select id="priceuom" name="priceuom"><?php foreach($priceuoms as $priceuom){$selected =''; if($priceuom['code']=='PE'){$selected=' selected';} echo '<option value="'.$priceuom['code'].'"'.$selected.'>'.$priceuom['description'].'</option>';}?></select></div>
+                                                <div style="padding-top:3px;"><div style="float:left;">Price Type: </div><div id="newpricetype" data-pricetype="" style="float:left;padding-top:1px;padding-right:5px;"></div><div style="clear:both;"></div> </div>
+                                                <div style="padding-top:3px;"><div style="float:left;">Amount <input disabled style="text-align:right;" type="text" id="priceamount" size="4"/></div> <div id="newpricecurrency" data-currency="" style="float:left;padding-top:3px;padding-right:5px;"></div> <button class="btn btn-sm btn-success" title="Add a price to this part" id="addprice" disabled onclick="addPrice()">Add Price</button><div style="clear:both;"></div></div>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr><th>Attributes</th>
                                         <td>
-                                            <div id="appliedattributes" style="padding:5px;">
+                                            <div id="appliedattributes" style="padding-bottom:5px;">
                                                 <?php foreach ($attributes as $attribute) 
                                                 {
                                                     if($attribute['PAID']==0)
                                                     {
-                                                        echo '<div style="padding:1px;" id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this user-defined (non-PAdb) attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:1px; margin-bottom:1px; background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                        echo '<div style="padding-bottom:3px;" id="appliedattribute_'.$attribute['id'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this user-defined (non-PAdb) attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:3px; margin-left:3px; background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
                                                     }
                                                     else
                                                     {
-                                                        echo '<div style="padding:1px;" id="appliedattribute_'.$attribute['id'].'"><div style="width:2em;float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this PAdb ('.$attribute['PAID'].') attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:2px; margin-bottom:1px; background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                        echo '<div style="padding-bottom:3px;" id="appliedattribute_'.$attribute['id'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this PAdb ('.$attribute['PAID'].') attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:3px; margin-left:4px; background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
                                                     }
                                                 } ?>
                                             </div>

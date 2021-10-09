@@ -115,8 +115,10 @@ if($uri && $havewriteaccess && $username && $password)
   if($hash==$localhash){echo ' (valid)'.$newlinechars;}else{echo ' (NOT VALID)'.$newlinechars;}       
    
   echo "Extracting MySQL package.........";
+  flush();
   exec('unzip -o '.$downloadsdirectory.'/'.$randomfilename.' -d '.$downloadsdirectory);
   echo "Done".$newlinechars;
+  flush();
 
   // verify they filename extracted is to the expected pattern
   if(file_exists($downloadsdirectory.'/'.'AAIA PAdb MySQL '.$dbversion.'.sql'))
@@ -127,13 +129,47 @@ if($uri && $havewriteaccess && $username && $password)
    {
    // import the sql file into the mysql client
     echo "Importing database to MySQL server.........";
+    flush();
     exec('mysql --host='.$mysql->host.' --user='.$mysql->user.' --password='.$mysql->passwd.' padb'.$dbversion." < '".$downloadsdirectory.'/AAIA PAdb MySQL '.$dbversion.'.sql'."'");
     echo "Done".$newlinechars;
+    flush();
 
     $padb=new padb('padb'.$dbversion); // test the new version as ask it for its versiondate
     $versiondate=$padb->version();
     $pim->recordAutocareDatabaseList('padb'.$dbversion, 'padb', $versiondate);   // catalog the new version
     $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'PAdb '.$dbversion.' imported');
+
+    // add indexes that AutoCare forgot to add!
+        
+    echo 'Adding index on MetaUOMCodes.MetaUOMID....';
+    flush();
+    echo $padb->addDatabaseIndex('MetaUOMCodes', 'MetaUOMID').'Done<br/>';  //create index idx_MetaUOMID on MetaUOMCodeAssignment (MetaUOMID);
+
+    echo 'Adding index on MetaUOMCodeAssignment.MetaUOMID...';
+    flush();
+    echo $padb->addDatabaseIndex('MetaUOMCodeAssignment', 'MetaUOMID').'Done<br/>';  //create index idx_MetaUOMID on MetaUOMCodeAssignment (MetaUOMID);
+
+    echo 'Adding index on MetaUOMCodeAssignment.PAPTID...';
+    flush();
+    echo $padb->addDatabaseIndex('MetaUOMCodeAssignment', 'PAPTID').'Done<br/>';  //create index idx_PAPTID on MetaUOMCodeAssignment (PAPTID);  
+
+    echo 'Adding index on PartAttributeAssignment.MetaID...';
+    flush();
+    echo $padb->addDatabaseIndex('PartAttributeAssignment', 'MetaID').'Done<br/>';  //create index idx_MetaID on PartAttributeAssignment (MetaID);
+
+    echo 'Adding index on PartAttributeAssignment.PAID...';
+    flush();
+    echo $padb->addDatabaseIndex('PartAttributeAssignment', 'PAID').'Done<br/>';  //create index idx_PAID on PartAttributeAssignment (PAID);
+
+    echo 'Adding index on PartAttributeAssignment.PartTerminologyID...';
+    flush();
+    echo $padb->addDatabaseIndex('PartAttributeAssignment', 'PartTerminologyID').'Done<br/>';  //create index idx_PartTerminologyID on PartAttributeAssignment (PartTerminologyID);
+
+    echo 'Adding index on PartAttributeAssignment.PAPTID...';
+    flush();
+    echo $padb->addDatabaseIndex('PartAttributeAssignment', 'PAPTID').'Done<br/>';  //create index idx_PAPTID on PartAttributeAssignment (PAPTID);
+    
+    echo 'import complete';
    }
    else
    {// database create failed
