@@ -146,7 +146,7 @@ class asset
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename']);
+       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename'],'filetype'=>$row['fileType']);
      }
     }
    }
@@ -225,7 +225,20 @@ class asset
   // need to delete (unlink) local file if it exists
  }
   
- 
+ function primaryPhotoURIofPart($partnumber)
+ {
+  $returnval=false;
+  $assets=$this->getAssetsConnectedToPart($partnumber, false);
+  foreach($assets as $asset)
+  {
+   if($asset['assettypecode']=='P04' && $asset['uri']!='')
+   {
+    $returnval=$asset['uri'];
+    break;
+   }
+  }
+  return $returnval;
+ }
  
  
  function setAssetDescription($assetid,$description)

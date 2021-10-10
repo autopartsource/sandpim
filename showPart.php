@@ -90,6 +90,8 @@ $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
 
+$primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -470,7 +472,20 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
              refreshClipboard();
             }
 
+            function flagUnsavedGTIN()
+            {
+             document.getElementById("btnUpdateGTIN").className="btn btn-sm btn-danger";
+            }
 
+            function flagUnsavedReplacedby()
+            {
+             document.getElementById("btnUpdateReplacedby").className="btn btn-sm btn-danger";
+            }
+
+            function flagUnsavedNotes()
+            {
+             document.getElementById("btnUpdateNotes").className="btn btn-sm btn-danger";
+            }
 
         </script>
         
@@ -500,6 +515,29 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                     </div>
                 </div>
                 <?php }?>
+                    
+                <?php 
+                
+                foreach($connectedassets as $connectedasset)
+                {
+                    if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='')
+                    {
+                        echo '<div><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></div>';
+                        break;
+                    }
+                }
+
+                foreach($connectedassets as $connectedasset)
+                {
+                    if($connectedasset['assettypecode']!='P04' && $connectedasset['filetype']=='JPG' && $connectedasset['uri']!='')
+                    {
+                        echo '<div><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></div>';
+                    }
+                }
+
+                
+                ?>
+                                       
                 </div>
                 
                 <!-- Main Content -->
@@ -541,11 +579,11 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                                             </div>
                                         </td>
                                     <tr>
-                                    <tr><th>GTIN (Item Level)</th><td><input type="text" id="gtin" value="<?php echo $part['GTIN']?>"/><button class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></td><tr>
+                                    <tr><th>GTIN (Item Level)</th><td><div style="float:left;"><input type="text" id="gtin" oninput="flagUnsavedGTIN()" value="<?php echo $part['GTIN']?>"/></div><div style="float:left;"><button id="btnUpdateGTIN" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php /*    <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><button class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></td><tr> */ ?>
-                                    <tr><th>Replaced By</th><td><input type="text" id="replacedby" value="<?php echo $part['replacedby']?>"/><button class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></td><tr>
+                                    <tr><th>Replaced By</th><td><div style="float:left;"><input type="text" id="replacedby" oninput="flagUnsavedReplacedby()" value="<?php echo $part['replacedby']?>"/></div><div style="float:left;"><button id="btnUpdateReplacedby" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php if($balance){?> <tr><th>Balance</th><td>On-Hand: <b><?php echo round($balance['qoh'],0);?></b>, Demand: <b><?php echo $balance['amd'];?></b> units/month</td><tr> <?php }?>
-                                    <tr><th>Internal<br/>Notes</th><td><textarea  id="internalnotes"  cols="50"><?php echo $part['internalnotes']?></textarea><div><button class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
+                                    <tr><th>Internal<br/>Notes</th><td><textarea style="width:90%;" id="internalnotes" oninput="flagUnsavedNotes()"><?php echo $part['internalnotes']?></textarea><div><button id="btnUpdateNotes" class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
                                     <tr>
                                         <th>Interchange</th>
                                         <td>
@@ -646,15 +684,8 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
                                             <?php 
                                             foreach($connectedassets as $connectedasset)
                                             {
-                                                echo '<div>';
-                                                if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='')
-                                                {
-                                                    echo '<div><img class="img-thumbnail" src="'.$connectedasset['uri'].'" width="400px"/></div>';
-                                                }
                                                 echo '<div id="assetconnectionid_'.$connectedasset['connectionid'].'" style="padding:2px;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> <button class="btn btn-sm btn-outline-danger" title="Disconnect this asset from this part. The asset and any other part connections will not be affected." onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')"><span aria-hidden="true">&times;</span></button></div>';
-                                                echo '</div>';
-
-                                            };
+                                            }
                                             ?>
                                         </td>
                                     <tr>
