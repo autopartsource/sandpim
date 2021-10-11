@@ -684,7 +684,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                             <?php 
                                             foreach($connectedassets as $connectedasset)
                                             {
-                                                echo '<div id="assetconnectionid_'.$connectedasset['connectionid'].'" style="padding:2px;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> <button class="btn btn-sm btn-outline-danger" title="Disconnect this asset from this part. The asset and any other part connections will not be affected." onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')"><span aria-hidden="true">&times;</span></button></div>';
+                                                  echo '<div style="padding-bottom:3px;" id="assetconnectionid_'.$connectedasset['connectionid'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Disconnect this asset from this part" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div><div style="border:1px solid;padding:3px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div><div style="clear:both;"></div></div>';
                                             }
                                             ?>
                                         </td>
@@ -700,9 +700,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                             }
                             ?>
                         </div>
-                    </div>
-                                       
-                    
+                    </div>                    
                 </div>
                 <!-- End of Main Content -->
                 

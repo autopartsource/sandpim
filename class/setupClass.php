@@ -931,6 +931,18 @@ class setup
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_user ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_user ('.$db->conn->error.')';}      
         
         
+        $sql="CREATE TABLE plan_receiverprofile (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        planid int UNSIGNED NOT NULL,
+        receiverprofileid int UNSIGNED NOT NULL,
+        PRIMARY KEY (id),
+        index idx_planid(planid),
+        index idx_receiverprofileid(receiverprofileid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - plan_receiverprofile ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - plan_receiverprofile ('.$db->conn->error.')';}      
+        
+        $sql="insert into plan_receiverprofile values(1,10500,1000)"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+ 
+        
         $sql="CREATE TABLE plan (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         description varchar(255) not null,      
