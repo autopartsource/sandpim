@@ -232,6 +232,38 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
              xhr.send();
             }
 
+            function addNonPAdbAttribute()
+            {
+             var name=document.getElementById('nonpadbname').value;
+             var value=document.getElementById('nonpadbvalue').value;
+             var uom=document.getElementById('nonpadbuom').value;
+             
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdateAttributeOfPart.php?partnumber=<?php echo $partnumber;?>&attribute='+encodeURIComponent(name)+'&value='+encodeURIComponent(value)+'&uom='+encodeURIComponent(uom));
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              if(response.success)
+              { //add attribute to "applied" list 
+
+               // just in case the user-defined attribute already exists - delete it first (this is possible with user-defined attributes)
+               var appliedattributediv = document.getElementById('appliedattribute_'+response.id);
+               if(appliedattributediv)
+               {
+                appliedattributediv.parentNode.removeChild(appliedattributediv);
+               }
+
+               var container=document.getElementById('appliedattributes');
+               container.innerHTML+='<div style="padding-bottom:3px;" id="appliedattribute_'+response.id+'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" onclick="deleteAttribute('+response.id+','+response.PAID+',\''+response.name+'\')">x</button></div><div style="border:1px solid;padding:3px; margin-left:4px; background:#dddddd;float:left;">'+response.name+' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'+response.value+' '+response.uom+'</span></div><div style="clear:both;"></div></div>';
+               // show new oid
+               document.getElementById("sandpiperoid").innerHTML=response.oid;
+              }
+             };
+             xhr.send();                
+            }
+
+
+
             function deleteInterchange(interchangeid)
             {
              var interchangediv = document.getElementById('interchangeid_'+interchangeid);
@@ -665,16 +697,17 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                             </div>
                                             <div onclick="showhideUnappliedAttributes()">...</div>
                                             <div id="unappliedattributes" style="display:none; padding:5px;">
-                                                    <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
-                                                        echo '<div style="text-align:left;padding:3px;" id="unappliedattribute_'.$attribute['PAID'].'">'. $attribute['name'] . ' <span><input size="8" id="unappliedattributevalue_'.$attribute['PAID'].'"/>';
-                                                        if(count($attribute['uomlist']))
-                                                        {
-                                                            echo ' <select id="unappliedattributeuom_'.$attribute['PAID'].'">';
-                                                            foreach($attribute['uomlist'] as $uom){echo '<option value="'.$uom.'">'.$uom.'</option>';}
-                                                            echo '</select> ';
-                                                        }
-                                                        echo '</span> <button class="btn btn-sm btn-success" title="Add PAdb('.$attribute['PAID'].') attribute" onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div>';
-                                                    }?>
+                                                <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
+                                                    echo '<div style="text-align:left;padding:3px;" id="unappliedattribute_'.$attribute['PAID'].'">'. $attribute['name'] . ' <span><input size="8" id="unappliedattributevalue_'.$attribute['PAID'].'"/>';
+                                                    if(count($attribute['uomlist']))
+                                                    {
+                                                        echo ' <select id="unappliedattributeuom_'.$attribute['PAID'].'">';
+                                                        foreach($attribute['uomlist'] as $uom){echo '<option value="'.$uom.'">'.$uom.'</option>';}
+                                                        echo '</select> ';
+                                                    }
+                                                    echo '</span> <button class="btn btn-sm btn-success" title="Add PAdb('.$attribute['PAID'].') attribute" onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div>';
+                                                }?>
+                                                <div style="text-align:left;padding-top:20px;">User-Defined name <input size="5" id="nonpadbname"/> Value <input size="3" id="nonpadbvalue"/> UoM <input size="2" id="nonpadbuom"/> <button class="btn btn-sm btn-success" title="Add non-PAdb attribute" onclick="addNonPAdbAttribute()">+</button></div>
                                             </div>
                                         </td>
                                     </tr>

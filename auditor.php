@@ -42,6 +42,8 @@ $sandpiperPrimary=new sandpiperPrimary();
 $partnumbergroupsize=100;
 $partnumbers=$pim->getPartnumbersByRandom($partnumbergroupsize);
 
+$downloadlimit=4;
+
 foreach($partnumbers as $partnumber)
 {       
     $part=$pim->getPart($partnumber);
@@ -279,7 +281,66 @@ foreach($orphans as $orphan)
 }
 
 
+// download assets from their given uri and test filehash 
+// if local filehash is blank, quietly write it to the local database
+// if local hash is non-blank and the calculated hash is different, write an issue record
+
+$assetrecords=$asset->getAssetsByRandom(4); // grab a few randomly-selected assets to pull down from their CDN host and verify the hash.  $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode']);
+foreach($assetrecords as $assetrecord)
+{
+ if(trim($assetrecord['uri'])!='' && ($assetrecord['fileType']=='JPG' || $assetrecord['fileType']=='PDF'))
+ {
+       
+  $fixedescapeduri = str_replace(['%2F', '%3A'], ['/', ':'], urlencode($assetrecord['uri']));    
+  $assetfilecontents = file_get_contents($fixedescapeduri);
     
+  $hash=md5($assetfilecontents);
+  $size=strlen($assetfilecontents);
+
+  //$logs->logSystemEvent('asstes', 0, 'size('.$assetrecord['assetid'].') -> '. $size); 
+
+  
+  if(trim($assetrecord['fileHashMD5'])=='')
+  {
+   $logs->logSystemEvent('asstes', 0, 'md5('.$assetrecord['assetid'].') -> '. $hash); 
+   $asset->setAssetHash($assetrecord['id'], $hash);
+  }
+  else
+  {
+   if($assetrecord['fileHashMD5']!=$hash)
+   {
+    $issuehash=md5('ASSET/HASH/MISMATCH'.$assetrecord['assetid'].'filehash from ['.$assetrecord['uri'].'] does not match the hash in the local metatdata store'.'background auditor');
+    if(!$pim->getIssueByHash($issuehash))
+    {// this issue is not already recorded 
+     $pim->recordIssue('ASSET/HASH/MISMATCH','',$assetrecord['assetid'].'filehash from ['.$assetrecord['uri'].'] does not match the hash in the local metatdata store','background auditor', $issuehash);
+    }
+   }
+  }
+
+  if(intval($assetrecord['filesize'])!=intval($size))
+  {
+   $logs->logSystemEvent('asstes', 0, 'size('.$assetrecord['assetid'].') updated from '.intval($assetrecord['filesize']).' to '. $size); 
+
+   $asset->setAssetFilesize($assetrecord['id'], $size);
+   
+   /*
+   $issuehash=md5('ASSET/SIZE/MISMATCH'.$assetrecord['assetid'].'filesize from ['.$assetrecord['uri'].'] does not match the size in the local metatdata store'.'background auditor');
+   if(!$pim->getIssueByHash($issuehash))
+   {// this issue is not already recorded 
+    $pim->recordIssue('ASSET/SIZE/MISMATCH','',$assetrecord['assetid'].'filesize from ['.$assetrecord['uri'].'] does not match the size in the local metatdata store','background auditor', $issuehash);
+   }
+       */
+       
+  }
+
+ 
+ }
+}
+
+
+
+
+
 
 
 

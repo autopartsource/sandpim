@@ -55,15 +55,16 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['attr
   else
   {// this is a user-defined attribute
    $attributename=$_GET['attribute'];
+   $PAname=$_GET['attribute'];
    if(!$pim->getPartAttribute($partnumber,0,$attributename))
    {
     $eventtext='user-defined attribute['.$attributename.'='.$value.$uom.'] was added';
-    $pim->writePartAttribute($partnumber, $PAID, $attributename, $value, $uom);
+    $id=$pim->writePartAttribute($partnumber, $PAID, $attributename, $value, $uom);
    }
    else
    {// user-defined attribute exists from this part - update it
     $eventtext='user-defined attribute['.$attributename.'] was updated to: '.$value.$uom;
-    $pim->updatePartAttribute($partnumber, 0, $attributename, $value, $uom);
+    $id=$pim->updatePartAttribute($partnumber, 0, $attributename, $value, $uom);
    }
    $oid=$pim->updatePartOID($partnumber);
    $pim->logPartEvent($partnumber,$userid, $eventtext ,$oid);

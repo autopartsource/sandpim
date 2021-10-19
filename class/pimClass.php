@@ -935,25 +935,39 @@ function countAppsByPartcategories($partcategories)
    $stmt->bind_param('sisss',$partnumber,$PAID,$attributename,$attributevalue,$uom);
    $stmt->execute();
    $id=$db->conn->insert_id;
-   $this->updatePartOID($partnumber);
-  } // else{print_r($db->conn->error);}
+  }
   $db->close();
   return $id;
  }
 
  function updatePartAttribute($partnumber,$PAID,$attributename,$attributevalue,$uom)
  { // PAID of 0 implies a user-defned attribute 
-  $id=false;
-  $db = new mysql; 
-  //$db->dbname='pim';
+  $id=false; $db = new mysql; 
   $db->connect();
-  if($stmt=$db->conn->prepare('update part_attribute set `value`=?,uom=? where partnumber=? and PAID=? and userDefinedAttributeName=?'))
+
+  if($stmt=$db->conn->prepare('select id from part_attribute where partnumber=? and PAID=? and userDefinedAttributeName=? and uom=?'))
   {
-   $stmt->bind_param('sssis',$attributevalue,$uom,$partnumber,$PAID,$attributename);
-   $stmt->execute();
-   $id=$db->conn->insert_id;
-   $this->updatePartOID($partnumber);  
-  } // else{print_r($db->conn->error);}
+   if($stmt->bind_param('siss',$partnumber,$PAID,$attributename,$uom))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $id=$row['id'];
+     } 
+    }
+   }
+  }
+  
+  if($id)
+  {
+   if($stmt=$db->conn->prepare('update part_attribute set `value`=? where partnumber=? and PAID=? and userDefinedAttributeName=? and uom=?'))
+   {
+    $stmt->bind_param('ssiss',$attributevalue,$partnumber,$PAID,$attributename,$uom);
+    $stmt->execute();
+   }
+  }
 
   $db->close();
   return $id;

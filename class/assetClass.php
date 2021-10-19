@@ -253,6 +253,29 @@ class asset
   $db->close();
  }
 
+ 
+ function setAssetHash($id,$hash)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set fileHashMD5=? where id=?'))
+  {
+   $stmt->bind_param('si', $hash, $id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ function setAssetFilesize($id,$size)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set filesize=? where id=?'))
+  {
+   $stmt->bind_param('ii', $size, $id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
  function updateAssetOID($assetid)
  {
   $db = new mysql; $db->connect();
@@ -319,6 +342,27 @@ class asset
   return $assets;   
  }
 
+ 
+ function getAssetsByRandom($limit)
+ {
+  $assets=array(); $db=new mysql; 
+  $db->connect();
+  if($stmt=$db->conn->prepare('select * from asset order by rand() limit ?'))
+  {
+   $stmt->bind_param('i',$limit);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode']);
+   }
+  }
+  $db->close();
+  return $assets;   
+ }
+
+ 
+ 
  function sqlclean($string)
  {
    $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
