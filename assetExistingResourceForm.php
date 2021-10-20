@@ -86,6 +86,11 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
     }
 }
 
+if(isset($_POST['partnumber']) && trim($_POST['partnumber'])!='' && $pim->validPart(trim($_POST['partnumber'])))
+{
+ $guessedpartnumber=trim($_POST['partnumber']);
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -116,7 +121,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
                     } ?>
 
                         <form method="post" action="assetCreate.php">
-                            <input type="hidden" name="filename" value="<?php echo $filename;?>"/>
+                            <input type="hidden" name="filename" value="<?php echo $basename;?>"/>
                             <input type="hidden" name="basename" value="<?php echo $basename;?>"/>
                             <input type="hidden" name="localpath" value="<?php echo $basename;;?>"/>
                             <input type="hidden" name="dimensionUOM" value="<?php echo $dimensionUOM;?>"/>
@@ -133,14 +138,14 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
                             <div style="padding:10px;">Description <input name="description" type="text" value="<?php echo $description;?>"/></div>
                             <div style="padding:10px;">Orientation <input name="orientationviewcode" type="text" value="<?php echo $orientationviewcode;?>"/></div>
                             <div style="padding:10px;">Background <input name="background" type="text" value="<?php echo $background;?>"/></div>
-                            <div style="padding:10px;">Color Mode Code<input name="colormodecode" type="text" value="<?php echo $colormodecode;?>"/></div>
-                            <div style="padding:10px;">Resolution<input name="resolution" type="text" value="300"/></div>
+                            <div style="padding:10px;">Color Mode Code <input name="colormodecode" type="text" value="<?php echo $colormodecode;?>"/></div>
+                            <div style="padding:10px;">Resolution <input name="resolution" type="text" value="300"/></div>
                             <div style="padding:10px;">Public <input name="public" type="text" value="<?php echo $public;?>"/></div>
                             <div style="padding:10px;">URI <input name="uri" value="<?php echo $uri;?>"/></div>
                             <div style="padding:10px;"><label><input type="checkbox" id="uripublic" name="uripublic"/>URI is for public consumption</label></div>
                             <div style="padding:10px;"><input type="checkbox" name="discardlocal"/>Discard local copy</div>
                             
-                            <div style="padding:10px;">Connect Part<input name="partnumber" value="<?php echo $guessedpartnumber;?>"/></div>
+                            <div style="padding:10px;">Connect Part <input name="partnumber" value="<?php echo $guessedpartnumber;?>"/></div>
                             <select name="assettypecode" id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
                             <select name="representation" id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
 

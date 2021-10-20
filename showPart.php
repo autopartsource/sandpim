@@ -470,7 +470,19 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
              }
             }
 
-
+            function showhideAssetForm()
+            {
+             var x = document.getElementById("assetform");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }                
+            }
+            
             function disconnectAsset(connectionid)
             {
                 var assetdiv = document.getElementById('assetconnectionid_'+connectionid);
@@ -720,6 +732,14 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                                   echo '<div style="padding-bottom:3px;" id="assetconnectionid_'.$connectedasset['connectionid'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Disconnect this asset from this part" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div><div style="border:1px solid;padding:3px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div><div style="clear:both;"></div></div>';
                                             }
                                             ?>
+
+                                            <div onclick="showhideAssetForm()">...</div>
+                                            <div  id="assetform" style="display:none; padding:5px;">
+                                                <form action="assetExistingResourceForm.php" method="post">
+                                                    <div style="text-align:left; padding:5px;">uri <input type="text" name="uri"/> filename <input type="text" size="6" name="basename"/> <input type="hidden" name="partnumber" value="<?php echo $part['partnumber'];?>"/>
+                                                    <input type="submit" name="submit" value="Retrieve"/></div>
+                                                </form>
+                                            </div>
                                         </td>
                                     <tr>
                                     <?php if($vio){echo '<tr><th>VIO ('.$viogeography.' '.$vioyearquarter.')</th><td>'.number_format($vio,0,'.',',').'</td><tr>';}?>
