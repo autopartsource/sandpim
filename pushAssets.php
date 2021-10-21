@@ -23,19 +23,26 @@ $assetpushuri='https://aps.dev/sandpim/acceptAssets.php';
 if($assetpushuri)
 {
  $allassets=$asset->getAssets('', 'startswith', 'any', 'any',  date('Y-m-d', strtotime('-3 day'))   , 'from', '', '', 99999);
- 
  $data=array();
+
+ $assetidkeyedassets=array(); 
  foreach($allassets as $allasset)
  {
-  $connectedparts=$asset->getPartsConnectedToAsset($allasset['assetid']);
+  $assetidkeyedassets[$allasset['assetid']][]=array('id'=>$allasset['id'],'assetid'=>$allasset['assetid'],'filename'=>$allasset['filename'],'localpath'=>$allasset['localpath'],'uri'=>$allasset['uri'],'orientationViewCode'=>$allasset['orientationViewCode'],'colorModeCode'=>$allasset['colorModeCode'],'assetHeight'=>$allasset['assetHeight'],'assetWidth'=>$allasset['assetWidth'],'dimensionUOM'=>$allasset['dimensionUOM'],'background'=>$allasset['background'],'fileType'=>$allasset['fileType'],'createdDate'=>$allasset['createdDate'],'public'=>$allasset['public'],'approved'=>$allasset['approved'],'description'=>$allasset['description'],'oid'=>$allasset['oid'],'fileHashMD5'=>$allasset['fileHashMD5'],'filesize'=>$allasset['filesize'],'resolution'=>$allasset['resolution'],'languagecode'=>$allasset['languagecode']);
+ } 
+ 
+
+ foreach($assetidkeyedassets as $assetid=>$assetrecords)
+ {    
+  $connectedparts=$asset->getPartsConnectedToAsset($assetid);
   $connections=array();
-  foreach ($connectedparts as $connectedpart)
+  foreach($connectedparts as $connectedpart)
   {
    $connections[]=array('partnumber'=>$connectedpart['partnumber'],'assettypecode'=>$connectedpart['assettypecode'],'sequence'=>$connectedpart['sequence'],'representation'=>$connectedpart['representation']);
   }
-  $data[]=array('asset'=>$allasset,'connections'=>$connections);
+  $data[]=array('assetid'=>$assetid,'records'=>$assetrecords,'connections'=>$connections);
  }
-
+ 
  $curl = curl_init($assetpushuri);
  curl_setopt($curl, CURLOPT_URL, $assetpushuri);
  curl_setopt($curl, CURLOPT_POST, true);
@@ -50,6 +57,8 @@ if($assetpushuri)
 
  $runtime=time()-$starttime;
  $logs->logSystemEvent('assetposter', 0, '*'.$resp.'* Asset poster pushed '.count($allassets).' asset metadata records in '.$runtime.' seconds');
+
+ print_r($data); 
 }
 else
 {
