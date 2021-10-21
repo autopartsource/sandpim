@@ -18,12 +18,28 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 $asset=new asset();
 
 $bodyraw=file_get_contents('php://input');
-$postbody= json_decode($bodyraw,true);
+$assetrecords= json_decode($bodyraw,true);
+
+$assetid='not found';
+if(count($assetrecords))
+{
+ foreach ($assetrecords as $assetrecord)
+ {
+  if(array_key_exists('asset', $assetrecord) && array_key_exists('connections', $assetrecord))
+  {
+   // see if the assets already exists here
+      
+      $assetid=$assetrecord['asset']['assetid'];
+      
+  }
+ }
+}
+
 
 
     
 $runtime=time()-$starttime;
-$logs->logSystemEvent('assetacceptor', 0, print_r($postbody,true));   
+$logs->logSystemEvent('assetacceptor', 0, $assetid);   
 
 //$logs->logSystemEvent('assetacceptor', 0, print_r($postbody,true).': Asset acceptor received '.count($assets).' asset metadata records in '.$runtime.' seconds');   
 

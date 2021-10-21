@@ -19,10 +19,10 @@ $configGet = new configGet;
 
 $assetpushuri=$configGet->getConfigValue('assetPushURI');
 
-
+$assetpushuri='https://aps.dev/sandpim/acceptAssets.php';
 if($assetpushuri)
 {
- $allassets=$asset->getAssets('', 'startswith', 'any', 'any',  date('Y-m-d', strtotime('-90 day'))   , 'from', '', '', 99999);
+ $allassets=$asset->getAssets('', 'startswith', 'any', 'any',  date('Y-m-d', strtotime('-3 day'))   , 'from', '', '', 99999);
  
  $data=array();
  foreach($allassets as $allasset)
@@ -43,13 +43,13 @@ if($assetpushuri)
 
  $headers = array("Accept: application/json","Content-Type: application/json",);
  curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
- curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+ curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
 
  $resp = curl_exec($curl);
  curl_close($curl);
 
  $runtime=time()-$starttime;
- $logs->logSystemEvent('assetposter', 0, 'Asset poster pushed '.count($allassets).' asset metadata records in '.$runtime.' seconds');
+ $logs->logSystemEvent('assetposter', 0, '*'.$resp.'* Asset poster pushed '.count($allassets).' asset metadata records in '.$runtime.' seconds');
 }
 else
 {
