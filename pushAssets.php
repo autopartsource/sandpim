@@ -58,7 +58,7 @@ if($assetpushuri)
  $runtime=time()-$starttime;
  $logs->logSystemEvent('assetposter', 0, '*'.$resp.'* Asset poster pushed '.count($allassets).' asset metadata records in '.$runtime.' seconds');
 
- print_r($data); 
+ echo 'pushed '.count($data).' assets'; 
 }
 else
 {
