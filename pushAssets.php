@@ -58,10 +58,10 @@ if($assetpushuri)
  $runtime=time()-$starttime;
  $logs->logSystemEvent('assetposter', 0, '*'.$resp.'* Asset poster pushed '.count($allassets).' asset metadata records in '.$runtime.' seconds');
 
- echo 'pushed '.count($data).' assets'; 
+ echo 'pushed '.count($data).' assets. Response:'.$resp; 
 }
 else
 {
- $logs->logSystemEvent('assetposter', 0, 'Asset poster uri (assetPushURI) is not set in config');    
+ $logs->logSystemEvent('assetposter', 0, 'Asset pusher uri (assetPushURI) is not set in config');    
 }
 ?>

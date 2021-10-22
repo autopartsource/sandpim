@@ -51,6 +51,7 @@ if(count($data))
     
 $runtime=time()-$starttime;
 
-$logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor created '.count($newassetcount).' assets records in '.$runtime.' seconds');   
+$logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor created '.$newassetcount.' assets records in '.$runtime.' seconds');   
 
+echo $newassetcount.' assets created';
 ?>
