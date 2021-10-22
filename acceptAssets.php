@@ -20,7 +20,9 @@ $asset=new asset();
 $bodyraw=file_get_contents('php://input');
 $data= json_decode($bodyraw,true);
 
-$assetid='not found';
+$newassetcount=0;
+$existingassetcount=0;
+
 if(count($data))
 {
  foreach ($data as $a)
@@ -28,41 +30,27 @@ if(count($data))
   if(array_key_exists('assetid', $a) && array_key_exists('records', $a))
   {
    // see if the assets already exists here
-      
    $assetid=$a['assetid'];
-   $assetrecords=$a['records'];
-   $assetrecordsexist=false;
 
-
-   $localassetrecords=$asset->getAssetRecordsByAssetid($assetid);
-
-   if(count($localassetrecords))
-   {// this assetid (like 'MG4121') already exists - maybe multiple varients of the same id
-    $logs->logSystemEvent('assetacceptor', 0, 'asset records ('.count($localassetrecords).') already exist for '.$assetid.' - no action taken.');        
+   // delete any assets and connections that may exist under this assetid
+   $asset->deleteAssetsByAssetid($assetid);
+   foreach($a['records'] as $assetrecord)
+   {
+    $id=$asset->addAsset($assetid, $assetrecord['filename'], $assetrecord['localpath'], $assetrecord['uri'], $assetrecord['orientationViewCode'], $assetrecord['colorModeCode'], $assetrecord['assetHeight'], $assetrecord['assetWidth'], $assetrecord['dimensionUOM'], $assetrecord['resolution'], $assetrecord['background'], $assetrecord['fileType'], $assetrecord['public'], $assetrecord['approved'], $assetrecord['description'], $assetrecord['oid'], $assetrecord['fileHashMD5'], $assetrecord['filesize'], $assetrecord['public'], $assetrecord['languagecode'], $assetrecord['createdDate']);
+    $newassetcount++;
    }
-   else
-   {// this asset id is not found locally
-    foreach($assetrecords as $assetrecord)
-    {
-     $id=$asset->addAsset($assetid, $assetrecord['filename'], $assetrecord['localpath'], $assetrecord['uri'], $assetrecord['orientationViewCode'], $assetrecord['colorModeCode'], $assetrecord['assetHeight'], $assetrecord['assetWidth'], $assetrecord['dimensionUOM'], $assetrecord['resolution'], $assetrecord['background'], $assetrecord['fileType'], $assetrecord['public'], $assetrecord['approved'], $assetrecord['description'], $assetrecord['oid'], $assetrecord['fileHashMD5'], $assetrecord['filesize'], $assetrecord['public'], $assetrecord['languagecode'], $assetrecord['createdDate']);
-     $logs->logSystemEvent('assetacceptor', 0, 'asset record '.$id.' was written for '.$assetid);
-    }
-    // write all the part-asset recs
-    foreach($a['records'] as $connection)
-    {
-     $asset->connectPartToAsset($connection['partnumber'], $assetid, $connection['assettypecode'], $connection['sequence'], $connection['representation']);
-     $pim->logPartEvent($connection['partnumber'], 0, 'asset '.$assetid.' connected by acceptAsset API', '');
-    }
+   foreach($a['connections'] as $connection)
+   {// write all the part-asset recs
+    $asset->connectPartToAsset($connection['partnumber'], $assetid, $connection['assettypecode'], $connection['sequence'], $connection['representation']);
+    $pim->logPartEvent($connection['partnumber'], 0, 'asset '.$assetid.' connected by acceptAsset API', '');
    }
   }
  }
 }
 
-
-
     
 $runtime=time()-$starttime;
 
-$logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor received '.count($assets).' asset metadata records in '.$runtime.' seconds');   
+$logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor created '.count($newassetcount).' assets records in '.$runtime.' seconds');   
 
 ?>

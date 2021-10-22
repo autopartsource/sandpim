@@ -220,11 +220,21 @@ class asset
   {
    $stmt->bind_param('s',$assetid);
    $stmt->execute();
-  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }
+
+  // delete any part-asset connection that exist for this asset
+  if($stmt=$db->conn->prepare('delete from part_asset where assetid=?'))
+  {
+   $stmt->bind_param('s',$assetid);
+   $stmt->execute();
+  }
+
   $db->close();
-  // need to delete (unlink) local file if it exists
+// need to delete (unlink) local file if it exists  
  }
   
+ 
+ 
  function primaryPhotoURIofPart($partnumber)
  {
   $returnval=false;
