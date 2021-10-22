@@ -796,6 +796,7 @@ class setup
         $sql="insert into config_options values('qdbProductionDatabase','','','qdb','This is the name of the local MySQL database that will use for lookup of Qdb data. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('defaultDescriptionLanguageCode','','','EN','Language code to select on load of forms for adding descriptions to parts');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('defaultDescriptionTypeCode','','','EN','Type code to select on load of forms for adding descriptions to parts');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('assetPushURI','','','','Experimental feature for debugging - URI of peer SandPIM system to push assets to');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         
         

@@ -19,10 +19,9 @@ $configGet = new configGet;
 
 $assetpushuri=$configGet->getConfigValue('assetPushURI');
 
-$assetpushuri='https://aps.dev/sandpim/acceptAssets.php';
 if($assetpushuri)
 {
- $allassets=$asset->getAssets('', 'startswith', 'any', 'any',  date('Y-m-d', strtotime('-3 day'))   , 'from', '', '', 99999);
+ $allassets=$asset->getAssets('', 'startswith', 'any', 'any',  date('Y-m-d', strtotime('-10000 day'))   , 'from', '', '', 99999);
  $data=array();
 
  $assetidkeyedassets=array(); 
@@ -56,12 +55,12 @@ if($assetpushuri)
  curl_close($curl);
 
  $runtime=time()-$starttime;
- $logs->logSystemEvent('assetposter', 0, '*'.$resp.'* Asset poster pushed '.count($allassets).' asset metadata records in '.$runtime.' seconds');
+ $logs->logSystemEvent('assetpusher', 0, 'Asset pusher posted '.count($allassets).' records in '.$runtime.' seconds. Response: '.$resp);
 
- echo 'pushed '.count($data).' assets. Response:'.$resp; 
+// echo 'pushed '.count($data).' assets. Response:'.$resp; 
 }
 else
 {
- $logs->logSystemEvent('assetposter', 0, 'Asset pusher uri (assetPushURI) is not set in config');    
+ $logs->logSystemEvent('assetpusher', 0, 'Asset pusher uri (assetPushURI) is not set in config');    
 }
 ?>

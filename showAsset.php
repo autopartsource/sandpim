@@ -122,7 +122,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 <div class="col-xs-12 col-md-7 my-col colMain">
                     <?php foreach ($assetrecords as $assetrecord){
                          if(strlen($assetrecord['uri'])>0){$imgsrc=$assetrecord['uri'];}
-                         if(strlen($assetrecord['localpath'])>0){$imgsrc=$configGet->getConfigValue('localImageStorePath').'/'.$assetrecord['localpath'];}
+                         //if(strlen($assetrecord['localpath'])>0){$imgsrc=$configGet->getConfigValue('localImageStorePath').'/'.$assetrecord['localpath'];}
                          ?>
                         <div class="card shadow-sm">
                             <h3 class="card-header text-start">Record for Asset: <span class="text-info"><?php echo $assetid;?></span><div style="float:right;"><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></div></h3>
