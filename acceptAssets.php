@@ -16,8 +16,8 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 
 
 $asset=new asset();
-$newassetcount=0;  $existingassetcount=0;
-        
+$newassetcount=0;  $droppedassetcount=0;
+
 if(isset($_GET['detail']))
 { // get local list of all asset oid's
  $allassets=$asset->getAssets('', 'startswith', 'any', 'any', '2000-01-01', 'any', '', '',0);
@@ -43,11 +43,20 @@ $bodyraw=file_get_contents('php://input');
 
 if(strlen($bodyraw)>0)
 {
- $data= json_decode($bodyraw,true);
-
- if(count($data))
+ $body=json_decode($bodyraw,true);
+ if(isset($body['drops']))
  {
-  foreach ($data as $a)
+  foreach ($body['drops'] as $assetid)
+  {
+   $asset->deleteAssetsByAssetid($assetid);
+   $logs->logSystemEvent('assetacceptor', 0, 'dropped asset '.$assetid);
+   $droppedassetcount++;
+  }
+ } 
+ 
+ if(isset($body['adds']))
+ {
+  foreach ($body['adds'] as $a)
   {
    if(array_key_exists('assetid', $a) && array_key_exists('records', $a))
    {
@@ -74,6 +83,6 @@ if(strlen($bodyraw)>0)
 $runtime=time()-$starttime;
 if($newassetcount || $runtime>10)
 {
- $logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor created '.$newassetcount.' assets records in '.$runtime.' seconds');   
+ $logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor added '.$newassetcount.', dropped '.$droppedassetcount.' assets records in '.$runtime.' seconds');   
 }
 ?>

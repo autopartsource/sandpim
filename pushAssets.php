@@ -47,7 +47,7 @@ if($assetpushuri)
 
  if($localoidhash == $responsedecoded['hash'])
  {
-  $logs->logSystemEvent('assetpusher', 0, 'remote system reports same hash as local system - no action taken');
+  $logs->logSystemEvent('assetpusher', 0, 'remote hash equals local hash - no assets pushed');
   exit;
  }  
     
@@ -73,8 +73,9 @@ if($assetpushuri)
  $r=array(); foreach($responsedecoded['oids'] as $oid){$r[$oid]='';}
  $l=array(); foreach($localoids as $oid){$l[$oid]='';}
  
- $oidstopush=array();
  
+ // compare sets of oids to determine what's missing fron remote system
+ $oidstopush=array();
  foreach($localoids as $oid)
  {
   if(!array_key_exists($oid,$r))
@@ -83,6 +84,18 @@ if($assetpushuri)
   }
  }
  
+  // convert the "push" list of OID's into asset records
+ $assetstopush=array();
+ foreach($oidstopush as $oid)
+ {
+  if($a=$asset->getAssetByOID($oid))
+  {
+    $assetstopush[]=$a;
+  }
+ }
+
+ 
+ // compare sets of oids to determine what's extra in remote system 
  $oidstodelete=array();
  foreach($responsedecoded['oids'] as $oid)
  {
@@ -92,20 +105,23 @@ if($assetpushuri)
   }
  }
 
- // convert the "push" list of OID's into asset records
- $assetstopush=array();
- foreach($oidstopush as $oid)
+  // convert the "deletes" list of OID's into asset ids
+ $assetidstodelete=array();
+ foreach($oidstodelete as $oid)
  {
   if($a=$asset->getAssetByOID($oid))
   {
-    $assetstopush[]=$a;
+    // avoid adding duplicate asset ids. (same asset id and be used multiple times having different oids - like in th case of a different sizes of the same photo)
+   if(!in_array($a['assetid'], $assetidstodelete)){$assetidstodelete[]=$a['assetid'];}
   }
  }
  
- 
- if(count($assetstopush)>0)
+
+    
+ if(count($assetstopush)>0 || count($assetidstodelete)>0)
  {
-  $body=array();
+  $body=array('adds'=>array(),'drops'=>$assetidstodelete);
+
   $assetidkeyedassets=array(); 
   foreach($assetstopush as $a)
   {
@@ -120,9 +136,10 @@ if($assetpushuri)
    {
     $connections[]=array('partnumber'=>$connectedpart['partnumber'],'assettypecode'=>$connectedpart['assettypecode'],'sequence'=>$connectedpart['sequence'],'representation'=>$connectedpart['representation']);
    }
-   $body[]=array('assetid'=>$assetid,'records'=>$assetrecords,'connections'=>$connections);
+   $body['adds'][]=array('assetid'=>$assetid,'records'=>$assetrecords,'connections'=>$connections);
   }
  
+  
   $curl = curl_init($assetpushuri);
   curl_setopt($curl, CURLOPT_URL, $assetpushuri);
   curl_setopt($curl, CURLOPT_POST, true);
@@ -135,6 +152,11 @@ if($assetpushuri)
 
   $runtime=time()-$starttime;
   $logs->logSystemEvent('assetpusher', 0, 'Asset pusher posted '.count($assetstopush).' records in '.$runtime.' seconds. Response: '.$resp);
+
+  
+ print_r($body); 
+  
+  
  }
 }
 else
