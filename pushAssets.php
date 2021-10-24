@@ -19,7 +19,7 @@ $configGet = new configGet;
 
 $assetpushuri=$configGet->getConfigValue('assetPushURI');
 
-$assetpushuri='https://aps.dev/sandpiper/acceptAssets.php';
+$assetpushuri='https://aps.dev/sandpim/acceptAssets.php';
 
 
 if($assetpushuri)
