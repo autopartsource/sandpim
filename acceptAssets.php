@@ -38,7 +38,6 @@ if(isset($_GET['detail']))
  }
 }
 
-
 $bodyraw=file_get_contents('php://input');
 
 if(strlen($bodyraw)>0)
