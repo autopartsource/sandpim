@@ -96,31 +96,20 @@ if($assetpushuri)
 
  
  // compare sets of oids to determine what's extra in remote system 
- $oidstodelete=array();
+ // don't bother converting them to real assetsid - they may not exit locally
+ $oidstodrop=array();
  foreach($responsedecoded['oids'] as $oid)
  {
   if(!array_key_exists($oid,$l))
   {// this remote oid is not found in the local list
-   $oidstodelete[]=$oid;      
+   $oidstodrop[]=$oid;      
   }
  }
-
-  // convert the "deletes" list of OID's into asset ids
- $assetidstodelete=array();
- foreach($oidstodelete as $oid)
- {
-  if($a=$asset->getAssetByOID($oid))
-  {
-    // avoid adding duplicate asset ids. (same asset id and be used multiple times having different oids - like in th case of a different sizes of the same photo)
-   if(!in_array($a['assetid'], $assetidstodelete)){$assetidstodelete[]=$a['assetid'];}
-  }
- }
- 
 
     
- if(count($assetstopush)>0 || count($assetidstodelete)>0)
+ if(count($assetstopush)>0 || count($oidstodrop)>0)
  {
-  $body=array('adds'=>array(),'drops'=>$assetidstodelete);
+  $body=array('adds'=>array(),'drops'=>$oidstodrop);
 
   $assetidkeyedassets=array(); 
   foreach($assetstopush as $a)

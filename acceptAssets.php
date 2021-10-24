@@ -44,12 +44,13 @@ $bodyraw=file_get_contents('php://input');
 if(strlen($bodyraw)>0)
 {
  $body=json_decode($bodyraw,true);
+
  if(isset($body['drops']))
- {
-  foreach ($body['drops'] as $assetid)
+ { // drop list is oid's (no assetid's)
+  foreach ($body['drops'] as $oid)
   {
-   $asset->deleteAssetsByAssetid($assetid);
-   $logs->logSystemEvent('assetacceptor', 0, 'dropped asset '.$assetid);
+   $asset->deleteAssetRecordByOID($oid);
+   $logs->logSystemEvent('assetacceptor', 0, 'dropped asset by oid '.$oid);
    $droppedassetcount++;
   }
  } 

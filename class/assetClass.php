@@ -60,7 +60,7 @@ class asset
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-       $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode']);
+    $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode']);
    }
   }
   $db->close();
@@ -76,7 +76,7 @@ class asset
    $stmt->bind_param('sssis',$part,$assetid,$assettypecode,$sequence,$representation);
    $stmt->execute();
    $id=$db->conn->insert_id;
-  }//else{echo $db->conn->error;}//$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }
   $db->close();
   
   return $id;   
@@ -107,7 +107,7 @@ class asset
     $stmt->bind_param('si',$partnumber,$connectionid);
    }
    $stmt->execute();
-  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }
   $db->close();
  }
  
@@ -204,13 +204,26 @@ class asset
   {
    $stmt->bind_param('i',$id);
    $stmt->execute();
-  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }
   $db->close();
   
   // need to delete (unlink) local file if it exists
   
  }
  
+
+ function deleteAssetRecordByOID($oid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from asset where oid=?'))
+  {
+   $stmt->bind_param('s',$oid);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+
  
  
  function deleteAssetsByAssetid($assetid)
