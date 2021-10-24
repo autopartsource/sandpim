@@ -17,6 +17,28 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 
 $asset=new asset();
 
+if(isset($_GET['detail']))
+{ // get local list of all asset oid's
+ $allassets=$asset->getAssets('', 'startswith', 'any', 'any', '2000-01-01', 'any', '', '',0);
+ $oids=array(); foreach($allassets as $allasset){$oids[]=$allasset['oid'];}
+ sort($oids);
+ $oidliststring=''; foreach($oids as $oid){$oidliststring.=$oid;}
+
+ if($_GET['detail']=='hash')
+ {
+  $hash=md5($oidliststring);
+  echo json_encode(array('hash'=> $hash));
+  $logs->logSystemEvent('assetacceptor', 0, 'client requested hash ('.$hash.') of oids');   
+ }
+ else
+ {
+  echo json_encode(array('oids'=>$oids));
+  $logs->logSystemEvent('assetacceptor', 0, 'client requested list of ('.count($oids).') oids');
+ }
+}
+
+
+
 $bodyraw=file_get_contents('php://input');
 $data= json_decode($bodyraw,true);
 
@@ -53,5 +75,5 @@ $runtime=time()-$starttime;
 
 $logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor created '.$newassetcount.' assets records in '.$runtime.' seconds');   
 
-echo $newassetcount.' assets created';
+//echo $newassetcount.' assets created';
 ?>
