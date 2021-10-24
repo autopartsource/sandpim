@@ -16,7 +16,8 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 
 
 $asset=new asset();
-
+$newassetcount=0;  $existingassetcount=0;
+        
 if(isset($_GET['detail']))
 { // get local list of all asset oid's
  $allassets=$asset->getAssets('', 'startswith', 'any', 'any', '2000-01-01', 'any', '', '',0);
@@ -43,9 +44,6 @@ $bodyraw=file_get_contents('php://input');
 if(strlen($bodyraw)>0)
 {
  $data= json_decode($bodyraw,true);
-
- $newassetcount=0;
- $existingassetcount=0;
 
  if(count($data))
  {

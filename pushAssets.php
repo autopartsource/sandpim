@@ -34,20 +34,81 @@ if($assetpushuri)
  //ask server for a hash of its oids
  
  $curl = curl_init($assetpushuri.'?detail=hash');
- curl_setopt($curl, CURLOPT_URL, $assetpushuri);
+ curl_setopt($curl, CURLOPT_URL, $assetpushuri.'?detail=hash');
  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
  $headers = array("Accept: application/json","Content-Type: application/json",);
  curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
  $resp = curl_exec($curl);
  curl_close($curl);
+
+ $responsedecoded= json_decode($resp, true); 
  
+ if(!isset($responsedecoded['hash']))
+ {
+  $logs->logSystemEvent('assetpusher', 0, 'unexpected response form remote system:'.$resp);    
+  exit;
+ }
+ 
+
+ if($localoidhash == $responsedecoded['hash'])
+ {
+  $logs->logSystemEvent('assetpusher', 0, 'remote system reports same hash as local system - no action taken');
+echo 'zero diffs';
+  exit;
+ }  
     
- echo 'remote response:'.$resp;
+// remote system has a differnt hash of its oid's that we do. Ask for a list
+ 
+ $curl = curl_init($assetpushuri.'?detail=ids');
+ curl_setopt($curl, CURLOPT_URL, $assetpushuri.'?detail=ids');
+ curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+ $headers = array("Accept: application/json","Content-Type: application/json",);
+ curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+ $resp = curl_exec($curl);
+ curl_close($curl);
+
+ $responsedecoded= json_decode($resp, true); 
+ 
+ if(!isset($responsedecoded['oids']))
+ {
+  $logs->logSystemEvent('assetpusher', 0, 'unexpected response form remote system:'.$resp);    
+  exit;
+ }
+ 
+ // we now have an array of oids from the other system
+ $r=array(); foreach($responsedecoded['oids'] as $oid){$r[$oid]='';}
+ $l=array(); foreach($localoids as $oid){$l[$oid]='';}
+ 
+ $oidstopush=array();
+ 
+ foreach($localoids as $oid)
+ {
+  if(!array_key_exists($oid,$r))
+  {// this local oid is not found in the renote list
+   $oidstopush[]=$oid;      
+  }
+ }
+ 
+ $oidstodelete=array();
+ foreach($responsedecoded['oids'] as $oid)
+ {
+  if(!array_key_exists($oid,$l))
+  {// this remote oid is not found in the local list
+   $oidstodelete[]=$oid;      
+  }
+ }
+ 
+ echo 'push:'.print_r($oidstopush,true);
+ 
+ echo '----<br/>';
+ 
+ echo 'delete:'.print_r($oidstodelete,true);
+ 
+ 
+ 
+ 
  exit;
-    
-    
-    
-    
+ 
     
     
  $data=array();
