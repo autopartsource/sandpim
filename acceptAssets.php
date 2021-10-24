@@ -72,8 +72,8 @@ if(strlen($bodyraw)>0)
 }
     
 $runtime=time()-$starttime;
-
-$logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor created '.$newassetcount.' assets records in '.$runtime.' seconds');   
-
-//echo $newassetcount.' assets created';
+if($newassetcount || $runtime>10)
+{
+ $logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor created '.$newassetcount.' assets records in '.$runtime.' seconds');   
+}
 ?>
