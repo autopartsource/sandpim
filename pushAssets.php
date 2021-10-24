@@ -128,7 +128,6 @@ if($assetpushuri)
    $body['adds'][]=array('assetid'=>$assetid,'records'=>$assetrecords,'connections'=>$connections);
   }
  
-  
   $curl = curl_init($assetpushuri);
   curl_setopt($curl, CURLOPT_URL, $assetpushuri);
   curl_setopt($curl, CURLOPT_POST, true);
@@ -141,11 +140,6 @@ if($assetpushuri)
 
   $runtime=time()-$starttime;
   $logs->logSystemEvent('assetpusher', 0, 'Asset pusher posted '.count($assetstopush).' records in '.$runtime.' seconds. Response: '.$resp);
-
-  
- print_r($body); 
-  
-  
  }
 }
 else
