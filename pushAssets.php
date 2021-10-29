@@ -139,7 +139,7 @@ if($assetpushuri)
   curl_close($curl);
 
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('assetpusher', 0, 'Asset pusher posted '.count($assetstopush).' records in '.$runtime.' seconds. Response: '.$resp);
+  $logs->logSystemEvent('assetpusher', 0, 'Asset pusher posted '.count($assetstopush).' records in '.$runtime.' seconds. '.$resp);
  }
 }
 else

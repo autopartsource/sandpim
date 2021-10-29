@@ -28,6 +28,7 @@ $pcdb=new pcdb();
 $error_msg = false;
 
 $valid_upload=false;
+$partnumber='';
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Create') 
 {
@@ -171,6 +172,8 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                 } ?>
                             </h4>
 
+                            <div><a href="./showPart.php?partnumber=<?php echo $partnumber;?>">Back to <?php echo $partnumber;?></a></div>
+                            
                             <?php if($valid_upload){?>
                             <form method="post">
                                 <input type="hidden" name="filename" value="<?php echo $filename;?>"/>

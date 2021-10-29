@@ -544,6 +544,39 @@ function countAppsByPartcategories($partcategories)
   return $part;
  }
 
+ function getPartByOID($oid)
+ {
+  $db = new mysql; $db->connect();
+  $part=false;
+  
+  if($stmt=$db->conn->prepare('select * from part where oid=?'))
+  {
+   $stmt->bind_param('s', $oid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $part=array('partnumber'=>$row['partnumber'],
+        'partcategory'=>$row['partcategory'],
+        'parttypeid'=>$row['parttypeid'],
+        'replacedby'=>$row['replacedby'],
+        'lifecyclestatus'=>$row['lifecyclestatus'],
+        'internalnotes'=>$row['internalnotes'],
+        'description'=>$row['description'],
+        'GTIN'=>$row['GTIN'],
+        'UNSPC'=>$row['UNSPC'],
+        'createdDate'=>$row['createdDate'],
+        'firststockedDate'=>$row['firststockedDate'],
+        'discontinuedDate'=>$row['discontinuedDate'],
+        'oid'=>$row['oid']);    
+   }
+  }
+  $db->close();
+  return $part;
+ }
+
+ 
+ 
  function getParts($partnumber,$matchtype,$partcategory,$parttypeid,$lifecyclestatus,$limit)
  {
   $db = new mysql; $db->connect();
@@ -3406,6 +3439,76 @@ function attributesAreExperianUseful($attributes)
 
 
 
+ function deletePartsByOID($oid)
+ {
+     // delete part records and all part_x mid-table records associated to the part
+     // return an array of partnumbers that were deleted (likely only one)
+  $db = new mysql; $db->connect(); $partnumbers=array();
+  
+  if($stmt=$db->conn->prepare('select partnumber from part where oid=?'))
+  {// compile partnumber(s) that are to be deleted (most likely one)
+   if($stmt->bind_param('s', $oid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $partnumbers[]=$row['partnumber'];
+     }
+    }
+   }
+  }
+
+  
+  if(count($partnumbers)>0)
+  {
+   $partnumbertemp='';
+
+   if($stmt=$db->conn->prepare('delete from part where partnumber=?'))
+   {
+    $stmt->bind_param('s', $partnumbertemp);    
+    foreach($partnumbers as $partnumber)
+    {
+     $partnumbertemp=$partnumber;
+     $stmt->execute();
+    }   
+   }
+   
+   if($stmt=$db->conn->prepare('delete from part_asset where partnumber=?'))
+   {
+    $stmt->bind_param('s', $partnumbertemp);    
+    foreach($partnumbers as $partnumber)
+    {
+     $partnumbertemp=$partnumber;
+     $stmt->execute();
+    }   
+   }
+   
+   if($stmt=$db->conn->prepare('delete from part_attribute where partnumber=?'))
+   {
+    $stmt->bind_param('s', $partnumbertemp);    
+    foreach($partnumbers as $partnumber)
+    {
+     $partnumbertemp=$partnumber;
+     $stmt->execute();
+    }   
+   }
+   
+   if($stmt=$db->conn->prepare('delete from part_description where partnumber=?'))
+   {
+    $stmt->bind_param('s', $partnumbertemp);    
+    foreach($partnumbers as $partnumber)
+    {
+     $partnumbertemp=$partnumber;
+     $stmt->execute();
+    }   
+   }
+  } 
+  
+  $db->close();
+  return $partnumbers;
+ }
 
 
  

@@ -473,14 +473,17 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
             function showhideAssetForm()
             {
              var x = document.getElementById("assetform");
+             var y = document.getElementById("showAssetFormIcon");
              if (x.style.display === "none") 
              {
               x.style.display = "block";
+              y.style.display="none";
              }
              else
              {
               x.style.display = "none";
-             }                
+              y.style.display="block";
+             }
             }
             
             function disconnectAsset(connectionid)
@@ -615,7 +618,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                                 </div>
                                             <?php }?>
                                             </div>
-                                            <div onclick="showhideNewDescription()">...</div>
+                                            <div onclick="showhideNewDescription()"><img src="./expandmore.png" title="Expand to show descriptions form"/></div>
                                             <div id="newdescription" style="display:none; padding-top: 10px; text-align: left;">
                                                 <div style="padding-bottom:5px;"><input type="text" id="descriptiontext" size="50"/></div>
                                                 <div style="padding-bottom:5px;"><select id="descriptioncode"><?php foreach($descriptioncodes as $descriptioncode){$selected=''; if($descriptioncode['code']==$defaultdescriptiontypecode){$selected=' selected';} echo '<option value="'.$descriptioncode['code'].'"'.$selected.'>'.$descriptioncode['description'].'</option>';}?></select> <select id="descriptionlanguagecode"><?php foreach($descriptionlanguagecodes as $descriptionlanguagecode){$selected=''; if($descriptionlanguagecode['code']==$defaultdescriptionlanguagecode){$selected=' selected';} echo '<option value="'.$descriptionlanguagecode['code'].'"'.$selected.'>'.$descriptionlanguagecode['description'].'</option>';}?></select></div>
@@ -733,12 +736,13 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                             }
                                             ?>
 
-                                            <div onclick="showhideAssetForm()">...</div>
+                                            <div id="showAssetFormIcon" style="display:block;" onclick="showhideAssetForm()"><img src="./expandmore.png" title="Expand to show assets form"/></div>
                                             <div  id="assetform" style="display:none; padding:5px;">
                                                 <form action="assetExistingResourceForm.php" method="post">
                                                     <div style="text-align:left; padding:5px;">uri <input type="text" name="uri"/> filename <input type="text" size="6" name="basename"/> <input type="hidden" name="partnumber" value="<?php echo $part['partnumber'];?>"/>
                                                     <input type="submit" name="submit" value="Retrieve"/></div>
                                                 </form>
+                                            <div id="hideAssetFormIcon" onclick="showhideAssetForm()"><img src="./expandless.png" title="Hide assets form"/></div>
                                             </div>
                                         </td>
                                     <tr>
