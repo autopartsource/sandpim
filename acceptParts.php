@@ -20,7 +20,7 @@ if(isset($_GET['detail']))
 { // get local list of all part oid's
  $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 999999);
  $localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
- sort($oids);
+ sort($localoids);
  $oidliststring=''; foreach($oids as $oid){$oidliststring.=$oid;}
 
  if($_GET['detail']=='hash')
