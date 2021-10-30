@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/packagingClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $navCategory = 'utilities';
@@ -26,6 +27,7 @@ if (!isset($_SESSION['userid'])) {
 $logs = new logs();
 $vcdb = new vcdb();
 $pcdb = new pcdb();
+$packaging = new packaging();
 
 $tabbedoutput='';
 $tabbedoutputrecords=array();
@@ -36,7 +38,7 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
  
  $input = $_POST['input'];
  $records = explode("\r\n", $input);
- $tabbedoutput="Partnumber\tPartType\tApplications\r\n";
+ $tabbedoutput="Partnumber\tCategory\tUPC\tPart Type\tLifecycle Status\tReplaced By\tQoH\tAMD\tPackages\tApplications\r\n";
 
  foreach ($records as $record) 
  {
@@ -119,8 +121,16 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
     $balance=$pim->getPartBalance($part['partnumber']);
     $qoh=0; $amd=0;
     if($balance){$qoh=$balance['qoh']; $amd=$balance['amd'];}
+    
+    $nicepackagestring='';
+    $partpackages=$packaging->getPackagesByPartnumber($part['partnumber']);
+    
+    if(count($partpackages))
+    {
+     $nicepackagestring=$partpackages[0]['nicepackage'];
+    }
         
-    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$qoh."\t".$amd."\t".$summary;
+    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$qoh."\t".$amd."\t".$nicepackagestring."\t".$summary;
     $tabbedoutputrecords[]=$tabbedoutputrecord;
     $tabbedoutput.=$tabbedoutputrecord."\r\n";
    }
@@ -131,7 +141,7 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
  {
   $writer = new XLSXWriter();
   $writer->setAuthor('SandPIM');
-  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','QoH'=>'integer','AMD'=>'integer','Applications'=>'string'), array('widths'=>array(18,20,13,30,20,18,10,10,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','QoH'=>'integer','AMD'=>'integer','Packages'=>'string','Applications'=>'string'), array('widths'=>array(18,20,13,30,20,18,10,10,20,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
   foreach($tabbedoutputrecords as $tabbedoutputrecord)
   {
    $row=explode("\t",$tabbedoutputrecord);

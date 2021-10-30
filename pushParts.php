@@ -17,7 +17,7 @@ $uri='https://aps.dev/sandpim/acceptParts.php';
 
 if($uri)
 {
- $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 999999);
+ $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 10);
  $localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
  sort($localoids);
  $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
