@@ -1,12 +1,16 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/pricingClass.php');
+include_once('./class/packagingClass.php');
+include_once('/class/interchangeClass.php');
 include_once('./class/logsClass.php');
 
 $starttime=time();
 
 $pim = new pim();
 $pricing = new pricing();
+$packaging = new packaging();
+$interchange = new interchange();
 $logs=new logs();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
@@ -92,7 +96,15 @@ if(strlen($bodyraw)>0)
      $pricing->addPrice($partnumber, $pr['pricesheetnumber'], $pr['amount'], $pr['currency'], $pr['priceuom'], $pr['pricetype'], $pr['effectivedate'], $pr['expirationdate']);
     }
 
+    foreach($p['packages'] as $pk)
+    {
+     $packaging->addPackage($partnumber, $pk['packageuom'], $pk['quantityofeaches'], $pk['innerquantity'], $pk['innerquantityuom'], $pk['weight'], $pk['weightsuom'], $pk['packagelevelGTIN'], $pk['packagebarcodecharacters'], $pk['shippingheight'], $pk['shippingwidth'], $pk['shippinglength'], $pk['dimensionsuom']);
+    }
     
+    foreach($p['interchanges'] as $ic)
+    {
+     $interchange->addInterchange($partnumber, $ic['competitorpartnumber'], $ic['brandAAIAID'], $ic['interchangequantity'], $ic['uom'], $ic['interchangenotes'], $ic['internalnotes']);       
+    }
     
     $pim->logPartEvent($partnumber, 0, 'part created by partAcceptor.php', $p['oid']);
     
