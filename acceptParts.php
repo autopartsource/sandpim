@@ -66,7 +66,7 @@ if(strlen($bodyraw)>0)
     $pim->setPartGTIN($partnumber, $p['GTIN'], false);
     $pim->setPartUNSPC($partnumber, $p['UNSPC'], false);
     $pim->setPartLifecyclestatus($partnumber, $p['lifecyclestatus'], false);
-    $pim->setPartInternalnotes($partnumber, $p['internalnotes']);
+    $pim->setPartInternalnotes($partnumber, base64_decode($p['internalnotes']));
     $pim->setPartReplacedby($partnumber, $p['replacedby'], false);
     $pim->setPartCreatedDate($partnumber, $p['createdDate'], false);
     $pim->setPartFirststockedDate($partnumber, $p['firststockedDate'], false);

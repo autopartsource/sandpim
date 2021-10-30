@@ -766,7 +766,7 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
  
- function setPartInternalnotes($partnumber,$internalnotes)
+ function setPartInternalnotes($partnumber,$internalnotes,$updateoid)
  {
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('update part set internalnotes=? where partnumber=?'))
@@ -774,6 +774,7 @@ function countAppsByPartcategories($partcategories)
    $encodednotes=base64_encode($internalnotes);
    $stmt->bind_param('ss', $encodednotes,$partnumber);
    $stmt->execute();
+   if($updateoid){$this->updatePartOID($partnumber);}
   }
   $db->close();
  }

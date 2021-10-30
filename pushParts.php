@@ -17,7 +17,7 @@ $uri='https://aps.dev/sandpim/acceptParts.php';
 
 if($uri)
 {
- $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 10);
+ $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 999999);
  $localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
  sort($localoids);
  $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
@@ -123,9 +123,7 @@ if($uri)
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
   $resp = curl_exec($curl);
   curl_close($curl);
-
-  print_r($body);
-  
+ 
   $runtime=time()-$starttime;
   $logs->logSystemEvent('partpusher', 0, 'Part pusher posted '.count($partstopush).' parts in '.$runtime.' seconds. '.$resp);
  }
