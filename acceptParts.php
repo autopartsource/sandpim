@@ -47,8 +47,10 @@ if(strlen($bodyraw)>0)
   foreach ($body['drops'] as $oid)
   {
    $partnumbers=$pim->deletePartsByOID($oid);
-   //$logs->logSystemEvent('partacceptor', 0, 'dropped part: '.$partnumbers);
-   $pim->logPartEvent($partnumber, 0, 'part deleted by partAcceptor.php', '');
+   foreach($partnumbers as $partnumber)
+   {// possible (but unlikely) that multiple parts could have had the same oid - delete them all
+    $pim->logPartEvent($partnumber, 0, 'part deleted by partAcceptor.php', '');
+   }
    $droppedpartcount++;
   }
  } 
@@ -71,7 +73,18 @@ if(strlen($bodyraw)>0)
     $pim->setPartCreatedDate($partnumber, $p['createdDate'], false);
     $pim->setPartFirststockedDate($partnumber, $p['firststockedDate'], false);
     $pim->setPartDiscontinuedDate($partnumber, $p['discontinuedDate'], false);
+    
+    // part_x records 
+    foreach($p['descriptions'] as $d)
+    {
+     $pim->addPartDescription($partnumber, $d['description'], $d['descriptioncode'], $d['sequence'], $d['languagecode']);      
+    }
+
+
+    
+    
     $pim->logPartEvent($partnumber, 0, 'part created by partAcceptor.php', $p['oid']);
+    
     $newpartcount++;
    }
    else

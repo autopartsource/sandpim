@@ -2,12 +2,18 @@
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/logsClass.php');
+include_once(__DIR__.'/class/pricingClass.php');
+include_once(__DIR__.'/class/interchangeClass.php');
+include_once(__DIR__.'/class/packagingClass.php');
 include_once(__DIR__.'/class/configGetClass.php');
 
 $starttime=time();
 
 $pim = new pim();
 $logs=new logs();
+$pricing=new pricing();
+$interchange = new interchange();
+$packaging = new packaging();
 $configGet = new configGet;
 
 $uri=$configGet->getConfigValue('assetPushURI');
@@ -88,7 +94,18 @@ if($uri)
  {
   if($p=$pim->getPartByOID($oid))
   {
-    $partstopush[]=$p;
+   //get the part_to records and add them to the $p object
+   $descriptions=$pim->getPartDescriptions($p['partnumber']);
+   $attributes=$pim->getPartAttributes($p['partnumber']);
+   $prices=$pricing->getPricesByPartnumber($p['partnumber']);
+   $packages=$packaging->getPackagesByPartnumber($p['partnumber']);
+   $interchanges=$interchange->getInterchangeByPartnumber($p['partnumber']);
+   $p['descriptions']=$descriptions;
+   $p['attributes']=$attributes;
+   $p['prices']=$prices;
+   $p['packages']=$packages;
+   $p['interchanges']=$interchanges;
+   $partstopush[]=$p;
   }
  }
 
@@ -100,7 +117,7 @@ if($uri)
  {
   if(!array_key_exists($oid,$l))
   {// this remote oid is not found in the local list
-   $oidstodrop[]=$oid;      
+   $oidstodrop[]=$oid;
   }
  }
 
@@ -123,7 +140,7 @@ if($uri)
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
   $resp = curl_exec($curl);
   curl_close($curl);
- 
+ print_r($body);
   $runtime=time()-$starttime;
   $logs->logSystemEvent('partpusher', 0, 'Part pusher posted '.count($partstopush).' parts in '.$runtime.' seconds. '.$resp);
  }
