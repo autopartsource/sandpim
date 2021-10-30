@@ -82,9 +82,9 @@ if(strlen($bodyraw)>0)
      $pim->addPartDescription($partnumber, $d['description'], $d['descriptioncode'], $d['sequence'], $d['languagecode']);      
     }
 
-    foreach($p['attributes'] as $a)
+    foreach($p['attributes'] as $at)
     {
-     //$pim->writePartAttribute($partnumber, $PAID, $attributename, $attributevalue, $uom)
+     $pim->writePartAttribute($partnumber, $at['PAID'], $at['attributename'], $at['attributevalue'], $at['uom']);
     }
     
     foreach($p['prices'] as $pr)
