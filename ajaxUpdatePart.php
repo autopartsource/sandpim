@@ -47,12 +47,14 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   if($part['partcategory']!=$_GET['value'])
   {
    $pim->setPartCategory($partnumber,intval($_GET['value']),true);
+   $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'category changed to:'.intval($_GET['value']),$oid);
   }
   break;
 
   case 'internalnotes':
    $pim->setPartInternalnotes($partnumber,$_GET['value'],true);
+   $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'internal notes updated',$oid);
   break;
 
