@@ -121,7 +121,7 @@ if($uri)
   $headers = array("Accept: application/json","Content-Type: application/json",);
   curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
-  //$resp = curl_exec($curl);
+  $resp = curl_exec($curl);
   curl_close($curl);
 
   print_r($body);

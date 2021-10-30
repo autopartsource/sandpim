@@ -705,8 +705,7 @@ function countAppsByPartcategories($partcategories)
 
  function updatePartOID($partnumber)
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
+  $db = new mysql; $oid=false;
   $db->connect();
   if($stmt=$db->conn->prepare('update part set oid=? where partnumber=?'))
   {
@@ -717,6 +716,19 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $oid;
  }
+
+ function setPartOID($partnumber,$oid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set oid=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $oid, $partnumber);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+
  
  function setPartParttype($partnumber,$parttypeid,$updateoid)
  {
@@ -762,7 +774,7 @@ function countAppsByPartcategories($partcategories)
    $encodednotes=base64_encode($internalnotes);
    $stmt->bind_param('ss', $encodednotes,$partnumber);
    $stmt->execute();
-  }else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }
   $db->close();
  }
  
@@ -813,7 +825,44 @@ function countAppsByPartcategories($partcategories)
   if($updateoid){$this->updatePartOID($partnumber);}
   $db->close();
  }
+   
+ function setPartCreatedDate($partnumber,$createdDate,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set createdDate=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $createdDate, $partnumber);
+   $stmt->execute();
+  }
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+ }
   
+ function setPartFirststockedDate($partnumber,$firststockedDate,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set firststockedDate=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $firststockedDate, $partnumber);
+   $stmt->execute();
+  }
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+ }
+ 
+ function setPartDiscontinuedDate($partnumber,$discontinuedDate,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set discontinuedDate=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $discontinuedDate, $partnumber);
+   $stmt->execute();
+  }
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+ }
+ 
+ 
  function getPartAttribute($partnumber,$PAID,$attributename)
  {
   $attributes=false;

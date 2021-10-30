@@ -32,7 +32,7 @@ if(isset($_GET['detail']))
  else
  {
   echo json_encode(array('oids'=>$localoids));
-  $logs->logSystemEvent('partacceptor', 0, 'client requested list of ('.count($localoids).') oids');
+  $logs->logSystemEvent('partacceptor', 0, 'client requested list of ('.count($localoids).') local oids');
  }
 }
 
@@ -47,7 +47,8 @@ if(strlen($bodyraw)>0)
   foreach ($body['drops'] as $oid)
   {
    $partnumbers=$pim->deletePartsByOID($oid);
-   $logs->logSystemEvent('partacceptor', 0, 'dropped part: '.$partnumbers);
+   //$logs->logSystemEvent('partacceptor', 0, 'dropped part: '.$partnumbers);
+   $pim->logPartEvent($partnumber, 0, 'part deleted by partAcceptor.php', '');
    $droppedpartcount++;
   }
  } 
@@ -60,9 +61,18 @@ if(strlen($bodyraw)>0)
    if(!$pim->validPart($partnumber))
    {// part being added by remote master does not already exist
        
-    $logs->logSystemEvent('partacceptor', 0, 'would have added: '.$partnumber);
-    
-
+    $pim->createPart($partnumber, $p['partcategory'], $p['parttypeid']);
+    $pim->setPartOID($partnumber, $p['oid']);
+    $pim->setPartGTIN($partnumber, $p['GTIN'], false);
+    $pim->setPartUNSPC($partnumber, $p['UNSPC'], false);
+    $pim->setPartLifecyclestatus($partnumber, $p['lifecyclestatus'], false);
+    $pim->setPartInternalnotes($partnumber, $p['internalnotes']);
+    $pim->setPartReplacedby($partnumber, $p['replacedby'], false);
+    $pim->setPartCreatedDate($partnumber, $p['createdDate'], false);
+    $pim->setPartFirststockedDate($partnumber, $p['firststockedDate'], false);
+    $pim->setPartDiscontinuedDate($partnumber, $p['discontinuedDate'], false);
+    $pim->logPartEvent($partnumber, 0, 'part created by partAcceptor.php', $p['oid']);
+    $newpartcount++;
    }
    else
    {// remote client tried to add a part that already existed
