@@ -1,10 +1,12 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/pricingClass.php');
 include_once('./class/logsClass.php');
 
 $starttime=time();
 
 $pim = new pim();
+$pricing = new pricing();
 $logs=new logs();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
@@ -80,6 +82,15 @@ if(strlen($bodyraw)>0)
      $pim->addPartDescription($partnumber, $d['description'], $d['descriptioncode'], $d['sequence'], $d['languagecode']);      
     }
 
+    foreach($p['attributes'] as $a)
+    {
+     //$pim->writePartAttribute($partnumber, $PAID, $attributename, $attributevalue, $uom)
+    }
+    
+    foreach($p['prices'] as $pr)
+    {
+     $pricing->addPrice($partnumber, $pr['pricesheetnumber'], $pr['amount'], $pr['currency'], $pr['priceuom'], $pr['pricetype'], $pr['effectivedate'], $pr['expirationdate']);
+    }
 
     
     
