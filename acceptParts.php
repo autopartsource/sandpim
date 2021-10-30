@@ -21,7 +21,7 @@ if(isset($_GET['detail']))
  $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 999999);
  $localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
  sort($localoids);
- $oidliststring=''; foreach($oids as $oid){$oidliststring.=$oid;}
+ $oidliststring=''; foreach($localoids as $oid){$oidliststring.=$oid;}
 
  if($_GET['detail']=='hash')
  {
@@ -31,8 +31,8 @@ if(isset($_GET['detail']))
  }
  else
  {
-  echo json_encode(array('oids'=>$oids));
-  $logs->logSystemEvent('partacceptor', 0, 'client requested list of ('.count($oids).') oids');
+  echo json_encode(array('oids'=>$localoids));
+  $logs->logSystemEvent('partacceptor', 0, 'client requested list of ('.count($localoids).') oids');
  }
 }
 
