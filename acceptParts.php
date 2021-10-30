@@ -84,7 +84,7 @@ if(strlen($bodyraw)>0)
 
     foreach($p['attributes'] as $at)
     {
-     $pim->writePartAttribute($partnumber, $at['PAID'], $at['attributename'], $at['attributevalue'], $at['uom']);
+     $pim->writePartAttribute($partnumber, $at['PAID'], $at['name'], $at['value'], $at['uom']);
     }
     
     foreach($p['prices'] as $pr)
