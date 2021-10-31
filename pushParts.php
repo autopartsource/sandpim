@@ -145,7 +145,7 @@ if($uri)
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
   $resp = curl_exec($curl);
   curl_close($curl);
- print_r($body);
+ //print_r($body);
   $runtime=time()-$starttime;
   $logs->logSystemEvent('partpusher', 0, 'Part pusher posted '.count($partstopush).' parts in '.$runtime.' seconds. '.$resp);
  }

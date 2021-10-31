@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/pricingClass.php');
 include_once('./class/packagingClass.php');
 include_once('./class/interchangeClass.php');
+include_once('./class/assetClass.php');
 include_once('./class/logsClass.php');
 
 $starttime=time();
@@ -11,6 +12,7 @@ $pim = new pim();
 $pricing = new pricing();
 $packaging = new packaging();
 $interchange = new interchange();
+$asset = new asset();
 $logs=new logs();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
