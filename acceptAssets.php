@@ -63,17 +63,12 @@ if(strlen($bodyraw)>0)
     // see if the assets already exists here
     $assetid=$a['assetid']; 
 
-    // delete any assets and connections that may exist under this assetid
+    // delete any assets that may exist under this assetid
     $asset->deleteAssetsByAssetid($assetid);
     foreach($a['records'] as $assetrecord)
     {
      $id=$asset->addAsset($assetid, $assetrecord['filename'], $assetrecord['localpath'], $assetrecord['uri'], $assetrecord['orientationViewCode'], $assetrecord['colorModeCode'], $assetrecord['assetHeight'], $assetrecord['assetWidth'], $assetrecord['dimensionUOM'], $assetrecord['resolution'], $assetrecord['background'], $assetrecord['fileType'], $assetrecord['public'], $assetrecord['approved'], $assetrecord['description'], $assetrecord['oid'], $assetrecord['fileHashMD5'], $assetrecord['filesize'], $assetrecord['public'], $assetrecord['languagecode'], $assetrecord['createdDate']);
      $newassetcount++;
-    }
-    foreach($a['connections'] as $connection)
-    {// write all the part-asset recs
-     $asset->connectPartToAsset($connection['partnumber'], $assetid, $connection['assettypecode'], $connection['sequence'], $connection['representation']);
-     $pim->logPartEvent($connection['partnumber'], 0, 'asset '.$assetid.' connected by acceptAsset API', '');
     }
    }
   }

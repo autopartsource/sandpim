@@ -119,13 +119,7 @@ if($assetpushuri)
  
   foreach($assetidkeyedassets as $assetid=>$assetrecords)
   {    
-   $connectedparts=$asset->getPartsConnectedToAsset($assetid);
-   $connections=array();
-   foreach($connectedparts as $connectedpart)
-   {
-    $connections[]=array('partnumber'=>$connectedpart['partnumber'],'assettypecode'=>$connectedpart['assettypecode'],'sequence'=>$connectedpart['sequence'],'representation'=>$connectedpart['representation']);
-   }
-   $body['adds'][]=array('assetid'=>$assetid,'records'=>$assetrecords,'connections'=>$connections);
+   $body['adds'][]=array('assetid'=>$assetid,'records'=>$assetrecords);
   }
  
   $curl = curl_init($assetpushuri);

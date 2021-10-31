@@ -106,6 +106,11 @@ if(strlen($bodyraw)>0)
      $interchange->addInterchange($partnumber, $ic['competitorpartnumber'], $ic['brandAAIAID'], $ic['interchangequantity'], $ic['uom'], $ic['interchangenotes'], $ic['internalnotes']);       
     }
     
+    foreach($p['assetconnections'] as $ac)
+    {// write all the part-asset recs
+     $asset->connectPartToAsset($partnumber, $ac['assetid'], $ac['assettypecode'], $ac['sequence'], $ac['representation']);
+    }
+    
     $pim->logPartEvent($partnumber, 0, 'part created by partAcceptor.php', $p['oid']);
     
     $newpartcount++;

@@ -5,6 +5,8 @@ include_once(__DIR__.'/class/logsClass.php');
 include_once(__DIR__.'/class/pricingClass.php');
 include_once(__DIR__.'/class/interchangeClass.php');
 include_once(__DIR__.'/class/packagingClass.php');
+include_once(__DIR__.'/class/assetClass.php');
+
 include_once(__DIR__.'/class/configGetClass.php');
 
 $starttime=time();
@@ -14,6 +16,7 @@ $logs=new logs();
 $pricing=new pricing();
 $interchange = new interchange();
 $packaging = new packaging();
+$asset = new asset();
 $configGet = new configGet;
 
 $uri=$configGet->getConfigValue('assetPushURI');
@@ -100,11 +103,13 @@ if($uri)
    $prices=$pricing->getPricesByPartnumber($p['partnumber']);
    $packages=$packaging->getPackagesByPartnumber($p['partnumber']);
    $interchanges=$interchange->getInterchangeByPartnumber($p['partnumber']);
+   $assetconnections=$asset->getAssetsConnectedToPart($p['partnumber']);
    $p['descriptions']=$descriptions;
    $p['attributes']=$attributes;
    $p['prices']=$prices;
    $p['packages']=$packages;
    $p['interchanges']=$interchanges;
+   $p['assetconnections']=$assetconnections;
    $partstopush[]=$p;
   }
  }
