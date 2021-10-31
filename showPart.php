@@ -519,20 +519,12 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
              refreshClipboard();
             }
 
-            function flagUnsavedGTIN()
-            {
-             document.getElementById("btnUpdateGTIN").className="btn btn-sm btn-danger";
-            }
-
-            function flagUnsavedReplacedby()
-            {
-             document.getElementById("btnUpdateReplacedby").className="btn btn-sm btn-danger";
-            }
-
-            function flagUnsavedNotes()
-            {
-             document.getElementById("btnUpdateNotes").className="btn btn-sm btn-danger";
-            }
+            function flagUnsavedGTIN(){document.getElementById("btnUpdateGTIN").className="btn btn-sm btn-danger";}
+            function unflagUnsavedGTIN(){document.getElementById("btnUpdateGTIN").className="btn btn-sm btn-outline-secondary";}
+            function flagUnsavedReplacedby(){document.getElementById("btnUpdateReplacedby").className="btn btn-sm btn-danger";}
+            function unflagUnsavedReplacedby(){document.getElementById("btnUpdateReplacedby").className="btn btn-sm btn-outline-secondary";}
+            function flagUnsavedNotes(){document.getElementById("btnUpdateNotes").className="btn btn-sm btn-danger";}
+            function unflagUnsavedNotes(){document.getElementById("btnUpdateNotes").className="btn btn-sm btn-outline-secondary";}
 
         </script>
         
@@ -626,11 +618,11 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                             </div>
                                         </td>
                                     <tr>
-                                    <tr><th>GTIN (Item Level)</th><td><div style="float:left;"><input type="text" id="gtin" oninput="flagUnsavedGTIN()" value="<?php echo $part['GTIN']?>"/></div><div style="float:left;"><button id="btnUpdateGTIN" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','gtin');">Update</button></div><div style="clear:both;"></div></td><tr>
+                                    <tr><th>GTIN (Item Level)</th><td><div style="float:left;"><input type="text" id="gtin" oninput="flagUnsavedGTIN();" value="<?php echo $part['GTIN']?>"/></div><div style="float:left;"><button id="btnUpdateGTIN" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','gtin'); unflagUnsavedGTIN();">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php /*    <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><button class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></td><tr> */ ?>
-                                    <tr><th>Replaced By</th><td><div style="float:left;"><input type="text" id="replacedby" oninput="flagUnsavedReplacedby()" value="<?php echo $part['replacedby']?>"/></div><div style="float:left;"><button id="btnUpdateReplacedby" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','replacedby');">Update</button></div><div style="clear:both;"></div></td><tr>
+                                    <tr><th>Replaced By</th><td><div style="float:left;"><input type="text" id="replacedby" oninput="flagUnsavedReplacedby();" value="<?php echo $part['replacedby']?>"/></div><div style="float:left;"><button id="btnUpdateReplacedby" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','replacedby'); unflagUnsavedReplacedby();">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php if($balance){?> <tr><th>Balance</th><td>On-Hand: <b><?php echo round($balance['qoh'],0);?></b>, Demand: <b><?php echo $balance['amd'];?></b> units/month</td><tr> <?php }?>
-                                    <tr><th>Internal<br/>Notes</th><td><textarea style="width:90%;" id="internalnotes" oninput="flagUnsavedNotes()"><?php echo $part['internalnotes']?></textarea><div><button id="btnUpdateNotes" class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes');">Update</button></div></td><tr>
+                                    <tr><th>Internal<br/>Notes</th><td><textarea style="width:90%;" id="internalnotes" oninput="flagUnsavedNotes()"><?php echo $part['internalnotes']?></textarea><div><button id="btnUpdateNotes" class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes'); unflagUnsavedNotes();">Update</button></div></td><tr>
                                     <tr>
                                         <th>Interchange</th>
                                         <td>
