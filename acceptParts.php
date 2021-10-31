@@ -35,12 +35,12 @@ if(isset($_GET['detail']))
  {
   $hash=md5($oidliststring);
   echo json_encode(array('hash'=> $hash));
-  $logs->logSystemEvent('partacceptor', 0, 'gave hash ('.$hash.') of local part oids to client');   
+  $logs->logSystemEvent('partacceptor', 0, 'gave hash ('.$hash.') of '.count($localoids).' local part oids to client '.$_SERVER['REMOTE_ADDR']);
  }
  else
  {
   echo json_encode(array('oids'=>$localoids));
-  $logs->logSystemEvent('partacceptor', 0, 'gave list of '.count($localoids).' local part oids to client');
+  $logs->logSystemEvent('partacceptor', 0, 'gave list of '.count($localoids).' local part oids to client '.$_SERVER['REMOTE_ADDR']);
  }
 }
 

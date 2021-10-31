@@ -29,12 +29,12 @@ if(isset($_GET['detail']))
  {
   $hash=md5($oidliststring);
   echo json_encode(array('hash'=> $hash));
-  $logs->logSystemEvent('assetacceptor', 0, 'client requested hash ('.$hash.') of oids');   
+  $logs->logSystemEvent('assetacceptor', 0, 'gave hash ('.$hash.') of '.count($oids).' local asset oids to client '.$_SERVER['REMOTE_ADDR']);
  }
  else
  {
   echo json_encode(array('oids'=>$oids));
-  $logs->logSystemEvent('assetacceptor', 0, 'client requested list of ('.count($oids).') oids');
+  $logs->logSystemEvent('assetacceptor', 0, 'gave list of '.count($oids).' local asset oids to client '.$_SERVER['REMOTE_ADDR']);
  }
 }
 
