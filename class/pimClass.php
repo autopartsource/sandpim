@@ -3554,6 +3554,38 @@ function attributesAreExperianUseful($attributes)
      $stmt->execute();
     }   
    }
+   
+   if($stmt=$db->conn->prepare('delete from price where partnumber=?'))
+   {
+    $stmt->bind_param('s', $partnumbertemp);    
+    foreach($partnumbers as $partnumber)
+    {
+     $partnumbertemp=$partnumber;
+     $stmt->execute();
+    }   
+   }
+   
+   if($stmt=$db->conn->prepare('delete from package where partnumber=?'))
+   {
+    $stmt->bind_param('s', $partnumbertemp);    
+    foreach($partnumbers as $partnumber)
+    {
+     $partnumbertemp=$partnumber;
+     $stmt->execute();
+    }   
+   }
+   
+   if($stmt=$db->conn->prepare('delete from interchange where partnumber=?'))
+   {
+    $stmt->bind_param('s', $partnumbertemp);    
+    foreach($partnumbers as $partnumber)
+    {
+     $partnumbertemp=$partnumber;
+     $stmt->execute();
+    }   
+   }
+   
+   
   } 
   
   $db->close();

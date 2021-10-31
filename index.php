@@ -13,6 +13,7 @@ include_once('./class/kpiClass.php');
 
 $navCategory = 'dashboard';
 
+
 $pim = new pim;
 $logs = new logs;
 
@@ -33,10 +34,10 @@ $kpi=new kpi();
 
 
 $configGet = new configGet;
-$appshistory = $logs->getAppsEvents(20);
-$assetshistory = $logs->getAssetsEvents(20);
-$partshistory = $logs->getPartsEvents(20);
-$systemhistory = $logs->getSystemEvents('%', false, 20);
+$appshistory = $logs->getAppsEvents(30);
+$assetshistory = $logs->getAssetsEvents(30);
+$partshistory = $logs->getPartsEvents(30);
+$systemhistory = $logs->getSystemEvents('%', false, 30);
 
 //$partissues=$pim->getIssues('PART/%','%',0,array(1,2),20);
 $partissues=$pim->getPartIssuesPrioritized(20);
@@ -349,7 +350,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                                 if (strlen  ($nicedescription) > $logpreviewlength) {
                                                     $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
                                                 }
-                                                echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td>' . $nicedescription . '</td></tr>';
+                                                echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td><code>' . $nicedescription . '</code></td></tr>';
                                             }
                                             echo '</table></div>';
                                         }      
