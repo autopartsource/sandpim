@@ -67,6 +67,22 @@ class pim
   return $apps;
  }
 
+ function getAppOids()
+ {
+  $db = new mysql;  $db->connect(); $oids=array();
+  if($stmt=$db->conn->prepare('select oid from application'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $oids[]=$row['oid'];
+   }
+  }
+  $db->close();
+  return $oids;
+ }
+
  function getAppIDsByRandom($limit)
  {
   $db = new mysql; $db->connect(); $ids=array();
@@ -288,6 +304,25 @@ function countAppsByPartcategories($partcategories)
   return $app;
  }
 
+ function getAppByOid($oid)
+ {
+  $db = new mysql; $db->connect(); $app=false;
+  if($stmt=$db->conn->prepare('select * from application where oid=?'))
+  {
+   $stmt->bind_param('s', $oid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $attributes=$this->getAppAttributes($appid);
+    $attributeshash=$this->appAttributesHash($attributes);
+    $app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>base64_decode($row['internalnotes']),'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
+   }
+  }
+  $db->close();
+  return $app;
+ }
+
  function getOIDofApp($appid)
  {
   $db = new mysql; 
@@ -421,6 +456,61 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ function deleteAppByOid($oid)
+ {
+  $db = new mysql; $db->connect(); $appids=array();
+  if($stmt=$db->conn->prepare('select id from application where oid=?'))
+  {
+   if($stmt->bind_param('s', $oid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $appids[]=$row['id'];
+     }
+    }
+   }
+  }
+
+  if(count($appids))
+  {
+   $idtemp=0;
+
+   if($stmt=$db->conn->prepare('delete from application_attribute where applicationid=?'))
+   {
+    $stmt->bind_param('i',$idtemp);
+    foreach($appids as $appid)
+    {
+     $idtemp=$appid;
+     $stmt->execute();
+    }
+   }
+
+   if($stmt=$db->conn->prepare('delete from application_asset where applicationid=?'))
+   {
+    $stmt->bind_param('i',$idtemp);
+    foreach($appids as $appid)
+    {
+     $idtemp=$appid;
+     $stmt->execute();
+    }
+   }
+  
+   if($stmt=$db->conn->prepare('delete from application where oid=?'))
+   {
+    $stmt->bind_param('s',$oid);
+    $stmt->execute();
+   }
+  }
+  $db->close();
+  return $appids;
+ }
+ 
+ 
+ 
+ 
  function deleteAppAttribute($appid,$attributeid)
  {
   $db = new mysql; 
