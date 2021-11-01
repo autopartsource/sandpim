@@ -314,7 +314,7 @@ function countAppsByPartcategories($partcategories)
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $attributes=$this->getAppAttributes($appid);
+    $attributes=$this->getAppAttributes($row['id']);
     $attributeshash=$this->appAttributesHash($attributes);
     $app=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'internalnotes'=>base64_decode($row['internalnotes']),'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
    }
