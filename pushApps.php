@@ -119,9 +119,8 @@ if($uri)
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
   $resp=curl_exec($curl);
   curl_close($curl);
-// echo strlen(json_encode($body));
+//print_r($body);
   $runtime=time()-$starttime;
-//  echo '<br/>runtime:'.$runtime;
   $logs->logSystemEvent('apppusher', 0, 'App pusher posted '.count($appstopush).' apps in '.$runtime.' seconds. '.$resp);
  }
 }

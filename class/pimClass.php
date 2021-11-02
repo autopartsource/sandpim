@@ -2028,7 +2028,7 @@ function countAppsByPartcategories($partcategories)
   $applicationid=false;
   if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic) values(null,?,?,0,0,?,?,?,?,0,?)'))
   {
-   if(!$oid){$oid=$this->newoid();}
+   if($oid===false){$oid=$this->newoid();}
    $stmt->bind_param('siiiisi', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic);
    $stmt->execute();
    $applicationid=$db->conn->insert_id;
