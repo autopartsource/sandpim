@@ -135,12 +135,12 @@ foreach($partnumbers as $partnumber)
     }
     
     // find lifecycle "proposed" parts with quantity on-hand
-    if($partqoh > 0 && $part['lifecyclestatus']=='0')
+    if($partqoh > 0 && ($part['lifecyclestatus']=='0' || $part['lifecyclestatus']=='4'))
     {
-        $issuehash=md5('PART/LIFECYCLE/OBSOLETE'.$partnumber.'0'.'Lifecycle status is Proposed, but there is stock on-hand. Maybe it should be marked as available?'.'background auditor');
+        $issuehash=md5('PART/LIFECYCLE/OBSOLETE'.$partnumber.'0'.'Lifecycle status is Proposed or announced, but there is stock on-hand. Maybe it should be marked as available?'.'background auditor');
         if(!$pim->getIssueByHash($issuehash))
         {// this issue is not already recorded 
-            $pim->recordIssue('PART/LIFECYCLE/OBSOLETE',$partnumber,0,'Lifecycle status is Proposed, but there is stock on-hand. Maybe it should be marked as available?','background auditor', $issuehash);
+            $pim->recordIssue('PART/LIFECYCLE/OBSOLETE',$partnumber,0,'Lifecycle status is Proposed or announced, but there is stock on-hand. Maybe it should be marked as available?','background auditor', $issuehash);
         }
     }
        

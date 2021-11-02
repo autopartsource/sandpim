@@ -701,11 +701,16 @@ function countAppsByPartcategories($partcategories)
   return $parts;
  }
 
- function getPartnumbersByPartcategories($partcategories)
+ function getPartnumbersByPartcategories($partcategories,$statuses=false)
  {
+   // need to pull this from a new table (receiverprofile_lifecycleststus?) and build at a UI to manage it
+   $statuses=array('4','A','2','8','3','1','6','7');
+   $statusesquoted=array(); foreach($statuses as $status){$statusesquoted[]="'".$status."'";}
+   $statusliststring=implode(',',$statusesquoted);
+  
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
   $db = new mysql; $db->connect(); $partnumbers=array();
-  if($stmt=$db->conn->prepare('select partnumber from part where partcategory in('.$categorylist.') order by partnumber'))
+  if($stmt=$db->conn->prepare('select partnumber from part where partcategory in('.$categorylist.') and lifecyclestatus in('.$statusliststring.') order by partnumber'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();

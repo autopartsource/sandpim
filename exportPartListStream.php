@@ -54,7 +54,7 @@ if($profile)
  
  $filecontents= implode("\r\n", $partnumberlist);
 
- $filename='assetfiles_'.date('Y-m-d').'.txt';
+ $filename='parts_'.date('Y-m-d').'.txt';
  header('Content-Disposition: attachment; filename="'.$filename.'"');
  header('Content-Type: application/octet-stream');
  header('Content-Length: ' . strlen($filecontents));

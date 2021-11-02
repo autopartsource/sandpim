@@ -49,7 +49,7 @@ if($uri)
   exit;
  }  
     
-// remote system has a differnt hash of its oid's that we do. Ask for a list
+// remote system has a differnt hash of its oid's that we do. Ask for an actual list
  
  $curl = curl_init($uri.'?detail=ids');
  curl_setopt($curl, CURLOPT_URL, $uri.'?detail=ids');
@@ -60,6 +60,9 @@ if($uri)
  curl_close($curl);
 
  $responsedecoded= json_decode($resp, true); 
+ 
+ print_r($responsedecoded);
+ 
  
  if(!isset($responsedecoded['oids']))
  {
@@ -117,7 +120,7 @@ if($uri)
   $headers = array("Accept: application/json","Content-Type: application/json",);
   curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
-  $resp=curl_exec($curl);
+  $resp='';//curl_exec($curl);
   curl_close($curl);
 //print_r($body);
   $runtime=time()-$starttime;
