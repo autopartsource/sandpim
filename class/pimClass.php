@@ -2022,13 +2022,13 @@ function countAppsByPartcategories($partcategories)
   return $newappids;
  }
  
- function newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$attributes)
+ function newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$attributes,$oid=false)
  {
   $db = new mysql; $db->connect();
   $applicationid=false;
   if($stmt=$db->conn->prepare('insert into application (id,oid,basevehicleid,makeid,equipmentid,parttypeid,positionid,quantityperapp,partnumber,status,cosmetic) values(null,?,?,0,0,?,?,?,?,0,?)'))
   {
-   $oid=$this->newoid();
+   if(!$oid){$oid=$this->newoid();}
    $stmt->bind_param('siiiisi', $oid,$basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic);
    $stmt->execute();
    $applicationid=$db->conn->insert_id;

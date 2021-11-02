@@ -13,7 +13,7 @@ $configGet = new configGet;
 $uri=$configGet->getConfigValue('assetPushURI');
 
 $uri='https://aps.dev/sandpim/acceptApps.php';
-
+$pushlimit=1000;
 
 if($uri)
 {
@@ -86,6 +86,7 @@ if($uri)
  $appstopush=array();
  foreach($oidstopush as $oid)
  {
+  if(count($appstopush)>=$pushlimit){break;}
   if($a=$pim->getAppByOID($oid))
   {
    $appstopush[]=$a;
@@ -116,10 +117,11 @@ if($uri)
   $headers = array("Accept: application/json","Content-Type: application/json",);
   curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
-  $resp = '';//curl_exec($curl);
+  $resp=curl_exec($curl);
   curl_close($curl);
- print_r($body);
+// echo strlen(json_encode($body));
   $runtime=time()-$starttime;
+//  echo '<br/>runtime:'.$runtime;
   $logs->logSystemEvent('apppusher', 0, 'App pusher posted '.count($appstopush).' apps in '.$runtime.' seconds. '.$resp);
  }
 }
