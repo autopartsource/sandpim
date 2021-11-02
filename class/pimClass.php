@@ -70,7 +70,7 @@ class pim
  function getAppOids()
  {
   $db = new mysql;  $db->connect(); $oids=array();
-  if($stmt=$db->conn->prepare('select oid from application'))
+  if($stmt=$db->conn->prepare('select oid from application order by id'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();

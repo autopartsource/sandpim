@@ -61,7 +61,8 @@ if(strlen($bodyraw)>0)
    $newappid=$pim->newApp($a['basevehicleid'], $a['parttypeid'], $a['positionid'], $a['quantityperapp'], $a['partnumber'], $a['cosmetic'], $a['attributes'],$a['oid']);
    if($newappid)
    {
-    $pim->logAppEvent($newappid, 0, 'app created by acceptApps API', '');       
+    $pim->logAppEvent($newappid, 0, 'app created by acceptApps API', '');
+    $newappcount++;
    }
    else
    {

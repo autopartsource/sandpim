@@ -13,7 +13,7 @@ $configGet = new configGet;
 $uri=$configGet->getConfigValue('assetPushURI');
 
 $uri='https://aps.dev/sandpim/acceptApps.php';
-$pushlimit=1000;
+$pushlimit=5000;
 
 if($uri)
 {
