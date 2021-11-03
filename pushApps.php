@@ -22,6 +22,8 @@ if($uri)
  $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
  $localoidhash= md5($localoidliststring);
  
+ echo count($localoids). ' oids<br/>';
+ 
  
  //ask server for a hash of its oids
  
@@ -74,6 +76,10 @@ if($uri)
  $r=array(); foreach($responsedecoded['oids'] as $oid){$r[$oid]='';}
  $l=array(); foreach($localoids as $oid){$l[$oid]='';}
  
+ echo count($l). ' local distinct oids<br/>';
+ echo count($r). ' remote distinct oids<br/>';
+ 
+ 
  
  // compare sets of oids to determine what's missing fron remote system
  $oidstopush=array();
@@ -108,9 +114,12 @@ if($uri)
   }
  }
 
-    
+  
+ curl_close($curl);
+ 
  if(count($appstopush)>0 || count($oidstodrop)>0)
  {
+     
   $body=array('adds'=>$appstopush,'drops'=>$oidstodrop);
  
   $curl = curl_init($uri);
