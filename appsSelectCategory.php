@@ -47,7 +47,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='Create' )
  {
   if($basevehicleid=$vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid))
   {
-   if($appid=$pim->newApp($basevehicleid, $parttypeid, $positionid, $quantityperapp, $partnumber, $cosmetic, $attributes))
+   if($appid=$pim->newApp($basevehicleid, $parttypeid, $positionid, $quantityperapp, $partnumber, $cosmetic, $attributes,''))
    {
      $appoid=$pim->getOIDofApp($appid);
      $pim->logAppEvent($appid, $userid, 'app created with appsSelectCategory.php form', $appoid);

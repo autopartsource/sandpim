@@ -61,7 +61,7 @@ if($uri)
 
  $responsedecoded= json_decode($resp, true); 
  
- print_r($responsedecoded);
+ //print_r($responsedecoded);
  
  
  if(!isset($responsedecoded['oids']))
@@ -120,9 +120,8 @@ if($uri)
   $headers = array("Accept: application/json","Content-Type: application/json",);
   curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
-  $resp='';//curl_exec($curl);
+  $resp=curl_exec($curl);
   curl_close($curl);
-//print_r($body);
   $runtime=time()-$starttime;
   $logs->logSystemEvent('apppusher', 0, 'App pusher posted '.count($appstopush).' apps in '.$runtime.' seconds. '.$resp);
  }

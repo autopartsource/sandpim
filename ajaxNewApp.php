@@ -25,7 +25,7 @@ if(isset($_SESSION['userid']) && isset($_GET['basevehicleid']) && isset($_GET['q
  $quantityperapp=intval($_GET['quantityperapp']);
  $partnumber=$_GET['partnumber'];
  $cosmetic=intval($_GET['cosmetic']);
- $newappid=$pim->newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$attributes);
+ $newappid=$pim->newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$attributes,'');
  $oid=$pim->getOIDofApp($newappid);
  $pim->logAppEvent($newappid,$userid,'app created by drag/copy',$oid);
  echo $newappid;
