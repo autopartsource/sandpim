@@ -16,7 +16,7 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 
 $newappcount=0;  $droppedappcount=0;
 
-if(isset($_GET['detail']))
+if(array_key_exists('detail',$_GET))
 { // get local list of all app oid's
  $localoids=$pim->getAppOids();
  sort($localoids);
@@ -41,7 +41,7 @@ if(strlen($bodyraw)>0)
 {
  $body=json_decode($bodyraw,true);
 
- if(isset($body['drops']))
+ if(array_key_exists('drops',$body))
  { // drop list is oid's (not appid's)
   foreach ($body['drops'] as $oid)
   {
@@ -52,13 +52,13 @@ if(strlen($bodyraw)>0)
    }
    $droppedappcount++;
   }
- } 
+ }
  
- if(isset($body['adds']))
+ if(array_key_exists('adds',$body))
  {
   foreach ($body['adds'] as $a)
   {
-   $newappid=$pim->newApp($a['basevehicleid'], $a['parttypeid'], $a['positionid'], $a['quantityperapp'], $a['partnumber'], $a['cosmetic'], $a['attributes'],'DDDDDDDDDD');
+   $newappid=$pim->newApp($a['basevehicleid'], $a['parttypeid'], $a['positionid'], $a['quantityperapp'], $a['partnumber'], $a['cosmetic'], $a['attributes'],'');
    if($newappid)
    {
     $pim->logAppEvent($newappid, 0, 'app created by acceptApps API', '');

@@ -37,7 +37,7 @@ if($uri)
 
  $responsedecoded= json_decode($resp, true); 
  
- if(!isset($responsedecoded['hash']))
+ if(!array_key_exists('hash',$responsedecoded))
  {
   $logs->logSystemEvent('apppusher', 0, 'unexpected response form remote system:'.$resp);    
   exit;
@@ -66,7 +66,7 @@ if($uri)
  //print_r($responsedecoded);
  
  
- if(!isset($responsedecoded['oids']))
+ if(!array_key_exists('oids',$responsedecoded))
  {
   $logs->logSystemEvent('apppusher', 0, 'unexpected response form remote system:'.$resp);    
   exit;
