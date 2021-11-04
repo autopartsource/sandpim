@@ -60,8 +60,9 @@ if (isset($_POST['input']))
      $internalnotes=$fields[6];
      
      $interchange->addInterchange($partnumber,trim($competitorpart),$brandAAIAID,$interchangequantity,$uom,$interchangenotes,$internalnotes);
+     $newoid=$pim->updatePartOID($partnumber);
      $importresults[]='partnumber '.$partnumber.' interchange to '.trim($competitorpart).' imported';
-     $pim->logPartEvent($partnumber,$_SESSION['userid'],'competitor interchange to:'.$brandAAIAID.'/'.trim($competitorpart).' imported','');
+     $pim->logPartEvent($partnumber,$_SESSION['userid'],'competitor interchange to:'.$brandAAIAID.'/'.trim($competitorpart).' imported',$newoid);
      $importcount++;
     }
    }

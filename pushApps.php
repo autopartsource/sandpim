@@ -15,14 +15,17 @@ $uri=$configGet->getConfigValue('assetPushURI');
 $uri='https://aps.dev/sandpim/acceptApps.php';
 $pushlimit=5000;
 
+
 if($uri)
 {
+ $logstring='uri: '.$uri.'; ';
+
  $localoids=$pim->getAppOids();
  sort($localoids);
  $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
  $localoidhash= md5($localoidliststring);
  
- echo count($localoids). ' oids<br/>';
+ $logstring.='localoids '.count($localoids). '; ';
  
  
  //ask server for a hash of its oids
@@ -73,11 +76,9 @@ if($uri)
  $r=array(); foreach($responsedecoded['oids'] as $oid){$r[$oid]='';}
  $l=array(); foreach($localoids as $oid){$l[$oid]='';}
  
- echo count($l). ' local distinct oids<br/>';
- echo count($r). ' remote distinct oids<br/>';
- 
- 
- 
+ $logstring.='local distinct oids: '.count($l).'; ';
+ $logstring.='remote distinct oids: '.count($r).'; ';
+   
  // compare sets of oids to determine what's missing fron remote system
  $oidstopush=array();
  foreach($localoids as $oid)
@@ -88,8 +89,7 @@ if($uri)
   }
  }
  
- echo count($oidstopush). ' local oids need to fly<br/>';
-
+ $logstring.='local oids needing to fly: '.count($oidstopush).'; ';
  
   // convert the "push" list of OID's into app object
  $appstopush=array();
@@ -102,9 +102,7 @@ if($uri)
   }
  }
 
- echo ' - which translated to '.count($oidstopush). ' local apps needing to fly<br/>';
-
- 
+ $logstring.='local apps needing to fly: '.count($appstopush).'; ';
  
  
  // compare sets of oids to determine what's extra in remote system 
@@ -118,18 +116,11 @@ if($uri)
   }
  }
 
- 
- echo count($oidstodrop). ' remote oids need to be dropped (the first one is: '.$oidstodrop[0].')<br/>';
-
-//$oidstodrop=array(); 
-  
- curl_close($curl);
+ $logstring.='remote oids needing to be dropped: '.count($oidstodrop).'; ';
  
  if(count($appstopush)>0 || count($oidstodrop)>0)
- {
-     
+ {     
   $body=array('adds'=>$appstopush,'drops'=>$oidstodrop);
- 
   $curl = curl_init($uri);
   curl_setopt($curl, CURLOPT_URL, $uri);
   curl_setopt($curl, CURLOPT_POST, true);
@@ -140,7 +131,7 @@ if($uri)
   $resp=curl_exec($curl);
   curl_close($curl);
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('apppusher', 0, 'App pusher posted '.count($appstopush).' apps in '.$runtime.' seconds. '.$resp);
+  $logs->logSystemEvent('apppusher', 0, 'Pushed/dropped '.count($appstopush).'/'.count($oidstodrop).' in '.$runtime.' seconds. '.$logstring);
  }
 }
 else
