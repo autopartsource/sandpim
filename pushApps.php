@@ -102,7 +102,7 @@ if($uri)
   }
  }
 
- echo '  which translated to '.count($oidstopush). ' local apps needing to fly<br/>';
+ echo ' - which translated to '.count($oidstopush). ' local apps needing to fly<br/>';
 
  
  
