@@ -1731,7 +1731,7 @@ function countAppsByPartcategories($partcategories)
   return $id;
  }
 
- function addNoteAttributeToApp($applicationid,$note,$sequence,$cosmetic)
+ function addNoteAttributeToApp($applicationid,$note,$sequence,$cosmetic,$updateoid)
  {
   $db=new mysql; $db->connect();
   $id=false;
@@ -1743,7 +1743,7 @@ function countAppsByPartcategories($partcategories)
     if($stmt->execute())
     {
      $id=$db->conn->insert_id;
-     $this->updateAppOID($applicationid);
+     if($updateoid){$this->updateAppOID($applicationid);}
     }
    }
   }
@@ -1751,7 +1751,7 @@ function countAppsByPartcategories($partcategories)
   return $id;
  }
 
- function addQdbAttributeToApp($applicationid,$qdbid,$parmsstring,$sequence,$cosmetic)
+ function addQdbAttributeToApp($applicationid,$qdbid,$parmsstring,$sequence,$cosmetic,$updateoid)
  {
      /*
       * the "name" field in application_attribute will hold the numeric Qdb ID. the "value" 
@@ -1771,7 +1771,7 @@ function countAppsByPartcategories($partcategories)
     if($stmt->execute())
     {
      $id=$db->conn->insert_id;
-     $this->updateAppOID($applicationid);
+     if($updateoid){$this->updateAppOID($applicationid);}
     }
    }
   }
@@ -2022,7 +2022,7 @@ function countAppsByPartcategories($partcategories)
   foreach($appids as $appid)
   {
    $existingapp=$this->getApp($appid);
-   $newappids[]=$this->newApp($basevehicleid, $existingapp['parttypeid'], $existingapp['positionid'], $existingapp['quantityperapp'], $existingapp['partnumber'], $existingapp['cosmetic'], $existingapp['attributes'],'');         
+   $newappids[]=$this->newApp($basevehicleid, $existingapp['parttypeid'], $existingapp['positionid'], $existingapp['quantityperapp'], $existingapp['partnumber'], $existingapp['cosmetic'], $existingapp['attributes'],'');
   }
   return $newappids;
  }
