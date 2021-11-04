@@ -60,7 +60,7 @@ if(isset($_POST))
   {
    $vcdbattributename=$bits[0]; $vcdbattributevalue=intval($bits[1]); $cosmetic=0;
    $topsequence=$pim->highestAppAttributeSequence($appid);
-   $pim->addVCdbAttributeToApp($appid,$vcdbattributename,$vcdbattributevalue,$topsequence+1,$cosmetic);
+   $pim->addVCdbAttributeToApp($appid,$vcdbattributename,$vcdbattributevalue,$topsequence+1,$cosmetic,true);
    $pim->cleansequenceAppAttributes($appid);
    $pim->logAppEvent($appid,$userid,'VCdb attribute added '.$vcdbattributename.'='.$vcdbattributevalue,'');
   }

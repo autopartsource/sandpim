@@ -1711,7 +1711,7 @@ function countAppsByPartcategories($partcategories)
   return $success;
  }
 
- function addVCdbAttributeToApp($applicationid,$attributename,$attributevalue,$sequence,$cosmetic)
+ function addVCdbAttributeToApp($applicationid,$attributename,$attributevalue,$sequence,$cosmetic,$updateoid)
  {
   $db=new mysql; $db->connect();
   $id=false;
@@ -1723,7 +1723,7 @@ function countAppsByPartcategories($partcategories)
     if($stmt->execute())
     {
      $id=$db->conn->insert_id;
-     $this->updateAppOID($applicationid);
+     if($updateoid){$this->updateAppOID($applicationid);}
     }
    }
   }
@@ -1897,11 +1897,11 @@ function countAppsByPartcategories($partcategories)
     switch($attribute['type'])
     {
      case 'vcdb':
-      $this->addVCdbAttributeToApp($appid,$attribute['name'],$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+      $this->addVCdbAttributeToApp($appid,$attribute['name'],$attribute['value'],$attribute['sequence'],$attribute['cosmetic'],false);
       $historytext.='; Added VCdb '.$attribute['name'].':'.$attribute['value'].';sequence:'.$attribute['sequence'].';cosmetic:'.$attribute['cosmetic'];
       break;
      case 'note':
-      $this->addNoteAttributeToApp($appid,$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+      $this->addNoteAttributeToApp($appid,$attribute['value'],$attribute['sequence'],$attribute['cosmetic'],false);
       $historytext.='; Added Note:'.$attribute['value'].';sequence:'.$attribute['sequence'].';cosmetic:'.$attribute['cosmetic'];
       break;
      case 'qdb':
@@ -1928,13 +1928,13 @@ function countAppsByPartcategories($partcategories)
    switch($attribute['type'])
    {
     case 'vcdb':
-     $this->addVCdbAttributeToApp($appid,$attribute['name'],$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+     $this->addVCdbAttributeToApp($appid,$attribute['name'],$attribute['value'],$attribute['sequence'],$attribute['cosmetic'],$updateoid);
      break;
     case 'note':
-     $this->addNoteAttributeToApp($appid,$attribute['value'],$attribute['sequence'],$attribute['cosmetic']);
+     $this->addNoteAttributeToApp($appid,$attribute['value'],$attribute['sequence'],$attribute['cosmetic'],$updateoid);
      break;
     case 'qdb':
-     $this->addQdbAttributeToApp($appid, $attribute['name'], $attribute['value'], $attribute['sequence'], $attribute['cosmetic']);        
+     $this->addQdbAttributeToApp($appid, $attribute['name'], $attribute['value'], $attribute['sequence'], $attribute['cosmetic'],$updateoid);
      break;
     default: break;
    }

@@ -45,7 +45,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['type']) &
   switch($_GET['type'])
   {
    case 'vcdb':
-    if($id=$pim->addVCdbAttributeToApp($appid,$name,$value,$topsequence+1,$cosmetic))
+    if($id=$pim->addVCdbAttributeToApp($appid,$name,$value,$topsequence+1,$cosmetic,true))
     {
      $pim->cleansequenceAppAttributes($appid);
      $result['oid']=$pim->getOIDofApp($appid);
@@ -58,7 +58,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['type']) &
     //name like "21627", value like "123, ABC, XYZ|~12|mm~4|mm"    (redered result would be: Axle #123, ABC, XYZ With 12mm x 4mm Brakes)
     if($qdbid=intval($name))
     {
-     if($id=$pim->addQdbAttributeToApp($appid,$qdbid,$value,$topsequence+1,$cosmetic))
+     if($id=$pim->addQdbAttributeToApp($appid,$qdbid,$value,$topsequence+1,$cosmetic,true))
      {
       $pim->cleansequenceAppAttributes($appid);
       $result['oid']=$pim->getOIDofApp($appid);
@@ -70,7 +70,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['type']) &
     break;
 
    case 'note':
-    if($id=$pim->addNoteAttributeToApp($appid,$value,$topsequence,$cosmetic))
+    if($id=$pim->addNoteAttributeToApp($appid,$value,$topsequence,$cosmetic,true))
     {
      $pim->cleansequenceAppAttributes($appid);
      $result['oid']=$pim->getOIDofApp($appid);

@@ -63,9 +63,6 @@ if($uri)
 
  $responsedecoded= json_decode($resp, true); 
  
- //print_r($responsedecoded);
- 
- 
  if(!array_key_exists('oids',$responsedecoded))
  {
   $logs->logSystemEvent('apppusher', 0, 'unexpected response form remote system:'.$resp);    
@@ -91,6 +88,9 @@ if($uri)
   }
  }
  
+ echo count($oidstopush). ' local oids need to fly<br/>';
+
+ 
   // convert the "push" list of OID's into app object
  $appstopush=array();
  foreach($oidstopush as $oid)
@@ -102,6 +102,10 @@ if($uri)
   }
  }
 
+ echo '  which translated to '.count($oidstopush). ' local apps needing to fly<br/>';
+
+ 
+ 
  
  // compare sets of oids to determine what's extra in remote system 
  // don't bother converting them to real apps - they may not exist locally
@@ -114,6 +118,10 @@ if($uri)
   }
  }
 
+ 
+ echo count($oidstodrop). ' remote oids need to be dropped (the first one is: '.$oidstodrop[0].')<br/>';
+
+//$oidstodrop=array(); 
   
  curl_close($curl);
  
