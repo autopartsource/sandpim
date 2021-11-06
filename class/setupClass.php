@@ -1199,6 +1199,22 @@ class setup
         INDEX idx_part_geo_yrQtr (partnumber, geography, yearQuarter),
         INDEX idx_capturedate (capturedate))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_VIO ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_VIO ('.$db->conn->error.')';}      
+
+
+        $sql="CREATE TABLE replicationpeer (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        identifier varchar(255) NOT NULL,
+        description varchar(255) NOT NULL,
+        type varchar(255) NOT NULL,
+        role varchar(255) NOT NULL,
+        uri varchar(255) NOT NULL,
+        objectlimit int unsigned not null,
+        sharedsecret varchar(255) NOT NULL,
+        enabled int unsigned not null,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - replicationpeer ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - replicationpeer ('.$db->conn->error.')';}
+
+
         
         $db->close();
         return $returnvalue;

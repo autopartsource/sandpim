@@ -2,23 +2,22 @@
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/logsClass.php');
-include_once(__DIR__.'/class/replicationClass.php');
+include_once(__DIR__.'/class/configGetClass.php');
 
 $starttime=time();
 
 $pim = new pim();
 $logs=new logs();
-$replication=new replication();
+$configGet = new configGet;
 
-$peers=$replication->getPeers('app', 'secondary');
+$uri=$configGet->getConfigValue('assetPushURI');
 
-foreach($peers as $peer)
+$uri='https://aps.dev/sandpim/acceptApps.php';
+$pushlimit=5000;
+
+
+if($uri)
 {
- if($peer['enabled']==0){continue;}
- $uri=$peer['uri'];
- $pushlimit=$peer['objectlimit'];
- 
-
  $logstring='uri: '.$uri.'; ';
 
  $localoids=$pim->getAppOids();
@@ -43,15 +42,16 @@ foreach($peers as $peer)
  
  if(!array_key_exists('hash',$responsedecoded))
  {
-  $logs->logSystemEvent('apppusher', 0, 'unexpected response form '.$peer['description'].':'.$resp);    
-  continue;
+  $logs->logSystemEvent('apppusher', 0, 'unexpected response form remote system:'.$resp);    
+  exit;
  }
  
  
+
  if($localoidhash == $responsedecoded['hash'])
  {
-  $logs->logSystemEvent('apppusher', 0, 'remote hash on '.$peer['description'].' equals local hash - no apps pushed');
-  continue;
+  $logs->logSystemEvent('apppusher', 0, 'remote hash equals local hash - no apps pushed');
+  exit;
  }  
     
 // remote system has a differnt hash of its oid's that we do. Ask for an actual list
@@ -68,8 +68,8 @@ foreach($peers as $peer)
  
  if(!array_key_exists('oids',$responsedecoded))
  {
-  $logs->logSystemEvent('apppusher', 0, 'unexpected response form '.$peer['description'].':'.$resp);
-  continue;
+  $logs->logSystemEvent('apppusher', 0, 'unexpected response form remote system:'.$resp);    
+  exit;
  }
  
  // we now have an array of oids from the remote (secondary) system
@@ -89,7 +89,7 @@ foreach($peers as $peer)
   }
  }
  
- $logstring.='local oids to push: '.count($oidstopush).'; ';
+ $logstring.='local oids needing to be pushed: '.count($oidstopush).'; ';
  
   // convert the "push" list of OID's into app object
  $appstopush=array();
@@ -102,7 +102,7 @@ foreach($peers as $peer)
   }
  }
 
- $logstring.='local apps to push: '.count($appstopush).'; ';
+ $logstring.='local apps being pushed: '.count($appstopush).'; ';
  
  
  // compare sets of oids to determine what's extra in remote system 
@@ -116,14 +116,11 @@ foreach($peers as $peer)
   }
  }
 
- $logstring.='remote oids to drop: '.count($oidstodrop).'; ';
+ $logstring.='remote oids needing to be dropped: '.count($oidstodrop).'; ';
  
  if(count($appstopush)>0 || count($oidstodrop)>0)
- {
-  $body=array('identifier'=>$peer['identifier'],'adds'=>$appstopush,'drops'=>$oidstodrop);
-  $signature = hash_hmac('SHA256', json_encode($body), $peer['sharedsecret'],false);
-  $body['signature']=$signature;
-  $logstring.='signature:'.$signature;
+ {     
+  $body=array('adds'=>$appstopush,'drops'=>$oidstodrop);
   $curl = curl_init($uri);
   curl_setopt($curl, CURLOPT_URL, $uri);
   curl_setopt($curl, CURLOPT_POST, true);
@@ -134,8 +131,11 @@ foreach($peers as $peer)
   $resp=curl_exec($curl);
   curl_close($curl);
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('apppusher', 0, 'pushed/dropped '.count($appstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
+  $logs->logSystemEvent('apppusher', 0, 'Pushed/dropped '.count($appstopush).'/'.count($oidstodrop).' in '.$runtime.' seconds. '.$logstring);
  }
-
+}
+else
+{
+ $logs->logSystemEvent('apppusher', 0, 'App pusher uri (assetPushURI) is not set in config');    
 }
 ?>

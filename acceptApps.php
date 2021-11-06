@@ -1,15 +1,19 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/replicationClass.php');
 include_once('./class/logsClass.php');
+
+
 
 $starttime=time();
 
 $pim = new pim();
+$replication = new replication();
 $logs=new logs();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
- $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'acceptApps - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'acceptApps.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
 
@@ -26,12 +30,12 @@ if(array_key_exists('detail',$_GET))
  {
   $hash=md5($localoidliststring);
   echo json_encode(array('hash'=> $hash));
-  $logs->logSystemEvent('appacceptor', 0, 'gave hash ('.$hash.') of '.count($localoids).' local app oids to client '.$_SERVER['REMOTE_ADDR']);
+  $logs->logSystemEvent('replication', 0, 'gave hash ('.$hash.') of '.count($localoids).' local app oids to client '.$_SERVER['REMOTE_ADDR']);
  }
  else
  {
   echo json_encode(array('oids'=>$localoids));
-  $logs->logSystemEvent('appacceptor', 0, 'gave list of '.count($localoids).' local app oids to client '.$_SERVER['REMOTE_ADDR']);
+  $logs->logSystemEvent('replication', 0, 'gave list of '.count($localoids).' local app oids to client '.$_SERVER['REMOTE_ADDR']);
  }
 }
 
@@ -41,6 +45,26 @@ if(strlen($bodyraw)>0)
 {
  $body=json_decode($bodyraw,true);
 
+ if(array_key_exists('identifier',$body) && array_key_exists('signature',$body))
+ {
+  $logs->logSystemEvent('replication', 0, 'invalid data (missing identifier or signature) from client '.$_SERVER['REMOTE_ADDR']);
+  exit;
+ }
+ 
+ // lookup peer by its claimed identifier
+ $peers=$replication->getPeers($body['identifier'],'app', 'primary');
+ if(count($peers)==0)
+ {
+  $logs->logSystemEvent('replication', 0, 'unknown identifier ['.$body['identifier'].'] from client '.$_SERVER['REMOTE_ADDR']);  
+  exit;
+ }
+ 
+ //test signature of payload
+ $computedsignature = hash_hmac('SHA256', json_encode(array('identifier'=>$body['identifier'],'adds'=>$body['adds'],'drops'=>$body['drops'])), $peers[0]['sharedsecret'],false);
+ $givensignature=$body['signature'];
+ $logs->logSystemEvent('replication', 0, $computedsignature.' / '.$givensignature);   
+
+ 
  if(array_key_exists('drops',$body))
  { // drop list is oid's (not appid's)
   foreach ($body['drops'] as $oid)
@@ -48,7 +72,7 @@ if(strlen($bodyraw)>0)
    $appids=$pim->deleteAppByOid($oid);
    foreach($appids as $appid)
    {// possible (but unlikely) that multiple apps could have had the same oid - delete them all
-    $pim->logAppEvent($appid, 0, 'app deleted by acceptApps API', '');
+    $pim->logAppEvent($appid, 0, 'app deleted by replication API', '');
    }
    $droppedappcount++;
   }
@@ -61,12 +85,12 @@ if(strlen($bodyraw)>0)
    $newappid=$pim->newApp($a['basevehicleid'], $a['parttypeid'], $a['positionid'], $a['quantityperapp'], $a['partnumber'], $a['cosmetic'], $a['attributes'],$a['oid']);
    if($newappid)
    {
-    $pim->logAppEvent($newappid, 0, 'app created by acceptApps API', '');
+    $pim->logAppEvent($newappid, 0, 'app created by replication API', '');
     $newappcount++;
    }
    else
    {
-    $logs->logSystemEvent('appacceptor', 0, 'App creation failed');          
+    $logs->logSystemEvent('replication', 0, 'App creation failed');          
    }
   }
  }
@@ -75,6 +99,6 @@ if(strlen($bodyraw)>0)
 $runtime=time()-$starttime;
 if($newappcount || $runtime>10)
 {
- $logs->logSystemEvent('appacceptor', 0, 'App acceptor added '.$newappcount.', dropped '.$droppedappcount.' apps in '.$runtime.' seconds');   
+ $logs->logSystemEvent('replication', 0, 'Added '.$newappcount.' apps, dropped '.$droppedappcount.' in '.$runtime.' seconds');   
 }
 ?>
