@@ -10,7 +10,7 @@ $pim = new pim();
 $logs=new logs();
 $replication=new replication();
 
-$peers=$replication->getPeers('app', 'secondary');
+$peers=$replication->getPeers('%','app', 'secondary');
 
 foreach($peers as $peer)
 {

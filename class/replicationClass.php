@@ -18,7 +18,7 @@ class replication
  function getPeers($identifier,$type,$role)
  {
   $db=new mysql; $db->connect(); $peers=array();
-  if($stmt=$db->conn->prepare('select * from replicationpeer where identifier=? and `type`=? and role=?'))
+  if($stmt=$db->conn->prepare('select * from replicationpeer where identifier like ? and `type`=? and role=?'))
   {
    if($stmt->bind_param('sss',$identifier,$type,$role))
    {
