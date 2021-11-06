@@ -3,8 +3,6 @@ include_once('./class/pimClass.php');
 include_once('./class/replicationClass.php');
 include_once('./class/logsClass.php');
 
-
-
 $starttime=time();
 
 $pim = new pim();
@@ -16,7 +14,6 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'acceptApps.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
-
 
 $newappcount=0;  $droppedappcount=0;
 
@@ -61,9 +58,10 @@ if(strlen($bodyraw)>0)
  
  //test signature of payload
  $computedsignature = hash_hmac('SHA256', json_encode(array('identifier'=>$body['identifier'],'adds'=>$body['adds'],'drops'=>$body['drops'])), $peers[0]['sharedsecret'],false);
- $givensignature=$body['signature'];
- $logs->logSystemEvent('replication', 0, $computedsignature.' / '.$givensignature);   
-
+ if($body['signature']!=$computedsignature)
+ {
+  $logs->logSystemEvent('replication', 0, 'invalid signature on payload - no adds/drops accepted from peer identified by: '.$body['identifier']);
+ }
  
  if(array_key_exists('drops',$body))
  { // drop list is oid's (not appid's)
