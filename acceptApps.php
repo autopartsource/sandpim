@@ -61,6 +61,7 @@ if(strlen($bodyraw)>0)
  if($body['signature']!=$computedsignature)
  {
   $logs->logSystemEvent('replication', 0, 'invalid signature on payload - no adds/drops accepted from peer identified by: '.$body['identifier']);
+  exit;
  }
  
  if(array_key_exists('drops',$body))
