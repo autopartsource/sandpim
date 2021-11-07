@@ -45,8 +45,19 @@ $grain=$sandpiper->getFilegrainByUUID($_GET['uuid']);
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <?php
-                    print_r($grain);
+                    //print_r($grain);
                     ?>
+                    
+                    <table>
+                        <tr><th>grain uuid</th><td><?php echo $grain['grain_uuid'];?></td></tr>
+                        <tr><th>grain key</th><td><?php echo $grain['grain_key'];?></td></tr>
+                        <tr><th>source</th><td><?php echo $grain['source'];?></td></tr>
+                        <tr><th>encoding</th><td><?php echo $grain['encoding'];?></td></tr>
+                        <tr><th>size (bytes)</th><td><?php echo $grain['grain_size_bytes'];?></td></tr>
+                        <tr><th>timestamp</th><td><?php echo $grain['timestamp'];?></td></tr>
+                        <tr><th>payload</th><td><textarea><?php echo $grain['payload'];?></textarea></td></tr>
+                    </table>
+                    
                 </div>
                 <!-- End of Main Content -->
                 
