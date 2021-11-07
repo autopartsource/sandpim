@@ -3,7 +3,7 @@ include_once('./includes/loginCheck.php');
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/sandpiperPrimaryClass.php');
-include_once('./class/sandpiperClass.php');
+include_once('./class/sandpiperAPIclass.php');
 
 
 $navCategory = 'settings';
