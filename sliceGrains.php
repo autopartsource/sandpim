@@ -76,7 +76,7 @@ $grainlist=$sandpiperPrimary->getSliceGrainList(intval($_GET['sliceid']));
                 <div class="col-xs-12 col-md-8 my-col colMain">
                    
                     <?php foreach($grainlist as $grain){
-                    echo '<div style="float:left; padding:10px;"><a href="./grain.php?id='.$grain.'">'.$grain.'</a></div>';
+                    echo '<div style="float:left; padding:10px;"><a href="./grain.php?uuid='.$grain.'">'.$grain.'</a></div>';
                     }?>
                     <div style="clear: both;"></div> 
                 </div>
