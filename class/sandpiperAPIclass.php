@@ -363,6 +363,44 @@ class sandpiper
      return $grains;
     }
     
+
+    function getFilegrainByUUID($grainuuid)
+    {
+     $db = new mysql; $db->connect(); $grain=false;
+     $inflatepayload=false;
+     
+     $sql="select grainuuid,encoding,grainkey,source,length(payload) as payloadsize,timestamp from filegrain where grainuuid=?";
+     
+     if($stmt=$db->conn->prepare($sql))
+     {
+      if($stmt->bind_param('s', $grainuuid))
+      {
+       if($stmt->execute())
+       {
+        if($db->result = $stmt->get_result())
+        {
+         if($row = $db->result->fetch_assoc())
+         {
+          $payload=$row['payload'];
+          
+          if($row['encoding']=='z64' && strlen($payload)>0 && $inflatepayload)
+          {
+           $payload= $this->unZ64($payload);
+          }
+          
+          $grain=array('grain_uuid'=>$row['grainuuid'],'grain_key'=>$row['grainkey'],'source'=>Rrow['source'],'encoding'=>$row['encoding'],'grain_size_bytes'=>$row['payloadsize'],'payload'=>$payload,'timestamp'=>$row['timestamp']);
+         }
+        }
+       }
+      }         
+     }
+     return $grain;
+    }
+
+
+
+
+
     
 
     function isClientPrimary()
