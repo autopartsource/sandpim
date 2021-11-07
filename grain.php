@@ -57,7 +57,11 @@ $grain=$sandpiper->getFilegrainByUUID($_GET['uuid']);
                         <tr><th>size (bytes)</th><td><?php echo $grain['grain_size_bytes'];?></td></tr>
                         <tr><th>timestamp</th><td><?php echo $grain['timestamp'];?></td></tr>
                         <tr><th>payload</th><td><textarea><?php echo $grain['payload'];?></textarea></td></tr>
-                        <tr><th>Actions</th><td><form action="./sliceGrains.php"><input type="hidden" name="sliceid" value="<?php echo $sliceid;?>"/><input type="hidden" name="uuid" value="<?php echo $grain['grain_uuid'];?>"/><input type="submit" name="submit" value="Delete"/></form></td></tr>
+                        <tr><th>Actions</th>
+                            <td><form action="./sliceGrains.php"><input type="hidden" name="sliceid" value="<?php echo $sliceid;?>"/><input type="hidden" name="uuid" value="<?php echo $grain['grain_uuid'];?>"/><input type="submit" name="submit" value="Delete"/></form>
+                                <a href="./streamFilegrain.php?uuid=<?php echo $grain['grain_uuid'];?>&sliceid=<?php echo $sliceid;?>"/>Download</a>
+                            </td>
+                        </tr>
                     </table>
                     
                 </div>

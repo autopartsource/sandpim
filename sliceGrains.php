@@ -30,20 +30,19 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Delete')
 }
 
 
+$slice=$sandpiperPrimary->getSlice($sliceid);
 
 
-
-
-if (isset($_POST['submit']) && $_POST['submit'] == 'Add') 
+if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice) 
 {
  $data=array();
  $data['grain_uuid']=$_POST['grainuuid'];
- $data['slice_uuid']=$_POST['grainuuid'];
- $data['grain_key']=$_POST['basename'];
+ $data['slice_uuid']=$slice['sliceuuid'];
+ $data['grain_key']='Level-1';
  $data['encoding']='raw';
  $data['payload'] = file_get_contents($_POST['uri']);
     
- if(true)
+ if(strlen($data['payload'])>0)
  {
   $error_msg.='filesize:'.strlen($data['payload']).'; ';      
   $grainid=$sp->addGrain($data, true, true);
@@ -51,13 +50,12 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add')
  }
  else
  {
-  $error_msg = 'Failed to get file';
+  $error_msg = 'Failed to get uri';
  }
 }
 
 
 
-$slice=$sandpiperPrimary->getSlice($sliceid);
 $grainlist=$sandpiperPrimary->getSliceGrainList($sliceid);
 
 ?>
@@ -94,7 +92,14 @@ $grainlist=$sandpiperPrimary->getSliceGrainList($sliceid);
                 
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
-                    
+                    <form method="post">
+                        <input type="hidden" name="sliceid" value="<?php echo $sliceid;?>"/>
+                        <div style="padding:5px;">URI Path <input type="text" name="uri"/></div>
+                        <div style="padding:5px;">Filename <input type="text" name="basename"/></div>
+                        <div style="padding:5px;">Grain UUID <input type="text" name="grainuuid" value="<?php echo $pim->uuidv4();?>"/></div>
+                        <div style="padding:10px;"><input name="submit" type="submit" value="Add"/></div>
+                    </form>
+
                 </div>
             </div>
         </div>    
