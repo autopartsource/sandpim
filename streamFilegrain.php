@@ -29,7 +29,7 @@ if($grain)
 {
  $logs->logSystemEvent('sandpiper', $_SESSION['userid'], 'downloaded grain');
 
- $filename='grain_'.$grain['grain_uuid'];
+ $filename=$grain['source'];
  header('Content-Disposition: attachment; filename="'.$filename.'"');
  header('Content-Type: application/octet-stream');
  header('Content-Length: ' . strlen($grain['payload']));
