@@ -369,7 +369,7 @@ class sandpiper
      $db = new mysql; $db->connect(); $grain=false;
      $inflatepayload=false;
      
-     $sql="select grainuuid,encoding,grainkey,source,length(payload) as payloadsize,timestamp from filegrain where grainuuid=?";
+     $sql="select grainuuid,encoding,grainkey,source,length(payload) as payloadsize, payload, timestamp from filegrain where grainuuid=?";
      
      if($stmt=$db->conn->prepare($sql))
      {
@@ -388,7 +388,7 @@ class sandpiper
            $payload= $this->unZ64($payload);
           }
           
-          $grain=array('grain_uuid'=>$row['grainuuid'],'grain_key'=>$row['grainkey'],'source'=>Rrow['source'],'encoding'=>$row['encoding'],'grain_size_bytes'=>$row['payloadsize'],'payload'=>$payload,'timestamp'=>$row['timestamp']);
+          $grain=array('grain_uuid'=>$row['grainuuid'],'grain_key'=>$row['grainkey'],'source'=>$row['source'],'encoding'=>$row['encoding'],'grain_size_bytes'=>$row['payloadsize'],'payload'=>$payload,'timestamp'=>$row['timestamp']);
          }
         }
        }
