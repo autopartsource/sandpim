@@ -1,26 +1,33 @@
 <?php
-include_once('./includes/loginCheck.php');
 include_once('./class/pimClass.php');
+include_once('./class/assetClass.php');
+include_once('./class/sandpiperAPIclass.php');
 include_once('./class/logsClass.php');
-include_once('./class/sandpiperPrimaryClass.php');
-
-
-$navCategory = 'settings';
+$navCategory = 'assets';
 
 $pim=new pim;
-$logs=new logs;
 
+//ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
-{
- $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'sliceGrains.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'createFilegrainFromURI.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
+}    
+
+session_start();
+if (!isset($_SESSION['userid'])) {
+    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
+    exit;
 }
 
+$asset = new asset;
+$sp=new sandpiper();
+$error_msg = '';
 
-$sandpiperPrimary=new sandpiperPrimary;
 
 
-if (isset($_POST['submit']) && $_POST['submit'] == 'Add') 
+if (isset($_POST['submit']) && $_POST['submit'] == 'Create') 
 {
  $data=array();
  $data['grain_uuid']=$_POST['grainuuid'];
@@ -41,29 +48,19 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add')
  }
 }
 
-
-
-
-
-
-
-$slice=$sandpiperPrimary->getSlice(intval($_GET['sliceid']));
-$grainlist=$sandpiperPrimary->getSliceGrainList(intval($_GET['sliceid']));
-
 ?>
 <!DOCTYPE html>
-<html lang="en" xml:lang="en">
+<html>
     <head>
         <?php include('./includes/header.php'); ?>
     </head>
     <body>
         <!-- Navigation Bar -->
         <?php include('topnav.php'); ?>
-        
+
         <!-- Header -->
-        <h2><?php echo $slice['description'];?></h2>
-        <h3>(<?php echo $slice['sliceuuid'];?>)</3>
-        <h3><?php echo count($grainlist). ' '.$slice['slicetype'] ;?>   grains in slice </h3>
+        <h1>Create Sandpiper filegrain from URI</h1>
+
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -74,11 +71,18 @@ $grainlist=$sandpiperPrimary->getSliceGrainList(intval($_GET['sliceid']));
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                   
-                    <?php foreach($grainlist as $grain){
-                    echo '<div style="float:left; padding:10px;"><a href="./grain.php?id='.$grain.'">'.$grain.'</a></div>';
-                    }?>
-                    <div style="clear: both;"></div> 
+                    <div>
+                    <?php if ($error_msg) {
+                        echo $error_msg;
+                    } ?>
+                        <form method="post">
+                            <div style="padding:5px;">URI Path <input type="text" name="uri"/></div>
+                            <div style="padding:5px;">Filename <input type="text" name="basename"/></div>
+                            <div style="padding:5px;">Grain UUID <input type="text" name="sliceuuid" /></div>
+                            <div style="padding:5px;">Grain UUID <input type="text" name="grainuuid" value="<?php echo $pim->uuidv4();?>"/></div>
+                            <div style="padding:10px;"><input name="submit" type="submit" value="Create"/></div>
+                        </form>
+                    </div>
                 </div>
                 <!-- End of Main Content -->
                 
@@ -89,7 +93,7 @@ $grainlist=$sandpiperPrimary->getSliceGrainList(intval($_GET['sliceid']));
             </div>
         </div>    
         <!-- End of Content Container -->
-                
+
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
     </body>

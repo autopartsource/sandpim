@@ -349,7 +349,8 @@ function createSubscription($planid, $sliceid, $slicetype, $partcategory, $metad
  
  
  
- 
+ /* this type of appraoch will be used when when are connecting PIM content live to be served out through the Sandpiper API
+  *  until then, the static content (filegrains) will be reported. (see function of same name below that is not commented)
 
  function getSliceGrainList($sliceid)
  {
@@ -397,8 +398,34 @@ function createSubscription($planid, $sliceid, $slicetype, $partcategory, $metad
   return $list;
  }
 
+ */
  
- 
+ function getSliceGrainList($sliceid)
+ {
+  $db = new mysql; $db->connect(); $list=array();
+  if($stmt=$db->conn->prepare('select grainuuid from slice_filegrain,filegrain where slice_filegrain.grainid = filegrain.id and slice_filegrain.sliceid=? order by grainorder'))
+  {
+   if($stmt->bind_param('i', $sliceid))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      while($row = $db->result->fetch_assoc())
+      {
+       $list[]=$row['grainuuid'];
+      }   
+     }
+    }
+   }     
+  }
+  $db->close();
+  return $list;
+ }
+
+
+
+
  
 function getPartOIDsByPartcategory($partcategory)
 {

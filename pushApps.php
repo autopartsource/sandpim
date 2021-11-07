@@ -123,7 +123,6 @@ foreach($peers as $peer)
   $body=array('identifier'=>$peer['identifier'],'adds'=>$appstopush,'drops'=>$oidstodrop);
   $signature = hash_hmac('SHA256', json_encode($body), $peer['sharedsecret'],false);
   $body['signature']=$signature;
-  $logstring.='signature:'.$signature;
   $curl = curl_init($uri);
   curl_setopt($curl, CURLOPT_URL, $uri);
   curl_setopt($curl, CURLOPT_POST, true);

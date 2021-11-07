@@ -159,6 +159,31 @@ class pricing
   $db->close();
   return $records;   
  }
+
+ function getDistinctPartnumbersUsingPricesheet($pricesheetnumber)
+ {
+  $db=new mysql; $db->connect(); $partnumbers=array();
+  if($stmt=$db->conn->prepare('select distinct partnumber from price where pricesheetnumber=? order by partnumber'))
+  {
+   if($stmt->bind_param('s',$pricesheetnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $partnumbers[]=$row['partnumber'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $partnumbers;   
+ }
+
+
+
+
  
  function getPricesheet($number)
  {

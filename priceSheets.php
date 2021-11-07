@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pricingClass.php');
 
+
 $navCategory = 'settings';
 
 $pim = new pim;
@@ -31,11 +32,11 @@ if (isset($_POST['submit']) && $_POST['submit']=='Add' && isset($_POST['category
     $logs->logSystemEvent('pricesheet', $_SESSION['userid'], 'Pricesheet '.$name.' was created');
 }
 
-if (isset($_POST['submit']) && $_POST['submit']=='Delete') 
+if (isset($_GET['submit']) && $_GET['submit']=='Delete') 
 {
  $name=$pim->partCategoryName(intval($_POST['categoryid']));
  $pim->deletePartcategory(intval($_POST['categoryid']));
- $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$name.' was deleted');
+ $logs->logSystemEvent('pricesheetchange', $_SESSION['userid'], 'Part Category '.$name.' was deleted');
 }
 
 $pricesheets=$pricing->getPricesheets();
@@ -69,8 +70,10 @@ $pricesheets=$pricing->getPricesheets();
                             <?php
                                 foreach($pricesheets as $pricesheet)
                                 {
+                                    $distinctpartnumbers=$pricing->getDistinctPartnumbersUsingPricesheet($pricesheet['number']);
                                     echo '<div class="card">';
-                                        echo '<h6 class="card-header text-start">Name: '.$pricesheet['number'].'</h6>';
+                                        echo '<div><h6 class="card-header text-start">ID: '.$pricesheet['number'].'</h6></div>';
+                                        echo '<form><input type="submit" name="submit" value="Delete"/></form>';
                                         echo '<div class="card-body">';
                                             echo '<div class="form-group row">';
                                                 echo '<label for="staticDescription" class="col-sm-2 col-form-label">Description</label>';
@@ -102,6 +105,13 @@ $pricesheets=$pricing->getPricesheets();
                                                     echo '<input id="staticExpiration" readonly type="text" class="form-control" name="expirationdate" value="'.$pricesheet['expirationdate'].'"/>';
                                                 echo '</div>';
                                             echo '</div>';
+                                            echo '<div class="form-group row">';
+                                                echo '<label for="staticPartcount" class="col-sm-2 col-form-label">Part Count</label>';
+                                                echo '<div class="col-sm-10">';
+                                                    echo '<input id="staticPartcount" readonly type="text" class="form-control" name="partcount" value="'.count($distinctpartnumbers).'"/>';
+                                                echo '</div>';
+                                            echo '</div>';
+
                                         echo '</div>';
                                     echo '</div>';
                                 }
