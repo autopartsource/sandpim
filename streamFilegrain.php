@@ -24,7 +24,7 @@ $logs=new logs();
 $sandpiper = new sandpiper();
 
 
-$grain=$sandpiper->getFilegrainByUUID($_GET['uuid']);
+$grain=$sandpiper->getFilegrainByUUID($_GET['uuid'],true);
 if($grain)
 {
  $logs->logSystemEvent('sandpiper', $_SESSION['userid'], 'downloaded grain');

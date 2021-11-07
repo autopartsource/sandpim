@@ -39,6 +39,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice)
  $data['grain_uuid']=$_POST['grainuuid'];
  $data['slice_uuid']=$slice['sliceuuid'];
  $data['grain_key']='Level-1';
+ $data['source']=$_POST['filename'];
  $data['encoding']='raw';
  $data['payload'] = file_get_contents($_POST['uri']);
     
@@ -92,10 +93,11 @@ $grainlist=$sandpiperPrimary->getSliceGrainList($sliceid);
                 
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
+                    <h6>Upload file to slice</h6>
                     <form method="post">
                         <input type="hidden" name="sliceid" value="<?php echo $sliceid;?>"/>
                         <div style="padding:5px;">URI Path <input type="text" name="uri"/></div>
-                        <div style="padding:5px;">Filename <input type="text" name="basename"/></div>
+                        <div style="padding:5px;">Filename <input type="text" name="filename"/></div>
                         <div style="padding:5px;">Grain UUID <input type="text" name="grainuuid" value="<?php echo $pim->uuidv4();?>"/></div>
                         <div style="padding:10px;"><input name="submit" type="submit" value="Add"/></div>
                     </form>

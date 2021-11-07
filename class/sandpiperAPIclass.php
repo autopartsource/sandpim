@@ -364,10 +364,9 @@ class sandpiper
     }
     
 
-    function getFilegrainByUUID($grainuuid)
+    function getFilegrainByUUID($grainuuid,$inflatepayload=false)
     {
      $db = new mysql; $db->connect(); $grain=false;
-     $inflatepayload=false;
      
      $sql="select grainuuid,encoding,grainkey,source,length(payload) as payloadsize, payload, timestamp from filegrain where grainuuid=?";
      
@@ -382,7 +381,6 @@ class sandpiper
          if($row = $db->result->fetch_assoc())
          {
           $payload=$row['payload'];
-          
           if($row['encoding']=='z64' && strlen($payload)>0 && $inflatepayload)
           {
            $payload= $this->unZ64($payload);
@@ -514,7 +512,7 @@ class sandpiper
         $sliceuuid=$data['slice_uuid'];
         $grainuuid=$data['grain_uuid'];
         $grainkey=$data['grain_key'];
-        $source='';
+        $source=$data['source'];
         $encoding=$data['encoding'];
         if($encoding=='raw' && $compressrawpayload)
         {
