@@ -46,7 +46,7 @@ if(strlen($bodyraw)>0)
 {
  $body=json_decode($bodyraw,true);
 
-if(!array_key_exists('identifier',$body) || !array_key_exists('signature',$body))
+ if(!array_key_exists('identifier',$body) || !array_key_exists('signature',$body))
  {
   $logs->logSystemEvent('replication', 0, 'invalid data (missing identifier or signature) posted to acceptAssets API from client '.$_SERVER['REMOTE_ADDR']);
   exit;

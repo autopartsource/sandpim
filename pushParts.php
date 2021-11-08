@@ -1,40 +1,42 @@
 <?php
-
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
-include_once(__DIR__.'/class/logsClass.php');
+include_once(__DIR__.'/class/replicationClass.php');
 include_once(__DIR__.'/class/pricingClass.php');
 include_once(__DIR__.'/class/interchangeClass.php');
 include_once(__DIR__.'/class/packagingClass.php');
 include_once(__DIR__.'/class/assetClass.php');
-
-include_once(__DIR__.'/class/configGetClass.php');
+include_once(__DIR__.'/class/logsClass.php');
 
 $starttime=time();
 
 $pim = new pim();
-$logs=new logs();
+$replication=new replication();
 $pricing=new pricing();
 $interchange = new interchange();
 $packaging = new packaging();
 $asset = new asset();
-$configGet = new configGet;
+$logs=new logs();
 
-$uri=$configGet->getConfigValue('assetPushURI');
+$peers=$replication->getPeers('%','part', 'secondary');
 
-$uri='https://aps.dev/sandpim/acceptParts.php';
-
-
-if($uri)
+foreach($peers as $peer)
 {
+ if($peer['enabled']==0){continue;}
+ $uri=$peer['uri'];
+ $pushlimit=$peer['objectlimit'];
+ 
+ $logstring='uri: '.$uri.'; ';
+
+
  $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 999999);
  $localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
  sort($localoids);
  $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
  $localoidhash= md5($localoidliststring);
  
+ $logstring.='localoids '.count($localoids). '; ';
  
  //ask server for a hash of its oids
- 
  $curl = curl_init($uri.'?detail=hash');
  curl_setopt($curl, CURLOPT_URL, $uri.'?detail=hash');
  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -47,14 +49,14 @@ if($uri)
  
  if(!isset($responsedecoded['hash']))
  {
-  $logs->logSystemEvent('partpusher', 0, 'unexpected response form remote system:'.$resp);    
+  $logs->logSystemEvent('partpusher', 0, 'unexpected response in pushParts form '.$peer['description'].':'.$resp);    
   exit;
  }
  
 
  if($localoidhash == $responsedecoded['hash'])
  {
-  $logs->logSystemEvent('partpusher', 0, 'remote hash equals local hash - no parts pushed');
+  $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no parts pushed');
   exit;
  }  
     
@@ -72,7 +74,7 @@ if($uri)
  
  if(!isset($responsedecoded['oids']))
  {
-  $logs->logSystemEvent('partpusher', 0, 'unexpected response form remote system:'.$resp);    
+  $logs->logSystemEvent('replication', 0, 'unexpected response in pushParts form '.$peer['description'].':'.$resp);    
   exit;
  }
  
@@ -80,7 +82,9 @@ if($uri)
  $r=array(); foreach($responsedecoded['oids'] as $oid){$r[$oid]='';}
  $l=array(); foreach($localoids as $oid){$l[$oid]='';}
  
- 
+ $logstring.='local distinct oids: '.count($l).'; ';
+ $logstring.='remote distinct oids: '.count($r).'; ';
+
  // compare sets of oids to determine what's missing fron remote system
  $oidstopush=array();
  foreach($localoids as $oid)
@@ -91,6 +95,8 @@ if($uri)
   }
  }
  
+ $logstring.='local oids to push: '.count($oidstopush).'; ';
+
   // convert the "push" list of OID's into part objecta
  $partstopush=array();
  foreach($oidstopush as $oid)
@@ -114,7 +120,8 @@ if($uri)
   }
  }
 
- 
+ $logstring.='local parts to push: '.count($partstopush).'; ';
+
  // compare sets of oids to determine what's extra in remote system 
  // don't bother converting them to real partnumbers - they may not exist locally
  $oidstodrop=array();
@@ -126,16 +133,20 @@ if($uri)
   }
  }
 
-    
+ $logstring.='remote oids to drop: '.count($oidstodrop).'; ';
+
  if(count($partstopush)>0 || count($oidstodrop)>0)
  {
-  $body=array('adds'=>array(),'drops'=>$oidstodrop);
+  $body=array('identifier'=>$peer['identifier'],'adds'=>array(),'drops'=>$oidstodrop);
 
   foreach($partstopush as $part)
   {    
    $body['adds'][]=$part;
   }
- 
+    
+  $signature = hash_hmac('SHA256', json_encode($body), $peer['sharedsecret'],false);
+  $body['signature']=$signature;
+
   $curl = curl_init($uri);
   curl_setopt($curl, CURLOPT_URL, $uri);
   curl_setopt($curl, CURLOPT_POST, true);
@@ -145,13 +156,11 @@ if($uri)
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
   $resp = curl_exec($curl);
   curl_close($curl);
- //print_r($body);
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('partpusher', 0, 'Part pusher posted '.count($partstopush).' parts in '.$runtime.' seconds. '.$resp);
+  $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($partstopush).'/'.count($oidstodrop).' parts to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
  }
+
+ 
 }
-else
-{
- $logs->logSystemEvent('partpusher', 0, 'Part pusher uri (assetPushURI) is not set in config');    
-}
+ 
 ?>

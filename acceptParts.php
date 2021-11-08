@@ -4,15 +4,12 @@ include_once('./class/pricingClass.php');
 include_once('./class/packagingClass.php');
 include_once('./class/interchangeClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/replicationClass.php');
 include_once('./class/logsClass.php');
 
 $starttime=time();
 
 $pim = new pim();
-$pricing = new pricing();
-$packaging = new packaging();
-$interchange = new interchange();
-$asset = new asset();
 $logs=new logs();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
@@ -21,6 +18,11 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
+$pricing = new pricing();
+$packaging = new packaging();
+$interchange = new interchange();
+$asset = new asset();
+$replication = new replication();
 
 $newpartcount=0;  $droppedpartcount=0;
 
@@ -35,7 +37,7 @@ if(isset($_GET['detail']))
  {
   $hash=md5($oidliststring);
   echo json_encode(array('hash'=> $hash));
-  $logs->logSystemEvent('partacceptor', 0, 'gave hash ('.$hash.') of '.count($localoids).' local part oids to client '.$_SERVER['REMOTE_ADDR']);
+  $logs->logSystemEvent('replication', 0, 'gave hash ('.$hash.') of '.count($localoids).' local part oids to client '.$_SERVER['REMOTE_ADDR']);
  }
  else
  {
@@ -50,6 +52,29 @@ if(strlen($bodyraw)>0)
 {
  $body=json_decode($bodyraw,true);
 
+  if(!array_key_exists('identifier',$body) || !array_key_exists('signature',$body))
+ {
+  $logs->logSystemEvent('replication', 0, 'invalid data (missing identifier or signature) posted to acceptParts API from client '.$_SERVER['REMOTE_ADDR']);
+  exit;
+ }
+
+  // lookup peer by its claimed identifier
+ $peers=$replication->getPeers($body['identifier'],'part', 'primary');
+ if(count($peers)==0)
+ {
+  $logs->logSystemEvent('replication', 0, 'unknown identifier ['.$body['identifier'].'] posted to acceptPatrs API from client '.$_SERVER['REMOTE_ADDR']);  
+  exit;
+ }
+ 
+ //test signature of payload
+ $computedsignature = hash_hmac('SHA256', json_encode(array('identifier'=>$body['identifier'],'adds'=>$body['adds'],'drops'=>$body['drops'])), $peers[0]['sharedsecret'],false);
+ if($body['signature']!=$computedsignature)
+ {
+  $logs->logSystemEvent('replication', 0, 'invalid signature on payload - no adds/drops accepted by acceptParts API from peer identified by: '.$body['identifier']);
+  exit;
+ }
+
+ 
  if(isset($body['drops']))
  { // drop list is oid's (not partnumber's)
   foreach ($body['drops'] as $oid)
@@ -57,7 +82,7 @@ if(strlen($bodyraw)>0)
    $partnumbers=$pim->deletePartsByOID($oid);
    foreach($partnumbers as $partnumber)
    {// possible (but unlikely) that multiple parts could have had the same oid - delete them all
-    $pim->logPartEvent($partnumber, 0, 'part deleted by partAcceptor.php', '');
+    $pim->logPartEvent($partnumber, 0, 'part deleted by acceptPart API', '');
    }
    $droppedpartcount++;
   }
@@ -113,15 +138,13 @@ if(strlen($bodyraw)>0)
      $asset->connectPartToAsset($partnumber, $ac['assetid'], $ac['assettypecode'], $ac['sequence'], $ac['representation']);
     }
     
-    $pim->logPartEvent($partnumber, 0, 'part created by partAcceptor.php', $p['oid']);
+    $pim->logPartEvent($partnumber, 0, 'part created by acceptPart API', $p['oid']);
     
     $newpartcount++;
    }
    else
    {// remote client tried to add a part that already existed
-
-    $logs->logSystemEvent('partacceptor', 0, 'declined to add part ('.$partnumber.' that already exists');
-     
+    $logs->logSystemEvent('replication', 0, 'declined to add part ('.$partnumber.' that already exists');
    }
   }
  }
@@ -130,6 +153,7 @@ if(strlen($bodyraw)>0)
 $runtime=time()-$starttime;
 if($newpartcount || $runtime>10)
 {
- $logs->logSystemEvent('partacceptor', 0, 'Part acceptor added '.$newpartcount.', dropped '.$droppedpartcount.' parts in '.$runtime.' seconds');   
+ $logs->logSystemEvent('replication', 0, 'Added '.$newpartcount.', dropped '.$droppedpartcount.' parts in '.$runtime.' seconds from '.$_SERVER['REMOTE_ADDR']);
 }
+
 ?>
