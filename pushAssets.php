@@ -2,34 +2,38 @@
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/assetClass.php');
+include_once(__DIR__.'/class/replicationClass.php');
 include_once(__DIR__.'/class/logsClass.php');
-include_once(__DIR__.'/class/configGetClass.php');
 
 $starttime=time();
 
 $pim = new pim();
 $asset=new asset();
+$replication=new replication();
 $logs=new logs();
-$configGet = new configGet;
 
-$assetpushuri=$configGet->getConfigValue('assetPushURI');
+$peers=$replication->getPeers('%','asset', 'secondary');
 
-$assetpushuri='https://aps.dev/sandpim/acceptAssets.php';
-
-
-if($assetpushuri)
+foreach($peers as $peer)
 {
+ if($peer['enabled']==0){continue;}
+ $uri=$peer['uri'];
+ $pushlimit=$peer['objectlimit'];
+
+ $logstring='uri: '.$uri.'; ';
+
+
  $allassets=$asset->getAssets('', 'startswith', 'any', 'any',  '2000-01-01' , 'any', '', '', 0);
  $localoids=array(); foreach($allassets as $allasset){$localoids[]=$allasset['oid'];}
  sort($localoids);
  $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
  $localoidhash= md5($localoidliststring);
- 
- 
+  
+ $logstring.='localoids '.count($localoids). '; ';
+
  //ask server for a hash of its oids
- 
- $curl = curl_init($assetpushuri.'?detail=hash');
- curl_setopt($curl, CURLOPT_URL, $assetpushuri.'?detail=hash');
+ $curl = curl_init($uri.'?detail=hash');
+ curl_setopt($curl, CURLOPT_URL, $uri.'?detail=hash');
  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
  $headers = array("Accept: application/json","Content-Type: application/json",);
  curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
@@ -40,21 +44,21 @@ if($assetpushuri)
  
  if(!isset($responsedecoded['hash']))
  {
-  $logs->logSystemEvent('assetpusher', 0, 'unexpected response form remote system:'.$resp);    
+  $logs->logSystemEvent('replication', 0, 'unexpected response in pushAssets form '.$peer['description'].':'.$resp);    
   exit;
  }
  
 
  if($localoidhash == $responsedecoded['hash'])
  {
-  $logs->logSystemEvent('assetpusher', 0, 'remote hash equals local hash - no assets pushed');
+  $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no assets pushed');
   exit;
  }  
     
 // remote system has a differnt hash of its oid's that we do. Ask for a list
  
- $curl = curl_init($assetpushuri.'?detail=ids');
- curl_setopt($curl, CURLOPT_URL, $assetpushuri.'?detail=ids');
+ $curl = curl_init($uri.'?detail=ids');
+ curl_setopt($curl, CURLOPT_URL, $uri.'?detail=ids');
  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
  $headers = array("Accept: application/json","Content-Type: application/json",);
  curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
@@ -65,7 +69,7 @@ if($assetpushuri)
  
  if(!isset($responsedecoded['oids']))
  {
-  $logs->logSystemEvent('assetpusher', 0, 'unexpected response form remote system:'.$resp);    
+  $logs->logSystemEvent('replication', 0, 'unexpected response in pushAssets form peer '.$peer['description'].':'.$resp);    
   exit;
  }
  
@@ -73,7 +77,9 @@ if($assetpushuri)
  $r=array(); foreach($responsedecoded['oids'] as $oid){$r[$oid]='';}
  $l=array(); foreach($localoids as $oid){$l[$oid]='';}
  
- 
+ $logstring.='local distinct oids: '.count($l).'; ';
+ $logstring.='remote distinct oids: '.count($r).'; ';
+
  // compare sets of oids to determine what's missing fron remote system
  $oidstopush=array();
  foreach($localoids as $oid)
@@ -84,16 +90,20 @@ if($assetpushuri)
   }
  }
  
+ $logstring.='local oids to push: '.count($oidstopush).'; ';
+ 
   // convert the "push" list of OID's into asset records
  $assetstopush=array();
  foreach($oidstopush as $oid)
  {
+  if(count($assetstopush)>=$pushlimit){break;}
   if($a=$asset->getAssetByOID($oid))
   {
     $assetstopush[]=$a;
   }
  }
 
+ $logstring.='local assets to push: '.count($assetstopush).'; ';
  
  // compare sets of oids to determine what's extra in remote system 
  // don't bother converting them to real assetsid - they may not exit locally
@@ -106,10 +116,11 @@ if($assetpushuri)
   }
  }
 
-    
+ $logstring.='remote oids to drop: '.count($oidstodrop).'; ';
+
  if(count($assetstopush)>0 || count($oidstodrop)>0)
  {
-  $body=array('adds'=>array(),'drops'=>$oidstodrop);
+  $body=array('identifier'=>$peer['identifier'],'adds'=>array(),'drops'=>$oidstodrop);
 
   $assetidkeyedassets=array(); 
   foreach($assetstopush as $a)
@@ -122,8 +133,11 @@ if($assetpushuri)
    $body['adds'][]=array('assetid'=>$assetid,'records'=>$assetrecords);
   }
  
-  $curl = curl_init($assetpushuri);
-  curl_setopt($curl, CURLOPT_URL, $assetpushuri);
+  $signature = hash_hmac('SHA256', json_encode($body), $peer['sharedsecret'],false);
+  $body['signature']=$signature;
+  
+  $curl = curl_init($uri);
+  curl_setopt($curl, CURLOPT_URL, $uri);
   curl_setopt($curl, CURLOPT_POST, true);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
   $headers = array("Accept: application/json","Content-Type: application/json",);
@@ -131,13 +145,8 @@ if($assetpushuri)
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
   $resp = curl_exec($curl);
   curl_close($curl);
-
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('assetpusher', 0, 'Asset pusher posted '.count($assetstopush).' records in '.$runtime.' seconds. '.$resp);
+  $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($assetstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
  }
-}
-else
-{
- $logs->logSystemEvent('assetpusher', 0, 'Asset pusher uri (assetPushURI) is not set in config');    
 }
 ?>

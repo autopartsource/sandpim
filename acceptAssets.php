@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/replicationClass.php');
 include_once('./class/logsClass.php');
 
 $starttime=time();
@@ -16,6 +17,7 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 
 
 $asset=new asset();
+$replication = new replication();
 $newassetcount=0;  $droppedassetcount=0;
 
 if(isset($_GET['detail']))
@@ -29,12 +31,12 @@ if(isset($_GET['detail']))
  {
   $hash=md5($oidliststring);
   echo json_encode(array('hash'=> $hash));
-  $logs->logSystemEvent('assetacceptor', 0, 'gave hash ('.$hash.') of '.count($oids).' local asset oids to client '.$_SERVER['REMOTE_ADDR']);
+  $logs->logSystemEvent('replication', 0, 'gave hash ('.$hash.') of '.count($oids).' local asset oids to client '.$_SERVER['REMOTE_ADDR']);
  }
  else
  {
   echo json_encode(array('oids'=>$oids));
-  $logs->logSystemEvent('assetacceptor', 0, 'gave list of '.count($oids).' local asset oids to client '.$_SERVER['REMOTE_ADDR']);
+  $logs->logSystemEvent('replication', 0, 'gave list of '.count($oids).' local asset oids to client '.$_SERVER['REMOTE_ADDR']);
  }
 }
 
@@ -44,12 +46,34 @@ if(strlen($bodyraw)>0)
 {
  $body=json_decode($bodyraw,true);
 
+if(!array_key_exists('identifier',$body) || !array_key_exists('signature',$body))
+ {
+  $logs->logSystemEvent('replication', 0, 'invalid data (missing identifier or signature) posted to acceptAssets API from client '.$_SERVER['REMOTE_ADDR']);
+  exit;
+ }
+
+  // lookup peer by its claimed identifier
+ $peers=$replication->getPeers($body['identifier'],'asset', 'primary');
+ if(count($peers)==0)
+ {
+  $logs->logSystemEvent('replication', 0, 'unknown identifier ['.$body['identifier'].'] posted to acceptAsset API from client '.$_SERVER['REMOTE_ADDR']);  
+  exit;
+ }
+ 
+ //test signature of payload
+ $computedsignature = hash_hmac('SHA256', json_encode(array('identifier'=>$body['identifier'],'adds'=>$body['adds'],'drops'=>$body['drops'])), $peers[0]['sharedsecret'],false);
+ if($body['signature']!=$computedsignature)
+ {
+  $logs->logSystemEvent('replication', 0, 'invalid signature on payload - no adds/drops accepted by acceptAssets API from peer identified by: '.$body['identifier']);
+  exit;
+ }
+ 
  if(isset($body['drops']))
  { // drop list is oid's (no assetid's)
   foreach ($body['drops'] as $oid)
   {
    $asset->deleteAssetRecordByOID($oid);
-   $logs->logSystemEvent('assetacceptor', 0, 'dropped asset by oid '.$oid);
+   $logs->logSystemEvent('replication', 0, 'dropped asset by oid '.$oid);
    $droppedassetcount++;
   }
  } 
@@ -78,6 +102,6 @@ if(strlen($bodyraw)>0)
 $runtime=time()-$starttime;
 if($newassetcount || $runtime>10)
 {
- $logs->logSystemEvent('assetacceptor', 0, 'Asset acceptor added '.$newassetcount.', dropped '.$droppedassetcount.' assets records in '.$runtime.' seconds');   
+ $logs->logSystemEvent('replication', 0, 'Asset acceptor added '.$newassetcount.', dropped '.$droppedassetcount.' assets records in '.$runtime.' seconds');   
 }
 ?>
