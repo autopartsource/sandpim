@@ -540,9 +540,11 @@ class sandpiper
             // figure out what the recordid of the slice is 
             $slicerecordid=$this->sliceExists($sliceuuid);
             
-            if($stmt=$db->conn->prepare('insert into slice_filegrain values(null,?,?)'))
+            $grainorder=1;
+            
+            if($stmt=$db->conn->prepare('insert into slice_filegrain values(null,?,?,?)'))
             {
-                if($stmt->bind_param('ss', $slicerecordid, $grainrecordid))
+                if($stmt->bind_param('ssi', $slicerecordid, $grainrecordid, $grainorder))
                 {
                     $stmt->execute();
                 }         
