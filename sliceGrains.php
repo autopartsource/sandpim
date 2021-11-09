@@ -45,7 +45,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice)
     
  if(strlen($data['payload'])>0)
  {
-  $grainid=$sp->addGrain($data, true, true);
+  $grainid=$sandpiperPrimary->addGrain($data, true, true);
   
   if($grainid)
   {
