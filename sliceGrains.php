@@ -52,12 +52,12 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice)
   
   if($grainid)
   {
-    echo 'grain not created';    
+    echo 'grain created';    
       
   }
   else
   {// grain not created
-    echo 'grain not created';  
+    echo 'grain was not created';  
   }
   
  }
