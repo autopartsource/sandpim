@@ -69,7 +69,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice)
 
 
 
-$grainlist=$sandpiperPrimary->getSliceGrainList($sliceid);
+$grainlist=$spp->getSliceGrainList($sliceid);
 
 ?>
 <!DOCTYPE html>
