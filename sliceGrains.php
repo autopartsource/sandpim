@@ -2,6 +2,7 @@
 include_once('./includes/loginCheck.php');
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
+include_once('./class/sandpiperAPIclass.php');
 include_once('./class/sandpiperPrimaryClass.php');
 
 
@@ -17,7 +18,9 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 }
 
 
-$sandpiperPrimary=new sandpiperPrimary;
+$spp=new sandpiperPrimary();
+$sp=new sandpiper();
+
 
 
 $sliceid=intval($_GET['sliceid']);
@@ -30,7 +33,7 @@ if (isset($_GET['submit']) && $_GET['submit'] == 'Delete')
 }
 
 
-$slice=$sandpiperPrimary->getSlice($sliceid);
+$slice=$spp->getSlice($sliceid);
 
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice) 
@@ -45,7 +48,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice)
     
  if(strlen($data['payload'])>0)
  {
-  $grainid=$sandpiperPrimary->addGrain($data, true, true);
+  $grainid=$sp->addGrain($data, true, true);
   
   if($grainid)
   {
