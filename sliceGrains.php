@@ -45,13 +45,22 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice)
     
  if(strlen($data['payload'])>0)
  {
-  $error_msg.='filesize:'.strlen($data['payload']).'; ';      
   $grainid=$sp->addGrain($data, true, true);
-  $error_msg.='grainid:'.$grainid.'; ';
+  
+  if($grainid)
+  {
+    
+      
+  }
+  else
+  {// grain not created
+      
+  }
+  
  }
  else
  {
-  $error_msg = 'Failed to get uri';
+     
  }
 }
 
