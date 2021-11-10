@@ -37,9 +37,9 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice)
  $data=array();
  $data['grain_uuid']=$_POST['grainuuid'];
  $data['slice_uuid']=$slice['sliceuuid'];
- $data['grain_key']='Level-1';
- $data['source']=$_POST['filename'];
- $data['encoding']='raw';
+ $data['grain_key']=$_POST['grainkey'];
+ $data['source']=$_POST['source'];
+ $data['encoding']='z64';
  $data['payload'] = file_get_contents($_POST['uri']);
     
  if(strlen($data['payload'])>0)
@@ -67,8 +67,7 @@ $grains=$spp->getSliceGrains($sliceid);
         
         <!-- Header -->
         <h3><?php echo $slice['description'];?></h3>
-        <h4>(<?php echo $slice['sliceuuid'];?>)</h4>
-        <h4><?php echo count($grains). ' '.$slice['slicetype'] ;?>   grains in slice </h4>
+        <div>(<?php echo $slice['sliceuuid'];?>)</div>
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -80,7 +79,7 @@ $grains=$spp->getSliceGrains($sliceid);
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <table>
-                        <tr><th>UUID</th><th>Source</th><th>Grain Key</th><th>Encoding</th><th>Size (bytes)</th><th>Timestamp</th><th>Actions</th></tr>                  
+                        <tr><th>Grain UUID</th><th>Source</th><th>Grain Key</th><th>Encoding</th><th>Size (bytes)</th><th>Timestamp</th><th>Actions</th></tr>                  
                         <?php foreach($grains as $grain){echo '<tr><td>'.$grain['grain_uuid'].'</td><td>'.$grain['source'].'</td><td>'.$grain['grain_key'].'</td><td>'.$grain['encoding'].'</td><td>'.$grain['grain_size_bytes'].'</td><td>'.$grain['timestamp'].'</td><td><a href="./streamFilegrain.php?uuid='.$grain['grain_uuid'].'&sliceid='.$sliceid.'"/>Download</a></td></tr>';}?>
                     </table>
                 </div>
@@ -88,15 +87,17 @@ $grains=$spp->getSliceGrains($sliceid);
                 
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
-                    <h6>Upload file to slice</h6>
-                    <form method="post">
-                        <input type="hidden" name="sliceid" value="<?php echo $sliceid;?>"/>
-                        <div style="padding:5px;">URI Path <input type="text" name="uri"/></div>
-                        <div style="padding:5px;">Filename <input type="text" name="filename"/></div>
-                        <div style="padding:5px;">Grain UUID <input type="text" name="grainuuid" value="<?php echo $pim->uuidv4();?>"/></div>
-                        <div style="padding:10px;"><input name="submit" type="submit" value="Add"/></div>
-                    </form>
-
+                    <div style="background-color: #c0c0c0;">
+                        <h6>Add filegrain to slice</h6>
+                        <form method="post">
+                            <input type="hidden" name="sliceid" value="<?php echo $sliceid;?>"/>
+                            <div style="padding:5px;">URI Path <input type="text" name="uri"/></div>
+                            <div style="padding:5px;">Source <input type="text" name="source"/></div>
+                            <div style="padding:5px;">Grain Key <input type="text" name="grainkey"/></div>
+                            <div style="padding:5px;">Grain UUID <input type="text" name="grainuuid" value="<?php echo $pim->uuidv4();?>"/></div>
+                            <div style="padding:10px;"><input name="submit" type="submit" value="Add"/></div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>    
