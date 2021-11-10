@@ -17,19 +17,15 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
-
 $spp=new sandpiperPrimary();
 $sp=new sandpiper();
 
-
-
 $sliceid=intval($_GET['sliceid']);
-
 
 if (isset($_GET['submit']) && $_GET['submit'] == 'Delete') 
 {
-    echo 'delete grain:',$_GET['uuid'];
-    
+ $sp->deleteGrain($_GET['uuid']);
+ $sp->logEvent('', '', $_GET['uuid'], 'grain deleted');   
 }
 
 
@@ -52,24 +48,12 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice)
   
   if($grainid)
   {
-    echo 'grain created';    
-      
+   $sp->logEvent('', '', $_POST['grainuuid'], 'grain created by manual upload');     
   }
-  else
-  {// grain not created
-    echo 'grain was not created';  
-  }
-  
- }
- else
- {
-     
  }
 }
 
-
-
-$grainlist=$spp->getSliceGrainList($sliceid);
+$grains=$spp->getSliceGrains($sliceid);
 
 ?>
 <!DOCTYPE html>
@@ -82,9 +66,9 @@ $grainlist=$spp->getSliceGrainList($sliceid);
         <?php include('topnav.php'); ?>
         
         <!-- Header -->
-        <h2><?php echo $slice['description'];?></h2>
-        <h3>(<?php echo $slice['sliceuuid'];?>)</3>
-        <h3><?php echo count($grainlist). ' '.$slice['slicetype'] ;?>   grains in slice </h3>
+        <h3><?php echo $slice['description'];?></h3>
+        <h4>(<?php echo $slice['sliceuuid'];?>)</h4>
+        <h5><?php echo count($grainlist). ' '.$slice['slicetype'] ;?>   grains in slice </h5>
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -95,10 +79,10 @@ $grainlist=$spp->getSliceGrainList($sliceid);
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
-                   
-                    <?php foreach($grainlist as $grain){
-                    echo '<div style="float:left; padding:10px;"><a href="./grain.php?uuid='.$grain.'&sliceid='.$sliceid.'">'.$grain.'</a></div>';
-                    }?>
+                    <table>
+                        <tr><th>UUID</th><th>Grain Key</th><th>Encoding</th><th>Size (bytes)</th><th>Timestamp</th><th>Actions</th></tr>                  
+                        <?php foreach($grainlist as $grain){echo '<tr><td>'.$grain['grain_uuid'].'</td><td>'.$grain['grain_key'].'</td><td>'.$grain['encoding'].'</td><td>'.$grain['grain_size_bytes'].'</td><td>'.$grain['timestamp'].'</td></tr>';}?>
+                    </<table>
                     <div style="clear: both;"></div> 
                 </div>
                 <!-- End of Main Content -->

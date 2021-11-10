@@ -424,6 +424,28 @@ function createSubscription($planid, $sliceid, $slicetype, $partcategory, $metad
  }
 
 
+ function getSliceGrains($sliceid)
+ {
+  $db = new mysql; $db->connect(); $grains=array();
+  if($stmt=$db->conn->prepare('select grainuuid,grainkey,source,encoding,payload,timestamp from slice_filegrain,filegrain where slice_filegrain.grainid = filegrain.id and slice_filegrain.sliceid=? order by grainorder'))
+  {
+   if($stmt->bind_param('i', $sliceid))
+   {
+    if($stmt->execute())
+    {
+     if($db->result = $stmt->get_result())
+     {
+      while($row = $db->result->fetch_assoc())
+      {
+       $grains[]=array('grain_uuid'=>$row['grainuuid'],'grain_key'=>$row['grainkey'],'source'=>$row['source'],'encoding'=>$row['encoding'],'grain_size_bytes'=>strlen($row['payload']),'timestamp'=>$row['timestamp']);
+      }   
+     }
+    }
+   }     
+  }
+  $db->close();
+  return $grains;
+ }
 
 
  
