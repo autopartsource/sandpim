@@ -22,7 +22,7 @@ $sp=new sandpiper();
 
 $sliceid=intval($_GET['sliceid']);
 
-if (isset($_GET['submit']) && $_GET['submit'] == 'Delete') 
+if (isset($_GET['submit']) && $_GET['submit'] == 'delete') 
 {
  $sp->deleteGrain($_GET['uuid']);
  $sp->logEvent('', '', $_GET['uuid'], 'grain deleted');   
@@ -39,7 +39,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Add' && $slice)
  $data['slice_uuid']=$slice['sliceuuid'];
  $data['grain_key']=$_POST['grainkey'];
  $data['source']=$_POST['source'];
- $data['encoding']='z64';
+ $data['encoding']='raw';
  $data['payload'] = file_get_contents($_POST['uri']);
     
  if(strlen($data['payload'])>0)
@@ -80,7 +80,8 @@ $grains=$spp->getSliceGrains($sliceid);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <table>
                         <tr><th>Grain UUID</th><th>Source</th><th>Grain Key</th><th>Encoding</th><th>Size (bytes)</th><th>Timestamp</th><th>Actions</th></tr>                  
-                        <?php foreach($grains as $grain){echo '<tr><td>'.$grain['grain_uuid'].'</td><td>'.$grain['source'].'</td><td>'.$grain['grain_key'].'</td><td>'.$grain['encoding'].'</td><td>'.$grain['grain_size_bytes'].'</td><td>'.$grain['timestamp'].'</td><td><a href="./streamFilegrain.php?uuid='.$grain['grain_uuid'].'&sliceid='.$sliceid.'"/>Download</a></td></tr>';}?>
+                        <?php foreach($grains as $grain){echo '<tr><td>'.$grain['grain_uuid'].'</td><td>'.$grain['source'].'</td><td>'.$grain['grain_key'].'</td><td>'.$grain['encoding'].'</td><td>'.$grain['grain_size_bytes'].'</td><td>'.$grain['timestamp'].'</td><td><a href="./streamFilegrain.php?uuid='.$grain['grain_uuid'].'&sliceid='.$sliceid.'"/>Download</a><br/><a href="./sliceGrains.php?submit=delete&sliceid='.$sliceid.'&uuid='.$grain['grain_uuid'].'">Delete</a></td></tr>';}?>
+                        
                     </table>
                 </div>
                 <!-- End of Main Content -->
