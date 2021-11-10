@@ -68,7 +68,7 @@ $grains=$spp->getSliceGrains($sliceid);
         <!-- Header -->
         <h3><?php echo $slice['description'];?></h3>
         <h4>(<?php echo $slice['sliceuuid'];?>)</h4>
-        <h5><?php echo count($grainlist). ' '.$slice['slicetype'] ;?>   grains in slice </h5>
+        <h5><?php echo count($grains). ' '.$slice['slicetype'] ;?>   grains in slice </h5>
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
@@ -81,7 +81,7 @@ $grains=$spp->getSliceGrains($sliceid);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <table>
                         <tr><th>UUID</th><th>Grain Key</th><th>Encoding</th><th>Size (bytes)</th><th>Timestamp</th><th>Actions</th></tr>                  
-                        <?php foreach($grainlist as $grain){echo '<tr><td>'.$grain['grain_uuid'].'</td><td>'.$grain['grain_key'].'</td><td>'.$grain['encoding'].'</td><td>'.$grain['grain_size_bytes'].'</td><td>'.$grain['timestamp'].'</td></tr>';}?>
+                        <?php foreach($grains as $grain){echo '<tr><td>'.$grain['grain_uuid'].'</td><td>'.$grain['grain_key'].'</td><td>'.$grain['encoding'].'</td><td>'.$grain['grain_size_bytes'].'</td><td>'.$grain['timestamp'].'</td></tr>';}?>
                     </<table>
                     <div style="clear: both;"></div> 
                 </div>
