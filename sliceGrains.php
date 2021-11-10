@@ -81,9 +81,8 @@ $grains=$spp->getSliceGrains($sliceid);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <table>
                         <tr><th>UUID</th><th>Grain Key</th><th>Encoding</th><th>Size (bytes)</th><th>Timestamp</th><th>Actions</th></tr>                  
-                        <?php foreach($grains as $grain){echo '<tr><td>'.$grain['grain_uuid'].'</td><td>'.$grain['grain_key'].'</td><td>'.$grain['encoding'].'</td><td>'.$grain['grain_size_bytes'].'</td><td>'.$grain['timestamp'].'</td></tr>';}?>
+                        <?php foreach($grains as $grain){echo '<tr><td>'.$grain['grain_uuid'].'</td><td>'.$grain['grain_key'].'</td><td>'.$grain['encoding'].'</td><td>'.$grain['grain_size_bytes'].'</td><td>'.$grain['timestamp'].'</td><td><a href="./streamFilegrain.php?uuid='.$grain['grain_uuid'].'&sliceid='.$sliceid.'"/>Download</a></td></tr>';}?>
                     </<table>
-                    <div style="clear: both;"></div> 
                 </div>
                 <!-- End of Main Content -->
                 
