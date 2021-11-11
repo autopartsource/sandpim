@@ -745,7 +745,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                             </div>
                             <?php
                             } else {
-                                echo 'Part ('.$partnumber.') not found';
+                                echo 'Part '.$partnumber.' not found (<a href="./newPart.php?partnumber='.$partnumber.'">add it</a>)';
                             }
                             ?>
                         </div>

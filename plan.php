@@ -159,7 +159,7 @@ $partcategories=$pim->getPartCategories();
                                         echo '<div class="card">';
                                             echo '<h6 class="card-header">Plan Metadata</h6>';
                                             echo '<div class="card-body">';
-                                                echo '<div style="float:left;"><textarea rows="10" cols="80" id="planmetadata">'.$plan['planmetadata'].'</textarea></div>';
+                                                echo '<div style="float:left;"><textarea id="planmetadata">'.$plan['planmetadata'].'</textarea></div>';
                                                 echo '<div style="float:left;padding-left:5px;"><button type="button" class="btn btn-outline-primary" onclick="updatePlanMetadata();">Update</button><div id="updatingMetadataIndicator"></div></div>';
                                                 echo '<div style="clear:both;"></div>';
                                             echo '</div>';

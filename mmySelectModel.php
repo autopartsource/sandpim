@@ -11,15 +11,13 @@ $vcdb=new vcdb;
 $makeid=intval($_GET['makeid']);
 $models=$vcdb->getModels($makeid);
 
-$groupcount=7;
+$groupcount=4;
 $modelcount=count($models);
-if($modelcount<=70){$groupcount=6;}
-if($modelcount<=60){$groupcount=5;}
-if($modelcount<=40){$groupcount=4;}
 if($modelcount<=30){$groupcount=3;}
 if($modelcount<=20){$groupcount=2;}
 if($modelcount<=10){$groupcount=1;}
 //comment
+//$groupcount=20;
 
 $groupsize=intval(count($models)/$groupcount);
 $i=0; $groupnumber=0; $groupedmodels=array();
@@ -46,7 +44,6 @@ $groupedModelsCount = count($groupedmodels);
             <div class="row padding my-row">
                 <!-- Left Column -->
                 <div class="col-xs-12 col-md-2 my-col colLeft">
-                    
                 </div>
                 
                 <!-- Main Content -->
