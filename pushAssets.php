@@ -5,31 +5,32 @@ include_once(__DIR__.'/class/assetClass.php');
 include_once(__DIR__.'/class/replicationClass.php');
 include_once(__DIR__.'/class/logsClass.php');
 
-$starttime=time();
 
 $pim = new pim();
 $asset=new asset();
 $replication=new replication();
 $logs=new logs();
 
+$allassets=$asset->getAssets('', 'startswith', 'any', 'any',  '2000-01-01' , 'any', '', '', 0);
+$localoids=array(); foreach($allassets as $allasset){$localoids[]=$allasset['oid'];}
+sort($localoids);
+$localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
+$localoidhash= md5($localoidliststring);
+$l=array(); foreach($localoids as $oid){$l[$oid]='';}
+
+  
 $peers=$replication->getPeers('%','asset', 'secondary');
 
 foreach($peers as $peer)
 {
+ $starttime=time();
  if($peer['enabled']==0){continue;}
  $uri=$peer['uri'];
  $pushlimit=$peer['objectlimit'];
-
  $logstring='uri: '.$uri.'; ';
 
-
- $allassets=$asset->getAssets('', 'startswith', 'any', 'any',  '2000-01-01' , 'any', '', '', 0);
- $localoids=array(); foreach($allassets as $allasset){$localoids[]=$allasset['oid'];}
- sort($localoids);
- $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
- $localoidhash= md5($localoidliststring);
-  
  $logstring.='localoids '.count($localoids). '; ';
+ if(count($localoids)!=count($l)){$logstring.='local distinct oid count ('.count($l).') is different than oid count! you have a duplicate oid; ';}
 
  //ask server for a hash of its oids
  $curl = curl_init($uri.'?detail=hash');
@@ -45,18 +46,16 @@ foreach($peers as $peer)
  if(!isset($responsedecoded['hash']))
  {
   $logs->logSystemEvent('replication', 0, 'unexpected response in pushAssets form '.$peer['description'].':'.$resp);    
-  exit;
+  continue; // iterate to next peer
  }
  
-
  if($localoidhash == $responsedecoded['hash'])
  {
   $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no assets pushed');
-  exit;
- }  
+  continue; // iterate to next peer
+ }
     
-// remote system has a differnt hash of its oid's that we do. Ask for a list
- 
+// remote system has a differnt hash of its oid's that we do. Ask for a list 
  $curl = curl_init($uri.'?detail=ids');
  curl_setopt($curl, CURLOPT_URL, $uri.'?detail=ids');
  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -70,14 +69,11 @@ foreach($peers as $peer)
  if(!isset($responsedecoded['oids']))
  {
   $logs->logSystemEvent('replication', 0, 'unexpected response in pushAssets form peer '.$peer['description'].':'.$resp);    
-  exit;
+  continue; // iterate to next peer
  }
  
  // we now have an array of oids from the other system
  $r=array(); foreach($responsedecoded['oids'] as $oid){$r[$oid]='';}
- $l=array(); foreach($localoids as $oid){$l[$oid]='';}
- 
- $logstring.='local distinct oids: '.count($l).'; ';
  $logstring.='remote distinct oids: '.count($r).'; ';
 
  // compare sets of oids to determine what's missing fron remote system
