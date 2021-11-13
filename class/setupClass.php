@@ -402,6 +402,7 @@ class setup
         filesize int unsigned not null,
 	uripublic tinyint unsigned not null,
         languagecode varchar(255) NOT NULL,
+        assetlabel varchar(255) NOT NULL,
         PRIMARY KEY (id),
         INDEX idx_assetid (assetid),
         INDEX idx_oid (oid),

@@ -52,8 +52,9 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     $filesize=intval($_POST['filesize']);
     $uripublic=intval($_POST['uripublic']);
     $languagecode=''; if(isset($_POST['languagecode'])){$languagecode=$_POST['languagecode'];}
-        
-    if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic,$languagecode))
+    $assetlabel=$_POST['assetlabel']; // internal label like "Assembly Guide" or "QC Drawing"    
+    
+    if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic,$languagecode,$assetlabel))
     {
         $error_msg = 'Asset id ' . $id . ' was created.';
         $assetoid=$asset->updateAssetOID($assetid);

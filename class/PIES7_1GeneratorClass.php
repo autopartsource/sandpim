@@ -607,7 +607,9 @@ class PIESgenerator
        $asset->deleteAssetsByAssetid($digitalasset['AssetID']);
       }
       
-      if($asset->addAsset($digitalasset['AssetID'], $digitalasset['FileName'], '', $digitalasset['URI'], $digitalasset['OrientationView'], $digitalasset['ColorMode'], intval($digitalasset['AssetHeight']), intval($digitalasset['AssetWidth']), $digitalasset['UOM'], intval($digitalasset['Resolution']), $digitalasset['Background'], $digitalasset['FileType'], intval($digitalasset['Public']), 1, $digitalasset['Description'], $oid, '', intval($digitalasset['FileSize']), 1,$digitalasset['DescriptionLanguageCode'],$digitalasset['CreatedDate']))
+      $assetLabel='';
+      
+      if($asset->addAsset($digitalasset['AssetID'], $digitalasset['FileName'], '', $digitalasset['URI'], $digitalasset['OrientationView'], $digitalasset['ColorMode'], intval($digitalasset['AssetHeight']), intval($digitalasset['AssetWidth']), $digitalasset['UOM'], intval($digitalasset['Resolution']), $digitalasset['Background'], $digitalasset['FileType'], intval($digitalasset['Public']), 1, $digitalasset['Description'], $oid, '', intval($digitalasset['FileSize']), 1,$digitalasset['DescriptionLanguageCode'],$assetLabel,$digitalasset['CreatedDate']))
       { 
        $asset->connectPartToAsset($partnumber, $digitalasset['AssetID'], $digitalasset['AssetType'], $sequence, $digitalasset['Representation']);
        $asset->logAssetEvent($digitalasset['AssetID'], 0, $partnumber.' connected to asset '.$digitalasset['AssetID'].' as type '.$digitalasset['AssetType'] , '');

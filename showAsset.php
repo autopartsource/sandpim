@@ -145,6 +145,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                             <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode']; ?></td></tr>
                                             <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
                                             <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'], 'Public', 'Private'); ?></td></tr>
+                                            <tr><th>Label</th><td><?php echo $assetrecord['assetlabel']; ?></td></tr>
                                             <tr><th>File Hash</th><td><div style="font-size:50%;"><?php echo $assetrecord['fileHashMD5']; ?></div></td></tr>
                                         </table>
                                     </div>

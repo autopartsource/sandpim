@@ -137,6 +137,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                             <input type="hidden" name="assetwidth" value="<?php echo $assetwidth;?>"/>
                             <div style="padding:10px;">AssetID: <input type="text" name="assetid" value="<?php echo $filename;?>"/></div>
                             <div style="padding:10px;">Description <input name="description" type="text" value="<?php echo $description;?>"/></div>
+                            <div style="padding:10px;">Label <input name="assetlabel" type="text"/></div>
                             <div style="padding:10px;">Orientation <select name="orientationviewcode"><?php foreach ($orientationviewcodes as $orientationviewcode) { ?> <option value="<?php echo $orientationviewcode['code']; ?>"<?php if($orientationviewcode['code']=='TOP'){echo ' selected';}?>><?php echo $orientationviewcode['description']; ?></option><?php } ?></select></div>
                             <div style="padding:10px;">Background <input name="background" type="text" value="<?php echo $background;?>"/></div>
                             <div style="padding:10px;">Color Mode Code <input name="colormodecode" type="text" value="<?php echo $colormodecode;?>"/></div>

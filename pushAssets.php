@@ -121,7 +121,7 @@ foreach($peers as $peer)
   $assetidkeyedassets=array(); 
   foreach($assetstopush as $a)
   {
-   $assetidkeyedassets[$a['assetid']][]=array('id'=>$a['id'],'assetid'=>$a['assetid'],'filename'=>$a['filename'],'localpath'=>$a['localpath'],'uri'=>$a['uri'],'orientationViewCode'=>$a['orientationViewCode'],'colorModeCode'=>$a['colorModeCode'],'assetHeight'=>$a['assetHeight'],'assetWidth'=>$a['assetWidth'],'dimensionUOM'=>$a['dimensionUOM'],'background'=>$a['background'],'fileType'=>$a['fileType'],'createdDate'=>$a['createdDate'],'public'=>$a['public'],'approved'=>$a['approved'],'description'=>$a['description'],'oid'=>$a['oid'],'fileHashMD5'=>$a['fileHashMD5'],'filesize'=>$a['filesize'],'resolution'=>$a['resolution'],'languagecode'=>$a['languagecode']);
+   $assetidkeyedassets[$a['assetid']][]=array('id'=>$a['id'],'assetid'=>$a['assetid'],'filename'=>$a['filename'],'localpath'=>$a['localpath'],'uri'=>$a['uri'],'orientationViewCode'=>$a['orientationViewCode'],'colorModeCode'=>$a['colorModeCode'],'assetHeight'=>$a['assetHeight'],'assetWidth'=>$a['assetWidth'],'dimensionUOM'=>$a['dimensionUOM'],'background'=>$a['background'],'fileType'=>$a['fileType'],'createdDate'=>$a['createdDate'],'public'=>$a['public'],'approved'=>$a['approved'],'description'=>$a['description'],'oid'=>$a['oid'],'fileHashMD5'=>$a['fileHashMD5'],'filesize'=>$a['filesize'],'resolution'=>$a['resolution'],'languagecode'=>$a['languagecode'],'assetlabel'=>$a['assetlabel']);
   }
  
   foreach($assetidkeyedassets as $assetid=>$assetrecords)
