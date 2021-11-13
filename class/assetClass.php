@@ -393,7 +393,7 @@ class asset
    return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
 }
  
- function getAssets($assetid,$assetidsearchtype,$filetype,$orientation,$createddate,$createdsearchtype,$publicprivate,$filehash,$limit)
+ function getAssets($assetid,$assetidsearchtype,$filetype,$orientation,$createddate,$createdsearchtype,$publicprivate,$filehash,$assetlabel,$assetlabelsearchtype,$limit)
  {
   $assets=array(); $db=new mysql; 
   $db->connect();
@@ -409,6 +409,14 @@ class asset
   if($assetidsearchtype=='contains'){$assetidsearch='%'.$assetid.'%';}
   if($assetidsearchtype=='endswith'){$assetidsearch='%'.$assetid;}
   
+  $assetlabel=$this->sqlclean($assetlabel);
+  
+  if($assetlabelsearchtype=='equals'){$assetlabelsearch=$assetlabel;}
+  if($assetlabelsearchtype=='startswith'){$assetlabelsearch=$assetlabel.'%';}
+  if($assetlabelsearchtype=='contains'){$assetlabelsearch='%'.$assetlabel.'%';}
+  if($assetlabelsearchtype=='endswith'){$assetlabelsearch='%'.$assetlabel;}
+  
+   
   if($filetype=='any'){$filetype='%';}
   if($orientation=='any'){$orientation='%';}
   
@@ -423,7 +431,7 @@ class asset
   if($publicprivate=='private'){$publicprivateclause='and public=0';}
   
   if($filehash==''){$filehash='%';}
-  $sql="select * from asset where assetid like '".$assetidsearch."' and fileType like ? and orientationViewCode like ? and createdDate ".$createdsearchtype." ? ".$publicprivateclause." and fileHashMD5 like ?";
+  $sql="select * from asset where assetid like '".$assetidsearch."' and fileType like ? and orientationViewCode like ? and createdDate ".$createdsearchtype." ? ".$publicprivateclause." and fileHashMD5 like ? and assetlabel like '".$assetlabelsearch."'";
    
   if($stmt=$db->conn->prepare($sql))
   {

@@ -11,7 +11,7 @@ $asset=new asset();
 $replication=new replication();
 $logs=new logs();
 
-$allassets=$asset->getAssets('', 'startswith', 'any', 'any',  '2000-01-01' , 'any', '', '', 0);
+$allassets=$asset->getAssets('', 'startswith', 'any', 'any',  '2000-01-01' , 'any', '', '','' ,'startswith', 0);
 $localoids=array(); foreach($allassets as $allasset){$localoids[]=$allasset['oid'];}
 sort($localoids);
 $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
