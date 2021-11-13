@@ -91,7 +91,7 @@ if(strlen($bodyraw)>0)
     $asset->deleteAssetsByAssetid($assetid);
     foreach($a['records'] as $assetrecord)
     {
-     $id=$asset->addAsset($assetid, $assetrecord['filename'], $assetrecord['localpath'], $assetrecord['uri'], $assetrecord['orientationViewCode'], $assetrecord['colorModeCode'], $assetrecord['assetHeight'], $assetrecord['assetWidth'], $assetrecord['dimensionUOM'], $assetrecord['resolution'], $assetrecord['background'], $assetrecord['fileType'], $assetrecord['public'], $assetrecord['approved'], $assetrecord['description'], $assetrecord['oid'], $assetrecord['fileHashMD5'], $assetrecord['filesize'], $assetrecord['public'], $assetrecord['languagecode'],$assetrecord['assetLabel'] ,$assetrecord['createdDate']);
+     $id=$asset->addAsset($assetid, $assetrecord['filename'], $assetrecord['localpath'], $assetrecord['uri'], $assetrecord['orientationViewCode'], $assetrecord['colorModeCode'], $assetrecord['assetHeight'], $assetrecord['assetWidth'], $assetrecord['dimensionUOM'], $assetrecord['resolution'], $assetrecord['background'], $assetrecord['fileType'], $assetrecord['public'], $assetrecord['approved'], $assetrecord['description'], $assetrecord['oid'], $assetrecord['fileHashMD5'], $assetrecord['filesize'], $assetrecord['public'], $assetrecord['languagecode'],$assetrecord['assetlabel'] ,$assetrecord['createdDate']);
      $newassetcount++;
     }
    }
