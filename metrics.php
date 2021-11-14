@@ -37,7 +37,7 @@ $kpi->recordMetric('ACTIVE PARTS MISSING ASSETS', $missingscounts);
 $kpi->recordMetric('ACTIVE PART COUNT', count($allparts));
 
 
-$allassets=$asset->getAssets('', 'startswith', 'any', 'any', '', 'any', 'public', '', '', 'startswith', 1000000);
+$allassets=$asset->getAssets('', 'startswith', 'any', 'any', '', 'any', 'public', '', '', 'startswith', '', 'startswith', 1000000);
 $kpi->recordMetric('PUBLIC ASSET COUNT', count($allassets));
 
 $kpi->recordMetric('ACTIVE APPLICATION COUNT', $pim->countAppsByPartcategories([]));

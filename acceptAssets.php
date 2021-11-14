@@ -22,7 +22,7 @@ $newassetcount=0;  $droppedassetcount=0;
 
 if(isset($_GET['detail']))
 { // get local list of all asset oid's
- $allassets=$asset->getAssets('', 'startswith', 'any', 'any', '2000-01-01', 'any', '', '', '', 'startswith', 0);
+ $allassets=$asset->getAssets('', 'startswith', 'any', 'any', '2000-01-01', 'any', '', '', '', 'startswith', '', 'startswith', 0);
  $oids=array(); foreach($allassets as $allasset){$oids[]=$allasset['oid'];}
  sort($oids);
  $oidliststring=''; foreach($oids as $oid){$oidliststring.=$oid;}

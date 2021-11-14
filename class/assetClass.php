@@ -388,12 +388,12 @@ class asset
  
  function sqlclean($string)
  {
-   $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+   //$string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
    $string = preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
    return preg_replace('/-+/', '-', $string); // Replaces multiple hyphens with single one.
 }
  
- function getAssets($assetid,$assetidsearchtype,$filetype,$orientation,$createddate,$createdsearchtype,$publicprivate,$filehash,$assetlabel,$assetlabelsearchtype,$limit)
+ function getAssets($assetid,$assetidsearchtype,$filetype,$orientation,$createddate,$createdsearchtype,$publicprivate,$filehash,$assetlabel,$assetlabelsearchtype,$filename,$filenamesearchtype,$limit)
  {
   $assets=array(); $db=new mysql; 
   $db->connect();
@@ -401,25 +401,26 @@ class asset
   //because we cant bind parameters with a wildcard, we have to manually build the query string 
   // 
   
-  
   $assetid=$this->sqlclean($assetid);
-  
   if($assetidsearchtype=='equals'){$assetidsearch=$assetid;}
   if($assetidsearchtype=='startswith'){$assetidsearch=$assetid.'%';}
   if($assetidsearchtype=='contains'){$assetidsearch='%'.$assetid.'%';}
   if($assetidsearchtype=='endswith'){$assetidsearch='%'.$assetid;}
   
   $assetlabel=$this->sqlclean($assetlabel);
-  
   if($assetlabelsearchtype=='equals'){$assetlabelsearch=$assetlabel;}
   if($assetlabelsearchtype=='startswith'){$assetlabelsearch=$assetlabel.'%';}
   if($assetlabelsearchtype=='contains'){$assetlabelsearch='%'.$assetlabel.'%';}
   if($assetlabelsearchtype=='endswith'){$assetlabelsearch='%'.$assetlabel;}
   
+  $filename=$this->sqlclean($filename);
+  if($filenamesearchtype=='equals'){$filenamesearch=$filename;}
+  if($filenamesearchtype=='startswith'){$filenamesearch=$filename.'%';}
+  if($filenamesearchtype=='contains'){$filenamesearch='%'.$filename.'%';}
+  if($filenamesearchtype=='endswith'){$filenamesearch='%'.$filename;}
    
   if($filetype=='any'){$filetype='%';}
   if($orientation=='any'){$orientation='%';}
-  
   
   if($createdsearchtype=='any'){$createdsearchtype='like'; $createddate='%';}
   if($createdsearchtype=='from'){$createdsearchtype='>=';}
@@ -431,7 +432,7 @@ class asset
   if($publicprivate=='private'){$publicprivateclause='and public=0';}
   
   if($filehash==''){$filehash='%';}
-  $sql="select * from asset where assetid like '".$assetidsearch."' and fileType like ? and orientationViewCode like ? and createdDate ".$createdsearchtype." ? ".$publicprivateclause." and fileHashMD5 like ? and assetlabel like '".$assetlabelsearch."'";
+  $sql="select * from asset where assetid like '".$assetidsearch."' and fileType like ? and orientationViewCode like ? and createdDate ".$createdsearchtype." ? ".$publicprivateclause." and fileHashMD5 like ? and assetlabel like '".$assetlabelsearch."' and filename like '".$filenamesearch."'";
    
   if($stmt=$db->conn->prepare($sql))
   {

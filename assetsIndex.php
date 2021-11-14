@@ -30,7 +30,7 @@ $assetrecords=array();
 
 if(isset($_GET['submit']) && $_GET['submit']=='Search')
 {
-    $assetrecords=$asset->getAssets($_GET['assetid'],$_GET['assetidsearchtype'],$_GET['filetype'],$_GET['orientation'],$_GET['createddate'],$_GET['createdsearchtype'],$_GET['publicprivate'],$_GET['filehash'],$_GET['assetlabel'],$_GET['assetlabelsearchtype'],$_GET['limit']);
+    $assetrecords=$asset->getAssets($_GET['assetid'],$_GET['assetidsearchtype'],$_GET['filetype'],$_GET['orientation'],$_GET['createddate'],$_GET['createdsearchtype'],$_GET['publicprivate'],$_GET['filehash'],$_GET['assetlabel'],$_GET['assetlabelsearchtype'],$_GET['filename'],$_GET['filenamesearchtype'],$_GET['limit']);
 }
 
 
@@ -105,7 +105,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                 <div class="tab-pane fade show active text-start" id="search" role="tabpanel" aria-labelledby="search-tab">
                                     <div style="padding:10px;">
                                     <form method="get" action="assetsIndex.php">
-                                        <div style="padding:3px;">Asset ID's
+                                        <div style="padding:3px;">Asset ID
                                             <select name="assetidsearchtype">
                                                 <option value="startswith">starting with</option>
                                                 <option value="contains" <?php if(isset($_GET['assetidsearchtype']) && $_GET['assetidsearchtype']=='contains'){echo 'selected';}?>>containing</option>
@@ -126,7 +126,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                                 <option value="ZIP" <?php if(isset($_GET['filetype']) && $_GET['filetype']=='ZIP'){echo 'selected';}?>>ZIP</option>
                                             </select>
                                         </div>                                        
-                                        <div style="padding:3px;">Asset Labels
+                                        <div style="padding:3px;">Asset Label
                                             <select name="assetlabelsearchtype">
                                                 <option value="startswith">starting with</option>
                                                 <option value="contains" <?php if(isset($_GET['assetlabelsearchtype']) && $_GET['assetlabelsearchtype']=='contains'){echo 'selected';}?>>containing</option>
@@ -134,6 +134,14 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                                 <option value="equals" <?php if(isset($_GET['assetlabelsearchtype']) && $_GET['assetlabelsearchtype']=='equals'){echo 'selected';}?>>exactly equal to</option>
                                             </select> <input type="text" name="assetlabel" value="<?php if(isset($_GET['assetlabel'])){echo $_GET['assetlabel']; }?>"/>
                                         </div>
+                                        <div style="padding:3px;">File name
+                                            <select name="filenamesearchtype">
+                                                <option value="startswith">starting with</option>
+                                                <option value="contains" <?php if(isset($_GET['filenamesearchtype']) && $_GET['filenamesearchtype']=='contains'){echo 'selected';}?>>containing</option>
+                                                <option value="endswith" <?php if(isset($_GET['filenamesearchtype']) && $_GET['filenamesearchtype']=='endswith'){echo 'selected';}?>>ending with</option>
+                                                <option value="equals" <?php if(isset($_GET['filenamesearchtype']) && $_GET['filenamesearchtype']=='equals'){echo 'selected';}?>>exactly equal to</option>
+                                            </select> <input type="text" name="filename" value="<?php if(isset($_GET['filename'])){echo $_GET['filename']; }?>"/>
+                                        </div>                           
                                         <div style="padding:3px;">Orientation <select name="orientation"><option value="any">Any</option><?php foreach($orientationviewcodes as $orientationviewcode){?> <option value="<?php echo $orientationviewcode['code'];?>" <?php if(isset($_GET['orientation']) && $_GET['orientation']==$orientationviewcode['code']){echo ' selected';}?>><?php echo $orientationviewcode['description'];?></option><?php }?></select></div>
                                         <div style="padding:3px;">Public/Private
                                             <select name="publicprivate"><option value="any">Any</option>
