@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/configGetClass.php');
+include_once('./class/logsClass.php');
 
 
 $navCategory = 'assets';
@@ -17,6 +18,7 @@ $pim = new pim;
 $asset = new asset;
 $pcdb = new pcdb;
 $configGet= new configGet;
+$logs=new logs;
 
 $allassettypes=$pcdb->getAssetTypeCodes();
 
@@ -32,6 +34,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Delete') {
     $asset->logAssetEvent($_GET['assetid'], $_SESSION['userid'], 'Asset record ('.$_POST['id'].') deleted' , '');
 }
 
+$fixattributes=isset($_GET['fixattributes']);
 
 
 $assetid = $_GET['assetid'];
@@ -120,9 +123,29 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-7 my-col colMain">
-                    <?php foreach ($assetrecords as $assetrecord){
-                         if(strlen($assetrecord['uri'])>0){$imgsrc=$assetrecord['uri'];}
-                         //if(strlen($assetrecord['localpath'])>0){$imgsrc=$configGet->getConfigValue('localImageStorePath').'/'.$assetrecord['localpath'];}
+                    <?php foreach ($assetrecords as $assetrecord)
+                    {
+                        $urifilehash=''; $urifilesize=0; $badattributes=false;
+                         if(strlen($assetrecord['uri'])>0)
+                         {
+                            $imgsrc=$assetrecord['uri'];
+                            if(strlen(trim($assetrecord['uri']))>0)
+                            {
+                                $urifileattributes=$asset->attributesOfAssetAtURI($assetrecord['uri']);
+                                if($urifileattributes)
+                                {
+                                    $urifilehash=$urifileattributes['fileHashMD5']; $urifilesize=$urifileattributes['filesize'];
+                                    if($fixattributes)
+                                    {
+                                        $asset->setAssetHash($assetrecord['id'], $urifilehash);
+                                        $asset->setAssetFilesize($assetrecord['id'], $urifilesize);
+                                        $newoid=$asset->updateAssetOID($assetrecord['id']);
+                                        $asset->logAssetEvent($assetrecord['id'], $_SESSION['userid'], 'hash and/or size updated based on downloaded uri', $newoid);
+                                        
+                                    }
+                                }
+                            }
+                         }
                          ?>
                         <div class="card shadow-sm">
                             <h3 class="card-header text-start">Record for Asset: <span class="text-info"><?php echo $assetid;?></span><div style="float:right;"><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></div></h3>
@@ -133,20 +156,25 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                         <table class="table">
                                             <tr><th>Description</th>
                                                 <td><?php echo $assetrecord['description']; ?></td>
-                                                <td class="mobile" rowspan="13"></td></tr>
+                                                <td class="mobile" rowspan="12"></td></tr>
                                             <tr><th>File Type</th><td><?php echo $assetrecord['fileType']; ?></td></tr>
                                             <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
                                             <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
                                             <tr><th>Background</th><td><?php echo $assetrecord['background']; ?></td></tr>
-                                            <tr><th>File Size</th><td><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></td></tr>
                                             <tr><th>URI</th><td><a target="_blank" href="<?php echo $assetrecord['uri']; ?>">Link</a></td></tr>
+                                            <tr><th>File Size / Hash</th>
+                                                <td>
+                                                    <div style="<?php if($urifilesize!=$assetrecord['filesize']){$badattributes=true; echo 'background-color:#ffff00;';}?>"><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></div>
+                                                    <div style="font-size:50%;<?php if($urifilehash!=$assetrecord['fileHashMD5']){$badattributes=true; echo 'background-color:#ffff00;';}?>"><?php echo $assetrecord['fileHashMD5']; ?></div>
+                                                    <?php if($badattributes){echo '<div><a href="./showAsset.php?assetid='.urldecode($assetid).'&fixattributes">Fix</a></div>';}?>
+                                                </td>
+                                            </tr>
                                             <tr><th>Local Path</th><td><?php echo $assetrecord['localpath']; ?></td></tr>
                                             <tr><th>Orientation</th><td><?php echo $assetrecord['orientationViewCode']; ?></td></tr>
                                             <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode']; ?></td></tr>
                                             <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
                                             <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'], 'Public', 'Private'); ?></td></tr>
                                             <tr><th>Label</th><td><?php echo $assetrecord['assetlabel']; ?></td></tr>
-                                            <tr><th>File Hash</th><td><div style="font-size:50%;"><?php echo $assetrecord['fileHashMD5']; ?></div></td></tr>
                                         </table>
                                     </div>
                                     <div class="col-xs-12 col-md-5">

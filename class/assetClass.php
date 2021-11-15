@@ -301,14 +301,15 @@ class asset
  
  function updateAssetOID($assetid)
  {
-  $db = new mysql; $db->connect();
+  $db = new mysql; $db->connect(); $oid=false;
   if($stmt=$db->conn->prepare('update asset set oid=? where id=?'))
   {
    $oid=$this->newoid();
    $stmt->bind_param('ss', $oid,$assetid);
    $stmt->execute();
-  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }
   $db->close();
+  return $oid;
  }
 
  function newoid()
@@ -590,5 +591,24 @@ class asset
      }
      return $nicevalue;
  }
+ 
+ function attributesOfAssetAtURI($uri)
+ {
+     /* retreive a file from uri and compute hash of it
+      * return false if download failed
+      */
+    $attributes=false;
+    $fixedescapeduri = str_replace(['%2F', '%3A'], ['/', ':'], urlencode($uri)); 
+    $assetfilecontents = file_get_contents($fixedescapeduri);
+    if($assetfilecontents)
+    {
+        $attributes['fileHashMD5']=md5($assetfilecontents); $attributes['filesize']=strlen($assetfilecontents);
+    }
+    return $attributes;
+ }
+ 
+ 
+ 
+ 
  
 }?>
