@@ -89,7 +89,29 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                 xhr.send();
             }
 
+            function updateAsset(assetrecordid,elementtype,elementid)
+            {
+             var value='';
+             if(elementtype=='text'){value=document.getElementById(elementid).value;}
+             if(elementtype=='select')
+             {
+              var e=document.getElementById(elementid);
+              value=e.options[e.selectedIndex].value;
+             }
+             document.getElementById("sandpiperoid").innerHTML='';
 
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdateAsset.php?assetrecordid='+assetrecordid+'&elementid='+elementid+'&value='+encodeURIComponent(value));
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+              document.getElementById("sandpiperoid").innerHTML=response;
+             };
+             xhr.send();
+            }
+            
+            function flagUnsavedLabel(){document.getElementById("btnUpdateLabel").className="btn btn-sm btn-danger";}
+            function unflagUnsavedLabel(){document.getElementById("btnUpdateLabel").className="btn btn-sm btn-outline-secondary";}
             
             
             </script>
@@ -156,7 +178,7 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                         <table class="table">
                                             <tr><th>Description</th>
                                                 <td><?php echo $assetrecord['description']; ?></td>
-                                                <td class="mobile" rowspan="12"></td></tr>
+                                                <td class="mobile" rowspan="13"></td></tr>
                                             <tr><th>File Type</th><td><?php echo $assetrecord['fileType']; ?></td></tr>
                                             <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
                                             <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
@@ -174,7 +196,9 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                             <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode']; ?></td></tr>
                                             <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
                                             <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'], 'Public', 'Private'); ?></td></tr>
-                                            <tr><th>Label</th><td><?php echo $assetrecord['assetlabel']; ?></td></tr>
+                                            <tr><th>Label</th><td><div style="float:left;"><input type="text" id="assetlabel" oninput="flagUnsavedLabel();" value="<?php echo $assetrecord['assetlabel'];?>"/></div><div style="float:left;"><button id="btnUpdateLabel" class="btn btn-sm btn-outline-secondary" onclick="updateAsset('<?php echo $assetrecord['id'];?>','text','assetlabel'); unflagUnsavedLabel();">Update</button></div><div style="clear:both;"></div></td></tr>
+                                            <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $assetrecord['oid']; ?></div></td><tr>
+
                                         </table>
                                     </div>
                                     <div class="col-xs-12 col-md-5">

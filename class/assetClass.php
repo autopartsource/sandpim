@@ -269,13 +269,23 @@ class asset
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('update asset set description=? where assetid=?'))
   {
-   $encodednotes=base64_encode($internalnotes);
+   $encodednotes=base64_encode($description);
    $stmt->bind_param('ss', $encodednotes,$assetid);
    $stmt->execute();
-  } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }
   $db->close();
  }
 
+ function setAssetLabel($id,$label)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set assetlabel=? where id=?'))
+  {
+   $stmt->bind_param('si', $label, $id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
  function setAssetHash($id,$hash)
  {
@@ -298,6 +308,21 @@ class asset
   }
   $db->close();
  }
+ 
+ 
+ function updateAssetOIDbyRecordID($id)
+ {
+  $db = new mysql; $db->connect(); $oid=false;
+  if($stmt=$db->conn->prepare('update asset set oid=? where id=?'))
+  {
+   $oid=$this->newoid();
+   $stmt->bind_param('si', $oid,$id);
+   $stmt->execute();
+  }
+  $db->close();
+  return $oid;
+ }
+
  
  function updateAssetOID($assetid)
  {

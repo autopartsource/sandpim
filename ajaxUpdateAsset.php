@@ -15,38 +15,46 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 session_start();
 $asset=new asset;
 
-//$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, print_r($_GET,true)).'*'; fclose($fp);
+$oid='';
 
-if(isset($_SESSION['userid']) && isset($_GET['assetid']) && isset($_GET['elementid']) && isset($_GET['value']))
+if(isset($_SESSION['userid']) && isset($_GET['assetrecordid']) && isset($_GET['elementid']) && isset($_GET['value']))
 {
- $assetid=$_GET['assetid'];
- $userid=$_SESSION['userid'];
-
- switch($_GET['elementid'])
+ $assetrecordid=intval($_GET['assetrecordid']);
+ $userid=intval($_SESSION['userid']);
+ $value=$_GET['value'];
+ 
+ if($a=$asset->getAssetById($assetrecordid))
  {
-  case 'description':
-  if(isset($_GET['description']))
+  
+  switch($_GET['elementid'])
   {
-   $asset->setAssetDescription($assetid,$_GET['description']);
-  // $pim->logAppEvent($appid,$userid,'parttype changed to:'.intval($_GET['value']),$oid);
+   case 'description':
+    $asset->setAssetDescription($assetrecordid,$value);
+    $oid=$asset->updateAssetOIDbyRecordID($assetrecordid);
+    $asset->logAssetEvent($a['assetid'], $userid, 'updated asset description', $oid);
+    break;
+
+   case 'public':
+    $asset->toggleAssetPublic($assetrecordid);
+    $oid=$asset->updateAssetOIDbyRecordID($assetrecordid);
+    $asset->logAssetEvent($a['assetid'], $userid, 'toggled public attribute', $oid);
+    break;
+
+   case 'uripublic':
+    $asset->toggleAssetUriPublic($assetrecordid);
+    $oid=$asset->updateAssetOIDbyRecordID($assetrecordid);
+    $asset->logAssetEvent($a['assetid'], $userid, 'toggled uripublic attribute', $oid);
+    break;
+
+   case 'assetlabel':
+    $asset->setAssetLabel($assetrecordid, $value);
+    $oid=$asset->updateAssetOIDbyRecordID($assetrecordid);
+    $asset->logAssetEvent($a['assetid'], $userid, 'assetlabel updated to '.$value, $oid);
+    break;
+
+   default: break;
   }
-  break;
 
-  case 'public':
-  $asset->toggleAssetPublic($assetid);
-      
-//  $pim->logAppEvent($appid,$userid,'cosmetic toggled',$oid);
-  break;
-
-  case 'uripublic':
-  $asset->toggleAssetUriPublic($assetid);
-  //$pim->logAppEvent($appid,$userid,'cosmetic toggled',$oid);
-  break;
-
-
-  default:
-  break;
+  echo $oid;
  }
-
- echo $oid;
 }?>
