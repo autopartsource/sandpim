@@ -40,6 +40,7 @@ $fixattributes=isset($_GET['fixattributes']);
 $assetid = $_GET['assetid'];
 $assetrecords=$asset->getAssetRecordsByAssetid($assetid);
 $connectedparts=$asset->getPartsConnectedToAsset($assetid);
+$orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
 
 ?>
 <!DOCTYPE html>
@@ -192,13 +193,12 @@ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
                                                 </td>
                                             </tr>
                                             <tr><th>Local Path</th><td><?php echo $assetrecord['localpath']; ?></td></tr>
-                                            <tr><th>Orientation</th><td><?php echo $assetrecord['orientationViewCode']; ?></td></tr>
+                                            <tr><th>Orientation</th><td><select id="orientationviewcode"  onchange="updateAsset(<?php echo $assetrecord['id']; ?>,'select','orientationviewcode');"><?php foreach ($orientationviewcodes as $orientationviewcode) { ?> <option value="<?php echo $orientationviewcode['code']; ?>"<?php if($orientationviewcode['code']==$assetrecord['orientationViewCode']){echo ' selected';}?>><?php echo $orientationviewcode['description']; ?></option><?php } ?></select></td></tr>                                           
                                             <tr><th>Color Mode</th><td><?php echo $assetrecord['colorModeCode']; ?></td></tr>
                                             <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
-                                            <tr><th>Public</th><td><?php echo $asset->niceBoolText($assetrecord['public'], 'Public', 'Private'); ?></td></tr>
-                                            <tr><th>Label</th><td><div style="float:left;"><input type="text" id="assetlabel" oninput="flagUnsavedLabel();" value="<?php echo $assetrecord['assetlabel'];?>"/></div><div style="float:left;"><button id="btnUpdateLabel" class="btn btn-sm btn-outline-secondary" onclick="updateAsset('<?php echo $assetrecord['id'];?>','text','assetlabel'); unflagUnsavedLabel();">Update</button></div><div style="clear:both;"></div></td></tr>
+                                            <tr><th>Public/Private</th><td><select id="public" onchange="updateAsset(<?php echo $assetrecord['id']; ?>,'select','public');"><option value="0"<?php if($assetrecord['public']==0){echo ' selected';} ?>>Private</option>            <option value="1"<?php if($assetrecord['public']==1){echo ' selected';} ?>>Public</option></select></td></tr>
+                                            <tr><th>Internal Label</th><td><div style="float:left;"><input type="text" id="assetlabel" oninput="flagUnsavedLabel();" value="<?php echo $assetrecord['assetlabel'];?>"/></div><div style="float:left;"><button id="btnUpdateLabel" class="btn btn-sm btn-outline-secondary" onclick="updateAsset('<?php echo $assetrecord['id'];?>','text','assetlabel'); unflagUnsavedLabel();">Update</button></div><div style="clear:both;"></div></td></tr>
                                             <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $assetrecord['oid']; ?></div></td><tr>
-
                                         </table>
                                     </div>
                                     <div class="col-xs-12 col-md-5">

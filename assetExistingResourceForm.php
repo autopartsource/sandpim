@@ -142,7 +142,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                             <div style="padding:10px;">Background <input name="background" type="text" value="<?php echo $background;?>"/></div>
                             <div style="padding:10px;">Color Mode Code <input name="colormodecode" type="text" value="<?php echo $colormodecode;?>"/></div>
                             <div style="padding:10px;">Resolution <input name="resolution" type="text" value="300"/></div>
-                            <div style="padding:10px;">Public <input name="public" type="text" value="<?php echo $public;?>"/></div>
+                            <div style="padding:10px;"><label><input name="public" type="checkbox" <?php if($public==1){echo 'checked="checked"';}?>/>Public Asset</label></div>
                             <div style="padding:10px;">URI <input name="uri" value="<?php echo $uri;?>"/></div>
                             <div style="padding:10px;"><label><input type="checkbox" id="uripublic" name="uripublic" checked="checked"/>URI is for public consumption</label></div>
                             <div style="padding:10px;"><input type="checkbox" name="discardlocal" checked="checked"/>Discard local copy</div>

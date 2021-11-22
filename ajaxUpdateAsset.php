@@ -34,16 +34,22 @@ if(isset($_SESSION['userid']) && isset($_GET['assetrecordid']) && isset($_GET['e
     $asset->logAssetEvent($a['assetid'], $userid, 'updated asset description', $oid);
     break;
 
-   case 'public':
-    $asset->toggleAssetPublic($assetrecordid);
+   case 'orientationviewcode':
+    $asset->setAssetOrientationviewcode($assetrecordid, $value);
     $oid=$asset->updateAssetOIDbyRecordID($assetrecordid);
-    $asset->logAssetEvent($a['assetid'], $userid, 'toggled public attribute', $oid);
+    $asset->logAssetEvent($a['assetid'], $userid, 'orientationviewcode attribute changed to '.$value, $oid);
+    break;
+
+   case 'public':
+    $asset->setAssetPublic($assetrecordid, $value);
+    $oid=$asset->updateAssetOIDbyRecordID($assetrecordid);
+    $asset->logAssetEvent($a['assetid'], $userid, 'public attribute changed to '.$value, $oid);
     break;
 
    case 'uripublic':
-    $asset->toggleAssetUriPublic($assetrecordid);
+    $asset->setAssetUriPublic($assetrecordid, $value);
     $oid=$asset->updateAssetOIDbyRecordID($assetrecordid);
-    $asset->logAssetEvent($a['assetid'], $userid, 'toggled uripublic attribute', $oid);
+    $asset->logAssetEvent($a['assetid'], $userid, 'uripublic attribute changed to '.$value, $oid);
     break;
 
    case 'assetlabel':

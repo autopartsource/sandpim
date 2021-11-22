@@ -44,13 +44,13 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     $resolution=intval($_POST['resolution']);
     $background=$_POST['background'];
     $filetype=$_POST['filetype'];
-    $public=intval($_POST['public']);
+    $public=0; if(isset($_POST['public']) && $_POST['public']=='checked'){$public=1;}
     $approved=1;
     $description=$_POST['description'];
     $oid = $pim->newoid();
     $filehash=$_POST['filehash'];
     $filesize=intval($_POST['filesize']);
-    $uripublic=intval($_POST['uripublic']);
+    $uripublic=0; if(isset($_POST['uripublic']) && $_POST['uripublic']=='checked'){$uripublic=1;}
     $languagecode=''; if(isset($_POST['languagecode'])){$languagecode=$_POST['languagecode'];}
     $assetlabel=$_POST['assetlabel']; // internal label like "Assembly Guide" or "QC Drawing"    
     

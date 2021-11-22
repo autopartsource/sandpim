@@ -287,6 +287,19 @@ class asset
   $db->close();
  }
  
+ function setAssetOrientationviewcode($id,$orientationviewcode)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set orientationviewcode=? where id=?'))
+  {
+   $stmt->bind_param('si', $orientationviewcode, $id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+
+
  function setAssetHash($id,$hash)
  {
   $db = new mysql; $db->connect();
@@ -356,9 +369,21 @@ class asset
   {
    $stmt->bind_param('i', $id);
    $stmt->execute();
-  } //else{print_r($db->conn->error);}
+  }
   $db->close();
  }
+
+ function setAssetPublic($id,$piblic)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set public=? where id=?'))
+  {
+   $stmt->bind_param('ii', $piblic, $id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
  
  function toggleAssetUriPublic($assetid)
  {
@@ -367,10 +392,20 @@ class asset
   {
    $stmt->bind_param('s', $assetid);
    $stmt->execute();
-  } //else{print_r($db->conn->error);}
+  }
   $db->close();
  }
 
+ function setAssetUriPublic($id,$public)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set uripublic=? where id=?'))
+  {
+   $stmt->bind_param('ii', $public, $id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
 
  function getRecentAssets($limit)
  {
