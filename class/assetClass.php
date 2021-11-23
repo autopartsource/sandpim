@@ -197,6 +197,26 @@ class asset
   return $assets;
  }
  
+ function getOrphanPartAssetRecords()
+ {
+  $db=new mysql; $db->connect(); $connections=array();
+  if($stmt=$db->conn->prepare('select part_asset.* from part_asset left join asset on part_asset.assetid = asset.assetid where asset.id is null;'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+      $connections[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'assetid'=>$row['assetid'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation']);
+    }
+   }
+  }
+  $db->close();
+  return $connections;
+ }
+ 
+ 
+ 
  function deleteAssetRecord($id)
  {
   $db = new mysql; $db->connect();

@@ -53,7 +53,6 @@ $metricsACTIVEAPPLICATIONCOUNT=$kpi->getMetric('ACTIVE APPLICATION COUNT', date(
 $jobstemp=$pim->getBackgroundjobs('%', '%');
 $myjobs=array(); foreach($jobstemp as $job){if($job['userid']==$_SESSION['userid']){$myjobs[]=$job;}}
 
-
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
 ?>
 <!DOCTYPE html>
@@ -366,7 +365,12 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
             </div>
         </div>
                 <!-- Right Column -->
-                <div class="col-xs-12 col-md-2 my-col colRight"></div>
+                <div class="col-xs-12 col-md-2 my-col colRight">
+                    
+                    <?php //print_r($orphans);?>
+                    
+                    
+                </div>
     </div>
 </div>
 </div>

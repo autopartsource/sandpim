@@ -44,16 +44,15 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
     $resolution=intval($_POST['resolution']);
     $background=$_POST['background'];
     $filetype=$_POST['filetype'];
-    $public=0; if(isset($_POST['public']) && $_POST['public']=='checked'){$public=1;}
+    $public=0; if(isset($_POST['public']) && $_POST['public']=='on'){$public=1;}
     $approved=1;
     $description=$_POST['description'];
     $oid = $pim->newoid();
     $filehash=$_POST['filehash'];
     $filesize=intval($_POST['filesize']);
-    $uripublic=0; if(isset($_POST['uripublic']) && $_POST['uripublic']=='checked'){$uripublic=1;}
+    $uripublic=0; if(isset($_POST['uripublic']) && $_POST['uripublic']=='on'){$uripublic=1;}
     $languagecode=''; if(isset($_POST['languagecode'])){$languagecode=$_POST['languagecode'];}
     $assetlabel=$_POST['assetlabel']; // internal label like "Assembly Guide" or "QC Drawing"    
-    
     if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic,$languagecode,$assetlabel))
     {
         $error_msg = 'Asset id ' . $id . ' was created.';

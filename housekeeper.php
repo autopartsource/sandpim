@@ -7,6 +7,7 @@
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/logsClass.php');
+include_once(__DIR__.'/class/assetClass.php');
 include_once(__DIR__.'/class/configGetClass.php');
 
 $starttime=time();
@@ -14,7 +15,21 @@ $starttime=time();
 $pim=new pim();
 $configGet = new configGet();
 $logs=new logs();
+$asset=new asset();
 
+
+// delete (and document) orphan records in part_asset table (assets that were deleted and left behind a part connection)
+$orphans=$asset->getOrphanPartAssetRecords();
+foreach($orphans as $orphan)
+{
+ $asset->disconnectPartFromAsset($orphan['partnumber'], $orphan['id']);
+ $newoid=$pim->updatePartOID($orphan['partnumber']);
+ $pim->logPartEvent($orphan['partnumber'], 0, 'orphan asset connection to ['.$orphan['assetid'].'] was deleted by housekeeper', $newoid);
+}
+if(count($orphans))
+{
+ $logs->logSystemEvent('housekeeper', 0, 'Background houskeeper deleted '.count($orphans).' orphan part_asset records');    
+}
 
 // PIO re-calc for all active parts
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
@@ -46,8 +61,6 @@ else
  $logs->logSystemEvent('housekeeper', 0, 'Background housekeeper skipped part VIO updates because VIOdefaultGeography or VIOdefaultYearQuarter is not set in the config.'); 
 }
 $logs->logSystemEvent('housekeeper', 0, 'Background houskeeper updated VIO counts on '.$updatedpartcount. ' parts.'); 
-
-
 
 
 
