@@ -561,7 +561,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                 {
                     if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='')
                     {
-                        echo '<div><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></div>';
+                        echo '<div><a href="./showAsset.php?assetid='.$connectedasset['assetid'].'"><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></a></div>';
                         break;
                     }
                 }
@@ -570,7 +570,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                 {
                     if($connectedasset['assettypecode']!='P04' && $connectedasset['filetype']=='JPG' && $connectedasset['uri']!='')
                     {
-                        echo '<div><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></div>';
+                        echo '<div><a href="./showAsset.php?assetid='.$connectedasset['assetid'].'"><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></a></div>';
                     }
                 }
 
