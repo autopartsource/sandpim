@@ -184,7 +184,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                             <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
                                             <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
                                             <tr><th>Background</th><td><?php echo $assetrecord['background']; ?></td></tr>
-                                            <tr><th>URI</th><td><a target="_blank" href="<?php echo $assetrecord['uri']; ?>">Link</a></td></tr>
+                                            <tr><th>URI</th><td><a href="<?php echo $assetrecord['uri']; ?>">Link</a></td></tr>
                                             <tr><th>File Size / Hash</th>
                                                 <td>
                                                     <div style="<?php if($urifilesize!=$assetrecord['filesize']){$badattributes=true; echo 'background-color:#ffff00;';}?>"><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></div>
@@ -202,7 +202,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                         </table>
                                     </div>
                                     <div class="col-xs-12 col-md-5">
-                                        <img class="img-thumbnail" src="<?php echo $imgsrc; ?>"/>
+                                        <a target="_blank" href="<?php echo $assetrecord['uri']; ?>"><img class="img-thumbnail" src="<?php echo $imgsrc; ?>"/></a>
                                     </div>
                                 </div>
                             </div>
