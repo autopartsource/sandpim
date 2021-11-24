@@ -17,6 +17,13 @@ $packaging = new packaging();
 $asset = new asset();
 $logs=new logs();
 
+
+$localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 999999);
+$localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
+sort($localoids);
+$localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
+$localoidhash= md5($localoidliststring);
+
 $peers=$replication->getPeers('%','part', 'secondary');
 
 foreach($peers as $peer)
@@ -25,16 +32,7 @@ foreach($peers as $peer)
  $uri=$peer['uri'];
  $pushlimit=$peer['objectlimit'];
  
- $logstring='uri: '.$uri.'; ';
-
-
- $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 999999);
- $localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
- sort($localoids);
- $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
- $localoidhash= md5($localoidliststring);
- 
- $logstring.='localoids '.count($localoids). '; ';
+ $logstring='uri: '.$uri.'; localoids: '.count($localoids). '; ';
  
  //ask server for a hash of its oids
  $curl = curl_init($uri.'?detail=hash');
@@ -50,14 +48,14 @@ foreach($peers as $peer)
  if(!isset($responsedecoded['hash']))
  {
   $logs->logSystemEvent('partpusher', 0, 'unexpected response in pushParts form '.$peer['description'].':'.$resp);    
-  exit;
+  continue; // iterate to next peer
  }
  
 
  if($localoidhash == $responsedecoded['hash'])
  {
   $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no parts pushed');
-  exit;
+  continue; // iterate to next peer
  }  
     
 // remote system has a differnt hash of its oid's that we do. Ask for a list
@@ -75,7 +73,7 @@ foreach($peers as $peer)
  if(!isset($responsedecoded['oids']))
  {
   $logs->logSystemEvent('replication', 0, 'unexpected response in pushParts form '.$peer['description'].':'.$resp);    
-  exit;
+  continue; // iterate to next peer
  }
  
  // we now have an array of oids from the remote (secondary) system
@@ -118,6 +116,8 @@ foreach($peers as $peer)
    $p['assetconnections']=$assetconnections;
    $partstopush[]=$p;
   }
+  if(count($partstopush)>= $pushlimit){break;} // limit pushlias
+  
  }
 
  $logstring.='local parts to push: '.count($partstopush).'; ';
@@ -160,7 +160,5 @@ foreach($peers as $peer)
   $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($partstopush).'/'.count($oidstodrop).' parts to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
  }
 
- 
 }
- 
 ?>
