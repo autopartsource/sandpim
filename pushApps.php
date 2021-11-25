@@ -43,14 +43,14 @@ foreach($peers as $peer)
  
  if(!array_key_exists('hash',$responsedecoded))
  {
-  $logs->logSystemEvent('apppusher', 0, 'unexpected response form '.$peer['description'].':'.$resp);    
+  $logs->logSystemEvent('replication', 0, 'unexpected response form '.$peer['description'].':'.$resp);    
   continue;
  }
  
  
  if($localoidhash == $responsedecoded['hash'])
  {
-  $logs->logSystemEvent('apppusher', 0, 'remote hash on '.$peer['description'].' equals local hash - no apps pushed');
+  $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no apps pushed');
   continue;
  }  
     
@@ -68,7 +68,7 @@ foreach($peers as $peer)
  
  if(!array_key_exists('oids',$responsedecoded))
  {
-  $logs->logSystemEvent('apppusher', 0, 'unexpected response form '.$peer['description'].':'.$resp);
+  $logs->logSystemEvent('replication', 0, 'unexpected response form '.$peer['description'].':'.$resp);
   continue;
  }
  
@@ -133,7 +133,7 @@ foreach($peers as $peer)
   $resp=curl_exec($curl);
   curl_close($curl);
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('apppusher', 0, 'pushed/dropped '.count($appstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
+  $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($appstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
  }
 
 }

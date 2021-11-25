@@ -134,6 +134,27 @@ class logs {
         return $sorted;
     }
 
+    function getAssetEvents($assetid,$limit)
+    {
+        $db = new mysql; $db->connect(); $events = array();
+        if($stmt = $db->conn->prepare('select * from asset_history where assetid=? order by id desc limit ?'))
+        {
+            $stmt->bind_param('si', $assetid, $limit);
+            $stmt->execute();
+            $db->result = $stmt->get_result();
+            while ($row = $db->result->fetch_assoc())
+            {
+                $events[] = array('id' => $row['id'], 'assetid' => $row['assetid'], 'eventdatetime' => $row['eventdatetime'], 'userid' => $row['userid'], 'description' => $row['description'], 'new_oid' => $row['new_oid']);
+            }
+        }
+
+        $db->close();
+        return $events;
+    }
+
+    
+    
+    
 }
 
 ?>

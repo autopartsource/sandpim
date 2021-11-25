@@ -171,7 +171,20 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                          }
                          ?>
                         <div class="card shadow-sm">
-                            <h3 class="card-header text-start">Record for Asset: <span class="text-info"><?php echo $assetid;?></span><div style="float:right;"><form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>"><input type="submit" name="submit" value="Delete"/><input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/><input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/></form></div></h3>
+                            <h3 class="card-header text-start">
+                                Asset <span class="text-info"><?php echo $assetid;?></span>
+                                <div style="float:right;">
+                                    <form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>">
+                                        <input type="submit" name="submit" value="Delete"/>
+                                        <input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/>
+                                        <input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/>
+                                    </form>
+                                </div>
+                                <div style="float:right;">
+                                    <a class="btn btn-secondary" href="./assetHistory.php?assetid=<?php echo urlencode($assetid); ?>">History</a>
+                                </div>
+                                <div style="clear:both;"></div>
+                            </h3>
                             
                             <div class="card-body">
                                 <div class="row g-0">
@@ -201,9 +214,11 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                             <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $assetrecord['oid']; ?></div></td><tr>
                                         </table>
                                     </div>
+                                    <?php if($assetrecord['fileType']=='JPG' || $assetrecord['fileType']=='PNG'){?>
                                     <div class="col-xs-12 col-md-5">
                                         <a target="_blank" href="<?php echo $assetrecord['uri']; ?>"><img class="img-thumbnail" src="<?php echo $imgsrc; ?>"/></a>
                                     </div>
+                                    <?php }?>
                                 </div>
                             </div>
                         </div>
@@ -244,7 +259,6 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
             </div>
         </div>    
         <!-- End of Content Container -->
-                
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
     </body>

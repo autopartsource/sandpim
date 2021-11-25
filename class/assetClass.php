@@ -4,11 +4,26 @@ include_once("mysqlClass.php");
 class asset
 {
 
+ function validAsset($assetid)
+ {
+  $db=new mysql; $db->connect(); $returnval=array();
+  if($stmt=$db->conn->prepare('select * from asset where assetid=?'))
+  {
+   $stmt->bind_param('s',$assetid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $returnval=true;
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
+    
  function addAsset($assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic,$languagecode,$assetlabel,$createddate=false)
  {
-  $id=false;
-  $db=new mysql; 
-  $db->connect();
+  $db=new mysql; $db->connect(); $id=false;
 
   $created=date('Y-m-d');
   if($createddate){$created=$createddate;}
@@ -29,10 +44,7 @@ class asset
 
  function getAssetRecordsByAssetid($assetid)
  {
-  $records=array();
-  $db=new mysql; 
-  $db->connect();
-  
+  $db=new mysql; $db->connect(); $records=array();
   if($stmt=$db->conn->prepare('select * from asset where assetid=?'))
   {
    $stmt->bind_param('s',$assetid);
@@ -47,12 +59,9 @@ class asset
   return $records;   
  }
  
-
  function getAssetById($id)
  {
-  $asset=false;
-  $db=new mysql; $db->connect();
-  
+  $db=new mysql; $db->connect(); $asset=false;
   if($stmt=$db->conn->prepare('select * from asset where id=?'))
   {
    $stmt->bind_param('i',$id);
@@ -69,8 +78,7 @@ class asset
  
  function connectPartToAsset($part,$assetid,$assettypecode,$sequence,$representation)
  {
-  $id=false;
-  $db=new mysql; $db->connect();
+  $db=new mysql; $db->connect(); $id=false;
   if($stmt=$db->conn->prepare('insert into part_asset (id,partnumber,assetid,assettypecode,sequence,representation) values(null,?,?,?,?,?)'))
   {   
    $stmt->bind_param('sssis',$part,$assetid,$assettypecode,$sequence,$representation);
@@ -78,7 +86,6 @@ class asset
    $id=$db->conn->insert_id;
   }
   $db->close();
-  
   return $id;   
  }
  
@@ -113,9 +120,7 @@ class asset
  
  function getPartsConnectedToAsset($assetid)
  {
-  $connections=array();
-  $db=new mysql; $db->connect();
-  
+  $db=new mysql; $db->connect(); $connections=array();
   if($stmt=$db->conn->prepare('select * from part_asset where assetid=? order by partnumber'))
   {
    $stmt->bind_param('s',$assetid);
@@ -132,11 +137,8 @@ class asset
  
  function getAssetsConnectedToPart($partnumber,$excludenonpublic=false)
  {
-  $db=new mysql; $db->connect();
-  $connections=array();
-  
+  $db=new mysql; $db->connect(); $connections=array();
   $publicclause=''; if($excludenonpublic){$publicclause=' and public=1';}
-  
   if($stmt=$db->conn->prepare('select part_asset.id as connectionid, partnumber,assettypecode,sequence,representation, asset.* from part_asset,asset where part_asset.assetid=asset.assetid and partnumber=? '.$publicclause.' order by sequence'))
   {
    if($stmt->bind_param('s',$partnumber))
@@ -157,9 +159,7 @@ class asset
 
  function getAssetByPartConnectionid($connectionid)
  {
-  $db=new mysql; $db->connect();
-  $asset=false;
-  
+  $db=new mysql; $db->connect(); $asset=false;
   if($stmt=$db->conn->prepare('select * from part_asset,asset where part_asset.assetid=asset.assetid and part_asset.id=? order by sequence'))
   {
    if($stmt->bind_param('i',$connectionid))
@@ -180,8 +180,7 @@ class asset
 
  function getUnconnecteddAssets()
  {
-  $db=new mysql; $db->connect();
-  $assets=array();
+  $db=new mysql; $db->connect(); $assets=array();
   if($stmt=$db->conn->prepare('select asset.id,asset.assetid,uri,filetype from asset left join part_asset on asset.assetid = part_asset.assetid where part_asset.assetid is null'))
   {
    if($stmt->execute())
@@ -243,9 +242,6 @@ class asset
   $db->close();
  }
  
-
- 
- 
  function deleteAssetsByAssetid($assetid)
  {
   $db = new mysql; $db->connect();
@@ -266,8 +262,6 @@ class asset
 // need to delete (unlink) local file if it exists  
  }
   
- 
- 
  function primaryPhotoURIofPart($partnumber)
  {
   $returnval=false;
@@ -282,7 +276,6 @@ class asset
   }
   return $returnval;
  }
- 
  
  function setAssetDescription($assetid,$description)
  {
