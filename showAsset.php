@@ -146,11 +146,20 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                 
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-7 my-col colMain">
+
+                    <h3 class="card-header text-start">Asset <span class="text-info"><?php echo $assetid;?></span>
+                        <div style="float:right;">
+                            <a class="btn btn-secondary" href="./assetHistory.php?assetid=<?php echo urlencode($assetid); ?>">History</a>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </h3>
+                    
+                    
                     <?php foreach ($assetrecords as $assetrecord)
                     {
                         $urifilehash=''; $urifilesize=0; $badattributes=false;
-                         if(strlen($assetrecord['uri'])>0)
-                         {
+                        if(strlen($assetrecord['uri'])>0)
+                        {
                             $imgsrc=$assetrecord['uri'];
                             if(strlen(trim($assetrecord['uri']))>0)
                             {
@@ -163,28 +172,13 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                         $asset->setAssetHash($assetrecord['id'], $urifilehash);
                                         $asset->setAssetFilesize($assetrecord['id'], $urifilesize);
                                         $newoid=$asset->updateAssetOID($assetrecord['id']);
-                                        $asset->logAssetEvent($assetrecord['id'], $_SESSION['userid'], 'hash and/or size updated based on downloaded uri', $newoid);
-                                        
+                                        $asset->logAssetEvent($assetrecord['id'], $_SESSION['userid'], 'hash and/or size updated based on downloaded uri', $newoid);                                       
                                     }
                                 }
                             }
-                         }
+                        }
                          ?>
                         <div class="card shadow-sm">
-                            <h3 class="card-header text-start">
-                                Asset <span class="text-info"><?php echo $assetid;?></span>
-                                <div style="float:right;">
-                                    <form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>">
-                                        <input type="submit" name="submit" value="Delete"/>
-                                        <input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/>
-                                        <input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/>
-                                    </form>
-                                </div>
-                                <div style="float:right;">
-                                    <a class="btn btn-secondary" href="./assetHistory.php?assetid=<?php echo urlencode($assetid); ?>">History</a>
-                                </div>
-                                <div style="clear:both;"></div>
-                            </h3>
                             
                             <div class="card-body">
                                 <div class="row g-0">
@@ -192,7 +186,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                         <table class="table">
                                             <tr><th>Description</th>
                                                 <td><?php echo $assetrecord['description']; ?></td>
-                                                <td class="mobile" rowspan="13"></td></tr>
+                                                <td class="mobile" rowspan="16"></td></tr>
                                             <tr><th>File Type</th><td><?php echo $assetrecord['fileType']; ?></td></tr>
                                             <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
                                             <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
@@ -217,6 +211,13 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                     <?php if($assetrecord['fileType']=='JPG' || $assetrecord['fileType']=='PNG'){?>
                                     <div class="col-xs-12 col-md-5">
                                         <a target="_blank" href="<?php echo $assetrecord['uri']; ?>"><img class="img-thumbnail" src="<?php echo $imgsrc; ?>"/></a>
+                                    </div>
+                                    <div>
+                                        <form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>">
+                                            <input type="submit" name="submit" value="Delete"/>
+                                            <input type="hidden" name="id" value="<?php echo $assetrecord['id']; ?>"/>
+                                            <input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/>
+                                        </form>
                                     </div>
                                     <?php }?>
                                 </div>
