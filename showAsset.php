@@ -5,8 +5,15 @@ include_once('./class/pcdbClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/logsClass.php');
 
-
 $navCategory = 'assets';
+
+$pim = new pim;
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// ip-based ACL enforcement - bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'showAsset.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -14,13 +21,13 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
-$pim = new pim;
 $asset = new asset;
 $pcdb = new pcdb;
 $configGet= new configGet;
 $logs=new logs;
 
 $allassettypes=$pcdb->getAssetTypeCodes();
+$orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Connect') {
 
@@ -36,11 +43,16 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Delete') {
 
 $fixattributes=isset($_GET['fixattributes']);
 
-
 $assetid = $_GET['assetid'];
-$assetrecords=$asset->getAssetRecordsByAssetid($assetid);
-$connectedparts=$asset->getPartsConnectedToAsset($assetid);
-$orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
+if($asset->validAsset($assetid))
+{
+ $assetrecords=$asset->getAssetRecordsByAssetid($assetid);
+ $connectedparts=$asset->getPartsConnectedToAsset($assetid);
+}
+else
+{// passed-in asset is not valid - blank it out of caution 
+ $assetid='';
+}
 
 ?>
 <!DOCTYPE html>
@@ -249,7 +261,7 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                 <?php }?>
                             </div>
                             <div class="tab-pane fade m-3" id="newconnection" role="tabpanel" aria-labelledby="newconnection-tab">
-                                <input type="text" id="partnumber" size="8"/> 
+                                Partnumber <input type="text" id="partnumber" size="8"/> 
                                 <select id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
                                 <select id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
                                 <button onclick="connectPart('<?php echo $assetid;?>')">Connect</button>
