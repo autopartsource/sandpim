@@ -45,6 +45,24 @@ class logs {
         return $events;
     }
 
+    function getSystemEvent($id)
+    {
+        $db = new mysql; $db->connect();  $event = false;
+
+        if ($stmt = $db->conn->prepare('select * from system_history where id=?')) 
+        {
+            $stmt->bind_param('i', $id);
+            $stmt->execute();
+            $db->result = $stmt->get_result();
+            while ($row = $db->result->fetch_assoc()) 
+            {
+                $event = array('id' => $row['id'], 'eventdatetime' => $row['eventdatetime'], 'eventtype' => $row['eventtype'], 'userid' => $row['userid'], 'description' => $row['description']);
+            }
+        }
+        $db->close();
+        return $event;
+    }
+    
     function getAppsEvents($limit) {
         $db = new mysql;
         $db->connect();

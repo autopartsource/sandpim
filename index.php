@@ -349,7 +349,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                                 if (strlen  ($nicedescription) > $logpreviewlength) {
                                                     $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
                                                 }
-                                                echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td><code>' . $nicedescription . '</code></td></tr>';
+                                                echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td><code>' . $nicedescription . '</code></td></tr>';
                                             }
                                             echo '</table></div>';
                                         }      
