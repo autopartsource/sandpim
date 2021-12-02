@@ -112,6 +112,7 @@ else
               value=e.options[e.selectedIndex].value;
              }
              document.getElementById("sandpiperoid").innerHTML='';
+             document.getElementById("changeddate").innerHTML='';
 
              var xhr = new XMLHttpRequest();
              xhr.open('GET', 'ajaxUpdateAsset.php?assetrecordid='+assetrecordid+'&elementid='+elementid+'&value='+encodeURIComponent(value));
@@ -119,6 +120,7 @@ else
              {
               var response=xhr.responseText;
               document.getElementById("sandpiperoid").innerHTML=response;
+              document.getElementById("changeddate").innerHTML = new Date().toISOString().slice(0, 10);
              };
              xhr.send();
             }
@@ -217,6 +219,7 @@ else
                                             <tr><th>Created Date</th><td><?php echo $assetrecord['createdDate']; ?></td></tr>
                                             <tr><th>Public/Private</th><td><select id="public" onchange="updateAsset(<?php echo $assetrecord['id']; ?>,'select','public');"><option value="0"<?php if($assetrecord['public']==0){echo ' selected';} ?>>Private</option>            <option value="1"<?php if($assetrecord['public']==1){echo ' selected';} ?>>Public</option></select></td></tr>
                                             <tr><th>Internal Label</th><td><div style="float:left;"><input type="text" id="assetlabel" oninput="flagUnsavedLabel();" value="<?php echo $assetrecord['assetlabel'];?>"/></div><div style="float:left;"><button id="btnUpdateLabel" class="btn btn-sm btn-outline-secondary" onclick="updateAsset('<?php echo $assetrecord['id'];?>','text','assetlabel'); unflagUnsavedLabel();">Update</button></div><div style="clear:both;"></div></td></tr>
+                                            <tr><th>Last Changed Date</th><td><div id="changeddate"><?php echo $assetrecord['changedDate']; ?></div></td></tr>
                                             <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $assetrecord['oid']; ?></div></td><tr>
                                         </table>
                                     </div>

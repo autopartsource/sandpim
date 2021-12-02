@@ -28,16 +28,16 @@ class asset
   $created=date('Y-m-d');
   if($createddate){$created=$createddate;}
   
-  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,localpath,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,resolution,background,fileType,createdDate,public,approved,description,oid,fileHashMD5,filesize,uripublic,languagecode,assetLabel) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'))
+  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,localpath,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,resolution,background,fileType,createdDate,public,approved,description,oid,fileHashMD5,filesize,uripublic,languagecode,assetLabel,createdDate) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())'))
   {
    if($stmt->bind_param('ssssssiisisssiisssiiss',$assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$created,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic,$languagecode,$assetlabel))
    {
     if($stmt->execute())
     {
      $id=$db->conn->insert_id;
-    } else{echo 'problem with execute: '.$db->conn->error;}
-   } else{echo 'problem with bind';}
-  } else{echo 'problem with prepare';}
+    }// else{echo 'problem with execute: '.$db->conn->error;}
+   }// else{echo 'problem with bind';}
+  }// else{echo 'problem with prepare';}
   $db->close();
   return $id;
  }
@@ -52,7 +52,7 @@ class asset
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $records[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel']);
+       $records[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel'],'changedDate'=>$row['changedDate']);
    }
   }
   $db->close();
@@ -69,7 +69,7 @@ class asset
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel']);
+    $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel'],'changedDate'=>'2000-01-01');
    }
   }
   $db->close();
@@ -280,7 +280,7 @@ class asset
  function setAssetDescription($assetid,$description)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set description=? where assetid=?'))
+  if($stmt=$db->conn->prepare('update asset set description=?, changedDate=now() where assetid=?'))
   {
    $encodednotes=base64_encode($description);
    $stmt->bind_param('ss', $encodednotes,$assetid);
@@ -292,7 +292,7 @@ class asset
  function setAssetLabel($id,$label)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set assetlabel=? where id=?'))
+  if($stmt=$db->conn->prepare('update asset set assetlabel=?, changedDate=now() where id=?'))
   {
    $stmt->bind_param('si', $label, $id);
    $stmt->execute();
@@ -303,7 +303,7 @@ class asset
  function setAssetOrientationviewcode($id,$orientationviewcode)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set orientationviewcode=? where id=?'))
+  if($stmt=$db->conn->prepare('update asset set orientationviewcode=?, changedDate=now() where id=?'))
   {
    $stmt->bind_param('si', $orientationviewcode, $id);
    $stmt->execute();
@@ -316,7 +316,7 @@ class asset
  function setAssetHash($id,$hash)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set fileHashMD5=? where id=?'))
+  if($stmt=$db->conn->prepare('update asset set fileHashMD5=?, changedDate=now() where id=?'))
   {
    $stmt->bind_param('si', $hash, $id);
    $stmt->execute();
@@ -327,7 +327,7 @@ class asset
  function setAssetFilesize($id,$size)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set filesize=? where id=?'))
+  if($stmt=$db->conn->prepare('update asset set filesize=?, changedDate=now() where id=?'))
   {
    $stmt->bind_param('ii', $size, $id);
    $stmt->execute();
@@ -339,7 +339,7 @@ class asset
  function updateAssetOIDbyRecordID($id)
  {
   $db = new mysql; $db->connect(); $oid=false;
-  if($stmt=$db->conn->prepare('update asset set oid=? where id=?'))
+  if($stmt=$db->conn->prepare('update asset set oid=?, changedDate=now() where id=?'))
   {
    $oid=$this->newoid();
    $stmt->bind_param('si', $oid,$id);
@@ -353,7 +353,7 @@ class asset
  function updateAssetOID($assetid)
  {
   $db = new mysql; $db->connect(); $oid=false;
-  if($stmt=$db->conn->prepare('update asset set oid=? where id=?'))
+  if($stmt=$db->conn->prepare('update asset set oid=?, changedDate=now() where id=?'))
   {
    $oid=$this->newoid();
    $stmt->bind_param('ss', $oid,$assetid);
@@ -378,7 +378,7 @@ class asset
  function toggleAssetPublic($id)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set public=public XOR 1 where id=?'))
+  if($stmt=$db->conn->prepare('update asset set public=public XOR 1, changedDate=now() where id=?'))
   {
    $stmt->bind_param('i', $id);
    $stmt->execute();
@@ -389,7 +389,7 @@ class asset
  function setAssetPublic($id,$piblic)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set public=? where id=?'))
+  if($stmt=$db->conn->prepare('update asset set public=?, changedDate=now() where id=?'))
   {
    $stmt->bind_param('ii', $piblic, $id);
    $stmt->execute();
@@ -401,7 +401,7 @@ class asset
  function toggleAssetUriPublic($assetid)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set uripublic=uripublic XOR 1 where assetid=?'))
+  if($stmt=$db->conn->prepare('update asset set uripublic=uripublic XOR 1, changedDate=now() where assetid=?'))
   {
    $stmt->bind_param('s', $assetid);
    $stmt->execute();
@@ -412,7 +412,7 @@ class asset
  function setAssetUriPublic($id,$public)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update asset set uripublic=? where id=?'))
+  if($stmt=$db->conn->prepare('update asset set uripublic=?, changedDate=now() where id=?'))
   {
    $stmt->bind_param('ii', $public, $id);
    $stmt->execute();
