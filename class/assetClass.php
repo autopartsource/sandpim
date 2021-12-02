@@ -681,6 +681,22 @@ class asset
  }
  
  
+ function getAssetlabels()
+ {
+  $db=new mysql; $db->connect(); $assetlabels=array();
+  if($stmt=$db->conn->prepare('select * from assetlabel order by labeltext'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $assetlabels[]=array('id'=>$row['id'],'labeltext'=>$row['labeltext']);
+   }
+  }
+  $db->close();
+  return $assetlabels;
+ }
+ 
  
  
  

@@ -417,6 +417,15 @@ class setup
         $sql="insert into asset values(30001,'PRC914A','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914A.jpg','','TOP','RGB',726,1500,'PX',300,'WHI','JPG','2021-10-02',1,1,'Primary photo of PRC914A','','',202050,1,'EN','',now())"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into asset values(30002,'PRC914B','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914B.jpg','','TOP','RGB',764,1500,'PX',300,'WHI','JPG','2021-10-03',1,1,'Primary photo of PRC914B','','',213594,1,'EN','',now())"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
+
+
+        $sql="CREATE TABLE assetlabel (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        labeltext varchar(255) NOT NULL,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - pricesheet ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - assetlabel ('.$db->conn->error.')';}
+
+        $sql="insert into assetlabel values(null,'ASSMGUIDE_PACKING')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
         
         
         $sql="CREATE TABLE application_history (
