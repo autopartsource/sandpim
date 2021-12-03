@@ -729,9 +729,11 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                             ?>
 
                                             <div id="showAssetFormIcon" style="display:block;" onclick="showhideAssetForm()"><img src="./expandmore.png" title="Expand to show assets form"/></div>
-                                            <div  id="assetform" style="display:none; padding:5px;">
+                                            <div  id="assetform" style="display:none; padding:25px;">
                                                 <form action="assetExistingResourceForm.php" method="post">
-                                                    <div style="text-align:left; padding:5px;">uri <input type="text" name="uri"/> filename <input type="text" size="6" name="basename"/> <input type="hidden" name="partnumber" value="<?php echo $part['partnumber'];?>"/>
+                                                    <div>Create a new asset (from URI) connected to this part</div>
+                                                    <div>URI <input type="text" name="uri" size="50"/></div>
+                                                    <div>Filename <input type="text" size="25" name="basename"/><input type="hidden" name="partnumber" value="<?php echo $part['partnumber'];?>"/>
                                                     <input type="submit" name="submit" value="Retrieve"/></div>
                                                 </form>
                                             <div id="hideAssetFormIcon" onclick="showhideAssetForm()"><img src="./expandless.png" title="Hide assets form"/></div>
