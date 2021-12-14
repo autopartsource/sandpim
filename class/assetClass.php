@@ -3,7 +3,23 @@ include_once("mysqlClass.php");
 
 class asset
 {
+ function uuidv4()
+ {
+  $randodata = file_get_contents('/dev/urandom', NULL, NULL, 0, 16);
+  $uuid=vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($randodata), 4));
 
+  // all 128 bits are now randomly generated in the hex output. Set the "M" (version) nibble to "4" by over-writing it 
+  $uuid= substr_replace($uuid,'4', 14, 1);
+  
+  // set the "N" (variant) nibble to a,b,8 or 9 to specify the MSB as set and the second most significant bit to clear
+  $valid_n_hex_nibbles=array('a','b','8','9');
+  $n_hex_nibble=$valid_n_hex_nibbles[random_int(0, 3)];
+  $uuid= substr_replace($uuid, $n_hex_nibble, 19, 1);
+          
+  return $uuid;
+ }
+
+    
  function validAsset($assetid)
  {
   $db=new mysql; $db->connect(); $returnval=array();
@@ -35,9 +51,9 @@ class asset
     if($stmt->execute())
     {
      $id=$db->conn->insert_id;
-    }// else{echo 'problem with execute: '.$db->conn->error;}
-   }// else{echo 'problem with bind';}
-  }// else{echo 'problem with prepare';}
+    }else{echo 'problem with execute: '.$db->conn->error;}
+   }else{echo 'problem with bind';}
+  }else{echo 'problem with prepare';}
   $db->close();
   return $id;
  }
@@ -365,12 +381,15 @@ class asset
 
  function newoid()
  {
+  $oid= $this->uuidv4();
+/*
   $charset=array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
   $oid='';
   for($i=0;$i<10;$i++)
   {
    $oid.=$charset[random_int(0,61)];
   }
+ */
   return $oid;
  }
 
