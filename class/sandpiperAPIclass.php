@@ -1361,21 +1361,17 @@ class plans extends sandpiper
 
             /**  these are the GET scenarios
              * 
-             *                 /v1/plans/invoke
+             *                 /plans/invoke
              */
                 if(count($this->requesturi)==5)
                 {
-                    switch($this->requesturi[4])
+                    if($this->requesturi[4]=='invoke')
                     {
-                        // is there a priary/seconday gotchya here? does the server know the role of the client at this stage
-                        
-                        case 'invoke':
-                            $this->response=array('plan'=>$plan, 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new plan fragment','http response code'=>200));                             
-                            break;
-                        
-                        default:
-                            $this->response=array('message_code'=>'3000','message'=>'unexpected generator action('.$this->requesturi[4].') after .../v1/plans/. Was expecting .../v1/plans/invoke','http response code'=>403);
-                            break;
+                        $this->response=array('plan'=>$plan, 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new plan fragment','http response code'=>200));                             
+                    }
+                    else
+                    {// something besides "invoke"
+                        $this->response=array('message_code'=>'3000','message'=>'unexpected generator action('.$this->requesturi[4].') after .../v1/plans/. Was expecting .../v1/plans/invoke','http response code'=>403);
                     }
                 }
                 else
