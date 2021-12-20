@@ -1366,8 +1366,8 @@ class plans extends sandpiper
                 if(count($this->requesturi)==5)
                 {
                     if($this->requesturi[4]=='invoke')
-                    {
-                        $this->response=array('plan'=>$plan, 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new plan fragment','http response code'=>200));                             
+                    {//ccc
+                        $this->response=array('plan'=>array('plan_uuid'=>'','replaces_plan_uuid'=>'','plan_description'=>'very descriptive description','plan_status'=>'proposed', 'plan_status_on'=>date('Y-m-dTh:i:s'),'payload'=>'<xml>plan doc xml text</xm>'), 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new plan fragment'), 'http response code'=>200);
                     }
                     else
                     {// something besides "invoke"
