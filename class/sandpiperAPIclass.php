@@ -1358,69 +1358,30 @@ class plans extends sandpiper
         switch($this->method)
         {
             case 'GET':
-            
+
             /**  these are the GET scenarios
              * 
-             *                 /v1/plans
              *                 /v1/plans/invoke
              */
-            
-                
-                switch(count($this->requesturi))
+                if(count($this->requesturi)==5)
                 {
-                    case 4:
-                        // /v1/plans
-                            $uripart=$this->extractParms($this->requesturi[3]);
-                            $plans=$this->getPlansForUser($this->userid);
-                            
-                            $planslist=array();
-                            foreach($plans as $plan)
-                            {
-                                $planslist[]=array('plan_uuid'=>$plan['planuuid'], 'plan_description'=>$plan['descriprion'], 'plan_status'=>$plan['status'], 'plan_status_on'=>$plan['planstatuson'], 'primary_approved_on'=>$plan['primaryapprovedon'], 'secondary_approved_on'=>$plan['secondaryapprovedon'], 'payload'=>$plan['plandocument']);
-                            }
+                    switch($this->requesturi[4])
+                    {
+                        // is there a priary/seconday gotchya here? does the server know the role of the client at this stage
                         
-                            $this->response=array('plans'=>$planslist, 'message'=>array('message_code'=>1000, 'message_text'=>'list of '.count($planslist).' plans returned'));
-                        break;
-
-                    case 5:
-                        // /v1/plans/xxx
-                        $uripart=$this->extractParms($this->requesturi[4]);
-                        if($this->looksLikeAUUID($uripart))
-                        {// /v1/plans/uuid
-                            $this->planuuid=$uripart;
-                            $plan=$this->getPlanRecord($this->planuuid);
-                            if($plan)
-                            { // plan presented exists
-                                $this->response=array('plan'=>$plan, 'message'=>array('message_code'=>1000, 'message_text'=>'Here is the reqested plan','http response code'=>200));                            
-                            }
-                            else
-                            {// plan does not exist for this user
-                                
-                                
-                                $this->response=array('message'=>array('message_code'=>3000, 'message_text'=>'Reqested plan does not exist or you do not have access','http response code'=>403));                                                            
-                            }
-                        }
-                        else
-                        {// // /v1/plans/non-a-uuid
-                            
-                            if($uripart=='invoke')
-                            {//   /v1/plans/invoke
-                                $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'plan_description'=>'fragment plan','plan_status'=>'Proposed','payload'=>'<xml></xml>'),'message'=>array('message_code'=>2000,'message_text'=>'client asked for plan invocation'),'http response code'=>200);
-                            }
-                            else
-                            { // /v1/plans/xxx 
-                                $this->response=array('message_code'=>'3000','message'=>'unexpected verb after /plans/. Expected invoke','http response code'=>400);                    
-                            }
-                        }
-                        break;
-
-
-                    default:
-                        $this->response=array('message_code'=>'3000','message'=>'unexpected input after wrong number of slashed levels','http response code'=>400);                    
-                        break;
-                    
-                }                
-                
+                        case 'invoke':
+                            $this->response=array('plan'=>$plan, 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new plan fragment','http response code'=>200));                             
+                            break;
+                        
+                        default:
+                            $this->response=array('message_code'=>'3000','message'=>'unexpected generator action('.$this->requesturi[4].') after .../v1/plans/. Was expecting .../v1/plans/invoke','http response code'=>403);
+                            break;
+                    }
+                }
+                else
+                {// wrong number of inputs
+                    $this->response=array('message_code'=>'3000','message'=>'unexpected number of slashed levels. Was expecting .../v1/plans/invoke','http response code'=>403);                                        
+                }
                 
                 break;
         
@@ -1446,12 +1407,12 @@ class plans extends sandpiper
                         
                             if($uripart=='invoke')
                             {//   /plans/invoke
-                                $this->response=array('message_code'=>'2xxx','message'=>'client asked for plan invocation','http response code'=>200);
+                                $this->response=array('message_code'=>1000,'message'=>'client asked for plan invocation','http response code'=>200);
                             }
                             
                             if($uripart=='propose')
                             {//   /plans/invoke
-                                $this->response=array('message_code'=>'2xxx','message'=>'client proposed a new plan','http response code'=>200);
+                                $this->response=array('message_code'=>1000,'message'=>'client proposed a new plan','http response code'=>200);
                             }
                                                        
                         break;
@@ -1517,10 +1478,6 @@ class plans extends sandpiper
                         
                         break;
                 }
-                
-                
-                
-                
                 
                                 
                 break;  // this break closes POST method case

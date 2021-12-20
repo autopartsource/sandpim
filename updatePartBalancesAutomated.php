@@ -78,7 +78,7 @@ if(isset($_POST['input']))
       
    if(strlen($partnumber) <= 20 && strlen($partnumber) > 0 && $pim->validPart($partnumber)) 
    {
-    $pim->updatePartBalance($partnumber, $qoh, $amd);
+    $pim->updatePartBalance($partnumber, $qoh, $amd); // include cost, 
     $importcount++;
    }
    else

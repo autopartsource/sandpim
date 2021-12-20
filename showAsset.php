@@ -212,7 +212,7 @@ else
                                                 <td>
                                                     <div style="<?php if($urifilesize!=$assetrecord['filesize']){$badattributes=true; echo 'background-color:#ffff00;';}?>"><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></div>
                                                     <div style="font-size:50%;<?php if($urifilehash!=$assetrecord['fileHashMD5']){$badattributes=true; echo 'background-color:#ffff00;';}?>"><?php echo $assetrecord['fileHashMD5']; ?></div>
-                                                    <?php if($badattributes){echo '<div><a href="./showAsset.php?assetid='.urldecode($assetid).'&fixattributes">Fix</a></div>';}?>
+                                                    <?php if($badattributes){echo '<div><a href="./showAsset.php?assetid='.urlencode($assetid).'&fixattributes">Fix</a></div>';}?>
                                                 </td>
                                             </tr>
                                             <tr><th>Local Path</th><td><?php echo $assetrecord['localpath']; ?></td></tr>
@@ -236,6 +236,7 @@ else
                                     <div class="col-xs-12 col-md-5">
                                         <a target="_blank" href="<?php echo $assetrecord['uri']; ?>"><img class="img-thumbnail" src="<?php echo $imgsrc; ?>"/></a>
                                     </div>
+                                    <?php }?>
                                     <div>
                                         <form method="post" action="showAsset.php?assetid=<?php echo $assetid; ?>">
                                             <input type="submit" name="submit" value="Delete"/>
@@ -243,7 +244,6 @@ else
                                             <input type="hidden" name="assetid" value="<?php echo $assetid; ?>"/>
                                         </form>
                                     </div>
-                                    <?php }?>
                                 </div>
                             </div>
                         </div>

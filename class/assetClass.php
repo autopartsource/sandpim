@@ -689,8 +689,11 @@ class asset
      /* retreive a file from uri and compute hash of it
       * return false if download failed
       */
+
+    if(strstr($uri, 'youtube.com') || strstr($uri, 'y2u.be')){return false;} // don't try do download youtube vids
+     
     $attributes=false;
-    $fixedescapeduri = str_replace(['%2F', '%3A'], ['/', ':'], urlencode($uri)); 
+    $fixedescapeduri = str_replace(['%2F', '%3A', '%2B'], ['/', ':','+'], urlencode($uri));  // the %2B is an AWS-specific hack
     $assetfilecontents = file_get_contents($fixedescapeduri);
     if($assetfilecontents)
     {
