@@ -220,6 +220,11 @@ class sandpiper
         return $returnvalue;     
     }
     
+
+    function invokePlan()
+    {
+        return 'plan fragment xml';
+    }
     
     
 
@@ -1367,7 +1372,7 @@ class plans extends sandpiper
                 {
                     if($this->requesturi[4]=='invoke')
                     {//ccc
-                        $this->response=array('plan'=>array('plan_uuid'=>'','replaces_plan_uuid'=>'','plan_description'=>'very descriptive description','plan_status'=>'proposed', 'plan_status_on'=>date('Y-m-dTh:i:s'),'payload'=>'<xml>plan doc xml text</xm>'), 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new plan fragment'), 'http response code'=>200);
+                        $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'replaces_plan_uuid'=>'','plan_description'=>'very descriptive description','plan_status'=>'proposed', 'plan_status_on'=>date('Y-m-d h:i:s'), 'primary_approved_on'=>date('Y-m-d h:i:s'), 'secondary_approved_on'=>date('Y-m-d h:i:s'),'payload'=> $this->invokePlan()), 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new plan fragment'), 'http response code'=>200);
                     }
                     else
                     {// something besides "invoke"
