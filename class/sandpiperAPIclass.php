@@ -231,8 +231,28 @@ class sandpiper
         $root->setAttribute('uuid','00000000-0000-0000-0000-000000000000');
         
         $primaryElement=new DOMElement('Primary');
-        $root->appendChild($primaryElement);
         
+        $instanceElement=new DOMElement('Instance');
+        $instanceElement->setAttribute('uuid', 'b829e2a5-9037-4e45-a801-b10d138b0fe0');
+        
+        $softwareElement=new DOMElement('Software');
+        $softwareElement->setAttribute('description', 'SandPIM');
+        $softwareElement->setAttribute('version', '0.8');
+        
+        $capabilityElement=new DOMElement('Capability');
+        $capabilityElement->setAttribute('level', '2');
+                
+        $responseElement=new DOMElement('Response');
+        $responseElement->setAttribute('uri', 'https://aps.dev/sandpim/sandpiper');
+        $responseElement->setAttribute('role', 'All');
+        $responseElement->setAttribute('description', 'SandPIM Sandpiper Respondent');
+        $capabilityElement->appendChild($responseElement);
+        
+        $instanceElement->appendChild($softwareElement);
+        $instanceElement->appendChild($capabilityElement);
+        $primaryElement->appendChild($instanceElement);
+        
+        $root->appendChild($primaryElement);
         $doc->formatOutput=true;
         return $doc->saveXML();    
     }
