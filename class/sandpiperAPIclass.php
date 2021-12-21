@@ -253,6 +253,38 @@ class sandpiper
         $responseElement->setAttribute('description', 'SandPIM Sandpiper Respondent');
         
         
+        $controlerElement=new DOMElement('Controller');
+        $primaryElement->appendChild($controlerElement);
+        $controlerElement->setAttribute('uuid','3297051d-d0dd-44ae-8bba-a2247425ad89');
+        $controlerElement->setAttribute('description','AutoPartSource');
+        
+        $adminElement=new DOMElement('Admin');
+        $controlerElement->appendChild($adminElement);
+        $adminElement->setAttribute('contact', 'Luke Smith');
+        $adminElement->setAttribute('email', 'lsmith@autopartsource.com');
+
+        
+        $primaryLinksElement=new DOMElement('Links');
+        $primaryElement->appendChild($primaryLinksElement);
+        
+        $primaryUniqueLinksElement=new DOMElement('UniqueLink');
+        $primaryLinksElement->appendChild($primaryUniqueLinksElement);
+        $primaryUniqueLinksElement->setAttribute('uuid', '68e5b203-d19e-4d33-9a61-1879e13e3616');
+        $primaryUniqueLinksElement->setAttribute('description', 'AutoPartSource');
+        $primaryUniqueLinksElement->setAttribute('keyfield', 'autocare-brand-parent');
+        $primaryUniqueLinksElement->setAttribute('keyvalue', 'BQMD');
+        
+        $poolsElement=new DOMElement('Pools');
+        $primaryElement->appendChild($poolsElement);
+        
+        $poolElement=new DOMElement('Pool');
+        $poolsElement->appendChild($poolElement);
+        $poolElement->setAttribute('uuid', '631dd42f-46f2-4d6a-94b3-a327d2c4ad88');
+        $poolElement->setAttribute('description', 'AmeriBrakes - Basic Content Offering');
+        
+        
+        
+        
         $doc->formatOutput=true;
         return $doc->saveXML();    
     }
