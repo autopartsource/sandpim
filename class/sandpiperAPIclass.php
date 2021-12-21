@@ -282,7 +282,59 @@ class sandpiper
         $poolElement->setAttribute('uuid', '631dd42f-46f2-4d6a-94b3-a327d2c4ad88');
         $poolElement->setAttribute('description', 'AmeriBrakes - Basic Content Offering');
         
+        $poolLinksElement=new DOMElement('Links');
+        $poolElement->appendChild($poolLinksElement);
+        $poolLinksUniqueLinksElement=new DOMElement('UniqueLink');
+        $poolLinksElement->appendChild($poolLinksUniqueLinksElement);
+        $poolLinksUniqueLinksElement->setAttribute('uuid', 'f08c601c-a402-42af-939f-c480eae5faab');
+        $poolLinksUniqueLinksElement->setAttribute('keyfield', 'autocare-brand');
+        $poolLinksUniqueLinksElement->setAttribute('keyvalue', 'GQBF');
+        $poolLinksUniqueLinksElement->setAttribute('description', 'AmeriBrakes');
         
+        
+        $slicesElement=new DOMElement('Slices');
+        $poolElement->appendChild($slicesElement);
+        
+        
+        $sliceElement=new DOMElement('Slice');
+        $slicesElement->appendChild($sliceElement);
+        $sliceElement->setAttribute('uuid', 'bab3d740-51dc-4726-bf79-d7df41e8f9a1');
+        $sliceElement->setAttribute('description', 'Full ACES (L1) - Pads, Shoes, Drums and Wear Sensors');
+        $sliceElement->setAttribute('slicetype', 'aces-file');
+        $sliceElement->setAttribute('filename', 'AmeriBrakes_PadsShoesDrumsWearSensors_ACES_FULL_2021-11-09.xml');
+        
+        $sliceLinksElement=new DOMElement('Links');
+        $sliceElement->appendChild($sliceLinksElement);
+        $sliceLinksUniqueLinkElement=new DOMElement('UniqueLink');
+        $sliceLinksElement->appendChild($sliceLinksUniqueLinkElement);
+        $sliceLinksUniqueLinkElement->setAttribute('uuid', 'c5bce7ee-d05a-4893-9575-9c3c70674f9e');
+        $sliceLinksUniqueLinkElement->setAttribute('keyfield', 'primary-reference');
+        $sliceLinksUniqueLinkElement->setAttribute('keyvalue', '390239');
+        
+        $sliceLinksUniqueLinkElement=new DOMElement('UniqueLink');
+        $sliceLinksElement->appendChild($sliceLinksUniqueLinkElement);
+        $sliceLinksUniqueLinkElement->setAttribute('uuid', '237751f9-8f7a-4898-8d06-fbf0e4ea8fa4');
+        $sliceLinksUniqueLinkElement->setAttribute('keyfield', 'autocare-brand');
+        $sliceLinksUniqueLinkElement->setAttribute('keyvalue', 'GQBF');
+        $sliceLinksUniqueLinkElement->setAttribute('description', 'AmeriBrakes');
+        
+        
+        $sliceLinksMultiLinkElement=new DOMElement('MultiLink');
+        $sliceLinksElement->appendChild($sliceLinksMultiLinkElement);
+        $sliceLinksMultiLinkElement->setAttribute('keyfield', 'autocare-pcdb-parttype');
+        
+        
+        $multiLinkEntryElement=new DOMElement('MultiLinkEntry');
+        $sliceLinksMultiLinkElement->appendChild($multiLinkEntryElement);
+        $multiLinkEntryElement->setAttribute('uuid', 'e47d750b-77a5-46ac-acae-2bf0a042bf81');
+        $multiLinkEntryElement->setAttribute('keyvalue', '1684');
+        $multiLinkEntryElement->setAttribute('description','Disc Brake Pad Set');
+        
+        $multiLinkEntryElement=new DOMElement('MultiLinkEntry');
+        $sliceLinksMultiLinkElement->appendChild($multiLinkEntryElement);
+        $multiLinkEntryElement->setAttribute('uuid', 'd2b626f8-ec28-42c8-b458-58edbcdecf8d');
+        $multiLinkEntryElement->setAttribute('keyvalue', '1688');
+        $multiLinkEntryElement->setAttribute('description','Drum Brake Shoe');
         
         
         $doc->formatOutput=true;
