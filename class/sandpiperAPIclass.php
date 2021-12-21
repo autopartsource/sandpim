@@ -222,8 +222,19 @@ class sandpiper
     
 
     function invokePlan()
-    {
-        return 'plan fragment xml';
+    {       
+        $doc = new DOMDocument('1.0', 'UTF-8');
+        $root = $doc->createElementNS('http://www.autocare.org', 'Plan');
+ 
+        $root = $doc->appendChild($root);
+        $root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:xs' ,'http://www.w3.org/2001/XMLSchema');
+        $root->setAttribute('uuid','00000000-0000-0000-0000-000000000000');
+        
+        $primaryElement=new DOMElement('Primary');
+        $root->appendChild($primaryElement);
+        
+        $doc->formatOutput=true;
+        return $doc->saveXML();    
     }
     
     
@@ -1372,7 +1383,7 @@ class plans extends sandpiper
                 {
                     if($this->requesturi[4]=='invoke')
                     {//ccc
-                        $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'replaces_plan_uuid'=>'','plan_description'=>'very descriptive description','plan_status'=>'proposed', 'plan_status_on'=>date('Y-m-d h:i:s'), 'primary_approved_on'=>date('Y-m-d h:i:s'), 'secondary_approved_on'=>date('Y-m-d h:i:s'),'payload'=> $this->invokePlan()), 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new fragment plan'), 'http response code'=>200);
+                        $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'replaces_plan_uuid'=>'','plan_description'=>'fragment plan','plan_status'=>'proposed', 'plan_status_on'=>date('Y-m-d h:i:s'), 'primary_approved_on'=>date('Y-m-d h:i:s'), 'secondary_approved_on'=>date('Y-m-d h:i:s'),'payload'=> $this->invokePlan()), 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new fragment plan'), 'http response code'=>200);
                     }
                     else
                     {// something besides "invoke"
