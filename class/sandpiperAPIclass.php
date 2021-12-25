@@ -20,8 +20,9 @@ class sandpiper
   public $response;
   protected $userid=false;
   protected $username;
-  protected $secondarycompanyuuid;
-  protected $primarycompanyuuid;
+  protected $userrealname;
+  //protected $secondarycompanyuuid;
+  //protected $primarycompanyuuid;
 
 
   protected $keyedparms=array();
@@ -94,15 +95,12 @@ class sandpiper
          $secret=$this->getJWTsecret();
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
-         //$returnvalue= array('message'=>array('message_code'=>'1xxx','message_text'=>'1xxx'),'token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>$plandocument['schemaerrors'],'message'=>'successful Authentication with plan: '.$planuuid,'http response code'=>200);
+         $this->logEvent($planuuid, '', '', 'user ['.$user->name.'] authenticated with plan ['.$planuuid.'] from ['.$address.']');
          $returnvalue= array('token'=>$jwt,'message'=>array('message_code'=>3001,'message_text'=>'authentication success'),'http response code'=>200);
-         
-         
         }
         else
         {// plan presented had XSD errors
-         //$returnvalue='{"sandpiper status code":"3xxx","message":"Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')","http status":"4xx"}';         
-//         $returnvalue=array('message_code'=>'3xxx','message'=>'Error - Plan documents presented failed XSD validation ('.$plandocument['schemaerrors'].')','http response code'=>400);
+         $this->logEvent('', '', '', 'user ['.$user->name.'] authenticated from ['.$address.'], but the plandocument presented contained XSD errors ['.$plandocument['schemaerrors'].']');
          $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (xml schema errors):'.$plandocument['schemaerrors']),'http response code'=>401);
         }        
        }
@@ -115,14 +113,14 @@ class sandpiper
          $secret=$this->getJWTsecret();
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' with null plan');
-         //$returnvalue= array('message_code'=>'12xx','token'=>$jwt,'expires'=>date('Y-m-d\TH:i:s-00:00',$expiresepoch),'planschemaerrors'=>'','message'=>'Authenticated with null plan - limited resources avail','http response code'=>200);
+         $this->logEvent('', '', '', 'user ['.$user->name.'] authenticated with a null plan from ['.$address.']');
          $returnvalue= array('token'=>$jwt,'message'=>array('message_code'=>1001,'message_text'=>'authentication success'),'http response code'=>200);         
         }
       } 
       else
       {// log the failure event
         $logs->logSystemEvent('loginfailure', $this->userid, 'sandpiper API login failed from '.$address);
-        //$returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
+        $this->logEvent('', '', '', 'user ['.$user->name.'] failed authentication from ['.$address.']');
         $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (bad password)'),'http response code'=>401);
       }
      }
@@ -130,8 +128,8 @@ class sandpiper
      { // unknown user
        //  burn the amount of time that a password verification would have taken had this been a known username. This is to thwart a timing attack: Baddie could determine validity of arbitrary usernames thrown at the api because they all take a similar hmac time (several hundred mS)
        $trash= password_verify('asdkjflkasjdfkl', '$argon2id$v=19$m=65536,t=4,p=1$NnBsSTgvZmpNbmdoeXo2eA$LWpqCgHuxVmgEwDMSf3o5SM1AWT7qbCtkV8ckxBCr94');      
-       $logs->logSystemEvent('loginfailure', 0, 'sandpiper API unknown user ('.$username.') from '.$address);
-       //$returnvalue=array('http response code'=>401); // login failure is intentionally cryptic (no sandpiper-looking stuff to see) for sake of information leakage 
+       $logs->logSystemEvent('loginfailure', 0, 'unknown user on sandpiper API ('.$username.', password:'.$password.') from '.$address);
+       $this->logEvent('', '', '', 'unknown user ['.$username.'] attempted authentication with password ['.$password.'] from ['.$address.']');
        $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (unknown user)'),'http response code'=>401);
 
      }
@@ -177,8 +175,9 @@ class sandpiper
         if($extractidentity)
         {// apply payload identy to properties of this instance of the class
             
+         $u = new user();
          $this->userid=$payload_array['id'];
-         $this->secondarycompanyuuid=$payload_array['c'];
+         $this->userrealname=$u->realNameOfUserid($payload_array['id']);
          if(array_key_exists('plan', $payload_array) && $this->looksLikeAUUID($payload_array['plan']))
          {
           $this->planuuid=$payload_array['plan'];
@@ -1092,7 +1091,7 @@ class slices extends sandpiper
                         {// slice is part of user's plan
                             
                             $slice=$this->getSlice($this->planuuid, $sliceuuid);
-                            $this->response=array('http response code'=>200, 'slice'=>$slice, 'message'=>array('message_code'=>1000, 'message_text'=>'here is you slice'));
+                            $this->response=array('http response code'=>200, 'slice'=>$slice, 'message'=>array('message_code'=>1000, 'message_text'=>'here is your slice'));
                         }
                         else
                         {// supplied slice is not in user's plan
@@ -1137,11 +1136,13 @@ class slices extends sandpiper
                             else
                             {// supplied slice is not in user's plan
                                 $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice UUID ('.$sliceuuid.') is not part of the current plan'));
+                                $this->logEvent($this->planuuid, $sliceuuid, '', 'out-of-plan slice requested from ['.$address.']');
                             }
                         }
                         else
                         {// the expected uuid in /slices/[uuid]/grains was not formatted as a UUID
                             $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. Was expecting /v1/slices/{sliceuuid}/grains. sliceuuid was not formatted as a uuid. '));
+                            $this->logEvent($this->planuuid, '', '', 'mal-formed slice uuid ['.$sliceuuid.'] requested from ['.$address.']');
                         }
                     }
                     else
@@ -1200,22 +1201,26 @@ class slices extends sandpiper
                                 {// no grains found in the given plan/slice
                                                                         
                                     $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice / grain ('.$sliceuuid.' / '.$grainuuidid.') was not found'));
+                                    $this->logEvent($this->planuuid, $sliceuuid, '', 'slice / grain ('.$sliceuuid.' / '.$grainuuidid.') was not found');
                                 }
                             }
                             else
                             {// supplied slice is not in user's plan
 
                                 $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'slice ('.$sliceuuid.') is not part of plan ('. $this->planuuid.')'));
+                                $this->logEvent($this->planuuid, $sliceuuid, '', 'slice ('.$sliceuuid.') is not part of plan ('. $this->planuuid.')');
                             }
                         }
                         else  
                         {//             /slices/[non-uuid]/grains/[non-uuid]
                             $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[grainuuid]. Did not get properly formatted uuids in grains and/or slices positions'));
+                            $this->logEvent($this->planuuid, $sliceuuid, '', 'unexpected input. was expecting /slices/[sliceuuid]/grains/[grainuuid]. Did not get properly formatted uuids in grains and/or slices positions');
                         }
                     }
                     else
                     {//             /slices/[uuid]/!grains/something
                         $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'unexpected input. was expecting /slices/[sliceuuid]/grains/[gtainuuid]. Did not get grains keyword'));
+                        $this->logEvent($this->planuuid, $sliceuuid, '', 'unexpected input. was expecting /slices/[sliceuuid]/grains/[gtainuuid]. Did not get grains keyword');
                     }
                     
                     break;
@@ -1223,10 +1228,9 @@ class slices extends sandpiper
                     
                 default:
                     $this->response=array('http response code'=>404, 'message'=>array('message_code'=>3000, 'message_text'=>'wrong number of inputs'));
-                    
+                    $this->logEvent('', '', '', 'wrong number of inputs at /slices GET ['.$this->requesturi.']');
                     break;
             }
-            
             
             break;
 
@@ -1486,17 +1490,20 @@ class plans extends sandpiper
                 if(count($this->requesturi)==5)
                 {
                     if($this->requesturi[4]=='invoke')
-                    {//ccc
+                    {
                         $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'replaces_plan_uuid'=>'','plan_description'=>'fragment plan','plan_status'=>'proposed', 'plan_status_on'=>date('Y-m-d h:i:s'), 'primary_approved_on'=>date('Y-m-d h:i:s'), 'secondary_approved_on'=>date('Y-m-d h:i:s'),'payload'=> $this->invokePlan()), 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new fragment plan'), 'http response code'=>200);
+                        $this->logEvent('', '', '', 'fragment plan invoked by '.$this->userrealname);
                     }
                     else
                     {// something besides "invoke"
                         $this->response=array('message_code'=>'3000','message'=>'unexpected generator action('.$this->requesturi[4].') after .../v1/plans/. Was expecting .../v1/plans/invoke','http response code'=>403);
+                        $this->logEvent('', '', '', 'unexpected input after /plans ['.$this->requesturi[4].'] by '.$this->userrealname.'. Was expecting invoke verb.');
                     }
                 }
                 else
                 {// wrong number of inputs
                     $this->response=array('message_code'=>'3000','message'=>'unexpected number of slashed levels. Was expecting .../v1/plans/invoke','http response code'=>403);                                        
+                    $this->logEvent('', '', '', 'unexpected input at /plans ['.$this->requesturi.'] by '.$this->userrealname.'. Was expecting something like .../plans/invoke.');
                 }
                 
                 break;
