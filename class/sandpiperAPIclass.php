@@ -200,7 +200,7 @@ class sandpiper
     {
         $db = new mysql; $db->connect(); $returnvalue=false;
         if($stmt=$db->conn->prepare('select * from plan where planuuid=?'))
-        {
+        {// need to lock this down to the scope of the specific user requesting!
             if($stmt->bind_param('s', $planuuid))
             {
                 if($stmt->execute())
@@ -209,7 +209,7 @@ class sandpiper
                     {
                         if($row = $db->result->fetch_assoc())
                         {
-                            $returnvalue=array('id'=>$row['id'],'description'=>$row['description'],'planmetadata'=>$row['planmetadata'],'receiverprofileid'=>$row['receiverprofileid']);
+                            $returnvalue=array('id'=>$row['id'],'planuuid'=>$row['planuuid'],'description'=>$row['description'],'status'=>$row['status'],'plandocument'=>$row['plandocument'],'planmetadata'=>$row['planmetadata'],'receiverprofileid'=>$row['receiverprofileid'],'planstatuson'=>$row['planstatuson'],'primaryapprovedon'=>$row['primaryapprovedon'],'secondaryapprovedon'=>$row['secondaryapprovedon']);
                         }
                     }
                 }
@@ -1032,7 +1032,7 @@ class sandpiper
                     {
                         if($row = $db->result->fetch_assoc())
                         {
-                            $plans[]=array('id'=>$row['id'],'planuuid'=>$row['planuuid'],'description'=>$row['description'],'planmetadata'=>$row['planmetadata'],'receiverprofileid'=>$row['receiverprofileid']);
+                            $plans[]=array('id'=>$row['id'],'planuuid'=>$row['planuuid'],'description'=>$row['description'],'status'=>$row['status'],'plandocument'=>$row['plandocument'],'planmetadata'=>$row['planmetadata'],'receiverprofileid'=>$row['receiverprofileid'],'planstatuson'=>$row['planstatuson'],'primaryapprovedon'=>$row['primaryapprovedon'],'secondaryapprovedon'=>$row['secondaryapprovedon']);
                         }
                     }
                 }
@@ -1484,27 +1484,76 @@ class plans extends sandpiper
             case 'GET':
 
             /**  these are the GET scenarios
-             * 
-             *                 /plans/invoke
+             *    /plans
+             *    /plans?plan_detail=PLAN_WITH_DOCUMENT
+             *    /plans?plan_detail=PLAN_WITHOUT_DOCUMENT
+             *    /plans/invoke
+             *    /plans/{uuid}
              */
-                if(count($this->requesturi)==5)
-                {
-                    if($this->requesturi[4]=='invoke')
-                    {
-                        $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'replaces_plan_uuid'=>'','plan_description'=>'fragment plan','plan_status'=>'proposed', 'plan_status_on'=>date('Y-m-d h:i:s'), 'primary_approved_on'=>date('Y-m-d h:i:s'), 'secondary_approved_on'=>date('Y-m-d h:i:s'),'payload'=> $this->invokePlan()), 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new fragment plan'), 'http response code'=>200);
-                        $this->logEvent('', '', '', 'fragment plan invoked by '.$this->userrealname);
-                    }
-                    else
-                    {// something besides "invoke"
-                        $this->response=array('message_code'=>'3000','message'=>'unexpected generator action('.$this->requesturi[4].') after .../v1/plans/. Was expecting .../v1/plans/invoke','http response code'=>403);
-                        $this->logEvent('', '', '', 'unexpected input after /plans ['.$this->requesturi[4].'] by '.$this->userrealname.'. Was expecting invoke verb.');
-                    }
+
+                switch(count($this->requesturi))
+                {//ccc
+                    case 4:
+                        /**  these are the GET scenarios
+                         *    /plans
+                         */
+                        $plans=$this->getPlansForUser($this->userid);
+                        $plansresponse=array();
+                        foreach($plans as $plan)
+                        {
+                            $plansresponse[]=array('plan_uuid'=>$plan['planuuid'],'replaces_plan_uuid'=>'','plan_description'=>$plan['description'],'plan_status'=>'proposed', 'plan_status_on'=>$plan['planstatuson'], 'primary_approved_on'=>$plan['primaryapprovedon'], 'secondary_approved_on'=>$plan['secondaryapprovedon'],'payload'=>$plan['plandocument']);
+                        }
+
+                        $this->response=array('plans'=>$plansresponse,'message'=>array('message_code'=>1000, 'message_text'=>'Here are the plans'), 'http response code'=>200);
+                        $this->logEvent('', '', '', 'existing plans list requested by '.$this->userrealname);
+ 
+                        break;
+                
+                    case 5:
+                        /**
+                         *    /plans?plan_detail=PLAN_WITH_DOCUMENT
+                         *    /plans?plan_detail=PLAN_WITHOUT_DOCUMENT
+                         *    /plans/invoke
+                         *    /plans/{uuid}
+                         */
+                                                
+                        $requestedplanuuid=$this->extractParms(requesturi[4]);   
+                        if($this->looksLikeAUUID($requestedplanuuid))
+                        {// specific plan was requested
+                            $plan=$this->getPlanRecord($requestedplanuuid);
+                            if($plan)
+                            {
+                                $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'replaces_plan_uuid'=>'','plan_description'=>'fragment plan','plan_status'=>'proposed', 'plan_status_on'=>date('Y-m-d h:i:s'), 'primary_approved_on'=>date('Y-m-d h:i:s'), 'secondary_approved_on'=>date('Y-m-d h:i:s'),'payload'=>'plan xml placeholder'), 'message'=>array('message_code'=>1000, 'message_text'=>'Here is the plan'), 'http response code'=>200);
+                                $this->logEvent($requestedplanuuid, '', '', 'existing plan ['.$requestedplanuuid.'] requested by '.$this->userrealname);
+                            }
+                            else
+                            {// specific plan was not found
+                                $this->response=array('message_code'=>'3000','message'=>'plan ['.$requestedplanuuid.'] not found','http response code'=>403);
+                                $this->logEvent($requestedplanuuid, '', '', 'plan ['.$requestedplanuuid.'] not found requested by '.$this->userrealname);                                
+                            }
+                        }
+                        else 
+                        {// /plans/{not-a-uuid}
+                            if($this->requesturi[4]=='invoke')
+                            {
+                                $this->response=array('plan'=>array('plan_uuid'=>$this->uuidv4(),'replaces_plan_uuid'=>'','plan_description'=>'fragment plan','plan_status'=>'proposed', 'plan_status_on'=>date('Y-m-d h:i:s'), 'primary_approved_on'=>date('Y-m-d h:i:s'), 'secondary_approved_on'=>date('Y-m-d h:i:s'),'payload'=> $this->invokePlan()), 'message'=>array('message_code'=>1000, 'message_text'=>'Here is a new fragment plan'), 'http response code'=>200);
+                                $this->logEvent('', '', '', 'fragment plan invoked by '.$this->userrealname);
+                            }
+                            else
+                            {// something besides "invoke"
+                                $this->response=array('message_code'=>'3000','message'=>'unexpected generator action('.$this->requesturi[4].') after .../v1/plans/. Was expecting .../v1/plans/invoke','http response code'=>403);
+                                $this->logEvent('', '', '', 'unexpected input after /plans ['.$this->requesturi[4].'] by '.$this->userrealname.'. Was expecting invoke verb.');
+                            }
+                        }
+                        break;
+                    
+                    default:
+                        // wrong number of inputs
+                        $this->response=array('message_code'=>'3000','message'=>'unexpected number of slashed levels. Was expecting .../v1/plans/invoke','http response code'=>403);                                        
+                        $this->logEvent('', '', '', 'unexpected input at /plans ['.$this->requesturi.'] by '.$this->userrealname.'. Was expecting something like .../plans/invoke.');
+                        break;                    
                 }
-                else
-                {// wrong number of inputs
-                    $this->response=array('message_code'=>'3000','message'=>'unexpected number of slashed levels. Was expecting .../v1/plans/invoke','http response code'=>403);                                        
-                    $this->logEvent('', '', '', 'unexpected input at /plans ['.$this->requesturi.'] by '.$this->userrealname.'. Was expecting something like .../plans/invoke.');
-                }
+                
                 
                 break;
         
@@ -1552,8 +1601,7 @@ class plans extends sandpiper
                         */
                         
                         if($this->looksLikeAUUID($this->requesturi[4]))
-                        { //probably   /plans/[uuid]/hold
-
+                        { 
                             $this->response=array('message_code'=>'3xxx','message'=>'Unknown verb after /plans/[uuid]/', 'http response code'=>400);
 
                             
@@ -1587,7 +1635,7 @@ class plans extends sandpiper
                             
                         }
                         else
-                        {//   /v1/plans/{no-at-uuid}/xxx
+                        {//   /v1/plans/{not-a-uuid}/xxx
 
                             $this->response=array('message_code'=>'3xxx','message'=>'unexpected input after /plans/. Expected a uuid, got this instead: '.$this->requesturi[4],'http response code'=>400);
                         }
