@@ -38,6 +38,8 @@ $appshistory = $logs->getAppsEvents(50);
 $assetshistory = $logs->getAssetsEvents(50);
 $partshistory = $logs->getPartsEvents(50);
 $systemhistory = $logs->getSystemEvents('%', false, 50);
+$sandpiperhistory= $logs->getSandpiperEvents(50);
+
 
 //$partissues=$pim->getIssues('PART/%','%',0,array(1,2),20);
 $partissues=$pim->getPartIssuesPrioritized(20);
@@ -290,6 +292,12 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         <a class="nav-link" id="system-tab" data-bs-toggle="tab" href="#system" role="tab" aria-controls="system" aria-selected="false">System</a>
                                     </li>';
                                     }
+ 
+                                    if(count($sandpiperhistory)) {
+                                    echo '<li class="nav-item">
+                                        <a class="nav-link" id="sandpiper-tab" data-bs-toggle="tab" href="#sandpiper" role="tab" aria-controls="sandpiper" aria-selected="false">Sandpiper</a>
+                                    </li>';
+                                    }
                                         
                                 echo '</ul>';
                                       
@@ -299,7 +307,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         </div>';
                                         if(count($appshistory)) {
                                             echo '<div class="tab-pane fade mt-3" id="applications" role="tabpanel" aria-labelledby="applications-tab">'
-                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>AppID</th><th>Change Description</th></tr>';
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>AppID</th><th>Event Description</th></tr>';
                                                 foreach ($appshistory as $record) {
                                                     $nicedescription = $record['description'];
                                                     if (strlen($nicedescription) > $logpreviewlength) {
@@ -314,7 +322,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         if (count($assetshistory)) 
                                         {
                                             echo '<div class="tab-pane fade mt-3" id="assets" role="tabpanel" aria-labelledby="assets-tab">'
-                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>AssetID</th><th>Change Description</th></tr>';
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>AssetID</th><th>Event Description</th></tr>';
                                                 foreach ($assetshistory as $record) {
                                                     $nicedescription = $record['description'];
                                                     if (strlen($nicedescription) > $logpreviewlength) {
@@ -329,7 +337,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         if (count($partshistory)) 
                                         {
                                             echo '<div class="tab-pane fade mt-3" id="parts" role="tabpanel" aria-labelledby="parts-tab">'
-                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Partnumber</th><th>Change Description</th></tr>';
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Partnumber</th><th>Event Description</th></tr>';
                                             foreach ($partshistory as $record) {
                                                 $nicedescription = $record['description'];
                                                 if (strlen  ($nicedescription) > $logpreviewlength) {
@@ -350,6 +358,20 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                                     $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
                                                 }
                                                 echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td><code>' . $nicedescription . '</code></td></tr>';
+                                            }
+                                            echo '</table></div>';
+                                        }      
+
+                                        if(count($sandpiperhistory))
+                                        {
+                                            echo '<div class="tab-pane fade mt-3" id="sandpiper" role="tabpanel" aria-labelledby="sandpiper-tab">'
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Event Description</th></tr>';
+                                            foreach ($sandpiperhistory as $record) {
+                                                $nicedescription = $record['description'];
+                                                if (strlen  ($nicedescription) > $logpreviewlength) {
+                                                    $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                                                }
+                                                echo '<tr><td><a href="./showSandpiperLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td><code>' . $nicedescription . '</code></td></tr>';
                                             }
                                             echo '</table></div>';
                                         }      

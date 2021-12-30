@@ -170,7 +170,29 @@ class logs {
         return $events;
     }
 
-    
+    function getSandpiperEvents($limit)
+    {
+        $db = new mysql; $db->connect();
+        $events = array();
+        $sql = 'select * from sandpiperactivity order by id desc limit ?';
+ 
+        if ($stmt = $db->conn->prepare($sql))
+        {
+            if($stmt->bind_param('i', $limit))
+            {
+                if($stmt->execute())
+                {
+                    $db->result = $stmt->get_result();
+                    while ($row = $db->result->fetch_assoc()) 
+                    {
+                        $events[] = array('id' => $row['id'], 'planuuid'=>$row['planuuid'], 'subscriptionuuid'=>$row['subscriptionuuid'], 'grainuuid'=>$row['grainuuid'], 'action'=>$row['action'], 'timestamp' => $row['timestamp']);
+                    }
+                }
+            }
+        }
+        $db->close();
+        return $events;
+    }
     
     
 }
