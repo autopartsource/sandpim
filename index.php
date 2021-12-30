@@ -365,13 +365,13 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                         if(count($sandpiperhistory))
                                         {
                                             echo '<div class="tab-pane fade mt-3" id="sandpiper" role="tabpanel" aria-labelledby="sandpiper-tab">'
-                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Event Description</th></tr>';
+                                            . '<table class="table"><tr><th>Date/Time</th><th>Event Description</th></tr>';
                                             foreach ($sandpiperhistory as $record) {
-                                                $nicedescription = $record['description'];
+                                                $nicedescription = $record['action'];
                                                 if (strlen  ($nicedescription) > $logpreviewlength) {
                                                     $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
                                                 }
-                                                echo '<tr><td><a href="./showSandpiperLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td><code>' . $nicedescription . '</code></td></tr>';
+                                                echo '<tr><td><a href="./showSandpiperLogEvent.php?id='.$record['id'].'">' . $record['timestamp'] . '</a></td><td><code>' . $nicedescription . '</code></td></tr>';
                                             }
                                             echo '</table></div>';
                                         }      
