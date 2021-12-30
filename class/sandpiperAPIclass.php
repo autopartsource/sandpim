@@ -95,12 +95,12 @@ class sandpiper
          $secret=$this->getJWTsecret();
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' using plan:'.$planuuid);
-         $this->logEvent($planuuid, '', '', 'user ['.$user->name.'] authenticated with plan ['.$planuuid.'] from ['.$address.']');
+         $this->logEvent($planuuid, '', '', $user->name.' authenticated with plan ['.$planuuid.'] from '.$address);
          $returnvalue= array('token'=>$jwt,'message'=>array('message_code'=>3001,'message_text'=>'authentication success'),'http response code'=>200);
         }
         else
         {// plan presented had XSD errors
-         $this->logEvent('', '', '', 'user ['.$user->name.'] authenticated from ['.$address.'], but the plandocument presented contained XSD errors ['.$plandocument['schemaerrors'].']');
+         $this->logEvent('', '', '', $user->name.' authenticated from '.$address.', but the plandocument presented contained XSD errors ['.$plandocument['schemaerrors'].']');
          $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (xml schema errors):'.$plandocument['schemaerrors']),'http response code'=>401);
         }        
        }
@@ -113,14 +113,14 @@ class sandpiper
          $secret=$this->getJWTsecret();
          $jwt= $this->generateJWT($this->userid, $this->username, $planuuid, $resources, $expiresepoch, $secret);
          $logs->logSystemEvent('login', $user->id, $user->name.' sandpiper API log in from '.$address. ' with null plan');
-         $this->logEvent('', '', '', 'user ['.$user->name.'] authenticated with a null plan from ['.$address.']');
+         $this->logEvent('', '', '', $user->name.' authenticated with a null plan from '.$address);
          $returnvalue= array('token'=>$jwt,'message'=>array('message_code'=>1001,'message_text'=>'authentication success'),'http response code'=>200);         
         }
       } 
       else
       {// log the failure event
         $logs->logSystemEvent('loginfailure', $this->userid, 'sandpiper API login failed from '.$address);
-        $this->logEvent('', '', '', 'user ['.$user->name.'] failed authentication from ['.$address.']');
+        $this->logEvent('', '', '', $user->name.' failed authentication from '.$address);
         $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (bad password)'),'http response code'=>401);
       }
      }
@@ -1505,7 +1505,7 @@ class plans extends sandpiper
                         }
 
                         $this->response=array('plans'=>$plansresponse,'message'=>array('message_code'=>1000, 'message_text'=>'Here are the plans'), 'http response code'=>200);
-                        $this->logEvent('', '', '', 'existing plans list (of '.count($plansresponse).' plans) requested by '.$this->userrealname);
+                        $this->logEvent('', '', '', $this->userrealname.' requested existing plans list ('.count($plansresponse).' plans in response)');
  
                         break;
                 
