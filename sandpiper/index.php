@@ -113,8 +113,8 @@ switch($uriparts[2])
                 }
                 else
                 {// send the "not authorized" code
-                    $plans->logEvent('', '', '', 'unauthenticated request attempted at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
                     http_response_code(401);
+                    $plans->logEvent('', '', '', 'unauthenticated attempt at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
                 }
                 break;
 
