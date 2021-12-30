@@ -120,7 +120,7 @@ class sandpiper
       else
       {// log the failure event
         $logs->logSystemEvent('loginfailure', $this->userid, 'sandpiper API login failed from '.$address);
-        $this->logEvent('', '', '', $user->name.' failed authentication from '.$address);
+        $this->logEvent('', '', '', $user->name.' failed authentication with wrong password ['.$password.'] from '.$address);
         $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (bad password)'),'http response code'=>401);
       }
      }
@@ -129,7 +129,7 @@ class sandpiper
        //  burn the amount of time that a password verification would have taken had this been a known username. This is to thwart a timing attack: Baddie could determine validity of arbitrary usernames thrown at the api because they all take a similar hmac time (several hundred mS)
        $trash= password_verify('asdkjflkasjdfkl', '$argon2id$v=19$m=65536,t=4,p=1$NnBsSTgvZmpNbmdoeXo2eA$LWpqCgHuxVmgEwDMSf3o5SM1AWT7qbCtkV8ckxBCr94');      
        $logs->logSystemEvent('loginfailure', 0, 'unknown user on sandpiper API ('.$username.', password:'.$password.') from '.$address);
-       $this->logEvent('', '', '', 'unknown user ['.$username.'] attempted authentication with password ['.$password.'] from ['.$address.']');
+       $this->logEvent('', '', '', 'unknown user ['.$username.'] attempted authentication with password ['.$password.'] from '.$address);
        $returnvalue= array('token'=>'','message'=>array('message_code'=>3000,'message_text'=>'authentication failure (unknown user)'),'http response code'=>401);
 
      }
