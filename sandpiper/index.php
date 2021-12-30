@@ -134,6 +134,7 @@ switch($uriparts[2])
                 else
                 {// send the "not authorized" code
                     http_response_code(401);
+                    $slices->logEvent('', '', '', 'unauthenticated attempt at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
                 }
                 break;
 
@@ -149,6 +150,7 @@ switch($uriparts[2])
                 else
                 {// send the "not authorized" code
                     http_response_code(401);
+                    $activity->logEvent('', '', '', 'unauthenticated attempt at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
                 }
                 break;
             
@@ -208,7 +210,9 @@ switch($uriparts[2])
                 break;
                         
     
-            default: 
+            default:
+                $sandpiper=new sandpiper;
+                $plans->logEvent('', '', '', 'unexpected request to ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR'].' 404 was sent.');
                 echo 'Unexpected input. Was expecting a verb like login, plans, slices or activity. Got this instead: '.$root;
                 http_response_code(404);
                 break;
@@ -218,6 +222,8 @@ switch($uriparts[2])
     
     
     default:
+        $sandpiper=new sandpiper;
+        $plans->logEvent('', '', '', 'unexpected request to ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR'].' 404 was sent.');
         echo 'Unexpected input. Was expecting a version number (like v1) or the check verb.';
         http_response_code(404);
         break;
