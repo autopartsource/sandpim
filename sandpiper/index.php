@@ -113,7 +113,7 @@ switch($uriparts[2])
                 }
                 else
                 {// send the "not authorized" code
-                    $sandpiper->logEvent('', '', '', 'unauthenticated request attempted at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
+                    $plans->logEvent('', '', '', 'unauthenticated request attempted at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
                     http_response_code(401);
                 }
                 break;
