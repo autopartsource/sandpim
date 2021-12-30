@@ -1505,7 +1505,7 @@ class plans extends sandpiper
                         }
 
                         $this->response=array('plans'=>$plansresponse,'message'=>array('message_code'=>1000, 'message_text'=>'Here are the plans'), 'http response code'=>200);
-                        $this->logEvent('', '', '', 'existing plans list requested by '.$this->userrealname);
+                        $this->logEvent('', '', '', 'existing plans list (of '.count($plansresponse).' plans) requested by '.$this->userrealname);
  
                         break;
                 
