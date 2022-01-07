@@ -1110,6 +1110,19 @@ class setup
         PRIMARY KEY (brandAAIAID))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - competitivebrand ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - competitivebrand ('.$db->conn->error.')';}
 
+        //brand-connected assets (non-part) - marketing materials, non-SKU videos, etc
+        $sql="CREATE TABLE brand_asset (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        BrandID varchar(255) NOT NULL,
+        assetid varchar(255) NOT NULL,
+        assettypecode varchar(255) not null,
+        sequence int unsigned not null,
+        PRIMARY KEY (id),
+        INDEX idx_BrandID (BrandID),
+        INDEX idx_assetid (assetid)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - brand_asset ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - brand_asset ('.$db->conn->error.')';}
+                
         $sql="CREATE TABLE autocare_databases (
         databasename varchar(255) not null,
         databasetype varchar(255) not null,

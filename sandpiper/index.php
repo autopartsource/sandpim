@@ -114,7 +114,7 @@ switch($uriparts[2])
                 else
                 {// send the "not authorized" code
                     http_response_code(401);
-                    $plans->logEvent('', '', '', 'unauthenticated '.$method.' at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
+                    $plans->logEvent('', '', '', 'unauthenticated '.$method.' attempt at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
                 }
                 break;
 
@@ -134,7 +134,7 @@ switch($uriparts[2])
                 else
                 {// send the "not authorized" code
                     http_response_code(401);
-                    $slices->logEvent('', '', '', 'unauthenticated '.$method.' at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
+                    $slices->logEvent('', '', '', 'unauthenticated '.$method.' attempt at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
                 }
                 break;
 
@@ -150,7 +150,7 @@ switch($uriparts[2])
                 else
                 {// send the "not authorized" code
                     http_response_code(401);
-                    $activity->logEvent('', '', '', 'unauthenticated '.$method.' at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
+                    $activity->logEvent('', '', '', 'unauthenticated '.$method.' attempt at ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR']);
                 }
                 break;
             
@@ -212,7 +212,7 @@ switch($uriparts[2])
     
             default:
                 $sandpiper=new sandpiper;
-                $sandpiper->logEvent('', '', '', 'unexpected '.$method.' to ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR'].' 404 was sent.');
+                $sandpiper->logEvent('', '', '', 'unexpected '.$method.' to ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR'].' - http 404 sent.');
                 echo 'Unexpected input. Was expecting a verb like login, plans, slices or activity. Got this instead: '.$root;
                 http_response_code(404);
                 break;
@@ -223,7 +223,7 @@ switch($uriparts[2])
     
     default:
         $sandpiper=new sandpiper;
-        $sandpiper->logEvent('', '', '', 'unexpected '.$method.' to ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR'].' 404 was sent.');
+        $sandpiper->logEvent('', '', '', 'unexpected '.$method.' to ['.$_SERVER['REQUEST_URI'].'] by '.$_SERVER['REMOTE_ADDR'].' - http 404 sent.');
         echo 'Unexpected input. Was expecting a version number (like v1) or the check verb.';
         http_response_code(404);
         break;

@@ -34,11 +34,12 @@ $kpi=new kpi();
 
 
 $configGet = new configGet;
-$appshistory = $logs->getAppsEvents(50);
-$assetshistory = $logs->getAssetsEvents(50);
-$partshistory = $logs->getPartsEvents(50);
-$systemhistory = $logs->getSystemEvents('%', false, 50);
-$sandpiperhistory= $logs->getSandpiperEvents(50);
+$appshistory = $logs->getAppsEvents(100);
+$assetshistory = $logs->getAssetsEvents(100);
+$partshistory = $logs->getPartsEvents(100);
+$systemhistory = $logs->getSystemEvents('%', false, 100);
+$sandpiperhistory= $logs->getSandpiperEvents(100);
+
 
 
 //$partissues=$pim->getIssues('PART/%','%',0,array(1,2),20);

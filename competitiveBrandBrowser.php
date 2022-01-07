@@ -154,10 +154,8 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                                         {
                                             $checked=''; if(array_key_exists($brand['BrandID'], $brandAAIAIDkeyedcompetitivebrands)){$checked=' checked';}
                                             $brandownercolumn='
-                                                    <div class="col-md-6">
-                                                        '.$brand['BrandName'].
-                                                    '</div>
-                                                    <div class="col-md-3">
+                                                    <div class="col-md-6"><a href="./showBrand.php?brandid='.$brand['BrandID'].'">'.$brand['BrandName'].'</a></div>
+                                                        <div class="col-md-3">
                                                         '.$brand['BrandID'].
                                                     '</div>
                                                     <div class="col-md-3">
