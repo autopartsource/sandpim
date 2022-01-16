@@ -1238,7 +1238,21 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - replicationpeer ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - replicationpeer ('.$db->conn->error.')';}
 
+        // struggling to come up with a good name for this table. We need a data-driven way for regular users to deploy arbitrary html to the dashboard page - general iframe embeds
+        // to external resources like AirTable, Jira etc. in order to publish information to other users that is not managed inside the PIM system.
+        // the specific use-case diving this inside AutoPartSource is that we manage the queue of requests for digital asset creation in an external web-based service called AirTable
+        // they provide an embed (iframe) capability to tailor a specifc filtered/sorted presentation of a larger dataset.
+        $sql="CREATE TABLE dashboardembed (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        description varchar(255) NOT NULL,
+        type varchar(255) NOT NULL,
+        sequence int unsigned not null,
+        data text not null,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - replicationpeer ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - replicationpeer ('.$db->conn->error.')';}
 
+        
+        
         
         $db->close();
         return $returnvalue;
