@@ -43,7 +43,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
    $doc->load($_FILES['fileToUpload']['tmp_name']);
    
    libxml_use_internal_errors(true);
-   if(!$doc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
+   if(!$doc->schemaValidate('PIES_6_7_r5_XSD.xsd'))
    {
     $schemavalidated=false;
     $schemaerrors = libxml_get_errors();
@@ -626,7 +626,8 @@ if($validUpload)
     
     $orientationviewElement=$digitalfileinformationElement->getElementsByTagName('OrientationView');
     if(count($orientationviewElement)){$orientationview=$orientationviewElement[0]->nodeValue;}
-    
+        
+
     $assetDimensionsElement=$digitalfileinformationElement->getElementsByTagName('AssetDimensions');
     if(count($assetDimensionsElement))
     {
@@ -659,6 +660,8 @@ if($validUpload)
             $assetdescriptionlanguagecode=$assetDescriptionElement[0]->getAttribute('LanguageCode');
         }
     }
+
+
     
     $uriElement=$digitalfileinformationElement->getElementsByTagName('URI');
     if(count($uriElement)){$uri=$uriElement[0]->nodeValue;}
@@ -706,7 +709,6 @@ if($validUpload)
 
 
 
-
   
   //----- jam all the segments into the items array
   $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSbrandid,'UNSPSC'=>$UNSPSC,'NicePartTerminologyName'=>$niceparttypename,'descriptions'=>$descriptions,'prices'=>$prices,'expis'=>$expis,'attributes'=>$attributes,'packages'=>$packages,'kits'=>$kits,'interchanges'=>$interchanges,'digitalassets'=>$digitalassets);
@@ -716,7 +718,7 @@ if($validUpload)
  $writer->setAuthor('SandPIM'); 
  
  $writer->writeSheetHeader('Header', array('TechnicalContact'=>'string',$header['TechnicalContact']=>'string'),array('widths'=>array(20,60)));
-// $row=array('RhubarbTemplate','7.1'); $writer->writeSheetRow('Header', $row);
+// $row=array('RhubarbTemplate','6.7'); $writer->writeSheetRow('Header', $row);
 // $row=array('TechnicalContact',$header['TechnicalContact']); $writer->writeSheetRow('Header', $row);
  $row=array('ContactEmail',$header['ContactEmail']); $writer->writeSheetRow('Header', $row);
  $row=array('PCdbVersionDate',$header['PCdbVersionDate']); $writer->writeSheetRow('Header', $row);
@@ -951,7 +953,7 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Convert PIES (7.1) xml to Excel spreadsheet</h3>
+                        <h3 class="card-header text-start">Convert PIES (6.7) xml to Excel spreadsheet</h3>
 
                         <div class="card-body">
                             <h5 class="alert alert-secondary">Step 2: Analyze results and download spreadsheet</h5>
@@ -1015,7 +1017,7 @@ $logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($i
 
 if($streamXLSX)
 {   
- $filename='Rhubarb_7_1_C_'.date('Y-m-d').'.xlsx';
+ $filename='Rhubarb_6_7_A_'.date('Y-m-d').'.xlsx';
  header('Content-Disposition: attachment; filename="'.$filename.'"');
  header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
  header('Content-Length: ' . strlen($xlsxdata));

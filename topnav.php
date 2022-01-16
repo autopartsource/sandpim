@@ -108,6 +108,7 @@
                     <a class="dropdown-item" href="MMYtoBasevidsInput.php">Convert Makes/Models/Years to BaseVehicleIDs</a>
                     <a class="dropdown-item" href="convertAiExcelToACES4_1upload.php">Convert coded-value spreadsheet to ACES</a>
                     <a class="dropdown-item" href="./rhubarb7_1Index.php">Rhubarb 7.1</a>
+                    <a class="dropdown-item" href="./rhubarb6_7Index.php">Rhubarb 6.7</a>
                     <a class="dropdown-item" href="UUIDgenerator.php">UUID Generator</a>
                 </div>
             </li>
