@@ -599,7 +599,7 @@ if($validUpload)
  {
   $kitsSheet=$xlsx->getSheetData('Kits');
 
-  $PartNumberFieldIndex=-1; $DescriptionFieldIndex=-1; $DescriptionCodeFieldIndex=-1; $QuantityInKitFieldIndex=-1; $QuantityInKitUOMfieldIndex=-1; $LanguageCodeFieldIndex=-1; $ComponentPartTerminologyIDfieldIndex=-1; $SoldSeparatelyFieldIndex=-1; $SequenceCodeFieldIndex=-1; $ComponentPartNumberFieldIndex=-1; $ComponentBrandFieldIndex=-1; $ComponentBrandLabelFieldIndex=-1; $ComponentSubBrandFieldIndex=-1; $ComponentSubBrandLabelFieldIndex=-1;
+  $PartNumberFieldIndex=-1; $DescriptionFieldIndex=-1; $DescriptionCodeFieldIndex=-1; $QuantityInKitFieldIndex=-1; $QuantityInKitUOMfieldIndex=-1; $LanguageCodeFieldIndex=-1; $ComponentPartTerminologyIDfieldIndex=-1; $SoldSeparatelyFieldIndex=-1; $IDQualifierFieldIndex=-1; $SequenceCodeFieldIndex=-1; $ComponentPartNumberFieldIndex=-1; $ComponentBrandFieldIndex=-1; $ComponentBrandLabelFieldIndex=-1; $ComponentSubBrandFieldIndex=-1; $ComponentSubBrandLabelFieldIndex=-1;
   for($i=0; $i<=count($kitsSheet[0])-1; $i++)
   { // identify the named columns' IDs
    if($kitsSheet[0][$i]=='PartNumber'){$PartNumberFieldIndex=$i;}
@@ -610,6 +610,7 @@ if($validUpload)
    if($kitsSheet[0][$i]=='LanguageCode'){$LanguageCodeFieldIndex=$i;}
    if($kitsSheet[0][$i]=='ComponentPartTerminologyID'){$ComponentPartTerminologyIDfieldIndex=$i;}
    if($kitsSheet[0][$i]=='SoldSeparately'){$SoldSeparatelyFieldIndex=$i;}
+   if($kitsSheet[0][$i]=='IDQualifier'){$IDQualifierFieldIndex=$i;}
    if($kitsSheet[0][$i]=='SequenceCode'){$SequenceCodeFieldIndex=$i;}
    if($kitsSheet[0][$i]=='ComponentPartNumber'){$ComponentPartNumberFieldIndex=$i;}
    if($kitsSheet[0][$i]=='ComponentBrand'){$ComponentBrandFieldIndex=$i;}
@@ -634,6 +635,7 @@ if($validUpload)
     if($LanguageCodeFieldIndex>=0){$kit['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
     if($ComponentPartTerminologyIDfieldIndex>=0){$kit['ComponentPartTerminologyID']=trim($fields[$ComponentPartTerminologyIDfieldIndex]);}
     if($SoldSeparatelyFieldIndex>=0){$kit['SoldSeparately']=trim($fields[$SoldSeparatelyFieldIndex]);}
+    if($IDQualifierFieldIndex>=0){$kit['IDQualifier']=trim($fields[$IDQualifierFieldIndex]);}
     if($SequenceCodeFieldIndex>=0){$kit['SequenceCode']=trim($fields[$SequenceCodeFieldIndex]);}
     if($ComponentPartNumberFieldIndex>=0){$kit['ComponentPartNumber']=trim($fields[$ComponentPartNumberFieldIndex]);}
     if($ComponentBrandFieldIndex>=0){$kit['ComponentBrand']=trim($fields[$ComponentBrandFieldIndex]);}

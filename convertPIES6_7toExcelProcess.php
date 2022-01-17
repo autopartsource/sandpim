@@ -284,7 +284,7 @@ if($validUpload)
    $pricingElements=$pricesElement[0]->getElementsByTagName('Pricing');
    foreach($pricingElements as $pricingElement)
    {
-    $pricesheetnumber=''; $price=''; $priceuom=''; $pricetype=''; $currencycode=''; $effectivedate=''; $expirationdate=''; $pricetypedescription=''; $pricebreak=''; $pricebreakuom=''; $pricemultiplier='';   $pricetype=$pricingElement->getAttribute('PriceType');
+    $pricesheetnumber=''; $price=''; $priceuom=''; $pricetype=''; $currencycode=''; $effectivedate=''; $expirationdate=''; $pricetypedescription=''; $pricebreak=''; $pricebreakuom=''; $pricetype=$pricingElement->getAttribute('PriceType');
     $pricesheetnumberElement=$pricingElement->getElementsByTagName('PriceSheetNumber'); if(count($pricesheetnumberElement)){$pricesheetnumber = $pricesheetnumberElement[0]->nodeValue;}
     $priceElement=$pricingElement->getElementsByTagName('Price'); if(count($priceElement)){$price = $priceElement[0]->nodeValue; $priceuom=$priceElement[0]->getAttribute('UOM');}
     $currencycodeElement=$pricingElement->getElementsByTagName('CurrencyCode'); if(count($currencycodeElement)){$currencycode = $currencycodeElement[0]->nodeValue;}
@@ -292,9 +292,9 @@ if($validUpload)
     $expirationdateElement=$pricingElement->getElementsByTagName('ExpirationDate'); if(count($expirationdateElement)){$expirationdate = $expirationdateElement[0]->nodeValue;}
     $pricetypedescriptionElement=$pricingElement->getElementsByTagName('PriceTypeDescription'); if(count($pricetypedescriptionElement)){$pricetypedescription = $pricetypedescriptionElement[0]->nodeValue;}
     $pricebreakElement=$pricingElement->getElementsByTagName('PriceBreak'); if(count($pricebreakElement)){$pricebreak = $pricebreakElement[0]->nodeValue; $pricebreakuom=$pricebreakElement[0]->getAttribute('UOM');}
-    $pricemultiplierElement=$pricingElement->getElementsByTagName('PriceMultiplier');
-    if(count($pricemultiplierElement)){$pricemultiplier = $pricemultiplierElement[0]->nodeValue;}
-    $prices[]=array('PriceSheetNumber'=>$pricesheetnumber,'Price'=>$price,'PriceUOM'=>$priceuom,'PriceType'=>$pricetype,'CurrencyCode'=>$currencycode,'EffectiveDate'=>$effectivedate,'ExpirationDate'=>$expirationdate,'PriceTypeDescription'=>$pricetypedescription,'PriceBreak'=>$pricebreak,'PriceBreakUOM'=>$pricebreakuom,'PriceMultiplier'=>$pricemultiplier);
+    //$pricemultiplierElement=$pricingElement->getElementsByTagName('PriceMultiplier');
+    //if(count($pricemultiplierElement)){$pricemultiplier = $pricemultiplierElement[0]->nodeValue;}
+    $prices[]=array('PriceSheetNumber'=>$pricesheetnumber,'Price'=>$price,'PriceUOM'=>$priceuom,'PriceType'=>$pricetype,'CurrencyCode'=>$currencycode,'EffectiveDate'=>$effectivedate,'ExpirationDate'=>$expirationdate,'PriceTypeDescription'=>$pricetypedescription,'PriceBreak'=>$pricebreak,'PriceBreakUOM'=>$pricebreakuom);
    }
   }
 
@@ -514,10 +514,14 @@ if($validUpload)
    $kitcomponentElements=$kitsElement[0]->getElementsByTagName('KitComponent');
    foreach($kitcomponentElements as $kitcomponentElement)
    {
-    $componentpartnumber=''; $description=''; $descriptioncode=''; $quantityinkit=''; $quantityinkituom=''; $soldseparately=''; $languagecode=''; $componentpartterminologyid=''; $sequencecode=''; $componentbrand=''; $componentbrandlabel=''; $componentsubbrand=''; $componentsubbrandlabel='';
+    $componentpartnumber=''; $description=''; $descriptioncode=''; $quantityinkit=''; $quantityinkituom=''; $idqualifier=''; $languagecode=''; $sequencecode=''; $componentbrand=''; $componentbrandlabel=''; $componentsubbrand=''; $componentsubbrandlabel='';
 
     $componentpartnumberElement=$kitcomponentElement->getElementsByTagName('ComponentPartNumber');
-    if(count($componentpartnumberElement)){$componentpartnumber=$componentpartnumberElement[0]->nodeValue;}
+    if(count($componentpartnumberElement))
+    {
+        $componentpartnumber=$componentpartnumberElement[0]->nodeValue;
+        $idqualifier=$componentpartnumberElement[0]->getAttribute('IDQualifier');
+    }
      
     $componentbrandElement=$kitcomponentElement->getElementsByTagName('ComponentBrand');
     if(count($componentbrandElement)){$componentbrand=$componentbrandElement[0]->nodeValue;}
@@ -540,8 +544,8 @@ if($validUpload)
      $languagecode=$descriptionElement[0]->getAttribute('LanguageCode');
     }
      
-    $componentpartterminologyidElement=$kitcomponentElement->getElementsByTagName('ComponentPartTerminologyID');
-    if(count($componentpartterminologyidElement)){$componentpartterminologyid=$componentpartterminologyidElement[0]->nodeValue;}
+//    $componentpartterminologyidElement=$kitcomponentElement->getElementsByTagName('ComponentPartTerminologyID');
+//    if(count($componentpartterminologyidElement)){$componentpartterminologyid=$componentpartterminologyidElement[0]->nodeValue;}
      
     $quantityinkitElement=$kitcomponentElement->getElementsByTagName('QuantityInKit');
     if(count($quantityinkitElement))
@@ -553,11 +557,11 @@ if($validUpload)
     $sequencecodeElement=$kitcomponentElement->getElementsByTagName('SequenceCode');
     if(count($sequencecodeElement)){$sequencecode=$sequencecodeElement[0]->nodeValue;}
      
-    $soldseparatelyElement=$kitcomponentElement->getElementsByTagName('SoldSeparately');
-    if(count($soldseparatelyElement)){$soldseparately=$soldseparatelyElement[0]->nodeValue;}
+//    $soldseparatelyElement=$kitcomponentElement->getElementsByTagName('SoldSeparately');
+//    if(count($soldseparatelyElement)){$soldseparately=$soldseparatelyElement[0]->nodeValue;}
      
      
-    $kits[]=array('ComponentPartNumber'=>$componentpartnumber,'Description'=>$description,'DescriptionCode'=>$descriptioncode,'QuantityInKit'=>$quantityinkit,'QuantityInKitUOM'=>$quantityinkituom,'SoldSeparately'=>$soldseparately,'LanguageCode'=>$languagecode,'ComponentPartTerminologyID'=>$componentpartterminologyid, 'SequenceCode'=>$sequencecode, 'ComponentBrand'=>$componentbrand, 'ComponentBrandLabel'=>$componentbrandlabel, 'ComponentSubBrand'=>$componentsubbrand, 'ComponentSubBrandLabel'=>$componentsubbrandlabel); 
+    $kits[]=array('ComponentPartNumber'=>$componentpartnumber,'Description'=>$description,'DescriptionCode'=>$descriptioncode,'QuantityInKit'=>$quantityinkit,'QuantityInKitUOM'=>$quantityinkituom,'IDQualifier'=>$idqualifier ,'LanguageCode'=>$languagecode, 'SequenceCode'=>$sequencecode, 'ComponentBrand'=>$componentbrand, 'ComponentBrandLabel'=>$componentbrandlabel, 'ComponentSubBrand'=>$componentsubbrand, 'ComponentSubBrandLabel'=>$componentsubbrandlabel); 
    }      
   }
   
@@ -767,12 +771,12 @@ if($validUpload)
 
  
 //-------- prices ---------
- $writer->writeSheetHeader('Prices', array('PartNumber'=>'string','PriceSheetNumber'=>'string','Price'=>'0.00','PriceUOM'=>'string','PriceType'=>'string','CurrencyCode'=>'string','EffectiveDate'=>'string','ExpirationDate'=>'string','PriceTypeDescription'=>'string','PriceBreak'=>'integer','PriceBreakUOM'=>'string','PriceMultiplier'=>'0.000'), array('widths'=>array(11,16,5.00,9,9,12,11,13,19,10,14,12),'freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff']));
+ $writer->writeSheetHeader('Prices', array('PartNumber'=>'string','PriceSheetNumber'=>'string','Price'=>'0.00','PriceUOM'=>'string','PriceType'=>'string','CurrencyCode'=>'string','EffectiveDate'=>'string','ExpirationDate'=>'string','PriceTypeDescription'=>'string','PriceBreak'=>'integer','PriceBreakUOM'=>'string'), array('widths'=>array(11,16,5.00,9,9,12,11,13,19,10,14,12),'freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['prices'] as $price)
   {
-   $row=array($partnumber,$price['PriceSheetNumber'],$price['Price'],$price['PriceUOM'],$price['PriceType'],$price['CurrencyCode'],$price['EffectiveDate'],$price['ExpirationDate'],$price['PriceTypeDescription'],$price['PriceBreak'],$price['PriceBreakUOM'],$price['PriceMultiplier']);
+   $row=array($partnumber,$price['PriceSheetNumber'],$price['Price'],$price['PriceUOM'],$price['PriceType'],$price['CurrencyCode'],$price['EffectiveDate'],$price['ExpirationDate'],$price['PriceTypeDescription'],$price['PriceBreak'],$price['PriceBreakUOM']);
    $writer->writeSheetRow('Prices', $row);
   }
  }
@@ -809,17 +813,14 @@ if($validUpload)
      'WeightsUOM'=>'string',
      'PackageLevelGTIN'=>'string',
      'PackageBarCodeCharacters'=>'string',
-     'ShippingHeight'=>'0.00',
-     'ShippingWidth'=>'0.00',
-     'ShippingLength'=>'0.00',
+     'Height'=>'0.00',
+     'Width'=>'0.00',
+     'Length'=>'0.00',
      'DimensionsUOM'=>'string',
      'DimensionalWeight'=>'0.00',
      'WeightVariance'=>'0.00',
      'StackingFactor'=>'0.00',
      'ElectronicProductCode'=>'string',
-     'MerchandisingHeight'=>'0.00',
-     'MerchandisingWidth'=>'0.00',
-     'MerchandisingLength'=>'0.00',
      'ShippingScope'=>'string',
      'Bulk'=>'string',
      'RegulatingCountry'=>'string',
@@ -838,23 +839,23 @@ if($validUpload)
      'PackingGroupCode'=>'string',
      'WHMISFreeText'=>'string',
      'WHMISCode'=>'string',
-     'LanguageCode'=>'string'), array('widths'=>array(13,13,16,12,17,7,13,17,25,14,14,14,16,18,15,14,29,19,19,19,14,5,17,15,10,15,28,27,26,14,13,24,18,13,25,18,31,12,14),'freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],             ['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
+     'LanguageCode'=>'string'), array('widths'=>array(13,13,16,12,17,7,13,17,25,14,14,14,14,29,19,19,19,14,5,17,15,10,15,28,27,26,14,13,24,18,13,25,18,31,12,14),'freeze_rows'=>1, 'freeze_columns'=>1,['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],             ['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['packages'] as $package)
   {
-   $row=array($partnumber,$package['PackageUOM'], $package['QuantityofEaches'], $package['InnerQuantity'], $package['InnerQuantityUOM'],$package['Weight'],$package['WeightsUOM'],$package['PackageLevelGTIN'],$package['PackageBarCodeCharacters'],$package['ShippingHeight'],$package['ShippingWidth'],$package['ShippingLength'],$package['DimensionsUOM'],$package['DimensionalWeight'],$package['WeightVariance'],$package['StackingFactor'], $package['ElectronicProductCode'], $package['MerchandisingHeight'],$package['MerchandisingWidth'],$package['MerchandisingLength'],$package['ShippingScope'],$package['Bulk'],$package['RegulatingCountry'],$package['TransportMethod'],$package['Regulated'],$package['Description'],$package['HazardousMaterialCodeQualifier'],$package['HazardousMaterialDescription'],$package['HazardousMaterialLabelCode'],$package['ShippingName'],$package['UNNAIDCode'],$package['HazardousPlacardNotation'],$package['OuterPackageLabel'],$package['TextMessage'],$package['RegulationsExemptionCode'],$package['PackingGroupCode'],$package['WHMISFreeText'],$package['WHMISCode'],$package['LanguageCode']);
+   $row=array($partnumber,$package['PackageUOM'], $package['QuantityofEaches'], $package['InnerQuantity'], $package['InnerQuantityUOM'],$package['Weight'],$package['WeightsUOM'],$package['PackageLevelGTIN'],$package['PackageBarCodeCharacters'],$package['Height'],$package['Width'],$package['Length'],$package['DimensionsUOM'],$package['DimensionalWeight'],$package['WeightVariance'],$package['StackingFactor'], $package['ElectronicProductCode'],$package['ShippingScope'],$package['Bulk'],$package['RegulatingCountry'],$package['TransportMethod'],$package['Regulated'],$package['Description'],$package['HazardousMaterialCodeQualifier'],$package['HazardousMaterialDescription'],$package['HazardousMaterialLabelCode'],$package['ShippingName'],$package['UNNAIDCode'],$package['HazardousPlacardNotation'],$package['OuterPackageLabel'],$package['TextMessage'],$package['RegulationsExemptionCode'],$package['PackingGroupCode'],$package['WHMISFreeText'],$package['WHMISCode'],$package['LanguageCode']);
    $writer->writeSheetRow('Packages', $row);
   }
  }
 
 //------------- kits ----------------
- $writer->writeSheetHeader('Kits', array('PartNumber'=>'string','Description'=>'string','DescriptionCode'=>'string','QuantityInKit'=>'integer','QuantityInKitUOM'=>'string','SoldSeparately'=>'string','LanguageCode'=>'string','ComponentPartTerminologyID'=>'integer','SequenceCode'=>'integer','ComponentPartNumber'=>'string','ComponentBrand'=>'string','ComponentBrandLabel'=>'string','ComponentSubBrand'=>'string','ComponentSubBrandLabel'=>'string'), array('widths'=>array(11,41,15,12,17,14,14,27,14,21,16,20,19,24),'freeze_rows'=>1, 'freeze_columns'=>1, ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
+ $writer->writeSheetHeader('Kits', array('PartNumber'=>'string','Description'=>'string','DescriptionCode'=>'string','QuantityInKit'=>'integer','QuantityInKitUOM'=>'string','IDQualifier'=>'string', 'LanguageCode'=>'string','SequenceCode'=>'integer','ComponentPartNumber'=>'string','ComponentBrand'=>'string','ComponentBrandLabel'=>'string','ComponentSubBrand'=>'string','ComponentSubBrandLabel'=>'string'), array('widths'=>array(11,41,15,12,17,14,27,14,21,16,20,19,24),'freeze_rows'=>1, 'freeze_columns'=>1, ['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ff0000'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#ffff00'],['fill'=>'#00ff00'],['fill'=>'#0000ff'],['fill'=>'#0000ff'],['fill'=>'#0000ff']));
  foreach($items as $partnumber=>$item)
  {
   foreach($item['kits'] as $kit)
   {
-   $row=array($partnumber,$kit['Description'],$kit['DescriptionCode'],$kit['QuantityInKit'],$kit['QuantityInKitUOM'],$kit['SoldSeparately'],$kit['LanguageCode'],$kit['ComponentPartTerminologyID'],$kit['SequenceCode'],$kit['ComponentPartNumber'],$kit['ComponentBrand'],$kit['ComponentBrandLabel'],$kit['ComponentSubBrand'],$kit['ComponentSubBrandLabel']);
+   $row=array($partnumber,$kit['Description'],$kit['DescriptionCode'],$kit['QuantityInKit'],$kit['QuantityInKitUOM'],$kit['IDQualifier'] ,$kit['LanguageCode'],$kit['SequenceCode'],$kit['ComponentPartNumber'],$kit['ComponentBrand'],$kit['ComponentBrandLabel'],$kit['ComponentSubBrand'],$kit['ComponentSubBrandLabel']);
    $writer->writeSheetRow('Kits', $row);
   }
  }

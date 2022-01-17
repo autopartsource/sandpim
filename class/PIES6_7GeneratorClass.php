@@ -121,7 +121,7 @@ class PIESgenerator
    $ItemElement->appendChild($PartNumberElement);
    $BrandAAIAIDelement= $doc->createElement('BrandAAIAID',$item['BrandAAIAID']); $ItemElement->appendChild($BrandAAIAIDelement);
    if(array_key_exists('BrandLabel', $item)){$BrandLabelElement= $doc->createElement('BrandLabel',$item['BrandLabel']); $ItemElement->appendChild($BrandLabelElement); }
-   if(array_key_exists('VMRSBrandID', $item)){$VMRSBrandIDelement= $doc->createElement('VMRSBrandID',$item['VMRSBrandID']); $ItemElement->appendChild($VMRSBrandIDelement); }
+   //if(array_key_exists('VMRSBrandID', $item)){$VMRSBrandIDelement= $doc->createElement('VMRSBrandID',$item['VMRSBrandID']); $ItemElement->appendChild($VMRSBrandIDelement); }
    if(array_key_exists('ACESApplications', $item)){$ACESApplicationsElement= $doc->createElement('ACESApplications',$item['ACESApplications']); $ItemElement->appendChild($ACESApplicationsElement);}
    if(array_key_exists('ItemQuantitySize', $item) && array_key_exists('ItemQuantitySizeUOM', $item)){$ItemQuantitySizeElement= $doc->createElement('ItemQuantitySize',$item['ItemQuantitySize']); $ItemQuantitySizeElement->setAttribute('UOM', $item['ItemQuantitySizeUOM']); $ItemElement->appendChild($ItemQuantitySizeElement);}
    if(array_key_exists('ContainerType', $item)){$ContainerTypeElement= $doc->createElement('ContainerType',$item['ContainerType']); $ItemElement->appendChild($ContainerTypeElement);}
@@ -189,9 +189,9 @@ class PIESgenerator
      if(array_key_exists('EffectiveDate',$price)){$EffectiveDateElement=$doc->createElement('EffectiveDate',$price['EffectiveDate']); $PricingElement->appendChild($EffectiveDateElement);}
      if(array_key_exists('ExpirationDate',$price)){$ExpirationDateElement=$doc->createElement('ExpirationDate',$price['ExpirationDate']); $PricingElement->appendChild($ExpirationDateElement);}
      if(array_key_exists('Price',$price) && array_key_exists('PriceUOM',$price)){$PriceElement=$doc->createElement('Price',$price['Price']); $PriceElement->setAttribute('UOM', $price['PriceUOM']); $PricingElement->appendChild($PriceElement);}
-     if(array_key_exists('PriceTypeDescription',$price)){$PriceTypeDescriptionElement=$doc->createElement('PriceTypeDescription', htmlspecialchars($price['PriceTypeDescription'], ENT_XML1 | ENT_COMPAT, 'UTF-8')); $PricingElement->appendChild($PriceTypeDescriptionElement);}
+     //if(array_key_exists('PriceTypeDescription',$price)){$PriceTypeDescriptionElement=$doc->createElement('PriceTypeDescription', htmlspecialchars($price['PriceTypeDescription'], ENT_XML1 | ENT_COMPAT, 'UTF-8')); $PricingElement->appendChild($PriceTypeDescriptionElement);}
      if(array_key_exists('PriceBreak',$price) && array_key_exists('PriceBreakUOM',$price)){$PriceBreakElement=$doc->createElement('PriceBreak',$price['PriceBreak']); $PriceBreakElement->setAttribute('UOM', $price['PriceBreakUOM']); $PricingElement->appendChild($PriceBreakElement);}
-     if(array_key_exists('PriceMultiplier',$price)){$PriceMultiplierElement=$doc->createElement('PriceMultiplier',$price['PriceMultiplier']); $PricingElement->appendChild($PriceMultiplierElement);}
+     //if(array_key_exists('PriceMultiplier',$price)){$PriceMultiplierElement=$doc->createElement('PriceMultiplier',$price['PriceMultiplier']); $PricingElement->appendChild($PriceMultiplierElement);}
      $PricesElement->appendChild($PricingElement);
     }
     $ItemElement->appendChild($PricesElement);
@@ -267,13 +267,13 @@ class PIESgenerator
      if(array_key_exists('DimensionsUOM',$package)){$DimensionsElement->setAttribute('UOM', $package['DimensionsUOM']);}
 
      
-     if(array_key_exists('MerchandisingHeight',$package)){$MerchandisingHeightElement=$doc->createElement('MerchandisingHeight',$package['MerchandisingHeight']); $DimensionsElement->appendChild($MerchandisingHeightElement);}
-     if(array_key_exists('MerchandisingWidth',$package)){$MerchandisingWidthElement=$doc->createElement('MerchandisingWidth',$package['MerchandisingWidth']); $DimensionsElement->appendChild($MerchandisingWidthElement);}
-     if(array_key_exists('MerchandisingLength',$package)){$MerchandisingLengthElement=$doc->createElement('MerchandisingLength',$package['MerchandisingLength']); $DimensionsElement->appendChild($MerchandisingLengthElement);}
+     //if(array_key_exists('MerchandisingHeight',$package)){$MerchandisingHeightElement=$doc->createElement('MerchandisingHeight',$package['MerchandisingHeight']); $DimensionsElement->appendChild($MerchandisingHeightElement);}
+     //if(array_key_exists('MerchandisingWidth',$package)){$MerchandisingWidthElement=$doc->createElement('MerchandisingWidth',$package['MerchandisingWidth']); $DimensionsElement->appendChild($MerchandisingWidthElement);}
+     //if(array_key_exists('MerchandisingLength',$package)){$MerchandisingLengthElement=$doc->createElement('MerchandisingLength',$package['MerchandisingLength']); $DimensionsElement->appendChild($MerchandisingLengthElement);}
      
-     if(array_key_exists('ShippingHeight',$package) && $package['ShippingHeight']>0){$ShippingHeightElement=$doc->createElement('ShippingHeight',$package['ShippingHeight']); $DimensionsElement->appendChild($ShippingHeightElement);}
-     if(array_key_exists('ShippingWidth',$package) && $package['ShippingWidth']>0){$ShippingWidthElement=$doc->createElement('ShippingWidth',$package['ShippingWidth']); $DimensionsElement->appendChild($ShippingWidthElement);}
-     if(array_key_exists('ShippingLength',$package) && $package['ShippingLength']>0){$ShippingLengthElement=$doc->createElement('ShippingLength',$package['ShippingLength']); $DimensionsElement->appendChild($ShippingLengthElement); $PackageElement->appendChild($DimensionsElement);}
+     if(array_key_exists('Height',$package) && $package['Height']>0){$HeightElement=$doc->createElement('Height',$package['Height']); $DimensionsElement->appendChild($HeightElement);}
+     if(array_key_exists('Width',$package) && $package['Width']>0){$WidthElement=$doc->createElement('Width',$package['Width']); $DimensionsElement->appendChild($WidthElement);}
+     if(array_key_exists('Length',$package) && $package['Length']>0){$LengthElement=$doc->createElement('Length',$package['Length']); $DimensionsElement->appendChild($LengthElement); $PackageElement->appendChild($DimensionsElement);}
 
      if(array_key_exists('Weight',$package) && $package['Weight']!=0 && array_key_exists('WeightsUOM',$package) && trim($package['WeightsUOM'])!='')
      {
@@ -366,11 +366,11 @@ class PIESgenerator
       $KitComponentElement->appendChild($DescriptionElement);
      }     
      
-     if(array_key_exists('ComponentPartTerminologyID',$kit) && trim($kit['ComponentPartTerminologyID'])!='')
-     {
-      $ComponentPartTerminologyIDElement=$doc->createElement('ComponentPartTerminologyID',$kit['ComponentPartTerminologyID']);
-      $KitComponentElement->appendChild($ComponentPartTerminologyIDElement);
-     }     
+//     if(array_key_exists('ComponentPartTerminologyID',$kit) && trim($kit['ComponentPartTerminologyID'])!='')
+//     {
+//      $ComponentPartTerminologyIDElement=$doc->createElement('ComponentPartTerminologyID',$kit['ComponentPartTerminologyID']);
+//      $KitComponentElement->appendChild($ComponentPartTerminologyIDElement);
+//     }     
      
      if(array_key_exists('QuantityInKit',$kit) && trim($kit['QuantityInKit'])!='')
      {
@@ -385,12 +385,12 @@ class PIESgenerator
       $KitComponentElement->appendChild($SequenceCodeElement);
      }     
      
-     if(array_key_exists('SoldSeparately',$kit) && trim($kit['SoldSeparately'])!='')
-     {
-      $SoldSeparatelyElement=$doc->createElement('SoldSeparately',$kit['SoldSeparately']);
-      $KitComponentElement->appendChild($SoldSeparatelyElement);
-     }     
-          
+//     if(array_key_exists('SoldSeparately',$kit) && trim($kit['SoldSeparately'])!='')
+//     {
+//      $SoldSeparatelyElement=$doc->createElement('SoldSeparately',$kit['SoldSeparately']);
+//      $KitComponentElement->appendChild($SoldSeparatelyElement);
+//     }     
+     
      $KitComponentElement->setAttribute('MaintenanceType','A');
      $KitsElement->appendChild($KitComponentElement);
     }
@@ -414,7 +414,7 @@ class PIESgenerator
      if(array_key_exists('BrandLabel',$interchange)){$PartInterchangeElement->setAttribute('BrandLabel',$interchange['BrandLabel']);}
      if(array_key_exists('SubBrandAAIAID',$interchange)){$PartInterchangeElement->setAttribute('SubBrandAAIAID',$interchange['SubBrandAAIAID']);}
      if(array_key_exists('SubBrandLabel',$interchange)){$PartInterchangeElement->setAttribute('SubBrandLabel',$interchange['SubBrandLabel']);}
-     if(array_key_exists('VMRSBrandID',$interchange)){$PartInterchangeElement->setAttribute('VMRSBrandID',$interchange['VMRSBrandID']);}
+     //if(array_key_exists('VMRSBrandID',$interchange)){$PartInterchangeElement->setAttribute('VMRSBrandID',$interchange['VMRSBrandID']);}
      if(array_key_exists('ItemEquivalentUOM',$interchange)){$PartInterchangeElement->setAttribute('ItemEquivalentUOM',$interchange['ItemEquivalentUOM']);}
      if(array_key_exists('QualityGradeLevel',$interchange)){$PartInterchangeElement->setAttribute('QualityGradeLevel',$interchange['QualityGradeLevel']);}
      if(array_key_exists('InternalNotes',$interchange)){$PartInterchangeElement->setAttribute('InternalNotes',$interchange['InternalNotes']);}
