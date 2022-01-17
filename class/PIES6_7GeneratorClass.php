@@ -266,7 +266,6 @@ class PIESgenerator
      $DimensionsElement=$doc->createElement('Dimensions');
      if(array_key_exists('DimensionsUOM',$package)){$DimensionsElement->setAttribute('UOM', $package['DimensionsUOM']);}
 
-     
      //if(array_key_exists('MerchandisingHeight',$package)){$MerchandisingHeightElement=$doc->createElement('MerchandisingHeight',$package['MerchandisingHeight']); $DimensionsElement->appendChild($MerchandisingHeightElement);}
      //if(array_key_exists('MerchandisingWidth',$package)){$MerchandisingWidthElement=$doc->createElement('MerchandisingWidth',$package['MerchandisingWidth']); $DimensionsElement->appendChild($MerchandisingWidthElement);}
      //if(array_key_exists('MerchandisingLength',$package)){$MerchandisingLengthElement=$doc->createElement('MerchandisingLength',$package['MerchandisingLength']); $DimensionsElement->appendChild($MerchandisingLengthElement);}
