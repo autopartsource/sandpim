@@ -216,8 +216,19 @@ class asset
   return $connections;   
  }
 
- 
- 
+
+ function connectBrandToAsset($brandid,$assetid,$assettypecode,$sequence)
+ {
+  $db=new mysql; $db->connect(); $id=false;
+  if($stmt=$db->conn->prepare('insert into brand_asset (id,BrandID,assetid,assettypecode,sequence) values(null,?,?,?,?)'))
+  {   
+   $stmt->bind_param('sssi',$brandid,$assetid,$assettypecode,$sequence);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;   
+ }
  
  function getUnconnecteddAssets()
  {

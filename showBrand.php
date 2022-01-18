@@ -35,7 +35,25 @@ $connectedassets=$asset->getAssetsConnectedToBrand($BrandID);
 ?>
 <!DOCTYPE html>
 <html>
-    <head>
+    <head>        
+        <script>
+            function showhideAssetForm()
+            {
+             var x = document.getElementById("assetform");
+             var y = document.getElementById("showAssetFormIcon");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+              y.style.display="none";
+             }
+             else
+             {
+              x.style.display = "none";
+              y.style.display="block";
+             }
+            }
+
+        </script>
         <?php include('./includes/header.php'); ?>        
     </head>
     <body>
@@ -70,7 +88,7 @@ $connectedassets=$asset->getAssetsConnectedToBrand($BrandID);
                                         ?>
                                         <div id="showAssetFormIcon" style="display:block;" onclick="showhideAssetForm()"><img src="./expandmore.png" title="Expand to show assets form"/></div>
                                         <div  id="assetform" style="display:none; padding:25px;">
-                                            <form action="assetExistingResourceForm.php" method="post">
+                                            <form action="brandAssetExistingResourceForm.php" method="post">
                                                 <div>Create a new asset (from URI) connected to this brand</div>
                                                 <div>URI <input type="text" name="uri" size="50"/></div>
                                                 <div>Filename <input type="text" size="25" name="basename"/><input type="hidden" name="brandid" value="<?php echo $BrandID;?>"/>

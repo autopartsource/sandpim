@@ -53,6 +53,7 @@ $issuescount=count($partissues)+count($appissues)+count($assetissues)+count($sys
 $metricsACTIVEPARTCOUNT=$kpi->getMetric('ACTIVE PART COUNT', date('Y-m-d', strtotime('-3 day')), date('Y-m-d',strtotime('+1 day')));
 $metricsPUBLICASSETCOUNT=$kpi->getMetric('PUBLIC ASSET COUNT', date('Y-m-d', strtotime('-3 day')), date('Y-m-d',strtotime('+1 day')));
 $metricsACTIVEAPPLICATIONCOUNT=$kpi->getMetric('ACTIVE APPLICATION COUNT', date('Y-m-d', strtotime('-3 day')), date('Y-m-d',strtotime('+1 day')));
+$embeds=$pim->getDashboardEmbeds();
 
 $jobstemp=$pim->getBackgroundjobs('%', '%');
 $myjobs=array(); foreach($jobstemp as $job){if($job['userid']==$_SESSION['userid']){$myjobs[]=$job;}}
@@ -382,6 +383,15 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                 echo '<div></div>';
                             }
                             ?>
+                            
+                            
+                            <?php foreach($embeds as $embed){?>
+                            <div class="card">
+                                <h5 class="card-header text-start"><?php echo $embed['description'];?></h5>
+                                <div class="card-body"><?php echo $embed['data'];?></div>
+                            </div>
+                            <?php }?>
+
                         </div>
                         <!-- End of Main Content -->
                     </div>

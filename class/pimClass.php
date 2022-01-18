@@ -3691,6 +3691,24 @@ function attributesAreExperianUseful($attributes)
  }
 
 
+ function getDashboardEmbeds()
+ {
+  $records=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from dashboardembed order by sequence'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $records[]=array('id'=>$row['id'],'description'=>$row['description'],'type'=>$row['type'],'data'=> base64_decode($row['data']),'sequence'=>$row['sequence']);
+    }
+   }
+  }
+  $db->close();
+  return $records;
+ }
  
  
  
