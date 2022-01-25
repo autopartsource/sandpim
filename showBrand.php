@@ -37,6 +37,22 @@ $connectedassets=$asset->getAssetsConnectedToBrand($BrandID);
 <html>
     <head>        
         <script>
+            
+            function disconnectAsset(connectionid)
+            {
+                var assetdiv = document.getElementById('assetconnectionid_'+connectionid);
+                assetdiv.parentNode.removeChild(assetdiv);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'ajaxDisconnectBrandAsset.php?connectionid='+connectionid+'&brandid=<?php echo $brandid;?>');
+                xhr.onload = function()
+                {
+                 var response=JSON.parse(xhr.responseText);
+                 document.getElementById("sandpiperoid").innerHTML=response.partoid;
+                };
+                xhr.send();
+            }
+            
             function showhideAssetForm()
             {
              var x = document.getElementById("assetform");

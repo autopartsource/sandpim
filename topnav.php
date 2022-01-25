@@ -91,6 +91,7 @@
                     <a class="dropdown-item" href="applicationNotesReportForm.php">Application Note Usage</a>
  */?>
                     <a class="dropdown-item" href="assetCoverageReportForm.php">Asset Matrix</a>
+                    <a class="dropdown-item" href="assetHitlistReportForm.php">Asset Hitlist</a>
                     <a class="dropdown-item" href="partAttributesReportForm.php">Attribute Matrix</a>
                     <a class="dropdown-item" href="interchangeCoverageReportForm.php">Interchange Matrix</a>
                     <a class="dropdown-item" href="pricingCoverageReportForm.php">Pricing Matrix</a>                    
