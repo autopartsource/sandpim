@@ -160,6 +160,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownIO">
                     <a class="dropdown-item" href="./exportPIESselect.php">PIES xml</a>
                     <a class="dropdown-item" href="./exportACESselect.php">ACES xml</a>
+                    <a class="dropdown-item" href="./exportAPA65pricefileSelect.php">APA/AWDA (6.5) pricesheet</a>
                     <a class="dropdown-item" href="./exportFlatPartsSelect.php">Flattened parts file</a>
                     <a class="dropdown-item" href="./exportFlatAppsSelect.php">Flattened applications file</a>
                     <a class="dropdown-item" href="./exportForPrintSelect.php">Printable applications guides</a>
