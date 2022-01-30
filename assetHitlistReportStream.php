@@ -32,6 +32,13 @@ $pcdbVersion=$pcdb->version();
 $configGet = new configGet();
 
 $targetassettype='P04';
+$validassettypecode=false;
+$allassettypes=$pcdb->getAssetTypeCodes();
+foreach($allassettypes as $allassettype)
+{
+    if($_GET['assettypecode']==$allassettype['code']){$validassettypecode=true; break;}
+}
+if($validassettypecode){$targetassettype=$_GET['assettypecode'];}
 
 
 $receiverprofileid=intval($_GET['receiverprofile']);
@@ -112,7 +119,7 @@ foreach($matrix as $partnumber=>$columns)
   // exclude zero-onhand and non-avail lifecycle 
  if($part['lifecyclestatus']!='2' || ($partbalance && $qoh==0)){continue;}
 
- if(count($matrix[$partnumber][$targetassettype])){continue;}
+ if(isset($matrix[$partnumber][$targetassettype]) && count($matrix[$partnumber][$targetassettype])){continue;}
   
  $viototal=$pim->partVIO($partnumber, $viogeography, $vioyearquarter);
  $viograndtotal+=$viototal;
