@@ -1,7 +1,8 @@
 <?php
 session_start();
 $data=array();
-$data['VCdb']['MySQL']['complete']['current']=array('versiondate'=>'2021-12-17','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020211217.zip','sha256'=>'6e9db6a1c73eb567cfc7ac1926b0bb3c1e1509e2abdb526c4ad9b284bde0a8c1');
+$data['VCdb']['MySQL']['complete']['current']=array('versiondate'=>'2022-01-28','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020220128.zip','sha256'=>'dc9d18cd04efcc52fece34a3f5fe32db5570f8332c6ac321872a776a0c9536b7');
+$data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2022-01-28','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020220128.zip','sha256'=>'dc9d18cd04efcc52fece34a3f5fe32db5570f8332c6ac321872a776a0c9536b7');
 $data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2021-12-17','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020211217.zip','sha256'=>'6e9db6a1c73eb567cfc7ac1926b0bb3c1e1509e2abdb526c4ad9b284bde0a8c1');
 $data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2021-11-19','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020211119.zip','sha256'=>'362b1c6183750474e50e59ee5006229ea4f1280d1ae28e8dc0e16491165f9f2d');
 $data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2021-10-29','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020211029.zip','sha256'=>'9a0b0c0298fb606e55be2e2b3cc43cece58a87548545f0a44540b496696597db');
@@ -40,7 +41,8 @@ $data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2019-02-2
 $data['VCdb']['MySQL']['complete']['releases'][]=array('versiondate'=>'2019-01-25','uri'=>'ftps://52.168.10.67/download_vcdb/Complete/MySQL/AAIA%20VCdb2009%20MySQL%20Complete%20VCDB%2020190125.zip','sha256'=>'9de8485f5c242ac27235a0c45b22b9a1cad2ce9cec4979d9b48017a87ffa97ed');
 
 
-$data['PCdb']['MySQL']['current']=array('versiondate'=>'2021-12-17','uri'=>'ftps://52.168.10.67/download_pcdb/MySql/AAIA%20PCdb%20MySQL%2020211217.zip','sha256'=>'48fad8cc87fde10904f0d606572a565550ca4d0fef606cae097b17a6f7b079ba');
+$data['PCdb']['MySQL']['current']=array('versiondate'=>'2022-01-28','uri'=>'ftps://52.168.10.67/download_pcdb/MySql/AAIA%20PCdb%20MySQL%2020220128.zip','sha256'=>'7631dfbdae77fdf78841df79ead9cc8b8ec0abc02674f75b9eeee5956795450d');
+$data['PCdb']['MySQL']['releases'][]=array('versiondate'=>'2022-01-28','uri'=>'ftps://52.168.10.67/download_pcdb/MySql/AAIA%20PCdb%20MySQL%2020220128.zip','sha256'=>'7631dfbdae77fdf78841df79ead9cc8b8ec0abc02674f75b9eeee5956795450d');
 $data['PCdb']['MySQL']['releases'][]=array('versiondate'=>'2021-12-17','uri'=>'ftps://52.168.10.67/download_pcdb/MySql/AAIA%20PCdb%20MySQL%2020211217.zip','sha256'=>'48fad8cc87fde10904f0d606572a565550ca4d0fef606cae097b17a6f7b079ba');
 $data['PCdb']['MySQL']['releases'][]=array('versiondate'=>'2021-11-19','uri'=>'ftps://52.168.10.67/download_pcdb/MySql/AAIA%20PCdb%20MySQL%2020211119.zip','sha256'=>'30bf730ad259549479bd0a3787a474b961b8c0e472410af0ddf5f32c8ad21ba1');
 $data['PCdb']['MySQL']['releases'][]=array('versiondate'=>'2021-10-29','uri'=>'ftps://52.168.10.67/download_pcdb/MySql/AAIA%20PCdb%20MySQL%2020211029.zip','sha256'=>'2dfa389ef19978b6fb8ec746388468f1730c78bcfcd143828f9a284e5f8d7afd');
@@ -77,7 +79,8 @@ $data['PCdb']['MySQL']['releases'][]=array('versiondate'=>'2020-01-31','uri'=>'f
 $data['PCdb']['MySQL']['releases'][]=array('versiondate'=>'2020-01-10','uri'=>'ftps://52.168.10.67/download_pcdb/MySql/AAIA%20PCdb%20MySQL%2020200110.zip','sha256'=>'70721c5f4fcef4b135376c7a5358805503fbef41d29332a75805b0ec1f25df7d');
 
 
-$data['Qdb']['MySQL']['current']=array('versiondate'=>'2021-10-29','uri'=>'ftps://52.168.10.67/download_qdb/MySql/AAIA%20Qdb%20MySQL%2020211217.zip','sha256'=>'71ffed2fea168189e95b63846a9f12a2702b4cadbb3208d55d7ee2f1b936e9b7');
+$data['Qdb']['MySQL']['current']=array('versiondate'=>'2022-01-28','uri'=>'ftps://52.168.10.67/download_qdb/MySql/AAIA%20Qdb%20MySQL%2020220128.zip','sha256'=>'bfae5cfd8fc22575140e16d94c1aef5cff565f20f03b8aa7be65d2b677b0c7e0');
+$data['Qdb']['MySQL']['releases'][]=array('versiondate'=>'2022-01-28','uri'=>'ftps://52.168.10.67/download_qdb/MySql/AAIA%20Qdb%20MySQL%2020220128.zip','sha256'=>'bfae5cfd8fc22575140e16d94c1aef5cff565f20f03b8aa7be65d2b677b0c7e0');
 $data['Qdb']['MySQL']['releases'][]=array('versiondate'=>'2021-12-17','uri'=>'ftps://52.168.10.67/download_qdb/MySql/AAIA%20Qdb%20MySQL%2020211217.zip','sha256'=>'71ffed2fea168189e95b63846a9f12a2702b4cadbb3208d55d7ee2f1b936e9b7');
 $data['Qdb']['MySQL']['releases'][]=array('versiondate'=>'2021-11-19','uri'=>'ftps://52.168.10.67/download_qdb/MySql/AAIA%20Qdb%20MySQL%2020211119.zip','sha256'=>'f9f6d7ce65242d33d08e4c21c23c3b3881c434d067c8ca4cc09122fed01c080a');
 $data['Qdb']['MySQL']['releases'][]=array('versiondate'=>'2021-10-29','uri'=>'ftps://52.168.10.67/download_qdb/MySql/AAIA%20Qdb%20MySQL%2020211029.zip','sha256'=>'137713f2a1795ba6f79255e4100070d3d0963bb5f9b189ce3396f96ae73f71c8');
@@ -111,8 +114,8 @@ $data['Qdb']['MySQL']['releases'][]=array('versiondate'=>'2019-07-26','uri'=>'ft
 $data['Qdb']['MySQL']['releases'][]=array('versiondate'=>'2019-06-28','uri'=>'ftps://52.168.10.67/download_qdb/MySql/AAIA%20Qdb%20MySQL%2020190628.zip','sha256'=>'a514803fd6354b34e26b9677669b207807370b25c4efe7d4f8893f55ee0a48c8');
 
 
-
-$data['PAdb']['MySQL']['current']=array('versiondate'=>'2021-10-29','uri'=>'ftps://52.168.10.67/download_padb/MySQL/AAIA%20PAdb%20MySQL%2020211217.zip','sha256'=>'c5934c706fff83be451689942827135f1579211c87807182bc19b586a588ffb7');
+$data['PAdb']['MySQL']['current']=array('versiondate'=>'2022-01-28','uri'=>'ftps://52.168.10.67/download_padb/MySQL/AAIA%20PAdb%20MySQL%2020220128.zip','sha256'=>'9b947051c52a124c0369b6c0645d258e1e5fb4c4e97cad35084178c661885607');
+$data['PAdb']['MySQL']['releases'][]=array('versiondate'=>'2022-01-28','uri'=>'ftps://52.168.10.67/download_padb/MySQL/AAIA%20PAdb%20MySQL%2020220128.zip','sha256'=>'9b947051c52a124c0369b6c0645d258e1e5fb4c4e97cad35084178c661885607');
 $data['PAdb']['MySQL']['releases'][]=array('versiondate'=>'2021-12-17','uri'=>'ftps://52.168.10.67/download_padb/MySQL/AAIA%20PAdb%20MySQL%2020211217.zip','sha256'=>'c5934c706fff83be451689942827135f1579211c87807182bc19b586a588ffb7');
 $data['PAdb']['MySQL']['releases'][]=array('versiondate'=>'2021-11-19','uri'=>'ftps://52.168.10.67/download_padb/MySQL/AAIA%20PAdb%20MySQL%2020211119.zip','sha256'=>'6f402d7bad15f76cd9f5cd69b887e0d082b441a6bac044a1562def05d8a374e4');
 $data['PAdb']['MySQL']['releases'][]=array('versiondate'=>'2021-10-29','uri'=>'ftps://52.168.10.67/download_padb/MySQL/AAIA%20PAdb%20MySQL%2020211029.zip','sha256'=>'3521ac6dc7e87b1694c86ed5dfd7fda4fc5b04e0c9d5294a6692f2116fe5cf0d');
