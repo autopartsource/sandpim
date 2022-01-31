@@ -44,7 +44,7 @@ $connectedassets=$asset->getAssetsConnectedToBrand($BrandID);
                 assetdiv.parentNode.removeChild(assetdiv);
 
                 var xhr = new XMLHttpRequest();
-                xhr.open('GET', 'ajaxDisconnectBrandAsset.php?connectionid='+connectionid+'&brandid=<?php echo $brandid;?>');
+                xhr.open('GET', 'ajaxDisconnectBrandAsset.php?connectionid='+connectionid+'&brandid=<?php echo $BrandID;?>');
                 xhr.onload = function()
                 {
                  var response=JSON.parse(xhr.responseText);

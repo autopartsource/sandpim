@@ -22,9 +22,7 @@ if(isset($_SESSION['userid']) && isset($_GET['connectionid']) && isset($_GET['br
  $userid=$_SESSION['userid'];
  $connectionid=intval($_GET['connectionid']);
  $asset->disconnectBrandFromAsset($brandid,$connectionid);
- $asset->logAssetEvent($assetrecord['assetid'], $userid, 'brand ['.$brandid.'] was disconnected', '');
- $result=array('success'=>true,'partoid'=>$partoid,'assetoid'=>$assetoid);
-
+ $result=array('success'=>true);
  echo json_encode($result);
 }
 ?>

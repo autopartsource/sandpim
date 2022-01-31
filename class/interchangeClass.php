@@ -27,9 +27,9 @@ class interchange
     if($stmt->execute())
     {
      $id=$db->conn->insert_id;
-    }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
-   }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
-  }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+    }
+   }
+  }
   $db->close();
   return $id;
  }

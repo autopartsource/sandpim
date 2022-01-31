@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/interchangeClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/logsClass.php');
@@ -23,6 +24,7 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $asset = new asset;
+$interchange=new interchange;
 $pcdb = new pcdb;
 $configGet= new configGet;
 $logs=new logs;
@@ -47,15 +49,21 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Delete') {
 $fixattributes=isset($_GET['fixattributes']);
 
 $assetid = $_GET['assetid'];
+
+
 if($asset->validAsset($assetid))
 {
  $assetrecords=$asset->getAssetRecordsByAssetid($assetid);
  $connectedparts=$asset->getPartsConnectedToAsset($assetid);
+ $connectedbrands=$asset->getBrandsConnectedToAsset($assetid);
 }
 else
 {// passed-in asset is not valid - blank it out of caution 
  $assetid='';
 }
+
+$brands=$interchange->getCompetitivebrands();
+
 
 ?>
 <!DOCTYPE html>
@@ -67,7 +75,7 @@ else
             function connectPart(assetid)
             {
                 var partnumber=document.getElementById('partnumber').value;
-                var assettypecodeselectionelement = document.getElementById("assettypecode");
+                var assettypecodeselectionelement = document.getElementById("partassettypecode");
                 var selectedassettypecode = assettypecodeselectionelement.options[assettypecodeselectionelement.selectedIndex].value;
                 
                 var representationselectionelement = document.getElementById("representation");
@@ -80,10 +88,10 @@ else
                  var response=JSON.parse(xhr.responseText);
                  if(response.success)
                  {
-                  var e = document.getElementById('connected');
+                  var e = document.getElementById('connectedparts');
                   var d = document.createElement('div');
                   d.style='padding: 2px;';
-                  d.id = 'assetconnectionid_'+response.connectionid;
+                  d.id = 'partassetconnectionid_'+response.connectionid;
                   d.innerHTML='<a class="btn btn-secondary" href="showPart.php?partnumber='+partnumber+'">'+partnumber+'</a> <button onclick="disconnectPart(\''+partnumber+'\',\''+response.connectionid+'\')">x</button>';
                   e.appendChild(d);
                  }
@@ -93,16 +101,16 @@ else
 
             function disconnectPart(partnumber,connectionid)
             {
-                var assetdiv = document.getElementById('assetconnectionid_'+connectionid);
-                assetdiv.parentNode.removeChild(assetdiv);
+             var assetdiv = document.getElementById('partassetconnectionid_'+connectionid);
+             assetdiv.parentNode.removeChild(assetdiv);
 
-                var xhr = new XMLHttpRequest();
-                xhr.open('GET', 'ajaxDisconnectPartAsset.php?connectionid='+connectionid+'&partnumber='+partnumber);
-                xhr.onload = function()
-                {
-                 var response=JSON.parse(xhr.responseText);
-                };
-                xhr.send();
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDisconnectPartAsset.php?connectionid='+connectionid+'&partnumber='+partnumber);
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+             };
+             xhr.send();
             }
 
             function updateAsset(assetrecordid,elementtype,elementid)
@@ -131,7 +139,51 @@ else
             function flagUnsavedLabel(){document.getElementById("btnUpdateLabel").className="btn btn-sm btn-danger";}
             function unflagUnsavedLabel(){document.getElementById("btnUpdateLabel").className="btn btn-sm btn-outline-secondary";}
             
-            
+
+
+            function connectBrand(assetid)
+            {
+             var assettypecodeselectionelement = document.getElementById("brandassettypecode");
+             var selectedassettypecode = assettypecodeselectionelement.options[assettypecodeselectionelement.selectedIndex].value;
+
+             var brandselectionelement = document.getElementById("brandid");
+             var brandid = brandselectionelement.options[brandselectionelement.selectedIndex].value;
+
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxConnectBrandAsset.php?assetid='+assetid+'&brandid='+brandid+'&assettypecode='+selectedassettypecode+'&sequence=1');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              if(response.success)
+              {
+               var e = document.getElementById('connectedbrands');
+               var d = document.createElement('div');
+               d.style='padding: 2px;';
+               d.id = 'brandassetconnectionid_'+response.connectionid;
+               d.innerHTML='<a class="btn btn-secondary" href="showBrand.php?brandid='+brandid+'">'+brandid+'</a> <button onclick="disconnectBrand(\''+brandid+'\',\''+response.connectionid+'\')">x</button>';
+               e.appendChild(d);
+              }
+             };
+             xhr.send();
+            }
+
+            function disconnectBrand(brandid,connectionid)
+            {
+             var assetdiv = document.getElementById('brandassetconnectionid_'+connectionid);
+             assetdiv.parentNode.removeChild(assetdiv);
+
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDisconnectBrandAsset.php?connectionid='+connectionid+'&brandid='+brandid);
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+             };
+             xhr.send();
+            }
+
+
+
+
             </script>
     </head>
     <body>
@@ -256,31 +308,62 @@ else
                 <div class="col-xs-12 col-md-3 my-col colRight">
                     <div class="card shadow-sm">
                         <h5 class="card-header">
-                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            Part Connections
+                            <ul class="nav nav-tabs" id="partconnectionstab" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="connected-tab" data-bs-toggle="tab" href="#connected" role="tab" aria-controls="connected" aria-selected="true">Connected</a>
+                                    <a class="nav-link active" id="connectedparts-tab" data-bs-toggle="tab" href="#connectedparts" role="tab" aria-controls="connectedparts" aria-selected="true">Existing</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="newconnection-tab" data-bs-toggle="tab" href="#newconnection" role="tab" aria-controls="newconnection" aria-selected="false">New Connection</a>
+                                    <a class="nav-link" id="newpartconnection-tab" data-bs-toggle="tab" href="#newpartconnection" role="tab" aria-controls="newpartconnection" aria-selected="false">New</a>
                                 </li>
                             </ul>
                         </h5>
-                        <div class="tab-content" id="myTabContent">
-                            <div class="tab-pane fade show active text-start m-3" id="connected" role="tabpanel" aria-labelledby="connected-tab">
+                        <div class="tab-content" id="partconnectionscontent">
+                            <div class="tab-pane fade show active text-start m-3" id="connectedparts" role="tabpanel" aria-labelledby="connectedparts-tab">
                                 <?php foreach($connectedparts as $connectedpart){?>
-                                <div id="assetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
+                                <div id="partassetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
                                    <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a> <button type="button" class="btn btn-light" onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')"><i class="bi bi-x"></i></button>
                                 </div>
                                 <?php }?>
                             </div>
-                            <div class="tab-pane fade m-3" id="newconnection" role="tabpanel" aria-labelledby="newconnection-tab">
+                            <div class="tab-pane fade m-3" id="newpartconnection" role="tabpanel" aria-labelledby="newpartconnection-tab">
                                 Partnumber <input type="text" id="partnumber" size="8"/> 
-                                <select id="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
+                                <select id="partassettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
                                 <select id="representation"><option value="A">Actual Depicted</option><option value="R">Similar Depicted</option></select>
                                 <button onclick="connectPart('<?php echo $assetid;?>')">Connect</button>
                             </div>
                         </div>
                     </div>
+
+                    <div class="card shadow-sm">
+                        <h5 class="card-header">
+                            Brand Connections
+                            <ul class="nav nav-tabs" id="brandconnectionstab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="connectedbrands-tab" data-bs-toggle="tab" href="#connectedbrands" role="tab" aria-controls="connectedbrands" aria-selected="true">Existing</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="newbrandconnection-tab" data-bs-toggle="tab" href="#newbrandconnection" role="tab" aria-controls="newbrandconnection" aria-selected="false">New</a>
+                                </li>
+                            </ul>
+                        </h5>
+                        <div class="tab-content" id="brandconnectionscontent">
+                            <div class="tab-pane fade show active text-start m-3" id="connectedbrands" role="tabpanel" aria-labelledby="connectedbrands-tab">
+                                <?php foreach($connectedbrands as $connectedbrand){?>
+                                <div id="brandassetconnectionid_<?php echo $connectedbrand['connectionid'];?>" style="padding: 2px;"> 
+                                   <a class="btn btn-secondary" href="showBrand.php?brandid=<?php echo $connectedbrand['BrandID'];?>"><?php echo $connectedbrand['BrandID'];?></a> <button type="button" class="btn btn-light" onclick="disconnectBrand('<?php echo $connectedbrand['BrandID'];?>','<?php echo $connectedbrand['connectionid'];?>')"><i class="bi bi-x"></i></button>
+                                </div>
+                                <?php }?>
+                            </div>
+                            <div class="tab-pane fade m-3" id="newbrandconnection" role="tabpanel" aria-labelledby="newbrandconnection-tab">
+                              <div style="padding:5px;"><select id="brandid"><?php foreach ($brands as $brand){ ?><option value="<?php echo $brand['brandAAIAID']; ?>"><?php echo substr($brand['description'],0,25);?></option><?php }?></select></div>
+                              <div style="padding:5px;"><select id="brandassettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select></div>
+                              <button onclick="connectBrand('<?php echo $assetid;?>')">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div>    

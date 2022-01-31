@@ -193,7 +193,7 @@ class asset
   $db->close();
   return $asset;   
  }
-
+//ccc
  function getAssetsConnectedToBrand($BrandID,$excludenonpublic=false)
  {
   $db=new mysql; $db->connect(); $connections=array();
@@ -216,7 +216,29 @@ class asset
   return $connections;   
  }
 
+ function getBrandsConnectedToAsset($assetid,$excludenonpublic=false)
+ {
+  $db=new mysql; $db->connect(); $connections=array();
+  $publicclause=''; if($excludenonpublic){$publicclause=' and public=1';}
+  if($stmt=$db->conn->prepare('select brand_asset.id as connectionid, BrandID,assettypecode,sequence, asset.* from brand_asset,asset where brand_asset.assetid=asset.assetid and asset.assetid=? '.$publicclause.' order by sequence'))
+  {
+   if($stmt->bind_param('s',$assetid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'BrandID'=>$row['BrandID'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'uri'=>$row['uri'],'filename'=>$row['filename'],'filetype'=>$row['fileType']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $connections;   
+ }
 
+ 
  function connectBrandToAsset($brandid,$assetid,$assettypecode,$sequence)
  {
   $db=new mysql; $db->connect(); $id=false;
@@ -229,6 +251,38 @@ class asset
   $db->close();
   return $id;   
  }
+
+ function disconnectBrandFromAsset($brandid,$connectionid=false)
+ {
+  $db = new mysql; $db->connect();
+  $sql='delete from brand_asset where BrandID=?'; // start by assuming no connection id was passed, and only select for partnumber the partnbmer (not connectionid)
+  if($connectionid)
+  {
+   $sql='delete from brand_asset where BrandID=? and id=?';
+  }   
+  
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($connectionid)
+   {
+    $stmt->bind_param('si',$brandid,$connectionid);
+   }
+   else
+   {// no connection id was passed - we are binding only the partnbmer 
+    $stmt->bind_param('s',$brandid);       
+   }
+   
+   if($connectionid)
+   {
+    $stmt->bind_param('si',$brandid,$connectionid);
+   }
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+
+
  
  function getUnconnecteddAssets()
  {
