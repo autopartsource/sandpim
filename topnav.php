@@ -93,6 +93,7 @@
                     <a class="dropdown-item" href="assetCoverageReportForm.php">Asset Matrix</a>
                     <a class="dropdown-item" href="assetHitlistReportForm.php">Asset Hitlist</a>
                     <a class="dropdown-item" href="partAttributesReportForm.php">Attribute Matrix</a>
+                    <a class="dropdown-item" href="partDescriptionsReportForm.php">Descriptions Matrix</a>
                     <a class="dropdown-item" href="interchangeCoverageReportForm.php">Interchange Matrix</a>
                     <a class="dropdown-item" href="pricingCoverageReportForm.php">Pricing Matrix</a>                    
                     <a class="dropdown-item" href="competitorCoverageReportForm.php">Competitor Coverage</a>
@@ -143,6 +144,7 @@
                     <a class="dropdown-item" href="./importACESxml.php">ACES xml</a>
                     <a class="dropdown-item" href="./importACEStext.php">Applications from text</a>
                     <a class="dropdown-item" href="./importPartText.php">Parts from text</a>
+                    <a class="dropdown-item" href="./importPartDescriptionText.php">Part descriptions from text</a>
                     <a class="dropdown-item" href="./importPartAttributeText.php">Part attributes from text</a>
                     <a class="dropdown-item" href="./importPackagingText.php">Packaging from text</a>
                     <a class="dropdown-item" href="./importPricesText.php">Prices from text</a>

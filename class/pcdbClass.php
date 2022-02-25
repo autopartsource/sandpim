@@ -307,6 +307,29 @@ class pcdb
  }
 
  
+ function validPartDecriptionCode($code)
+ {
+  $returnval=false;
+  $db = new mysql; $db->dbname=$db->pcdbname;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect();
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESFieldId=39 and CodeValue=?'))
+  {
+   if($stmt->bind_param('s', $code))
+   {
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $returnval=true;
+    }
+   }
+  }
+  $db->close();
+  return $returnval; 
+ }
+ 
+ 
  function getAssetTypeCodes()
  {
   $codes=array();
@@ -353,13 +376,13 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=60 order by CodeDescription'))
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription,FieldFormat from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=60 order by CodeDescription'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
+    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription'],'format'=>$row['FieldFormat']);
    }
   }
   $db->close();

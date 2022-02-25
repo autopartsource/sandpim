@@ -385,16 +385,17 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                             ?>
                             
                             
-                            <?php foreach($embeds as $embed){?>
-                            <div class="card">
-                                <h5 class="card-header text-start"><?php echo $embed['description'];?></h5>
-                                <div class="card-body"><?php echo $embed['data'];?></div>
-                            </div>
-                            <?php }?>
-
                         </div>
+
                         <!-- End of Main Content -->
                     </div>
+                        <?php foreach($embeds as $embed){?>
+                        <div class="card">
+                            <h5 class="card-header text-start"><?php echo $embed['description'];?></h5>
+                            <div class="card-body"><?php echo $embed['data'];?></div>
+                        </div>
+                        <?php }?>
+
                 </div>
             </div>
         </div>
@@ -404,10 +405,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                     <?php //print_r($orphans);?>
                     
                     
-                </div>
     </div>
-</div>
-</div>
         
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>

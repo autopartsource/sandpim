@@ -32,51 +32,59 @@ $partnumber='';
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Create') 
 {
-    $assetid=$_POST['assetid'];
-    $filename=$_POST['filename'];
-    $localpath=$_POST['localpath'];
-    $uri=$_POST['uri'];
-    $orientationviewcode=$_POST['orientationviewcode'];
-    $colormodecode=$_POST['colormodecode'];
-    $assetheight=intval($_POST['assetheight']);
-    $assetwidth=intval($_POST['assetwidth']);
-    $dimensionUOM=$_POST['dimensionUOM'];
-    $resolution=intval($_POST['resolution']);
-    $background=$_POST['background'];
-    $filetype=$_POST['filetype'];
-    $public=0; if(isset($_POST['public']) && $_POST['public']=='on'){$public=1;}
-    $approved=1;
-    $description=$_POST['description'];
-    $oid = $pim->newoid();
-    $filehash=$_POST['filehash'];
-    $filesize=intval($_POST['filesize']);
-    $uripublic=0; if(isset($_POST['uripublic']) && $_POST['uripublic']=='on'){$uripublic=1;}
-    $languagecode=''; if(isset($_POST['languagecode'])){$languagecode=$_POST['languagecode'];}
-    $assetlabel=$_POST['assetlabel']; // internal label like "Assembly Guide" or "QC Drawing"    
-    if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic,$languagecode,$assetlabel))
+    $assetid=trim($_POST['assetid']);
+    if(!$asset->validAsset($assetid))
     {
-        $error_msg = 'Asset id ' . $id . ' was created.';
-        $assetoid=$asset->updateAssetOID($assetid);
-        $asset->logAssetEvent($assetid, $_SESSION['userid'], 'Asset created' ,$assetoid);
-        
-        if(isset($_POST['partnumber']) && $pim->validPart($_POST['partnumber']))
+        $filename=trim($_POST['filename']);
+        $localpath=trim($_POST['localpath']);
+        $uri=trim($_POST['uri']);
+        $orientationviewcode=$_POST['orientationviewcode'];
+        $colormodecode=$_POST['colormodecode'];
+        $assetheight=intval($_POST['assetheight']);
+        $assetwidth=intval($_POST['assetwidth']);
+        $dimensionUOM=$_POST['dimensionUOM'];
+        $resolution=intval($_POST['resolution']);
+        $background=$_POST['background'];
+        $filetype=$_POST['filetype'];
+        $public=0; if(isset($_POST['public']) && $_POST['public']=='on'){$public=1;}
+        $approved=1;
+        $description=trim($_POST['description']);
+        $oid = $pim->newoid();
+        $filehash=$_POST['filehash'];
+        $filesize=intval($_POST['filesize']);
+        $uripublic=0; if(isset($_POST['uripublic']) && $_POST['uripublic']=='on'){$uripublic=1;}
+        $languagecode=''; if(isset($_POST['languagecode'])){$languagecode=$_POST['languagecode'];}
+        $assetlabel=trim($_POST['assetlabel']); // internal label like "Assembly Guide" or "QC Drawing"    
+        if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic,$languagecode,$assetlabel))
         {
-            $partnumber=trim(strtoupper($_POST['partnumber']));
-            $partoid=$pim->updatePartOID($partnumber);
-            $connectionid=$asset->connectPartToAsset($partnumber,$assetid,$_POST['assettypecode'],1,$_POST['representation']);
-            $pim->logPartEvent($partnumber,$_SESSION['userid'], 'asset ['.$assetid.'] was connected' ,$partoid);
-            $asset->logAssetEvent($assetid, $_SESSION['userid'], 'part ['.$partnumber.'] was connected', $assetoid);
+            $error_msg = 'Asset record ' . $id . ' was created for asset ID '.$assetid;
+            $assetoid=$asset->updateAssetOID($assetid);
+            $asset->logAssetEvent($assetid, $_SESSION['userid'], 'Asset created' ,$assetoid);
+
+            if(isset($_POST['partnumber']) && $pim->validPart($_POST['partnumber']))
+            {
+                $partnumber=trim(strtoupper($_POST['partnumber']));
+                $partoid=$pim->updatePartOID($partnumber);
+                $connectionid=$asset->connectPartToAsset($partnumber,$assetid,$_POST['assettypecode'],1,$_POST['representation']);
+                $pim->logPartEvent($partnumber,$_SESSION['userid'], 'asset ['.$assetid.'] was connected' ,$partoid);
+                $asset->logAssetEvent($assetid, $_SESSION['userid'], 'part ['.$partnumber.'] was connected', $assetoid);
+            }
+        }
+        else 
+        { // asset not created
+            $error_msg = 'Error creating asset';
+        }
+
+        if(isset($_POST['discardlocal']))
+        { // torch local copy that was brought down from uri
+            unlink($_POST['localfilepath']);
         }
     }
-    else 
-    { // asset not created
-        $error_msg = 'Error creating asset';
-    }
-    if(isset($_POST['discardlocal']))
-    { // torch local copy that was brought down from uri
-        unlink($_POST['localfilepath']);
-    }
+    else
+    {// assetid already exists - avoid creating a new record by the same id (even though it would be technically ok, we want to avoid the confusion)
     
+        $error_msg = 'Asset ID ['.$assetid.'] already exists - no action taken';
+    }    
 }
 
 
@@ -171,8 +179,10 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                                     echo $error_msg;
                                 } ?>
                             </h4>
-
+                            
+                            <?php if($partnumber!=''){?>
                             <div><a href="./showPart.php?partnumber=<?php echo $partnumber;?>">Back to <?php echo $partnumber;?></a></div>
+                            <?php }?>
                             
                             <?php if($valid_upload){?>
                             <form method="post">

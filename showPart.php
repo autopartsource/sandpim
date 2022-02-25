@@ -560,7 +560,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                 
                 foreach($connectedassets as $connectedasset)
                 {
-                    if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='')
+                    if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='' && $connectedasset['filetype']=='JPG')
                     {
                         echo '<div><a href="./showAsset.php?assetid='.$connectedasset['assetid'].'"><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></a></div>';
                         break;
