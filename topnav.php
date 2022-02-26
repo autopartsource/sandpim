@@ -94,6 +94,7 @@
                     <a class="dropdown-item" href="assetHitlistReportForm.php">Asset Hitlist</a>
                     <a class="dropdown-item" href="partAttributesReportForm.php">Attribute Matrix</a>
                     <a class="dropdown-item" href="partDescriptionsReportForm.php">Descriptions Matrix</a>
+                    <a class="dropdown-item" href="partPackagesReportForm.php">Packages Matrix</a>
                     <a class="dropdown-item" href="interchangeCoverageReportForm.php">Interchange Matrix</a>
                     <a class="dropdown-item" href="pricingCoverageReportForm.php">Pricing Matrix</a>                    
                     <a class="dropdown-item" href="competitorCoverageReportForm.php">Competitor Coverage</a>
