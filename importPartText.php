@@ -1,8 +1,18 @@
 <?php
 include_once('./class/pimClass.php');
-
+include_once('./class/logsClass.php');
 $navCategory = 'import';
 
+$pim = new pim;
+$logs = new logs;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs->logSystemEvent('accesscontrol',0, 'importPartText.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
+ exit;
+}
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -10,7 +20,6 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
-$pim = new pim;
 $partcategories = $pim->getPartCategories();
 
 ?>

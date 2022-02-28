@@ -2,15 +2,14 @@
 include_once('./class/pimClass.php');
 include_once('./class/interchangeClass.php');
 include_once('./class/logsClass.php');
-
 $navCategory = 'settings';
 
 $pim=new pim;
+$logs = new logs;
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
- $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'competitiveBrandBrowser.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
  http_response_code(404); // nothing to see here, folks
  exit;
@@ -96,7 +95,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Competitive Brands (system-wide)<div style="float:right;"><a class="btn btn-secondary" href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search">Show brands that are already in our competitor list</a></div></h3>
+                        <h3 class="card-header text-start">Competitive Brands (system-wide)<div style="float:right;"><a class="btn btn-secondary" href="./competitiveBrandBrowser.php?searchtype=selected&searchterm=&submit=Search">Show only favorites</a></div></h3>
 
                         <div class="card-body">
                             <form method="get">

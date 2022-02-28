@@ -1,7 +1,22 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/packagingClass.php');
+include_once('./class/logsClass.php');
+
 $navCategory = 'import';
+
+$pim = new pim;
+$logs = new logs;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs->logSystemEvent('accesscontrol',0, 'importPackagingText.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
+ exit;
+}
+
+
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -10,10 +25,8 @@ if (!isset($_SESSION['userid'])) {
 }
 
 
-$pim = new pim;
 $packaging=new packaging;
-
-$importcount=0; $invalidcount=0; $recordnumber=0;
+$importcount=0; $invalidcount=0; $recordnumber=0; $errors=array(); $results=array(); 
 
 if (isset($_POST['input'])) 
 {
@@ -81,6 +94,7 @@ if (isset($_POST['input']))
    $oid=$pim->updatePartOID($partnumber);
    $pim->logPartEvent($partnumber,$_SESSION['userid'],'packaging record imported ('.$innerquantity.' '.$packageuom.'; '.$weight.' '.$weightsuom.'; ' .$shippinglength.'x'.$shippingwidth.'x'.$shippingheight.'x '.$dimensionsuom.')',$oid);
    $importcount++;
+   $results[]='['.$innerquantity.' '.$packageuom.'; '.$weight.' '.$weightsuom.'; ' .$shippinglength.'x'.$shippingwidth.'x'.$shippingheight.'x '.$dimensionsuom.'] -> '.$partnumber;
   }
   else
   {// invalid part - make a note of it
@@ -89,14 +103,10 @@ if (isset($_POST['input']))
   }
     
  }
- $finalresultmessage='Imported '.$importcount.' package records';
- if($invalidcount>0){$finalresultmessage.='. '.$invalidcount.' records were ignored because of invalid data.';};
- $errors[]=$finalresultmessage;
+ 
+ $finalresultmessage='Imported '.$importcount.' package records'; if($invalidcount>0){$finalresultmessage.='. '.$invalidcount.' records were ignored because of invalid data.';};
+ $logs->logSystemEvent('import', $_SESSION['userid'], $finalresultmessage);
 }
-
-
-
-
 
 
 
@@ -124,17 +134,16 @@ if (isset($_POST['input']))
 			<!-- Header -->
                         <h3 class="card-header text-start">Import Packaging</h3>
                         <div class="card-body">
-                            <?php foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}?>
                             <form method="post">
                                 <div class="alert alert-secondary" role="alert">
                                     <h6 class="alert-heading">Paste tab-delimited data (including header row):</h6>
                                     <p>PartNumber, PackageUOM,	QuantityofEaches, [Weight], [WeightsUOM], [InnerQuantity], [InnerQuantityUOM], [ShippingHeight], [ShippingWidth], [ShippingLength], [DimensionsUOM]</p>
-                                </div>
-                                    
-                                <textarea name="input" rows="20" cols="100"></textarea>
-                                
+                                </div>                                    
+                                <textarea style="width:100%;" name="input" rows="15"></textarea>
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
+                            <?php foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}?>
+                            <?php foreach($results as $result){echo '<div class="alert alert-success" role="alert">'.$result.'</div>';}?>
                         </div>
                     </div>
                     

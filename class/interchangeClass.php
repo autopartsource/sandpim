@@ -283,9 +283,16 @@ class interchange
   return $success;
  }
  
- function importBrandTable($data)
+ function importBrandTable($data, $clearfirst)
  {
   $db=new mysql; $db->connect();
+  
+  if($clearfirst)
+  {
+   $stmt=$db->conn->prepare('delete from brand');
+   $stmt->execute();   
+  }
+  
   if($stmt=$db->conn->prepare('insert into brand values(?,?,?,?,?,?)'))
   {
    $BrandID=''; $BrandName=''; $BrandOwnerID=''; $BrandOwner=''; $ParentID=''; $ParentCompany='';
