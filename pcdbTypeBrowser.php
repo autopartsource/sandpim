@@ -90,7 +90,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Favorite PCdb PartTypes<div style="float:right"><a class="btn btn-secondary" href="pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search">Show only already selected types</a></div></h3>
+                        <h3 class="card-header text-start">Favorite Part Types<div style="float:right"><a class="btn btn-secondary" href="pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search">Show only favorites</a></div></h3>
 
                         <div class="card-body">
                             <form method="get">

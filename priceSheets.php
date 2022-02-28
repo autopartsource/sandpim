@@ -2,16 +2,14 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pricingClass.php');
-
-
 $navCategory = 'settings';
 
 $pim = new pim;
+$logs = new logs;
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
- $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'priceSheets.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
  http_response_code(404); // nothing to see here, folks
  exit;
@@ -24,8 +22,6 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $pricing = new pricing;
-$logs = new logs;
-
 
 if (isset($_POST['submit']) && $_POST['submit']=='Add' && isset($_POST['categoryname']) && trim($_POST['categoryname'])!='') 
 {
@@ -73,8 +69,7 @@ $pricesheets=$pricing->getPricesheets();
                                 {
                                     $distinctpartnumbers=$pricing->getDistinctPartnumbersUsingPricesheet($pricesheet['number']);
                                     echo '<div class="card">';
-                                        echo '<div><h6 class="card-header text-start">ID: '.$pricesheet['number'].'</h6></div>';
-                                        echo '<form><input type="submit" name="submit" value="Delete"/></form>';
+                                        echo '<div><h6 class="card-header text-start">'.$pricesheet['number'].'<div style="float:right;"><form><input type="submit" name="submit" value="Delete"/></form></div><div style="clear:both;"></div></h6></div>';
                                         echo '<div class="card-body">';
                                             echo '<div class="form-group row">';
                                                 echo '<label for="staticDescription" class="col-sm-2 col-form-label">Description</label>';

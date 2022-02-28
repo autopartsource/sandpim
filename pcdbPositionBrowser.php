@@ -1,16 +1,17 @@
 <?php
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
-
+include_once('./class/logsClass.php');
 $navCategory = 'settings';
 
 $pim=new pim;
+$logs = new logs;
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
- $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'pcdbPositionBrowser.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'pcdbPositionBrowser.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }    
 
@@ -19,9 +20,9 @@ if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equi
 
 $pcdb=new pcdb;
 
- $allpositions=array();
- $mypositions=$pim->getFavoritePositions(); 
- $idkeyedpositions=array(); foreach($mypositions as $myposition){$idkeyedpositions[$myposition['id']]=$myposition['name'];}
+$allpositions=array();
+$mypositions=$pim->getFavoritePositions(); 
+$idkeyedpositions=array(); foreach($mypositions as $myposition){$idkeyedpositions[$myposition['id']]=$myposition['name'];}
 
 $searchposition='';
 if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchterm']))
@@ -87,7 +88,7 @@ if(isset($_GET['submit']) && isset($_GET['searchtype']) && isset($_GET['searchte
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Favorite PCdb Positions<div style="float:right"><a class="btn btn-secondary" href="./pcdbPositionBrowser.php?searchtype=selected&searchterm=&submit=Search">Show only already selected positions</a></div></h3>
+                        <h3 class="card-header text-start">Favorite Application Positions<div style="float:right"><a class="btn btn-secondary" href="./pcdbPositionBrowser.php?searchtype=selected&searchterm=&submit=Search">Show only favorites</a></div></h3>
 
                         <div class="card-body">
                             <form method="get">
