@@ -154,6 +154,7 @@
                     <a class="dropdown-item" href="./updatePartBalances.php">Part balance data from text</a>
                     <a class="dropdown-item" href="./importBrandTableText.php">AutoCare Brand Table text</a>
                     <a class="dropdown-item" href="./AutoCareDownloads.php">AutoCare Downloads (VCdb, PCdb, PAdb, Qdb)</a>
+                    <a class="dropdown-item" href="./importExperianVIOtext.php">Experian VIO</a>
                 </div>
             </li>
             <li<?php if ($navCategory == 'export') {echo ' class="nav-item dropdown active"';} else {echo ' class="nav-item dropdown"';} ?>>

@@ -101,7 +101,7 @@ if(isset($_POST['input']))
                                     <p>BrandID, BrandName, BrandOwnerID, BrandOwner, ParentID, ParentCompany</p>
                                     <p>All data will be cleared from the brand list and replaced with the imported list. The double-quote character will be ignored.</p>
                                 </div>
-                                <textarea name="input" style="width:100%;" rows="15"></textarea>
+                                <textarea name="input" rows="20" cols="100"></textarea>
                                 <div><input type="checkbox" name="clearfirst"/>Clear existing data before import</div>
 
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>

@@ -3327,6 +3327,23 @@ function updateAppSummary($partnumber,$summary)
   $db->close();
   return $insertednew;
  }
+
+//$yearquarter,$geography,$vehicleid,$basevehicleid,$yearid,$makeid,$modelid,$submodelid,$bodytypeid,$bodynumdoorsid,$drivetypeid,$fueltypeid,$enginebaseid,$enginevinid,$fueldeliverysubtypeid,$transcontroltypeid,$transnumspeedid,$aspirationid,$vehicletypeid,$vehiclecount
+ function addExperianVIOrecords($records)
+ {
+  $db=new mysql; $db->connect();     
+  if($stmt=$db->conn->prepare('insert into experianVIO (id,yearQuarter,geography,vehicleID,baseVehicleID,yearID,makeID,modelID,subModelID,bodyTypeID,bodyNumDoorsID,driveTypeID,fuelTypeID,engineBaseID,engineVINID,fuelDeliverySubTypeID,transControlTypeID,transNumSpeedID,aspirationID,vehicleTypeID,vehicleCount) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'))
+  {
+   $yearquarter=''; $geography=''; $vehicleid=0; $basevehicleid=0; $yearid=0; $makeid=0; $modelid=0; $submodelid=0; $bodytypeid=0; $bodynumdoorsid=0; $drivetypeid=0; $fueltypeid=0; $enginebaseid=0; $enginevinid=0; $fueldeliverysubtypeid=0; $transcontroltypeid=0; $transnumspeedid=0; $aspirationid=0; $vehicletypeid=0; $vehiclecount=0;
+   $stmt->bind_param('ssiiiiiiiiiiiiiiiiii', $yearquarter,$geography,$vehicleid,$basevehicleid,$yearid,$makeid,$modelid,$submodelid,$bodytypeid,$bodynumdoorsid,$drivetypeid,$fueltypeid,$enginebaseid,$enginevinid,$fueldeliverysubtypeid,$transcontroltypeid,$transnumspeedid,$aspirationid,$vehicletypeid,$vehiclecount);      
+   foreach($records as $record)
+   {
+    $yearquarter=$record['yearquarter']; $geography=$record['geography']; $vehicleid=$record['vehicleid']; $basevehicleid=$record['basevehicleid']; $yearid=$record['yearid']; $makeid=$record['makeid']; $modelid=$record['modelid']; $submodelid=$record['submodelid']; $bodytypeid=$record['bodytypeid']; $bodynumdoorsid=$record['bodynumdoorsid']; $drivetypeid=$record['drivetypeid']; $fueltypeid=$record['fueltypeid']; $enginebaseid=$record['enginebaseid']; $enginevinid=$record['enginevinid']; $fueldeliverysubtypeid=$record['fueldeliverysubtypeid']; $transcontroltypeid=$record['transcontroltypeid']; $transnumspeedid=$record['transnumspeedid'];$aspirationid=$record['aspirationid']; $vehicletypeid=$record['vehicletypeid']; $vehiclecount=$record['vehiclecount'];
+    $stmt->execute();
+   }
+  }
+  $db->close();     
+ }
  
  function appVIOexperian($appid,$geography, $yearquarter)
  {// get the parts-in-operation count for a scpecific app (VIO*app_qty)
