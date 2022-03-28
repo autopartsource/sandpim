@@ -28,7 +28,8 @@ $streamXLSX=false;
 $xlsxdata='';
 
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
-$partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
+$lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
+$partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
 
         
 $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','GTIN'=>'string','Replaced By'=>'string','Part Category'=>'string','Created On'=>'string','First Stocked On'=>'string','Discontinued Date'=>'string'), array('widths'=>array(12,30,22,15,11,25,10,15,16),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));

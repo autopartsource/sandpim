@@ -930,6 +930,21 @@ class setup
         unique key idx_receiver_internalpart(receiverprofileid,internalpart))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_parttranslation ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_parttranslation ('.$db->conn->error.')';}
         
+        
+        $sql="CREATE TABLE receiverprofile_lifecycleststus (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        lifecyclestatus varchar(255) not null,
+        PRIMARY KEY (id),
+        index idx_receiverprofileid(receiverprofileid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_lifecycleststus ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_lifecycleststus ('.$db->conn->error.')';}
+
+        $sql="insert into receiverprofile_lifecycleststus values(1,1000,'0')"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into receiverprofile_lifecycleststus values(2,1000,'2')"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into receiverprofile_lifecycleststus values(3,1000,'7')"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+
+        
+        
         // contemplating schema options to address plan-user connections
         // this table may not be the final answer
         $sql="CREATE TABLE plan_user (

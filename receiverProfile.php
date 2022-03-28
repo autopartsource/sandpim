@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
+include_once('./class/pcdbClass.php');
 
 $navCategory = 'settings';
 
@@ -22,6 +23,7 @@ if (!isset($_SESSION['userid']))
 }
 
 $logs = new logs;
+$pcdb = new pcdb;
 
 if (isset($_POST['submit']) && $_POST['submit']=='Save') 
 {
@@ -62,7 +64,10 @@ $applieddeliverygroupids=$pim->getReceiverprofileDeliverygroupids($profile['id']
 $alldeliverygroups=$pim->getDeliverygroups();
 
 $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
-        
+
+$lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($profile['id']);
+$alllifecyclestatuses=$pcdb->getLifeCycleCodes();
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -99,6 +104,53 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
              
              document.getElementById('applieddeliverygroups').innerHTML+='<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'+deliverygroupid+'"><button class="btn btn-outline-danger" onclick="removeDeliverygroup(\''+deliverygroupid+'\',\''+deliverygroupdescription+'\')"><i class="bi bi-arrow-bar-left"></i></button> '+deliverygroupdescription+'</div>';
             }
+            
+            
+            
+            function addLifecyclestatus()
+            {
+             var descriptiontext = document.getElementById("descriptiontext").value;
+             var descriptioncode = document.getElementById("descriptioncode").value;
+             var languagecode = document.getElementById("descriptionlanguagecode").value;
+             if(descriptiontext.trim().length>0)
+             {
+              var xhr = new XMLHttpRequest();
+              xhr.open('GET', 'ajaxAddReceiverLifecyclestatus.php?descriptiontext='+btoa(descriptiontext)+'&descriptioncode='+descriptioncode+'&languagecode='+languagecode+'&partnumber=<?php echo $partnumber;?>');
+              
+              xhr.onload = function()
+              {
+               var response=JSON.parse(xhr.responseText);
+
+               var container=document.getElementById('descriptions');
+               container.innerHTML+='<div style="padding-bottom:3px;" id="lifecyclestatus_'+response.id+'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this '+response.descriptioncode+' code description from this part" onclick="deleteDescription('+response.id+')">x</button></div><div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;">'+descriptiontext+'</div><div style="clear:both;"></div></div>';
+              };
+              xhr.send();
+             }
+            }
+
+            function removeLifecyclestatus(id)
+            {
+             var lifecyclestatusdiv = document.getElementById('descriptionid_'+descriptionid);
+             lifecyclestatusdiv.parentNode.removeChild(lifecyclestatusdiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeleteReceiverLifecyclestatus.php?id='+descriptionid+'&partnumber=<?php echo $partnumber;?>');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+             };
+             xhr.send();
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
                         
         </script>
         <?php include('./includes/header.php'); ?>
@@ -199,6 +251,29 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
                                             </div>
                                         </div>
                                        
+                                        <div class="row padding">
+                                            <div class="col">
+                                                <div class="card">
+                                                    <h6 class="card-header">Lifecycle Statuses to include in exports</h6>
+                                                    <div class="card-body">
+                                                        <div style="float:left;">
+                                                            <select id="lifecyclestatus" onchange="updateProfile('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($alllifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select>
+                                                            <button class="btn btn-sm btn-success" id="addlifecyclestatus" title="Add a lifecycle status to this profile" onclick="addLifecyclestatus()">+</button>
+                                                        </div>
+                                                        <div style="float:left;padding-left: 80px;">
+<?php 
+foreach($lifecyclestatuses as $lifecyclestatus)
+{
+ echo '<div style="text-align:left;padding-bottom:5px;" id="lifecyclestatus_'.$lifecyclestatus['id'].'"><button class="btn btn-sm btn-outline-danger" title="Remove this lifecyclestatus from this profile" onclick="deleteLifecyclestatus('.$lifecyclestatus['id'].')">x</button> '.$pcdb->lifeCycleCodeDescription($lifecyclestatus['lifecyclestatus']).'</div>';    
+}
+?>
+                                                        </div>
+                                                        <div style="clear: both;"></div>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         
                                         
                                     </div>

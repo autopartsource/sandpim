@@ -558,14 +558,20 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                     
                 <?php 
                 
+                $foundPrimaries=false; $foundNonprimaries=false;
+
                 foreach($connectedassets as $connectedasset)
                 {
                     if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='' && $connectedasset['filetype']=='JPG')
                     {
                         echo '<div><a href="./showAsset.php?assetid='.$connectedasset['assetid'].'"><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></a></div>';
-                        break;
+                        $foundPrimaries=true;
                     }
                 }
+
+                foreach($connectedassets as $connectedasset){if($connectedasset['assettypecode']!='P04' && $connectedasset['filetype']=='JPG' && $connectedasset['uri']!=''){$foundNonprimaries=true;}}
+                
+                if($foundPrimaries && $foundNonprimaries){echo '<hr/>';}
 
                 foreach($connectedassets as $connectedasset)
                 {

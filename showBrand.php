@@ -90,32 +90,42 @@ $connectedassets=$asset->getAssetsConnectedToBrand($BrandID);
                         <h3 class="card-header text-start">
                             Brand <span class="text-info"><?php echo $interchange->brandName($BrandID).' ('.$BrandID.')'; ?></span>
                         </h3>
+
                         <div class="card-body">
-                            
-                            <table class="table" border="1" cellpadding="5">
-                                <tr>
-                                    <th>Assets</th>
-                                    <td>
-                                        <?php 
-                                        foreach($connectedassets as $connectedasset)
-                                        {
-                                              echo '<div style="padding-bottom:3px;" id="assetconnectionid_'.$connectedasset['connectionid'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Disconnect this asset from this brand" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div><div style="border:1px solid;padding:1px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>  <div style="float:left;padding-left:5px;">'. $pcdb->assetTypeCodeDescription($connectedasset['assettypecode']).'</div>     <div style="clear:both;"></div></div>';
-                                        }
-                                        ?>
-                                        <div id="showAssetFormIcon" style="display:block;" onclick="showhideAssetForm()"><img src="./expandmore.png" title="Expand to show assets form"/></div>
-                                        <div  id="assetform" style="display:none; padding:25px;">
-                                            <form action="brandAssetExistingResourceForm.php" method="post">
-                                                <div style="padding:5px;">Create a new asset (from URI) connected to this brand</div>
-                                                <div style="padding:5px;">URI <input type="text" name="uri" size="50"/></div>
-                                                <div style="padding:5px;">Filename <input type="text" size="25" name="basename"/><input type="hidden" name="brandid" value="<?php echo $BrandID;?>"/>
-                                                <input type="submit" name="submit" value="Retrieve"/></div>
-                                            </form>
-                                        <div id="hideAssetFormIcon" onclick="showhideAssetForm()"><img src="./expandless.png" title="Hide assets form"/></div>
-                                        </div>
-                                    </td>
-                                <tr>
+                        <h4 class="card-header text-start">Connected Assets</h4>
+
+                            <table>
+                                <tr><th></th><th>Asset ID</th><th>Type</th><th>Description</th><th>Size</th><th>Download</th></tr>
+                            <?php 
+                            foreach($connectedassets as $connectedasset)
+                            {
+                                $shortenedassetid=$connectedasset['assetid'];
+                                if(strlen($connectedasset['assetid'])>10){$shortenedassetid=substr($connectedasset['assetid'],0,10).'...' ;}
+
+                                  //echo '<div style="padding-bottom:3px;" id="assetconnectionid_'.$connectedasset['connectionid'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Disconnect this asset from this brand" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div><div style="border:1px solid;padding:1px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>  <div style="float:left;padding-left:5px;">'. $pcdb->assetTypeCodeDescription($connectedasset['assettypecode']).'</div>     <div style="clear:both;"></div></div>';
+                                  echo '<tr id="assetconnectionid_'.$connectedasset['connectionid'].'">'; 
+                                  echo  '<td><button class="btn btn-sm btn-outline-danger" title="Disconnect this asset from this brand" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></td>';
+                                  echo  '<td><a href="./showAsset.php?assetid='.$connectedasset['assetid'].'">'.$shortenedassetid.'</a></td>';
+                                  echo  '<td>'.$pcdb->assetTypeCodeDescription($connectedasset['assettypecode']).'</td>';
+                                  echo  '<td>'.$connectedasset['description'].'</td>';                                              
+                                  echo  '<td>'.$asset->niceFileSize($connectedasset['filesize']).'</td>';
+                                  echo  '<td><a href="'.$connectedasset['uri'].'">Link</a></td>';
+                                  echo '</tr>';//<div style="padding-bottom:3px;" id="assetconnectionid_'.$connectedasset['connectionid'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Disconnect this asset from this brand" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div><div style="border:1px solid;padding:1px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div>  <div style="float:left;padding-left:5px;">'. $pcdb->assetTypeCodeDescription($connectedasset['assettypecode']).'</div>     <div style="clear:both;"></div></div>';
+                            }
+                            ?>
                             </table>
-                        </div>
+                            <div id="showAssetFormIcon" style="display:block;" onclick="showhideAssetForm()"><img src="./expandmore.png" title="Expand to show assets form"/></div>
+                            <div  id="assetform" style="display:none; padding:25px;">
+                                <form action="brandAssetExistingResourceForm.php" method="post">
+                                    <div style="padding:5px;">Create a new asset (from existing URI) and connect it to this brand</div>
+                                    <div style="padding:5px;">URI <input type="text" name="uri" size="50"/></div>
+                                    <div style="padding:5px;">Filename <input type="text" size="25" name="basename"/><input type="hidden" name="brandid" value="<?php echo $BrandID;?>"/>
+                                    <input type="submit" name="submit" value="Retrieve"/></div>
+                                </form>
+                            <div id="hideAssetFormIcon" onclick="showhideAssetForm()"><img src="./expandless.png" title="Hide assets form"/></div>
+                            </div>
+                        </td>
+                        </div>                    
                     </div>                    
                 </div>
                 <!-- End of Main Content -->

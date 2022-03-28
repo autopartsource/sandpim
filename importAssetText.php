@@ -50,12 +50,12 @@ $partcategories = $pim->getPartCategories();
 
                         <div class="card-body">
                             <form method="post" action="importAssetTextProcess.php">
-                                <div class="alert alert-secondary" role="alert">Copy/Paste data from the template <a href="./Asset_import_template_3-2-2021.xlsx">spreadsheet</a> (include header row)</div>
-                                <div style="padding:10px;"><div>Tab-delimited text</div>
-                                    <textarea name="assets" rows="6" cols="100"></textarea>
+                                <div class="alert alert-secondary" role="alert">Paste data from the template <a href="./Asset_import_template_3-2-2021.xlsx">spreadsheet</a> (include header row)</div>
+                                <div style="padding:10px;">
+                                    <textarea style="width:100%;" name="assets" rows="10"></textarea>
                                 </div>
                                 
-                                <div style="padding:10px;"><input type="checkbox" name="doimport"/>Do import (uncheck for test run)</div>
+                                <div style="padding:10px;"><input type="checkbox" name="doimport"/>Do import (un-check for test run)</div>
                                 <div style="padding:10px;"><input type="checkbox" name="removeexisting"/>Remove existing assets for the partnumbers imported</div>
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Next"/></div>
                             </form>

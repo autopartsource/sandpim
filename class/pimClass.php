@@ -703,11 +703,16 @@ function countAppsByPartcategories($partcategories)
 
  function getPartnumbersByPartcategories($partcategories,$statuses=false)
  {
-   // need to pull this from a new table (receiverprofile_lifecycleststus?) and build at a UI to manage it
-   $statuses=array('4','A','2','8','3','1','6','7');
-   $statusesquoted=array(); foreach($statuses as $status){$statusesquoted[]="'".$status."'";}
+  if($statuses===false)
+  {// no status array was passeed. query for all of them
+   $statusliststring="'4','A','2','8','3','1','6','7'";   
+  }
+  else
+  {
+   $statusesquoted=array(); foreach($statuses as $status){$statusesquoted[]="'".$status['lifecyclestatus']."'";}
    $statusliststring=implode(',',$statusesquoted);
-  
+  }
+   
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
   $db = new mysql; $db->connect(); $partnumbers=array();
   if($stmt=$db->conn->prepare('select partnumber from part where partcategory in('.$categorylist.') and lifecyclestatus in('.$statusliststring.') order by partnumber'))
@@ -2467,6 +2472,29 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $partcategories;
  }
+ 
+ function getReceiverprofileLifecyclestatuses($receiverprofileid)
+ {  // return and array of partcategory id's for a given receiverprofile
+  $lifecyclestatuses=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from receiverprofile_lifecycleststus where receiverprofileid=?'))
+  {
+   $stmt->bind_param('i',$receiverprofileid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $lifecyclestatuses[]=array('id'=>$row['id'],'lifecyclestatus'=>$row['lifecyclestatus']);
+   }
+  }
+  $db->close();
+  return $lifecyclestatuses;
+ }
+ 
+ 
+ 
+ 
+ 
   
  function getReceiverprofileDeliverygroupids($receiverprofileid)
  {  // return and array of partcategory id's for a given receiverprofile

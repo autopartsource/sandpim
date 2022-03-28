@@ -198,6 +198,7 @@ class asset
  {
   $db=new mysql; $db->connect(); $connections=array();
   $publicclause=''; if($excludenonpublic){$publicclause=' and public=1';}
+  //if($stmt=$db->conn->prepare('select brand_asset.id as connectionid, BrandID,assettypecode,sequence, asset.* from brand_asset,asset where brand_asset.assetid=asset.assetid and BrandID=? '.$publicclause.' order by sequence'))
   if($stmt=$db->conn->prepare('select brand_asset.id as connectionid, BrandID,assettypecode,sequence, asset.* from brand_asset,asset where brand_asset.assetid=asset.assetid and BrandID=? '.$publicclause.' order by sequence'))
   {
    if($stmt->bind_param('s',$BrandID))
@@ -207,7 +208,7 @@ class asset
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'BrandID'=>$row['BrandID'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'uri'=>$row['uri'],'filename'=>$row['filename'],'filetype'=>$row['fileType']);
+       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'BrandID'=>$row['BrandID'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'uri'=>$row['uri'],'filename'=>$row['filename'],'filetype'=>$row['fileType'],'public'=>$row['public'],'filesize'=>$row['filesize'],'description'=>$row['description']);
      }
     }
    }
