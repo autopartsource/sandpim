@@ -109,32 +109,26 @@ $alllifecyclestatuses=$pcdb->getLifeCycleCodes();
             
             function addLifecyclestatus()
             {
-             var descriptiontext = document.getElementById("descriptiontext").value;
-             var descriptioncode = document.getElementById("descriptioncode").value;
-             var languagecode = document.getElementById("descriptionlanguagecode").value;
-             if(descriptiontext.trim().length>0)
-             {
-              var xhr = new XMLHttpRequest();
-              xhr.open('GET', 'ajaxAddReceiverLifecyclestatus.php?descriptiontext='+btoa(descriptiontext)+'&descriptioncode='+descriptioncode+'&languagecode='+languagecode+'&partnumber=<?php echo $partnumber;?>');
-              
-              xhr.onload = function()
-              {
-               var response=JSON.parse(xhr.responseText);
+             var lifecyclestatus = document.getElementById("lifecyclestatus").value;
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddRemoveReceiverLifecyclestatus.php?receiverprofileid=<?php echo $profile['id'];?>&lifecyclestatus='+lifecyclestatus+'&action=add');
 
-               var container=document.getElementById('descriptions');
-               container.innerHTML+='<div style="padding-bottom:3px;" id="lifecyclestatus_'+response.id+'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this '+response.descriptioncode+' code description from this part" onclick="deleteDescription('+response.id+')">x</button></div><div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;">'+descriptiontext+'</div><div style="clear:both;"></div></div>';
-              };
-              xhr.send();
-             }
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              var container=document.getElementById('lifecyclestatuses');
+              container.innerHTML+='<div style="padding-bottom:3px;" id="lifecyclestatusid_'+response.id+'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this lifecycle status from this profile" onclick="removeLifecyclestatus('+response.id+')">x</button></div><div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;">'+response.lifecyclestatusdescription+'</div><div style="clear:both;"></div></div>';
+             };
+             xhr.send();
             }
 
             function removeLifecyclestatus(id)
             {
-             var lifecyclestatusdiv = document.getElementById('descriptionid_'+descriptionid);
+             var lifecyclestatusdiv = document.getElementById('lifecyclestatusid_'+id);
              lifecyclestatusdiv.parentNode.removeChild(lifecyclestatusdiv);
                 
              var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxDeleteReceiverLifecyclestatus.php?id='+descriptionid+'&partnumber=<?php echo $partnumber;?>');
+             xhr.open('GET', 'ajaxAddRemoveReceiverLifecyclestatus.php?recordid='+id+'&receiverprofileid=<?php echo $profile['id'];?>&action=remove');
              xhr.onload = function()
              {
               var response=JSON.parse(xhr.responseText);
@@ -174,116 +168,111 @@ $alllifecyclestatuses=$pcdb->getLifeCycleCodes();
                         <h3 class="card-header text-start">Receiver Profile</h3>
 
                         <div class="card-body">
-                            <form action="" method="post">
-                                <div class="card">
-                                    <h5 class="card-header text-start">
+                            <div class="card">
+                                <h5 class="card-header text-start">
+                                    <form action="" method="post">
+                                        <input type="hidden" name="id" value="<?php echo $profile['id']; ?>"/>
+                                        <input type="hidden" name="oldname" value="<?php echo $profile['name']; ?>"/>
                                         Name: <input type="text" name="profilename" value="<?php echo $profile['name']; ?>"/>
                                         <span style="float:right"><input name="submit" type="submit" value="Save"/> <input name="submit" type="submit" value="Delete"/></span>
-                                    </h5>
-                                    <div class="card-body">
-                                        
-                                        <div class="row padding">
-                                            <div class="col-md-6">
-                                                <div class="card">
-                                                    <h6 class="card-header">Available Delivery Groups</h6>
-                                                    <div class="card-body">
-                                                        <div id="unapplieddeliverygroups">
-                                                        <?php
-                                                        foreach ($alldeliverygroups as $deliverygroup) 
-                                                        {   
-                                                            if(in_array($deliverygroup['id'], $applieddeliverygroupids)){continue;}
-                                                            echo '<div style="text-align:right;padding:3px;" id="unapplieddeliverygroupid_'.$deliverygroup['id'].'">'.$deliverygroup['description'] . ' <button class="btn btn-outline-success" onclick="addDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')"><i class="bi bi-arrow-bar-right"></i></button></div>';
-                                                        }
-                                                        ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="card">
-                                                    <h6 class="card-header">Applied Delivery Groups</h6>
-                                                    <div class="card-body">
-                                                        <div id="applieddeliverygroups">
-                                                        <?php
-                                                        foreach ($applieddeliverygroupids as $deliverygroupid) 
-                                                        {
-                                                            $deliverygroup=$pim->getDeliverygroup($deliverygroupid);
-                                                            echo '<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'.$deliverygroupid.'"><button class="btn btn-outline-danger" onclick="removeDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')"><i class="bi bi-arrow-bar-left"></i></button> '.$deliverygroup['description'].'</div>';
-                                                        }
-                                                        ?>
-                                                        </div>
-                                                        
+                                    </form>
+                                </h5>
+                                <div class="card-body">
+
+                                    <div class="row padding">
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <h6 class="card-header">Available Delivery Groups</h6>
+                                                <div class="card-body">
+                                                    <div id="unapplieddeliverygroups">
+                                                    <?php
+                                                    foreach ($alldeliverygroups as $deliverygroup) 
+                                                    {   
+                                                        if(in_array($deliverygroup['id'], $applieddeliverygroupids)){continue;}
+                                                        echo '<div style="text-align:right;padding:3px;" id="unapplieddeliverygroupid_'.$deliverygroup['id'].'">'.$deliverygroup['description'] . ' <button class="btn btn-outline-success" onclick="addDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')"><i class="bi bi-arrow-bar-right"></i></button></div>';
+                                                    }
+                                                    ?>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                                                                
-                                        <div class="row padding">
-                                            <div class="col">
-                                                <div class="card">
-                                                    <h6 class="card-header">ACES & PIES header parameters</h6>
-                                                    <div class="card-body">
-                                                        <textarea name="profiledata" rows="10" style="width: 100%; max-width: 100%;"><?php echo $profile['data']; ?></textarea>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <h6 class="card-header">Applied Delivery Groups</h6>
+                                                <div class="card-body">
+                                                    <div id="applieddeliverygroups">
+                                                    <?php
+                                                    foreach ($applieddeliverygroupids as $deliverygroupid) 
+                                                    {
+                                                        $deliverygroup=$pim->getDeliverygroup($deliverygroupid);
+                                                        echo '<div style="text-align:left;padding:3px;" id="applieddeliverygroupid_'.$deliverygroupid.'"><button class="btn btn-outline-danger" onclick="removeDeliverygroup(\''.$deliverygroup['id'].'\',\''.$deliverygroup['description'].'\')"><i class="bi bi-arrow-bar-left"></i></button> '.$deliverygroup['description'].'</div>';
+                                                    }
+                                                    ?>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        <div class="row padding">
-                                            <div class="col">
-                                                <div class="card">
-                                                    <h6 class="card-header">Internal Notes</h6>
-                                                    <div class="card-body">
-                                                        <textarea name="notes" rows="10" style="width: 100%; max-width: 100%;"><?php echo $profile['notes']; ?></textarea>
-                                                    </div>
+                                    </div>
+
+                                    <div class="row padding">
+                                        <div class="col">
+                                            <div class="card">
+                                                <h6 class="card-header">ACES & PIES header parameters</h6>
+                                                <div class="card-body">
+                                                    <textarea name="profiledata" rows="10" style="width: 100%; max-width: 100%;"><?php echo $profile['data']; ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
-                                                                                
-                                        <div class="row padding">
-                                            <div class="col">
-                                                <div class="card">
-                                                    <h6 class="card-header">Partnumber Translation Table (internal TAB external)</h6>
-                                                    <div class="card-body">
-                                                        <textarea style="width: 100%; max-width: 100%;" rows="10" name="parttranslation"><?php foreach ($parttranslations as $internalpart=>$externalpart){echo $internalpart."\t".$externalpart."\r\n";} ?></textarea>
-                                                    </div>
+                                    </div>
+
+                                    <div class="row padding">
+                                        <div class="col">
+                                            <div class="card">
+                                                <h6 class="card-header">Internal Notes</h6>
+                                                <div class="card-body">
+                                                    <textarea name="notes" rows="10" style="width: 100%; max-width: 100%;"><?php echo $profile['notes']; ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
-                                       
-                                        <div class="row padding">
-                                            <div class="col">
-                                                <div class="card">
-                                                    <h6 class="card-header">Lifecycle Statuses to include in exports</h6>
-                                                    <div class="card-body">
-                                                        <div style="float:left;">
-                                                            <select id="lifecyclestatus" onchange="updateProfile('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($alllifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select>
-                                                            <button class="btn btn-sm btn-success" id="addlifecyclestatus" title="Add a lifecycle status to this profile" onclick="addLifecyclestatus()">+</button>
-                                                        </div>
-                                                        <div style="float:left;padding-left: 80px;">
+                                    </div>
+
+                                    <div class="row padding">
+                                        <div class="col">
+                                            <div class="card">
+                                                <h6 class="card-header">Partnumber Translation Table (internal TAB external)</h6>
+                                                <div class="card-body">
+                                                    <textarea style="width: 100%; max-width: 100%;" rows="10" name="parttranslation"><?php foreach ($parttranslations as $internalpart=>$externalpart){echo $internalpart."\t".$externalpart."\r\n";} ?></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row padding">
+                                        <div class="col">
+                                            <div class="card">
+                                                <h6 class="card-header">Lifecycle Statuses to include in exports</h6>
+                                                <div class="card-body">
+                                                    <div style="float:left;">
+                                                        <select id="lifecyclestatus"><?php foreach($alllifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"><?php echo $lifecyclestatus['description'];?></option><?php }?></select>
+                                                        <button class="btn btn-sm btn-success" id="addlifecyclestatus" title="Add a lifecycle status to this profile" onclick="addLifecyclestatus()">+</button>
+                                                    </div>
+                                                    <div id="lifecyclestatuses" style="float:left;padding-left: 80px;">
 <?php 
 foreach($lifecyclestatuses as $lifecyclestatus)
 {
- echo '<div style="text-align:left;padding-bottom:5px;" id="lifecyclestatus_'.$lifecyclestatus['id'].'"><button class="btn btn-sm btn-outline-danger" title="Remove this lifecyclestatus from this profile" onclick="deleteLifecyclestatus('.$lifecyclestatus['id'].')">x</button> '.$pcdb->lifeCycleCodeDescription($lifecyclestatus['lifecyclestatus']).'</div>';    
+echo '<div style="text-align:left;padding-bottom:5px;" id="lifecyclestatusid_'.$lifecyclestatus['id'].'"><button class="btn btn-sm btn-outline-danger" title="Remove this lifecyclestatus from this profile" onclick="removeLifecyclestatus('.$lifecyclestatus['id'].')">x</button> '.$pcdb->lifeCycleCodeDescription($lifecyclestatus['lifecyclestatus']).'</div>';    
 }
 ?>
-                                                        </div>
-                                                        <div style="clear: both;"></div>
-                                                        
                                                     </div>
+                                                    <div style="clear: both;"></div>
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        
                                     </div>
                                 </div>
-                                <input type="hidden" name="id" value="<?php echo $profile['id']; ?>"/>
-                                <input type="hidden" name="oldname" value="<?php echo $profile['name']; ?>"/>
-                            </form>
+                            </div>                            
                         </div>
-                    </div>
-                    
+                    </div>                    
                 </div>
                 <!-- End of Main Content -->
                 

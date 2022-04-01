@@ -7,7 +7,6 @@
         xhr.onload = function ()
         {
             var response = JSON.parse(xhr.responseText);
-            console.log(response.length);
             if (parseInt(response.length) > 0) {
                 document.getElementById("clipboardButton").removeAttribute("hidden");
                 document.getElementById("clipboardButton").setAttribute("class", "btn btn-success position-relative");

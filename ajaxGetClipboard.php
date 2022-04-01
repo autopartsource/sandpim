@@ -20,4 +20,4 @@ if(isset($_SESSION['userid']))
  if(isset($_GET['objecttype'])){$objecttype=$_GET['objecttype'];}
  $clipboard=$pim->getClipboard($userid, $objecttype);
  echo json_encode($clipboard);
-}?>
+ }?>

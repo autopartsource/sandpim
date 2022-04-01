@@ -2652,8 +2652,37 @@ function countAppsByPartcategories($partcategories)
   return $id;
  }
   
+ //ccc
+ function addLifecyclestatusToReceiverProfile($receiverprofileid,$lifecyclestatus)
+ {
+  $db = new mysql; $db->connect(); $id=false;
+  if($stmt=$db->conn->prepare("insert into receiverprofile_lifecycleststus values(null,?,?)"))
+  {
+   if($stmt->bind_param('is',$receiverprofileid,$lifecyclestatus))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+    }
+   }
+  }
+  $db->close();
+  return $id;
+ }
  
- 
+ function removeLifecyclestatusFromReceiverProfile($id,$receiverprofileid)
+ {
+  $db = new mysql; $db->connect(); $success=false;
+  if($stmt=$db->conn->prepare("delete from receiverprofile_lifecycleststus where id=? and receiverprofileid=?"))
+  {
+   if($stmt->bind_param('ii',$id, $receiverprofileid))
+   {
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;
+ }
  
  
  
