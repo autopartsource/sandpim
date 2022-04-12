@@ -271,6 +271,61 @@ class user
   }
   $db->close();
  }
+ 
+ function getUserPreference($userid, $preferencekey)
+ {
+  $value='';
+  $db = new mysql;  $db->connect();
+  if($stmt=$db->conn->prepare("select preferencevalue from user_preference where userid=? and preferencekey=?"))
+  {
+   $stmt->bind_param('is',$userid,$preferencekey);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $value=$row['preferencevalue'];
+   }
+  }
+  $db->close();
+  return $value;
+ }
+
+ 
+ function setUserPreference($userid, $preferencekey, $preferencevalue)
+ {
+  $db = new mysql;  $db->connect(); $id=-1;
+  
+  if($stmt=$db->conn->prepare("select id from user_preference where userid=? and preferencekey=?"))
+  {
+   $stmt->bind_param('is',$userid,$preferencekey);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $id=$row['id'];
+   }
+  }
+  
+  if($id >= 0)
+  {// existing record for this user and preference key - update it
+   if($stmt=$db->conn->prepare("update user_preference set preferencevalue=? where id=?"))
+   {
+    $stmt->bind_param('si',$preferencevalue,$id);
+    $stmt->execute();
+   }
+  }
+  else
+  {// this is a new user/key combo - write it
+   if($stmt=$db->conn->prepare("insert into user_preference values(null,?,?,?)"))
+   {
+    $stmt->bind_param('iss',$userid,$preferencekey, $preferencevalue);
+    $stmt->execute();
+   }
+  }
+
+  $db->close();
+ }
+
 
  function testDatabase()
  {

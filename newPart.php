@@ -1,8 +1,20 @@
 <?php
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'parts';
+
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'newPart.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
+ exit;
+}    
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -11,20 +23,22 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $pcdb = new pcdb;
-$pim = new pim;
 $logs=new logs;
+$user=new user;
 
 $partcategories = $pim->getPartCategories();
 $favoriteparttypes=$pim->getFavoriteParttypes();
+$partnumber=''; if(isset($_GET['partnumber'])){$partnumber=trim(strtoupper($_GET['partnumber']));}
 
-$partnumber=trim(strtoupper($_GET['partnumber']));
 
-
-if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['partcategory']))
+if(isset($_POST['partnumber'])  && trim($_POST['partnumber'])!='' && isset($_POST['parttypeid']) && isset($_POST['partcategory']))
 {
  $partnumber=trim(strtoupper($_POST['partnumber']));
  $parttypeid=intval($_POST['parttypeid']);
  $partcategory=intval($_POST['partcategory']);
+    // record user's preference for category and type
+ $user->setUserPreference($_SESSION['userid'], 'last part create category',$partcategory);
+ $user->setUserPreference($_SESSION['userid'], 'last part create part type',$parttypeid);
     
  if($pim->validPart($partnumber))
  {// part already esists - re-direct to showPart.php without making a fuss
@@ -45,7 +59,12 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
    $errormessage='part was not created';
   }
  }
+ 
 }
+
+// get user's preference for category and type
+$preferedpartcategory=$user->getUserPreference($_SESSION['userid'], 'last part create category');
+$preferedparttype=$user->getUserPreference($_SESSION['userid'], 'last part create part type');
 
 ?>
 <!DOCTYPE html>
@@ -106,8 +125,8 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
                                     <form method="post">
                                         <table border="1" cellpadding="5">
                                             <tr><th>Partnumber</th><td><input type="text" name="partnumber" value="<?php echo $partnumber;?>"/></td></tr>
-                                            <tr><th>Part Type</th><td><select name="parttypeid"><?php foreach ($favoriteparttypes as $parttype) { ?> <option value="<?php echo $parttype['id']; ?>"><?php echo $parttype['name']; ?></option><?php } ?></select></td></tr>
-                                            <tr><th>Part Category</th><td><select name="partcategory"><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></td></tr>
+                                            <tr><th>Part Type</th><td><select name="parttypeid"><?php foreach ($favoriteparttypes as $parttype) { ?> <option value="<?php echo $parttype['id']; ?>"   <?php if($parttype['id']==$preferedparttype){echo ' selected';}?>    ><?php echo $parttype['name']; ?></option><?php } ?></select></td></tr>
+                                            <tr><th>Part Category</th><td><select name="partcategory"><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>" <?php if($partcategory['id']==$preferedpartcategory){echo ' selected';}?>><?php echo $partcategory['name']; ?></option><?php }?></select></td></tr>
                                         </table>
                                         <div style="padding-top:15px;"><input type="submit" name="submit" value="Next"/></div>
                                     </form>
@@ -123,7 +142,6 @@ if(isset($_POST['partnumber']) && isset($_POST['parttypeid']) && isset($_POST['p
 
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
-
                 </div>
             </div>
         </div>    

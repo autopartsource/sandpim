@@ -1107,6 +1107,13 @@ class setup
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_selected_partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_selected_partcategory ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE user_preference (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        userid int UNSIGNED NOT NULL,
+        preferencekey varchar(255) not null,
+        preferencevalue varchar(255) not null,
+        PRIMARY KEY (id), unique key idx_userid_preferencekey(userid,preferencekey))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_preference ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_preference ('.$db->conn->error.')';}
         
         $sql="CREATE TABLE brand (
         BrandID varchar(255) not null,
