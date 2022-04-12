@@ -2,27 +2,36 @@
 include_once('./class/pimClass.php');
 include_once('./class/padbClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $pim = new pim();
 
-session_start();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
  $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'exportPartDescriptionsStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
+}
+
+session_start();
+if (!isset($_SESSION['userid'])) {
+    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
+    exit;
 }
 
 $logs=new logs();
 $pcdb=new pcdb();
+$user=new user();
 $writer = new XLSXWriter();
 
 $streamXLSX=false;
 $xlsxdata='';
 
 $receiverprofileid=intval($_GET['receiverprofile']);
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);   
 

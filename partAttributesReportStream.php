@@ -2,6 +2,7 @@
 include_once('./class/pimClass.php');
 include_once('./class/padbClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/XLSXWriterClass.php');
 
@@ -12,6 +13,7 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'partAttributeCoverageReportStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }
 
@@ -26,12 +28,14 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 $logs=new logs();
 $padb=new padb();
 $pcdb=new pcdb();
+$user=new user();
 $writer = new XLSXWriter();
 
 $streamXLSX=false;
 $xlsxdata='';
 
 $receiverprofileid=intval($_GET['receiverprofile']);
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);   
 

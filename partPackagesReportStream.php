@@ -3,12 +3,12 @@ include_once('./class/pimClass.php');
 include_once('./class/padbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/packagingClass.php');
+include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $pim = new pim();
 
-session_start();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
@@ -17,8 +17,16 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
+session_start();
+if (!isset($_SESSION['userid'])) {
+    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
+    exit;
+}
+
+
 $logs=new logs();
 $pcdb=new pcdb();
+$user=new user();
 $packaging=new packaging();
 $writer = new XLSXWriter();
 
@@ -26,6 +34,7 @@ $streamXLSX=false;
 $xlsxdata='';
 
 $receiverprofileid=intval($_GET['receiverprofile']);
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);   
 

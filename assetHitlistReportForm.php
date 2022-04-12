@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'reports';
 
@@ -21,10 +22,12 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $pcdb = new pcdb;
+$user=new user;
 
 $allassettypes=$pcdb->getAssetTypeCodes();
 
 $receiverprofiles=$pim->getReceiverprofiles();
+$preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last receiverprofileid used');
 ?>
 
 <!DOCTYPE html>
@@ -53,7 +56,7 @@ $receiverprofiles=$pim->getReceiverprofiles();
                         <div class="card-body">
                             <form action="assetHitlistReportStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
-                                    Parts for Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+                                    Parts for Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
                                     Missing assest of type 
                                     <select name="assettypecode"><?php foreach ($allassettypes as $assettype){ ?><option value="<?php echo $assettype['code']; ?>"<?php if($assettype['code']=='P04'){echo ' selected';} ?>><?php echo $assettype['description']; if($assettype['description']=='User Defined'){echo ' ('.$assettype['code'].')';} ?></option><?php }?></select>
                                     <input type="submit" name="submit" value="Export"/>

@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/userClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/XLSXWriterClass.php');
 
@@ -27,6 +28,7 @@ if (!isset($_SESSION['userid']))
 $logs=new logs();
 $pcdb = new pcdb();
 $asset=new asset();
+$user=new user();
 $writer = new XLSXWriter();
 $pcdbVersion=$pcdb->version();
 $configGet = new configGet();
@@ -42,7 +44,7 @@ if($validassettypecode){$targetassettype=$_GET['assettypecode'];}
 
 
 $receiverprofileid=intval($_GET['receiverprofile']);
-
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 

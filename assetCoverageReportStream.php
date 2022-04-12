@@ -2,6 +2,7 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/userClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/XLSXWriterClass.php');
@@ -13,6 +14,7 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'assetCoverageReportStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }
 
@@ -26,12 +28,14 @@ if (!isset($_SESSION['userid']))
 $logs=new logs();
 $pcdb = new pcdb();
 $asset=new asset();
+$user=new user();
 $writer = new XLSXWriter();
 $pcdbVersion=$pcdb->version();
 $configGet = new configGet();
 
 
 $receiverprofileid=intval($_GET['receiverprofile']);
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
