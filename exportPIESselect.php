@@ -1,6 +1,7 @@
 <?php
 include_once('./class/vcdbClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'export';
 
@@ -9,7 +10,8 @@ $pim = new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'exportPIESselect.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'exportPIESselect.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }
 
@@ -20,10 +22,11 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $vcdb = new vcdb;
+$user = new user;
 
 $partcategories = $pim->getPartCategories();
 $receiverprofiles=$pim->getReceiverprofiles();
-
+$preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last receiverprofileid used');
 ?>
 
 <!DOCTYPE html>
@@ -65,7 +68,7 @@ $receiverprofiles=$pim->getReceiverprofiles();
                             <form action="exportPIESstream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
                                     <div>
-                                        Receiver Profile <select id="selectBox" name="receiverprofile" onclick="updateSelectedID();"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+                                        Receiver Profile <select id="selectBox" name="receiverprofile" onclick="updateSelectedID();"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
                                         <a id="assetFilesDownload" href="" role="button" class="btn btn-secondary btn-sm disabled" aria-disabled="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Asset File List for Export">Assets</a>
                                         <a id="partsListDownload" href="" role="button" class="btn btn-secondary btn-sm disabled" aria-disabled="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Parts List">Parts</a>
                                     </div>
