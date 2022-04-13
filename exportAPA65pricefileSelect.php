@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
+include_once('./class/userClass.php');
 include_once('./class/pricingClass.php');
 $navCategory = 'export';
 
@@ -22,13 +23,10 @@ if (!isset($_SESSION['userid'])) {
 
 
 $pricing = new pricing();
-
+$user = new user();
 $receiverprofiles=$pim->getReceiverprofiles();
 $pricesheets=$pricing->getPricesheets();
-
-
-
-
+$preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last receiverprofileid used');
 ?>
 
 <!DOCTYPE html>
@@ -57,7 +55,7 @@ $pricesheets=$pricing->getPricesheets();
                         <div class="card-body">
                             <form action="exportAPA65pricefileStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">                                    
-                                    <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>"><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+                                    <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
                                     <select name="pricesheetnumber" <option value="">select...</option><?php foreach($pricesheets as $pricesheet){echo '<option value="'.$pricesheet['number'].'">'.$pricesheet['description'].'</option>';}?></select>
                                     <div style="padding:10px;">
                                         Blanket Effective Date <input type="text" name="blanketeffectivedate" value="<?php echo date('Y-m-d');?>"/>

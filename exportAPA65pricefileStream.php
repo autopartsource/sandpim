@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pricingClass.php');
+include_once('./class/userClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $pim = new pim();
@@ -21,12 +22,13 @@ if (!isset($_SESSION['userid'])) {
 
 $pcdb = new pcdb();
 $writer = new XLSXWriter();
+$user=new user();
 $logs=new logs();
 $pcdbVersion=$pcdb->version();
 $pricing = new pricing();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
-
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $blanketeffectivedate='';
 
 if(isset($_GET['blanketeffectivedate']) && trim($_GET['blanketeffectivedate'])!='')

@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/qdbClass.php');
+include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 
 $navCategory = 'export';
@@ -12,7 +13,8 @@ $pim = new pim();
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'exportFlatAppsStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'exportFlatAppsStream.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }    
 
@@ -25,10 +27,12 @@ if(!isset($_SESSION['userid']))
 
 $vcdb=new vcdb();
 $pcdb=new pcdb();
+$user=new user();
 $qdb=new qdb();
 $logs=new logs();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $profile=$pim->getReceiverprofileById($receiverprofileid);
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
 
@@ -52,7 +56,7 @@ if($appscount>5000)
  $token=$pim->createBackgroundjob('ACESflatExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text',$clientfilename);
  $logs->logSystemEvent('Export', 0, 'Flat apps file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
  echo 'This export will contain '.$appscount.' apps. It will be processed by the houskeeper (CLI execution of processFlatAppsExport.php by cron) and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
- echo '<br/><br/><a href="./ioIndex.php">Back to Import/Export menu</a>';
+ echo '<br/><br/><a href="./inndex.php">Back to home</a>';
 }
 else
 {// dataset is small enough to stream it on-the-fly without kicking-off background processing

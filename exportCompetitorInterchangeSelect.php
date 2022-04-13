@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/interchangeClass.php');
+include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'export';
 
@@ -10,7 +11,8 @@ $pim = new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'exportCompetitorInterchangeSelect.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'exportCompetitorInterchangeSelect.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }    
 
@@ -21,7 +23,9 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $interchange = new interchange;
+$user=new user;
 $competitors=$interchange->getCompetitors();
+$preferedbrandid = $user->getUserPreference($_SESSION['userid'], 'last brandid used');
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +55,7 @@ $competitors=$interchange->getCompetitors();
                             <form action="exportCompetitorInterchangeStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
                                     <div style="padding: 10px;">Competitor</div>
-                                    <select name="competitorBrandAAIAID"><?php foreach ($competitors as $competitor) { ?><option value="<?php echo $competitor['brandAAIAID']; ?>"><?php echo $competitor['name']; ?></option><?php } ?></select>
+                                    <select name="competitorBrandAAIAID"><?php foreach ($competitors as $competitor) { ?><option value="<?php echo $competitor['brandAAIAID']; ?>" <?php if($competitor['brandAAIAID']==$preferedbrandid){echo ' selected';} ?>><?php echo $competitor['name']; ?></option><?php } ?></select>
                                     <input type="submit" name="submit" value="Export"/>
                                 </div>
                             </form>

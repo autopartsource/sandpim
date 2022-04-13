@@ -2,12 +2,14 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/userClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $pim = new pim();
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
- $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'exportFlatPartsStream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'exportFlatPartsStream.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }
 
@@ -18,12 +20,13 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $pcdb = new pcdb();
+$user = new user();
 $writer = new XLSXWriter();
 $logs=new logs();
 $pcdbVersion=$pcdb->version();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
-
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $streamXLSX=false;
 $xlsxdata='';
 
