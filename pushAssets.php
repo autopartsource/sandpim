@@ -116,12 +116,16 @@ foreach($peers as $peer)
 
  if(count($assetstopush)>0 || count($oidstodrop)>0)
  {
+  $pushsummary='';
+  
   $body=array('identifier'=>$peer['identifier'],'adds'=>array(),'drops'=>$oidstodrop);
 
   $assetidkeyedassets=array(); 
   foreach($assetstopush as $a)
   {
    $assetidkeyedassets[$a['assetid']][]=array('id'=>$a['id'],'assetid'=>$a['assetid'],'filename'=>$a['filename'],'localpath'=>$a['localpath'],'uri'=>$a['uri'],'orientationViewCode'=>$a['orientationViewCode'],'colorModeCode'=>$a['colorModeCode'],'assetHeight'=>$a['assetHeight'],'assetWidth'=>$a['assetWidth'],'dimensionUOM'=>$a['dimensionUOM'],'background'=>$a['background'],'fileType'=>$a['fileType'],'createdDate'=>$a['createdDate'],'public'=>$a['public'],'approved'=>$a['approved'],'description'=>$a['description'],'oid'=>$a['oid'],'fileHashMD5'=>$a['fileHashMD5'],'filesize'=>$a['filesize'],'resolution'=>$a['resolution'],'languagecode'=>$a['languagecode'],'assetlabel'=>$a['assetlabel']);
+  
+   $pushsummary.=$a['assetid'].', ';
   }
  
   foreach($assetidkeyedassets as $assetid=>$assetrecords)
@@ -142,7 +146,7 @@ foreach($peers as $peer)
   $resp = curl_exec($curl);
   curl_close($curl);
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($assetstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
+  $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($assetstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. Pushed:'.$pushsummary.'. '.$logstring);
  }
 }
 ?>
