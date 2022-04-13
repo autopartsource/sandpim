@@ -517,7 +517,7 @@ class PIESgenerator
  }
 
     
- function importPIESdata($items,$createparts,$partcategory,$doimport,$importoptions=false)
+ function importPIESdata($userid,$items,$createparts,$partcategory,$doimport,$importoptions=false)
  {
      /*import options is name:value key pair
       * 
@@ -567,7 +567,7 @@ class PIESgenerator
      {
       $pim->addPartDescription($partnumber, $description['Description'], $description['DescriptionCode'], $description['Sequence'], $description['LanguageCode']);
       $newoid=$pim->updatePartOID($partnumber);
-      $pim->logPartEvent($partnumber, 0, 'description ['.$description['Description'].'] type ['.$description['DescriptionCode'].'] added by mass import', $newoid);
+      $pim->logPartEvent($partnumber, $userid, 'description ['.$description['Description'].'] type ['.$description['DescriptionCode'].'] added by mass import', $newoid);
      }
      $results[]='description ('.$description['Description'].') added to '.$partnumber;
     }
@@ -582,7 +582,7 @@ class PIESgenerator
      {
       $pricing->addPrice($partnumber, $price['PriceSheetNumber'], $price['Price'], $price['CurrencyCode'], $price['PriceUOM'], $price['PriceType'], $price['EffectiveDate'], $price['ExpirationDate']);         
       $newoid=$pim->updatePartOID($partnumber);
-      $pim->logPartEvent($partnumber, 0, 'price ['.$price['Price'].' '.$price['CurrencyCode'].'] type ['.$price['PriceType'].'] added by mass import', $newoid);
+      $pim->logPartEvent($partnumber, $userid, 'price ['.$price['Price'].' '.$price['CurrencyCode'].'] type ['.$price['PriceType'].'] added by mass import', $newoid);
      }
      $results[]=$price['PriceType'].' price ('.$price['Price'].') for item '.$partnumber.' '.$actiondescription;
     }
@@ -618,7 +618,7 @@ class PIESgenerator
        $asset->connectPartToAsset($partnumber, $digitalasset['AssetID'], $digitalasset['AssetType'], $sequence, $digitalasset['Representation']);
        $asset->logAssetEvent($digitalasset['AssetID'], 0, $partnumber.' connected to asset '.$digitalasset['AssetID'].' as type '.$digitalasset['AssetType'] , '');
        $newoid=$pim->updatePartOID($partnumber);
-       $pim->logPartEvent($partnumber, 0, 'asset ['.$digitalasset['AssetID'].'] connected as type ['.$digitalasset['AssetType'].'] by mass import', $newoid);
+       $pim->logPartEvent($partnumber, $userid, 'asset ['.$digitalasset['AssetID'].'] connected as type ['.$digitalasset['AssetType'].'] by mass import', $newoid);
       }
       $sequence++;
      }

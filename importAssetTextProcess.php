@@ -11,9 +11,9 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'sandpiper index.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }
-
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -107,7 +107,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
    if($DescriptionCodeFieldIndex>=0 && trim($fields[$DescriptionCodeFieldIndex])!=''){$asset['DescriptionCode']=trim($fields[$DescriptionCodeFieldIndex]);}
    if($DescriptionLanguageCodeFieldIndex>=0 && trim($fields[$DescriptionLanguageCodeFieldIndex])!=''){$asset['DescriptionLanguageCode']=trim($fields[$DescriptionLanguageCodeFieldIndex]); $asset['LanguageCode']=trim($fields[$DescriptionLanguageCodeFieldIndex]);}
    if($LanguageCodeFieldIndex>=0 && trim($fields[$LanguageCodeFieldIndex])!=''){$asset['LanguageCode']=trim($fields[$LanguageCodeFieldIndex]);}
-    if($CreatedDateFieldIndex>=0 && trim($fields[$CreatedDateFieldIndex])!=''){$asset['CreatedDate']=trim($fields[$CreatedDateFieldIndex]);}
+   if($CreatedDateFieldIndex>=0 && trim($fields[$CreatedDateFieldIndex])!=''){$asset['CreatedDate']=trim($fields[$CreatedDateFieldIndex]);}
    if($AssetDateTypeFieldIndex>=0 && trim($fields[$AssetDateTypeFieldIndex])!=''){$asset['AssetDateType']=trim($fields[$AssetDateTypeFieldIndex]);}
    if($CountryFieldIndex>=0 && trim($fields[$CountryFieldIndex])!=''){$asset['Country']=trim($fields[$CountryFieldIndex]);}
    if($PublicFieldIndex>=0 && trim($fields[$PublicFieldIndex])!=''){$asset['Public']=trim($fields[$PublicFieldIndex]);}
@@ -153,7 +153,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Next')
  
  $partcategory=0; $createparts=false;
 // print_r($items);
- $importresults=$PIESgenerator->importPIESdata($items,$createparts,$partcategory,$doimport,$importoptions);
+ $importresults=$PIESgenerator->importPIESdata($_SESSION['userid'],$items,$createparts,$partcategory,$doimport,$importoptions);
 }
 ?>
 <!DOCTYPE html>

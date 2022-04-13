@@ -565,8 +565,7 @@ if($PartNumberFieldIndex==0)
  //-----------------------------------------------------
 $doimport=false; if(isset($_POST['doimport'])){$doimport=true;}
 $createparts=true; if($_POST['partcategory']==''){$createparts=false;}
-$importresults=$PIESgenerator->importPIESdata($items,$createparts,intval($_POST['partcategory']),$doimport);
- 
+$importresults=$PIESgenerator->importPIESdata($_SESSION['userid'],$items,$createparts,intval($_POST['partcategory']),$doimport);
 ?>
 <!DOCTYPE html>
 <html>
