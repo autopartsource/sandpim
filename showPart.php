@@ -712,6 +712,8 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                             <div onclick="showhideUnappliedAttributes()">...</div>
                                             <div id="unappliedattributes" style="display:none; padding:5px;">
                                                 <?php foreach ($validpadbattributes as $attribute) { if($pim->getPartAttribute($part['partnumber'], $attribute['PAID'], '')){continue;}
+                                                    $validoptions = $padb->getAttributeValidValues($part['parttypeid'], $attribute['PAID']);
+                                                    $validoptionslist=''; if(count($validoptions)){$validoptionslist = '. Valid options: '.implode(', ', $validoptions);}
                                                     echo '<div style="text-align:left;padding:3px;" id="unappliedattribute_'.$attribute['PAID'].'">'. $attribute['name'] . ' <span><input size="8" id="unappliedattributevalue_'.$attribute['PAID'].'"/>';
                                                     if(count($attribute['uomlist']))
                                                     {
@@ -719,7 +721,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                                         foreach($attribute['uomlist'] as $uom){echo '<option value="'.$uom.'">'.$uom.'</option>';}
                                                         echo '</select> ';
                                                     }
-                                                    echo '</span> <button class="btn btn-sm btn-success" title="Add PAdb('.$attribute['PAID'].') attribute" onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div>';
+                                                    echo '</span> <button class="btn btn-sm btn-success" title="Add PAdb('.$attribute['PAID'].') attribute'.$validoptionslist.'" onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div>';
                                                 }?>
                                                 <div style="text-align:left;padding-top:20px;">User-Defined name <input size="5" id="nonpadbname"/> Value <input size="3" id="nonpadbvalue"/> UoM <input size="2" id="nonpadbuom"/> <button class="btn btn-sm btn-success" title="Add non-PAdb attribute" onclick="addNonPAdbAttribute()">+</button></div>
                                             </div>

@@ -86,6 +86,27 @@ function PAIDname($PAID)
   $db->close();
   return $name;
 }
+
+ function getAttributeValidValues($parttypeid,$PAID)
+ {
+  $options=array();
+  $db = new mysql; $db->dbname=$db->padbname;
+  if($this->padbversion!==false){$db->dbname=$this->padbversion;}
+  $db->connect();
+  if($stmt=$db->conn->prepare('select ValidValue from PartAttributeAssignment, ValidValueAssignment,ValidValues where PartAttributeAssignment.PAPTID=ValidValueAssignment.PAPTID and ValidValueAssignment.ValidValueID=ValidValues.ValidValueID and PartAttributeAssignment.PartTerminologyID=? and PartAttributeAssignment.PAID=?'))
+  {
+   $stmt->bind_param('ii', $parttypeid, $PAID);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $options[]=$row['ValidValue'];
+   }
+  } 
+  $db->close();
+  return $options;
+ }
+
 function version()
 {
   $versiondate='not found';
