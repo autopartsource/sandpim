@@ -507,6 +507,16 @@ class asset
   $db->close();
  }
 
+ function setAssetUri($id,$uri)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set uri=?, changedDate=now() where id=?'))
+  {
+   $stmt->bind_param('si', $uri, $id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
  function toggleAssetUriPublic($assetid)
  {

@@ -721,7 +721,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                                         foreach($attribute['uomlist'] as $uom){echo '<option value="'.$uom.'">'.$uom.'</option>';}
                                                         echo '</select> ';
                                                     }
-                                                    echo '</span> <button class="btn btn-sm btn-success" title="Add PAdb('.$attribute['PAID'].') attribute'.$validoptionslist.'" onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div>';
+                                                    echo '</span> <button class="btn btn-sm btn-success" title="Add PAdb attribute '.$attribute['PAID'].$validoptionslist.'" onclick="addPAdbAttribute('.$attribute['PAID'].')">+</button></div>';
                                                 }?>
                                                 <div style="text-align:left;padding-top:20px;">User-Defined name <input size="5" id="nonpadbname"/> Value <input size="3" id="nonpadbvalue"/> UoM <input size="2" id="nonpadbuom"/> <button class="btn btn-sm btn-success" title="Add non-PAdb attribute" onclick="addNonPAdbAttribute()">+</button></div>
                                             </div>

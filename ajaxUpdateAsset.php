@@ -46,6 +46,12 @@ if(isset($_SESSION['userid']) && isset($_GET['assetrecordid']) && isset($_GET['e
     $asset->logAssetEvent($a['assetid'], $userid, 'public attribute changed to '.$value, $oid);
     break;
 
+   case 'uri':
+    $asset->setAssetUri($assetrecordid, base64_decode($value));
+    $oid=$asset->updateAssetOIDbyRecordID($assetrecordid);
+    $asset->logAssetEvent($a['assetid'], $userid, 'uri changed to '.base64_decode($value), $oid);
+    break;
+
    case 'uripublic':
     $asset->setAssetUriPublic($assetrecordid, $value);
     $oid=$asset->updateAssetOIDbyRecordID($assetrecordid);

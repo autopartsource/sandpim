@@ -47,12 +47,27 @@ class pim
   return $apps;
  }
 
- function getAppsByPartcategories($partcategories)
+ function getAppsByPartcategories($partcategories,$statuslist=false)
  {
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  
+  $statusclause='';
+  $cleanstatuses=array();
+  if($statuslist)
+  {
+   foreach($statuslist as $status)
+   {
+    if(strlen($status)==1 && $status!=';' && $status!="'" && $status!='"' && $status!='\\' && $status!='%' &&  $status!='#')
+    {
+     $cleanstatuses[]="'".$status."'";
+    }
+   }
+   if(count($cleanstatuses)){ $statusclause= ' and part.lifecyclestatus in('. implode(',',$cleanstatuses).')';}
+  }
+  
   $db = new mysql;  $db->connect();
   $apps=array();
-  if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where part.partcategory in('.$categorylist.') order by partnumber'))
+  if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where part.partcategory in('.$categorylist.') '.$statusclause.' order by partnumber'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();

@@ -47,8 +47,14 @@ if(count($jobs))
  $receiverprofileid=intval($parameters['receiverprofile']);
  $profile=$pim->getReceiverprofileById($receiverprofileid);
  $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
+
+ $lifecyclestatuslist=array();
+ $lifecyclestatusestemp=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
+ foreach ($lifecyclestatusestemp as $status){$lifecyclestatuslist[]=$status['lifecyclestatus'];}
+
+ 
  $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
- $apps=$pim->getAppsByPartcategories($partcategories);
+ $apps=$pim->getAppsByPartcategories($partcategories,$lifecyclestatuslist);
  $parttranslations=$pim->getReceiverprofileParttranslations($receiverprofileid);
  
  $filename=$jobs[0]['outputfile'];

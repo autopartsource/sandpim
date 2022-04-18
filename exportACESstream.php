@@ -6,6 +6,8 @@ include_once('./class/qdbClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/ACES4_1GeneratorClass.php');
 
+
+
 $navCategory = 'export';
 
 $pim = new pim;
@@ -54,6 +56,12 @@ foreach($profileelements as $profileelement)
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $appscount=$pim->countAppsByPartcategories($partcategories);
 
+
+$lifecyclestatuslist=array();
+$lifecyclestatusestemp=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
+foreach ($lifecyclestatusestemp as $status){$lifecyclestatuslist[]=$status['lifecyclestatus'];}
+
+
 if($appscount>10000)
 { // dataset is too big - this export will be handled by the housekeeper (cron) and written to a temp directory for download
  $streamXML=false;
@@ -62,9 +70,9 @@ if($appscount>10000)
  $clientfilename='ACES_4_1_'.$keyedprofile['DocumentTitle'].'_'.$randomstring.'_FULL_'.date('Y-m-d').'.xml';
  $localfilename=__DIR__.'/ACESexports/'.$randomstring;
  $token=$pim->createBackgroundjob('ACESxmlExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text/xml',$clientfilename);
- $logs->logSystemEvent('Export', 0, 'ACES file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('Export', $_SESSION['userid'], 'ACES file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
  echo 'This export will contain '.$appscount.' apps. It will be processed by the houskeeper and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
- echo '<br/><br/><a href="./ioIndex.php">Back to Import/Export menu</a>';
+ echo '<br/><br/><a href="./backgroundJobs.php">Go to background export jobs list</a>';
 }
 else
 {// dataset is small enough to stream it on-the-fly without kicking-off background processing

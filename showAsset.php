@@ -182,6 +182,53 @@ $brands=$interchange->getCompetitivebrands();
             }
 
 
+            function openLinkEdit()
+            {
+             document.getElementById("uriinput").style.display='block';
+             document.getElementById("urilink").style.display='none';
+             document.getElementById("btnEditLink").style.display='none';
+             document.getElementById("btnSaveLinkEdit").style.display='block';
+             document.getElementById("btnCancelLinkEdit").style.display='block';
+            }
+
+            function cancelLinkEdit()
+            {
+             document.getElementById("uriinput").style.display='none';
+             document.getElementById("uriinput").value=document.getElementById("uriinputtemp").value;
+             document.getElementById("urilink").style.display='block';
+             document.getElementById("urilink").href=document.getElementById("uriinputtemp").value;
+             document.getElementById("btnEditLink").style.display='block';
+             document.getElementById("btnSaveLinkEdit").style.display='none';
+             document.getElementById("btnCancelLinkEdit").style.display='none';
+            }
+            
+            function saveLinkEdit(assetrecordid)
+            {
+             var uri=document.getElementById("uriinput").value;
+             document.getElementById("uriinput").style.display='none';
+             document.getElementById("uriinputtemp").href=uri;
+             document.getElementById("urilink").style.display='block';
+             document.getElementById("urilink").href=document.getElementById("uriinput").value;
+             document.getElementById("btnEditLink").style.display='block';
+             document.getElementById("btnSaveLinkEdit").style.display='none';
+             document.getElementById("btnCancelLinkEdit").style.display='none';                
+
+             document.getElementById("sandpiperoid").innerHTML='';
+             document.getElementById("changeddate").innerHTML='';
+
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdateAsset.php?assetrecordid='+assetrecordid+'&elementid=uri&value='+btoa(uri));
+             xhr.onload = function()
+             {
+              var response=xhr.responseText;
+              document.getElementById("sandpiperoid").innerHTML=response;
+              document.getElementById("changeddate").innerHTML = new Date().toISOString().slice(0, 10);
+             };
+             xhr.send();
+
+    
+    
+            }
 
 
             </script>
@@ -260,7 +307,26 @@ $brands=$interchange->getCompetitivebrands();
                                             <tr><th>Filename</th><td><?php echo $assetrecord['filename']; ?></td></tr>
                                             <tr><th>Width x Height</th><td><?php echo $assetrecord['assetWidth'] . ' x ' . $assetrecord['assetHeight'] . ' (' . $assetrecord['dimensionUOM'] . ')'; ?></td></tr>
                                             <tr><th>Background</th><td><?php echo $assetrecord['background']; ?></td></tr>
-                                            <tr><th>URI</th><td><a href="<?php echo $assetrecord['uri']; ?>">Link</a></td></tr>
+
+                                            <tr><th>URI</th>
+                                                <td>
+                                                    <div style="float:left;width:60%;">
+                                                        <input type="text" style="display:none;width:100%" id="uriinput" value="<?php echo $assetrecord['uri']; ?>"/>
+                                                        <input type="text" style="display:none;" id="uriinputtemp" value="<?php echo $assetrecord['uri']; ?>"/>
+                                                        <a id="urilink" style="display:block;" href="<?php echo $assetrecord['uri']; ?>">Link</a>                                                   
+                                                    </div>                                                    
+                                                    <div style="float:right;width:40%;">
+                                                        <div style="float:left;padding-left:2px;"><button id="btnEditLink" style="display: block;" class="btn btn-sm btn-outline-secondary" onclick="openLinkEdit();">Edit</button></div>
+                                                        <div style="float:left;padding-left:2px;"><button id="btnSaveLinkEdit" style="display: none;" class="btn btn-sm btn-outline-secondary" onclick="saveLinkEdit(<?php echo $assetrecord['id']; ?>);">Save</button></div>
+                                                        <div style="float:left;padding-left:2px;"><button id="btnCancelLinkEdit" style="display: none;" class="btn btn-sm btn-outline-secondary" onclick="cancelLinkEdit();">Cancel</button></div>
+                                                        <div style="clear:both;"></div>
+                                                    </div>
+                                                    <div style="clear:both;"></div>
+                                                </td>
+                                            </tr>
+
+
+
                                             <tr><th>File Size / Hash</th>
                                                 <td>
                                                     <div style="<?php if($urifilesize!=$assetrecord['filesize']){$badattributes=true; echo 'background-color:#ffff00;';}?>"><?php echo $asset->niceFileSize($assetrecord['filesize']); ?></div>
