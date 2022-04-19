@@ -78,7 +78,8 @@ if(count($jobs))
  
  $includecosmeticapps=false; if(array_key_exists('IncludeCosmeticApps', $keyedprofile) && $keyedprofile['IncludeCosmeticApps']=='yes'){$includecosmeticapps=true;}
  $includecosmeticattributes=false; if(array_key_exists('IncludeCosmeticAttributes', $keyedprofile) && $keyedprofile['IncludeCosmeticAttributes']=='yes'){$includecosmeticattributes=true;} 
- $generatoroptions=array('IncludeCosmeticApps'=>$includecosmeticapps,'IncludeCosmeticAttributes'=>$includecosmeticattributes);
+ $suppressduplicateapps=false; if(array_key_exists('SuppressDuplicateApps', $keyedprofile) && $keyedprofile['SuppressDuplicateApps']=='yes'){$suppressduplicateapps=true;} 
+ $generatoroptions=array('IncludeCosmeticApps'=>$includecosmeticapps,'IncludeCosmeticAttributes'=>$includecosmeticattributes,'SuppressDuplicateApps'=>$suppressduplicateapps);
 
  $assetapps=array();
  

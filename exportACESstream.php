@@ -3,10 +3,9 @@ include_once('./class/pimClass.php');
 include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/qdbClass.php');
+include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/ACES4_1GeneratorClass.php');
-
-
 
 $navCategory = 'export';
 
@@ -31,7 +30,7 @@ if(!isset($_SESSION['userid']))
 $vcdb=new vcdb();
 $pcdb=new pcdb();
 $qdb=new qdb();
-
+$user=new user();
 $logs=new logs();
 $generator=new ACESgenerator();
 
@@ -40,6 +39,7 @@ $logicerrors=array();
 $errors=array();
 
 $receiverprofileid=intval($_POST['receiverprofile']);
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $profile=$pim->getReceiverprofileById($receiverprofileid);
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
 
@@ -76,7 +76,7 @@ if($appscount>10000)
 }
 else
 {// dataset is small enough to stream it on-the-fly without kicking-off background processing
- $apps=$pim->getAppsByPartcategories($partcategories);
+ $apps=$pim->getAppsByPartcategories($partcategories,$lifecyclestatuslist);
  $filename='ACES_4_1_FULL_'.date('Y-m-d').'.xml';
 
  $header=array('Company'=>'not set in profile ['.$profile['name'].']','SenderName'=>'not set in profile ['.$profile['name'].']', 'SenderPhone'=>'not set in profile ['.$profile['name'].']','BrandAAIAID'=>'XXXX','DocumentTitle'=>'not set in profile ['.$profile['name'].']','TransferDate'=>date('Y-m-d'),'EffectiveDate'=>date('Y-m-d'),'SubmissionType'=>'FULL','VcdbVersionDate'=>$vcdb->version(),'QdbVersionDate'=>$qdb->version(),'PcdbVersionDate'=>$pcdb->version());
