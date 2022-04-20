@@ -63,6 +63,12 @@ else
 $logs->logSystemEvent('housekeeper', 0, 'Background houskeeper updated VIO counts on '.$updatedpartcount. ' parts.'); 
 
 
+// delete apps flagged as deleted (status = 1)
+$appids=$pim->removeDeletedApps();
+if(count($appids)>0)
+{
+ $logs->logSystemEvent('housekeeper', 0, 'Removed '.count($appids).' apps flagged for delete.');
+}
 
 $runtime=time()-$starttime;
 if($runtime > 30)

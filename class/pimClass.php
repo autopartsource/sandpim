@@ -524,8 +524,55 @@ function countAppsByPartcategories($partcategories)
  }
  
  
- 
- 
+
+ function removeDeletedApps()
+ {
+  $db = new mysql; $db->connect(); $appids=array();
+  if($stmt=$db->conn->prepare('select id from application where status=1'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $appids[]=$row['id'];
+    }
+   }
+  }
+
+  if(count($appids))
+  {
+   $idtemp=0;
+
+   if($stmt=$db->conn->prepare('delete from application_attribute where applicationid=?'))
+   {
+    $stmt->bind_param('i',$idtemp);
+    foreach($appids as $appid)
+    {
+     $idtemp=$appid;
+     $stmt->execute();
+    }
+   }
+
+   if($stmt=$db->conn->prepare('delete from application_asset where applicationid=?'))
+   {
+    $stmt->bind_param('i',$idtemp);
+    foreach($appids as $appid)
+    {
+     $idtemp=$appid;
+     $stmt->execute();
+    }
+   }
+  
+   if($stmt=$db->conn->prepare('delete from application where status=1'))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+  return $appids;
+ }
+  
  function deleteAppAttribute($appid,$attributeid)
  {
   $db = new mysql; 

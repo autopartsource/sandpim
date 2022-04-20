@@ -24,6 +24,10 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
+ini_set('memory_limit','1000M');
+
+
+
 $logs = new logs();
 $vcdb = new vcdb();
 $pcdb = new pcdb();

@@ -1,7 +1,20 @@
 <?php
 include_once('./class/vcdbClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/logsClass.php');
 $navCategory = 'import';
+
+$pim = new pim;
+$logs = new logs;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs->logSystemEvent('accesscontrol',0, 'importACEStext.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
+ exit;
+}    
+
 
 session_start();
 if (!isset($_SESSION['userid'])) {
@@ -9,26 +22,44 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
-
 $v = new vcdb;
-$pim = new pim;
 
 $partcategories = $pim->getPartCategories();
-
+$resultmessage='';
 
 
 /*
 cosmetic	basevid	item	parttypeid	position	qty	vcdbattributes (name|value|sequence|cosmetic)	qdbqualifiers (id|p1|UoM1|p2|UoM2…)	notes (text|sequence|cosmetic)
 0	144067	ITM20200619	1896	22	1	FrontBrakeType|5|3|1~SubModel|20|2|0~		Some nice notes|1|0~Additional Cosmetic notes|2|1~
 
-
-
 */
 
-if (isset($_POST['input'])) {
-    $app_count = $pim->createAppsFromText($_POST['input'],intval($_POST['partcategory']));
-    echo $app_count . ' apps created';
-}?>
+if (isset($_POST['input']))
+{
+ $rows= explode("\r\n", $_POST['input']);
+ if(count($rows)<100)
+ {
+  $app_count = $pim->createAppsFromText($_POST['input'],intval($_POST['partcategory']));
+  $resultmessage=$app_count . ' apps created';
+ }
+ else
+ {// dataset is too big. Write it to temp file for background process to handle next time it is called by cron
+
+  $randomstring=$pim->uuidv4();
+  $localfilename=__DIR__.'/ACESuploads/'.$randomstring;
+  if(file_put_contents($localfilename, $_POST['input']))
+  {
+   $token=$pim->createBackgroundjob('ACESflatImport','started',$_SESSION['userid'],$localfilename,'','partcategory:'.intval($_POST['partcategory']).';',date('Y-m-d H:i:s'),'text/xml','');
+   $logs->logSystemEvent('Import', $_SESSION['userid'], 'ACES flat text import setup for houskeeper by:'.$_SERVER['REMOTE_ADDR']);
+   $resultmessage='Input data was queued for background process to import ('.count($rows).' input lines). Got to <a href="./backgroundJobs.php"> Settings -> Manage background import/export jobs</a> to monitor progress';      
+  }
+  else    
+  {// file write was 0 bytes (failure)
+   $resultmessage='Failed to write input text to local file';
+  }
+ }  
+}
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -50,6 +81,7 @@ if (isset($_POST['input'])) {
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
+                        <?php if($resultmessage!=''){echo '<div>'.$resultmessage.'</div>';}?>
                         <h3 class="card-header text-start">Import applications from structured text</h3>
 
                         <div class="card-body">

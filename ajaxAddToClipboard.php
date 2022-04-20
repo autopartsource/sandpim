@@ -8,7 +8,8 @@ $pim= new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'ajaxAddToClipboard.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'ajaxAddToClipboard.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }
 
@@ -23,7 +24,7 @@ if(isset($_SESSION['userid']) && isset($_GET['description']) && isset($_GET['obj
  $objectkey=$_GET['objectkey'];
  $objectdata=base64_decode($_GET['objectdata']);
  $id=$pim->addClipboardObject($userid,$description ,$objecttype, $objectkey, $objectdata);
- $logs->logSystemEvent('clipboard',$_SESSION['userid'],'added '.$objecttype.':'.$description);
+ //$logs->logSystemEvent('clipboard',$_SESSION['userid'],'added '.$objecttype.':'.$description);
  echo json_encode($id);
 }
 ?>
