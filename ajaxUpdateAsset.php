@@ -20,6 +20,7 @@ $oid='';
 if(isset($_SESSION['userid']) && isset($_GET['assetrecordid']) && isset($_GET['elementid']) && isset($_GET['value']))
 {
  $assetrecordid=intval($_GET['assetrecordid']);
+ 
  $userid=intval($_SESSION['userid']);
  $value=$_GET['value'];
  
@@ -66,7 +67,7 @@ if(isset($_SESSION['userid']) && isset($_GET['assetrecordid']) && isset($_GET['e
 
    default: break;
   }
-
+  $pim->addAuditRequest('asset-general', $a['assetid']);
   echo $oid;
  }
 }?>

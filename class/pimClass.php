@@ -3846,6 +3846,93 @@ function attributesAreExperianUseful($attributes)
   return $records;
  }
  
+ function getHousekeepingRequests($requesttype)
+ {
+  $records=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from housekeepingrequest where requesttype=? order by id'))
+  {
+   $stmt->bind_param('s', $requesttype);
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $records[]=array('id'=>$row['id'],'requesttype'=>$row['requesttype'],'requestdata'=>$row['requestdata']);
+    }
+   }
+  }
+  $db->close();
+  return $records;
+ }
+ 
+
+function deleteHousekeepingRequest($id)
+{
+ $db = new mysql; $db->connect();
+ if($stmt=$db->conn->prepare('delete from housekeepingrequest where id=?'))
+ {
+  $stmt->bind_param('i', $id);
+  $stmt->execute();
+ }
+ $db->close();
+}
+
+function addHousekeepingRequest($requesttype,$requestdata)
+{
+ $db = new mysql; $db->connect();
+ if($stmt=$db->conn->prepare('insert into housekeepingrequest values(null,?,?)'))
+ {
+  $stmt->bind_param('ss', $requesttype, $requestdata);
+  $stmt->execute();
+ }
+ $db->close();
+}
+
+
+ function getAuditRequests($requesttype)
+ {
+  $records=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from auditrequest where requesttype=? order by id'))
+  {
+   $stmt->bind_param('s', $requesttype);
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $records[]=array('id'=>$row['id'],'requesttype'=>$row['requesttype'],'requestdata'=>$row['requestdata']);
+    }
+   }
+  }
+  $db->close();
+  return $records;
+ }
+
+function deleteAuditRequest($id)
+{
+ $db = new mysql; $db->connect();
+ if($stmt=$db->conn->prepare('delete from auditrequest where id=?'))
+ {
+  $stmt->bind_param('i', $id);
+  $stmt->execute();
+ }
+ $db->close();
+}
+
+function addAuditRequest($requesttype,$requestdata)
+{
+ $db = new mysql; $db->connect();
+ if($stmt=$db->conn->prepare('insert into auditrequest values(null,?,?)'))
+ {
+  $stmt->bind_param('ss', $requesttype, $requestdata);
+  $stmt->execute();
+ }
+ $db->close();
+}
+ 
+ 
  
  
 }?>

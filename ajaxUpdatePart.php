@@ -104,6 +104,6 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   default:
    break;
  }
-
+ $pim->addAuditRequest('part-general', $partnumber);
  echo $oid;
 }?>

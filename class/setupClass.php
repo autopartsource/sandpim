@@ -1272,9 +1272,20 @@ class setup
         data text not null,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - replicationpeer ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - replicationpeer ('.$db->conn->error.')';}
+        
+        $sql="CREATE TABLE housekeepingrequest (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        requesttype varchar(255) NOT NULL,
+        requestdata varchar(255) NOT NULL,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - housekeepingrequest ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - housekeepingrequest ('.$db->conn->error.')';}
 
-        
-        
+        $sql="CREATE TABLE auditrequest (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        requesttype varchar(255) NOT NULL,
+        requestdata varchar(255) NOT NULL,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - auditrequest ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - auditrequest ('.$db->conn->error.')';}
         
         $db->close();
         return $returnvalue;

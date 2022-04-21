@@ -42,6 +42,14 @@ $sandpiperPrimary=new sandpiperPrimary();
 $partnumbergroupsize=100;
 $partnumbers=$pim->getPartnumbersByRandom($partnumbergroupsize);
 
+$partauditrequests=$pim->getAuditRequests('part-general');
+foreach($partauditrequests as $partauditrequest)
+{
+    $partnumbers[]=$partauditrequest['requestdata'];
+    $pim->deleteAuditRequest($partauditrequest['id']);
+}
+
+
 $downloadlimit=4;
 
 foreach($partnumbers as $partnumber)
@@ -286,6 +294,13 @@ foreach($orphans as $orphan)
 // if local hash is non-blank and the calculated hash is different, write an issue record
 
 $assetrecords=$asset->getAssetsByRandom(4); // grab a few randomly-selected assets to pull down from their CDN host and verify the hash.  $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode']);
+$assetauditrequests=$pim->getAuditRequests('asset-general');
+foreach($assetauditrequests as $assetauditrequest)
+{
+ $assetrecords= array_merge($assetrecords,$asset->getAssetRecordsByAssetid($assetauditrequest['requestdata']));
+ $pim->deleteAuditRequest($assetauditrequest['id']);
+}
+
 foreach($assetrecords as $assetrecord)
 {
  if(trim($assetrecord['uri'])!='' && ($assetrecord['fileType']=='JPG' || $assetrecord['fileType']=='PDF'))
