@@ -35,7 +35,8 @@ $streamXLSX=false;
 $xlsxdata='';
 
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
-$partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
+$lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
+$partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
 
 // build a matrix of partnumber/pricetype
 // columns are types like "JBR (USD)", rows are partnumbers

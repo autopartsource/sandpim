@@ -33,7 +33,8 @@ $xlsxdata='';
 $receiverprofileid=intval($_GET['receiverprofile']);
 $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
-$partnumbers=$pim->getPartnumbersByPartcategories($partcategories);   
+$lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
+$partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
 
 $matrix=array();
 

@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/packagingClass.php');
+include_once('./class/userClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $pim = new pim();
@@ -25,18 +26,20 @@ if (!isset($_SESSION['userid']))
 
 $logs=new logs();
 $pcdb = new pcdb();
+$user=new user();
 $writer = new XLSXWriter();
 $pcdbVersion=$pcdb->version();
 $packaging=new packaging();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 
 $streamXLSX=false;
 $xlsxdata='';
 
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
-$partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
-
+$lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
+$partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
         
 $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','Problem'=>'string'), array('widths'=>array(30,20,20),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
        

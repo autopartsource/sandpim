@@ -36,7 +36,8 @@ $streamXLSX=false;
 $xlsxdata='';
 
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
-$partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
+$lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
+$partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
 
 // build a matrix of partnumber/competitor
 // columns are competitor brands, rows are partnumbers

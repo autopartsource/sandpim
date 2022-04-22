@@ -47,8 +47,8 @@ $streamXLSX=false;
 $xlsxdata='';
 
 $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
-$partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
-
+$lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
+$partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
 
 
 // buiild a partnumber-keyed lookup of all our parts in the given receiver profile for fast lookup later
