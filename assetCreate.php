@@ -69,6 +69,8 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
                 $pim->logPartEvent($partnumber,$_SESSION['userid'], 'asset ['.$assetid.'] was connected' ,$partoid);
                 $asset->logAssetEvent($assetid, $_SESSION['userid'], 'part ['.$partnumber.'] was connected', $assetoid);
             }
+            // request audit from backend
+            $pim->addAuditRequest('asset-general', $assetid);
         }
         else 
         { // asset not created
