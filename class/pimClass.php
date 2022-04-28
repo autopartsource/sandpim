@@ -1768,7 +1768,7 @@ function countAppsByPartcategories($partcategories)
   $success=false;
   if(!$this->validPart($partnumber))
   {
-   $replacedby=''; $lifecyclestatus='2'; $oid=$this->newoid();
+   $replacedby=''; $lifecyclestatus='0'; $oid=$this->newoid();
    if($stmt=$db->conn->prepare("insert into part (partnumber,partcategory,parttypeid,replacedby,lifecyclestatus,internalnotes,description,GTIN,UNSPC,createdDate,firststockedDate,discontinuedDate,oid) values(?,?,?,?,?,'','','','',now(),'0000-00-00','0000-00-00',?)"))
    {
     if($stmt->bind_param('siisss', $partnumber,$partcategory,$parttypeid,$replacedby,$lifecyclestatus,$oid))

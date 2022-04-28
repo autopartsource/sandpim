@@ -10,7 +10,8 @@ $pim = new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'importPricesText.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'importPricesText.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }
 
@@ -66,8 +67,7 @@ if (isset($_POST['input']))
      { // partnumber is within valid length
       if($pim->validPart($partnumber)) 
       {
-       //check for existing price (same item/pricesheet)
-          
+
        $existingprices=$pricing->getPricesByPartnumber($partnumber, $pricesheetnumber);
        foreach($existingprices as $existingprice)
        {
@@ -140,11 +140,10 @@ if (isset($_POST['input']))
                                 <div class="alert alert-secondary" role="alert">
                                     <h6 class="alert-heading">Paste 8 tab-delimited columns of data (no header row):</h6>
                                     <p>Partnumber, <a href="./priceSheets.php">Pricesheet Number</a>, Amount, Currency Code, UoM, Price Type,  Effective Date, Expiration Date</p>
-                                    <p>Date format is YYYY-MM-DD</p>
+                                    <p>Date format is YYYY-MM-DD. Existing records with the same partnumber, pricesheet number, currency, uom and price type will be replaced.</p>
                                 </div>
                                     
-                                <textarea name="input" rows="15" cols="100"></textarea>
-                                
+                                <textarea name="input" rows="15" cols="100"></textarea>                         
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
                         </div>
