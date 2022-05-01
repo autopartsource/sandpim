@@ -11,7 +11,8 @@ $pim = new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'importPartDescriptionText.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'importPartsText.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }
 
@@ -24,59 +25,56 @@ if (!isset($_SESSION['userid'])) {
 $pcdb=new pcdb();
 
 $errors=array();
-$results='';
 $importcount=0;
 $failedcount=0;
 $recordnumber=0;
-$showvalidcodes=false;
+$partcategory=0;
 
 if (isset($_POST['input']))
 {
+    $partcategory=intval($_POST['partcategory']);
     $input = $_POST['input'];
     $records = explode("\r\n", $_POST['input']);
     foreach ($records as $record)
     {
         $fields = explode("\t", $record);
         $recordnumber++;
+        if(count($fields) == 1 && trim($fields[0])==''){continue;} // ignore blank lines
         
-        if(count($fields) == 5)
+        if(count($fields) == 2)
         { // Partnumber, description text, description code, language code, sequence
             $partnumber = trim(strtoupper($fields[0]));
-            if (strlen($partnumber) <= 20 && strlen($partnumber) > 0 && $pim->validPart($partnumber))
-            { // partnumber is valid
-
-                $descriptiontext = trim($fields[1]);
-                $descriptioncode = trim($fields[2]);
-                if($pcdb->validPartDecriptionCode($descriptioncode))
+            if(!$pim->validPart($partnumber))
+            { // partnumber does not already exist
+                $parttypeid=intval(trim($fields[1]));
+                if($pcdb->validPartType($parttypeid))
                 {
-                    $languagecode = trim($fields[3]);
-                    $sequence = intval(trim($fields[4]));
-                    $pim->addPartDescription($partnumber, $descriptiontext, $descriptioncode, $sequence, $languagecode);
-                    $newoid=$pim->updatePartOID($partnumber);
-                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Description ['.$descriptiontext.'] writted by mass import', $newoid);
+                    $pim->createPart($partnumber, $partcategory, $parttypeid);
+                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Part created by mass import', '');
                     $importcount++;
                 }
                 else
-                {// description code is not valid (according the the currently loaded PCdb)
-                    
-                    $errors[]='Invalid description code ['.$descriptioncode.'] on line '.$recordnumber;
+                {// parttype id is not valid
+                    $errors[]='Invalid parttype id ('.$parttypeid.') on line '.$recordnumber;                    
                     $failedcount++;
-                    $showvalidcodes=true;
                 }
             }
             else
-            {// partnumber is not valid
-                $errors[]='Invalid partnumber ['.$partnumber.'] on line '.$recordnumber;
+            {// partnumber already exists
+                $errors[]='Partnumber ['.$partnumber.'] on line '.$recordnumber.' already exists';
                 $failedcount++;
             }
         }
         else
         {// wrong field count
-            $errors[]='Wrong field count on line '.$recordnumber.'. Input data must have 5 tab-delimited data';
+            $errors[]='Wrong field count on line '.$recordnumber.'. Input data must have 2 tab-delimited columns';
             $failedcount++;
         }
     }
 }
+
+$partcategories = $pim->getPartCategories();
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -99,18 +97,17 @@ if (isset($_POST['input']))
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Import Part Descriptions</h3>
+                        <h3 class="card-header text-start">Import Parts</h3>
 
                         <div class="card-body">
                             <form method="post">
                                 <div class="alert alert-secondary" role="alert">
-                                    <h6 class="alert-heading">Paste five tab-delimited columns (no header row):</h6>
-                                    <p>Partnumber, description text, description code (SHO, DES, etc.), language code (EN, ES, etc.), sequence</p>
+                                    <h6 class="alert-heading">Paste two tab-delimited columns (no header row):</h6>
+                                    <p>Partnumber, parttypeid</p>
                                 </div>
-                                    <hr>                               
                                 
                                 <textarea name="input" style="width:100%;height:200px;"></textarea>
-                                
+                                <div><select name="partcategory"><?php foreach ($partcategories as $category) { ?> <option value="<?php echo $category['id']; ?>" <?php if($category['id']==$partcategory){echo 'selected';}?>><?php echo $category['name']; ?></option><?php } ?></select></div>
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
                             
@@ -118,18 +115,6 @@ if (isset($_POST['input']))
                             
                             <?php foreach($errors as $error){ echo '<div>'.$error.'</div>'; }?>
                                          
-                            <?php
-                            if($showvalidcodes)
-                            {
-                                echo '<div>Valid Desctiption codes: <table><tr><th>Code</th><th>Code Meaning</th><th>Format/Max length</th></tr>';
-                                $validdescriptioncodes=$pcdb->getPartDescriptionTypeCodes(); //    $codes[]=array('code'=>$row['CodeValue'],'description'=>$row['CodeDescription']);
-                                foreach($validdescriptioncodes as $validdescriptioncode)
-                                {
-                                    echo '<tr><td>'.$validdescriptioncode['code'].'</td><td>'.$validdescriptioncode['description'].'</td><td>'.$validdescriptioncode['format'].'</td></tr>';
-                                }
-                            }
-                            echo '</table></div>'
-                            ?>
                         </div>
                     </div>
                     

@@ -143,7 +143,7 @@ if (isset($_POST['input']))
                                     <p>Date format is YYYY-MM-DD. Existing records with the same partnumber, pricesheet number, currency, uom and price type will be replaced.</p>
                                 </div>
                                     
-                                <textarea name="input" rows="15" cols="100"></textarea>                         
+                                <textarea name="input" style="width:100%;height:200px;"></textarea>                         
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
                         </div>

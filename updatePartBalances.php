@@ -101,7 +101,7 @@ if (isset($_POST['input']))
                                     <p>Partnumber, QoH, AMD</p>
                                 </div>
                                     
-                                <textarea name="input" rows="20" cols="100"></textarea>
+                                <textarea name="input" style="width:100%;height:200px;"></textarea>
                                 
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>

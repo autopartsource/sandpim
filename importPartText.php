@@ -44,16 +44,15 @@ $partcategories = $pim->getPartCategories();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Product data structured text import</h3>
+                        <h3 class="card-header text-start">Create parts from tab-delimited text</h3>
 
                         <div class="card-body">
-                            <h5 class="card-subtitle mb-2 text-muted">Step 1: copy/paste data from the template spreadsheet</h5>
+                            <h5 class="card-subtitle mb-2 text-muted"></h5>
                             <form method="post" action="importPartTextProcess.php">
 
                                 <div style="padding:10px;"><div>Items</div>
-                                    <textarea name="items" rows="5" cols="100"></textarea>
+                                    <textarea name="items" style="width:100%;height:200px;"></textarea>
                                 </div>
-
                                 <div style="padding:10px;"><div>Descriptions</div>
                                     <textarea name="descriptions" rows="5" cols="100"></textarea>
                                 </div>
@@ -81,10 +80,9 @@ $partcategories = $pim->getPartCategories();
                                 <div style="padding:10px;"><div>Digital Assets</div>
                                     <textarea name="assets" rows="5" cols="100"></textarea>
                                 </div>
-
                                 <div><select name="partcategory"><option value="">Do not create new parts</option><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
                                 <div><input type="checkbox" name="doimport"/>Do import (uncheck for test run)</div>
-                                <div><input name="submit" type="submit" value="Next"/></div>
+                                <div><input name="submit" type="submit" value="Import"/></div>
                             </form>
                         </div>
                     </div>

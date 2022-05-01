@@ -127,6 +127,29 @@ class pcdb
   return $name;
  }
 
+ function validPartType($parttypeid)
+ {
+  $db = new mysql; $db->dbname=$db->pcdbname; $returnval=false;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect();
+  if($stmt=$db->conn->prepare('select PartTerminologyName from Parts where PartTerminologyID=?'))
+  {
+   if($stmt->bind_param('i', $parttypeid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $returnval=true;
+     }
+    } 
+   } 
+  }
+  $db->close();
+  return $returnval;
+ }
+
  function parttypeIDofName($parttypename)
  {
   $id=false; $db = new mysql; $db->dbname=$db->pcdbname;
