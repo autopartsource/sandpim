@@ -198,7 +198,7 @@ else
                         <div class="card-body">
                             <form method="post">
                                 <div class="alert alert-secondary" role="alert">Partnumbers (one per line)</div>
-                                <div><textarea name="input" rows="10" cols="80"><?php echo $tabbedoutput;?></textarea></div>
+                                <div><textarea name="input" style="width:100%;height:200px;"><?php echo $tabbedoutput;?></textarea></div>
                                 <div><input type="checkbox" id="renderxlsx" name="renderxlsx"/><label for="renderxlsx">Download As Excel Spreadsheet</label></div>
 
 

@@ -733,7 +733,7 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                                             <?php 
                                             foreach($connectedassets as $connectedasset)
                                             {
-                                                  echo '<div style="padding-bottom:3px;" id="assetconnectionid_'.$connectedasset['connectionid'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Disconnect this asset from this part" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div><div style="border:1px solid;padding:3px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a></div><div style="clear:both;"></div></div>';
+                                                  echo '<div style="padding-bottom:3px;" id="assetconnectionid_'.$connectedasset['connectionid'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" style="height:46px;" title="Disconnect this asset from this part" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div><div style="border:1px solid;padding:3px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> '.$pcdb->assetTypeCodeDescription($connectedasset['assettypecode']).' </div><div style="clear:both;"></div></div>';
                                             }
                                             ?>
 

@@ -129,12 +129,16 @@ if($uri && $havewriteaccess && $username && $password)
     // import the sql file into the mysql client
     echo "Importing database to MySQL server.........";
     exec('mysql --host='.$mysql->host.' --user='.$mysql->user.' --password='.$mysql->passwd.' qdb'.$dbversion." < '".$downloadsdirectory.'/AAIA Qdb MySQL '.$dbversion.'.sql'."'");
-    echo "Done".$newlinechars; 
 
     $qdb=new qdb('qdb'.$dbversion); // test the new version as ask it for its versiondate
     $versiondate=$qdb->version();
     $pim->recordAutocareDatabaseList('qdb'.$dbversion, 'qdb', $versiondate);   // catalog the new version
     $logs->logSystemEvent('autocareupdate', $_SESSION['userid'], 'qdb '.$dbversion.' imported');
+    
+    // add the fulltext index that autocare forgot!
+    echo 'Adding FULLTEXT index on Qualifier.QualifierText...'.$newlinechars;;
+    echo $qdb->addDatabaseFulltextIndex('Qualifier', 'QualifierText').$newlinechars;;
+    echo "Done".$newlinechars; 
    }
    else
    {// database create failed

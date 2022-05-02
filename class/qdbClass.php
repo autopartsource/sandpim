@@ -100,7 +100,6 @@ class qdb
   $typeclause=''; if($type){$typeclause=' and QualifierTypeID='.intval($type);}
   
   $db = new mysql; $db->dbname=$db->qdbname; if($this->qdbversion!==false){$db->dbname=$this->qdbversion;} $db->connect();
-
   if($stmt=$db->conn->prepare('select QualifierID,QualifierText,QualifierTypeID,ExampleText from Qualifier WHERE match(QualifierText) against(? IN BOOLEAN MODE) '.$typeclause))
   {
    $stmt->bind_param('s', $search);
@@ -131,6 +130,28 @@ class qdb
   }
   $db->close();
   return $qualifiers;
+ }
+
+  function addDatabaseFulltextIndex($table,$field)
+ {
+     // AutoCare's mysql version of the Qdb (as of 4/2022) does not have all the needed indexes for effecient lookups
+     // specifically, it's missing a fulltext index on qualifiertext
+     // ALTER TABLE Qualifier  ADD FULLTEXT(QualifierText)  
+  $result='';
+  $db = new mysql; $db->dbname=$db->qdbname; if($this->qdbversion!==false){$db->dbname=$this->qdbversion;} $db->connect();
+  if($stmt=$db->conn->prepare('alter table '.$table.' add FULLTEXT('.$field.')'))
+  {
+   if(!$stmt->execute())
+   {
+    $result='problem with execute: '.$db->conn->error;;
+   }
+  }
+  else
+  {
+   $result='problem with prepare: '.$db->conn->error;;   
+  }
+  $db->close();
+  return $result;
  }
 
  function version()

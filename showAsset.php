@@ -388,7 +388,10 @@ $brands=$interchange->getCompetitivebrands();
                             <div class="tab-pane fade show active text-start m-3" id="connectedparts" role="tabpanel" aria-labelledby="connectedparts-tab">
                                 <?php foreach($connectedparts as $connectedpart){?>
                                 <div id="partassetconnectionid_<?php echo $connectedpart['id'];?>" style="padding: 2px;"> 
-                                   <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a> <button type="button" class="btn btn-light" onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')"><i class="bi bi-x"></i></button>
+                                   <button type="button" class="btn btn-light" onclick="disconnectPart('<?php echo $connectedpart['partnumber'];?>','<?php echo $connectedpart['id'];?>')"><i class="bi bi-x"></i></button> 
+                                   <a class="btn btn-secondary" href="showPart.php?partnumber=<?php echo $connectedpart['partnumber'];?>"><?php echo $connectedpart['partnumber'];?></a>
+                                   <?php echo $pcdb->assetTypeCodeDescription($connectedpart['assettypecode']);?>
+                                   
                                 </div>
                                 <?php }?>
                             </div>
@@ -417,7 +420,9 @@ $brands=$interchange->getCompetitivebrands();
                             <div class="tab-pane fade show active text-start m-3" id="connectedbrands" role="tabpanel" aria-labelledby="connectedbrands-tab">
                                 <?php foreach($connectedbrands as $connectedbrand){?>
                                 <div id="brandassetconnectionid_<?php echo $connectedbrand['connectionid'];?>" style="padding: 2px;"> 
-                                   <a class="btn btn-secondary" href="showBrand.php?brandid=<?php echo $connectedbrand['BrandID'];?>"><?php echo $connectedbrand['BrandID'];?></a> <button type="button" class="btn btn-light" onclick="disconnectBrand('<?php echo $connectedbrand['BrandID'];?>','<?php echo $connectedbrand['connectionid'];?>')"><i class="bi bi-x"></i></button>
+                                   <button type="button" class="btn btn-light" onclick="disconnectBrand('<?php echo $connectedbrand['BrandID'];?>','<?php echo $connectedbrand['connectionid'];?>')"><i class="bi bi-x"></i></button>
+                                   <a class="btn btn-secondary" href="showBrand.php?brandid=<?php echo $connectedbrand['BrandID'];?>"><?php echo $connectedbrand['BrandID'];?></a>
+                                   <?php echo $pcdb->assetTypeCodeDescription($connectedbrand['assettypecode']); ?>
                                 </div>
                                 <?php }?>
                             </div>
