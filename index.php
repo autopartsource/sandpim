@@ -101,7 +101,7 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
 
                             <?php if(count($myjobs)){?>
                             <div class="card">
-                                <h5 class="card-header text-start">My Background exports</h5>
+                                <h5 class="card-header text-start">My Background Jobs</h5>
                                 <div class="card-body">
                                     <table class="table">
                                         <thead>

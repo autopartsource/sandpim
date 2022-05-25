@@ -448,9 +448,9 @@ if($validUpload)
     $attribute=array();
     $PartNumber=trim($fields[0]);
 
-    if($AttributeIDFieldIndex>=0){$attribute['AttributeID']= htmlspecialchars(trim($fields[$AttributeIDFieldIndex]));}
+    if($AttributeIDFieldIndex>=0){$attribute['AttributeID']= trim($fields[$AttributeIDFieldIndex]);}
     if($PADBAttributeFieldIndex>=0){$attribute['PADBAttribute']=trim($fields[$PADBAttributeFieldIndex]);}
-    if($AttributeValueFieldIndex>=0){$attribute['AttributeValue']=htmlspecialchars(trim($fields[$AttributeValueFieldIndex]));}
+    if($AttributeValueFieldIndex>=0){$attribute['AttributeValue']=trim($fields[$AttributeValueFieldIndex]);}
     if($StyleIDFieldIndex>=0){$attribute['StyleID']=trim($fields[$StyleIDFieldIndex]);}
     if($AttributeUOMFieldIndex>=0){$attribute['AttributeUOM']=trim($fields[$AttributeUOMFieldIndex]);}
     if($MultiValueQuantityFieldIndex>=0){$attribute['MultiValueQuantity']=trim($fields[$MultiValueQuantityFieldIndex]);}

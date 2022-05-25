@@ -67,7 +67,7 @@ class pim
   
   $db = new mysql;  $db->connect();
   $apps=array();
-  if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where part.partcategory in('.$categorylist.') '.$statusclause.' order by partnumber'))
+  if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where status=0 and part.partcategory in('.$categorylist.') '.$statusclause.' order by partnumber'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
