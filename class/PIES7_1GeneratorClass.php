@@ -161,7 +161,8 @@ class PIESgenerator
     $DescriptionsElement = $doc->createElement('Descriptions');
     foreach($item['descriptions'] as $description)
     {
-     $DescriptionElement=$doc->createElement('Description', htmlspecialchars($description['Description'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+     $DescriptionElement=$doc->createElement('Description');//, htmlspecialchars($description['Description'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+     $DescriptionElement->appendChild($doc->createTextNode($description['Description']));
      $DescriptionElement->setAttribute('MaintenanceType','A');
      if(array_key_exists('DescriptionCode',$description) && trim($description['DescriptionCode'])!=''){$DescriptionElement->setAttribute('DescriptionCode',$description['DescriptionCode']);}
      if(array_key_exists('LanguageCode',$description) && trim($description['LanguageCode'])!=''){$DescriptionElement->setAttribute('LanguageCode',$description['LanguageCode']);}
@@ -223,10 +224,13 @@ class PIESgenerator
 
     foreach($item['attributes'] as $attribute)
     {
-     $ProductAttributeElement=$doc->createElement('ProductAttribute', htmlspecialchars($attribute['AttributeValue'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+     $ProductAttributeElement=$doc->createElement('ProductAttribute');//, htmlspecialchars($attribute['AttributeValue'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+     $ProductAttributeElement->appendChild($doc->createTextNode(str_replace('"','&quot;',$attribute['AttributeValue'])));
+
      $ProductAttributeElement->setAttribute('MaintenanceType','A');
      if(intval($attribute['AttributeID'])>0){$ProductAttributeElement->setAttribute('PADBAttribute','Y');}else{$ProductAttributeElement->setAttribute('PADBAttribute','N');}
-     $ProductAttributeElement->setAttribute('AttributeID', htmlspecialchars($attribute['AttributeID'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+     $ProductAttributeElement->setAttribute('AttributeID', $attribute['AttributeID']);
+     
      if(array_key_exists('AttributeUOM',$attribute) && trim($attribute['AttributeUOM'])!=''){$ProductAttributeElement->setAttribute('AttributeUOM',$attribute['AttributeUOM']);}
      if(array_key_exists('StyleID',$attribute) && trim($attribute['StyleID'])!=''){$ProductAttributeElement->setAttribute('StyleID',$attribute['StyleID']);}
      if(array_key_exists('RecordNumber',$attribute) && trim($attribute['RecordNumber'])!=''){$ProductAttributeElement->setAttribute('RecordNumber',$attribute['RecordNumber']);}
