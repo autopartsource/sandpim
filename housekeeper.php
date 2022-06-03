@@ -38,7 +38,7 @@ $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 $updatedpartcount=0;
 if($viogeography && $vioyearquarter)
 {
- $activeparts=$pim->getParts('', 'contains', 'any', 'any', '2', 1000000); //array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
+ $activeparts=$pim->getParts('', 'contains', 'any', 'any', '2', 'any', 1000000); //array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
  foreach($activeparts as $part)
  {
   $piorecords=$pim->getPartVIOrecords($part['partnumber'],$viogeography,$vioyearquarter);

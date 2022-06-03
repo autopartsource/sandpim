@@ -32,6 +32,8 @@ $qdb=new qdb();
 $logs=new logs();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
+$format=''; if($_GET['format']=='human1'){$format='human1';}
+
 $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $profile=$pim->getReceiverprofileById($receiverprofileid);
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
@@ -56,7 +58,7 @@ if($appscount>5000)
  $token=$pim->createBackgroundjob('ACESflatExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text',$clientfilename);
  $logs->logSystemEvent('Export', 0, 'Flat apps file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
  echo 'This export will contain '.$appscount.' apps. It will be processed by the houskeeper (CLI execution of processFlatAppsExport.php by cron) and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
- echo '<br/><br/><a href="./inndex.php">Back to home</a>';
+ echo '<br/><br/><a href="./index.php">Home</a><br/><a href="./backgroundJobs.php">Manage background import/export jobs</a>';
 }
 else
 {// dataset is small enough to stream it on-the-fly without kicking-off background processing

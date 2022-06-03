@@ -51,8 +51,12 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                         <div class="card-body">
                             <form action="exportFlatAppsStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
-                                    <div style="padding: 10px;">Receiver Profile</div>
-                                    <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+                                    <div style="padding: 5px;">Receiver Profile 
+                                        <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+                                    </div>
+                                    <div style="padding: 5px;">Export Format 
+                                        <select name="format"><option value="default">Default (coded values for machine readability)</option></select>
+                                    </div>
                                     <input type="submit" name="submit" value="Export"/>
                                 </div>
                             </form>

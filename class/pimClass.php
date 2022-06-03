@@ -23,7 +23,15 @@ class pim
           
   return $uuid;
  }
-    
+
+ function sanitizeParnumber($input)
+ {
+  $output=trim($input);
+  if(strlen($input)>20){$output= substr($input, 0, 20);}
+  $output=str_replace(array('"',';',"'","\t","\n","\r","\\",'?',',','.','>','<','`','!','@','$','%','^','&','*','(',')','+','=',':','[',']','{','}','|','/','~'), '-', $output);
+  return $output;
+ }
+ 
     
  function getAppsByBasevehicleid($basevehicleid,$partcategories)
  {
@@ -689,7 +697,8 @@ function countAppsByPartcategories($partcategories)
         'firststockedDate'=>$row['firststockedDate'],
         'discontinuedDate'=>$row['discontinuedDate'],
         'typicalposition'=>$typicalPosition,
-        'typicalqtyperapp'=>$typicalQty);
+        'typicalqtyperapp'=>$typicalQty,
+        'basepart'=>$row['basepart']);
    }
   }
   $db->close();
@@ -720,7 +729,8 @@ function countAppsByPartcategories($partcategories)
         'createdDate'=>$row['createdDate'],
         'firststockedDate'=>$row['firststockedDate'],
         'discontinuedDate'=>$row['discontinuedDate'],
-        'oid'=>$row['oid']);    
+        'oid'=>$row['oid'],
+        'basepart'=>$row['basepart']);    
    }
   }
   $db->close();
@@ -729,15 +739,19 @@ function countAppsByPartcategories($partcategories)
 
  
  
- function getParts($partnumber,$matchtype,$partcategory,$parttypeid,$lifecyclestatus,$limit)
+ function getParts($partnumber,$matchtype,$partcategory,$parttypeid,$lifecyclestatus,$basepart,$limit)
  {
   $db = new mysql; $db->connect();
   $parts=array();
   
+  $partnumber=$this->sanitizeParnumber($partnumber);
+  $basepart=$this->sanitizeParnumber($basepart);
+          
   if($partcategory=='any'){$partcategoryclause='';}else{$partcategoryclause=' and partcategory='.intval($partcategory);}
   if($parttypeid=='any'){$parttypeclause='';}else{$parttypeclause=' and parttypeid='.intval($parttypeid);}
-
-  $sql='select part.*,partcategory.name as partcategoryname from part left join partcategory on part.partcategory=partcategory.id where partnumber like ? '.$partcategoryclause.$parttypeclause.' and lifecyclestatus like ? order by partnumber limit ?';
+  if($basepart=='any'){$basepartclause='';}else{$basepartclause=" and basepart='".$basepart."'";}
+  
+  $sql='select part.*,partcategory.name as partcategoryname from part left join partcategory on part.partcategory=partcategory.id where partnumber like ? '.$partcategoryclause.$parttypeclause.' and lifecyclestatus like ? and basepart=? order by partnumber limit ?';
 
   if($stmt=$db->conn->prepare($sql))
   {
@@ -747,14 +761,14 @@ function countAppsByPartcategories($partcategories)
    if($matchtype=='endswith'){$searchstring='%'.$partnumber;}
    if($lifecyclestatus=='any'){$lifecyclestatus='%';}
 
-   if($stmt->bind_param('ssi', $searchstring, $lifecyclestatus, $limit))
+   if($stmt->bind_param('sssi', $searchstring, $lifecyclestatus, $basepart, $limit))
    {
     if($stmt->execute())
     {
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-      $parts[]=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
+      $parts[]=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description'],'basepart'=>$row['basepart']);
      }
     }
    }
@@ -812,6 +826,25 @@ function countAppsByPartcategories($partcategories)
  }
 
 
+ function getPartnumbersByBasepart($partnumber)
+ {
+  $db = new mysql; $db->connect(); $partnumbers=array();
+  if(strlen(trim($partnumber))>0)
+  {
+   if($stmt=$db->conn->prepare('select partnumber from part where basepart=?'))
+   { 
+    $stmt->bind_param('s', $partnumber);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $partnumbers[]=$row['partnumber'];
+    }
+   }
+   $db->close();
+  }
+  return $partnumbers;
+ }
 
 
  
@@ -1740,10 +1773,9 @@ function countAppsByPartcategories($partcategories)
 
  function validPart($partnumber)
  {
-  $db=new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
-  $exists=false;
+  $db=new mysql;  $db->connect(); $exists=false;
+  if(trim($partnumber)==''){return false;}
+  
   if($stmt=$db->conn->prepare('select oid from part where partnumber=?'))
   {
    if($stmt->bind_param('s', $partnumber))
@@ -1769,7 +1801,7 @@ function countAppsByPartcategories($partcategories)
   if(!$this->validPart($partnumber))
   {
    $replacedby=''; $lifecyclestatus='0'; $oid=$this->newoid();
-   if($stmt=$db->conn->prepare("insert into part (partnumber,partcategory,parttypeid,replacedby,lifecyclestatus,internalnotes,description,GTIN,UNSPC,createdDate,firststockedDate,discontinuedDate,oid) values(?,?,?,?,?,'','','','',now(),'0000-00-00','0000-00-00',?)"))
+   if($stmt=$db->conn->prepare("insert into part (partnumber,partcategory,parttypeid,replacedby,lifecyclestatus,internalnotes,description,GTIN,UNSPC,createdDate,firststockedDate,discontinuedDate,oid,basepart) values(?,?,?,?,?,'','','','',now(),'0000-00-00','0000-00-00',?,'')"))
    {
     if($stmt->bind_param('siisss', $partnumber,$partcategory,$parttypeid,$replacedby,$lifecyclestatus,$oid))
     {

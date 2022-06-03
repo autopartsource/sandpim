@@ -545,15 +545,15 @@ class setup
         INDEX idx_partcategory (partcategory),
         INDEX idx_parttypeid (parttypeid),
         INDEX idx_replacedby (replacedby),
-        INDEX idx_oid (oid))";
+        INDEX idx_oid (oid),
+        INDEX idx_basepart (basepart))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part ('.$db->conn->error.')';}
 
-        $sql="insert into part values('PRC914',10,1684,'','2','','','841929101122','','2021-09-30','2000-01-01','2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into part values('PRC914A',10,1684,'','2','','','841929127160','','2021-10-01','2000-01-01','2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into part values('PRC914B',10,1684,'','1','','','841929127177','','2021-10-02','2000-01-01','2000-01-01','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into part values('PRC914',10,1684,'','2','','','841929101122','','2021-09-30','2000-01-01','2000-01-01','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into part values('PRC914A',10,1684,'','2','','','841929127160','','2021-10-01','2000-01-01','2000-01-01','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into part values('PRC914B',10,1684,'','1','','','841929127177','','2021-10-02','2000-01-01','2000-01-01','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
-        
-        
+                
         $sql="CREATE TABLE part_attribute (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         partnumber varchar(20) NOT NULL,

@@ -28,7 +28,7 @@ $newpartcount=0;  $droppedpartcount=0;
 
 if(isset($_GET['detail']))
 { // get local list of all part oid's
- $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 999999);
+ $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 'any', 999999);
  $localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
  sort($localoids);
  $oidliststring=''; foreach($localoids as $oid){$oidliststring.=$oid;}

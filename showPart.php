@@ -93,6 +93,8 @@ $vio=$pim->partVIOexperian($partnumber, $viogeography, $vioyearquarter);
 
 $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
 
+$dependantparts=$pim->getPartnumbersByBasepart($partnumber);
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -590,12 +592,13 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
                 <div class="col-xs-12 col-md-7 my-col colMain">
                     <div class="card shadow-sm">
                         <h3 class="card-header text-start">
-                            Part Number <span class="text-info"><?php echo $part['partnumber']; ?></span>
+                            <div>Part Number <span class="text-info"><?php echo $part['partnumber']; ?></span>
+                                <?php if(count($dependantparts)){?> <span style="font-size:50%;">Base for <?php echo count($dependantparts); ?> <a href="./partsIndex.php?searchtype=startswith&partnumber=&partcategory=any&parttypeid=any&lifecyclestatus=any&basepart=<?php echo $partnumber;?>&limit=20">parts</a></span> <?php }?>
+                                <?php if($pim->validPart($part['basepart'])){?> <span style="font-size:50%;">Based on <a href="./showPart.php?partnumber=<?php echo $part['basepart'];?>"><?php echo $part['basepart'];?></a></span> <?php }?>
                             <div style="float:right;">
-                                    
                                 <span class="btn btn-info" onclick="addPartToClipboard(),refreshClipboard()">Copy</span>
-                                
                                 <?php if(count($history)){echo '<span><a class="btn btn-secondary" href="./partHistory.php?partnumber='.$partnumber.'">History</a></span>';} ?>
+                            </div>
                             </div>
                         </h3>
                         <div class="card-body">
