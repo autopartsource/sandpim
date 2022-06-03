@@ -703,12 +703,28 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                                                 <?php foreach ($attributes as $attribute) 
                                                 {
                                                     if($attribute['PAID']==0)
-                                                    {
-                                                        echo '<div style="padding-bottom:3px;" id="appliedattribute_'.$attribute['id'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this user-defined (non-PAdb) attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:3px; margin-left:3px; background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                    { // user-defined attribute
+                                                        if($attribute['inheritedfrom']=='')
+                                                        { // this attribute is applied directly to this part (not inherited from a basepart)
+                                                            echo '<div style="padding:3px;margin-bottom:2px" id="appliedattribute_'.$attribute['id'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this user-defined (non-PAdb) attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:3px; margin-left:3px; background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                        }
+                                                        else
+                                                        {// this attribute is inherited from the basepart - indicate with an icon and disallow delete
+                                                            echo '<div style="border:1px solid;padding:2px;margin-left:32px;;margin-bottom:3px;background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
+                                                        }
                                                     }
                                                     else
-                                                    {
-                                                        echo '<div style="padding-bottom:3px;" id="appliedattribute_'.$attribute['id'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this PAdb ('.$attribute['PAID'].') attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:3px; margin-left:4px; background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                    {// PAdb-coded attribute
+                                                        if($attribute['inheritedfrom']=='')
+                                                        { // this attribute is applied directly to this part (not inherited from a basepart)
+                                                            echo '<div style="padding:3px;margin-bottom:2px" id="appliedattribute_'.$attribute['id'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this PAdb ('.$attribute['PAID'].') attribute" onclick="deleteAttribute('.$attribute['id'].','.$attribute['PAID'].',\''.$padb->PAIDname($attribute['PAID']).'\')">x</button></div><div style="border:1px solid;padding:3px; margin-left:4px; background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div></div>';
+                                                        }
+                                                        else
+                                                        {// this attribute is inherited from the basepart - indicate with an icon and disallow delete
+                                                            
+                                                            echo '<div style="border:1px solid;padding:2px; margin-left:32px;margin-bottom:3px;background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
+                                                            
+                                                        }
                                                     }
                                                 } ?>
                                             </div>

@@ -845,7 +845,29 @@ function countAppsByPartcategories($partcategories)
   }
   return $partnumbers;
  }
-
+ 
+ 
+ 
+ function basepartOfPart($partnumber)
+ {
+  $db = new mysql; $db->connect(); $basepart=false;
+  if(strlen(trim($partnumber))>0)
+  {
+   if($stmt=$db->conn->prepare('select basepart from part where partnumber=?'))
+   { 
+    $stmt->bind_param('s', $partnumber);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $basepart=$row['basepart'];
+    }
+   }
+   $db->close();
+  }
+  return $basepart;
+ }
+ 
 
  
  // for continuous background auditing (small selections of the entire part population)
@@ -1186,10 +1208,26 @@ function countAppsByPartcategories($partcategories)
 
  function getPartAttributes($partnumber)
  {
-  $attributes=array();
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
+  $db = new mysql; $db->connect(); $keyedattributes=array(); $attributes=array();
+
+  $basepart=$this->basepartOfPart($partnumber);
+  if($basepart)
+  {// this part has a base - we need to deal with inheritance
+   // unique key for identifying attributes is PAID+userDefinedAttributeName+uom
+   
+   if($stmt=$db->conn->prepare('select id,PAID,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=?'))
+   {
+    $stmt->bind_param('s',$basepart);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $key=$row['PAID'].'|'.$row['userDefinedAttributeName'].'|'.$row['uom'];
+     $keyedattributes[$key]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'name'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom'],'inheritedfrom'=>$basepart);
+    }
+   }   
+  }
+  
   if($stmt=$db->conn->prepare('select id,PAID,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=?'))
   {
    $stmt->bind_param('s',$partnumber);
@@ -1197,9 +1235,16 @@ function countAppsByPartcategories($partcategories)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'name'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
+    $key=$row['PAID'].'|'.$row['userDefinedAttributeName'].'|'.$row['uom'];
+    $keyedattributes[$key]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'name'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom'],'inheritedfrom'=>'');
    }
   }
+  
+  foreach($keyedattributes as $keyedattribute)
+  {
+      $attributes[]=$keyedattribute;
+  }
+  
   $db->close();
   return $attributes;
  }
