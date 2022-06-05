@@ -209,7 +209,7 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                unappliedattributediv.parentNode.removeChild(unappliedattributediv);
                
                // show new oid
-               document.getElementById("sandpiperoid").innerHTML=response.oid;
+               document.getElementById("sandpiperoid").innerHTML=response.oid;               
               }
              };
              xhr.send();
@@ -528,6 +528,8 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
             function unflagUnsavedReplacedby(){document.getElementById("btnUpdateReplacedby").className="btn btn-sm btn-outline-secondary";}
             function flagUnsavedNotes(){document.getElementById("btnUpdateNotes").className="btn btn-sm btn-danger";}
             function unflagUnsavedNotes(){document.getElementById("btnUpdateNotes").className="btn btn-sm btn-outline-secondary";}
+            function flagUnsavedBasepart(){document.getElementById("btnUpdateBasepart").className="btn btn-sm btn-danger";}
+            function unflagUnsavedBasepart(){document.getElementById("btnUpdateBasepart").className="btn btn-sm btn-outline-secondary";}
 
         </script>
         
@@ -710,7 +712,7 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                                                         }
                                                         else
                                                         {// this attribute is inherited from the basepart - indicate with an icon and disallow delete
-                                                            echo '<div style="border:1px solid;padding:2px;margin-left:32px;;margin-bottom:3px;background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
+                                                            echo '<div style="float:left;"><img src="./inheritance.png" width="20" title="Inherited from '.$attribute['inheritedfrom'].'"/></div><div style="float:left;border:1px solid;padding:2px;margin-left:12px;;margin-bottom:3px;background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
                                                         }
                                                     }
                                                     else
@@ -722,7 +724,7 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                                                         else
                                                         {// this attribute is inherited from the basepart - indicate with an icon and disallow delete
                                                             
-                                                            echo '<div style="border:1px solid;padding:2px; margin-left:32px;margin-bottom:3px;background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
+                                                            echo '<div style="float:left;"><img src="./inheritance.png" width="20" title="Inherited from '.$attribute['inheritedfrom'].'"/></div><div style="float:left;border:1px solid;padding:2px; margin-left:12px;margin-bottom:3px;background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
                                                             
                                                         }
                                                     }
@@ -767,7 +769,10 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                                             <div id="hideAssetFormIcon" onclick="showhideAssetForm()"><img src="./expandless.png" title="Hide assets form"/></div>
                                             </div>
                                         </td>
-                                    <tr>
+                                    </tr>
+
+                                    <tr><th>Base Part</th><td><div style="float:left;"><input type="text" id="basepart" oninput="flagUnsavedBasepart();" value="<?php echo $part['basepart']?>"/></div><div style="float:left;"><button id="btnUpdateBasepart" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','basepart'); unflagUnsavedBasepart();">Update</button></div><div style="clear:both;"></div></td><tr>
+
                                     <?php if($vio){echo '<tr><th>VIO ('.$viogeography.' '.$vioyearquarter.')</th><td>'.number_format($vio,0,'.',',').'</td><tr>';}?>
                                     
                                     <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
@@ -786,7 +791,7 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-3 my-col colRight">
                     <div class="card shadow-sm">
-                        <h4 class="card-header text-start">Applications <?php echo '<span class="badge bg-primary rounded-pill">'.count($apps).'</span>'; ?></h4>
+                        <h4 class="card-header text-start"><?php if(count($apps) && $apps[0]['inheritedfrom']!=''){echo '<img src="./inheritance.png" width="20" title="Inherited from '.$apps[0]['inheritedfrom'].'"/>';} echo 'Applications <span class="badge bg-primary rounded-pill">'.count($apps).'</span>'; ?></h4>
                         <div class="card-body d-flex flex-column scroll">
                             <?php foreach ($apps as $app) {
                                 echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">' . $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']) . '</a>';} 

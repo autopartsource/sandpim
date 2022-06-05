@@ -23,7 +23,7 @@ if(isset($_SESSION['userid']) && isset($_GET['attributeid']) && isset($_GET['par
  $partnumber=$_GET['partnumber'];
  $attribute=$pim->getPartAttributeById($attributeid);
  if($attribute['partnumber']==$partnumber)
- {
+ { // verify that this id actualy belongs with this partnumber (for safty)
   if($attribute['PAID'])
   {// this was a PAdb attribute
    $pim->deletePartAttribute($attributeid);
@@ -40,6 +40,15 @@ if(isset($_SESSION['userid']) && isset($_GET['attributeid']) && isset($_GET['par
   }
   $pim->logPartEvent($partnumber,$userid, $eventtext ,$oid);
   $result=array('success'=>$success,'oid'=>$oid);
+  
+  // touch any dependant parts (change their oids and write history records)  
+  $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
+  foreach($dependantparts as $dependantpart)
+  {// each part that claims this one as a base
+   $oid=$pim->updatePartOID($dependantpart);
+   $pim->logPartEvent($dependantpart,$userid, $eventtext.' from basepart ['.$partnumber.']' ,$oid);  
+  }
+
  }
  echo json_encode($result);
 }

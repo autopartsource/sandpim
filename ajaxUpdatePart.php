@@ -12,8 +12,8 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 }
 
 session_start();
-// used for setting scalar values of parts ('parttypeid','lifecyclestatus','partcategory','replacedby','gtin','unspc', etc)
-// not used for adding/removing one-to-many things like prices,interchanges,packages,assets,attributes.
+// used for setting scalar values of parts ('parttypeid','lifecyclestatus','partcategory','replacedby','gtin','unspc', 'basepart', etc)
+// not used for adding/removing one-to-many things like prices,interchanges,packages,assets,attributes,applications.
  
 if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elementid']) && isset($_GET['value']))
 {
@@ -22,6 +22,10 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
  $part=$pim->getPart($partnumber);
  $oid=$part['oid'];
 
+ 
+ // determine if this part being changed has dependant parts that need their oids changed as a result of this change
+ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
+ 
  
  switch($_GET['elementid'])
  {
@@ -101,6 +105,31 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
       
   break;
 
+  case 'basepart':
+           
+   if($part['basepart']!=trim($_GET['value']))
+   {// existing basepart is different that new basepart - an actual change has happened
+    if(trim($_GET['value'])=='')
+    {// we are un-basing a part (making basepart blank) 
+     $pim->setPartBasepart($partnumber, '', true);
+     $oid=$pim->getOIDofPart($partnumber);
+     $pim->logPartEvent($partnumber,$userid,'Basepart updated to null',$oid);   
+    }
+    else
+    {// we are setting the base to something non-blank. Validate 
+     if($pim->validPart($_GET['value']))
+     {// given basepart is a valid part
+      if($pim->basepartOfPart($_GET['value'])=='')
+      { // given new basepart does not have a basepart (good)        
+       $pim->setPartBasepart($partnumber, trim($_GET['value']), true);
+       $oid=$pim->getOIDofPart($partnumber);
+       $pim->logPartEvent($partnumber,$userid,'Basepart updated to:'.$_GET['value'],$oid);
+      }  
+     }
+    }      
+   }
+  
+  
   default:
    break;
  }

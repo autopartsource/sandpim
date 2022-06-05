@@ -60,6 +60,19 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['attr
    $pim->logPartEvent($partnumber,$userid, $eventtext ,$oid);
    $success=true;
   }
+
+  // touch any dependant parts (change their oids and write history records)  
+  if($success)
+  {
+   $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
+   foreach($dependantparts as $dependantpart)
+   {// each part that claims this one as a base
+    $oid=$pim->updatePartOID($dependantpart);
+    $pim->logPartEvent($dependantpart,$userid, $eventtext.' to basepart ['.$partnumber.']' ,$oid);  
+   }
+  }
+  
+  
   $result=array('success'=>$success, 'id'=>$id, 'PAID'=>$PAID, 'name'=>$PAname, 'value'=>$value, 'uom'=>$uom);
   echo json_encode($result);
  }

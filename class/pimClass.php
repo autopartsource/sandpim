@@ -207,13 +207,10 @@ function countAppsByPartcategories($partcategories)
 }
 
 
- 
  function getAppsByPartnumber($partnumber)
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
-  $apps=array();
+  $db = new mysql; $db->connect(); $apps=array();
+  // basepart's apps will only be returned if no apps are found for passed in to this function.
   if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
   {
    $stmt->bind_param('s', $partnumber);
@@ -222,9 +219,29 @@ function countAppsByPartcategories($partcategories)
    while($row = $db->result->fetch_assoc())
    {
     $attributes=$this->getAppAttributes($row['id']);
-    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>'');
    }
   }
+
+  if(count($apps)==0)
+  {// the passed-in part has no apps. Look for baseparts's apps
+   $basepart=$this->basepartOfPart($partnumber);
+   if($basepart)
+   {// this part has a base and no apps of its own - we need to deal with inheritance
+    if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+    {
+     $stmt->bind_param('s', $basepart);
+     $stmt->execute();
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $attributes=$this->getAppAttributes($row['id']);
+      $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>$basepart);
+     }
+    }
+   }  
+  }
+  
   $db->close();
   return $apps;
  }
@@ -868,7 +885,20 @@ function countAppsByPartcategories($partcategories)
   return $basepart;
  }
  
+ 
+ function setPartBasepart($partnumber,$basepart,$updateoid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set basepart=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $basepart,$partnumber);
+   $stmt->execute();
+  }
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+ }
 
+ 
  
  // for continuous background auditing (small selections of the entire part population)
  function getPartnumbersByRandom($limit)
@@ -2791,7 +2821,6 @@ function countAppsByPartcategories($partcategories)
   return $id;
  }
   
- //ccc
  function addLifecyclestatusToReceiverProfile($receiverprofileid,$lifecyclestatus)
  {
   $db = new mysql; $db->connect(); $id=false;
