@@ -153,6 +153,9 @@ class asset
  
  function getAssetsConnectedToPart($partnumber,$excludenonpublic=false)
  {
+     // deal with inheritance
+     // if given part has a basepart, get those assets too. The resulting list of assets will be the combination from both parts
+    
   $db=new mysql; $db->connect(); $connections=array();
   $publicclause=''; if($excludenonpublic){$publicclause=' and public=1';}
   if($stmt=$db->conn->prepare('select part_asset.id as connectionid, partnumber,assettypecode,sequence,representation, asset.* from part_asset,asset where part_asset.assetid=asset.assetid and partnumber=? '.$publicclause.' order by sequence'))
@@ -164,11 +167,40 @@ class asset
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename'],'filetype'=>$row['fileType']);
+       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename'],'filetype'=>$row['fileType'],'inheritedfrom'=>'');
      }
     }
    }
   }
+  
+  //ccc
+  
+  $basepart='';
+  $stmt=$db->conn->prepare('select basepart from part where partnumber=?');
+  $stmt->bind_param('s', $partnumber);
+  $stmt->execute();
+  $db->result = $stmt->get_result();
+  if($row = $db->result->fetch_assoc()){$basepart=$row['basepart'];}
+  
+  if($basepart!='')
+  {
+   if($stmt=$db->conn->prepare('select part_asset.id as connectionid, partnumber,assettypecode,sequence,representation, asset.* from part_asset,asset where part_asset.assetid=asset.assetid and partnumber=? and public=1 order by sequence'))
+   {
+    if($stmt->bind_param('s',$basepart))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename'],'filetype'=>$row['fileType'],'inheritedfrom'=>$basepart);
+      }
+     }
+    }
+   }
+  }
+    
+  
   $db->close();
   return $connections;   
  }
