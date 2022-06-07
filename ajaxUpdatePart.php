@@ -15,6 +15,8 @@ session_start();
 // used for setting scalar values of parts ('parttypeid','lifecyclestatus','partcategory','replacedby','gtin','unspc', 'basepart', etc)
 // not used for adding/removing one-to-many things like prices,interchanges,packages,assets,attributes,applications.
  
+$success=false;
+$message='';
 if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elementid']) && isset($_GET['value']))
 {
  $partnumber=($_GET['partnumber']);
@@ -35,6 +37,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
    $pim->setPartParttype($partnumber,intval($_GET['value']),true);
    $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'parttype changed to:'.intval($_GET['value']),$oid);
+   $success=true;
   }
   break;
 
@@ -44,6 +47,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
    $pim->setPartLifecyclestatus($partnumber,$_GET['value'],true);
    $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'lifecycle status changed to:'.$_GET['value'],$oid);
+   $success=true;
   }
   break;
 
@@ -53,6 +57,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
    $pim->setPartCategory($partnumber,intval($_GET['value']),true);
    $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'category changed to:'.intval($_GET['value']),$oid);
+   $success=true;
   }
   break;
 
@@ -60,24 +65,42 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
    $pim->setPartInternalnotes($partnumber,$_GET['value'],true);
    $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'internal notes updated',$oid);
+   $success=true;
   break;
 
   case 'description':
    $pim->setPartDescription($partnumber,$_GET['value'],true);
    $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'description updated to:'.$_GET['value'],$oid);
+   $success=true;
   break;
 
   case 'gtin':
-   $pim->setPartGTIN($partnumber,$_GET['value'],true);
-   $oid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber,$userid,'GTIN updated to:'.$_GET['value'],$oid);
+   if(strlen($_GET['value'])==12 && is_numeric($_GET['value']))
+   {
+    if($pim->isValidBarcode($_GET['value']))
+    {
+     $pim->setPartGTIN($partnumber,$_GET['value'],true);
+     $oid=$pim->getOIDofPart($partnumber);
+     $pim->logPartEvent($partnumber,$userid,'GTIN updated to:'.$_GET['value'],$oid);
+     $success=true;
+    }
+    else
+    {// checkdigit it not valid
+     $message='GTIN has wrong check digit';   
+    }
+   }
+   else
+   {// input was not 12 digits of numeric digits
+    $message='GTIN must be 12 numeric digits';              
+   }
   break;
 
   case 'unspc':
    $pim->setPartUNSPC($partnumber,$_GET['value'],true);
    $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'UNSPC updated to:'.$_GET['value'],$oid);
+   $success=true;
   break;
 
   case 'replacedby':
@@ -90,6 +113,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
      //$pim->setPartLifecyclestatus($partnumber,'2',false);
      $oid=$pim->getOIDofPart($partnumber);
      $pim->logPartEvent($partnumber,$userid,'Replaced By updated to null',$oid);   
+     $success=true;
     }
     else
     {// 
@@ -99,8 +123,13 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
       $pim->setPartLifecyclestatus($partnumber,'7',false);
       $oid=$pim->getOIDofPart($partnumber);
       $pim->logPartEvent($partnumber,$userid,'Replaced By updated to:'.$_GET['value'].' and set lifecycle status to Superseded',$oid);   
+      $success=true;
      }
-    }      
+     else
+     {// given part is not valid
+       $message='replaced-by partnumber ['.$pim->sanitizeParnumber($_GET['value']).'] is not valid.';        
+     }
+    }     
    }
       
   break;
@@ -114,6 +143,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
      $pim->setPartBasepart($partnumber, '', true);
      $oid=$pim->getOIDofPart($partnumber);
      $pim->logPartEvent($partnumber,$userid,'Basepart updated to null',$oid);   
+     $success=true;
     }
     else
     {// we are setting the base to something non-blank. Validate 
@@ -124,7 +154,16 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
        $pim->setPartBasepart($partnumber, trim($_GET['value']), true);
        $oid=$pim->getOIDofPart($partnumber);
        $pim->logPartEvent($partnumber,$userid,'Basepart updated to:'.$_GET['value'],$oid);
-      }  
+       $success=true;
+      }
+      else
+      {// given new basepart has a basepart (bad)
+       $message='Base partnumber ['.$pim->sanitizeParnumber($_GET['value']).'] cannot be use as a base because it is based on another part. Inheritance can only go one generation back.';
+      }
+     }
+     else
+     {// non-valid part was given as a base
+       $message='base partnumber ['.$pim->sanitizeParnumber($_GET['value']).'] is not valid.';         
      }
     }      
    }
@@ -134,5 +173,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
    break;
  }
  $pim->addAuditRequest('part-general', $partnumber);
- echo $oid;
+ 
+ $result=array('success'=>$success,'oid'=>$oid, 'message'=>$message);
+ echo json_encode($result);
 }?>

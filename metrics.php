@@ -22,7 +22,7 @@ $asset=new asset();
 $interchange=new interchange();
 
 
-$allparts=$pim->getParts('', 'contains', 'any', 'any', '2', 1000000);
+$allparts=$pim->getParts('', 'contains', 'any', 'any', '2', 'any', 1000000);
 
 $missingscounts=0;
 foreach($allparts as $part)

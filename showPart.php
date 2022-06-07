@@ -117,9 +117,20 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
              xhr.open('GET', 'ajaxUpdatePart.php?partnumber='+partnumber+'&elementid='+elementid+'&value='+encodeURIComponent(value));
              xhr.onload = function()
              {
-              var response=xhr.responseText;
-              document.getElementById("sandpiperoid").innerHTML=response;
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
               setStatusColor();
+              if(response.success)
+              {
+               document.getElementById("heading-alert").style.display='none';
+               document.getElementById("heading-alert").innerHTML='';
+              }
+              else
+              {
+               document.getElementById("heading-alert").style.display='block';
+               document.getElementById("heading-alert").innerHTML=response.message;
+              }
+              
              };
              xhr.send();
             }
@@ -603,6 +614,7 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                             </div>
                             </div>
                         </h3>
+                        <div class="alert alert-danger" role="alert" id="heading-alert" style="display:none;">This is a danger alert—check it out!</div>
                         <div class="card-body">
                             <?php if ($part) {; ?>
                             <div style="padding:10px;">
@@ -780,7 +792,6 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                                     </tr>
 
                                     <tr><th>Base Part</th><td><div style="float:left;"><input type="text" id="basepart" oninput="flagUnsavedBasepart();" value="<?php echo $part['basepart']?>"/></div><div style="float:left;"><button id="btnUpdateBasepart" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','basepart'); unflagUnsavedBasepart();">Update</button></div><div style="clear:both;"></div></td><tr>
-
                                     <?php if($vio){echo '<tr><th>VIO ('.$viogeography.' '.$vioyearquarter.')</th><td>'.number_format($vio,0,'.',',').'</td><tr>';}?>
                                     
                                     <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
