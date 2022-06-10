@@ -93,15 +93,15 @@ foreach($partnumbers as $partnumber)
 
 
 
-$columnnames=array('Partnumber'=>'string','Lifecycle Status'=>'string','Qty On-Hand'=>'number','Monthly Demand'=>'number','VIO'=>'number','Hybrid POP'=>'number');
+$columnnames=array('Partnumber'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Qty On-Hand'=>'number','Monthly Demand'=>'number','VIO'=>'number','Hybrid POP'=>'number');
 foreach($assettypes as $assettype=>$trash)
 {
  $columnnames[$pcdb->assetTypeCodeDescription($assettype)]='string';
 }
  
-$columnwidths=array(15,16,12,15,10,15);
+$columnwidths=array(15,15,16,12,15,10,15);
 foreach($assettypes as $assettype=>$trsah){$columnwidths[]=20;} 
-$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
+$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1 ,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
 foreach($assettypes as $assettype=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
 
 $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
@@ -130,7 +130,7 @@ foreach($matrix as $partnumber=>$columns)
  $amdgrandtotal+=$amd;
  
  
- $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']),$qoh,$amd,$viototal,0);
+ $row=array($partnumber, $pcdb->parttypeName($part['parttypeid']) ,$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']),$qoh,$amd,$viototal,0);
  foreach($assettypes as $assettype=>$trash)
  {
   if(array_key_exists($assettype, $columns))
@@ -152,13 +152,13 @@ $popkey=array();
 $vioamdratio=(1+$viograndtotal)/(1+$amdgrandtotal); // compute the ration of amd to vio for scaling
 foreach($rows as $row)
 {// insert the hybrid pop value into the 6th column
- $row[5]= (($row[3]*$vioamdratio)+$row[4])/2;
+ $row[6]= (($row[4]*$vioamdratio)+$row[5])/2;
  $rowstemp[]=$row;
 }
 
 foreach($rowstemp as $key=>$row)
 {//compile an index using the 6th column
- $popkey[$key]=$row[5];
+ $popkey[$key]=$row[6];
 }
 
 array_multisort($popkey,SORT_DESC,$rowstemp);
