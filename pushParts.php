@@ -18,7 +18,8 @@ $asset = new asset();
 $logs=new logs();
 
 
-$localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 999999);
+$localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 'any', 999999);
+
 $localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
 sort($localoids);
 $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}

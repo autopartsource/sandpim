@@ -768,7 +768,7 @@ function countAppsByPartcategories($partcategories)
   if($parttypeid=='any'){$parttypeclause='';}else{$parttypeclause=' and parttypeid='.intval($parttypeid);}
   if($basepart=='any'){$basepartclause='';}else{$basepartclause=" and basepart='".$basepart."'";}
   
-  $sql='select part.*,partcategory.name as partcategoryname from part left join partcategory on part.partcategory=partcategory.id where partnumber like ? '.$partcategoryclause.$parttypeclause.' and lifecyclestatus like ? and basepart=? order by partnumber limit ?';
+  $sql='select part.*,partcategory.name as partcategoryname from part left join partcategory on part.partcategory=partcategory.id where partnumber like ? '.$partcategoryclause.$parttypeclause.' and lifecyclestatus like ? '.$basepartclause.' order by partnumber limit ?';
 
   if($stmt=$db->conn->prepare($sql))
   {
@@ -778,7 +778,7 @@ function countAppsByPartcategories($partcategories)
    if($matchtype=='endswith'){$searchstring='%'.$partnumber;}
    if($lifecyclestatus=='any'){$lifecyclestatus='%';}
 
-   if($stmt->bind_param('sssi', $searchstring, $lifecyclestatus, $basepart, $limit))
+   if($stmt->bind_param('ssi', $searchstring, $lifecyclestatus, $limit))
    {
     if($stmt->execute())
     {

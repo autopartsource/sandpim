@@ -83,6 +83,7 @@
                     Reports
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownReports">
+                    <a class="dropdown-item" href="applicationGuideReportForm.php">Application Guide</a>
                     <a class="dropdown-item" href="missingProductDataReportForm.php">Missing/Invalid Part Data</a>
                     <a class="dropdown-item" href="invalidApplicationsReportForm.php">Invalid Applications</a>
 <?php /*                   <a class="dropdown-item" href="applicationHolesReportForm.php">Application Holes</a>
