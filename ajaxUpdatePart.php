@@ -127,7 +127,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
      }
      else
      {// given part is not valid
-       $message='replaced-by partnumber ['.$pim->sanitizeParnumber($_GET['value']).'] is not valid.';        
+       $message='replaced-by partnumber ['.$pim->sanitizePartnumber($_GET['value']).'] is not valid.';        
      }
     }     
    }
@@ -158,12 +158,12 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
       }
       else
       {// given new basepart has a basepart (bad)
-       $message='Base partnumber ['.$pim->sanitizeParnumber($_GET['value']).'] cannot be use as a base because it is based on another part. Inheritance can only go one generation back.';
+       $message='Base partnumber ['.$pim->sanitizePartnumber($_GET['value']).'] cannot be use as a base because it is based on another part. Inheritance can only go one generation back.';
       }
      }
      else
      {// non-valid part was given as a base
-       $message='base partnumber ['.$pim->sanitizeParnumber($_GET['value']).'] is not valid.';         
+       $message='base partnumber ['.$pim->sanitizePartnumber($_GET['value']).'] is not valid.';         
      }
     }      
    }

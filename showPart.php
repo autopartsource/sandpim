@@ -51,7 +51,7 @@ function niceAppAttributes($appattributes) {
     return implode('; ', $nicefitmentarray);
 }
 
-$partnumber = $pim->sanitizeParnumber($_GET['partnumber']);
+$partnumber = $pim->sanitizePartnumber($_GET['partnumber']);
 
 $part = $pim->getPart($partnumber);
 $apps = $pim->getAppsByPartnumber($partnumber);

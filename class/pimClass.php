@@ -24,7 +24,7 @@ class pim
   return $uuid;
  }
 
- function sanitizeParnumber($input)
+ function sanitizePartnumber($input)
  {
   $output=trim(strtoupper($input));
   if(strlen($input)>20){$output= substr($input, 0, 20);}
@@ -761,8 +761,8 @@ function countAppsByPartcategories($partcategories)
   $db = new mysql; $db->connect();
   $parts=array();
   
-  $partnumber=$this->sanitizeParnumber($partnumber);
-  $basepart=$this->sanitizeParnumber($basepart);
+  $partnumber=$this->sanitizePartnumber($partnumber);
+  $basepart=$this->sanitizePartnumber($basepart);
           
   if($partcategory=='any'){$partcategoryclause='';}else{$partcategoryclause=' and partcategory='.intval($partcategory);}
   if($parttypeid=='any'){$parttypeclause='';}else{$parttypeclause=' and parttypeid='.intval($parttypeid);}

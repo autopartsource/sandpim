@@ -19,7 +19,7 @@ if(isset($_SESSION['userid']) && isset($_GET['basevehicleid']) && isset($_GET['q
  $movetype=''; if(isset($_GET['movetype']) && ($_GET['movetype']=='entry' || $_GET['movetype']=='drag-copy')){$movetype=$_GET['movetype'];}
  $success=false;
  $message='';
- $partnumber=$pim->sanitizeParnumber($_GET['partnumber']);
+ $partnumber=$pim->sanitizePartnumber($_GET['partnumber']);
  
  if($pim->validPart($partnumber))
  {
