@@ -19,7 +19,7 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['fitment']
  // get the existing app for pre-comparison so we can know what to change
  $appid=intval($_GET['appid']);
  $neednewoid=false;
- $description='grid drag';
+ $description='fitment grid drag';
  $userid=$_SESSION['userid'];
 
  if($app=$pim->getApp($appid))

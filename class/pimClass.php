@@ -26,7 +26,7 @@ class pim
 
  function sanitizeParnumber($input)
  {
-  $output=trim($input);
+  $output=trim(strtoupper($input));
   if(strlen($input)>20){$output= substr($input, 0, 20);}
   $output=str_replace(array('"',';',"'","\t","\n","\r","\\",'?',',','.','>','<','`','!','@','$','%','^','&','*','(',')','+','=',':','[',']','{','}','|','/','~'), '-', $output);
   return $output;

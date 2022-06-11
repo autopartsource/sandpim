@@ -242,11 +242,21 @@ ksort($fitmentcolumnkeys);
                     if (copymove == "copy")
                     { // new app is created at the row/column intersection using the part number, qty
                         var xhr = new XMLHttpRequest();
-                        xhr.open('GET', 'ajaxNewApp.php?basevehicleid=' + basevehicleid + '&partnumber=' + sourcepartnumber + '&cosmetic=' + sourcecosmetic + '&quantityperapp=' + sourcequantityperapp + '&fitment=' + ev.target.getAttribute('data-row') + '&positionandparttype=' + ev.target.getAttribute('data-column'));
+                        xhr.open('GET', 'ajaxNewApp.php?basevehicleid=' + basevehicleid + '&partnumber=' + sourcepartnumber + '&cosmetic=' + sourcecosmetic + '&quantityperapp=' + sourcequantityperapp + '&fitment=' + ev.target.getAttribute('data-row') + '&positionandparttype=' + ev.target.getAttribute('data-column') + '&movetype=drag-copy');
                         xhr.onload = function ()
                         {
-                            var newappid = xhr.responseText;
-                            ev.target.innerHTML += '<div id="apppart_' + newappid + '" class="apppart" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' + ev.target.getAttribute('data-row') + '" data-column="' + ev.target.getAttribute('data-column') + '" data-sourceapp="' + newappid + '" data-basevehicleid="' + basevehicleid + '" data-partnumber="' + sourcepartnumber + '" data-quantityperapp="' + sourcequantityperapp + '" data-cosmetic="' + sourcecosmetic + '" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' + newappid + '">' + sourcepartnumber + '</a></div>';
+                            var response=JSON.parse(xhr.responseText);
+                            if(response.success)
+                            {
+                                document.getElementById("heading-alert").style.display='none';
+                                document.getElementById("heading-alert").innerHTML='';
+                                ev.target.innerHTML += '<div id="apppart_' + response.newappid + '" class="apppart" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' + ev.target.getAttribute('data-row') + '" data-column="' + ev.target.getAttribute('data-column') + '" data-sourceapp="' + response.newappid + '" data-basevehicleid="' + basevehicleid + '" data-partnumber="' + sourcepartnumber + '" data-quantityperapp="' + sourcequantityperapp + '" data-cosmetic="' + sourcecosmetic + '" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' + response.newappid + '">' + sourcepartnumber + '</a></div>';
+                            }
+                            else
+                            {
+                                document.getElementById("heading-alert").style.display='block';
+                                document.getElementById("heading-alert").innerHTML=response.message;
+                            }
                         };
                         xhr.send();
                     } else
@@ -267,7 +277,7 @@ ksort($fitmentcolumnkeys);
             function showAddPartArea(source, rowdata, columndata, basevehicleid, dropzone)
             {
                 source.outerHTML += "<div style='position:absolute;width:200px;height:100px;border:1px solid;margin-top:-1em;background-color:#ffffff;padding:1em;'>" +
-                        " <p><input id='addpart_" + dropzone.toString() + "' type='text' name='partnumber'/></p>" +
+                        " <p><input id='addpart_" + dropzone.toString() + "' type='text' name='partnumber' style='width:95%;'/></p>" +
                         "<button class='addpartbutton' onclick='submitAddPart(this,\"" + rowdata.toString() + "\",\"" + columndata.toString() + "\",\"" + basevehicleid.toString() + "\",\"" + dropzone.toString() + "\")'>Add</button> <button onclick='closeAddPartArea(this);'>Cancel</button></div>";
                 document.getElementById('addpart_' + dropzone).focus();
             }
@@ -282,15 +292,25 @@ ksort($fitmentcolumnkeys);
 
                     // ajax call to add new app
                     var xhr = new XMLHttpRequest();
-                    xhr.open('GET', 'ajaxNewApp.php?basevehicleid=' + basevehicleid + '&partnumber=' + partnumber + '&cosmetic=0&quantityperapp=1&fitment=' + rowdata + '&positionandparttype=' + columndata);
+                    xhr.open('GET', 'ajaxNewApp.php?basevehicleid=' + basevehicleid + '&partnumber=' + partnumber + '&cosmetic=0&quantityperapp=1&fitment=' + rowdata + '&positionandparttype=' + columndata + '&movetype=entry');
                     xhr.onload = function ()
                     {
-                        var newappid = xhr.responseText;
-                        // insert new draggable part block
-                        document.getElementById(dropzone).innerHTML += '<div id="apppart_' + newappid + '" class="apppart" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' + rowdata + '" data-column="' + columndata + '" data-sourceapp="' + newappid + '" data-basevehicleid="' + basevehicleid + '" data-partnumber="' + partnumber + '" data-quantityperapp="1" data-cosmetic="0" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' + newappid + '">' + partnumber + '</a></div>';
+                        // insert new draggable part block                        
+                        var response=JSON.parse(xhr.responseText);
+                        if(response.success)
+                        {
+                            document.getElementById("heading-alert").style.display='none';
+                            document.getElementById("heading-alert").innerHTML='';
+                            document.getElementById(dropzone).innerHTML += '<div id="apppart_' + response.newappid + '" class="apppart" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' + rowdata + '" data-column="' + columndata + '" data-sourceapp="' + response.newappid + '" data-basevehicleid="' + basevehicleid + '" data-partnumber="' + partnumber + '" data-quantityperapp="1" data-cosmetic="0" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' + response.newappid + '">' + partnumber + '</a></div>';
+                        }
+                        else
+                        {
+                            document.getElementById("heading-alert").style.display='block';
+                            document.getElementById("heading-alert").innerHTML=response.message;
+                        }
                     };
                     xhr.send();
-                    // destroy modal popup area
+                    // destroy popup area input form
                     source.parentNode.parentNode.removeChild(source.parentNode);
                 }
             }
@@ -360,6 +380,8 @@ ksort($fitmentcolumnkeys);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
+                        <div class="alert alert-danger" role="alert" id="heading-alert" style="display:none;">This is a danger alert—check it out!</div>
+
                         <h3 class="card-header">
 
                             <div style="padding:5px;float:left">
@@ -429,7 +451,7 @@ ksort($fitmentcolumnkeys);
                                     }
                                 }
 
-                                echo '<label><input type="checkbox" id="copymove" name="copymove"/>Copy mode</label>';
+                                echo '<label><input type="checkbox" id="copymove" name="copymove"/>Replicate Dragged Parts</label>';
 
                                 echo '<table class="table"><tr><td></td>';
                                 foreach ($fitmentcolumnkeys as $fitmentcolumnkey => $trash) {

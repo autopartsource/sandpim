@@ -51,10 +51,7 @@ function niceAppAttributes($appattributes) {
     return implode('; ', $nicefitmentarray);
 }
 
-$partnumber = strtoupper($_GET['partnumber']);
-if (strlen($partnumber) > 20) {
-    $partnumber = substr($partnumber, 0, 20);
-}
+$partnumber = $pim->sanitizeParnumber($_GET['partnumber']);
 
 $part = $pim->getPart($partnumber);
 $apps = $pim->getAppsByPartnumber($partnumber);
