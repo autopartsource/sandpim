@@ -766,7 +766,7 @@ function countAppsByPartcategories($partcategories)
           
   if($partcategory=='any'){$partcategoryclause='';}else{$partcategoryclause=' and partcategory='.intval($partcategory);}
   if($parttypeid=='any'){$parttypeclause='';}else{$parttypeclause=' and parttypeid='.intval($parttypeid);}
-  if($basepart=='any'){$basepartclause='';}else{$basepartclause=" and basepart='".$basepart."'";}
+  if($basepart=='any' || $basepart=='ANY'){$basepartclause='';}else{$basepartclause=" and basepart='".$basepart."'";}
   
   $sql='select part.*,partcategory.name as partcategoryname from part left join partcategory on part.partcategory=partcategory.id where partnumber like ? '.$partcategoryclause.$parttypeclause.' and lifecyclestatus like ? '.$basepartclause.' order by partnumber limit ?';
 
@@ -3448,6 +3448,17 @@ function allowedHost($address)
    $stmt->bind_param('i', $userid);
    $stmt->execute();
   } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  $db->close();
+ }
+ 
+ function deleteOldClipboardObjects($agedays)
+ {  // delete all objects (any user) on the clipboard older than (or equal to) agedays
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from clipboard where datediff(now(),capturedate)>=?'))
+  {
+   $stmt->bind_param('i', $agedays);
+   $stmt->execute();
+  }
   $db->close();
  }
  

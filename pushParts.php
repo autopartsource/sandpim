@@ -17,8 +17,14 @@ $packaging = new packaging();
 $asset = new asset();
 $logs=new logs();
 
-
 $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 'any', 999999);
+if(count($localparts)==0)
+{
+ echo "refusing to push an empty local list\r\n";
+ $logs->logSystemEvent('replication', 0, 'local part list is empty. No push completed (too risky).');
+ exit;
+}
+
 
 $localoids=array(); foreach($localparts as $localpart){$localoids[]=$localpart['oid'];}
 sort($localoids);

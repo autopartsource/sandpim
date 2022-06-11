@@ -76,4 +76,8 @@ if($runtime > 30)
  $logs->logSystemEvent('housekeeper', 0, 'Background houskeeper process ran for '.$runtime.' seconds');
 }
 
+// clear clipboard content older than 2 days for all users
+$pim->deleteOldClipboardObjects(2);
+
+
 ?>

@@ -22,6 +22,13 @@ foreach($peers as $peer)
  $logstring='uri: '.$uri.'; ';
 
  $localoids=$pim->getAppOids();
+if(count($localoids)==0)
+{
+ echo "refusing to push an empty local list\r\n";
+ $logs->logSystemEvent('replication', 0, 'local app list is empty. No push completed (too risky).');
+ continue;
+}
+ 
  sort($localoids);
  $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
  $localoidhash= md5($localoidliststring);

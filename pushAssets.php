@@ -12,6 +12,13 @@ $replication=new replication();
 $logs=new logs();
 
 $allassets=$asset->getAssets('', 'startswith', 'any', 'any',  '2000-01-01' , 'any', '', '','' ,'startswith', '', 'startswith', 0);
+if(count($allassets)==0)
+{
+ echo "refusing to push an empty local list\r\n";
+ $logs->logSystemEvent('replication', 0, 'local assets list is empty. No push completed (too risky).');
+ exit;
+}
+
 $localoids=array(); foreach($allassets as $allasset){$localoids[]=$allasset['oid'];}
 sort($localoids);
 $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
