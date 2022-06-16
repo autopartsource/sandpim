@@ -38,7 +38,7 @@ if(isset($_SESSION['userid']) && isset($_GET['basevehicleid']) && isset($_GET['q
  }
  else
  { // given partnumber is not valid     
-  $message='invalid partnumber ['.$partnumber.'] entered';
+  $message='invalid partnumber ['.$partnumber.'] entered'; $oid=''; $newappid='';
  }
  
  echo json_encode(array('success'=>$success, 'message'=>$message, 'newappid'=>$newappid,'oid'=>$oid));

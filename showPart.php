@@ -623,13 +623,25 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                                         <th>Descriptions</th>
                                         <td>
                                             <div id="descriptions">
-                                            <?php foreach($descriptions as $description){;?>
+                                            <?php foreach($descriptions as $description)
+                                            {
+                                                if($description['inheritedfrom']=='')
+                                                { // this description is applied directly to this part (not inherited from a basepart) ?>
+ 
                                                 <div style="padding-bottom:3px;" id="descriptionid_<?php echo $description['id'];?>">
                                                     <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this <?php echo $description['descriptioncode'];?> code description from this part" onclick="deleteDescription(<?php echo $description['id'];?>)">x</button></div>
                                                     <div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;"><?php echo $description['description'];?></div>
                                                     <div style="clear:both;"></div>
                                                 </div>
-                                            <?php }?>
+                                                
+                                                
+                                                <?php }
+                                                else
+                                                {// this description is inherited from the basepart - indicate with an icon and disallow delete
+
+                                                    echo '<div style="float:left;"><img src="./inheritance.png" width="20" title="'.$description['descriptioncode'].' description inherited from '.$description['inheritedfrom'].'"/></div><div style="float:left; background-color: #e8e8e8;margin:4px; padding:5px;font-size:85%;">'.$description['description'].'</div><div style="clear:both;"></div>';
+                                                }
+                                            }?>
                                             </div>
                                             <div onclick="showhideNewDescription()"><img src="./expandmore.png" title="Expand to show descriptions form"/></div>
                                             <div id="newdescription" style="display:none; padding-top: 10px; text-align: left;">
@@ -721,7 +733,7 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                                                         }
                                                         else
                                                         {// this attribute is inherited from the basepart - indicate with an icon and disallow delete
-                                                            echo '<div style="float:left;"><img src="./inheritance.png" width="20" title="Inherited from '.$attribute['inheritedfrom'].'"/></div><div style="float:left;border:1px solid;padding:2px;margin-left:12px;;margin-bottom:3px;background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
+                                                            echo '<div style="float:left;"><img src="./inheritance.png" width="20" title="Non-PAdb attribute inherited from '.$attribute['inheritedfrom'].'"/></div><div style="float:left;border:1px solid;padding:2px;margin-left:12px;;margin-bottom:3px;background:#dddddd;float:left;">'.$attribute['name'].' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
                                                         }
                                                     }
                                                     else
@@ -733,7 +745,7 @@ $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
                                                         else
                                                         {// this attribute is inherited from the basepart - indicate with an icon and disallow delete
                                                             
-                                                            echo '<div style="float:left;"><img src="./inheritance.png" width="20" title="Inherited from '.$attribute['inheritedfrom'].'"/></div><div style="float:left;border:1px solid;padding:2px; margin-left:12px;margin-bottom:3px;background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
+                                                            echo '<div style="float:left;"><img src="./inheritance.png" width="20" title="PAdb attribute '.$attribute['PAID'].' inherited from '.$attribute['inheritedfrom'].'"/></div><div style="float:left;border:1px solid;padding:2px; margin-left:12px;margin-bottom:3px;background:#7ad0fe;float:left;">'.$padb->PAIDname($attribute['PAID']).' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;border-radius:2px;">'.$attribute['value'].' '.$attribute['uom'].'</span></div><div style="clear:both;"></div>';
                                                             
                                                         }
                                                     }

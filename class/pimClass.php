@@ -1151,8 +1151,9 @@ function countAppsByPartcategories($partcategories)
 
  function getPartDescriptions($partnumber)
  {
-  $descriptions=array(); 
-  $db = new mysql; $db->connect();
+  $db = new mysql; $db->connect(); $descriptions=array();
+
+  $keyeddescriptions=array();
   if($stmt=$db->conn->prepare('select * from part_description where partnumber=?'))
   {
    if($stmt->bind_param('s',$partnumber))
@@ -1162,15 +1163,49 @@ function countAppsByPartcategories($partcategories)
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-      $descriptions[]=array('id'=>$row['id'],'description'=>$row['description'],'descriptioncode'=>$row['descriptioncode'],'sequence'=>$row['sequence'],'languagecode'=>$row['languagecode']);
+      $keyeddescriptions[$row['description'].$row['descriptioncode'].$row['languagecode']]='';
+      $descriptions[]=array('id'=>$row['id'],'description'=>$row['description'],'descriptioncode'=>$row['descriptioncode'],'sequence'=>$row['sequence'],'languagecode'=>$row['languagecode'],'inheritedfrom'=>'');       
      }
     }
    }
   }
+  
+  $basepart=$this->basepartOfPart($partnumber);
+  if($basepart)
+  {// this part has a base - we need to deal with inheritance
+   if($stmt=$db->conn->prepare('select * from part_description where partnumber=?'))
+   {
+    if($stmt->bind_param('s',$basepart))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       if(!array_key_exists($row['description'].$row['descriptioncode'].$row['languagecode'], $keyeddescriptions))
+       {// this exact descriptive text, code and language were not alread contributed from a base part         
+        $descriptions[]=array('id'=>$row['id'],'description'=>$row['description'],'descriptioncode'=>$row['descriptioncode'],'sequence'=>$row['sequence'],'languagecode'=>$row['languagecode'],'inheritedfrom'=>$basepart);
+       }
+      }
+     }
+    }
+   }      
+  }
+   
   $db->close();
   return $descriptions;
  }
 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  function addPartDescription($partnumber,$description,$descriptioncode,$sequence,$languagecode)
  {
   $id=false;
