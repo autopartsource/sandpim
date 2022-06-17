@@ -614,6 +614,20 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_balance ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_balance ('.$db->conn->error.')';}
         
+
+
+        $sql="CREATE TABLE partrelationship (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        leftpartnumber varchar(20) NOT NULL,
+        rightpartnumber varchar(20) NOT NULL,
+        relationtype varchar(255) NOT NULL,
+        units decimal(10,2) not null,
+        sequence int unsigned NOT NULL,
+        PRIMARY KEY (id),
+        INDEX idx_leftpartnumber (leftpartnumber),
+        INDEX idx_rightpartnumber (rightpartnumber)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - partrelationship ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - partrelationship ('.$db->conn->error.')';}
         
         
         $sql="CREATE TABLE price (

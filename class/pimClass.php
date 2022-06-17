@@ -865,6 +865,28 @@ function countAppsByPartcategories($partcategories)
  
  
  
+ function getKitComponents($partnumber)
+ {
+  $db = new mysql; $db->connect(); $parts=array();
+  if($stmt=$db->conn->prepare("select * from partrelationship where leftpartnumber=? and relationtype='kit' order by sequence,rightpartnumber"))
+  {
+   if($stmt->bind_param('s',$partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $parts[]=array('id'=>$row['id'],'partnumber'=>$row['rightpartnumber'],'units'=>$row['units'],'sequence'=>$row['sequence']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $parts;
+ }
+ 
+ 
  function basepartOfPart($partnumber)
  {
   $db = new mysql; $db->connect(); $basepart=false;
