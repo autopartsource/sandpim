@@ -533,7 +533,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
 
             function addAppsToClipboard()
             {
-                var nodes = document.getElementById('appids').getElementsByTagName("div");
+                var nodes = document.getElementById('apps').getElementsByTagName("div");
                 for(var i=0; i<nodes.length; i++) 
                 {
                     //                    console.log(nodes[i].getAttribute('data-appid') + ' - ' + nodes[i].getAttribute('data-description'));
@@ -549,6 +549,27 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                 }
                 refreshClipboard();
             }
+
+
+            function addClipboardAppsToPart()
+            {
+             var appscontainer = document.getElementById('apps');
+             
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddClipboardAppsToPart.php?partnumber=<?php echo $partnumber;?>');
+             xhr.onload = function()
+             {
+              var newapps=JSON.parse(xhr.responseText);
+
+              for(var i in newapps)
+              {
+                 // console.log(newapps[i].id);
+               appscontainer.innerHTML+='<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid='+newapps[i].id+'">'+newapps[i].niceappdescription+'</a>';
+              }
+             }
+             xhr.send();
+            }
+
 
             function flagUnsavedGTIN(){document.getElementById("btnUpdateGTIN").className="btn btn-sm btn-danger";}
             function unflagUnsavedGTIN(){document.getElementById("btnUpdateGTIN").className="btn btn-sm btn-outline-secondary";}
@@ -875,10 +896,10 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                             
                             ?>
                         </h4>
-                        <div class="card-body d-flex flex-column scroll" id="appids">
+                        <div class="card-body d-flex flex-column scroll" id="apps">
                             <?php foreach($apps as $app)
                             {
-                                $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']);
+                                $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']);// . ' ' . niceAppAttributes($app['attributes']);
                                 echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">'.$niceappdescription.'</a>';
                                 echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description="'. base64_encode($niceappdescription).'">'.$app['id'].'</div>';
                             }

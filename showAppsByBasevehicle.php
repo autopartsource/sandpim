@@ -96,7 +96,7 @@ if(isset($_REQUEST['submit']) && $_REQUEST['submit']=='Paste' )
   
  if(count($clipboardappids)>0)
  {
-  $newappids=$pim->cloneApps($basevehicleid, $clipboardappids);
+  $newappids=$pim->cloneAppsToNewBasevehicle($basevehicleid, $clipboardappids);
   if(count($newappids)>0)
   {
    foreach($newappids as $newappid)

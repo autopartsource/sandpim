@@ -72,7 +72,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='Create from clipboard' )
   
   if(count($appids)>0)
   {
-   $newappids=$pim->cloneApps($basevehicleid, $appids);
+   $newappids=$pim->cloneAppsToNewBasevehicle($basevehicleid, $appids);
    if(count($newappids)>0)
    {
     foreach($newappids as $newappid)
