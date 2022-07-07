@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
+include_once('./class/assetClass.php');
 include_once('./class/userClass.php');
 $navCategory = 'reports';
 
@@ -20,9 +21,12 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
+$asset = new asset;
 $user=new user();
 $receiverprofiles=$pim->getReceiverprofiles();
 $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last receiverprofileid used');
+$labels=$asset->getAssetlabels();
+
 ?>
 
 <!DOCTYPE html>
@@ -51,9 +55,18 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                         <div class="card-body">
                             <form action="assetCoverageReportStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
-                                    <div style="padding: 10px;">Receiver Profile</div>
+                                    <div style="padding: 10px;">Receiver Profile
                                     <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
-                                    <input type="submit" name="submit" value="Export"/>
+                                    </div>
+                                    <div style="padding:5px;">
+                                        Include assets with label <select name="assetlabel"><option value="any">- any -</option><option value="">- blank -</option><?php foreach ($labels as $label) { ?> <option value="<?php echo $label['labeltext']; ?>"><?php echo $label['labeltext']; ?></option><?php } ?></select>
+                                    </div>
+                                    <div style="padding:5px;">
+                                        Data element to export <select name="format"><option value="assetid">AssetID</option><option value="uri">URI</option><option value="filename">Filename</option></select>
+                                    </div>
+                                    <div style="padding:5px;">
+                                        <input type="submit" name="submit" value="Export"/>
+                                    </div>
                                 </div>
                             </form>
                         </div>

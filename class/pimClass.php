@@ -3483,6 +3483,40 @@ function allowedHost($address)
   $db->close();
   return $objects;
  }
+ 
+ function clipboardHasAppsFromSinglePart($userid)
+ {
+  $db=new mysql; $db->connect(); $result=false; $appids=array(); $distinctpartnumbers=array();
+  
+  if($stmt=$db->conn->prepare("select * from clipboard where userid=? and objecttype ='app'"))
+  {
+   $stmt->bind_param('i',$userid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc()){$appids[]=intval($row['objectkey']);}
+  }
+
+  foreach($appids as $appid)
+  {
+   if($appid)
+   {
+    $app=$this->getApp($appid);
+    if($app)
+    {
+        $distinctpartnumbers[$app['partnumber']]='';
+    }
+   }
+  }
+
+  if(count($distinctpartnumbers)==1){$result=true;}
+
+  $db->close();
+  return $result;
+ }
+ 
+ 
+ 
+ 
 
   function deleteClipboardObject($userid,$id)
  {

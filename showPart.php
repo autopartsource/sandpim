@@ -531,6 +531,25 @@ $kitcomponents=$pim->getKitComponents($partnumber);
              refreshClipboard();
             }
 
+            function addAppsToClipboard()
+            {
+                var nodes = document.getElementById('appids').getElementsByTagName("div");
+                for(var i=0; i<nodes.length; i++) 
+                {
+                    //                    console.log(nodes[i].getAttribute('data-appid') + ' - ' + nodes[i].getAttribute('data-description'));
+                    var description = nodes[i].getAttribute('data-description');
+                    var objectdata='';
+                    var objectkey=nodes[i].getAttribute('data-appid');
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', 'ajaxAddToClipboard.php?objecttype=app&description='+description+'&objectkey='+objectkey+'&objectdata='+btoa(objectdata));
+                    xhr.onload = function()
+                    {
+                    };
+                    xhr.send();             
+                }
+                refreshClipboard();
+            }
+
             function flagUnsavedGTIN(){document.getElementById("btnUpdateGTIN").className="btn btn-sm btn-danger";}
             function unflagUnsavedGTIN(){document.getElementById("btnUpdateGTIN").className="btn btn-sm btn-outline-secondary";}
             function flagUnsavedReplacedby(){document.getElementById("btnUpdateReplacedby").className="btn btn-sm btn-danger";}
@@ -607,7 +626,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                 <?php if(count($dependantparts)){?> <span style="font-size:50%;">Base for <?php echo count($dependantparts); ?> <a href="./partsIndex.php?searchtype=startswith&partnumber=&partcategory=any&parttypeid=any&lifecyclestatus=any&basepart=<?php echo $partnumber;?>&limit=20">parts</a></span> <?php }?>
                                 <?php if($pim->validPart($part['basepart'])){?> <span style="font-size:50%;">Based on <a href="./showPart.php?partnumber=<?php echo $part['basepart'];?>"><?php echo $part['basepart'];?></a></span> <?php }?>
                             <div style="float:right;">
-                                <span class="btn btn-info" onclick="addPartToClipboard(),refreshClipboard()">Copy</span>
+                                <span class="btn btn-info" onclick="addPartToClipboard()">Copy</span>
                                 <?php if(count($history)){echo '<span><a class="btn btn-secondary" href="./partHistory.php?partnumber='.$partnumber.'">History</a></span>';} ?>
                             </div>
                             </div>
@@ -831,10 +850,39 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-3 my-col colRight">
                     <div class="card shadow-sm">
-                        <h4 class="card-header text-start"><?php if(count($apps) && $apps[0]['inheritedfrom']!=''){echo '<img src="./inheritance.png" width="20" title="Inherited from '.$apps[0]['inheritedfrom'].'"/>';} echo 'Applications <span class="badge bg-primary rounded-pill">'.count($apps).'</span>'; ?></h4>
-                        <div class="card-body d-flex flex-column scroll">
-                            <?php foreach ($apps as $app) {
-                                echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">' . $vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']) . '</a>';} 
+                        <h4 class="card-header text-start">
+                            <?php
+                            if(count($apps) && $apps[0]['inheritedfrom']!='')
+                            {
+                                echo '<img src="./inheritance.png" width="20" title="Inherited from '.$apps[0]['inheritedfrom'].'"/>';
+                            }
+                            
+                            echo 'Applications <span class="badge bg-primary rounded-pill">'. count($apps) .'</span>';
+                            
+                            if(count($apps))
+                            {// part has apps
+                                
+                                echo '<div style="float:right;"><span class="btn btn-info" onclick="addAppsToClipboard()">Copy</span></div><div style="clear:both;"></div>';
+                            }
+                            else
+                            {// part has no apps
+                                
+                                if($pim->clipboardHasAppsFromSinglePart($_SESSION['userid']))
+                                {
+                                    echo '<div style="float:right;"><span class="btn btn-info" onclick="addClipboardAppsToPart()">Paste</span></div><div style="clear:both;"></div>';
+                                }
+                            }
+                            
+                            ?>
+                        </h4>
+                        <div class="card-body d-flex flex-column scroll" id="appids">
+                            <?php foreach($apps as $app)
+                            {
+                                $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']) . ' ' . niceAppAttributes($app['attributes']);
+                                echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">'.$niceappdescription.'</a>';
+                                echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description="'. base64_encode($niceappdescription).'">'.$app['id'].'</div>';
+                            }
+ 
                             ?>
                         </div>
                     </div>

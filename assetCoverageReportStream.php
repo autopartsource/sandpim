@@ -67,9 +67,24 @@ foreach($partnumbers as $partnumber)
  $assetconnections=$asset->getAssetsConnectedToPart($partnumber); //array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename']);
 
  foreach($assetconnections as $assetconnection)
- {
-  $assettypes[$assetconnection['assettypecode']]='';
-  $matrix[$partnumber][$assetconnection['assettypecode']][]=$assetconnection['assetid'];
+ {  
+  $value=$assetconnection['assetid'];
+  if($_GET['format']=='filename'){$value=$assetconnection['filename'];}
+  if($_GET['format']=='uri'){$value=$assetconnection['uri'];}
+  
+  if($_GET['assetlabel']=='any')
+  {
+   $matrix[$partnumber][$assetconnection['assettypecode']][]=$value;
+   $assettypes[$assetconnection['assettypecode']]='';
+  }
+  else
+  {// specific label was specified
+   if($assetconnection['assetlabel']==$_GET['assetlabel'])
+   {
+    $matrix[$partnumber][$assetconnection['assettypecode']][]=$value;
+    $assettypes[$assetconnection['assettypecode']]='';
+   }
+  }  
  }
 
  if(!array_key_exists('P04', $matrix[$partnumber]))

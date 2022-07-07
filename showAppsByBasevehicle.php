@@ -354,6 +354,7 @@ ksort($fitmentcolumnkeys);
                     };
                     xhr.send();             
                 }
+                refreshClipboard();
             }
 
 
@@ -424,7 +425,7 @@ ksort($fitmentcolumnkeys);
                                         echo '<div data-appid="'.$app['id'].'" data-description="'.$makename.', '.$modelname.', '.$yearid.' ('.  $app['partnumber'].')">'.$app['id'].'</div>';
                                     }
                                     echo '</div>';                        
-                                    echo '<span class="btn btn-info" onclick="addAppsToClipboard(),refreshClipboard()">Copy</span>';
+                                    echo '<span class="btn btn-info" onclick="addAppsToClipboard()">Copy</span>';
                                     echo '</div>';
                                 }?>
 
