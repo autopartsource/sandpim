@@ -117,7 +117,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Upload')
                 
                 $valid_upload=true;
                 $imagedims = getimagesize($destinationpath);
-                $colormodecode = 'RBG';
+                $colormodecode = 'RGB';
                 $assetheight = $imagedims[1];
                 $assetwidth = $imagedims[0];
                 $dimensionUOM = 'PX';

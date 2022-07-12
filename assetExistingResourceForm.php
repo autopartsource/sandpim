@@ -48,7 +48,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
         {
             $displayableimage=true;
             $imagedims = getimagesize($destinationpath);
-            $colormodecode = 'RBG';
+            $colormodecode = 'RGB';
             $assetwidth = intval($imagedims[0]);
             $assetheight = intval($imagedims[1]);
             if($assetwidth==0 || $assetheight==0){$assetwidth=100;$assetheight=100;}
@@ -99,7 +99,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
         {// does not seem to be an image
             
             $basename=$_POST['basename'];
-            $colormodecode = 'RBG';
+            $colormodecode = 'RGB';
             $assetwidth=100;$assetheight=100;
             $dimensionUOM = 'PX';
             $filetype = '';

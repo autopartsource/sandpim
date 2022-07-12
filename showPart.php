@@ -615,20 +615,20 @@ $kitcomponents=$pim->getKitComponents($partnumber);
 
                 foreach($connectedassets as $connectedasset)
                 {
-                    if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='' && $connectedasset['filetype']=='JPG')
+                    if($connectedasset['assettypecode']=='P04' && $connectedasset['uri']!='' && ($connectedasset['filetype']=='JPG' || $connectedasset['filetype']=='PNG'))
                     {
                         echo '<div><a href="./showAsset.php?assetid='.$connectedasset['assetid'].'"><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></a></div>';
                         $foundPrimaries=true;
                     }
                 }
 
-                foreach($connectedassets as $connectedasset){if($connectedasset['assettypecode']!='P04' && $connectedasset['filetype']=='JPG' && $connectedasset['uri']!=''){$foundNonprimaries=true;}}
+                foreach($connectedassets as $connectedasset){if($connectedasset['assettypecode']!='P04' && ($connectedasset['filetype']=='JPG' || $connectedasset['filetype']=='PNG') && $connectedasset['uri']!=''){$foundNonprimaries=true;}}
                 
                 if($foundPrimaries && $foundNonprimaries){echo '<hr/>';}
 
                 foreach($connectedassets as $connectedasset)
                 {
-                    if($connectedasset['assettypecode']!='P04' && $connectedasset['filetype']=='JPG' && $connectedasset['uri']!='')
+                    if($connectedasset['assettypecode']!='P04' && ($connectedasset['filetype']=='JPG'  || $connectedasset['filetype']=='PNG') && $connectedasset['uri']!='')
                     {
                         echo '<div><a href="./showAsset.php?assetid='.$connectedasset['assetid'].'"><img class="img-thumbnail" src="'.$connectedasset['uri'].'" /></a></div>';
                     }

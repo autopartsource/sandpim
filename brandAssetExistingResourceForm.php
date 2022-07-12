@@ -44,7 +44,7 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve')
         {
             $valid_upload=true;
             $imagedims = getimagesize($destinationpath);
-            $colormodecode = 'RBG';
+            $colormodecode = 'RGB';
             $assetwidth = $imagedims[0];
             $assetheight = $imagedims[1];
             $dimensionUOM = 'PX';

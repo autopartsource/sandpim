@@ -754,6 +754,36 @@ function countAppsByPartcategories($partcategories)
   return $part;
  }
 
+ function getPartsSinceFirststockedDate($date)
+ {
+  $db = new mysql; $db->connect(); $parts=array();
+  
+  if($stmt=$db->conn->prepare('select * from part where firststockedDate>=? order by firststockedDate desc'))
+  {
+   $stmt->bind_param('s', $date);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $parts[]=array('partnumber'=>$row['partnumber'],
+        'partcategory'=>$row['partcategory'],
+        'parttypeid'=>$row['parttypeid'],
+        'replacedby'=>$row['replacedby'],
+        'lifecyclestatus'=>$row['lifecyclestatus'],
+        'internalnotes'=>$row['internalnotes'],
+        'description'=>$row['description'],
+        'GTIN'=>$row['GTIN'],
+        'UNSPC'=>$row['UNSPC'],
+        'createdDate'=>$row['createdDate'],
+        'firststockedDate'=>$row['firststockedDate'],
+        'discontinuedDate'=>$row['discontinuedDate'],
+        'oid'=>$row['oid'],
+        'basepart'=>$row['basepart']);    
+   }
+  }
+  $db->close();
+  return $parts;
+ }
  
  
  function getParts($partnumber,$matchtype,$partcategory,$parttypeid,$lifecyclestatus,$basepart,$limit)
@@ -3640,13 +3670,20 @@ function updateAppSummary($partnumber,$summary)
  function updatePartBalance($partnumber,$qoh,$amd)
  {
   $db=new mysql; $db->connect(); $insertednew=false;
-  if($stmt=$db->conn->prepare('select * from part_balance where partnumber=?'))
+  if($stmt=$db->conn->prepare('select part_balance.qoh,part.firststockedDate from part_balance left join part on part_balance.partnumber=part.partnumber where part_balance.partnumber=?'))
   {
    $stmt->bind_param('s',$partnumber);
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {// record exists for this part
+ 
+    if($row['qoh']==0 && $row['firststockedDate']=='0000-00-00' && $qoh>0)
+    {// first stocking event on a part that existed in the balance table
+     $this->setPartFirststockedDate($partnumber, date('Y-m-d'), true);
+     $this->logPartEvent($partnumber, 0, 'first stocked date set - existing balance record changed to non-zero qoh', '');
+    }
+    
     if($stmt=$db->conn->prepare('update part_balance set qoh=?, amd=?, updateddate=now() where partnumber=?'))
     {
      $stmt->bind_param('dds',$qoh, $amd, $partnumber);
@@ -3660,6 +3697,13 @@ function updateAppSummary($partnumber,$summary)
      $stmt->bind_param('sdd', $partnumber, $qoh, $amd);
      $stmt->execute();
      $insertednew=true;
+
+     if($qoh>0)
+     {// first stocking event on a part that is just now being written into the part_balance table
+      $this->setPartFirststockedDate($partnumber, date('Y-m-d'), true);
+      $this->logPartEvent($partnumber, 0, 'first stocked date set - new balance record created with non-zero qoh', '');
+     }
+     
     }      
    }
   }

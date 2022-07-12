@@ -122,6 +122,13 @@ if (isset($_POST['input']))
                             }
                             break;
 
+                        case 'firststockeddate':
+                            $pim->setPartFirststockedDate($partnumber, $attributevalue,true);
+                            $newoid=$pim->getOIDofPart($partnumber);
+                            $pim->logPartEvent($partnumber, $_SESSION['userid'], 'first stock date set to ['.$attributevalue.'] by mass import', $newoid);
+                            $importcount++;
+                            break;
+                            
 
                         default: 
                             // attribute name is not reserved, and not a PAdb numeric ID
@@ -184,7 +191,7 @@ if (isset($_POST['input']))
                                     <hr>
                                     <p>Part numbers are validated. If the second column is a number, it is assumed to be a PAdb ID.
                                     <br>Non-numeric values are assumed to be user-defined attribute names.
-                                    <br>Attribute names GTIN, parttypeid, lifecyclestatus, replacedby are special cases that will apply to the part if used.</p>
+                                    <br>Attribute names GTIN, parttypeid, lifecyclestatus, replacedby, firststockeddate are special cases that will apply to the part if used.</p>
                                 
                                 
                                 <textarea name="input" style="width:100%;height:200px;"></textarea>

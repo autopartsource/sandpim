@@ -59,6 +59,8 @@ $jobstemp=$pim->getBackgroundjobs('%', '%');
 $myjobs=array(); foreach($jobstemp as $job){if($job['userid']==$_SESSION['userid']){$myjobs[]=$job;}}
 
 $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLength', 80));
+$firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDaysBack', 7));
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -152,6 +154,37 @@ $logpreviewlength = intval($configGet->getConfigValue('logPreviewDescriptionLeng
                                 </div>
                             </div>
 
+
+                            <?php 
+                            $sincefirststockeddate=date('Y-m-d', time()-(24*3600*$firststockeddaysback));
+                            $recentparts=$pim->getPartsSinceFirststockedDate($sincefirststockeddate);
+                            if(count($recentparts)){ ?>
+                            <div class="card">
+                                <h5 class="card-header text-start">Recent Part Additions (since <?php echo $sincefirststockeddate;?>)</h5>
+                                <div class="card-body">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Partnumber</th>
+                                                <th scope="col">Type</th>
+                                                <th scope="col">Category</th>
+                                                <th scope="col">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($recentparts as $recentpart){?>
+                                            <tr>
+                                                <td><a href="showPart.php?partnumber=<?php echo $recentpart['partnumber'];?>" class="btn btn-secondary"><?php echo $recentpart['partnumber'];?></a></td>
+                                                <td><?php echo $pcdb->parttypeName($recentpart['parttypeid']);?></td>
+                                                <td><?php echo $pim->partCategoryName($recentpart['partcategory']);?></td>
+                                                <td><?php echo $pcdb->lifeCycleCodeDescription($recentpart['lifecyclestatus']);?></td>
+                                            </tr>
+                                            <?php }?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <?php }?>
 
                             
                             <?php if ($issuescount>0) {
