@@ -4197,6 +4197,13 @@ function addAuditRequest($requesttype,$requestdata)
 }
  
  
+
+function partHealthScore($partnumber)
+{
+ $score=100;    
+    
+ return $score;
+}
  
  
 }?>

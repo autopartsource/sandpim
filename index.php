@@ -125,6 +125,38 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                             </div>
                             <?php }?>
 
+                            <?php 
+                            $sincefirststockeddate=date('Y-m-d', time()-(24*3600*$firststockeddaysback));
+                            $recentparts=$pim->getPartsSinceFirststockedDate($sincefirststockeddate);
+                            if(count($recentparts)){ ?>
+                            <div class="card">
+                                <h5 class="card-header text-start">Recent Part Additions (First-stocked-date since <?php echo $sincefirststockeddate;?>)</h5>
+                                <div class="card-body">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Partnumber</th>
+                                                <th scope="col">Type</th>
+                                                <th scope="col">Category</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">First Stocked</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach($recentparts as $recentpart){?>
+                                            <tr>
+                                                <td><a href="showPart.php?partnumber=<?php echo $recentpart['partnumber'];?>" class="btn btn-secondary"><?php echo $recentpart['partnumber'];?></a></td>
+                                                <td><?php echo $pcdb->parttypeName($recentpart['parttypeid']);?></td>
+                                                <td><?php echo $pim->partCategoryName($recentpart['partcategory']);?></td>
+                                                <td><?php echo $pcdb->lifeCycleCodeDescription($recentpart['lifecyclestatus']);?></td>
+                                                <td><?php echo $recentpart['firststockedDate'];?></td>
+                                            </tr>
+                                            <?php }?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <?php }?>
 
                             <div class="card">
                                 <h5 class="card-header text-start">Metrics</h5>
@@ -153,38 +185,6 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                     </table>
                                 </div>
                             </div>
-
-
-                            <?php 
-                            $sincefirststockeddate=date('Y-m-d', time()-(24*3600*$firststockeddaysback));
-                            $recentparts=$pim->getPartsSinceFirststockedDate($sincefirststockeddate);
-                            if(count($recentparts)){ ?>
-                            <div class="card">
-                                <h5 class="card-header text-start">Recent Part Additions (since <?php echo $sincefirststockeddate;?>)</h5>
-                                <div class="card-body">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Partnumber</th>
-                                                <th scope="col">Type</th>
-                                                <th scope="col">Category</th>
-                                                <th scope="col">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach($recentparts as $recentpart){?>
-                                            <tr>
-                                                <td><a href="showPart.php?partnumber=<?php echo $recentpart['partnumber'];?>" class="btn btn-secondary"><?php echo $recentpart['partnumber'];?></a></td>
-                                                <td><?php echo $pcdb->parttypeName($recentpart['parttypeid']);?></td>
-                                                <td><?php echo $pim->partCategoryName($recentpart['partcategory']);?></td>
-                                                <td><?php echo $pcdb->lifeCycleCodeDescription($recentpart['lifecyclestatus']);?></td>
-                                            </tr>
-                                            <?php }?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <?php }?>
 
                             
                             <?php if ($issuescount>0) {
