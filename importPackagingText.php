@@ -139,7 +139,7 @@ if (isset($_POST['input']))
                                     <h6 class="alert-heading">Paste tab-delimited data (including header row):</h6>
                                     <p>PartNumber, PackageUOM,	QuantityofEaches, [Weight], [WeightsUOM], [InnerQuantity], [InnerQuantityUOM], [ShippingHeight], [ShippingWidth], [ShippingLength], [DimensionsUOM]</p>
                                 </div>                                    
-                                <textarea style="width:100%;" name="input" rows="15"></textarea>
+                                <textarea style="width:100%;" name="input" rows="15"><?php echo "PartNumber\tPackageUOM\tQuantityofEaches\tWeight\tWeightsUOM\tInnerQuantity\tInnerQuantityUOM\tShippingHeight\tShippingWidth\tShippingLength\tDimensionsUOM";?></textarea>
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
                             <?php foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}?>

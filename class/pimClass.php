@@ -4200,8 +4200,175 @@ function addAuditRequest($requesttype,$requestdata)
 
 function partHealthScore($partnumber)
 {
- $score=100;    
+ // 10 points each: 
+ // has package(s) with weight
+ // has package(s) with dims
+ // has GTIN
+ // has public primary photo
+ // has public non-primary photo
+ // has competitive interchange
+ // has apps
+ // has attributes
+ // has prices
+ // has descriptions
     
+ $db = new mysql; $db->connect(); $score=0;
+
+ if($stmt=$db->conn->prepare("select part_asset.id from part_asset,asset where part_asset.partnumber=asset.assetId and partnumber=? and public=1 and part_asset.assettypecode='P04'"))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $score+=10;
+    }
+   }
+  }
+ }
+
+ if($stmt=$db->conn->prepare("select part_asset.id from part_asset,asset where part_asset.partnumber=asset.assetId and partnumber=? and public=1 and part_asset.assettypecode<>'P04'"))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $score+=10;
+    }
+   }
+  }
+ }
+
+ if($stmt=$db->conn->prepare('select price.id from price where partnumber=?'))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $score+=10;
+    }
+   }
+  }
+ }
+
+ if($stmt=$db->conn->prepare('select part_attribute.id from part_attribute where partnumber=? and PAID>0'))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $score+=10;
+    }
+   }
+  }
+ }
+  
+ if($stmt=$db->conn->prepare('select id from interchange where partnumber=?'))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $score+=10;
+    }
+   }
+  }
+ }
+   
+ if($stmt=$db->conn->prepare('select GTIN from part where partnumber=?'))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     if(strlen(trim($row['GTIN']))==12)
+     {
+      $score+=10;
+     }
+    }
+   }
+  }
+ }
+  
+ if($stmt=$db->conn->prepare('select id from package where partnumber=? and weight>0'))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $score+=10;
+    }
+   }
+  }
+ }
+  
+ if($stmt=$db->conn->prepare('select id from package where partnumber=? and (shippingheight+shippingwidth+shippinglength)>0'))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $score+=10;
+    }
+   }
+  }
+ }
+ 
+  
+ if($stmt=$db->conn->prepare('select id from application where partnumber=? and status=0'))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $score+=10;
+    }
+   }
+  }
+ }
+ 
+ if($stmt=$db->conn->prepare('select id from part_description where partnumber=?'))
+ {
+  if($stmt->bind_param('s', $partnumber))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $score+=10;
+    }
+   }
+  }
+ }
+
+ $db->close(); 
  return $score;
 }
  

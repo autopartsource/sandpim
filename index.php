@@ -136,6 +136,7 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                         <thead>
                                             <tr>
                                                 <th scope="col">Partnumber</th>
+                                                <th scope="col">Health Score</th>
                                                 <th scope="col">Type</th>
                                                 <th scope="col">Category</th>
                                                 <th scope="col">Status</th>
@@ -143,9 +144,23 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach($recentparts as $recentpart){?>
+                                            <?php foreach($recentparts as $recentpart){
+                                                $healthscore=$pim->partHealthScore($recentpart['partnumber']);
+                                                $healthcolor='#FF8A65'; 
+                                                if($healthscore>=10){$healthcolor='#FFB74D';} 
+                                                if($healthscore>=20){$healthcolor='#FFD54F';} 
+                                                if($healthscore>=30){$healthcolor='#FFF176';} 
+                                                if($healthscore>=40){$healthcolor='#DCE775';} 
+                                                if($healthscore>=50){$healthcolor='#AED581';} 
+                                                if($healthscore>=60){$healthcolor='#81C784';} 
+                                                if($healthscore>=70){$healthcolor='#4DB6AC';} 
+                                                if($healthscore>=80){$healthcolor='#4DD0E1';} 
+                                                if($healthscore>=90){$healthcolor='#4FC3F7';} 
+                                                
+                                                ?>
                                             <tr>
                                                 <td><a href="showPart.php?partnumber=<?php echo $recentpart['partnumber'];?>" class="btn btn-secondary"><?php echo $recentpart['partnumber'];?></a></td>
+                                                <td><div style="width:40px; border-radius: 8px; background-color: <?php echo $healthcolor;?>;"><?php echo $healthscore;?></div></td>
                                                 <td><?php echo $pcdb->parttypeName($recentpart['parttypeid']);?></td>
                                                 <td><?php echo $pim->partCategoryName($recentpart['partcategory']);?></td>
                                                 <td><?php echo $pcdb->lifeCycleCodeDescription($recentpart['lifecyclestatus']);?></td>

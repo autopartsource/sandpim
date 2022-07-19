@@ -854,6 +854,8 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                     <tr>
                                     <tr><th>Base Part</th><td><div style="float:left;"><input type="text" id="basepart" oninput="flagUnsavedBasepart();" value="<?php echo $part['basepart']?>"/></div><div style="float:left;"><button id="btnUpdateBasepart" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','basepart'); unflagUnsavedBasepart();">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php if($vio){echo '<tr><th>VIO ('.$viogeography.' '.$vioyearquarter.')</th><td>'.number_format($vio,0,'.',',').'</td><tr>';}?>
+                                    <tr><th>Dates</th><td><div style="float:left;">First Stocked <input type="text" id="firststockeddate" oninput="flagUnsavedFirststockeddate();" value="<?php echo $part['firststockedDate']?>"/></div><div style="float:left;"><button id="btnUpdateFirststockedDate" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','firststockeddate'); unflagUnsavedFirststockeddate();">Update</button></div><div style="clear:both;"></div></td><tr>
+                                    <tr><th>Health Score</th><td><div style="float:left;"></div><?php echo $pim->partHealthScore($part['partnumber']);?><div style="clear:both;"></div></td><tr>
                                     
                                     <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
                                 </table>

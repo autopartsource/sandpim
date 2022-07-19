@@ -541,6 +541,7 @@ class setup
         firststockedDate date not null,
         discontinuedDate date not null,
         oid varchar(255) not null,
+        basepart varchar(20) not null,
         PRIMARY KEY (partnumber),
         INDEX idx_partcategory (partcategory),
         INDEX idx_parttypeid (parttypeid),
