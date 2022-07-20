@@ -247,7 +247,8 @@ class XLSXWorksheet {
 			$index = 0;
 
 			for ($i = $colLen-1; $i >= 0; $i--) {
-				$index += (ord($col{$i}) - 64) * pow(26, $colLen-$i-1);
+// LPS - depricated array access {}				$index += (ord($col{$i}) - 64) * pow(26, $colLen-$i-1);
+				$index += (ord($col[$i]) - 64) * pow(26, $colLen-$i-1);
 			}
 			return array($index-1, $row-1);
 		}

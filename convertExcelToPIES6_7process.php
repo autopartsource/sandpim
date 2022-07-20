@@ -120,10 +120,10 @@ if($validUpload)
  }
  
 //----------------------- marketing copy -----------------------
+ $marketingcopys=array();
  if(in_array('MarketingCopy',$sheetNames))
  {
   $marketingCopySheet=$xlsx->getSheetData('MarketingCopy');
-  $marketingcopys=array();
   $MarketCopyTypeFieldIndex=-1; $LanguageCodeFieldIndex=-1; $MarketCopyCodeFieldIndex=-1; $MarketCopyReferenceFieldIndex=-1; $MarketCopySubCodeFieldIndex=-1; $MarketCopySubCodeReferenceFieldIndex=-1; $RecordSequenceFieldIndex=-1; $MarketCopyFieldIndex=-1;
 
   for($i=0; $i<=count($marketingCopySheet[0])-1; $i++)
