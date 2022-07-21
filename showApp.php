@@ -700,20 +700,26 @@ if(isset($_GET['categories']))
                                             <div id="newvcdbattributeform" style="display:none;padding: 30px;">
                                                 <select id="vcdbattribute"> 
                                                     <?php
-                                                    $vcdbsystems = array();
-                                                    foreach ($allattributes as $attributekey => $allattributename) {
-                                                        $chunks = explode('_', $attributekey);
-                                                        $vcdbsystem = $chunks[0];
-                                                        $vcdbsystems[$vcdbsystem][$attributekey] = $allattributename;
+                                                    
+                                                    $acestags = array(); $taghashes=array();
+                                                    
+                                                    foreach ($allattributes as $allattribute)
+                                                    {                                                        
+                                                            $acestags[$allattribute['name']][]=$allattribute;
                                                     }
 
-                                                    foreach ($vcdbsystems as $vcdbsystem => $attributes) {
-                                                        echo '<optgroup label="' . $vcdbsystem . '">';
-                                                        foreach ($attributes as $attributekey => $attributename) {
-                                                            echo '<option value="' . $attributekey . '">' . $attributename . '</option>';
+                                                    foreach ($acestags as $acestagname=>$options) 
+                                                    {
+                                                        echo '<optgroup label="' . $acestagname . '">';
+                                                        foreach($options as $option)
+                                                        {
+                                                            if(array_key_exists($option['name'].'_'.$option['value'], $taghashes)){continue;}
+                                                            $taghashes[$option['name'].'_'.$option['value']]='';
+                                                            echo '<option value="'.$option['name'].'_'.$option['value']. '">'.$option['display'].'</option>';
                                                         }
                                                         echo '</optgroup>';
                                                     }
+                                                    
                                                     ?>
                                                 </select>
                                                 <button onclick="addVCdb()">Add VCdb Attribute</button>

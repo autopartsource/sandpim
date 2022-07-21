@@ -260,10 +260,42 @@ foreach($appids as $appid)
                 $pim->recordIssue('APP/REFERENCE/BASEVEHICLEID','',$appid,'BaseVehicleID ('.$app['basevehicleid'].') is not valid','background auditor', $issuehash);
             }
         }
+        
+        // validate vcdb attributes valid for basevehicle
+
+        
+        
+        
+        
     }
-    // validate attributes (vcdb, qdb)
+    
+    // look for duplicate attriutes (example multiple instances of "Submodel" on the app)
+    $attributestemp=array();
+    foreach($app['attributes'] as $appattribute)
+    {
+        if($appattribute['type']=='note'){continue;}
+        $tempkey=$appattribute['name'].'_'.$appattribute['type'];
+        if(array_key_exists($tempkey, $attributestemp))
+        {
+            $issuehash=md5('APP/ATTRIBUTE/DUPLICATE'.$appid.'Duplicate attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] found on app'.'background auditor');
+            if(!$pim->getIssueByHash($issuehash))
+            {// this issue is not already recorded 
+                $pim->recordIssue('APP/ATTRIBUTE/DUPLICATE','',$appid,'Duplicate attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] found on app','background auditor', $issuehash);
+            }
+        }
+        else
+        {// first time seeing this combo of name+type on this app add it to the list
+            $attributestemp[$tempkey]='';
+        }
+    }
     
     
+    
+    
+    
+    
+
+        
 }
 
 

@@ -1,12 +1,13 @@
 <?php
-/*
- core functions - mostly related to applications
-*/
 include_once("mysqlClass.php");
-
 
 class pim
 {
+
+ function buildVersion()
+ {
+  return '2022-07-20';
+ }
 
  function uuidv4()
  {
@@ -4371,6 +4372,5 @@ function partHealthScore($partnumber)
  $db->close(); 
  return $score;
 }
- 
  
 }?>
