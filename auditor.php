@@ -262,11 +262,25 @@ foreach($appids as $appid)
         }
         
         // validate vcdb attributes valid for basevehicle
-
-        
-        
-        
-        
+        $validattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid']);
+        foreach($app['attributes'] as $appattribute)
+        {
+            if($appattribute['type']!='vcdb'){continue;}
+            $foundvalid=false;
+            foreach($validattributes as $validattribute)
+            {
+                if($appattribute['name']==$validattribute['name'] && $appattribute['value']==$validattribute['value']){$foundvalid=true; break;}
+            }
+            
+            if(!$foundvalid)
+            {
+                $issuehash=md5('APP/ATTRIBUTE/INVALID'.$appid.'Invalid attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] for basevehicle found on app'.'background auditor');
+                if(!$pim->getIssueByHash($issuehash))
+                {// this issue is not already recorded 
+                    $pim->recordIssue('APP/ATTRIBUTE/INVALID','',$appid,'Invalid attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] for basevehicle found on app','background auditor', $issuehash);
+                }
+            }
+        }       
     }
     
     // look for duplicate attriutes (example multiple instances of "Submodel" on the app)
