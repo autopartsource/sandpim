@@ -517,7 +517,9 @@ function getValidEXPIvalues($code)
 |23 | UOM for Weight                                            | H46                  |            10 |
 |27 | Package UOM                                               | H15                  |            10 |
 */
-  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect(); 
+  $db = new mysql; $db->dbname=$db->pcdbname;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect(); 
   $records=array();
   $type=0;
   
@@ -552,7 +554,9 @@ function getValidEXPIvalues($code)
  
  function getUoMsForPrice()
  {
-  $db = new mysql; $db->dbname=$db->pcdbname; $db->connect(); 
+  $db = new mysql; $db->dbname=$db->pcdbname; 
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect(); 
   $records=array();
   if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=34 order by CodeDescription'))
   {
