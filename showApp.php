@@ -121,7 +121,7 @@ foreach($app['attributes'] as $appattribute)
 $nicefitmentarray=array(); foreach($niceattributes as $niceattribute){$nicefitmentarray[]=$niceattribute['text'];}
 $nicefitmentstring=implode('; ',$nicefitmentarray);
 
-$allattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid']); //print_r($allattributes);
+$allattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid'],false); //print_r($allattributes);
 
 $appassets=$pim->getAppAssets($appid);
 $partassets=$asset->getAssetsConnectedToPart($app['partnumber']);
@@ -704,8 +704,8 @@ if(isset($_GET['categories']))
                                                     $acestags = array(); $taghashes=array();
                                                     
                                                     foreach ($allattributes as $allattribute)
-                                                    {                                                        
-                                                            $acestags[$allattribute['name']][]=$allattribute;
+                                                    {       
+                                                        $acestags[$allattribute['name']][]=$allattribute;
                                                     }
 
                                                     foreach ($acestags as $acestagname=>$options) 

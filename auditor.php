@@ -263,14 +263,14 @@ foreach($appids as $appid)
         
         // validate vcdb attributes valid for basevehicle
         // treat U/K as wildcard
-        $validattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid']);
+        $validattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid'],true);
         foreach($app['attributes'] as $appattribute)
         {
             if($appattribute['type']!='vcdb'){continue;}
             $foundvalid=false;
             foreach($validattributes as $validattribute)
             {
-                if(($appattribute['name']==$validattribute['name'] && $appattribute['value']==$validattribute['value']) || ($appattribute['name']==$validattribute['name'] && strpos('U/K',$validattribute['display'])!==false))
+                if(($appattribute['name']==$validattribute['name'] && $appattribute['value']==$validattribute['value']) || ($appattribute['name']==$validattribute['name'] && strpos($validattribute['display'],'U/K')!==false))
                 {
                     $foundvalid=true; break;
                     

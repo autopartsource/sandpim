@@ -457,7 +457,7 @@ class vcdb
  
  function niceVCdbAttributePair($attributePair)
  {
-  $db=new mysql; $db->dbname=$db->vcdbname; $db->connect(); $value=$attributePair['value'];
+  $db=new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect(); $value=$attributePair['value'];
   $nicevalue='unknown - '.$attributePair['name'].'='.$attributePair['value'];
 
   if($attributePair['name'] == 'SubModel')
@@ -800,14 +800,14 @@ class vcdb
 
 
  // return a name/value pair list for filling a select box of available attributes for a given bas vehicle
- function getACESattributesForBasevehicle($basevehicleid)
+ function getACESattributesForBasevehicle($basevehicleid, $includeunknowns=false)
  {
-  $attributesList=array();
+  $attributesList=array(); $wildcard='U/K'; if($includeunknowns){$wildcard='';}
   $vehicles = $this->getVehiclesForBaseVehicleid($basevehicleid);
   foreach($vehicles as $vehicle) 
   {
    $attributesList[]=array('name'=>'SubModel', 'value'=>$vehicle['submodelid'],'display'=>$vehicle['submodelname']);
-   $attributesList[]=array('name'=>'Region', 'value'=>$vehicle['regionid'],'display'=>'Region: '.$vehicle['regionname']);       
+   $attributesList[]=array('name'=>'Region', 'value'=>$vehicle['regionid'],'display'=>$vehicle['regionname']);       
    $engines = $this->getEnginesForVehicleid($vehicle['vehicleid']);  
    $drivetypes = $this->getDriveTypesForVehicleid($vehicle['vehicleid']);
    $brakeconfigs = $this->getBrakeConfigsForVehicleid($vehicle['vehicleid']);
@@ -821,79 +821,74 @@ class vcdb
 
    foreach($engines as $engine)
    {
-    $attributesList[]=array('name'=>'EngineBase','value'=>$engine['enginebaseid'],'display'=>'Engine Base: '.$engine['blocktype'].$engine['cylinders'].' '.$engine['liter'].'L ('.$engine['cc'].' cc)');
+    $attributesList[]=array('name'=>'EngineBase','value'=>$engine['enginebaseid'],'display'=>$engine['blocktype'].$engine['cylinders'].' '.$engine['liter'].'L ('.$engine['cc'].' cc)');
      
-    if($engine['enginedesignationname']!='-')
+    if($engine['enginedesignationname']!='-' && $engine['enginedesignationname']!=$wildcard)
     {
-     $attributesList[]=array('name'=>'EngineDesignation','value'=>$engine['enginedesignationid'],'display'=>'Engine Designation: '.$engine['enginedesignationname']);
+     $attributesList[]=array('name'=>'EngineDesignation','value'=>$engine['enginedesignationid'],'display'=>$engine['enginedesignationname']);
     }
-    if($engine['enginevinname']!='-') { $attributesList[]=array('name'=>'EngineVIN','value'=>$engine['enginevinid'],'display'=>'Engine VIN: '.$engine['enginevinname']);}
-    if($engine['engineversion']!='N/A' && $engine['engineversion']!='N/R') { $attributesList[]=array('name'=>'EngineVersion','value'=>$engine['engineversionid'],'display'=>'Engine Version: '.$engine['engineversion']);}
+    if($engine['enginevinname']!='-' && $engine['enginevinname']!=$wildcard && $engine['enginevinname']!='N/A' && $engine['enginevinname']!='N/R') { $attributesList[]=array('name'=>'EngineVIN','value'=>$engine['enginevinid'],'display'=>$engine['enginevinname']);}
+    if($engine['engineversion']!='-' && $engine['engineversion']!=$wildcard && $engine['engineversion']!='N/A' && $engine['engineversion']!='N/R') { $attributesList[]=array('name'=>'EngineVersion','value'=>$engine['engineversionid'],'display'=>$engine['engineversion']);}
 
-    $attributesList[]=array('name'=>'EngineMfr','value'=>$engine['enginemfrid'],'display'=>'Engine Mfr: '.$engine['mfrname']); 
-    $attributesList[]=array('name'=>'FuelDeliveryType','value'=>$engine['fueldeliverytypeid'],'display'=>'Fuel Delivery Type: '.$engine['fueldeliverytypename']); 
-    $attributesList[]=array('name'=>'Aspiration','value'=>$engine['aspirationid'],'display'=>'Aspiration: '.$engine['aspirationname']); 
-    $attributesList[]=array('name'=>'CylinderHeadType','value'=>$engine['cylinderheadtypeid'],'display'=>'Cylinder Head Type: '.$engine['cylinderheadtypename']); 
-    $attributesList[]=array('name'=>'FuelType','value'=>$engine['fueltypeid'],'display'=>'Fuel: '.$engine['fueltypename']);
-    $attributesList[]=array('name'=>'ValvesPerEngine','value'=>$engine['valvesid'],'display'=>'Valves: '.$engine['valvesperengine']);
+    if($engine['mfrname']!=$wildcard){$attributesList[]=array('name'=>'EngineMfr','value'=>$engine['enginemfrid'],'display'=>$engine['mfrname']); }
+    if($engine['fueldeliverytypename']!=$wildcard && $engine['fueldeliverytypename']!='-'){$attributesList[]=array('name'=>'FuelDeliveryType','value'=>$engine['fueldeliverytypeid'],'display'=>$engine['fueldeliverytypename']); }
+    if($engine['aspirationname']!=$wildcard && $engine['aspirationname']!='-'){$attributesList[]=array('name'=>'Aspiration','value'=>$engine['aspirationid'],'display'=>$engine['aspirationname']); }
+    if($engine['cylinderheadtypename']!=$wildcard && $engine['cylinderheadtypename']!='N/R'){$attributesList[]=array('name'=>'CylinderHeadType','value'=>$engine['cylinderheadtypeid'],'display'=>$engine['cylinderheadtypename']); }
+    if($engine['fueltypename']!=$wildcard){$attributesList[]=array('name'=>'FuelType','value'=>$engine['fueltypeid'],'display'=>$engine['fueltypename']);}
+    if($engine['valvesperengine']!='-' && $engine['valvesperengine']!='N/R' && $engine['valvesperengine']!=$wildcard){$attributesList[]=array('name'=>'ValvesPerEngine','value'=>$engine['valvesid'],'display'=>$engine['valvesperengine']);}
    }
 
    foreach($drivetypes as $drivetype)
    {
-    $attributesList[]=array('name'=>'DriveType','value'=>$drivetype['drivetypeid'], 'display'=>'Drive Type: '. $drivetype['value']);
+    if($drivetype['value']!=$wildcard){$attributesList[]=array('name'=>'DriveType','value'=>$drivetype['drivetypeid'], 'display'=>$drivetype['value']);}
    }
 
    foreach($brakeconfigs as $brakeconfig)
    {
-    $attributesList[]=array('name'=>'FrontBrakeType','value'=>$brakeconfig['frontbraketypeid'],'display'=>'Front '.$brakeconfig['frontbraketypename'].' Brakes');
-    $attributesList[]=array('name'=>'RearBrakeType','value'=>$brakeconfig['rearbraketypeid'],'display'=>'Rear '.$brakeconfig['rearbraketypename'].' Brakes');
-    if($brakeconfig['brakeabsname']!='N/A'){$attributesList[]=array('name'=>'BrakeABS','value'=>$brakeconfig['brakeabsid'],'display'=>$brakeconfig['brakeabsname']);}
-    $attributesList[]=array('name'=>'BrakeSystem','value'=>$brakeconfig['brakesystemid'],'display'=>$brakeconfig['brakesystemname'].' Brakes');
+    if($brakeconfig['frontbraketypename']!=$wildcard){$attributesList[]=array('name'=>'FrontBrakeType','value'=>$brakeconfig['frontbraketypeid'],'display'=>'Front '.$brakeconfig['frontbraketypename']);}
+    if($brakeconfig['rearbraketypename']!=$wildcard){$attributesList[]=array('name'=>'RearBrakeType','value'=>$brakeconfig['rearbraketypeid'],'display'=>'Rear '.$brakeconfig['rearbraketypename']);}
+    if($brakeconfig['brakeabsname']!=$wildcard && $brakeconfig['brakeabsname']!='N/A'){$attributesList[]=array('name'=>'BrakeABS','value'=>$brakeconfig['brakeabsid'],'display'=>$brakeconfig['brakeabsname']);}
+    if($brakeconfig['brakesystemname']!=$wildcard){$attributesList[]=array('name'=>'BrakeSystem','value'=>$brakeconfig['brakesystemid'],'display'=>$brakeconfig['brakesystemname']);}
    }
 
    foreach($bodystyles as $bodystyle)
    {
-    $attributesList[]=array('name'=>'BodyNumDoors','value'=>$bodystyle['bodynumdoorsid'],'display'=>$bodystyle['bodynumdoors'].' Door'); 
-    $attributesList[]=array('name'=>'BodyType','value'=>$bodystyle['bodytypeid'],'display'=>$bodystyle['bodytypename']);
+    if($bodystyle['bodynumdoors']!=$wildcard){$attributesList[]=array('name'=>'BodyNumDoors','value'=>$bodystyle['bodynumdoorsid'],'display'=>$bodystyle['bodynumdoors'].' Door'); }
+    if($bodystyle['bodytypename']!=$wildcard){$attributesList[]=array('name'=>'BodyType','value'=>$bodystyle['bodytypeid'],'display'=>$bodystyle['bodytypename']);}
    }
 
    foreach($bodycodes as $bodycode)
    {
-    if($bodycode['mfrbodycodename']!='N/A')
-    {
-     $attributesList[]=array('name'=>'MfrBodyCode','value'=>$bodycode['mfrbodycodeid'],'display'=>'Body Code: '.$bodycode['mfrbodycodename']);
-    }
+    if($bodycode['mfrbodycodename']!='N/A' && $bodycode['mfrbodycodename']!=$wildcard){$attributesList[]=array('name'=>'MfrBodyCode','value'=>$bodycode['mfrbodycodeid'],'display'=>$bodycode['mfrbodycodename']);}
    }
   
    foreach($transmissions as $transmission)
    {
-    $attributesList[]=array('name'=>'TransmissionControlType','value'=>$transmission['transmissioncontroltypeid'],'display'=>$transmission['transmissioncontroltypename'].' Transmission');
-    $attributesList[]=array('name'=>'TransmissionNumSpeeds','value'=>$transmission['transmissionnumspeedsid'],'display'=>$transmission['transmissionnumspeeds'].' Speed Transmission');
-    if($transmission['transmissiontypename']!='N/A'){$attributesList[]=array('name'=>'TransmissionType','value'=>$transmission['transmissiontypeid'],'display'=>$transmission['transmissiontypename'].' Transmission');}
-    if($transmission['transmissionmfrcode']!='N/A'){$attributesList[]=array('name'=>'TransmissionMfrCode','value'=>$transmission['transmissionmfrcodeid'],'display'=>'Transmission Mfr Code: '.$transmission['transmissionmfrcode']);}
+    if($transmission['transmissioncontroltypename']!=$wildcard && $transmission['transmissioncontroltypename']!='N/A' && $transmission['transmissioncontroltypename']!='N/R'){$attributesList[]=array('name'=>'TransmissionControlType','value'=>$transmission['transmissioncontroltypeid'],'display'=>$transmission['transmissioncontroltypename']);}
+    if($transmission['transmissionnumspeeds']!=$wildcard && $transmission['transmissionnumspeeds']!='N/A' && $transmission['transmissionnumspeeds']!='N/R'){$attributesList[]=array('name'=>'TransmissionNumSpeeds','value'=>$transmission['transmissionnumspeedsid'],'display'=>$transmission['transmissionnumspeeds'].' Speed');}
+    if($transmission['transmissiontypename']!='N/A' && $transmission['transmissiontypename']!=$wildcard){$attributesList[]=array('name'=>'TransmissionType','value'=>$transmission['transmissiontypeid'],'display'=>$transmission['transmissiontypename']);}
+    if($transmission['transmissionmfrcode']!='N/A' && $transmission['transmissionmfrcode']!=$wildcard){$attributesList[]=array('name'=>'TransmissionMfrCode','value'=>$transmission['transmissionmfrcodeid'],'display'=>$transmission['transmissionmfrcode']);}
    }
 
    foreach($wheelbases as $wheelbase)
    {
-    if($wheelbase['wheelbase']!='-')
-    {
-     $attributesList[]=array('name'=>'WheelBase','value'=>$wheelbase['wheelbaseid'],'display'=>$wheelbase['wheelbase'].' inch Wheelbase');
-    }
+    if($wheelbase['wheelbase']!='-' && $wheelbase['wheelbase']!=$wildcard && $wheelbase['wheelbase']!='N/A'){$attributesList[]=array('name'=>'WheelBase','value'=>$wheelbase['wheelbaseid'],'display'=>$wheelbase['wheelbase'].' inches');}
    }
 
    foreach($steerings as $steering)
    {
-    $attributesList[]=array('name'=>'SteeringType','value'=>$steering['steeringtypeid'],'display'=>$steering['steeringtypename'].' Steering'); 
-    $attributesList[]=array('name'=>'SteeringSystem','value'=>$steering['steeringsystemid'],'display'=>$steering['steeringsystemname'].' Steering');
+    if($steering['steeringtypename']!=$wildcard && $steering['steeringtypename']!='N/A'){$attributesList[]=array('name'=>'SteeringType','value'=>$steering['steeringtypeid'],'display'=>$steering['steeringtypename']); }
+    if($steering['steeringsystemname']!=$wildcard && $steering['steeringsystemname']!='N/A'){$attributesList[]=array('name'=>'SteeringSystem','value'=>$steering['steeringsystemid'],'display'=>$steering['steeringsystemname']);}
    }
 
    foreach($beds as $bed)
    {
-    if($bed['bedtypename']!='N/R')
+    
+    if($bed['bedtypename']!='N/A' && $bed['bedtypename']!='N/R' && $bed['bedtypename']!=$wildcard)
     {
      $attributesList[]=array('name'=>'BedType','value'=>$bed['bedtypeid'],'display'=>$bed['bedtypename'].' Bed');
     }
-    if($bed['bedlength']!='N/R')
+    if($bed['bedlength']!='N/A' && $bed['bedlength']!='N/R' && $bed['bedlength']!=$wildcard)
     {
      $attributesList[]=array('name'=>'BedLength','value'=>$bed['bedlengthid'],'display'=>'Bed Length: '.$bed['bedlength']);
     }
@@ -901,8 +896,8 @@ class vcdb
 
    foreach($springs as $spring)
    {
-    $attributesList[]=array('name'=>'FrontSpringType','value'=>$spring['frontspringtypeid'],'display'=>'Front '.$spring['frontspringtypename'].' Springs');
-    $attributesList[]=array('name'=>'RearSpringType','value'=>$spring['rearspringtypeid'],'display'=>'Rear '.$spring['rearspringtypename'].' Springs');
+    if($spring['frontspringtypename']!=$wildcard){$attributesList[]=array('name'=>'FrontSpringType','value'=>$spring['frontspringtypeid'],'display'=>'Front '.$spring['frontspringtypename']);}
+    if($spring['rearspringtypename']!=$wildcard){$attributesList[]=array('name'=>'RearSpringType','value'=>$spring['rearspringtypeid'],'display'=>'Rear '.$spring['rearspringtypename']);}
    }
    
   }
