@@ -94,8 +94,27 @@ if($uri && $havewriteaccess && $username && $password)
  $randomint= random_int(1000000, 9000000);
  $randomfilename= $randomint.'.zip';
  echo "Downloading MySQL package (".$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.").........";
+ //exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate '.$uri.' --output-document='.$downloadsdirectory.'/'.$randomfilename);
+
+ $ftp = ftp_ssl_connect($uri,21,10);
+ 
+ $login_result = ftp_login($ftp, $username, $password);
+ if($login_result)
+ {
+     echo 'login success<br/>';
+ }
+ else
+ {
+     echo 'login failed<br/>';
+ }
+ 
+ ftp_close($ftp); 
+
+
  ob_flush();
- exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate '.$uri.' --output-document='.$downloadsdirectory.'/'.$randomfilename);
+ exit;
+
+
  echo "Done".$newlinechars;
 
  // test file size for 0 to see if the download failed
