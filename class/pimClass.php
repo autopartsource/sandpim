@@ -3632,12 +3632,15 @@ function updateAppSummary($partnumber,$summary)
   }
   else
   {// record does not exist for this part
-   if($stmt=$db->conn->prepare('insert into part_application_summary (partnumber,summary,capturedatetime) values(?,?,now())'))
+   if($summary!='')
    {
-    $stmt->bind_param('ss', $partnumber, $summary);
-    $stmt->execute();
-    $insertednew=true;
-   }      
+    if($stmt=$db->conn->prepare('insert into part_application_summary (partnumber,summary,capturedatetime) values(?,?,now())'))
+    {
+     $stmt->bind_param('ss', $partnumber, $summary);
+     $stmt->execute();
+     $insertednew=true;
+    }
+   }
   }
  }
  $db->close();
