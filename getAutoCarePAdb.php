@@ -62,6 +62,7 @@ if(isset($_GET['versiondate']) && $pim->validAutoCareVersionFormat($_GET['versio
    {
     $found=true;
     $uri=$padbavailable['uri'];
+    $serverpath=$padbavailable['serverpath'];
     $hash=$padbavailable['sha256'];
     $versiondate=$padbavailable['versiondate']; // with slashes (2020-10-30)
     $dbversion=substr($versiondate,0,4).substr($versiondate,5,2).substr($versiondate,8,2);
@@ -78,44 +79,51 @@ else
     exit;
 }
 
-echo 'Download URI:'.$uri.'<br/>';
 
 $username=$config->getConfigValue('AutoCareFTPusername');
 $password=$config->getConfigValue('AutoCareFTPpassword');
+$ftpserver=$config->getConfigValue('AutoCareFTPserver');
 
-if($username ===false || $password===false)
+if($ftpserver===false || $username ===false || $password===false)
 {
- $errormessage[]='config values for AutoCareFTPusername and AutoCareFTPpassword must be set in Settings > Config';
- echo 'config values for AutoCareFTPusername and AutoCareFTPpassword must be set in Settings > Config';
+ $errormessage[]='config values for AutoCareFTPserver, AutoCareFTPusername and AutoCareFTPpassword  must be set in Settings > Config';
+ echo 'config values for AutoCareFTPserver, AutoCareFTPusername and AutoCareFTPpassword must be set in Settings > Config';
 }
 
-if($uri && $havewriteaccess && $username && $password)
+
+if($ftpserver && $havewriteaccess && $username && $password)
 {
  $randomint= random_int(1000000, 9000000);
  $randomfilename= $randomint.'.zip';
  echo "Downloading MySQL package (".$dbversion.") from AutoCare FTP server to local server (".$downloadsdirectory.").........";
  //exec('wget --quiet --ftp-user='.$username.' --ftp-password='.$password.' --no-check-certificate '.$uri.' --output-document='.$downloadsdirectory.'/'.$randomfilename);
 
- $ftp = ftp_ssl_connect($uri,21,10);
- 
+ $ftp = ftp_ssl_connect($ftpserver ,21,10);
  $login_result = ftp_login($ftp, $username, $password);
  if($login_result)
  {
-     echo 'login success<br/>';
+  ftp_pasv($ftp, true); // switch to passive mode
+  $getresult=ftp_get($ftp,$downloadsdirectory.'/'.$randomfilename,'/download_padb/MySQL/AAIA PAdb MySQL 20220527.zip'); 
+  if($getresult)
+  {
+   echo 'download success<br/>'; 
+   ftp_close($ftp);
+  }
+  else
+  {
+   echo 'download failure<br/>';          
+   ftp_close($ftp);
+  }
  }
  else
  {
-     echo 'login failed<br/>';
+  echo 'login failed<br/>';
+  ftp_close($ftp);
+  exit;
  }
  
- ftp_close($ftp); 
 
-
- ob_flush();
- exit;
-
-
- echo "Done".$newlinechars;
+ echo "Download complete".$newlinechars;
 
  // test file size for 0 to see if the download failed
  $archivesize=filesize($downloadsdirectory.'/'.$randomfilename);
