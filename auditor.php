@@ -222,28 +222,44 @@ foreach($appids as $appid)
     
     // ignore deleted or hidden apps
     if($app['status']!=0){continue;}
-     
+
     $part=$pim->getPart($app['partnumber']);
-    if(!$part)
-    {// app contains invalid part    
-        $issuehash=md5('APP/PARTNUMBER/INVALID'.$appid.'Invalid partnumber ('.$app['partnumber'].') in app'.'background auditor');
-        if(!$pim->getIssueByHash($issuehash))
-        {// this issue is not already recorded 
-            $pim->recordIssue('APP/PARTNUMBER/INVALID','',$appid,'Invalid partnumber ('.$app['partnumber'].') in app','background auditor', $issuehash);
+    
+    if($pim->needAudit('APP/PARTNUMBER/INVALID', '', $appid, $app['oid']))
+    {
+        if(!$part)
+        {// app contains invalid part    
+            $issuehash=md5('APP/PARTNUMBER/INVALID'.$appid.'Invalid partnumber ('.$app['partnumber'].') in app'.'background auditor');
+            if(!$pim->getIssueByHash($issuehash))
+            {// this issue is not already recorded 
+                $pim->recordIssue('APP/PARTNUMBER/INVALID','',$appid,'Invalid partnumber ('.$app['partnumber'].') in app','background auditor', $issuehash);
+            }
+        }
+        else
+        {// part on app is valid
+            $pim->logAudit('APP/PARTNUMBER/INVALID', '', $appid, '', $app['oid']);        
         }
     }
+
     
     
     // validate parttype/position combination
-    if($app['parttypeid']!=0 && $app['positionid']!=0 && !$pcdb->validParttypePosition($app['parttypeid'], $app['positionid']))
-    {
-        $issuehash=md5('APP/REFERENCE/PARTTYPE-POSITION'.$appid.'PartType/Position ('.$app['parttypeid'].'/'.$app['positionid'].') combination is not valid'.'background auditor');
-        if(!$pim->getIssueByHash($issuehash))
-        {// this issue is not already recorded 
-            $pim->recordIssue('APP/REFERENCE/PARTTYPE-POSITION','',$appid,'PartType/Position ('.$app['parttypeid'].'/'.$app['positionid'].') combination is not valid','background auditor', $issuehash);
+    if($pim->needAudit('APP/REFERENCE/PARTTYPE-POSITION', '', $appid, $app['oid']))
+    {    
+        if($app['parttypeid']!=0 && $app['positionid']!=0 && !$pcdb->validParttypePosition($app['parttypeid'], $app['positionid']))
+        {// problem with parttype/position
+            $issuehash=md5('APP/REFERENCE/PARTTYPE-POSITION'.$appid.'PartType/Position ('.$app['parttypeid'].'/'.$app['positionid'].') combination is not valid'.'background auditor');
+            if(!$pim->getIssueByHash($issuehash))
+            {// this issue is not already recorded 
+                $pim->recordIssue('APP/REFERENCE/PARTTYPE-POSITION','',$appid,'PartType/Position ('.$app['parttypeid'].'/'.$app['positionid'].') combination is not valid','background auditor', $issuehash);
+            }
+        }
+        else
+        {// parttype/position is clean
+            $pim->logAudit('APP/REFERENCE/PARTTYPE-POSITION', '', $appid, '', $app['oid']);        
         }
     }
-        
+    
     if($app['basevehicleid']==0)
     {// equipment style app
         
@@ -251,66 +267,85 @@ foreach($appids as $appid)
     }
     else
     {// basevid style app
-        
+
         if(!$vcdb->getMMYforBasevehicleid($app['basevehicleid']))
-        {
+        {// invalid basevehicle
             $issuehash=md5('APP/REFERENCE/BASEVEHICLEID'.$appid.'BaseVehicleID ('.$app['basevehicleid'].') is not valid'.'background auditor');
             if(!$pim->getIssueByHash($issuehash))
             {// this issue is not already recorded 
                 $pim->recordIssue('APP/REFERENCE/BASEVEHICLEID','',$appid,'BaseVehicleID ('.$app['basevehicleid'].') is not valid','background auditor', $issuehash);
             }
         }
+        else
+        {// basevehicle is valid
+            $pim->logAudit('APP/REFERENCE/BASEVEHICLEID', '', $appid, '', $app['oid']);                    
+        }
         
         // validate vcdb attributes valid for basevehicle
         // treat U/K as wildcard
-        $validattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid'],true);
-        foreach($app['attributes'] as $appattribute)
+        if($pim->needAudit('APP/ATTRIBUTE/INVALID', '', $appid, $app['oid']))
         {
-            if($appattribute['type']!='vcdb'){continue;}
-            $foundvalid=false;
-            foreach($validattributes as $validattribute)
+            $cleanvcdbattributes=true;
+            $validattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid'],true);
+            foreach($app['attributes'] as $appattribute)
             {
-                if(($appattribute['name']==$validattribute['name'] && $appattribute['value']==$validattribute['value']) || ($appattribute['name']==$validattribute['name'] && strpos($validattribute['display'],'U/K')!==false))
+                if($appattribute['type']!='vcdb'){continue;}
+                $foundvalid=false;
+                foreach($validattributes as $validattribute)
                 {
-                    $foundvalid=true; break;
-                    
+                    if(($appattribute['name']==$validattribute['name'] && $appattribute['value']==$validattribute['value']) || ($appattribute['name']==$validattribute['name'] && strpos($validattribute['display'],'U/K')!==false))
+                    {
+                        $foundvalid=true; break;
+                    }
+                }
+
+                if(!$foundvalid)
+                {
+                    $cleanvcdbattributes=false;
+                    $issuehash=md5('APP/ATTRIBUTE/INVALID'.$appid.'Invalid attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] for basevehicle found on app'.'background auditor');
+                    if(!$pim->getIssueByHash($issuehash))
+                    {// this issue is not already recorded 
+                        $pim->recordIssue('APP/ATTRIBUTE/INVALID','',$appid,'Invalid attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] for basevehicle found on app','background auditor', $issuehash);
+                    }
                 }
             }
-            
-            if(!$foundvalid)
+
+            if($cleanvcdbattributes)
             {
-                $issuehash=md5('APP/ATTRIBUTE/INVALID'.$appid.'Invalid attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] for basevehicle found on app'.'background auditor');
-                if(!$pim->getIssueByHash($issuehash))
-                {// this issue is not already recorded 
-                    $pim->recordIssue('APP/ATTRIBUTE/INVALID','',$appid,'Invalid attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] for basevehicle found on app','background auditor', $issuehash);
-                }
+                $pim->logAudit('APP/ATTRIBUTE/INVALID', '', $appid, '', $app['oid']);            
             }
-        }       
+        }
     }
     
     // look for duplicate attriutes (example multiple instances of "Submodel" on the app)
-    $attributestemp=array();
-    foreach($app['attributes'] as $appattribute)
+    if($pim->needAudit('APP/ATTRIBUTE/DUPLICATE', '', $appid, $app['oid']))
     {
-        if($appattribute['type']=='note'){continue;}
-        $tempkey=$appattribute['name'].'_'.$appattribute['type'];
-        if(array_key_exists($tempkey, $attributestemp))
+        $cleanduplicates=true;
+        $attributestemp=array();
+        foreach($app['attributes'] as $appattribute)
         {
-            $issuehash=md5('APP/ATTRIBUTE/DUPLICATE'.$appid.'Duplicate attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] found on app'.'background auditor');
-            if(!$pim->getIssueByHash($issuehash))
-            {// this issue is not already recorded 
-                $pim->recordIssue('APP/ATTRIBUTE/DUPLICATE','',$appid,'Duplicate attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] found on app','background auditor', $issuehash);
+            if($appattribute['type']=='note'){continue;}
+            $tempkey=$appattribute['name'].'_'.$appattribute['type'];
+            if(array_key_exists($tempkey, $attributestemp))
+            {
+                $cleanduplicates=false;
+                $issuehash=md5('APP/ATTRIBUTE/DUPLICATE'.$appid.'Duplicate attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] found on app'.'background auditor');
+                if(!$pim->getIssueByHash($issuehash))
+                {// this issue is not already recorded 
+                    $pim->recordIssue('APP/ATTRIBUTE/DUPLICATE','',$appid,'Duplicate attribute ['.$appattribute['type'].'-'.$appattribute['name'].'] found on app','background auditor', $issuehash);
+                }
+            }
+            else
+            {// first time seeing this combo of name+type on this app add it to the list
+                $attributestemp[$tempkey]='';
             }
         }
-        else
-        {// first time seeing this combo of name+type on this app add it to the list
-            $attributestemp[$tempkey]='';
+
+        if($cleanduplicates)
+        {
+            $pim->logAudit('APP/ATTRIBUTE/DUPLICATE', '', $appid, '', $app['oid']);
         }
     }
-    
-    
-    
-    
     
     
 

@@ -1300,6 +1300,23 @@ class setup
         requestdata varchar(255) NOT NULL,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - auditrequest ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - auditrequest ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE auditlog (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        audittype varchar(255) NOT NULL,
+        objectkeyalpha varchar(255) NOT NULL,
+        objectkeynumeric int UNSIGNED NOT NULL,
+        result varchar(255) NOT NULL,
+        auditdatetime datetime not null,
+        oidataudit varchar(255) NOT NULL,
+        PRIMARY KEY (id),
+        INDEX idx_type_alpha (audittype,objectkeyalpha,oidataudit),
+        INDEX idx_type_numeric (audittype,objectkeynumeric,oidataudit),
+        INDEX idx_auditdatetime (auditdatetime),
+        INDEX idx_oidataudit (oidataudit))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - auditlog ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - auditlog ('.$db->conn->error.')';}
+
+
         
         $db->close();
         return $returnvalue;

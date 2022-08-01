@@ -6,7 +6,7 @@ class pim
 
  function buildVersion()
  {
-  return '2022-07-20';
+  return '2022-07-31';
  }
 
  function uuidv4()
@@ -4200,7 +4200,36 @@ function addAuditRequest($requesttype,$requestdata)
  $db->close();
 }
  
- 
+function logAudit($audittype,$objectkeyalpha,$objectkeynumeric,$result,$oidataudit)
+{
+ $db = new mysql; $db->connect();
+ if($stmt=$db->conn->prepare('insert into auditlog values(null,?,?,?,?,now(),?)'))
+ {
+  $stmt->bind_param('ssiss', $audittype,$objectkeyalpha,$objectkeynumeric,$result,$oidataudit);
+  $stmt->execute();
+ }
+ $db->close();
+}
+
+function needAudit($audittype,$objectkeyalpha,$objectkeynumeric,$oidataudit)
+{
+ $db = new mysql; $db->connect(); $need=true;
+ if($stmt=$db->conn->prepare('select result from auditlog where audittype=? and objectkeyalpha=? and objectkeynumeric=? and oidataudit=?'))
+ {
+  $stmt->bind_param('ssis', $audittype,$objectkeyalpha,$objectkeynumeric,$oidataudit);
+  if($stmt->execute())
+  {
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $need=false;
+   }
+  }
+ }
+ $db->close();
+ return $need;
+}
+
 
 function partHealthScore($partnumber)
 {
