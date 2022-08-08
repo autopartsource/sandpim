@@ -3599,7 +3599,7 @@ function allowedHost($address)
 function getAppSummary($partnumber)
 {
  $db=new mysql; $db->connect(); $returnval=array('summary'=>'','age'=>-1);
- if($stmt=$db->conn->prepare('select summary,DATEDIFF(now(),capturedatetime) as age from part_application_summary where partnumber=?'))
+ if($stmt=$db->conn->prepare('select summary,firstyear,lastyear,DATEDIFF(now(),capturedatetime) as age from part_application_summary where partnumber=?'))
  {
   $stmt->bind_param('s',$partnumber);
   $stmt->execute();
@@ -3608,13 +3608,15 @@ function getAppSummary($partnumber)
   {
    $returnval['summary']=$row['summary'];
    $returnval['age']=intval($row['age']);
+   $returnval['firstyear']=intval($row['firstyear']);   
+   $returnval['lastyear']=intval($row['lastyear']);   
   }    
  }
  $db->close();
  return $returnval;
 }
 
-function updateAppSummary($partnumber,$summary)
+function updateAppSummary($partnumber,$summary,$firstyear,$lastyear)
 {
  $db=new mysql; $db->connect(); $insertednew=false;
  if($stmt=$db->conn->prepare('select summary,DATEDIFF(now(),capturedatetime) as age from part_application_summary where partnumber=?'))
@@ -3624,9 +3626,9 @@ function updateAppSummary($partnumber,$summary)
   $db->result = $stmt->get_result();
   if($row = $db->result->fetch_assoc())
   {// record exists for this part
-   if($stmt=$db->conn->prepare('update part_application_summary set summary=?,capturedatetime=now() where partnumber=?'))
+   if($stmt=$db->conn->prepare('update part_application_summary set summary=?,firstyear=?,lastyear=?,capturedatetime=now() where partnumber=?'))
    {
-    $stmt->bind_param('ss',$summary, $partnumber);
+    $stmt->bind_param('siis',$summary, $firstyear, $lastyear, $partnumber);
     $stmt->execute();
    }
   }
@@ -3634,9 +3636,9 @@ function updateAppSummary($partnumber,$summary)
   {// record does not exist for this part
    if($summary!='')
    {
-    if($stmt=$db->conn->prepare('insert into part_application_summary (partnumber,summary,capturedatetime) values(?,?,now())'))
+    if($stmt=$db->conn->prepare('insert into part_application_summary (partnumber,summary,firstyear,lastyear,capturedatetime) values(?,?,?,?,now())'))
     {
-     $stmt->bind_param('ss', $partnumber, $summary);
+     $stmt->bind_param('ssii', $partnumber, $summary, $firstyear, $lastyear);
      $stmt->execute();
      $insertednew=true;
     }
@@ -3671,7 +3673,7 @@ function updateAppSummary($partnumber,$summary)
 
 
  
- function updatePartBalance($partnumber,$qoh,$amd)
+ function updatePartBalance($partnumber,$qoh,$amd,$cost)
  {
   $db=new mysql; $db->connect(); $insertednew=false;
   if($stmt=$db->conn->prepare('select part_balance.qoh,part.firststockedDate from part_balance left join part on part_balance.partnumber=part.partnumber where part_balance.partnumber=?'))
@@ -3688,17 +3690,17 @@ function updateAppSummary($partnumber,$summary)
      $this->logPartEvent($partnumber, 0, 'first stocked date set - existing balance record changed to non-zero qoh', '');
     }
     
-    if($stmt=$db->conn->prepare('update part_balance set qoh=?, amd=?, updateddate=now() where partnumber=?'))
+    if($stmt=$db->conn->prepare('update part_balance set qoh=?, amd=?, cost=?, updateddate=now() where partnumber=?'))
     {
-     $stmt->bind_param('dds',$qoh, $amd, $partnumber);
+     $stmt->bind_param('ddds',$qoh, $amd, $cost, $partnumber);
      $stmt->execute();
     }
    }
    else
    {// record does not exist for this part
-    if($stmt=$db->conn->prepare('insert into part_balance (partnumber,qoh,amd,updateddate) values(?,?,?,now())'))
+    if($stmt=$db->conn->prepare('insert into part_balance (partnumber,qoh,amd,cost,updateddate) values(?,?,?,?,now())'))
     {
-     $stmt->bind_param('sdd', $partnumber, $qoh, $amd);
+     $stmt->bind_param('sddd', $partnumber, $qoh, $amd,$cost);
      $stmt->execute();
      $insertednew=true;
 

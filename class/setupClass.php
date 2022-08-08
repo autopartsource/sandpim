@@ -463,6 +463,8 @@ class setup
         $sql="CREATE TABLE part_application_summary (
         partnumber varchar(255) not null,
         summary text not null,
+        firstyear int unsigned not null,
+        lastyear int unsigned not null,
         capturedatetime datetime not null,
         PRIMARY KEY (partnumber),
         INDEX idx_capturedatetime (capturedatetime)
@@ -609,6 +611,7 @@ class setup
         partnumber varchar(20) NOT NULL,
         qoh decimal(10,2) not null,
         amd decimal(10,2) not null,
+        cost decimal(10,2) not null,
         updateddate date not null,
         PRIMARY KEY (partnumber),
         INDEX idx_updateddate (updateddate)
@@ -768,14 +771,22 @@ class setup
         unique key idx_username(username))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user ('.$db->conn->error.')';}
 
-        $sql="CREATE TABLE user_permission (
+        $sql="CREATE TABLE usertype (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        userid int UNSIGNED NOT NULL,
+        `typename` varchar(255) not null,
+        PRIMARY KEY (id),
+        key idx_userid(id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - usertype ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - usertype ('.$db->conn->error.')';}
+        
+        
+        $sql="CREATE TABLE usertype_permission (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        usertypeid int UNSIGNED NOT NULL,
         `permissionname` varchar(255) not null,
         `permissionvalue` tinyint unsigned not null,
         PRIMARY KEY (id),
-        key idx_userid(userid))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_permission ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_permission ('.$db->conn->error.')';}
+        key idx_usertypeid(usertypeid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - usertype_permission ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - usertype_permission ('.$db->conn->error.')';}
 
         $sql="CREATE TABLE config (
         configname varchar(255) not null,

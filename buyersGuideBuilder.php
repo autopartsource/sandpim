@@ -4,6 +4,7 @@ include_once('./class/logsClass.php');
 include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/packagingClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/XLSXWriterClass.php');
 
 $navCategory = 'utilities';
@@ -32,10 +33,13 @@ $logs = new logs();
 $vcdb = new vcdb();
 $pcdb = new pcdb();
 $packaging = new packaging();
+$configGet = new configGet();
 
 $tabbedoutput='';
 $tabbedoutputrecords=array();
 $streamXLSX=false;
+$viogeography=$configGet->getConfigValue('VIOdefaultGeography');
+$vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 
 if(isset($_POST['submit']) && strlen($_POST['input'])>0) 
 {
@@ -51,16 +55,21 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
   {   
    if($part=$pim->getPart(trim($fields[0])))
    {
+    $vio=$pim->partVIOexperian($part['partnumber'], $viogeography, $vioyearquarter);
     $summarytemp=$pim->getAppSummary($part['partnumber']);  
     if($summarytemp['age']>30 || $summarytemp['age']<0)
     {// existing summary is stale or missing - recapture it
            
      $apps=$pim->getAppsByPartnumber($fields[0]);
     
-     $temp=array();
+     $temp=array(); $oldestyear=9999; $newestyear=0;
      foreach($apps as $app)
      {
       $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+      
+      if($mmy['year']>$newestyear){$newestyear=$mmy['year'];}
+      if($mmy['year']<$oldestyear){$oldestyear=$mmy['year'];}
+      
       $key=$mmy['makename'].'_'.$mmy['modelname'];
       if(array_key_exists($key, $temp))
       {// make_model exists in the array. See if year is compatible with an existing entry
@@ -115,11 +124,13 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
      }
      
      $summary=implode(', ',$nicelist);
-     $pim->updateAppSummary($part['partnumber'], $summary);
+     $pim->updateAppSummary($part['partnumber'], $summary, $oldestyear, $newestyear);
     }
     else
     {// existing summary is usable 
-     $summary=$summarytemp['summary'];   
+     $summary=$summarytemp['summary'];
+     $oldestyear=$summarytemp['firstyear'];
+     $newestyear=$summarytemp['lastyear'];
     }
     
     $balance=$pim->getPartBalance($part['partnumber']);
@@ -134,7 +145,7 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
      $nicepackagestring=$partpackages[0]['nicepackage'];
     }
         
-    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$qoh."\t".$amd."\t".$nicepackagestring."\t".$summary;
+    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$qoh."\t".$amd."\t".$nicepackagestring."\t".$vio."\t".$newestyear."\t".$summary;
     $tabbedoutputrecords[]=$tabbedoutputrecord;
     $tabbedoutput.=$tabbedoutputrecord."\r\n";
    }
@@ -145,7 +156,7 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
  {
   $writer = new XLSXWriter();
   $writer->setAuthor('SandPIM');
-  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','QoH'=>'integer','AMD'=>'integer','Packages'=>'string','Applications'=>'string'), array('widths'=>array(18,20,13,30,20,18,10,10,20,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','QoH'=>'integer','AMD'=>'integer','Packages'=>'string','VIO ('.$viogeography.' '.$vioyearquarter.')'=>'integer','Latest Model-year'=>'integer','Applications'=>'string'), array('widths'=>array(18,20,13,30,20,18,10,10,20,16,20,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
   foreach($tabbedoutputrecords as $tabbedoutputrecord)
   {
    $row=explode("\t",$tabbedoutputrecord);

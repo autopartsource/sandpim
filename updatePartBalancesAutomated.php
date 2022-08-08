@@ -70,15 +70,17 @@ if(isset($_POST['input']))
   $fields = explode("\t", $record);  
   if(count($fields)==1 && $fields[0]==''){continue;}
     
-  if (count($fields) == 3) 
+  if(count($fields) == 3 || count($fields) == 4) 
   {
    $partnumber = trim(strtoupper($fields[0]));
    $qoh= (double)filter_var($fields[1],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
    $amd= (double)filter_var($fields[2],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+   $cost=0; if(count($fields) == 4){$cost=(double)filter_var($fields[3],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);}
+   
       
    if(strlen($partnumber) <= 20 && strlen($partnumber) > 0 && $pim->validPart($partnumber)) 
    {
-    $pim->updatePartBalance($partnumber, $qoh, $amd); // include cost, 
+    $pim->updatePartBalance($partnumber, $qoh, $amd, $cost); 
     $importcount++;
    }
    else
@@ -89,7 +91,7 @@ if(isset($_POST['input']))
   }
   else
   {// field count is wrong
-   $errors[]='Field count was wrong (expected exactly 3 tab-delimited columns)';
+   $errors[]='Field count was wrong (expected exactly 3 or 4 tab-delimited columns)';
   }
  }
 }
