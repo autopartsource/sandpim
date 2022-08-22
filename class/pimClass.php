@@ -2321,6 +2321,9 @@ function countAppsByPartcategories($partcategories)
    }
   }
   $db->close();
+  
+  // delete app summary rec so it gets re-created on next request
+  $this->deleteAppSummary($partnumber);
   return $applicationid;
  }
 
@@ -3649,6 +3652,19 @@ function updateAppSummary($partnumber,$summary,$firstyear,$lastyear)
  return $insertednew;
 }
 
+
+function deleteAppSummary($partnumber)
+{
+ $db=new mysql; $db->connect();
+ if($stmt=$db->conn->prepare('delete from part_application_summary where partnumber=?'))
+ {
+  if($stmt->bind_param('s',$partnumber))
+  {
+   $stmt->execute();
+  }
+ }
+ $db->close();
+}
 
  function getPartBalance($partnumber)
  {
