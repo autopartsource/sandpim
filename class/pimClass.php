@@ -896,6 +896,28 @@ function countAppsByPartcategories($partcategories)
  
  
  
+ function getWhereUsedOfKitComponent($partnumber)
+ {
+  $db = new mysql; $db->connect(); $parts=array();
+  if($stmt=$db->conn->prepare("select * from partrelationship where rightpartnumber=? and relationtype='kit' order by leftpartnumber"))
+  {
+   if($stmt->bind_param('s',$partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $parts[]=array('id'=>$row['id'],'partnumber'=>$row['leftpartnumber'],'units'=>$row['units'],'sequence'=>$row['sequence']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $parts;
+ }
+ 
+ 
  function getKitComponents($partnumber)
  {
   $db = new mysql; $db->connect(); $parts=array();
@@ -916,8 +938,7 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $parts;
  }
- 
- 
+  
  function basepartOfPart($partnumber)
  {
   $db = new mysql; $db->connect(); $basepart=false;
@@ -3733,6 +3754,35 @@ function deleteAppSummary($partnumber)
   return $insertednew;
  }
 
+ function addPartBOM($partnumber,$bom)
+ {
+  $db=new mysql; $db->connect(); $success=false;
+  if($stmt=$db->conn->prepare("delete from partrelationship where leftpartnumber=? and relationtype='kit'"))
+  {
+   if($stmt->bind_param('s',$partnumber))
+   {
+    $stmt->execute();
+    $componentpartnumber=''; $componentuom=''; $componentunits=0; $componentsequence=0;
+    
+    if($stmt=$db->conn->prepare("insert into partrelationship values(null,?,?,'kit',?,?)"))
+    {
+     if($stmt->bind_param('ssii',$partnumber,$componentpartnumber,$componentunits,$componentsequence))
+     {       
+      foreach($bom as $component)
+      {
+       $componentpartnumber=$component['partnumber']; $componentunits=$component['units']; $componentsequence=$component['sequence'];
+       $stmt->execute();
+       $success=true;
+      }
+     } 
+    }
+   }   
+  }
+  $db->close();
+  return $success;
+ }
+ 
+ 
 //$yearquarter,$geography,$vehicleid,$basevehicleid,$yearid,$makeid,$modelid,$submodelid,$bodytypeid,$bodynumdoorsid,$drivetypeid,$fueltypeid,$enginebaseid,$enginevinid,$fueldeliverysubtypeid,$transcontroltypeid,$transnumspeedid,$aspirationid,$vehicletypeid,$vehiclecount
  function addExperianVIOrecords($records)
  {

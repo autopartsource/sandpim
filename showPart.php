@@ -78,7 +78,8 @@ $descriptioncodes=$pcdb->getPartDescriptionTypeCodes();
 $descriptionlanguagecodes=$pcdb->getPartDescriptionLanguageCodes();
 $pricesheets=$pricing->getPricesheets();
 $history=$logs->getPartEvents($partnumber,50);
-
+$assemblies=$pim->getWhereUsedOfKitComponent($partnumber);
+        
 $defaultdescriptionlanguagecode=$configGet->getConfigValue('defaultDescriptionLanguageCode','EN');
 $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCode');
 
@@ -841,17 +842,38 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                         </td>
                                     </tr>
 
-                                    <tr><th>Kit Components</th>
-                                        <td>
-                                        <?php
-                                        foreach($kitcomponents as $kitcomponent)
-                                        {
-                                            echo '<div style="float:left;padding:4px;"><a href="showPart.php?partnumber='.$kitcomponent['partnumber'].'" class="btn btn-secondary">'.$kitcomponent['partnumber'].'</a> '.$kitcomponent['units'].'</div><div style="clear:both;"></div>';
-                                        
-                                        }
-                                        ?>
-                                        </td>
-                                    <tr>
+                                    <?php if(count($kitcomponents)>0){?>
+                                        <tr><th>Kit Contains</th>
+                                            <td>
+                                            <?php
+                                            foreach($kitcomponents as $kitcomponent)
+                                            {
+                                                echo '<div style="float:left;padding:4px;"><a href="showPart.php?partnumber='.$kitcomponent['partnumber'].'" class="btn btn-secondary">'.$kitcomponent['partnumber'].'</a> '.$kitcomponent['units'].'</div><div style="clear:both;"></div>';
+                                            }
+                                            ?>
+                                            </td>
+                                        <tr>
+                                    <?php }?>
+
+                                    <?php if(count($assemblies)>0){?>
+                                        <tr><th>Used in kits</th>
+                                            <td>
+                                            <?php $usecount=0;
+                                            foreach($assemblies as $assembly)
+                                            {
+                                                $usecount++;
+                                                echo '<div style="float:left;padding:4px;"><a href="showPart.php?partnumber='.$assembly['partnumber'].'" class="btn btn-secondary">'.$assembly['partnumber'].'</a> '.$assembly['units'].'</div><div style="clear:both;"></div>';
+                                                if($usecount>=10)
+                                                {
+                                                    echo '<div>--- list truncated ---</div>';
+                                                    break;
+                                                }
+                                            }
+                                            ?>
+                                            </td>
+                                        <tr>
+                                    <?php }?>
+
                                     <tr><th>Base Part</th><td><div style="float:left;"><input type="text" id="basepart" oninput="flagUnsavedBasepart();" value="<?php echo $part['basepart']?>"/></div><div style="float:left;"><button id="btnUpdateBasepart" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','basepart'); unflagUnsavedBasepart();">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php if($vio){echo '<tr><th>VIO ('.$viogeography.' '.$vioyearquarter.')</th><td>'.number_format($vio,0,'.',',').'</td><tr>';}?>
                                     <tr><th>Dates</th><td><div style="float:left;">First Stocked <input type="text" id="firststockeddate" oninput="flagUnsavedFirststockeddate();" value="<?php echo $part['firststockedDate']?>"/></div><div style="float:left;"><button id="btnUpdateFirststockedDate" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','firststockeddate'); unflagUnsavedFirststockeddate();">Update</button></div><div style="clear:both;"></div></td><tr>
