@@ -848,7 +848,13 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                             <?php
                                             foreach($kitcomponents as $kitcomponent)
                                             {
-                                                echo '<div style="float:left;padding:4px;"><a href="showPart.php?partnumber='.$kitcomponent['partnumber'].'" class="btn btn-secondary">'.$kitcomponent['partnumber'].'</a> '.$kitcomponent['units'].'</div><div style="clear:both;"></div>';
+                                                $componentphotohtml='';
+                                                if($componentphotouri=$asset->primaryPhotoURIofPart($kitcomponent['partnumber']))
+                                                {
+                                                    $componentphotohtml='<div style="float:left;padding:4px;"><img src="'.$componentphotouri.'" width="75"/></div>';
+                                                }
+                                                
+                                                echo '<div style="float:left;padding:4px;"><div style="float:left;padding:4px;"><a href="showPart.php?partnumber='.$kitcomponent['partnumber'].'" class="btn btn-secondary">'.$kitcomponent['partnumber'].'</a></div>'.$componentphotohtml.'<div style="float:left;padding:4px;"> x '.number_format($kitcomponent['units']).'</div></div><div style="clear:both;"></div>';
                                             }
                                             ?>
                                             </td>
@@ -862,7 +868,13 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                             foreach($assemblies as $assembly)
                                             {
                                                 $usecount++;
-                                                echo '<div style="float:left;padding:4px;"><a href="showPart.php?partnumber='.$assembly['partnumber'].'" class="btn btn-secondary">'.$assembly['partnumber'].'</a> '.$assembly['units'].'</div><div style="clear:both;"></div>';
+                                                $assemblyphotohtml='';
+                                                if($assemblyphotouri=$asset->primaryPhotoURIofPart($assembly['partnumber']))
+                                                {
+                                                    $assemblyphotohtml='<div style="float:left;padding:4px;"><img src="'.$assemblyphotouri.'" height="75"/></div>';
+                                                }
+                                                
+                                                echo '<div style="float:left;padding:4px;"><div style="float:left;padding:4px;"><a href="showPart.php?partnumber='.$assembly['partnumber'].'" class="btn btn-secondary">'.$assembly['partnumber'].'</a></div>'.$assemblyphotohtml.'</div><div style="clear:both;"></div>';
                                                 if($usecount>=10)
                                                 {
                                                     echo '<div>--- list truncated ---</div>';
@@ -917,6 +929,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                     echo '<div style="float:right;"><span class="btn btn-info" onclick="addClipboardAppsToPart()">Paste</span></div><div style="clear:both;"></div>';
                                 }
                             }
+
                             
                             ?>
                         </h4>

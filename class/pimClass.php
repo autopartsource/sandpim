@@ -2316,11 +2316,16 @@ function countAppsByPartcategories($partcategories)
  function cloneAppsToPart($partnumber,$appids)
  {
      // duplicate every app in the array of app id's to the given new partnumber
+     // use the destination part's parttypeid in the new apps - this is so that you could pull off a trick like
+     // duplicating all the apps from a specific drum to a shoe
   $newappids=array();
-  foreach($appids as $appid)
+  if($part=$this->getPart($partnumber))
   {
-   $existingapp=$this->getApp($appid);
-   $newappids[]=$this->newApp($existingapp['basevehicleid'], $existingapp['parttypeid'], $existingapp['positionid'], $existingapp['quantityperapp'], $partnumber, $existingapp['cosmetic'], $existingapp['attributes'],'');
+   foreach($appids as $appid)
+   {
+    $existingapp=$this->getApp($appid);
+    $newappids[]=$this->newApp($existingapp['basevehicleid'], $part['parttypeid'], $existingapp['positionid'], $existingapp['quantityperapp'], $partnumber, $existingapp['cosmetic'], $existingapp['attributes'],'');
+   }
   }
   return $newappids;
  }

@@ -73,36 +73,54 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
       $key=$mmy['makename'].'_'.$mmy['modelname'];
       if(array_key_exists($key, $temp))
       {// make_model exists in the array. See if year is compatible with an existing entry
+
+       $found=false;
           
        for($i=0; $i<=count($temp[$key])-1; $i++)
-       {// look inside each existing year range for this make/mode entry
-        if($mmy['year']<$temp[$key][$i]['start'] || $mmy['year']>$temp[$key][$i]['end'])
-        {// app is outside existing year range. see if it is contiguous with an existing range
-         $found=false;
-        
-         if($mmy['year']==($temp[$key][$i]['start'])-1)
-         {// expand the range down
-          $temp[$key][$i]['start']=$mmy['year']; $found=true;
-         }          
-
-         if($mmy['year']==($temp[$key][$i]['end'])+1)
-         {// expand the range up
-          $temp[$key][$i]['end']=$mmy['year']; $found=true;
-         }          
-        
-         if(!$found)
-         {
-          $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
+       {// look inside each existing year range for this make/mode entry  
+        if((($mmy['year'])>=($temp[$key][$i]['start'])) && (($mmy['year'])<=($temp[$key][$i]['end'])))
+        {// app is inside existing year range.
+         $found=true; break;
+        }        
+       }
+       
+       if(!$found)
+       {// app did not find a home inside an existing uear range - now test the edges   
+        for($i=0; $i<=count($temp[$key])-1; $i++)
+        {// look inside each existing year range for this make/mode entry  
+         if(($mmy['year']+1)==($temp[$key][$i]['start']))
+         {// app is contiguous to the low edge of existing year range.
+          $temp[$key][$i]['start']=$mmy['year'];
+          $found=true; break;
          }
         }
-       }   
+       }
+
+       if(!$found)
+       {
+        for($i=0; $i<=count($temp[$key])-1; $i++)
+        {// look inside each existing year range for this make/mode entry  
+         if(($mmy['year']-1)==($temp[$key][$i]['end']))
+         {// app is contiguous to the low edge of existing year range.
+          $temp[$key][$i]['end']=$mmy['year'];
+          $found=true; break;
+         }
+        }
+       }
+       
+       if(!$found)
+       {// current app found no home in or on the edge of an existing range - add a home for it
+        $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
+        $found=true;
+       }
       }
       else
       {// make_model does not already exist in the array - add it and set both the start and end to this apps year
        $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
-      }
+      }      
      }
-    
+     // all apps consumed for current item
+     
      $nicelist=array();
      ksort($temp);
      foreach($temp as $makemodel=>$yearranges)
@@ -127,12 +145,14 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
      $pim->updateAppSummary($part['partnumber'], $summary, $oldestyear, $newestyear);
     }
     else
-    {// existing summary is usable 
+    {//existing summary is not stale
+        
      $summary=$summarytemp['summary'];
      $oldestyear=$summarytemp['firstyear'];
      $newestyear=$summarytemp['lastyear'];
     }
     
+    // $summary contains meaningful data (either fresh or cahced)    
     $balance=$pim->getPartBalance($part['partnumber']);
     $qoh=0; $amd=0;
     if($balance){$qoh=$balance['qoh']; $amd=$balance['amd'];}
