@@ -106,6 +106,7 @@
                     Utilities
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownUtilities">
+                    <a class="dropdown-item" href="pairPart.php">Part Match-maker</a>
                     <a class="dropdown-item" href="buyersGuideBuilder.php">Buyers Guide Builder</a>
                     <a class="dropdown-item" href="basevidsToMMYinput.php">Convert BaseVehicleIDs to Makes/Models/Years</a>
                     <a class="dropdown-item" href="MMYtoBasevidsInput.php">Convert Makes/Models/Years to BaseVehicleIDs</a>

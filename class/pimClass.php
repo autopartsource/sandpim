@@ -39,8 +39,17 @@ class pim
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
   $db = new mysql; $db->connect();
   $apps=array();
+
+  if(count($partcategories))
+  {
+   $sql='select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where part.partcategory in('.$categorylist.') and basevehicleid=? order by partnumber';  
+  }
+  else
+  {// empty array of categories passed in. select any category
+   $sql='select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where basevehicleid=? order by partnumber';
+  }
   
-  if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where part.partcategory in('.$categorylist.') and basevehicleid=? order by partnumber'))
+  if($stmt=$db->conn->prepare($sql))
   {
    $stmt->bind_param('i', $basevehicleid);
    $stmt->execute();

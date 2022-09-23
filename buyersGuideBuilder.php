@@ -41,6 +41,8 @@ $streamXLSX=false;
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 
+$forcesummaryupdate=true;
+
 if(isset($_POST['submit']) && strlen($_POST['input'])>0) 
 {
  
@@ -57,28 +59,45 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
    {
     $vio=$pim->partVIOexperian($part['partnumber'], $viogeography, $vioyearquarter);
     $summarytemp=$pim->getAppSummary($part['partnumber']);  
-    if($summarytemp['age']>30 || $summarytemp['age']<0)
+    if($summarytemp['age']>30 || $summarytemp['age']<0 || $forcesummaryupdate)
     {// existing summary is stale or missing - recapture it
            
-     $apps=$pim->getAppsByPartnumber($fields[0]);
+     $rawapps=$pim->getAppsByPartnumber($fields[0]);
     
+     $apps=array();
+     $makesindex=array(); $modelsindex=array(); $yearsindex=array();
+     
+     foreach($rawapps as $rowid=>$rawapp)
+     {
+      $mmy=$vcdb->getMMYforBasevehicleid($rawapp['basevehicleid']);
+      $apps[]=array('makename'=>$mmy['makename'],'modelname'=>$mmy['modelname'],'year'=>$mmy['year']);
+      $makesindex[$rowid]=$mmy['makename'];
+      $modelsindex[$rowid]=$mmy['modelname'];
+      $yearsindex[$rowid]=$mmy['year'];
+     }
+     
+     array_multisort($makesindex,SORT_ASC,$modelsindex,SORT_ASC,$yearsindex,SORT_ASC,$apps);
+     
+     
+     
      $temp=array(); $oldestyear=9999; $newestyear=0;
      foreach($apps as $app)
      {
-      $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+      $appyear=intval($app['year']);
       
-      if($mmy['year']>$newestyear){$newestyear=$mmy['year'];}
-      if($mmy['year']<$oldestyear){$oldestyear=$mmy['year'];}
       
-      $key=$mmy['makename'].'_'.$mmy['modelname'];
+      if($appyear>$newestyear){$newestyear=$appyear;}
+      if($appyear<$oldestyear){$oldestyear=$appyear;}
+      
+      $key=$app['makename'].'_'.$app['modelname'];
       if(array_key_exists($key, $temp))
       {// make_model exists in the array. See if year is compatible with an existing entry
 
        $found=false;
           
-       for($i=0; $i<=count($temp[$key])-1; $i++)
+       for($i=0; $i<=(count($temp[$key])-1); $i++)
        {// look inside each existing year range for this make/mode entry  
-        if((($mmy['year'])>=($temp[$key][$i]['start'])) && (($mmy['year'])<=($temp[$key][$i]['end'])))
+        if(($appyear>=($temp[$key][$i]['start'])) && ($appyear<=($temp[$key][$i]['end'])))
         {// app is inside existing year range.
          $found=true; break;
         }        
@@ -86,11 +105,11 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
        
        if(!$found)
        {// app did not find a home inside an existing uear range - now test the edges   
-        for($i=0; $i<=count($temp[$key])-1; $i++)
+        for($i=0; $i<=(count($temp[$key])-1); $i++)
         {// look inside each existing year range for this make/mode entry  
-         if(($mmy['year']+1)==($temp[$key][$i]['start']))
+         if(($appyear+1)==($temp[$key][$i]['start']))
          {// app is contiguous to the low edge of existing year range.
-          $temp[$key][$i]['start']=$mmy['year'];
+          $temp[$key][$i]['start']=$appyear;
           $found=true; break;
          }
         }
@@ -98,11 +117,11 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
 
        if(!$found)
        {
-        for($i=0; $i<=count($temp[$key])-1; $i++)
+        for($i=0; $i<=(count($temp[$key])-1); $i++)
         {// look inside each existing year range for this make/mode entry  
-         if(($mmy['year']-1)==($temp[$key][$i]['end']))
+         if(($appyear-1)==($temp[$key][$i]['end']))
          {// app is contiguous to the low edge of existing year range.
-          $temp[$key][$i]['end']=$mmy['year'];
+          $temp[$key][$i]['end']=$appyear;
           $found=true; break;
          }
         }
@@ -110,16 +129,17 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
        
        if(!$found)
        {// current app found no home in or on the edge of an existing range - add a home for it
-        $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
+        $temp[$key][]=array('start'=>$appyear,'end'=>$appyear,'status'=>1);
         $found=true;
        }
       }
       else
       {// make_model does not already exist in the array - add it and set both the start and end to this apps year
-       $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
+       $temp[$key][]=array('start'=>$appyear,'end'=>$appyear,'status'=>1);
       }      
      }
      // all apps consumed for current item
+     
      
      $nicelist=array();
      ksort($temp);

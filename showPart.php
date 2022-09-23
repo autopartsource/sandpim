@@ -55,6 +55,7 @@ $partnumber = $pim->sanitizePartnumber($_GET['partnumber']);
 
 $part = $pim->getPart($partnumber);
 $apps = $pim->getAppsByPartnumber($partnumber);
+$appsummarystruct = $pim->getAppSummary($partnumber);
 $attributes = $pim->getPartAttributes($partnumber);
 $validpadbattributes=$padb->getAttributesForParttype($part['parttypeid']);
 $assets_linked_to_item = array();
@@ -915,26 +916,27 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                             }
                             
                             echo 'Applications <span class="badge bg-primary rounded-pill">'. count($apps) .'</span>';
+
+                            echo '<div style="font-size:50%;padding:5px;">'.$appsummarystruct['summary'].'</div>'
                             
+                            ?>
+                        </h4>
+
+                        <div class="card-body d-flex flex-column scroll" id="apps">
+                            <?php 
                             if(count($apps))
                             {// part has apps
-                                
                                 echo '<div style="float:right;"><span class="btn btn-info" onclick="addAppsToClipboard()">Copy</span></div><div style="clear:both;"></div>';
                             }
                             else
-                            {// part has no apps
-                                
+                            {// part has no apps                                
                                 if($pim->clipboardHasAppsFromSinglePart($_SESSION['userid']))
                                 {
                                     echo '<div style="float:right;"><span class="btn btn-info" onclick="addClipboardAppsToPart()">Paste</span></div><div style="clear:both;"></div>';
                                 }
                             }
-
                             
-                            ?>
-                        </h4>
-                        <div class="card-body d-flex flex-column scroll" id="apps">
-                            <?php foreach($apps as $app)
+                            foreach($apps as $app)
                             {
                                 $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']);// . ' ' . niceAppAttributes($app['attributes']);
                                 echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">'.$niceappdescription.'</a>';
