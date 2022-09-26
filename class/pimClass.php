@@ -939,7 +939,7 @@ function countAppsByPartcategories($partcategories)
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-      $parts[]=array('id'=>$row['id'],'partnumber'=>$row['rightpartnumber'],'units'=>$row['units'],'sequence'=>$row['sequence']);
+      $parts[]=array('id'=>$row['id'],'partnumber'=>$row['rightpartnumber'],'units'=>round($row['units'],2),'sequence'=>$row['sequence']);
      }
     }
    }
@@ -3771,32 +3771,80 @@ function deleteAppSummary($partnumber)
  function addPartBOM($partnumber,$bom)
  {
   $db=new mysql; $db->connect(); $success=false;
-  if($stmt=$db->conn->prepare("delete from partrelationship where leftpartnumber=? and relationtype='kit'"))
-  {
-   if($stmt->bind_param('s',$partnumber))
-   {
-    $stmt->execute();
-    $componentpartnumber=''; $componentuom=''; $componentunits=0; $componentsequence=0;
-    
-    if($stmt=$db->conn->prepare("insert into partrelationship values(null,?,?,'kit',?,?)"))
-    {
-     if($stmt->bind_param('ssii',$partnumber,$componentpartnumber,$componentunits,$componentsequence))
-     {       
-      foreach($bom as $component)
-      {
-       $componentpartnumber=$component['partnumber']; $componentunits=$component['units']; $componentsequence=$component['sequence'];
-       $stmt->execute();
-       $success=true;
-      }
-     } 
-    }
-   }   
+  
+  // see if BOM already exists given (left) partnumber
+  //ccc
+
+  $seqindex=array(); $cmpnindex=array(); foreach($bom as $id=>$component){$seqindex[$id]=$component['sequence']; $cmpnindex[$id]=$component['partnumber'];}
+  array_multisort($seqindex,SORT_ASC,$cmpnindex, SORT_ASC,$bom);
+
+  $existing=$this->getKitComponents($partnumber);   // $parts[]=array('id'=>$row['id'],'partnumber'=>$row['rightpartnumber'],'units'=>$row['units'],'sequence'=>$row['sequence']); 
+  $seqindex=array(); $cmpnindex=array(); foreach($existing as $id=>$component){$seqindex[$id]=$component['sequence']; $cmpnindex[$id]=$component['partnumber'];}
+  array_multisort($seqindex,SORT_ASC,$cmpnindex, SORT_ASC,$existing);    
+  
+
+  $newhash=''; foreach($bom as $component){$newhash.=$component['partnumber'].'~'.$component['units'].'~'.$component['sequence']."\t";}
+  $existinghash=''; foreach($existing as $component){$existinghash.=$component['partnumber'].'~'.$component['units'].'~'.$component['sequence']."\t";}
+
+  
+  if($newhash==$existinghash)
+  {// new and existing are euqal - no need to update anything
   }
-  $db->close();
+  else
+  {// incomming BOM is different from exisging one
+
+   $this->logPartEvent($partnumber, 0, 'BOM change (new != old):'.$newhash.'!='.$existinghash , '');
+   
+   $this->addPartBOMhistory($partnumber,$existing);
+   
+      
+   if($stmt=$db->conn->prepare("delete from partrelationship where leftpartnumber=? and relationtype='kit'"))
+   {
+    if($stmt->bind_param('s',$partnumber))
+    {
+     $stmt->execute();
+     $componentpartnumber=''; $componentuom=''; $componentunits=0; $componentsequence=0;
+    
+     if($stmt=$db->conn->prepare("insert into partrelationship values(null,?,?,'kit',?,?)"))
+     {
+      if($stmt->bind_param('ssii',$partnumber,$componentpartnumber,$componentunits,$componentsequence))
+      {
+       foreach($bom as $component)
+       {
+        $componentpartnumber=$component['partnumber']; $componentunits=$component['units']; $componentsequence=$component['sequence'];
+        $stmt->execute();
+        $success=true;
+       }
+      } 
+     }
+    }   
+   }
+   $db->close();
+  }
   return $success;
  }
  
  
+ function addPartBOMhistory($partnumber,$bom)
+ {
+  $db=new mysql; $db->connect();
+  $componentpartnumber=''; $componentunits=0; $componentsequence=0;
+  if($stmt=$db->conn->prepare("insert into partrelationship_history values(null,?,?,'kit',?,?,now())"))
+  {
+   if($stmt->bind_param('ssii',$partnumber,$componentpartnumber,$componentunits,$componentsequence))
+   {
+    foreach($bom as $component)
+    {
+     $componentpartnumber=$component['partnumber']; $componentunits=$component['units']; $componentsequence=$component['sequence'];
+     $stmt->execute();
+     $success=true;
+    }
+   } 
+  }
+  $db->close();
+ }
+
+
 //$yearquarter,$geography,$vehicleid,$basevehicleid,$yearid,$makeid,$modelid,$submodelid,$bodytypeid,$bodynumdoorsid,$drivetypeid,$fueltypeid,$enginebaseid,$enginevinid,$fueldeliverysubtypeid,$transcontroltypeid,$transnumspeedid,$aspirationid,$vehicletypeid,$vehiclecount
  function addExperianVIOrecords($records)
  {

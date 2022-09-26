@@ -1326,8 +1326,39 @@ class setup
         INDEX idx_auditdatetime (auditdatetime),
         INDEX idx_oidataudit (oidataudit))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - auditlog ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - auditlog ('.$db->conn->error.')';}
+        
+        
+        // BOM history 
+
+        $sql="CREATE TABLE partrelationship_history (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        leftpartnumber varchar(20) NOT NULL,
+        rightpartnumber varchar(20) NOT NULL,
+        relationtype varchar(255) NOT NULL,
+        units decimal(10,2) not null,
+        sequence int unsigned NOT NULL,
+        versiondate datetime not null,
+        PRIMARY KEY (id),
+        INDEX idx_leftpartnumber (leftpartnumber),
+        INDEX idx_rightpartnumber (rightpartnumber),
+        INDEX idx_version (versiondate)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - partrelationship_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - partrelationship_history ('.$db->conn->error.')';}
 
 
+        //need a table(s) to store data related to "readiness certification" of what will be exported for a given 
+        // receiver profile. Generally, There will be a set of go/no-go criteria for a given receiver profile - for example: 
+        // all parts must have an SHO description (yes/no), All asset's URIs must be tested for validity (yes/no), All apps myst be 
+        // tested for VCdb reference validity against the current system VCdb version (yes/no). The hash of OIDs in each area of interest (parts, assets, apps)
+        // will be stored as a figerprint of the transmit-ready dataset. Any OID change would invalidate total and de-certify the dataset for transmit. Background 
+        // auditor woulbd be told to attempt a certification. Failing items would be reported and pass would be comemorated by updating the hash of all in-scope OIDs
+        // every lifecyle-available part has descriptions, packages, attributes, assets, prices, apps, valid non-conflicting GTIN, 
+        // every app is VCdb-valid against current version with no overlaps
+        // every asset's URI is valid
+        // every asset's size is within bounds
+        
+        
+        
         
         $db->close();
         return $returnvalue;

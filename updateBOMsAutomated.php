@@ -9,6 +9,8 @@ $logs=new logs;
 $errors=array();
 $importcount=0;
 $invalidcount=0;
+$changedcount=0;
+$badparts=array();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
@@ -81,13 +83,17 @@ if(isset($_POST['input']))
     $subfields=explode('|',$fields[$i]);
     if(count($subfields)==4)
     {
-     $bom[]=array('partnumber'=>$subfields[0], 'units'=>$subfields[1], 'uom'=>$subfields[2],'sequence'=>$subfields[3]);
+     $bom[]=array('partnumber'=>$subfields[0], 'units'=>round($subfields[1],2), 'uom'=>$subfields[2],'sequence'=>$subfields[3]);
     }
    }
    
    if(count($bom)>0)
    {
-    $pim->addPartBOM($partnumber, $bom);
+    $result=$pim->addPartBOM($partnumber, $bom);
+    if($result)
+    {
+      $changedcount++;        
+    }
     $importcount++;
    }
   }
@@ -95,6 +101,7 @@ if(isset($_POST['input']))
   {// invalid part - make a note of it
    // $errors[]='invalid partnumber ['.$partnumber.']'; // avoid filling up log storage with the hundreds of potential invalid items several times a day
    $invalidcount++;
+   $badparts[]=$partnumber;
   }
   
  }
@@ -104,8 +111,10 @@ else
  $errors[]='No form variable named input found. POST must be url-encoded (application/x-www-form-urlencoded) form data in a variable named input';
 }
 
-$logs->logSystemEvent('externalsystem', 0, 'Bulk import of '.$importcount.' via updateBOMsAutomated.php. '.implode(';',$errors));
+$badpartlist=implode(',',$badparts); if(strlen($badpartlist)>100){$badpartlist=substr($badpartlist, 100).'...';}
 
-$response=array('message'=>'Successful BOM imports: '.$importcount.'; invalid items: '.$invalidcount.'; '.implode(';',$errors));
+$logs->logSystemEvent('externalsystem', 0, 'Bulk import of '.$importcount.'; new and changed: '.$changedcount.'; Badparts: '.$badpartlist.'; via updateBOMsAutomated.php. '.implode(';',$errors));
+
+$response=array('message'=>'Successful BOM imports: '.$importcount.'; new and changed: '.$changedcount.'  ; invalid items('.$invalidcount.'): '.$badpartlist.'; '.implode(';',$errors));
 echo json_encode($response);
 ?>
