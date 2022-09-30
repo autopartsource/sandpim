@@ -4,7 +4,6 @@ include_once('./class/vcdbClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
-include_once('./class/packagingClass.php');
 include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/configGetClass.php');
@@ -38,7 +37,6 @@ $pcdb = new pcdb;
 $qdb = new qdb;
 $vcdb = new vcdb;
 $asset = new asset;
-$packaging = new packaging;
 $logs=new logs;
 $user=new user;
 $configGet=new configGet;
@@ -70,13 +68,16 @@ if(isset($_GET['submit']) && $_GET['submit']=='Search' && $part=$pim->getPart($_
  
  $partnumber=$part['partnumber'];
  $leftapps=$pim->getAppsByPartnumber($partnumber);
- $digitassets=$asset->getAssetsConnectedToPart($partnumber);
- $leftimageuri=false; foreach($digitassets as $digitalasset){if($digitalasset['assettypecode']=='P04'){$leftimageuri=$digitalasset['uri']; break;}}
- $packages=$packaging->getPackagesByPartnumber($partnumber);
- $leftpackage=false; foreach($packages as $package){if($package['packageuom']=='EA'){$leftpackage=$package; break;}}
+    
+ // given part is "leftapps"
+ //  output is a list of possible mates in the given "pairwith" parttype and their 
+ //  compatibility score (VIO of the apps they have in common)
+ //  
+ // 1 - roll through given part's apps and compile a list of basevids, positions
+ // 2 
  
- 
- 
+
+
 
  $basevidspositions=array();
  foreach($leftapps as $leftapp)
@@ -228,7 +229,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='Search' && $part=$pim->getPart($_
 
  foreach($finalcandidateapplines as $candidatepartnumber=>$fitmentlines)
  {
-  $outputs[]=array('partnumber'=>$candidatepartnumber,'fitmentlines'=>$fitmentlines,'score'=>$tempscores[$candidatepartnumber],'asset'=>'');
+  $outputs[]=array('partnumber'=>$candidatepartnumber,'fitmentlines'=>$fitmentlines,'score'=>$tempscores[$candidatepartnumber]);
  }
 
  $scoreindex=array();
@@ -274,7 +275,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='Search' && $part=$pim->getPart($_
                             <form>
                                 <div style="padding:5px;">Part Number <input type="text" name="partnumber" value="<?php echo $partnumber?>"/></div>
                                 <div style="padding:5px;">Pair with <select name="pairwith"><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$pairwithparttypeid){echo ' selected';} ?>><?php echo $parttype['name'];?></option><?php }?></select></div>
-                                <div style="padding:5px;">Position <select name="positionmode"><option value="same"<?php if($positionmode=='same'){echo ' selected';}?>>Same</option><option value="different"<?php if($positionmode=='different'){echo ' selected';}?>>Different</option></select></div>
+                                <div style="padding:5px;">Position <select name="positionmode"><option value="different"<?php if($positionmode=='different'){echo ' selected';}?>>Different</option><option value="same"<?php if($positionmode=='same'){echo ' selected';}?>>Same</option></select></div>
                                 <div style="padding:5px;">Part Category <select name="partcategory"><option value="any">any</option><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if(isset($_GET['partcategory']) && $partcategory['id']==$_GET['partcategory']){echo ' selected';}?>><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
                                 <div style="padding:5px;"><input type="submit" name="submit" value="Search"/></div>
                             </form>
@@ -292,35 +293,15 @@ if(isset($_GET['submit']) && $_GET['submit']=='Search' && $part=$pim->getPart($_
                             {
                              foreach($outputs as $output)
                              {
-                              $digitassets=$asset->getAssetsConnectedToPart($output['partnumber'], true);
-                              $imageuri=false; foreach($digitassets as $digitalasset){if($digitalasset['assettypecode']=='P04'){$imageuri=$digitalasset['uri']; break;}}
-                              $rightpackages=$packaging->getPackagesByPartnumber($output['partnumber']);
-                              $rightpackage=false; foreach($rightpackages as $package){if($package['packageuom']=='EA'){$rightpackage=$package; break;}}
-                                 
-                              echo '<div style="float:left;padding-top:25px; text-align:left">'; 
-                              echo  '<div style="font-weight:bold;">'.$partnumber.' + <a href="./showPart.php?partnumber='.$output['partnumber'].'">'.$output['partnumber'].'</a> (common VIO: '.number_format($output['score']).')</div>';
-                              if($leftimageuri){echo '<div style="float:left;padding:15px;"><img src="'.$leftimageuri.'" width="200"/></div>';}
-                              if($imageuri){echo '<div style="float:left;padding:15px;"><img src="'.$imageuri.'" width="200"/></div>';}
-                              echo  '<div style="float:left;padding:15px;">';
-                              if($leftpackage){$highlight=''; if($leftpackage['weight']>25){$highlight='background-color:orange;';} echo '<div style="padding-left:10px;'.$highlight.'">'.$leftpackage['nicepackage'].'</div>';}else{echo 'No Package';}
-                              if($rightpackage){$highlight=''; if($rightpackage['weight']>25){$highlight='background-color:orange;';} echo '<div style="padding-left:10px;'.$highlight.'">'.$rightpackage['nicepackage'].'</div>';}else{echo 'No Package';}
-                              echo '</div>';
-                              echo '</div>';
-                              
-                              echo '<div style="clear:both;"></div>';
-
-                              echo '<div style="float:left;padding-left:15px;">';
+                              echo '<div style="padding:15px; text-align:left">';
+                              echo $partnumber.'  + '.$output['partnumber'].' (common VIO: '.number_format($output['score']).')'."\r\n";
                               foreach($output['fitmentlines'] as $fitmentline)
                               {
-                               echo '<div style="font-size:80%;text-align:left;;padding:5px 0px 0px 30px;">';
+                               echo '<div style="font-size:80%;padding:5px 0px 0px 30px;">';
                                echo $fitmentline;
                                echo '</div>';
                               }
                               echo '</div>';
-                              
-                                                          
-                              
-                              echo '<div style="clear:both;"></div>';
                              }
                             }
                             ?>
