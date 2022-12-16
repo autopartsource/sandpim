@@ -194,6 +194,72 @@ class logs {
         return $events;
     }
     
+    function countBOMchangeEvents($partnumber)
+    {
+        $count=0;
+        $events=$this->getPartEvents($partnumber, 1000);
+        foreach($events as $event)
+        {
+            if(strpos($event['description'],'BOM change')!==false){$count++;}
+        }
+        return $count;
+    }
+
+
+
+
+    function extractBOMsfromChangeText($input)
+    {
+        // take a BOM change history record like:
+        //BOM change (new != old):BPRC2314~1~10 A2314~1~20 943C~1~80 AMWP1~4~100 HDWBX2~1~115 PRO2~1~120 L25~1~140 != BPRC2314~1~10 A2314~1~20 943C~1~80 AMWP1~4~100 HDWBX2~1~115 PRO2~1~120
+        // into an array 
+        $returnVal=array('before'=>array(),'after'=>array(),'beforeparts'=>array(),'afterparts'=>array());
+        
+        if(strpos($input,'BOM change')===false){return $returnVal;}
+        $bits=explode(':',$input);
+        if(count($bits)==2)
+        {
+            $oldnewpos=strpos($bits[1],'!=');
+            if($oldnewpos!==false)
+            {// found the onld/new delimiter (!=)
+                
+                $oldbomstring=substr($bits[1],$oldnewpos+2);
+                $oldbomarray=explode("\t",$oldbomstring);
+                $newbomstring=substr($bits[1],0,$oldnewpos);                                      
+                $newbomarray=explode("\t",$newbomstring);
+
+                foreach($newbomarray as $newbomline)
+                {
+                    $bomparts=explode('~',$newbomline);
+                    if(count($bomparts)==3)
+                    {
+                        $returnVal['after'][]=array('partnumber'=>trim($bomparts[0]),'units'=>$bomparts[1]);
+                        if(!array_key_exists(trim($bomparts[0]), $returnVal['afterparts']))
+                        {
+                            $returnVal['afterparts'][trim($bomparts[0])]='';
+                        }
+                    }
+                }
+ 
+                foreach($oldbomarray as $oldbomline)
+                {
+                    $bomparts=explode('~',$oldbomline);
+                    if(count($bomparts)==3)
+                    {
+                        $returnVal['before'][]=array('partnumber'=>trim($bomparts[0]),'units'=>$bomparts[1]);
+                        if(!array_key_exists(trim($bomparts[0]), $returnVal['beforeparts']))
+                        {
+                            $returnVal['beforeparts'][trim($bomparts[0])]='';
+                        }
+                    }
+                }        
+            }
+        }
+        return $returnVal;
+    }
+    
+    
+    
     
 }
 

@@ -94,15 +94,15 @@ foreach($partnumbers as $partnumber)
 }
 
 
-$columnnames=array('Partnumber'=>'string','Lifecycle Status'=>'string','Qty On-Hand'=>'number','Monthly Demand'=>'number','VIO'=>'number');
+$columnnames=array('Partnumber'=>'string','Lifecycle Status'=>'string','GTIN'=>'string','Qty On-Hand'=>'number','Monthly Demand'=>'number','VIO'=>'number');
 foreach($assettypes as $assettype=>$trash)
 {
  $columnnames[$pcdb->assetTypeCodeDescription($assettype)]='string';
 }
  
-$columnwidths=array(15,16,12,15,10);
+$columnwidths=array(15,16,16,12,15,10);
 foreach($assettypes as $assettype=>$trsah){$columnwidths[]=20;} 
-$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
+$columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
 foreach($assettypes as $assettype=>$trsah){$columnmeta[]=['fill'=>'#c0c0c0'];}
 
 $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta);
@@ -118,7 +118,7 @@ foreach($matrix as $partnumber=>$columns)
  $viototal=$pim->partVIO($partnumber, $viogeography, $vioyearquarter);
  
  
- $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']),$qoh,$amd,$viototal);
+ $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']),$part['GTIN'],$qoh,$amd,$viototal);
  foreach($assettypes as $assettype=>$trash)
  {
   if(array_key_exists($assettype, $columns))

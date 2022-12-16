@@ -20,7 +20,8 @@ if(isset($_SESSION['userid']) && isset($_GET['searchterm']) && isset($_GET['type
  $userid=$_SESSION['userid'];
 // $searchterm= urldecode($_GET['searchterm']);
  $searchterm= $_GET['searchterm'];
- $type=intval($_GET['type']);
+ if($_GET['type']=='any'){$type=false;}else{$type=intval($_GET['type']);}
+ 
  $qualifiers=$qdb->getQualifiersBySearch($searchterm,$type);
  echo json_encode($qualifiers);
 }

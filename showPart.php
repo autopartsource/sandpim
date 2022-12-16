@@ -78,9 +78,10 @@ $lifecyclestatuses=$pcdb->getLifeCycleCodes();
 $descriptioncodes=$pcdb->getPartDescriptionTypeCodes();
 $descriptionlanguagecodes=$pcdb->getPartDescriptionLanguageCodes();
 $pricesheets=$pricing->getPricesheets();
-$history=$logs->getPartEvents($partnumber,50);
+$history=$logs->getPartEvents($partnumber,100);
 $assemblies=$pim->getWhereUsedOfKitComponent($partnumber);
-        
+$bomchangescount=$logs->countBOMchangeEvents($partnumber);
+
 $defaultdescriptionlanguagecode=$configGet->getConfigValue('defaultDescriptionLanguageCode','EN');
 $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCode');
 
@@ -843,7 +844,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                         </td>
                                     </tr>
 
-                                    <?php if(count($kitcomponents)>0){?>
+                                    <?php if(count($kitcomponents)>0 || $bomchangescount>0){?>
                                         <tr><th>Kit Contains</th>
                                             <td>
                                             <?php
@@ -856,6 +857,11 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                                 }
                                                 
                                                 echo '<div style="float:left;padding:4px;"><div style="float:left;padding:4px;"><a href="showPart.php?partnumber='.$kitcomponent['partnumber'].'" class="btn btn-secondary">'.$kitcomponent['partnumber'].'</a></div>'.$componentphotohtml.'<div style="float:left;padding:4px;"> x '.number_format($kitcomponent['units']).'</div></div><div style="clear:both;"></div>';
+                                            }
+                                            
+                                            if($bomchangescount>0)
+                                            {
+                                                echo '<a href="./partRelationHistory.php?partnumber='.$partnumber.'">History</a>';
                                             }
                                             ?>
                                             </td>
@@ -876,12 +882,12 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                                 }
                                                 
                                                 echo '<div style="float:left;padding:4px;"><div style="float:left;padding:4px;"><a href="showPart.php?partnumber='.$assembly['partnumber'].'" class="btn btn-secondary">'.$assembly['partnumber'].'</a></div>'.$assemblyphotohtml.'</div><div style="clear:both;"></div>';
-                                                if($usecount>=10)
+                                                if($usecount>=40)
                                                 {
                                                     echo '<div>--- list truncated ---</div>';
                                                     break;
                                                 }
-                                            }
+                                            }                                            
                                             ?>
                                             </td>
                                         <tr>

@@ -44,7 +44,7 @@ if(isset($_GET['source']) && $_GET['source']=='noteManager')
        document.getElementById("qdbresults").innerHTML = "";
        var searchterm=document.getElementById("qdbsearchterm").value;
        var xhr = new XMLHttpRequest();
-       xhr.open('GET', 'ajaxSearchQdb.php?type=1&searchterm='+encodeURIComponent(searchterm));
+       xhr.open('GET', 'ajaxSearchQdb.php?type=any&searchterm='+encodeURIComponent(searchterm));
        xhr.onload = function()
        {
         var results=JSON.parse(xhr.responseText);
