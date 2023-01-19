@@ -69,14 +69,15 @@ if(count($jobs))
    {
        switch ($attribute['type']) {
            case 'vcdb':
-               $vcdbattributesstring.=$attribute['name'].'|'.$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].';';
+               $vcdbattributesstring.=$attribute['name'].'|'.$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~';
                break;
 
            case 'qdb':
+               $qdbattributesstring.='not yet implimented!';
                break;
 
            case 'note':
-               $notesstring.=$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].';';
+               $notesstring.=$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~';
                break;
 
            default:

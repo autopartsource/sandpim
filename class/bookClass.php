@@ -2,6 +2,7 @@
 include_once("mysqlClass.php");
 include_once("vcdbClass.php");
 include_once("pcdbClass.php");
+include_once("qdbClass.php");
 
 
 class book
@@ -18,8 +19,9 @@ class book
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
   $db = new mysql; 
   
-  $vcdb=new vcdb;  
-  $pcdb=new pcdb;  
+  $vcdb=new vcdb;
+  $pcdb=new pcdb;
+  $qdb=new qdb;
   
   
   $db->connect();
@@ -39,6 +41,12 @@ class book
      {
       $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $vcdb->niceVCdbAttributePair($appattribute));
      }
+     
+     if ($appattribute['type'] == 'qdb')
+     {
+      $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $qdb->qualifierText($appattribute['name'], explode('~', str_replace('|','',$appattribute['value']))), 'cosmetic' => $appattribute['cosmetic']);
+     }
+          
      if ($appattribute['type'] == 'note')
      {
       $niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $appattribute['value']);
@@ -152,7 +160,7 @@ class book
   }
   
   // stage 3 - combine equal year blocks
-  
+ /*
   $compressed=array();
   foreach($output as $makename=>$models)
   {
@@ -161,38 +169,13 @@ class book
     foreach($blocks as $block)
     {
      $rowwasplaced=false;
-     if(array_key_exists($makename, $compressed))
-     {
-      if(array_key_exists($modelname, $compressed[$makename]))
-      {// make/model already exist - roll through existing rows to find a compatibles one to glom onto 
-
-          
-          
-       if($existingblock>=0)
-       {
-        $compressed[$makename][$modelname][$existingblock]['rows'][]=$block['columns'];
-        $rowwasplaced=true;
-       }   
-      }
-     }
-     if(!$rowwasplaced)
-     {
-      $compressed[$makename][$modelname][]=array('startyear'=>$row['startyear'],'endyear'=>$row['endyear'],'rows'=>array(array('qualifiers'=>$row['qualifiers'],'columns'=>array($columnkey=>array(array('part'=>$row['partnumber'],'qty'=>$row['quantityperapp']))))));
-     }
+  
     }
    }
   }
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+  */
+   
   $db->close();
   return $output;
  }

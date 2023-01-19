@@ -65,7 +65,7 @@ class pim
   return $apps;
  }
 
- function getAppsByPartcategories($partcategories,$statuslist=false)
+ function getAppsByPartcategoriesOld($partcategories,$statuslist=false)
  {
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
   
@@ -99,6 +99,62 @@ class pim
   $db->close();
   return $apps;
  }
+
+ function getAppsByPartcategories($partcategories,$statuslist=false)
+ {  
+  $db = new mysql;  $db->connect();
+  
+  //build list of partnumbers in given categoirs
+  
+  $tempstatuses=array();
+  if($statuslist)
+  {
+   foreach($statuslist as $s){$tempstatuses[]=array('lifecyclestatus'=>$s);}
+  }
+  
+  $partnumbers=$this->getPartnumbersByPartcategories($partcategories, $tempstatuses);
+  
+  $apps=array();  
+  foreach($partnumbers as $partnumber)
+  {
+   $appcount=0;
+   if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+   {
+    $stmt->bind_param('s', $partnumber);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $attributes=$this->getAppAttributes($row['id']);
+     $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>'');
+     $appcount++;
+    }
+   }
+
+   if($appcount==0)
+   {// part has no apps - see if it has a basepart and maybe ues the baseprt's apps if they exist       
+    $basepart=$this->basepartOfPart($partnumber);
+    if($basepart)
+    {// this part has a base and no apps of its own - we need to deal with inheritance
+     if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+     {
+      $stmt->bind_param('s', $basepart);
+      $stmt->execute();
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $attributes=$this->getAppAttributes($row['id']);
+       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$partnumber,'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>$basepart);
+      }
+     }
+    }  
+   }
+  }
+   
+  $db->close();
+  return $apps;     
+ }
+  
 
  function getAppOids()
  {

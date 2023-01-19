@@ -76,6 +76,7 @@ else
                break;
 
            case 'qdb':
+                $qdbattributesstring.='not yet implimented!';
                break;
 
            case 'note':

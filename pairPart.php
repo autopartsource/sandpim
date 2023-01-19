@@ -268,7 +268,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='Search' && $part=$pim->getPart($_
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
                         <!-- Header -->
-                        <h3 class="card-header text-start">Part Pairing</h3>
+                        <h3 class="card-header text-start">Two-Part paring</h3>
                         <div class="card-body">
 
                             <form>
