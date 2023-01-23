@@ -62,7 +62,7 @@ $lifecyclestatusestemp=$pim->getReceiverprofileLifecyclestatuses($receiverprofil
 foreach ($lifecyclestatusestemp as $status){$lifecyclestatuslist[]=$status['lifecyclestatus'];}
 
 
-if($appscount>10000)
+if($appscount>5000)
 { // dataset is too big - this export will be handled by the housekeeper (cron) and written to a temp directory for download
  $streamXML=false;
  
@@ -77,8 +77,12 @@ if($appscount>10000)
 else
 {// dataset is small enough to stream it on-the-fly without kicking-off background processing
  $apps=$pim->getAppsByPartcategories($partcategories,$lifecyclestatuslist);
- $filename='ACES_4_1_FULL_'.date('Y-m-d').'.xml';
+// $filename='ACES_4_1_FULL_'.date('Y-m-d').'.xml';
 
+ $randomstring=$pim->newoid();
+ $documenttitle='DocumentTitleNotSetInProfile'; if(array_key_exists('DocumentTitle', $keyedprofile)){$documenttitle=$keyedprofile['DocumentTitle'];}
+ $filename='ACES_4_1_'.$documenttitle.'_'.$randomstring.'_FULL_'.date('Y-m-d').'.xml';
+ 
  $header=array('Company'=>'not set in profile ['.$profile['name'].']','SenderName'=>'not set in profile ['.$profile['name'].']', 'SenderPhone'=>'not set in profile ['.$profile['name'].']','BrandAAIAID'=>'XXXX','DocumentTitle'=>'not set in profile ['.$profile['name'].']','TransferDate'=>date('Y-m-d'),'EffectiveDate'=>date('Y-m-d'),'SubmissionType'=>'FULL','VcdbVersionDate'=>$vcdb->version(),'QdbVersionDate'=>$qdb->version(),'PcdbVersionDate'=>$pcdb->version());
  if(array_key_exists('Company', $keyedprofile)){$header['Company']=$keyedprofile['Company'];}
  if(array_key_exists('SenderName', $keyedprofile)){$header['SenderName']=$keyedprofile['SenderName'];}

@@ -6,7 +6,7 @@ class pim
 
  function buildVersion()
  {
-  return '2022-07-31';
+  return '2023-01-23';
  }
 
  function uuidv4()
@@ -118,33 +118,42 @@ class pim
   foreach($partnumbers as $partnumber)
   {
    $appcount=0;
-   if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+   // look for apps with the direct partnumber
+ //  if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+   if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where status=0 and part.partnumber=?'))
    {
     $stmt->bind_param('s', $partnumber);
     $stmt->execute();
     $db->result = $stmt->get_result();
     while($row = $db->result->fetch_assoc())
     {
+     //$attributes=$this->getAppAttributes($row['id']);
+     //$apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>'');
      $attributes=$this->getAppAttributes($row['id']);
-     $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>'');
+     $attributeshash=$this->appAttributesHash($attributes);
+     $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'partcategory'=>$row['partcategory'],'mfrlabel'=>$row['mfrlabel'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);     
      $appcount++;
     }
    }
 
    if($appcount==0)
    {// part has no apps - see if it has a basepart and maybe ues the baseprt's apps if they exist       
-    $basepart=$this->basepartOfPart($partnumber);
-    if($basepart)
+    $basepartnumber=$this->basepartOfPart($partnumber);
+    if($basepartnumber)
     {// this part has a base and no apps of its own - we need to deal with inheritance
-     if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+  //   if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+     if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where status=0 and part.partnumber=?'))
      {
-      $stmt->bind_param('s', $basepart);
+      $stmt->bind_param('s', $basepartnumber);
       $stmt->execute();
       $db->result = $stmt->get_result();
       while($row = $db->result->fetch_assoc())
       {
+//       $attributes=$this->getAppAttributes($row['id']);
+//       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$partnumber,'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>$basepart);
        $attributes=$this->getAppAttributes($row['id']);
-       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$partnumber,'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>$basepart);
+       $attributeshash=$this->appAttributesHash($attributes);
+       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$partnumber,'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'partcategory'=>$row['partcategory'],'mfrlabel'=>$row['mfrlabel'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);    
       }
      }
     }  
