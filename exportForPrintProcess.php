@@ -30,120 +30,54 @@ $vcdb = new vcdb;
 
 $categories=array(114,115);
 
-
 $content=$book->getContent($categories);
 
-print_r($content);
 
-// extract column keys
-$columnkeys=array();
+echo '<table style="border-collapse: collapse;table-layout:fixed;width:650px;"><tr style="background-color:#c0c0c0;border-collapse: collapse;"><th style="border:1px solid black; padding: 3px;width:20%;">Years</th><th style="border:1px solid black; padding: 3px;width:65%;">Notes</th><th style="border:1px solid black; padding: 3px;width:15%;">Parts</th></tr></table>';
+
+
+
+
 foreach($content as $make => $models)
 {
+ //if($make !='Honda'){continue;}
+ echo '<div style="font-size:200%;">'.$make.'</div>';  
+
  foreach($models as $model=>$blocks)
  {
+  echo '<div style="padding:10px 0px 1px 1px;margin:2px;font-size:150%;">'.$model.'</div>';
+
+//  echo '<table style="border-collapse: collapse;table-layout:fixed;width:600px;"><tr style="background-color:#c0c0c0;border-collapse: collapse;"><th style="border:1px solid black; padding: 5px;width:15%;">Years</th><th style="border:1px solid black; padding: 5px;width:65%;">Notes</th><th style="border:1px solid black; padding: 5px;width:20%;">Parts</th></tr>';
+  
+  echo '<table style="border-collapse: collapse;table-layout:fixed;width:650px;">';
+
   foreach($blocks as $block)
   {
-   foreach($block['columns'] as $key=>$column)
+   $rownumber=0;
+   foreach($block['qualifierblocks'] as $qualifiers=>$parts)
    {
-    $columnkeys[$key]='x';
+    echo '<tr style="border-collapse: collapse;">';
+    if($rownumber==0)
+    {
+        $niceyears=$block['startyear'].' - '.$block['endyear'];
+        if($block['startyear']==$block['endyear']){$niceyears=$block['startyear'];}
+        echo '<td rowspan="'.count($block['qualifierblocks']).'" style="border:1px solid black; padding: 3px;text-align:center;width:20%">'.$niceyears.'</td>';
+    }
+    echo '<td style="border:1px solid black; padding: 3px;width:65%;">'.$qualifiers.'</td>';
+    echo '<td style="border:1px solid black; padding: 3px;text-align:center;width:15%;">';    
+         
+    foreach($parts as $part)
+    {
+     echo '<div>'.$part.'</div>';
+    }
+    echo '</td>';
+    echo '</tr>';
+    $rownumber++;
    }
   }
+    
+  echo '</table>';
  }
-}
-
-
-foreach($content as $make => $models)
-{
-    if($make !='Honda'){continue;}
-    echo '<br/><hr/><div style="padding-left:100px;">'.$make.'</div><br/>';
-
-    foreach($models as $model=>$blocks)
-    {
-        echo '<br/>'.$model.'<br/>';
-        echo '<table class="table" border="1">';
-        echo '<tr><th>Years</th><th>Notes</th>';
-        foreach($columnkeys as $key=>$trash)
-        {
-         echo '<th>'.$key.'</th>';   
-        }        
-        echo '</tr>';
-        
-        // compress blocks of same years
-        $compressed=array();
-        foreach($blocks as $block)
-        {
-            $niceyearrange = $block['startyear'].' - '.$block['endyear']; if($block['startyear']==$block['endyear']){$niceyearrange = $block['startyear'];}
-            $compressed[$niceyearrange][]=$block;
-        }        
-
-        foreach($compressed as $niceyearrange=>$blocks)
-        {
-            echo '<tr>';
-            echo '<td>'.$niceyearrange.'</td>';
-            echo '<td>';
-
-            
-            echo '<table class="table" border="1">';
-            foreach($blocks as $block)
-            {
-             echo '<tr>';
-             echo '<td>'.$block['qualifiers'].'</td>';
-            
-             foreach($columnkeys as $key=>$trash)
-             {
-              echo '<td>';
-              if(array_key_exists($key,$block['columns']))
-              {
-               foreach($block['columns'][$key] as $item)
-               {
-                echo '<div>'.$item['part'].'</div>';
-               }
-              }
-              echo '</td>';
-             }
-             echo '</tr>';
-            }
-            echo '</table>';
-            
-            echo '</td>';
-            echo '</tr>';
-            
-            
-        }
-
-
-        
-        
-        /*
-        foreach($blocks as $block)
-        {
-            echo '<tr>';
-            if($block['startyear']==$block['endyear']){echo '<td>'.$block['startyear'].'</td>';}else{echo '<td>'.$block['startyear'].' - '.$block['endyear'].'</td>';}
-            echo '<td>'.$block['qualifiers'].'</td>';
-
-            foreach($columnkeys as $key=>$trash)
-            {
-             echo '<td>';
-             if(array_key_exists($key,$block['columns']))
-             {
-              foreach($block['columns'][$key] as $item)
-              {
-               echo '<div>'.$item['part'].'</div>';
-              }
-             }
-             echo '</td>';
-            }
-            echo '</tr>';
-        }
-         * 
-         * 
-         * 
-         */
-        
-        
-        echo '</table>';
-        
-    }
 }
 
 
