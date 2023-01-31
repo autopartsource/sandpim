@@ -170,7 +170,8 @@
                     <a class="dropdown-item" href="./exportAPA65pricefileSelect.php">APA/AWDA (6.5) pricesheet</a>
                     <a class="dropdown-item" href="./exportFlatPartsSelect.php">Flattened parts file</a>
                     <a class="dropdown-item" href="./exportFlatAppsSelect.php">Flattened applications file</a>
-                    <a class="dropdown-item" href="./exportForPrintSelect.php">Printable applications guides</a>
+                    <a class="dropdown-item" href="./exportForBasicPrintSelect.php">Application guide PDF (basic)</a>
+                    <a class="dropdown-item" href="./exportForMulticolumnPrintSelect.php">Application guide PDF (multi-Column)</a>
                     <a class="dropdown-item" href="./exportCompetitorInterchangeSelect.php">Competitor Interchange</a>
                 </div>
             </li>
