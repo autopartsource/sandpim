@@ -168,6 +168,7 @@
                     <a class="dropdown-item" href="./exportPIESselect.php">PIES xml</a>
                     <a class="dropdown-item" href="./exportACESselect.php">ACES xml</a>
                     <a class="dropdown-item" href="./exportAPA65pricefileSelect.php">APA/AWDA (6.5) pricesheet</a>
+                    <a class="dropdown-item" href="./exportWalmartSelect.php">Parts in Walmart format spreadsheet</a>
                     <a class="dropdown-item" href="./exportFlatPartsSelect.php">Flattened parts file</a>
                     <a class="dropdown-item" href="./exportFlatAppsSelect.php">Flattened applications file</a>
                     <a class="dropdown-item" href="./exportForBasicPrintSelect.php">Application guide PDF (basic)</a>
