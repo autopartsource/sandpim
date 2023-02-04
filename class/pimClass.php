@@ -1613,6 +1613,30 @@ function countAppsByPartcategories($partcategories)
   } //else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
   $db->close();
  }
+
+ function updatePartcategoryMarketcopy($partcategory,$marketcopy)
+ {
+  $db = new mysql; $db->connect();
+  $marketcopyencoded= base64_encode($marketcopy);
+  if($stmt=$db->conn->prepare('update partcategory set `marketcopy`=? where id=?'))
+  {
+   $stmt->bind_param('si', $marketcopyencoded,$partcategory);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+ function updatePartcategoryFAB($partcategory,$fab)
+ {
+  $db = new mysql; $db->connect();
+  $fabencoded= base64_encode($fab);
+  if($stmt=$db->conn->prepare('update partcategory set `fab`=? where id=?'))
+  {
+   $stmt->bind_param('si', $fabencoded,$partcategory);
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
  function getPartCategories()
  {
@@ -1643,7 +1667,7 @@ function countAppsByPartcategories($partcategories)
     $db->result = $stmt->get_result();
     if($row = $db->result->fetch_assoc())
     {
-     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID'],'subbrandID'=>$row['subbrandID'],'mfrlabel'=>$row['mfrlabel'],'logouri'=>$row['logouri']);
+     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID'],'subbrandID'=>$row['subbrandID'],'mfrlabel'=>$row['mfrlabel'],'logouri'=>$row['logouri'],'marketcopy'=>base64_decode($row['marketcopy']),'fab'=>base64_decode($row['fab']));
     }
    }
   }

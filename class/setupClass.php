@@ -715,11 +715,13 @@ class setup
         subbrandID varchar(255) not null,
         mfrlabel varchar(255) not null,
         logouri varchar(255) not null,
+        marketcopy text not null,
+        fab text not null,
         PRIMARY KEY (id))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - partcategory ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - partcategory ('.$db->conn->error.')';}
 
-        $sql="insert into partcategory values(10,'AmeriPRO - Ceramic','BKJT','','Ceramic','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into partcategory values(11,'AmeriPRO - Metalic','BKJT','','Metalic','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into partcategory values(10,'AmeriPRO - Ceramic','BKJT','','Ceramic','','Placeholder market copy','Features and benefits placeholder');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into partcategory values(11,'AmeriPRO - Metalic','BKJT','','Metalic','','Placeholder market copy','Features and benefits placeholder');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
 /* 11/7/2020 - probably won't need this 
 

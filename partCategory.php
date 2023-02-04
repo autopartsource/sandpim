@@ -54,6 +54,20 @@ if (isset($_POST['submit']) && $_POST['submit']=='Save')
   $pim->updatePartcategoryMfrlabel(intval($_POST['id']), $_POST['mfrlabel']); 
   $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$_POST['id'].' Mfrlabel was changed from '.$_POST['oldmfrlabel'].' to '.$_POST['mfrlabel']);
  }
+
+
+ if($_POST['marketcopy']!=base64_decode($_POST['oldmarketcopy']))
+ {
+  $pim->updatePartcategoryMarketcopy(intval($_POST['id']), $_POST['marketcopy']); 
+  $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$_POST['id'].' Marketcopy was changed from '.base64_decode($_POST['oldmarketcopy']).' to '.$_POST['marketcopy']);
+ }
+
+ if($_POST['fab']!=base64_decode($_POST['oldfab']))
+ {
+  $pim->updatePartcategoryFAB(intval($_POST['id']), $_POST['fab']); 
+  $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$_POST['id'].' Features and Benefits was changed from '.base64_decode($_POST['oldfab']).' to '.$_POST['fab']);
+ }
+
  
  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./partCategories.php'\" /></head><body></body></html>";
  exit;
@@ -109,14 +123,28 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
                                         <div class="form-group row">
                                             <label for="inputSubBrandAAIAID" class="col-sm-2 col-form-label">SubBrandAAIAID</label>
                                             <div class="col-sm-10">
-                                                <input id="inputSubBrandAAIAID" type="text" class="form-control" name="subbrandID" value="<?php echo $partcategory['subbrandID'];?>"/></td></tr>
+                                                <input id="inputSubBrandAAIAID" type="text" class="form-control" name="subbrandID" value="<?php echo $partcategory['subbrandID'];?>"/>
                                             </div>
                                         </div>
                                         <hr>
                                         <div class="form-group row">
                                             <label for="inputMfrLabel" class="col-sm-2 col-form-label">MfrLabel (ACES)</label>
                                             <div class="col-sm-10">
-                                                <input id="inputMfrLabel" type="text" class="form-control" name="mfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/></td></tr>
+                                                <input id="inputMfrLabel" type="text" class="form-control" name="mfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group row">
+                                            <label for="inputMarketCopy" class="col-sm-2 col-form-label">Marketing Copy</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="inputMarketCopy" class="form-control" name="marketcopy"><?php echo $partcategory['marketcopy'];?></textarea>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group row">
+                                            <label for="inputFeaturesAndBenefits" class="col-sm-2 col-form-label">Features and Benefits</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="inputFeaturesAndBenefits" class="form-control" name="fab"><?php echo $partcategory['fab'];?></textarea>
                                             </div>
                                         </div>
                                         <hr>
@@ -130,6 +158,8 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
                                 <input type="hidden" name="oldbrandID" value="<?php echo $partcategory['brandID'];?>"/>
                                 <input type="hidden" name="oldsubbrandID" value="<?php echo $partcategory['subbrandID'];?>"/>
                                 <input type="hidden" name="oldmfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/>
+                                <input type="hidden" name="oldmarketcopy" value="<?php echo base64_encode($partcategory['marketcopy']);?>"/>
+                                <input type="hidden" name="oldfab" value="<?php echo base64_encode($partcategory['fab']);?>"/>
                             </form>
                         </div>
                     </div>
