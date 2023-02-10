@@ -255,7 +255,17 @@ if($validUpload)
    $quantityperapplicationuom=$itemElement->getElementsByTagName('QuantityPerApplication')[0]->getAttribute('UOM');
   }
 
-  $brandlabel=''; $brandlabelElement=$itemElement->getElementsByTagName('BrandLabel'); if(count($brandlabelElement)){$brandlabel = $brandlabelElement[0]->nodeValue;}
+  $brandlabel=''; $brandlabelElement=$itemElement->getElementsByTagName('BrandLabel'); if(count($brandlabelElement)){$brandlabel = $brandlabelElement[0]->nodeValue;}  
+
+  /*
+  $brandlabel='FFF'; 
+  foreach($itemElement->childNodes as $nodeTemp)
+  {
+      if($nodeTemp->nodeName=='BrandLabel' && !$nodeTemp->hasAttributes()){$brandlabel=$nodeTemp->nodeValue.'sdsdsd'; break;}
+  }
+  */
+  
+  
   $VMRSbrandid=''; $VMRSbrandidElement=$itemElement->getElementsByTagName('VMRSBrandID'); if(count($VMRSbrandidElement)){$VMRSbrandid = $VMRSbrandidElement[0]->nodeValue;}
   $UNSPSC=''; $UNSPSCElement=$itemElement->getElementsByTagName('UNSPSC'); if(count($UNSPSCElement)){$UNSPSC = $UNSPSCElement[0]->nodeValue;}
   
@@ -571,8 +581,8 @@ if($validUpload)
    foreach($partinterchangeElements as $partinterchangeElement)
    {
     // get the competitor-level attributes
-    $brandAAIAID=$partinterchangeElement->getAttribute('BrandAAIAID');
-    $brandlabel=$partinterchangeElement->getAttribute('BrandLabel');
+    $interchangebrandAAIAID=$partinterchangeElement->getAttribute('BrandAAIAID');
+    $interchangebrandlabel=$partinterchangeElement->getAttribute('BrandLabel');
     $subbrandAAIAID=$partinterchangeElement->getAttribute('SubBrandAAIAID');
     $internalnotes=$partinterchangeElement->getAttribute('InternalNotes');
     $languagecode=$partinterchangeElement->getAttribute('LanguageCode');
@@ -589,7 +599,7 @@ if($validUpload)
      $interchangequantity=$partnumberElement->getAttribute('InterchangeQuantity');
      $interchangequantityuom=$partnumberElement->getAttribute('UOM');
      $interchangenotes=$partnumberElement->getAttribute('InterchangeNotes');
-     $interchanges[]=array('CompetitorPartNumber'=>$competitorpartnumber,'ReferenceItem'=>$referenceitem,'InterchangeQuantity'=>$interchangequantity,'UOM'=>$interchangequantityuom,'InterchangeNotes'=>$interchangenotes,'BrandAAIAID'=>$brandAAIAID,'BrandLabel'=>$brandlabel,'SubBrandAAIAID'=>$subbrandAAIAID,'InternalNotes'=>$internalnotes,'LanguageCode'=>$languagecode,'SubBrandLabel'=>$subbrandlabel, 'VMRSBrandID'=>$VMRSbrandid, 'QualityGradeLevel'=>$qualitygradelevel, 'ItemEquivalentUOM'=>$itemequivalentuom);
+     $interchanges[]=array('CompetitorPartNumber'=>$competitorpartnumber,'ReferenceItem'=>$referenceitem,'InterchangeQuantity'=>$interchangequantity,'UOM'=>$interchangequantityuom,'InterchangeNotes'=>$interchangenotes,'BrandAAIAID'=>$interchangebrandAAIAID,'BrandLabel'=>$interchangebrandlabel,'SubBrandAAIAID'=>$subbrandAAIAID,'InternalNotes'=>$internalnotes,'LanguageCode'=>$languagecode,'SubBrandLabel'=>$subbrandlabel, 'VMRSBrandID'=>$VMRSbrandid, 'QualityGradeLevel'=>$qualitygradelevel, 'ItemEquivalentUOM'=>$itemequivalentuom);
     }
    }
   }

@@ -8,6 +8,17 @@ include_once('./class/pricingClass.php');
 include_once('./class/userClass.php');
 include_once('./class/XLSXWriterClass.php');
 
+/*
+ * some data elements are pulled from the receiver profile 
+ *  MarketplaceBrandName
+ *  MarketplaceManufacturerName
+ * 
+ * 
+ * 
+ * 
+ */
+
+
 $pim = new pim();
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
@@ -35,6 +46,7 @@ $logs=new logs();
 $pcdbVersion=$pcdb->version();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
+$receiverprofile=$pim->getReceiverprofileById($receiverprofileid);
 $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $streamXLSX=false;
 $xlsxdata='';
@@ -43,7 +55,8 @@ $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
 
-
+$brandname='not set in receiver profile (MarketplaceBrandName)'; if(isset($receiverprofile['keyeddata']['MarketplaceBrandName'])){$brandname=$receiverprofile['keyeddata']['MarketplaceBrandName'];}
+$manufacturername='not set in receiver profile (MarketplaceManufacturerName)'; if(isset($receiverprofile['keyeddata']['MarketplaceManufacturerName'])){$manufacturername=$receiverprofile['keyeddata']['MarketplaceManufacturerName'];}
 
         
 $columnslist=array(); $columnwidthlist=array(); for($i=0;$i<=154;$i++){$columnslist['Column '.$i]='string'; $columnwidthlist[]=12;}
@@ -109,7 +122,7 @@ foreach($partnumbers as $partnumber)
   $row[4]='GTIN';
   $row[5]='00'.$part['GTIN'];  
   $row[8]=$descriptiontext.' - '.$partnumber;
-  $row[9]='AmeriBRAKES'; //brand
+  $row[9]=$brandname; //brand  
   $row[10]=intval($packagequantityofeaches); //PPU Quantity of Units
   $row[11]='Each';//PPU Unit of Measure	
   $row[12]=intval($packagequantityofeaches);//Multipack Quantity
@@ -149,7 +162,7 @@ foreach($partnumbers as $partnumber)
   $row[39]='Car;Truck;';//Vehilce Category
   $row[40]=$part['brandid'];//AAIA Brand ID
   $row[42]=$part['parttypeid'];//Part Terminology ID
-  $row[44]='Momentum USA';//Manufacturer name
+  $row[44]=$manufacturername;//Manufacturer name
   $row[45]=$partnumber;//Manufacturer Part Number
   $row[46]=$partnumber;//Model Number
   $row[47]='1 - Does not contain composite wood';//
@@ -164,7 +177,7 @@ foreach($partnumbers as $partnumber)
   $row[120]=$packageweightvalue;//Assembled Product Weight - Measure
   $row[121]=$packageweightunits;//Assembled Product Weight - Unit
   $row[125]='oem replacement';//
-  $row[144]='Momentum USA Inc. warrants this disc brake pad set to be free of defects in material and workmanship. Customer satisfaction guaranteed.';//Warranty Text
+  $row[144]=$partcategory['warranty'];//Warranty Text
 
  }
  else

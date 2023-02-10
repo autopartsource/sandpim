@@ -1637,6 +1637,18 @@ function countAppsByPartcategories($partcategories)
   }
   $db->close();
  }
+
+ function updatePartcategoryWarranty($partcategory,$warranty)
+ {
+  $db = new mysql; $db->connect();
+  $warrantyencoded= base64_encode($warranty);
+  if($stmt=$db->conn->prepare('update partcategory set `warranty`=? where id=?'))
+  {
+   $stmt->bind_param('si', $warrantyencoded,$partcategory);
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
  function getPartCategories()
  {
@@ -1667,7 +1679,7 @@ function countAppsByPartcategories($partcategories)
     $db->result = $stmt->get_result();
     if($row = $db->result->fetch_assoc())
     {
-     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID'],'subbrandID'=>$row['subbrandID'],'mfrlabel'=>$row['mfrlabel'],'logouri'=>$row['logouri'],'marketcopy'=>base64_decode($row['marketcopy']),'fab'=>base64_decode($row['fab']));
+     $category=array('id'=>$row['id'],'name'=>$row['name'],'brandID'=>$row['brandID'],'subbrandID'=>$row['subbrandID'],'mfrlabel'=>$row['mfrlabel'],'logouri'=>$row['logouri'],'marketcopy'=>base64_decode($row['marketcopy']),'fab'=>base64_decode($row['fab']),'warranty'=>base64_decode($row['warranty']));
     }
    }
   }
@@ -2844,7 +2856,17 @@ function countAppsByPartcategories($partcategories)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $profile=array('id'=>$row['id'],'name'=>$row['name'],'data'=>$row['data'],'status'=>$row['status'],'intervaldays'=>$row['intervaldays'],'lastexport'=>$row['lastexport'],'notes'=>base64_decode($row['notes']));
+    //convert "data" blob of name/value pairs into name-keyed array
+    $keyeddata=array();
+    $profiledata=$row['data'];
+    $dataelements=explode(';',$profiledata);
+    foreach($dataelements as $element)
+    {
+     $bits=explode(':',$element);
+     if(count($bits)==2){$keyeddata[$bits[0]]=$bits[1];}
+    }
+       
+    $profile=array('id'=>$row['id'],'name'=>$row['name'],'data'=>$row['data'],'keyeddata'=>$keyeddata,'status'=>$row['status'],'intervaldays'=>$row['intervaldays'],'lastexport'=>$row['lastexport'],'notes'=>base64_decode($row['notes']));
    }
   }
   $db->close();

@@ -68,6 +68,11 @@ if (isset($_POST['submit']) && $_POST['submit']=='Save')
   $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$_POST['id'].' Features and Benefits was changed from '.base64_decode($_POST['oldfab']).' to '.$_POST['fab']);
  }
 
+ if($_POST['warranty']!=base64_decode($_POST['oldwarranty']))
+ {
+  $pim->updatePartcategoryWarranty(intval($_POST['id']), $_POST['warranty']); 
+  $logs->logSystemEvent('partcategorychange', $_SESSION['userid'], 'Part Category '.$_POST['id'].' Warranty was changed from '.base64_decode($_POST['oldwarranty']).' to '.$_POST['warranty']);
+ }
  
  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./partCategories.php'\" /></head><body></body></html>";
  exit;
@@ -148,6 +153,13 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
                                             </div>
                                         </div>
                                         <hr>
+                                        <div class="form-group row">
+                                            <label for="inputWarranty" class="col-sm-2 col-form-label">Warranty Statement</label>
+                                            <div class="col-sm-10">
+                                                <textarea id="inputWarranty" class="form-control" name="warranty"><?php echo $partcategory['warranty'];?></textarea>
+                                            </div>
+                                        </div>
+                                        <hr>
                                         <div>
                                             <input name="submit" type="submit" value="Cancel"/> <input name="submit" type="submit" value="Save"/>
                                         </div>
@@ -160,6 +172,7 @@ $partcategory = $pim->getPartCategory(intval($_GET['id']));
                                 <input type="hidden" name="oldmfrlabel" value="<?php echo $partcategory['mfrlabel'];?>"/>
                                 <input type="hidden" name="oldmarketcopy" value="<?php echo base64_encode($partcategory['marketcopy']);?>"/>
                                 <input type="hidden" name="oldfab" value="<?php echo base64_encode($partcategory['fab']);?>"/>
+                                <input type="hidden" name="oldwarranty" value="<?php echo base64_encode($partcategory['warranty']);?>"/>
                             </form>
                         </div>
                     </div>
