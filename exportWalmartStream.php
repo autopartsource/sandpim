@@ -59,7 +59,19 @@ $brandname='not set in receiver profile (MarketplaceBrandName)'; if(isset($recei
 $manufacturername='not set in receiver profile (MarketplaceManufacturerName)'; if(isset($receiverprofile['keyeddata']['MarketplaceManufacturerName'])){$manufacturername=$receiverprofile['keyeddata']['MarketplaceManufacturerName'];}
 
         
-$columnslist=array(); $columnwidthlist=array(); for($i=0;$i<=154;$i++){$columnslist['Column '.$i]='string'; $columnwidthlist[]=12;}
+$columnslist=array(); $columnwidthlist=array(); 
+for($i=0;$i<=154;$i++)
+{
+    $columnslist['Column '.$i]='string';
+    $columnwidthlist[]=12;
+    if($i==10){$columnslist['Column '.$i]='number';}// PPU Quantity of Units
+    if($i==12){$columnslist['Column '.$i]='number';}// Multipack
+    if($i==42){$columnslist['Column '.$i]='number';}// Part Terminology ID
+    if($i==26){$columnslist['Column '.$i]='#0.00';}// price column
+    if($i==34){$columnslist['Column '.$i]='#0.00';}// weight column
+    if($i==118){$columnslist['Column '.$i]='#0.00';}// weight column
+    
+}
 
 
 //$writer->writeSheetHeader('Sheet1', $columnslist, array('widths'=>$columnwidthlist,'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
@@ -90,11 +102,13 @@ foreach($partnumbers as $partnumber)
   {//array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$innerquantity,'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$weight,'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$shippingheight,'shippingwidth'=>$shippingwidth,'shippinglength'=>$shippinglength,'dimensionsuom'=>$row['dimensionsuom'],'nicepackage'=>$nicepackage);
    if($package['packageuom']=='EA')
    {
-    $packagelengthvalue=$package['shippinglength']; $packagelengthunits=$package['packageuom']; $packagewidthvalue=$package['shippingwidth']; $packagewidthunits=$package['packageuom']; $packageheightvalue=$package['shippingheight']; 
-    $packageheightunits=$package['packageuom']; $packageweightvalue=$package['weight']; $packageweightunits=$package['weightsuom']; $packagequantityofeaches=$package['quantityofeaches'];    $packageuom=$package['packageuom'];
+    $packagelengthvalue=$package['shippinglength']; $packagelengthunits=$package['dimensionsuom']; $packagewidthvalue=$package['shippingwidth']; $packagewidthunits=$package['dimensionsuom']; $packageheightvalue=$package['shippingheight']; 
+    $packageheightunits=$package['dimensionsuom']; $packageweightvalue=floatval($package['weight']); $packageweightunits=$package['weightsuom']; $packagequantityofeaches=$package['quantityofeaches'];    $packageuom=$package['packageuom'];
     break;
    }
   }
+  if($packageweightunits=='PG'){$packageweightunits='lb';}
+  
   
   $descriptiontext='';
   foreach($descriptions as $description)
@@ -108,7 +122,7 @@ foreach($partnumbers as $partnumber)
   $sellprice=0;
   foreach($prices as $price)
   {// array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'pricesheetnumber'=>$row['pricesheetnumber'],'amount'=>$row['amount'],'currency'=>$row['currency'],'priceuom'=>$row['priceuom'],'pricetype'=>$row['pricetype'],'effectivedate'=>$row['effectivedate'],'expirationdate'=>$row['expirationdate'],'niceprice'=>$niceprice);
-   $sellprice=$price['amount'];
+   $sellprice=round($price['amount'],2);
    break;
   }
   
@@ -157,7 +171,7 @@ foreach($partnumbers as $partnumber)
   $row[27]='2021-05-27';//Site Start Date
   $row[28]='2049-12-31';//Site End Date
   $row[32]='Yes';//Ships in Original Packaging
-  $row[34]=$packageweightvalue;//Shipping Weight
+  $row[34]=round($packageweightvalue,2);//Shipping Weight
   $row[38]='Specific';//Fit Type
   $row[39]='Car;Truck;';//Vehilce Category
   $row[40]=$part['brandid'];//AAIA Brand ID
@@ -167,17 +181,17 @@ foreach($partnumbers as $partnumber)
   $row[46]=$partnumber;//Model Number
   $row[47]='1 - Does not contain composite wood';//
   $row[48]=intval($packagequantityofeaches);//Package Count
-  $row[55]=$appsummarystruct['summary'];
-  $row[114]=$packagelengthvalue;//Assembled Product Length - Measure
-  $row[115]=$packagelengthunits;//Assembled Product Length - Unit
-  $row[116]=$packagewidthvalue;//Assembled Product Width - Measure
-  $row[117]=$packagewidthunits;//Assembled Product Width - Unit
-  $row[118]=$packageheightvalue;//Assembled Product Height - Measure
-  $row[119]=$packageheightunits;//Assembled Product Height - Unit
-  $row[120]=$packageweightvalue;//Assembled Product Weight - Measure
-  $row[121]=$packageweightunits;//Assembled Product Weight - Unit
-  $row[125]='oem replacement';//
-  $row[144]=$partcategory['warranty'];//Warranty Text
+  $row[54]=$appsummarystruct['summary'];
+  $row[112]=$packagelengthvalue;//Assembled Product Length - Measure
+  $row[113]=strtolower($packagelengthunits);//Assembled Product Length - Unit
+  $row[114]=$packagewidthvalue;//Assembled Product Width - Measure
+  $row[115]=strtolower($packagewidthunits);//Assembled Product Width - Unit
+  $row[116]=$packageheightvalue;//Assembled Product Height - Measure
+  $row[117]=strtolower($packageheightunits);//Assembled Product Height - Unit
+  $row[118]=$packageweightvalue;//Assembled Product Weight - Measure
+  $row[119]=strtolower($packageweightunits);//Assembled Product Weight - Unit
+  $row[123]='oem replacement';//
+  $row[142]=$partcategory['warranty'];//Warranty Text
 
  }
  else

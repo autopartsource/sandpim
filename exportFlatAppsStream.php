@@ -32,7 +32,7 @@ $qdb=new qdb();
 $logs=new logs();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
-$format=''; if($_GET['format']=='human1'){$format='human1';}
+$format='default'; if($_GET['format']=='decoded'){$format='decoded';}
 
 $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $profile=$pim->getReceiverprofileById($receiverprofileid);
@@ -55,7 +55,7 @@ if($appscount>5000)
 { // dataset is too big - this export will be handled by the housekeeper (cron) and written to a temp directory for download
  
  $localfilename=__DIR__.'/ACESexports/'.$randomstring;
- $token=$pim->createBackgroundjob('ACESflatExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text',$clientfilename);
+ $token=$pim->createBackgroundjob('ACESflatExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';exportformat:'.$format,date('Y-m-d H:i:s'),'text',$clientfilename);
  $logs->logSystemEvent('Export', 0, 'Flat apps file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
  echo 'This export will contain '.$appscount.' apps. It will be processed by the houskeeper (CLI execution of processFlatAppsExport.php by cron) and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
  echo '<br/><br/><a href="./index.php">Home</a><br/><a href="./backgroundJobs.php">Manage background import/export jobs</a>';
@@ -76,7 +76,8 @@ else
                break;
 
            case 'qdb':
-                $qdbattributesstring.='not yet implimented!';
+                //$qdbattributesstring.='not yet implimented!';
+                $qdbattributesstring.=$qdb->qualifierText($attribute['name'], explode('~', str_replace('|','',$attribute['value'])));               
                break;
 
            case 'note':

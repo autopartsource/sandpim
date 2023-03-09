@@ -106,9 +106,10 @@ class pim
   
   //build list of partnumbers in given categoirs
   
-  $tempstatuses=array();
+  $tempstatuses=false;
   if($statuslist)
   {
+   $tempstatuses=array();
    foreach($statuslist as $s){$tempstatuses[]=array('lifecyclestatus'=>$s);}
   }
   

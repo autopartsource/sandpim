@@ -42,6 +42,9 @@ if(count($jobs))
   $temp=explode(':',$parameterbit); if(count($temp)==2){$parameters[$temp[0]]=$temp[1];}
  }
 
+ 
+ $exportformat='default';
+ if(array_key_exists('exportformat', $parameters)){$exportformat=$parameters['exportformat'];}
  $receiverprofileid=intval($parameters['receiverprofile']);
  $profile=$pim->getReceiverprofileById($receiverprofileid);
  $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
@@ -57,53 +60,69 @@ if(count($jobs))
   if(count($bits)==2){$keyedprofile[$bits[0]]=$bits[1];}
  } 
  
+ 
+ $partnumberstemp=$pim->getPartnumbersByPartcategories($partcategories);
+ 
+ $pim->logBackgroundjobEvent($jobid, 'export format: '.$exportformat);
+ $pim->logBackgroundjobEvent($jobid, 'part categories in export: '.implode(',',$partcategories));
+ $pim->logBackgroundjobEvent($jobid, 'part count in categories: '.count($partnumberstemp));
+  
+ 
  $writeresult=false;
  
  if($fh=fopen($filename, 'a'))
- {
-  foreach($apps as $app)
+ {     
+  if($exportformat=='default')
   {
-   $vcdbattributesstring=''; $qdbattributesstring=''; $notesstring='';
-   
-   foreach($app['attributes'] as $attribute)
+   foreach($apps as $app)
    {
-       switch ($attribute['type']) {
-           case 'vcdb':
-               $vcdbattributesstring.=$attribute['name'].'|'.$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~';
-               break;
-
-           case 'qdb':
-               $qdbattributesstring.='not yet implimented!';
-               break;
-
-           case 'note':
-               $notesstring.=$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~';
-               break;
-
-           default:
-               break;
-       } 
+    $vcdbattributesstring=''; $qdbattributesstring=''; $notesstring='';   
+    foreach($app['attributes'] as $attribute)
+    {
+     switch ($attribute['type']) 
+     {
+      case 'vcdb': $vcdbattributesstring.=$attribute['name'].'|'.$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~'; break;
+      case 'qdb': $qdbattributesstring.=$qdb->qualifierText($attribute['name'], explode('~', str_replace('|','',$attribute['value']))); break;
+      case 'note':$notesstring.=$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~'; break;
+      default: break;
+     } 
+    }
+    $record=$app['cosmetic']."\t".$app['basevehicleid']."\t".$app['partnumber']."\t".$app['parttypeid']."\t".$app['positionid']."\t".$app['quantityperapp']."\t".$app['partnumber']."\t".$vcdbattributesstring."\t".$qdbattributesstring."\t".$notesstring."\r\n";
+    $writeresult=fwrite($fh, $record);  
    }
-   
-   $record=$app['cosmetic']."\t".$app['basevehicleid']."\t".$app['partnumber']."\t".$app['parttypeid']."\t".$app['positionid']."\t".$app['quantityperapp']."\t".$app['partnumber']."\t".$vcdbattributesstring."\t".$qdbattributesstring."\t".$notesstring."\r\n";
-   $writeresult=fwrite($fh, $record);
   }
+     
+  if($exportformat=='decoded')
+  {
+   foreach($apps as $app)    
+   {
+    $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+    $niceattributes = array();
+    foreach ($app['attributes'] as $appattribute) 
+    {
+     if ($appattribute['type'] == 'vcdb') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $vcdb->niceVCdbAttributePair($appattribute), 'cosmetic' => $appattribute['cosmetic']);}
+     if ($appattribute['type'] == 'qdb') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $qdb->qualifierText($appattribute['name'], explode('~', str_replace('|','',$appattribute['value']))), 'cosmetic' => $appattribute['cosmetic']); 
+     if ($appattribute['type'] == 'note') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $appattribute['value'], 'cosmetic' => $appattribute['cosmetic']);}}
+     $nicefitmentstring = ''; $nicefitmentarray = array();
+     foreach ($niceattributes as $niceattribute){$nicefitmentarray[] = $niceattribute['text'];}
+     $record=$mmy['makename']."\t".$mmy['modelname']."\t".$mmy['year']."\t".$app['partnumber']."\t".$pcdb->parttypeName($app['parttypeid'])."\t".$pcdb->positionName($app['positionid'])."\t".$app['quantityperapp']."\t".implode('; ', $nicefitmentarray)."\r\n";
+     $writeresult=fwrite($fh, $record);  
+    }    
+   }
+  }
+  
   fclose($filename);
- }
- 
- 
- if($writeresult)
- {
   $pim->updateBackgroundjobDone($jobid,'complete',date('Y-m-d H:i:s'));
-  $pim->logBackgroundjobEvent($jobid, 'Flat applications file ['.$filename.'] created containing '.count($apps).' apps');
-  $logs->logSystemEvent('Export', 0, 'Flat applications file ['.$filename.'] (jobid:'.$jobid.') exported by houskeeper; apps:'.count($apps));
+  $pim->logBackgroundjobEvent($jobid, 'Flat applications file ['.$filename.'] created containing '.count($apps).' apps for profile id '.$receiverprofileid);
+  $logs->logSystemEvent('Export', 0, 'Flat applications file ['.$filename.'] (jobid:'.$jobid.') exported by houskeeper; apps: '.count($apps));
  }
  else
- {  // writing the output file failed
+ { // open failed
   $pim->updateBackgroundjobDone($jobid,'failed',date('Y-m-d H:i:s'));
   $pim->logBackgroundjobEvent($jobid, 'file write failed ['.$filename.']' );
-  $logs->logSystemEvent('Export', 0, 'Flat applications file ['.$filename.'] (jobid:'.$jobid.') export failed (write permission denied) during houskeeper processing; apps:'.count($apps));
+  $logs->logSystemEvent('Export', 0, 'Flat applications file ['.$filename.'] (jobid:'.$jobid.') export failed (write permission denied?) during houskeeper processing; apps: '.count($apps));     
  }
+ 
 }
 else
 {

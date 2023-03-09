@@ -55,7 +55,7 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                                         <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
                                     </div>
                                     <div style="padding: 5px;">Export Format 
-                                        <select name="format"><option value="default">Coded values - tilde delimited attributes</option></select>
+                                        <select name="format"><option value="default">Coded values - tilde delimited attributes</option><option value="decoded">Decoded values for human eyeballs</option></select>
                                     </div>
                                     <input type="submit" name="submit" value="Export"/>
                                 </div>
