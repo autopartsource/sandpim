@@ -76,15 +76,35 @@ class vcdb
  
  
  
- function getModels($makeid)
+ function getModels($makeid,$regionid=false)
  {
   $db = new mysql; $db->dbname=$db->vcdbname;
   if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;}
   $db->connect();
   $models=array();
-  if($stmt=$db->conn->prepare('select distinct ModelName, Model.ModelID from BaseVehicle,Make,Model where BaseVehicle.MakeID = Make.MakeID and BaseVehicle.ModelID = Model.ModelID and Make.MakeID = ? and Model.VehicleTypeID in(5,6,7,2187) ORDER BY Modelname'))
+  
+
+  if($regionid===false)
+  {// no region was passed - leave it out of the modelname query
+   $sql='select distinct ModelName, Model.ModelID from BaseVehicle,Make,Model where BaseVehicle.MakeID = Make.MakeID and BaseVehicle.ModelID = Model.ModelID and Make.MakeID = ? and Model.VehicleTypeID in(5,6,7,2187) ORDER BY Modelname';
+  }
+  else
+  {// a region was passed - include it in the modelname query
+   $sql='select distinct ModelName, Model.ModelID from BaseVehicle,Make,Model,Vehicle where BaseVehicle.MakeID = Make.MakeID and BaseVehicle.ModelID = Model.ModelID and BaseVehicle.BaseVehicleID=Vehicle.BaseVehicleID and Vehicle.RegionID=? and Make.MakeID =? and Model.VehicleTypeID in(5,6,7,2187) ORDER BY Modelname';
+  }
+  
+//  if($stmt=$db->conn->prepare('select distinct ModelName, Model.ModelID from BaseVehicle,Make,Model where BaseVehicle.MakeID = Make.MakeID and BaseVehicle.ModelID = Model.ModelID and Make.MakeID = ? and Model.VehicleTypeID in(5,6,7,2187) ORDER BY Modelname'))
+  if($stmt=$db->conn->prepare($sql))
   {
-   $stmt->bind_param('i', $makeid);
+   if($regionid===false)
+   {// no region was passed
+    $stmt->bind_param('i', $makeid);
+   }
+   else
+   {// a region was passed
+    $stmt->bind_param('ii', $regionid, $makeid);       
+   }
+   
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())

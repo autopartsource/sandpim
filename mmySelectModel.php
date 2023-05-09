@@ -8,8 +8,11 @@ if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equi
 
 $vcdb=new vcdb;
 
+
+
+$regionid=false; if(isset($_GET['regionid']) && intval($_GET['regionid'])>0){$regionid=intval($_GET['regionid']);}
 $makeid=intval($_GET['makeid']);
-$models=$vcdb->getModels($makeid);
+$models=$vcdb->getModels($makeid,$regionid);
 
 $groupcount=4;
 $modelcount=count($models);
@@ -50,7 +53,12 @@ $groupedModelsCount = count($groupedmodels);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Apps > <?php echo '<a href="appsIndex.php">'.$vcdb->makeName($makeid).'</a>'; ?></h3>
+                        <h4 class="card-header text-start"><?php echo '<a href="appsIndex.php">'.$vcdb->makeName($makeid).'</a>'; ?> Models from 
+                            <form id="region">
+                                <input type="hidden" name="makeid" value="<?php echo $makeid;?>"/>
+                                <select onchange="document.getElementById('region').submit();" name="regionid"><option value="0">All Regions</option><option value="1"<?php if($regionid==1){echo ' selected';}?>>US</option><option value="2"<?php if($regionid==2){echo ' selected';}?>>Canada</option><option value="3"<?php if($regionid==3){echo ' selected';}?>>Mexico</option></select>
+                            </form>
+                        </h4>
 
                         <div class="card-body">
                             <div class="container">

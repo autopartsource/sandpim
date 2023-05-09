@@ -66,8 +66,8 @@ $groupedMakesCount = count($groupedmakes);
                     <div class="card shadow-sm">
                         
                         <!-- Header -->
-                        <h3 class="card-header text-start">Apps</h3>
-                        
+                        <h3 class="card-header text-start">MMY Apps - Makes 
+                        </h3>
                         <div class="card-body">
                             <div class="container">
                                 <div class="row row-cols-1 row-cols-sm-2 <?php if($groupedMakesCount > 4) {echo "row-cols-md-"; echo $groupedMakesCount-2;} else {echo "row-cols-md-"+$groupedMakesCount;} echo" row-cols-lg-"; echo $groupedMakesCount;?>">
