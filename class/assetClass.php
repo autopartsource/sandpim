@@ -158,7 +158,7 @@ class asset
     
   $db=new mysql; $db->connect(); $connections=array();
   $publicclause=''; if($excludenonpublic){$publicclause=' and public=1';}
-  if($stmt=$db->conn->prepare('select part_asset.id as connectionid, partnumber,assettypecode,sequence,representation, asset.* from part_asset,asset where part_asset.assetid=asset.assetid and partnumber=? '.$publicclause.' order by representation, public desc, sequence'))
+  if($stmt=$db->conn->prepare('select part_asset.id as connectionid, partnumber,assettypecode,sequence,representation, asset.* from part_asset,asset where part_asset.assetid=asset.assetid and partnumber=? '.$publicclause.' order by representation, id'))
   {
    if($stmt->bind_param('s',$partnumber))
    {

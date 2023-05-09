@@ -154,7 +154,12 @@ class pim
 //       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$partnumber,'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>$basepart);
        $attributes=$this->getAppAttributes($row['id']);
        $attributeshash=$this->appAttributesHash($attributes);
-       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$partnumber,'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'partcategory'=>$row['partcategory'],'mfrlabel'=>$row['mfrlabel'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);    
+       
+       $mfrlabel=$row['mfrlabel'];
+       //mfr lable in the apps result set 
+       $mfrlabel=$this->partMfrLabel($partnumber);
+       //fff
+       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$partnumber,'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'partcategory'=>$row['partcategory'],'mfrlabel'=>$mfrlabel,'attributes'=>$attributes,'attributeshash'=>$attributeshash);    
       }
      }
     }  
@@ -3956,6 +3961,31 @@ function deleteAppSummary($partnumber)
   $db->close();
  }
 
+ 
+ function partMfrLabel($partnumber)
+ {
+  $mfrlabel='';
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select part.partcategory,partcategory.mfrlabel from part left join partcategory on part.partcategory=partcategory.id where part.partnumber=?'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $mfrlabel=$row['mfrlabel'];
+    }
+   }
+  }
+  $db->close();
+  return $mfrlabel;
+ }
+
+ 
+ 
+ 
+ 
 
 //$yearquarter,$geography,$vehicleid,$basevehicleid,$yearid,$makeid,$modelid,$submodelid,$bodytypeid,$bodynumdoorsid,$drivetypeid,$fueltypeid,$enginebaseid,$enginevinid,$fueldeliverysubtypeid,$transcontroltypeid,$transnumspeedid,$aspirationid,$vehicletypeid,$vehiclecount
  function addExperianVIOrecords($records)
