@@ -170,7 +170,7 @@ if($ftpserver && $havewriteaccess && $username && $password)
         
     echo 'Adding index on MetaUOMCodes.MetaUOMID....';
     flush();
-    echo $padb->addDatabaseIndex('MetaUOMCodes', 'MetaUOMID').'Done<br/>';  //create index idx_MetaUOMID on MetaUOMCodeAssignment (MetaUOMID);
+    echo $padb->addDatabaseIndex('MetaUOMCodes', 'MetaUOMID').'Done<br/>';  //create index idx_MetaUOMID on MetaUOMCodes (MetaUOMID);
 
     echo 'Adding index on MetaUOMCodeAssignment.MetaUOMID...';
     flush();
@@ -195,6 +195,14 @@ if($ftpserver && $havewriteaccess && $username && $password)
     echo 'Adding index on PartAttributeAssignment.PAPTID...';
     flush();
     echo $padb->addDatabaseIndex('PartAttributeAssignment', 'PAPTID').'Done<br/>';  //create index idx_PAPTID on PartAttributeAssignment (PAPTID);
+    
+    echo 'Adding index on ValidValueAssignment.PAPTID...';
+    flush();
+    echo $padb->addDatabaseIndex('ValidValueAssignment', 'PAPTID').'Done<br/>';  //create index idx_PAPTID on ValidValueAssignment (PAPTID);
+    
+    echo 'Adding index on ValidValueAssignment.ValidValueID...';
+    flush();
+    echo $padb->addDatabaseIndex('ValidValueAssignment', 'ValidValueID').'Done<br/>';  //create index idx_ValidValueID on ValidValueAssignment (ValidValueID);
     
     echo 'import complete';
    }
