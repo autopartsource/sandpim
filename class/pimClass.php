@@ -630,6 +630,60 @@ function countAppsByPartcategories($partcategories)
  }
  
  
+ 
+ function deleteAppsByPartnumber($partnumber)
+ {
+  $db = new mysql; $db->connect(); $appids=array();
+  if($stmt=$db->conn->prepare('select id from application where partnumber=?'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $appids[]=$row['id'];
+     }
+    }
+   }
+  }
+
+  if(count($appids))
+  {
+   $idtemp=0;
+
+   if($stmt=$db->conn->prepare('delete from application_attribute where applicationid=?'))
+   {
+    $stmt->bind_param('i',$idtemp);
+    foreach($appids as $appid)
+    {
+     $idtemp=$appid;
+     $stmt->execute();
+    }
+   }
+
+   if($stmt=$db->conn->prepare('delete from application_asset where applicationid=?'))
+   {
+    $stmt->bind_param('i',$idtemp);
+    foreach($appids as $appid)
+    {
+     $idtemp=$appid;
+     $stmt->execute();
+    }
+   }
+  
+   if($stmt=$db->conn->prepare('delete from application where oid=?'))
+   {
+    $stmt->bind_param('s',$oid);
+    $stmt->execute();
+   }
+  }
+  $db->close();
+  return $appids;
+ }
+ 
+ 
 
  function removeDeletedApps()
  {
@@ -803,6 +857,79 @@ function countAppsByPartcategories($partcategories)
   return $part;
  }
 
+ function deletePart($partnumber)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from interchange where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  if($stmt=$db->conn->prepare('delete from alert_part where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  if($stmt=$db->conn->prepare('delete from interchange where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  if($stmt=$db->conn->prepare('delete from package where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+
+  if($stmt=$db->conn->prepare('delete from part_VIO where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  if($stmt=$db->conn->prepare('delete from part_application_summary where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  if($stmt=$db->conn->prepare('delete from part_asset where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  if($stmt=$db->conn->prepare('delete from part_attribute where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  if($stmt=$db->conn->prepare('delete from part_balance where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  if($stmt=$db->conn->prepare('delete from part_description where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+
+  if($stmt=$db->conn->prepare('delete from receiverprofile_parttranslation where internalpart = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  if($stmt=$db->conn->prepare('delete from part_history where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+    
+  if($stmt=$db->conn->prepare('delete from part where partnumber = ?'))
+  {
+   $stmt->bind_param('s', $partnumber); $stmt->execute();
+  }
+  
+  $this->deleteAppsByPartnumber($partnumber);
+  
+  $db->close();
+ }
+ 
  function getPartByOID($oid)
  {
   $db = new mysql; $db->connect();

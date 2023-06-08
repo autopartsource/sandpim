@@ -108,6 +108,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownUtilities">
                     <a class="dropdown-item" href="pairPart.php">Two-Part Match-maker</a>
                     <a class="dropdown-item" href="bundlePart.php">Full-Vehicle Kit Match-maker</a>
+                    <a class="dropdown-item" href="clearDataSelect.php">Clear Data</a>
                     <a class="dropdown-item" href="buyersGuideBuilder.php">Buyers Guide Builder</a>
                     <a class="dropdown-item" href="basevidsToMMYinput.php">Convert BaseVehicleIDs to Makes/Models/Years</a>
                     <a class="dropdown-item" href="MMYtoBasevidsInput.php">Convert Makes/Models/Years to BaseVehicleIDs</a>
