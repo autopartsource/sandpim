@@ -6,7 +6,7 @@ class pim
 
  function buildVersion()
  {
-  return '2023-01-28';
+  return '2023-06-08';
  }
 
  function uuidv4()
@@ -672,12 +672,13 @@ function countAppsByPartcategories($partcategories)
      $stmt->execute();
     }
    }
-  
-   if($stmt=$db->conn->prepare('delete from application where oid=?'))
+   
+   if($stmt=$db->conn->prepare('delete from application where partnumber=?'))
    {
-    $stmt->bind_param('s',$oid);
+    $stmt->bind_param('s',$partnumber);
     $stmt->execute();
    }
+  
   }
   $db->close();
   return $appids;
