@@ -53,7 +53,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Delete' && $_POST['confirm']==$
    // application (and related)
    // part
    
-   $pim->deletePart($partnumber);
+   $pim->deletePart($part['partnumber']);
    $logs->logSystemEvent('UTILITIES', $_SESSION['userid'], 'Cleared ALL data for part ['.$part['partnumber'].']');       
    $deletedcount++;
   }
