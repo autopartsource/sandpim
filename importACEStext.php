@@ -34,17 +34,16 @@ cosmetic	basevid	item	parttypeid	position	qty	vcdbattributes (name|value|sequenc
 
 */
 
-if (isset($_POST['input']))
-{
+if (isset($_POST['input']) && $_POST['submit']='Import')
+{ // this is the copy-n-paste option
  $rows= explode("\r\n", $_POST['input']);
- if(count($rows)<100)
+ if(count($rows)<5000)
  {
   $app_count = $pim->createAppsFromText($_POST['input'],intval($_POST['partcategory']));
   $resultmessage=$app_count . ' apps created';
  }
  else
  {// dataset is too big. Write it to temp file for background process to handle next time it is called by cron
-
   $randomstring=$pim->uuidv4();
   $localfilename=__DIR__.'/ACESuploads/'.$randomstring;
   if(file_put_contents($localfilename, $_POST['input']))
@@ -59,6 +58,29 @@ if (isset($_POST['input']))
   }
  }  
 }
+
+if(isset($_POST['submit']) && $_POST['submit']=='Upload')
+{// this is the CSV upload option
+ if($_FILES['fileToUpload']['type']=='text/csv')
+ {
+  if($_FILES['fileToUpload']['size']<5000000 || isset($_SESSION['userid']))   
+  {
+   $originalFilename= basename($_FILES['fileToUpload']['name']);
+   $resultmessage=$originalFilename.' was uploaded';   
+  }
+  else
+  {
+   $resultmessage='upload was too big';
+  }
+ }
+ else
+ {
+  $resultmessage='file uploaded was not a CSV ('.$_FILES['fileToUpload']['type'].')';     
+ }
+}
+
+
+
 ?>
 <!DOCTYPE html>
 <html>

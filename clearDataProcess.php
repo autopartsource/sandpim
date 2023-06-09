@@ -40,23 +40,22 @@ if(isset($_POST['submit']) && $_POST['submit']=='Delete' && $_POST['confirm']==$
   if($part)
   {
    // alert_part
-   // application (and related)
    // interchange
    // package
-   // part
    // part_VIO
    // part_application_summary
    // part_asset
    // part_attribute
    // part_balance
    // part_description
+   // part_history
    // receiverprofile_parttranslation
-   // 
+   // application (and related)
+   // part
    
-   
-   
+   $pim->deletePart($partnumber);
+   $logs->logSystemEvent('UTILITIES', $_SESSION['userid'], 'Cleared ALL data for part ['.$part['partnumber'].']');       
    $deletedcount++;
-   $logs->logSystemEvent('UTILITIES', $_SESSION['userid'], 'TEST - Clear part ['.$part['partnumber'].']');       
   }
  }
  $resultmessage=$deletedcount.' parts were deleted - including their applications and asset connections';
