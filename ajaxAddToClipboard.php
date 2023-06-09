@@ -24,7 +24,7 @@ if(isset($_SESSION['userid']) && isset($_GET['description']) && isset($_GET['obj
  $objectkey=$_GET['objectkey'];
  $objectdata=base64_decode($_GET['objectdata']);
  $id=$pim->addClipboardObject($userid,$description ,$objecttype, $objectkey, $objectdata);
- //$logs->logSystemEvent('clipboard',$_SESSION['userid'],'added '.$objecttype.':'.$description);
+ $logs->logSystemEvent('clipboard',$_SESSION['userid'],'added '.$objecttype.':'.$description.' id:'.$id);
  echo json_encode($id);
 }
 ?>

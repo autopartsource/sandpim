@@ -520,7 +520,8 @@ $kitcomponents=$pim->getKitComponents($partnumber);
 
             function addPartToClipboard()
             {
-             var description='<a href="showApp.php'+ window.location.search +'"><?php echo $partnumber;?></a>';
+//             var description='<a href="showApp.php'+ window.location.search +'"><?php echo $partnumber;?></a>';
+             var description='<?php echo $partnumber;?>';
              var objectkey='<?php echo $partnumber;?>';
              var objectdata='';
              
@@ -540,7 +541,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                 for(var i=0; i<nodes.length; i++) 
                 {
                     //                    console.log(nodes[i].getAttribute('data-appid') + ' - ' + nodes[i].getAttribute('data-description'));
-                    var description = nodes[i].getAttribute('data-description');
+                    var description = nodes[i].getAttribute('data-description-app');
                     var objectdata='';
                     var objectkey=nodes[i].getAttribute('data-appid');
                     var xhr = new XMLHttpRequest();
@@ -928,7 +929,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                             ?>
                         </h4>
 
-                        <div class="card-body d-flex flex-column scroll" id="apps">
+                        <div class="card-body d-flex flex-column scroll">
                             <?php 
                             if(count($apps))
                             {// part has apps
@@ -942,12 +943,14 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                 }
                             }
                             
+                            echo '<div id="apps">';
                             foreach($apps as $app)
                             {
                                 $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']);// . ' ' . niceAppAttributes($app['attributes']);
                                 echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">'.$niceappdescription.'</a>';
-                                echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description="'. base64_encode($niceappdescription).'">'.$app['id'].'</div>';
+                                echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description-app="'. base64_encode($niceappdescription).'">'.$app['id'].'</div>';
                             }
+                            echo '</div>';
  
                             ?>
                         </div>

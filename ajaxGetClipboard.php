@@ -10,7 +10,6 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  $logs->logSystemEvent('accesscontrol',0, 'ajaxGetClipboard.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
-
 session_start();
 
 if(isset($_SESSION['userid']))

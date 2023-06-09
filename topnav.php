@@ -21,6 +21,7 @@
         };
         xhr.send();
     }
+    
 
     function deleteClipboardObject(id) {
         var clipboardObject = document.getElementById(id);

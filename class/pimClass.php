@@ -3775,15 +3775,16 @@ function allowedHost($address)
 
  function addClipboardObject($userid,$description,$objecttype,$objectkey,$objectdata)
  {
-  $db=new mysql; $db->connect(); $id=false; 
+  $db=new mysql; $db->connect(); $id=false;
   $encodedobjectdata= base64_encode($objectdata);
+  $encodeddescription= base64_encode($description);
   if($stmt=$db->conn->prepare('insert into clipboard (id,userid,description,objecttype,objectkey,objectdata,capturedate) values(null,?,?,?,?,?,now() )'))
   {
-   if($stmt->bind_param('issss', $userid,$description,$objecttype,$objectkey,$encodedobjectdata))
+   if($stmt->bind_param('issss', $userid,$encodeddescription,$objecttype,$objectkey,$encodedobjectdata))
    {
     if($stmt->execute())
     {
-     $id=$db->conn->insert_id;        
+     $id=$db->conn->insert_id;
     }
    }
   } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
@@ -3803,7 +3804,7 @@ function allowedHost($address)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $objects[]=array('id'=>$row['id'],'description'=>$row['description'],'objecttype'=>$row['objecttype'],'objectkey'=>$row['objectkey'],'objectdata'=>base64_decode($row['objectdata']));
+    $objects[]=array('id'=>$row['id'],'description'=>base64_decode($row['description']),'objecttype'=>$row['objecttype'],'objectkey'=>$row['objectkey'],'objectdata'=>base64_decode($row['objectdata']));
    }
   }
   $db->close();
