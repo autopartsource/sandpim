@@ -148,6 +148,7 @@
                     <a class="dropdown-item" href="./importACESupload.php">ACES file upload</a>
                     <a class="dropdown-item" href="./importACESxml.php">ACES xml</a>
                     <a class="dropdown-item" href="./importACEStext.php">Applications from text</a>
+                    <a class="dropdown-item" href="./importACESexcelUpload.php">Applications from spreadsheet</a>
                     <a class="dropdown-item" href="./importPartsText.php">Parts from text</a>
                     <a class="dropdown-item" href="./importPartDescriptionText.php">Part descriptions from text</a>
                     <a class="dropdown-item" href="./importPartAttributeText.php">Part attributes from text</a>
