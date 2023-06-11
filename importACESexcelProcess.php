@@ -120,8 +120,8 @@ if($validUpload)
           $vcdbattributechunks[]=$columnnameclean.'|'.intval($fields[$columnindex]).'|'.$sequence.'|'.'0';
       }
   }
-    
-  $output.="0\t".intval($fields[6])."\t".trim($fields[1])."\t".intval($fields[2])."\t".intval($fields[3])."\t".floatval($fields[0])."\t".implode('~',$vcdbattributechunks)."\t\t".implode('~',$notechunks)."\r\n";
+  $positionid=1; if(intval($fields[3])>0){$positionid=intval($fields[3]);}
+  $output.="0\t".intval($fields[6])."\t".trim($fields[1])."\t".intval($fields[2])."\t".$positionid."\t".floatval($fields[0])."\t".implode('~',$vcdbattributechunks)."\t\t".implode('~',$notechunks)."\r\n";
   $recordnumber++;
  }
  
