@@ -47,7 +47,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Import')
    else
    {
     $validUpload=false;
-    $inputFileLog[]='First row of applications sheet must start with these three columns:  Qty, PartNum, PartTypeID, PositionID, MfrLabel, Note, BaseVehicleID';
+    $inputFileLog[]='First row of applications sheet must start with these seven columns:  Qty, PartNum, PartTypeID, PositionID, MfrLabel, Note, BaseVehicleID. VCdb attribute columns after that are optional and the order is arbitrary';
     $logs->logSystemEvent('importACESexcel', 0, 'First row of Items sheet must start with these three columns:  Qty, PartNum, PartTypeID, PositionID, MfrLabel, Note, BaseVehicleID');
    }
   }
