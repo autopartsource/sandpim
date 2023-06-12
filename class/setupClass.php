@@ -3,8 +3,6 @@ include_once("mysqlClass.php");
 //GRANT create ON *.* TO webservice@'localhost';
 class setup
 {
-
-    
     function databaseNameExists($dbname)
     {
         $result=false;
@@ -530,10 +528,10 @@ class setup
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - backgroundjob_log ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - backgroundjob_log ('.$db->conn->error.')';}
 
         $sql="CREATE TABLE part (
-        partnumber varchar(20) not null,
+        partnumber varchar(255) not null,
         partcategory int unsigned not null,
         parttypeid int unsigned not null,
-        replacedby varchar(20) not null,
+        replacedby varchar(255) not null,
         lifecyclestatus varchar(255) not null,
         internalnotes text not null,
         description varchar(255) not null,
@@ -543,7 +541,7 @@ class setup
         firststockedDate date not null,
         discontinuedDate date not null,
         oid varchar(255) not null,
-        basepart varchar(20) not null,
+        basepart varchar(255) not null,
         PRIMARY KEY (partnumber),
         INDEX idx_partcategory (partcategory),
         INDEX idx_parttypeid (parttypeid),
@@ -559,7 +557,7 @@ class setup
                 
         $sql="CREATE TABLE part_attribute (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        partnumber varchar(20) NOT NULL,
+        partnumber varchar(255) NOT NULL,
         PAID int unsigned not null,
         userDefinedAttributeName varchar(255) not null,
         `value` varchar(255) not null,
@@ -573,7 +571,7 @@ class setup
 
         $sql="CREATE TABLE part_asset (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        partnumber varchar(20) NOT NULL,
+        partnumber varchar(255) NOT NULL,
         assetid varchar(255) NOT NULL,
         assettypecode varchar(255) not null,
         sequence int unsigned not null,
@@ -592,7 +590,7 @@ class setup
         
         $sql="CREATE TABLE part_description (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        partnumber varchar(20) NOT NULL,
+        partnumber varchar(255) NOT NULL,
         description varchar(255) NOT NULL,
         descriptioncode varchar(255) NOT NULL,
         sequence int unsigned NOT NULL,
@@ -608,7 +606,7 @@ class setup
         
         
         $sql="CREATE TABLE part_balance (
-        partnumber varchar(20) NOT NULL,
+        partnumber varchar(255) NOT NULL,
         qoh decimal(10,2) not null,
         amd decimal(10,2) not null,
         cost decimal(10,2) not null,
@@ -622,8 +620,8 @@ class setup
 
         $sql="CREATE TABLE partrelationship (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        leftpartnumber varchar(20) NOT NULL,
-        rightpartnumber varchar(20) NOT NULL,
+        leftpartnumber varchar(255) NOT NULL,
+        rightpartnumber varchar(255) NOT NULL,
         relationtype varchar(255) NOT NULL,
         units decimal(10,2) not null,
         sequence int unsigned NOT NULL,
@@ -636,7 +634,7 @@ class setup
         
         $sql="CREATE TABLE price (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        partnumber varchar(20) NOT NULL,
+        partnumber varchar(255) NOT NULL,
         pricesheetnumber varchar(255) NOT NULL,
         amount decimal(10,4) not null,
         currency varchar(3) NOT NULL,
@@ -671,7 +669,7 @@ class setup
         
         $sql="CREATE TABLE package (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        partnumber varchar(20) NOT NULL,
+        partnumber varchar(255) NOT NULL,
         packageuom varchar(255) NOT NULL,
         quantityofeaches decimal(8,3) not null,
         innerquantity decimal(8,3) not null,
@@ -693,8 +691,8 @@ class setup
 
         $sql="CREATE TABLE interchange (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        partnumber varchar(20) NOT NULL,
-        competitorpartnumber varchar(20) NOT NULL,
+        partnumber varchar(255) NOT NULL,
+        competitorpartnumber varchar(255) NOT NULL,
         brandAAIAID varchar(255) NOT NULL,
         interchangequantity decimal(8,3) not null,
         uom varchar(255) NOT NULL,
@@ -1335,8 +1333,8 @@ class setup
 
         $sql="CREATE TABLE partrelationship_history (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
-        leftpartnumber varchar(20) NOT NULL,
-        rightpartnumber varchar(20) NOT NULL,
+        leftpartnumber varchar(255) NOT NULL,
+        rightpartnumber varchar(255) NOT NULL,
         relationtype varchar(255) NOT NULL,
         units decimal(10,2) not null,
         sequence int unsigned NOT NULL,
@@ -1348,6 +1346,16 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - partrelationship_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - partrelationship_history ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE noteqdbtranslation (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        note varchar(255) NOT NULL,
+        qdbid int unsigned NOT NULL,
+        params text NOT NULL,
+        PRIMARY KEY (id),
+        INDEX idx_note (note),
+        INDEX idx_qdbid (qdbid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - noteqdbtranslation ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - noteqdbtranslation ('.$db->conn->error.')';}
+        
 
         //need a table(s) to store data related to "readiness certification" of what will be exported for a given 
         // receiver profile. Generally, There will be a set of go/no-go criteria for a given receiver profile - for example: 
