@@ -768,6 +768,7 @@ class setup
         `name` varchar(255) not null,
         username varchar(255) not null,
         hash varchar(255) not null,
+        environment varchar(255),
         PRIMARY KEY (id),
         unique key idx_username(username))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user ('.$db->conn->error.')';}
@@ -834,6 +835,7 @@ class setup
         $sql="insert into config_options values('qdbProductionDatabase','','','qdb','This is the name of the local MySQL database that will use for lookup of Qdb data. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('assetPushURI','','','','Experimental feature for debugging - URI of peer SandPIM system to push assets to');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('recentPartAdditionsDaysBack','','','7','How many days back from today into the past to consider for the recent-addtions list on the home screen');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql=" insert into config_options values('navbarColorHex','AN1/255','','c0c0c0','The UI top-nav background color (6 character hex value)');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         
         

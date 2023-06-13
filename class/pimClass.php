@@ -6,7 +6,7 @@ class pim
 
  function buildVersion()
  {
-  return '2023-06-08';
+  return '2023-06-12';
  }
 
  function uuidv4()
@@ -33,7 +33,24 @@ class pim
   return $output;
  }
  
-    
+ 
+ function navbarColor()
+ {
+  $db=new mysql; $db->connect();
+  $uri=false; $returnval='c0c0c0';
+ 
+  if($stmt=$db->conn->prepare("select * from config where configname='navbarColorHex'"))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $returnval=$row['configvalue'];
+   }
+  }
+  return $returnval;
+ } 
+ 
  function getAppsByBasevehicleid($basevehicleid,$partcategories)
  {
   $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input

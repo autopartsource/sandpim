@@ -51,7 +51,7 @@
 
 </script>
 
-<nav class="navbar can-stick navbar-expand-md navbar-dark bg-dark">
+<nav class="navbar can-stick navbar-expand-md navbar-light" style="background-color:#<?php echo $pim->navbarColor();?>">
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>    

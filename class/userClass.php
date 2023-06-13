@@ -17,10 +17,10 @@ class user
   $db = new mysql; 
   //$db->dbname='pim'; 
   $db->connect();
-  $userid=false;
-  if($stmt=$db->conn->prepare('insert into user (id,status,failedcount,`name`,username,hash) values(null,1,0,?,?,?)'))
+  $userid=false; $environment='';
+  if($stmt=$db->conn->prepare('insert into user (id,status,failedcount,`name`,username,hash,environment) values(null,1,0,?,?,?,?)'))
   {
-   if($stmt->bind_param('sss',$realname,$username,$pwd_hashed))
+   if($stmt->bind_param('ssss',$realname,$username,$pwd_hashed,$environment))
    {
     if($stmt->execute())
     {
