@@ -51,7 +51,22 @@
 
 </script>
 
-<nav class="navbar can-stick navbar-expand-md navbar-light" style="background-color:#<?php echo $pim->navbarColor();?>">
+</script>
+
+<style>
+.navbar-custom {background-color: #<?php echo $pim->navbarColor();?>;}
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {color: #ffcc00;}
+.navbar-custom .navbar-nav .nav-link {color: #ffbb00;}
+.navbar-custom .nav-item.active .nav-link,
+.navbar-custom .nav-item:focus .nav-link,
+.navbar-custom .nav-item:hover .nav-link {color: #ffffff;}
+.navbar-custom .navbar-nav .dropdown-menu {background-color: #ddaa11;}
+.navbar-custom .navbar-nav .dropdown-item {color: #000000;}
+.navbar-custom .navbar-nav .dropdown-item:hover,.navbar-custom .navbar-nav .dropdown-item:focus {color: #404040; background-color: #ffffff;}
+</style>
+
+<nav class="navbar can-stick navbar-expand-md navbar-custom">
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>    
