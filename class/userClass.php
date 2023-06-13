@@ -79,6 +79,7 @@ class user
     $this->status=$row['status'];
     $this->hash=$row['hash'];
     $this->failedcount=$row['failedcount'];
+    $this->environment=$row['environment'];
    }
   }
   $db->close();

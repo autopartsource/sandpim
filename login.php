@@ -54,7 +54,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         if (password_verify($pwd_peppered, $user->hash)) { // valid user and password
             $_SESSION['userid'] = $user->id; // sessionize the use id and name
             $_SESSION['name'] = $user->name; // sessionize the use id and name
-            
+            $_SESSION['environment'] = $user->environment;            
             // log the login event
             $logs->logSystemEvent('login', $user->id, $user->name.' logged in from '.$_SERVER['REMOTE_ADDR']);
             // re-direct client to index page
