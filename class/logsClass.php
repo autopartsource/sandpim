@@ -85,6 +85,32 @@ class logs {
         return $sorted;
     }
 
+    function getVehicleEvents($basevehicleid,$limit) 
+    {
+        $db = new mysql; $db->connect();
+        $events = array();
+        if ($stmt = $db->conn->prepare('select * from vehicle_history where basevehicleid=? order by eventdatetime desc limit ?')) 
+        {
+            $stmt->bind_param('ii',$basevehicleid, $limit);
+            $stmt->execute();
+            $db->result = $stmt->get_result();
+            while ($row = $db->result->fetch_assoc()) 
+            {
+                $events[] = array('id' => $row['id'], 'eventdatetime' => $row['eventdatetime'], 'userid' => $row['userid'], 'description' => $row['description']);
+            }
+
+            // sort the results ascending
+            $sorted = array();
+            for ($i = count($events) - 1; $i >= 0; $i--) {
+                $sorted[] = $events[$i];
+            }
+        }
+        $db->close();
+        return $sorted;
+    }
+    
+    
+    
     function getPartsEvents($limit) {
         $db = new mysql; $db->connect(); $events = array();
         if ($stmt = $db->conn->prepare('select * from part_history order by eventdatetime desc limit ?')) {

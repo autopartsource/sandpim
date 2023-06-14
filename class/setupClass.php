@@ -441,6 +441,19 @@ class setup
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - application_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - application_history ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE vehicle_history (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        basevehicleid int unsigned null default 0,
+        userid int unsigned null,
+        eventdatetime datetime not null,
+        description text not null,
+        PRIMARY KEY (id),
+        INDEX idx_basevehicleid (basevehicleid),
+        INDEX idx_userid (userid),
+        INDEX idx_eventdatetime (eventdatetime)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - vehicle_history ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - vehicle_history ('.$db->conn->error.')';}
+                
         $sql="CREATE TABLE asset_history (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         assetid varchar(255) not null,

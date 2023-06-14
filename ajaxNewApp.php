@@ -34,6 +34,7 @@ if(isset($_SESSION['userid']) && isset($_GET['basevehicleid']) && isset($_GET['q
   $newappid=$pim->newApp($basevehicleid,$parttypeid,$positionid,$quantityperapp,$partnumber,$cosmetic,$attributes,'');
   $oid=$pim->getOIDofApp($newappid);
   $pim->logAppEvent($newappid,$userid,'app created by fitment grid '.$movetype,$oid);
+  $pim->logVehicleEvent($basevehicleid, $userid, $partnumber.' was connected at position '.$positionid);
   $success=true;
  }
  else

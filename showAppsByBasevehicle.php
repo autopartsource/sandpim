@@ -4,6 +4,7 @@ include_once('./class/pcdbClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/configGetClass.php');
+include_once('./class/logsClass.php');
 
 
 function selfURL($makeid, $modelid, $yearid, $partcategories)
@@ -56,6 +57,7 @@ $vcdb = new vcdb;
 $pcdb = new pcdb;
 $qdb = new qdb;
 $configGet=new configGet;
+$logs = new logs;
 
 $makeid = intval($_REQUEST['makeid']);
 if (isset($_REQUEST['modelid'])) {
@@ -78,7 +80,7 @@ foreach ($_REQUEST as $getname => $getval) {
 }
 
 $basevehicleid = $vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid);
-
+$vehcilehistory=$logs->getVehicleEvents($basevehicleid, 25);
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 $viototal=$pim->experianVehicleCount($viogeography, $vioyearquarter, $basevehicleid, array());
@@ -426,6 +428,9 @@ ksort($fitmentcolumnkeys);
                                     }
                                     echo '</div>';                        
                                     echo '<span class="btn btn-info" onclick="addAppsToClipboard()">Copy</span>';
+                                    
+                                    if(count($vehcilehistory)){echo '<span> <a class="btn btn-secondary" href="./vehicleHistory.php?basevehicleid='.$basevehicleid.'">History</a></span>';}
+                                    
                                     echo '</div>';
                                 }?>
 

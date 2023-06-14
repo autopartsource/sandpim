@@ -6,7 +6,7 @@ class pim
 
  function buildVersion()
  {
-  return '2023-06-12';
+  return '2023-06-13';
  }
 
  function uuidv4()
@@ -2662,6 +2662,18 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ 
+ function logVehicleEvent($basevehicleid,$userid,$description)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into vehicle_history (id,basevehicleid,userid,eventdatetime,description) values(null,?,?,now(),?)'))
+  {
+   $stmt->bind_param('iis', $basevehicleid,$userid,$description);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
  
  
 
