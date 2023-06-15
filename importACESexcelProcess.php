@@ -65,7 +65,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Import')
 }
 
 $errors=array(); $warnings=array(); $output='';
-$vcdbAttributeColumns=array('EngineBaseID','AspirationID','BedLengthID','BedTypeID','BodyNumDoorsID','BodyTypeID','BrakeABSID','BrakeSystemID','CylinderHeadTypeID','DriveTypeID','EngineDesignationID','EngineMfrID','EngineVersionID','EngineVinID','FrontBrakeTypeID','FrontSpringTypeID','FuelDeliverySubTypeID','FuelDeliveryTypeID','FuelSystemControlTypeID','FuelSystemDesignID','FuelTypeID','IgnitionSystemTypeID','MfrBodyCodeID','PowerOutputID','RearBrakeTypeID','RearSpringTypeID','RegionID','SteeringSystemID','SteeringTypeID','SubModelID','TransmissionControlTypeID','TransmissionElecControlledID','TransmissionMfrID','TransmissionMfrCodeID','TransmissionNumSpeedsID','TransmissionTypeID','ValvesPerEngineID','WheelBaseID');
+$vcdbAttributeColumns=array('EngineBaseID','AspirationID','BedLengthID','BedTypeID','BodyNumDoorsID','BodyTypeID','BrakeABSID','BrakeSystemID','CylinderHeadTypeID','DriveTypeID','EngineDesignationID','EngineMfrID','EngineVersionID','EngineVINID','FrontBrakeTypeID','FrontSpringTypeID','FuelDeliverySubTypeID','FuelDeliveryTypeID','FuelSystemControlTypeID','FuelSystemDesignID','FuelTypeID','IgnitionSystemTypeID','MfrBodyCodeID','PowerOutputID','RearBrakeTypeID','RearSpringTypeID','RegionID','SteeringSystemID','SteeringTypeID','SubModelID','TransmissionControlTypeID','TransmissionElecControlledID','TransmissionMfrID','TransmissionMfrCodeID','TransmissionNumSpeedsID','TransmissionTypeID','ValvesPerEngineID','WheelBaseID');
 
 $columnmap=array();
 
