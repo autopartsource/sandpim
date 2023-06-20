@@ -337,7 +337,7 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESFieldId=39 and CodeValue=?'))
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESFieldId=60 and CodeValue=?'))
   {
    if($stmt->bind_param('s', $code))
    {
