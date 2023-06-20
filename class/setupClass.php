@@ -604,7 +604,7 @@ class setup
         $sql="CREATE TABLE part_description (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         partnumber varchar(255) NOT NULL,
-        description varchar(255) NOT NULL,
+        description text NOT NULL,
         descriptioncode varchar(255) NOT NULL,
         sequence int unsigned NOT NULL,
         languagecode varchar(255) NOT NULL,
