@@ -4,20 +4,20 @@ include_once("mysqlClass.php");
 class packaging
 {
 
- function addPackage($partnumber,$packageuom,$quantityofeaches,$innerquantity,$innerquantityuom,$weight,$weightsuom,$packagelevelGTIN,$packagebarcodecharacters,$shippingheight,$shippingwidth,$shippinglength,$dimensionsuom)
+ function addPackage($partnumber,$packageuom,$quantityofeaches,$innerquantity,$innerquantityuom,$weight,$weightsuom,$packagelevelGTIN,$packagebarcodecharacters,$shippingheight,$shippingwidth,$shippinglength,$merchandisingheight,$merchandisingwidth,$merchandisinglength,$dimensionsuom,$orderable)
  {
   $db=new mysql; $db->connect();
   $id=false;
-  if($stmt=$db->conn->prepare('insert into package (id,partnumber,packageuom,quantityofeaches,innerquantity,innerquantityuom,weight,weightsuom,packagelevelGTIN,packagebarcodecharacters,shippingheight,shippingwidth,shippinglength,dimensionsuom) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?)'))
+  if($stmt=$db->conn->prepare('insert into package (id,partnumber,packageuom,quantityofeaches,innerquantity,innerquantityuom,weight,weightsuom,packagelevelGTIN,packagebarcodecharacters,shippingheight,shippingwidth,shippinglength,merchandisingheight,merchandisingwidth,merchandisinglength,dimensionsuom,orderable) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'))
   {
-   if($stmt->bind_param('ssddsdsssddds',$partnumber,$packageuom,$quantityofeaches,$innerquantity,$innerquantityuom,$weight,$weightsuom,$packagelevelGTIN,$packagebarcodecharacters,$shippingheight,$shippingwidth,$shippinglength,$dimensionsuom))
+   if($stmt->bind_param('ssddsdsssddddddss',$partnumber,$packageuom,$quantityofeaches,$innerquantity,$innerquantityuom,$weight,$weightsuom,$packagelevelGTIN,$packagebarcodecharacters,$shippingheight,$shippingwidth,$shippinglength,$merchandisingheight,$merchandisingwidth,$merchandisinglength,$dimensionsuom,$orderable))
    {
     if($stmt->execute())
     {
      $id=$db->conn->insert_id;
-    }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
-   }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
-  }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+    }
+   }
+  }
   $db->close();
   return $id;
  }
@@ -40,9 +40,13 @@ class packaging
       $shippinglength=$this->decimalsFormat($row['shippinglength']);
       $shippingwidth=$this->decimalsFormat($row['shippingwidth']);
       $shippingheight=$this->decimalsFormat($row['shippingheight']);
-      $nicedims=''; if($shippinglength+$shippingwidth+$shippingheight>0){$nicedims=', L/W/H ('.$row['dimensionsuom'].'): '.$shippinglength.' x '.$shippingwidth.' x '.$shippingheight;}
-      $nicepackage=$row['packageuom'].' '.$innerquantity.', '.$weight.' '.$row['weightsuom'].$nicedims;
-      $package=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$innerquantity,'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$weight,'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$shippingheight,'shippingwidth'=>$shippingwidth,'shippinglength'=>$shippinglength,'dimensionsuom'=>$row['dimensionsuom'],'nicepackage'=>$nicepackage);
+      $merchandisinglength=$this->decimalsFormat($row['merchandisinglength']);
+      $merchandisingwidth=$this->decimalsFormat($row['merchandisingwidth']);
+      $merchandisingheight=$this->decimalsFormat($row['merchandisingheight']);
+      $niceshippingdims=''; if($shippinglength+$shippingwidth+$shippingheight>0){$niceshippingdims=', Ship L*W*H ('.$row['dimensionsuom'].'): '.$shippinglength.' * '.$shippingwidth.' * '.$shippingheight;}
+      $nicemerchdims=''; if($merchandisinglength+$merchandisingwidth+$merchandisingheight>0){$nicemerchdims=', Merch L*W*H ('.$row['dimensionsuom'].'): '.$merchandisinglength.' * '.$merchandisingwidth.' * '.$merchandisingheight;}
+      $nicepackage=$row['packageuom'].' '.$innerquantity.', '.$weight.' '.$row['weightsuom'].$niceshippingdims.' '.$nicemerchdims;
+      $package=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$innerquantity,'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$weight,'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$shippingheight,'shippingwidth'=>$shippingwidth,'shippinglength'=>$shippinglength, 'merchandisingheight'=>$merchandisingheight,'merchandisingwidth'=>$merchandisingwidth,'merchandisinglength'=>$merchandisinglength,'dimensionsuom'=>$row['dimensionsuom'],'orderable'=>$row['orderable'],'nicepackage'=>$nicepackage);
      }
     }
    }
@@ -80,12 +84,11 @@ class packaging
   return $output;
  }
  
- 
+
  function getPackagesByPartnumber($partnumber)
  {
   $db=new mysql; $db->connect();
   $records=array();
-  
   if($stmt=$db->conn->prepare('select * from package where partnumber=?'))
   {
    if($stmt->bind_param('s',$partnumber))
@@ -100,9 +103,13 @@ class packaging
       $shippinglength=$this->decimalsFormat($row['shippinglength']);
       $shippingwidth=$this->decimalsFormat($row['shippingwidth']);
       $shippingheight=$this->decimalsFormat($row['shippingheight']);
-      $nicedims=''; if($shippinglength+$shippingwidth+$shippingheight>0){$nicedims=', L/W/H ('.$row['dimensionsuom'].'): '.$shippinglength.' x '.$shippingwidth.' x '.$shippingheight;}
-      $nicepackage=$row['packageuom'].' '.$innerquantity.', '.$weight.' '.$row['weightsuom'].$nicedims;
-      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$innerquantity,'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$weight,'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$shippingheight,'shippingwidth'=>$shippingwidth,'shippinglength'=>$shippinglength,'dimensionsuom'=>$row['dimensionsuom'],'nicepackage'=>$nicepackage);
+      $merchandisinglength=$this->decimalsFormat($row['merchandisinglength']);
+      $merchandisingwidth=$this->decimalsFormat($row['merchandisingwidth']);
+      $merchandisingheight=$this->decimalsFormat($row['merchandisingheight']);
+      $niceshippingdims=''; if($shippinglength+$shippingwidth+$shippingheight>0){$niceshippingdims=', Ship: '.$shippinglength.'*'.$shippingwidth.'*'.$shippingheight.' '.$row['dimensionsuom'];}
+      $nicemerchdims=''; if($merchandisinglength+$merchandisingwidth+$merchandisingheight>0){$nicemerchdims=', Merch: '.$merchandisinglength.'*'.$merchandisingwidth.'*'.$merchandisingheight.' '.$row['dimensionsuom'] ;}
+      $nicepackage=$row['packageuom'].' '.$innerquantity.', '.$weight.' '.$row['weightsuom'].$niceshippingdims.' '.$nicemerchdims;
+      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$innerquantity,'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$weight,'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$shippingheight,'shippingwidth'=>$shippingwidth,'shippinglength'=>$shippinglength,'merchandisingheight'=>$merchandisingheight,'merchandisingwidth'=>$merchandisingwidth,'merchandisinglength'=>$merchandisinglength,'dimensionsuom'=>$row['dimensionsuom'],'orderable'=>$row['orderable'],'nicepackage'=>$nicepackage);
      }
     }
    }

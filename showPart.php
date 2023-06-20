@@ -329,9 +329,13 @@ $kitcomponents=$pim->getKitComponents($partnumber);
              var shippinglength = document.getElementById("shippinglength").value;
              var shippingwidth = document.getElementById("shippingwidth").value;
              var shippingheight = document.getElementById("shippingheight").value;
+             var merchandisinglength = document.getElementById("merchandisinglength").value;
+             var merchandisingwidth = document.getElementById("merchandisingwidth").value;
+             var merchandisingheight = document.getElementById("merchandisingheight").value;
              var dimensionsuom = document.getElementById("dimensionsuom").value;
+             var orderable = document.getElementById("orderable").value;
              var xhr = new XMLHttpRequest();
-             xhr.open('GET', 'ajaxAddPackage.php?packagebarcodecharacters='+packagebarcodecharacters+'&packageuom='+packageuom+'&packagelevelgtin='+packagelevelgtin+'&quantityofeaches='+quantityofeaches+'&innerquantity='+innerquantity+'&innerquantityuom='+innerquantityuom+'&weight='+weight+'&weightsuom='+weightsuom+'&shippinglength='+shippinglength+'&shippingwidth='+shippingwidth+'&shippingheight='+shippingheight+'&dimensionsuom='+dimensionsuom+'&partnumber=<?php echo $partnumber;?>');
+             xhr.open('GET', 'ajaxAddPackage.php?packagebarcodecharacters='+packagebarcodecharacters+'&packageuom='+packageuom+'&packagelevelgtin='+packagelevelgtin+'&quantityofeaches='+quantityofeaches+'&innerquantity='+innerquantity+'&innerquantityuom='+innerquantityuom+'&weight='+weight+'&weightsuom='+weightsuom+'&shippinglength='+shippinglength+'&shippingwidth='+shippingwidth+'&shippingheight='+shippingheight+'&merchandisinglength='+merchandisinglength+'&merchandisingwidth='+merchandisingwidth+'&merchandisingheight='+merchandisingheight+'&dimensionsuom='+dimensionsuom+'&orderable='+orderable+'&partnumber=<?php echo $partnumber;?>');
              xhr.onload = function()
              {
               var response=JSON.parse(xhr.responseText);
@@ -740,7 +744,8 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                                 <div style="padding-top:3px;">Qty of Eaches <input type="text" id="quantityofeaches" size="2" value="1" style="text-align:right;"/></div>
                                                 <div style="padding-top:3px;">Inner Qty <input type="text" id="innerquantity" size="2" value="1" style="text-align:right;"/> <select id="innerquantityuom"><?php foreach($innerqtyuoms as $innerqtyuom){$selected=''; if($innerqtyuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$innerqtyuom['code'].'"'.$selected.'>'.$innerqtyuom['description'].'</option>';}?></select></div>
                                                 <div style="padding-top:3px;">Weight <input type="text" id="weight" size="2" style="text-align:right;"/> <select id="weightsuom"> <?php foreach($weightsuoms as $weightsuom){echo '<option value="'.$weightsuom['code'].'">'.$weightsuom['description'].'</option>';}?></select></div>
-                                                <div style="padding-top:3px;">L / W / H <input type="text" id="shippinglength" size="2" style="text-align:right;"/> <input type="text" id="shippingwidth" size="2" style="text-align:right;"/> <input type="text" id="shippingheight" size="2" style="text-align:right;"/> <select id="dimensionsuom"><?php foreach($dimensionsuoms as $dimensionsuom){echo '<option value="'.$dimensionsuom['code'].'">'.$dimensionsuom['description'].'</option>';}?></select></div>
+                                                <div style="padding-top:3px;">Shipping LWH <input type="text" id="shippinglength" size="2" style="text-align:right;"/> <input type="text" id="shippingwidth" size="2" style="text-align:right;"/> <input type="text" id="shippingheight" size="2" style="text-align:right;"/>  Merch LWH <input type="text" id="merchandisinglength" size="2" style="text-align:right;"/> <input type="text" id="merchandisingwidth" size="2" style="text-align:right;"/> <input type="text" id="merchandisingheight" size="2" style="text-align:right;"/>  <select id="dimensionsuom"><?php foreach($dimensionsuoms as $dimensionsuom){echo '<option value="'.$dimensionsuom['code'].'">'.$dimensionsuom['description'].'</option>';}?></select></div>
+                                                <div style="padding-top:3px;">Orderable <select id="orderable"><option value="Y">Yes</option><option value="N">No</option></select></div>
                                                 <div style="padding-top:6px;"><button  class="btn btn-sm btn-success" id="addpackage" title="Add a package to this part" onclick="addPackage()">Add Package</button></div>
                                             </div>
                                         </td>

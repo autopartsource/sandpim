@@ -678,8 +678,7 @@ class setup
 
         $sql="insert into pricesheet values('WDNET2021','WD Net Pricelist for 2021 (USD)','NET','USD','2021-01-01','2021-12-31')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
         
-        
-        
+                
         $sql="CREATE TABLE package (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         partnumber varchar(255) NOT NULL,
@@ -694,13 +693,17 @@ class setup
         shippingheight decimal(6,2) not null,
         shippingwidth decimal(6,2) not null,
         shippinglength decimal(6,2) not null,
+        merchandisingheight decimal(6,2) not null,
+        merchandisingwidth decimal(6,2) not null,
+        merchandisinglength decimal(6,2) not null,
         dimensionsuom varchar(255) NOT NULL,
+        orderable varchar(10) NOT NULL,        
         PRIMARY KEY (id),
         INDEX idx_partnumber (partnumber)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - packages ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - packages ('.$db->conn->error.')';}
 
-        $sql="insert into package values(1,'PRC914','EA',1,1,'EA',4.21,'PG','','',3,8,4,'IN')";  $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into package values(1,'PRC914','EA',1,1,'EA',4.21,'PG','','',3,8,4,3,8,4,'IN','Y')";  $stmt=$db->conn->prepare($sql); $stmt->execute();
 
         $sql="CREATE TABLE interchange (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,

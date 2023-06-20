@@ -125,7 +125,7 @@ if(strlen($bodyraw)>0)
 
     foreach($p['packages'] as $pk)
     {
-     $packaging->addPackage($partnumber, $pk['packageuom'], $pk['quantityofeaches'], $pk['innerquantity'], $pk['innerquantityuom'], $pk['weight'], $pk['weightsuom'], $pk['packagelevelGTIN'], $pk['packagebarcodecharacters'], $pk['shippingheight'], $pk['shippingwidth'], $pk['shippinglength'], $pk['dimensionsuom']);
+     $packaging->addPackage($partnumber, $pk['packageuom'], $pk['quantityofeaches'], $pk['innerquantity'], $pk['innerquantityuom'], $pk['weight'], $pk['weightsuom'], $pk['packagelevelGTIN'], $pk['packagebarcodecharacters'], $pk['shippingheight'], $pk['shippingwidth'], $pk['shippinglength'], $pk['merchandisingheight'], $pk['merchandisingwidth'], $pk['merchandisinglength'], $pk['dimensionsuom'],$pk['orderable']);
     }
     
     foreach($p['interchanges'] as $ic)

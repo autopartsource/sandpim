@@ -27,7 +27,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && (isset($_GET['pac
 
  if($pim->validPart($partnumber))
  {
-  if($id=$packaging->addPackage($partnumber, $_GET['packageuom'], $_GET['quantityofeaches'], $_GET['innerquantity'], $_GET['innerquantityuom'], $_GET['weight'], $_GET['weightsuom'], $_GET['packagelevelgtin'], $_GET['packagebarcodecharacters'], $_GET['shippingheight'], $_GET['shippingwidth'], $_GET['shippinglength'], $_GET['dimensionsuom']))
+  if($id=$packaging->addPackage($partnumber, $_GET['packageuom'], $_GET['quantityofeaches'], $_GET['innerquantity'], $_GET['innerquantityuom'], $_GET['weight'], $_GET['weightsuom'], $_GET['packagelevelgtin'], $_GET['packagebarcodecharacters'], $_GET['shippingheight'], $_GET['shippingwidth'], $_GET['shippinglength'], $_GET['merchandisingheight'], $_GET['merchandisingwidth'], $_GET['merchandisinglength'], $_GET['dimensionsuom'],$_GET['orderable']))
   {
    $nicepackagestring=$packaging->nicePackageStringByID($id);
    $oid=$pim->updatePartOID($partnumber);
