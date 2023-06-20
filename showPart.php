@@ -735,7 +735,12 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                         <th>Packages</th>
                                         <td>
                                             <div id="packages"> 
-                                            <?php foreach($packages as $package){;?><div id="packageid_<?php echo $package['id'];?>"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this package from this part" onclick="deletePackage(<?php echo $package['id'];?>)">x</button></div><div style="float:left;background-color:#cd9f61;border:2px solid #808080;margin-left:4px;padding:2px;" style="font-size: 80%;"><?php echo $package['nicepackage'];?></div><div style="clear:both;"></div></div><?php }?>
+                                            <?php foreach($packages as $package){;?>
+                                                <div id="packageid_<?php echo $package['id'];?>">
+                                                    <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this package from this part" onclick="deletePackage(<?php echo $package['id'];?>)">x</button></div>
+                                                    <div style="float:left;background-color:#cd9f61;border:2px solid #808080;margin-left:4px;padding:2px;" style="font-size: 80%;"><?php echo $package['nicepackagehtml'];?></div>
+                                                    <div style="clear:both;"></div></div><?php }
+                                                ?>
                                             </div>
                                             <div onclick="showhideNewpackage()">...</div>
                                             <div id="newpackage" style="display: none; padding-top: 10px; text-align:left;">
