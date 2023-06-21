@@ -33,16 +33,21 @@ if (isset($_POST['input']))
  $input = $_POST['input'];
  $records = explode("\r\n", $_POST['input']);
 
- $PartNumberFieldIndex=-1; $PackageUOMFieldIndex=-1; $QuantityofEachesFieldIndex=-1; $WeightFieldIndex=-1; $WeightsUOMFieldIndex=-1; $InnerQuantityFieldIndex=-1; $InnerQuantityUOMFieldIndex=-1; $ShippingHeightFieldIndex=-1; $ShippingWidthFieldIndex=-1;  $ShippingLengthFieldIndex=-1; $DimensionsUOMFieldIndex=-1;
-
+ $PartNumberFieldIndex=-1; $PackageUOMFieldIndex=-1; $QuantityofEachesFieldIndex=-1; $WeightFieldIndex=-1; $WeightsUOMFieldIndex=-1; $InnerQuantityFieldIndex=-1; $InnerQuantityUOMFieldIndex=-1; $ShippingHeightFieldIndex=-1; $ShippingWidthFieldIndex=-1;  $ShippingLengthFieldIndex=-1; $DimensionsUOMFieldIndex=-1;  $PackageLevelGTINFieldIndex=-1; $PackageBarCodeCharactersFieldIndex=-1; $MerchandisingHeightFieldIndex=-1; $MerchandisingWidthFieldIndex=-1; $MerchandisingLengthFieldIndex=-1; $OrderableFieldIndex=-1;
+ 
  $headerfields=explode("\t",$records[0]);
 
- 
  for($i=0; $i<=count($headerfields)-1; $i++)
  { // identify the named columns' IDs
   if($headerfields[$i]=='PartNumber'){$PartNumberFieldIndex=$i;}
   if($headerfields[$i]=='PackageUOM'){$PackageUOMFieldIndex=$i;}
-  if($headerfields[$i]=='QuantityofEaches'){$QuantityofEachesFieldIndex=$i;}
+  if($headerfields[$i]=='QuantityofEaches'){$QuantityofEachesFieldIndex=$i;}  
+  if($headerfields[$i]=='PackageLevelGTIN'){$PackageLevelGTINFieldIndex=$i;}
+  if($headerfields[$i]=='PackageBarCodeCharacters'){$PackageBarCodeCharactersFieldIndex=$i;}
+  if($headerfields[$i]=='MerchandisingHeight'){$MerchandisingHeightFieldIndex=$i;}
+  if($headerfields[$i]=='MerchandisingWidth'){$MerchandisingWidthFieldIndex=$i;}
+  if($headerfields[$i]=='MerchandisingLength'){$MerchandisingLengthFieldIndex=$i;}
+  if($headerfields[$i]=='Orderable'){$OrderableFieldIndex=$i;}
   if($headerfields[$i]=='Weight'){$WeightFieldIndex=$i;}
   if($headerfields[$i]=='WeightsUOM'){$WeightsUOMFieldIndex=$i;}
   if($headerfields[$i]=='InnerQuantity'){$InnerQuantityFieldIndex=$i;}
@@ -65,9 +70,9 @@ if (isset($_POST['input']))
   if($recordnumber==1)
   {// this is the header row
       
-   if($PartNumberFieldIndex!=0 || $PackageUOMFieldIndex!=1 || $QuantityofEachesFieldIndex!=2)
+   if($PartNumberFieldIndex==-1 || $PackageUOMFieldIndex==-1 || $QuantityofEachesFieldIndex==-1)
    {
-    $errors[]='Header row must start with: PartNumber (tab) PackageUOM (tab) QuantityofEaches';
+    $errors[]='Header row must contain: PartNumber, PackageUOM and QuantityofEaches';
     break;
    }
    continue;;
@@ -84,13 +89,21 @@ if (isset($_POST['input']))
    $innerquantityuom=trim($fields[$InnerQuantityUOMFieldIndex]);
    $weight=0; if(isset($fields[$WeightFieldIndex]) && is_numeric(trim($fields[$WeightFieldIndex]))){$weight=trim($fields[$WeightFieldIndex]);}
    $weightsuom='PG'; if(isset($fields[$WeightsUOMFieldIndex]) && trim($fields[$WeightsUOMFieldIndex])!=''){$weightsuom=trim($fields[$WeightsUOMFieldIndex]);}
-   $packagelevelGTIN='';
-   $packagebarcodecharacters='';
+   $packagelevelGTIN=''; if(isset($fields[$PackageLevelGTINFieldIndex]) && trim($fields[$PackageLevelGTINFieldIndex])!=''){$packagelevelGTIN=trim($fields[$PackageLevelGTINFieldIndex]);}
+   $packagebarcodecharacters=''; if(isset($fields[$PackageBarCodeCharactersFieldIndex]) && trim($fields[$PackageBarCodeCharactersFieldIndex])!=''){$packagebarcodecharacters=trim($fields[$PackageBarCodeCharactersFieldIndex]);}
+   
    $shippingheight=0; if(isset($fields[$ShippingHeightFieldIndex]) && is_numeric(trim($fields[$ShippingHeightFieldIndex]))){$shippingheight=trim($fields[$ShippingHeightFieldIndex]);}
    $shippingwidth=0; if(isset($fields[$ShippingWidthFieldIndex]) && is_numeric(trim($fields[$ShippingWidthFieldIndex]))){$shippingwidth=trim($fields[$ShippingWidthFieldIndex]);}
    $shippinglength=0; if(isset($fields[$ShippingLengthFieldIndex]) && is_numeric(trim($fields[$ShippingLengthFieldIndex]))){$shippinglength=trim($fields[$ShippingLengthFieldIndex]);}
-   $dimensionsuom='IN'; if(isset($fields[$DimensionsUOMFieldIndex]) && trim($fields[$DimensionsUOMFieldIndex])!=''){$dimensionsuom=trim($fields[$DimensionsUOMFieldIndex]);}      
-   $packaging->addPackage($partnumber, $packageuom, $quantityofeaches, $innerquantity, $innerquantityuom, $weight, $weightsuom, $packagelevelGTIN, $packagebarcodecharacters, $shippingheight, $shippingwidth, $shippinglength, $dimensionsuom);
+ 
+   $merchandisingheight=0; if(isset($fields[$MerchandisingHeightFieldIndex]) && is_numeric(trim($fields[$MerchandisingHeightFieldIndex]))){$merchandisingheight=trim($fields[$MerchandisingHeightFieldIndex]);}
+   $merchandisingwidth=0; if(isset($fields[$MerchandisingWidthFieldIndex]) && is_numeric(trim($fields[$MerchandisingWidthFieldIndex]))){$merchandisingwidth=trim($fields[$MerchandisingWidthFieldIndex]);}
+   $merchandisinglength=0; if(isset($fields[$MerchandisingLengthFieldIndex]) && is_numeric(trim($fields[$MerchandisingLengthFieldIndex]))){$merchandisinglength=trim($fields[$MerchandisingLengthFieldIndex]);}
+   
+   $dimensionsuom='IN'; if(isset($fields[$DimensionsUOMFieldIndex]) && trim($fields[$DimensionsUOMFieldIndex])!=''){$dimensionsuom=trim($fields[$DimensionsUOMFieldIndex]);}
+   $orderable='Y'; if(isset($fields[$OrderableFieldIndex])){$orderable=$fields[$OrderableFieldIndex];}
+   
+   $packaging->addPackage($partnumber, $packageuom, $quantityofeaches, $innerquantity, $innerquantityuom, $weight, $weightsuom, $packagelevelGTIN, $packagebarcodecharacters, $shippingheight, $shippingwidth, $shippinglength, $merchandisingheight, $merchandisingwidth, $merchandisinglength, $dimensionsuom, $orderable);
    $oid=$pim->updatePartOID($partnumber);
    $pim->logPartEvent($partnumber,$_SESSION['userid'],'packaging record imported ('.$innerquantity.' '.$packageuom.'; '.$weight.' '.$weightsuom.'; ' .$shippinglength.'x'.$shippingwidth.'x'.$shippingheight.'x '.$dimensionsuom.')',$oid);
    $importcount++;
@@ -137,9 +150,10 @@ if (isset($_POST['input']))
                             <form method="post">
                                 <div class="alert alert-secondary" role="alert">
                                     <h6 class="alert-heading">Paste tab-delimited data (including header row):</h6>
-                                    <p>PartNumber, PackageUOM,	QuantityofEaches, [Weight], [WeightsUOM], [InnerQuantity], [InnerQuantityUOM], [ShippingHeight], [ShippingWidth], [ShippingLength], [DimensionsUOM]</p>
+                                    <p>PartNumber,PackageUOM,QuantityofEaches,[PackageLevelGTIN],[PackageBarCodeCharacters],[InnerQuantity],[InnerQuantityUOM],[MerchandisingHeight],[MerchandisingLength],[MerchandisingWidth],[ShippingHeight],[ShippingLength],[ShippingWidth],[DimensionsUOM],[Weight],[WeightsUOM],[Orderable]</p>
+                                    <p>Column order is arbitrary. Columns is brackets are optional.</p>
                                 </div>                                    
-                                <textarea style="width:100%;" name="input" rows="15"><?php echo "PartNumber\tPackageUOM\tQuantityofEaches\tWeight\tWeightsUOM\tInnerQuantity\tInnerQuantityUOM\tShippingHeight\tShippingWidth\tShippingLength\tDimensionsUOM";?></textarea>
+                                <textarea style="width:100%;" name="input" rows="15"></textarea>
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
                             <?php foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}?>
