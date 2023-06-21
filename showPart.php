@@ -318,7 +318,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
             function addPackage()
             {
                 
-             var packagebarcodecharacters='';
+             var packagebarcodecharacters= document.getElementById("packagebarcodecharacters").value;
              var packageuom = document.getElementById("packageuom").value;
              var packagelevelgtin = document.getElementById("packagelevelgtin").value;
              var quantityofeaches = document.getElementById("quantityofeaches").value;
@@ -746,6 +746,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                             <div id="newpackage" style="display: none; padding-top: 10px; text-align:left;">
                                                 <div style="padding-top:3px;">Package UoM <select id="packageuom"><?php foreach($packageuoms as $packageuom){$selected=''; if($packageuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$packageuom['code'].'"'.$selected.'>'.$packageuom['description'].'</option>';}?></select></div>
                                                 <div style="padding-top:3px;">Package-Level GTIN <input type="text" id="packagelevelgtin" size="12"/></div>
+                                                <div style="padding-top:3px;">Package Barcode <input type="text" id="packagebarcodecharacters" size="12"/></div>
                                                 <div style="padding-top:3px;">Qty of Eaches <input type="text" id="quantityofeaches" size="2" value="1" style="text-align:right;"/></div>
                                                 <div style="padding-top:3px;">Inner Qty <input type="text" id="innerquantity" size="2" value="1" style="text-align:right;"/> <select id="innerquantityuom"><?php foreach($innerqtyuoms as $innerqtyuom){$selected=''; if($innerqtyuom['code']=='EA'){$selected=' selected';} echo '<option value="'.$innerqtyuom['code'].'"'.$selected.'>'.$innerqtyuom['description'].'</option>';}?></select></div>
                                                 <div style="padding-top:3px;">Weight <input type="text" id="weight" size="2" style="text-align:right;"/> <select id="weightsuom"> <?php foreach($weightsuoms as $weightsuom){echo '<option value="'.$weightsuom['code'].'">'.$weightsuom['description'].'</option>';}?></select></div>
