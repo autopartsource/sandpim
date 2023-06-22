@@ -267,13 +267,13 @@ class PIESgenerator
          $InnerQuantityElement->setAttribute('InnerQuantityUOM',$package['InnerQuantityUOM']);   
      }
 
+     if(array_key_exists('Orderable',$package) && trim($package['Orderable'])!=''){$OrderableElement=$doc->createElement('Orderable',$package['Orderable']); $PackageElement->appendChild($OrderableElement);}
      $DimensionsElement=$doc->createElement('Dimensions');
      if(array_key_exists('DimensionsUOM',$package)){$DimensionsElement->setAttribute('UOM', $package['DimensionsUOM']);}
-
      
-     if(array_key_exists('MerchandisingHeight',$package)){$MerchandisingHeightElement=$doc->createElement('MerchandisingHeight',$package['MerchandisingHeight']); $DimensionsElement->appendChild($MerchandisingHeightElement);}
-     if(array_key_exists('MerchandisingWidth',$package)){$MerchandisingWidthElement=$doc->createElement('MerchandisingWidth',$package['MerchandisingWidth']); $DimensionsElement->appendChild($MerchandisingWidthElement);}
-     if(array_key_exists('MerchandisingLength',$package)){$MerchandisingLengthElement=$doc->createElement('MerchandisingLength',$package['MerchandisingLength']); $DimensionsElement->appendChild($MerchandisingLengthElement);}
+     if(array_key_exists('MerchandisingHeight',$package) && $package['MerchandisingHeight']>0){$MerchandisingHeightElement=$doc->createElement('MerchandisingHeight',$package['MerchandisingHeight']); $DimensionsElement->appendChild($MerchandisingHeightElement);}
+     if(array_key_exists('MerchandisingWidth',$package) && $package['MerchandisingWidth']>0){$MerchandisingWidthElement=$doc->createElement('MerchandisingWidth',$package['MerchandisingWidth']); $DimensionsElement->appendChild($MerchandisingWidthElement);}
+     if(array_key_exists('MerchandisingLength',$package) && $package['MerchandisingLength']>0){$MerchandisingLengthElement=$doc->createElement('MerchandisingLength',$package['MerchandisingLength']); $DimensionsElement->appendChild($MerchandisingLengthElement);}
      
      if(array_key_exists('ShippingHeight',$package) && $package['ShippingHeight']>0){$ShippingHeightElement=$doc->createElement('ShippingHeight',$package['ShippingHeight']); $DimensionsElement->appendChild($ShippingHeightElement);}
      if(array_key_exists('ShippingWidth',$package) && $package['ShippingWidth']>0){$ShippingWidthElement=$doc->createElement('ShippingWidth',$package['ShippingWidth']); $DimensionsElement->appendChild($ShippingWidthElement);}

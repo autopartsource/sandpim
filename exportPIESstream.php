@@ -200,8 +200,11 @@ foreach($partnumbers as $partnumber)
    $itempackage['ShippingHeight']=$package['shippingheight'];
    $itempackage['ShippingWidth']=$package['shippingwidth'];
    $itempackage['ShippingLength']=$package['shippinglength'];
+   $itempackage['MerchandisingHeight']=$package['merchandisingheight'];
+   $itempackage['MerchandisingWidth']=$package['merchandisingwidth'];
+   $itempackage['MerchandisingLength']=$package['merchandisinglength'];
    $itempackage['DimensionsUOM']=$package['dimensionsuom'];
-   
+   $itempackage['Orderable']=$package['orderable'];
    $item['packages'][]=$itempackage;   
   }
    
