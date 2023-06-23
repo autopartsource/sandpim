@@ -150,8 +150,8 @@ if (isset($_POST['input']))
                             <form method="post">
                                 <div class="alert alert-secondary" role="alert">
                                     <h6 class="alert-heading">Paste tab-delimited data (including header row):</h6>
-                                    <p>PartNumber,PackageUOM,QuantityofEaches,[PackageLevelGTIN],[PackageBarCodeCharacters],[InnerQuantity],[InnerQuantityUOM],[MerchandisingHeight],[MerchandisingLength],[MerchandisingWidth],[ShippingHeight],[ShippingLength],[ShippingWidth],[DimensionsUOM],[Weight],[WeightsUOM],[Orderable]</p>
-                                    <p>Column order is arbitrary. Columns is brackets are optional.</p>
+                                    <p>PartNumber,PackageUOM,QuantityofEaches,<span style="color:green;">PackageLevelGTIN,PackageBarCodeCharacters,InnerQuantity,InnerQuantityUOM,MerchandisingHeight,MerchandisingLength,MerchandisingWidth,ShippingHeight,ShippingLength,ShippingWidth,DimensionsUOM,Weight,WeightsUOM,Orderable</span></p>
+                                    <p>Column names in green are optional. Column order is arbitrary.</p>
                                 </div>                                    
                                 <textarea style="width:100%;" name="input" rows="15"></textarea>
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>

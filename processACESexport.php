@@ -47,7 +47,8 @@ if(count($jobs))
  $receiverprofileid=intval($parameters['receiverprofile']);
  $profile=$pim->getReceiverprofileById($receiverprofileid);
  $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
-
+ $profilename=$profile['name'];
+ 
  $lifecyclestatuslist=array();
  $lifecyclestatusestemp=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
  foreach ($lifecyclestatusestemp as $status){$lifecyclestatuslist[]=$status['lifecyclestatus'];}
@@ -56,6 +57,8 @@ if(count($jobs))
  $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
  $apps=$pim->getAppsByPartcategories($partcategories,$lifecyclestatuslist);
  $parttranslations=$pim->getReceiverprofileParttranslations($receiverprofileid);
+ 
+ $pim->logBackgroundjobEvent($jobid, 'Partcategories in export:'.implode(',',$partcategories));
  
  $filename=$jobs[0]['outputfile'];
  $profileelements=explode(';',$profiledata);
@@ -79,7 +82,7 @@ if(count($jobs))
  $includecosmeticapps=false; if(array_key_exists('IncludeCosmeticApps', $keyedprofile) && $keyedprofile['IncludeCosmeticApps']=='yes'){$includecosmeticapps=true;}
  $includecosmeticattributes=false; if(array_key_exists('IncludeCosmeticAttributes', $keyedprofile) && $keyedprofile['IncludeCosmeticAttributes']=='yes'){$includecosmeticattributes=true;} 
  $suppressduplicateapps=false; if(array_key_exists('SuppressDuplicateApps', $keyedprofile) && $keyedprofile['SuppressDuplicateApps']=='yes'){$suppressduplicateapps=true;} 
- $generatoroptions=array('IncludeCosmeticApps'=>$includecosmeticapps,'IncludeCosmeticAttributes'=>$includecosmeticattributes,'SuppressDuplicateApps'=>$suppressduplicateapps);
+ $generatoroptions=array('IncludeCosmeticApps'=>$includecosmeticapps,'IncludeCosmeticAttributes'=>$includecosmeticattributes,'SuppressDuplicateApps'=>$suppressduplicateapps,'ProfileName'=>$profilename);
 
  $assetapps=array();
  
