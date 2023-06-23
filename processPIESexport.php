@@ -48,6 +48,7 @@ if(count($jobs))
  $receiverprofileid=intval($parameters['receiverprofile']);
  $profile=$pim->getReceiverprofileById($receiverprofileid);
  $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
+ $profilename=$profile['name'];
  $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
  $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
  
@@ -66,7 +67,7 @@ if(count($jobs))
  $marketingcopys=array();
  $logicerrors=array();
  
- $generatoroptions=array();
+ $generatoroptions=array('ProfileName'=>$profilename);
 
  $marketingcopyrecords=$pim->getMarketingcopyByReceiverprofileId($profile['id']);
 
