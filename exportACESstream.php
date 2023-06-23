@@ -42,6 +42,7 @@ $receiverprofileid=intval($_POST['receiverprofile']);
 $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $profile=$pim->getReceiverprofileById($receiverprofileid);
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
+$profilename=$profile['name'];
 
 $profileelements=explode(';',$profiledata);
 $keyedprofile=array();
@@ -94,7 +95,7 @@ else
  if(array_key_exists('MapperContact', $keyedprofile)){$header['MapperContact']=$keyedprofile['MapperContact'];}
 
  $assetapps=array();
- $generatoroptions=array('IncludeCosmeticApps'=>true,'IncludeCosmeticAttributes'=>true,);
+ $generatoroptions=array('IncludeCosmeticApps'=>true,'IncludeCosmeticAttributes'=>true,'ProfileName'=>$profilename);
 
  $parttranslations=$pim->getReceiverprofileParttranslations($receiverprofileid);
 
