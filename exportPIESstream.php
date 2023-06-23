@@ -43,10 +43,11 @@ $marketingcopys=array();
 
 $profile=$pim->getReceiverprofileById(intval($_GET['receiverprofile']));
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
-
+$profilename=$profile['name'];
 $partcategories=$pim->getReceiverprofilePartcategories($profile['id']);
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
 
+$generatoroptions=array('ProfileName'=>$profilename);
 
 $marketingcopyrecords=$pim->getMarketingcopyByReceiverprofileId($profile['id']);
 
@@ -285,7 +286,8 @@ foreach($partnumbers as $partnumber)
  $items[$partnumber]=$item;    
 }
 
-$doc=$PIESgenerator->createPIESdoc($header,$marketingcopys,$items);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
+
+$doc=$PIESgenerator->createPIESdoc($header,$marketingcopys,$items,$generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
 $doc->formatOutput=true;
 $piesxml=$doc->saveXML();    
 
