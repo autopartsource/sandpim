@@ -57,6 +57,7 @@ $part = $pim->getPart($partnumber);
 $apps = $pim->getAppsByPartnumber($partnumber);
 $appsummarystruct = $pim->getAppSummary($partnumber);
 $attributes = $pim->getPartAttributes($partnumber);
+$expis=$pim->getPartEXPIs($partnumber);
 $validpadbattributes=$padb->getAttributesForParttype($part['parttypeid']);
 $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
@@ -970,7 +971,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
             </div>
         </div>    
         <!-- End of Content Container -->
-             <?php // print_r($validpadbattributes);?>   
+             <?php //print_r($expis);?>   
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
     </body>

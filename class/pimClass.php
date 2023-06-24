@@ -1671,6 +1671,54 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ 
+ function getPartEXPIs($partnumber)
+ {
+  $db = new mysql; $db->connect(); $keyedexpis=array(); $expis=array();
+
+  $basepart=$this->basepartOfPart($partnumber);
+  if($basepart)
+  {// this part has a base - we need to deal with inheritance
+   // unique key for identifying attributes is EXPIcode+language+
+   if($stmt=$db->conn->prepare('select id,EXPIcode,EXPIvalue,languagecode from part_expi where partnumber=?'))
+   {
+    $stmt->bind_param('s',$basepart);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $key=$row['EXPIcode'].'|'.$row['languagecode'];
+     $keyedexpis[$key]=array('id'=>$row['id'],'EXPIcode'=>$row['EXPIcode'],'EXPIvalue'=>$row['EXPIvalue'],'languagecode'=>$row['languagecode'],'inheritedfrom'=>$basepart);
+    }
+   }   
+  }
+  
+  if($stmt=$db->conn->prepare('select id,EXPIcode,EXPIvalue,languagecode from part_expi where partnumber=?'))
+  {
+   $stmt->bind_param('s',$partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+     $key=$row['EXPIcode'].'|'.$row['languagecode'];
+     $keyedexpis[$key]=array('id'=>$row['id'],'EXPIcode'=>$row['EXPIcode'],'EXPIvalue'=>$row['EXPIvalue'],'languagecode'=>$row['languagecode'],'inheritedfrom'=>'');
+   }
+  }
+  
+  foreach($keyedexpis as $keyedexpi)
+  {
+      $expis[]=$keyedexpi;
+  }
+  
+  $db->close();
+  return $expis;
+ }
+
+ 
+ 
+ 
+ 
+ 
 
  function createPartcategory($name,$partcategory)
  {

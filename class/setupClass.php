@@ -617,6 +617,21 @@ class setup
         $sql="insert into part_description values(1,'PRC914','Pad Set W/Hardware','SHO',1,'EN')"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
         $sql="insert into part_description values(2,'PRC914','Ceraamic Pad Set With Hardware','DES',1,'EN')"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
         
+
+        $sql="CREATE TABLE part_expi (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(255) NOT NULL,
+        EXPIcode varchar (255) not null,
+        EXPIvalue varchar(255) not null,
+        languagecode varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber),
+        INDEX idx_EXPIcode (EXPIcode),
+        INDEX idx_partnumber_EXPIcode (partnumber,EXPIcode))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_expi  ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_expi  ('.$db->conn->error.')';}
+
+        $sql="insert into part_expi values(null,'PRC914','CTO','CA','EN')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
+        
         
         $sql="CREATE TABLE part_balance (
         partnumber varchar(255) NOT NULL,
