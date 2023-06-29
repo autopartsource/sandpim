@@ -122,6 +122,25 @@ if (isset($_POST['input']))
                             }
                             break;
 
+                        case 'basepart':
+
+                            $basepart=trim(strtoupper($attributevalue));
+
+                            if($pim->validPart($basepart))
+                            {                                        
+                                //$pim->setPartReplacedby($partnumber, $replacedby, true);
+                                $pim->setPartBasepart($partnumber, $basepart, true);
+                                $newoid=$pim->getOIDofPart($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'basepart updated to ['.$attributevalue.'] by mass import', $newoid);
+                                $importcount++;
+                            }
+                            else
+                            {// replacement part is not valid
+                                $errors[]= $partnumber.': basepart ['.$basepart.'] is not a valid partnumber on line '.$recordnumber;
+                                $failedcount++;
+                            }
+                            break;
+
                         case 'firststockeddate':
                             $pim->setPartFirststockedDate($partnumber, $attributevalue,true);
                             $newoid=$pim->getOIDofPart($partnumber);
@@ -191,7 +210,7 @@ if (isset($_POST['input']))
                                     <hr>
                                     <p>Part numbers are validated. If the second column is a number, it is assumed to be a PAdb ID.
                                     <br>Non-numeric values are assumed to be user-defined attribute names.
-                                    <br>Attribute names GTIN, parttypeid, lifecyclestatus, replacedby, firststockeddate are special cases that will apply to the part if used.</p>
+                                    <br>Attribute names GTIN, parttypeid, lifecyclestatus, replacedby, basepart, firststockeddate are special cases that will apply to the part if used.</p>
                                 
                                 
                                 <textarea name="input" style="width:100%;height:200px;"></textarea>
