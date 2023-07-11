@@ -269,16 +269,20 @@ class PIESgenerator
      }
 
      if(array_key_exists('Orderable',$package) && trim($package['Orderable'])!=''){$OrderableElement=$doc->createElement('Orderable',$package['Orderable']); $PackageElement->appendChild($OrderableElement);}
+     
+     $PackageDimensionsExist=false;
      $DimensionsElement=$doc->createElement('Dimensions');
-     if(array_key_exists('DimensionsUOM',$package)){$DimensionsElement->setAttribute('UOM', $package['DimensionsUOM']);}
-     
-     if(array_key_exists('MerchandisingHeight',$package) && $package['MerchandisingHeight']>0){$MerchandisingHeightElement=$doc->createElement('MerchandisingHeight',$package['MerchandisingHeight']); $DimensionsElement->appendChild($MerchandisingHeightElement);}
-     if(array_key_exists('MerchandisingWidth',$package) && $package['MerchandisingWidth']>0){$MerchandisingWidthElement=$doc->createElement('MerchandisingWidth',$package['MerchandisingWidth']); $DimensionsElement->appendChild($MerchandisingWidthElement);}
-     if(array_key_exists('MerchandisingLength',$package) && $package['MerchandisingLength']>0){$MerchandisingLengthElement=$doc->createElement('MerchandisingLength',$package['MerchandisingLength']); $DimensionsElement->appendChild($MerchandisingLengthElement);}
-     
-     if(array_key_exists('ShippingHeight',$package) && $package['ShippingHeight']>0){$ShippingHeightElement=$doc->createElement('ShippingHeight',$package['ShippingHeight']); $DimensionsElement->appendChild($ShippingHeightElement);}
-     if(array_key_exists('ShippingWidth',$package) && $package['ShippingWidth']>0){$ShippingWidthElement=$doc->createElement('ShippingWidth',$package['ShippingWidth']); $DimensionsElement->appendChild($ShippingWidthElement);}
-     if(array_key_exists('ShippingLength',$package) && $package['ShippingLength']>0){$ShippingLengthElement=$doc->createElement('ShippingLength',$package['ShippingLength']); $DimensionsElement->appendChild($ShippingLengthElement); $PackageElement->appendChild($DimensionsElement);}
+     if(array_key_exists('MerchandisingHeight',$package) && $package['MerchandisingHeight']>0){$MerchandisingHeightElement=$doc->createElement('MerchandisingHeight',$package['MerchandisingHeight']); $DimensionsElement->appendChild($MerchandisingHeightElement); $PackageDimensionsExist=true;}
+     if(array_key_exists('MerchandisingWidth',$package) && $package['MerchandisingWidth']>0){$MerchandisingWidthElement=$doc->createElement('MerchandisingWidth',$package['MerchandisingWidth']); $DimensionsElement->appendChild($MerchandisingWidthElement); $PackageDimensionsExist=true;}
+     if(array_key_exists('MerchandisingLength',$package) && $package['MerchandisingLength']>0){$MerchandisingLengthElement=$doc->createElement('MerchandisingLength',$package['MerchandisingLength']); $DimensionsElement->appendChild($MerchandisingLengthElement); $PackageDimensionsExist=true;}
+     if(array_key_exists('ShippingHeight',$package) && $package['ShippingHeight']>0){$ShippingHeightElement=$doc->createElement('ShippingHeight',$package['ShippingHeight']); $DimensionsElement->appendChild($ShippingHeightElement); $PackageDimensionsExist=true;}
+     if(array_key_exists('ShippingWidth',$package) && $package['ShippingWidth']>0){$ShippingWidthElement=$doc->createElement('ShippingWidth',$package['ShippingWidth']); $DimensionsElement->appendChild($ShippingWidthElement); $PackageDimensionsExist=true;}
+     if(array_key_exists('ShippingLength',$package) && $package['ShippingLength']>0){$ShippingLengthElement=$doc->createElement('ShippingLength',$package['ShippingLength']); $DimensionsElement->appendChild($ShippingLengthElement); $PackageDimensionsExist=true;}
+     if($PackageDimensionsExist && array_key_exists('DimensionsUOM',$package))
+     {
+         $DimensionsElement->setAttribute('UOM', $package['DimensionsUOM']);
+         $PackageElement->appendChild($DimensionsElement);         
+     }
 
      if(array_key_exists('Weight',$package) && $package['Weight']!=0 && array_key_exists('WeightsUOM',$package) && trim($package['WeightsUOM'])!='')
      {

@@ -1388,7 +1388,37 @@ class setup
         INDEX idx_note (note),
         INDEX idx_qdbid (qdbid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - noteqdbtranslation ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - noteqdbtranslation ('.$db->conn->error.')';}
+
+
+        $sql="CREATE TABLE wmapisession (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        state varchar(255) NOT NULL,
+        accesstoken text NOT NULL,
+        correlationid varchar(255) NOT NULL,
+        startepoch int unsigned not null,
+        messages text NOT NULL,
+        PRIMARY KEY (id),
+        INDEX idx_correlationid (correlationid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - wmapisession ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - wmapisession ('.$db->conn->error.')';}
+
+
+        $sql="CREATE TABLE wmapifeed (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        feedid varchar(255) NOT NULL,
+        type varchar(255) NOT NULL,
+        state varchar(255) NOT NULL,
+        localfile varchar(255) NOT NULL,
+        postfilename varchar(255) NOT NULL,
+        receiverprofileid int UNSIGNED NOT NULL,
+        messages text NOT NULL,
+        epochstart int UNSIGNED NOT NULL,  
+        PRIMARY KEY (id),
+        INDEX idx_feedid (feedid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - wmapifeed ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - wmapifeed ('.$db->conn->error.')';}
         
+        
+        
+
 
         //need a table(s) to store data related to "readiness certification" of what will be exported for a given 
         // receiver profile. Generally, There will be a set of go/no-go criteria for a given receiver profile - for example: 
