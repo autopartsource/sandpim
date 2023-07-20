@@ -9,11 +9,11 @@ include_once('./class/logsClass.php');
 $navCategory = 'utilities';
 
 $pim=new pim;
+$logs = new logs;
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
- $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'wmSessions.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
  http_response_code(404); // nothing to see here, folks
  exit;
@@ -24,7 +24,6 @@ if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equi
 
 
 $errors=array();
-
 
 $configGet = new configGet();
 
@@ -47,13 +46,14 @@ if($WMclientid && $WMsecret && $WMconsumerid && $WMconsumerchanneltype)
     if($wm->apiGetAccessToken())
     {
      $wm->saveSession('NEW', $wm->accesstoken, $wm->correlationid, time(), '');
+     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'new access token:'.$wm->accesstoken.' correlationid:'.$wm->correlationid);
     }
     else
     {
+     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'failed to get new access token. Error: '.$wm->errormessage);
      $errors[]='error:'.$wm->errormessage;
     }
     break;
-
     
    default:
     break;
@@ -63,6 +63,7 @@ if($WMclientid && $WMsecret && $WMconsumerid && $WMconsumerchanneltype)
 }
 else
 {
+ $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'Declined to request access token. config value(s) missing from config. Must have WMclientid, WMsecret, WMconsumerid and WMconsumerchanneltype');
  $errors[]='config value(s) missing from config. Must have WMclientid, WMsecret, WMconsumerid and WMconsumerchanneltype';    
 }
 

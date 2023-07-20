@@ -9,11 +9,11 @@ include_once('./class/logsClass.php');
 $navCategory = 'utilities';
 
 $pim=new pim;
+$logs = new logs;
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
- $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'wmFeeds.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
  http_response_code(404); // nothing to see here, folks
  exit;
@@ -21,9 +21,6 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 
 session_start();
 if(!isset($_SESSION['userid'])){echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
-
-
-
 
 
 $configGet = new configGet();
@@ -44,7 +41,8 @@ if(isset($_POST['apiaction']))
    $wm->accesstoken=$session['accesstoken'];
    $wm->correlationid=$session['correlationid'];
    $feedhistory=$wm->apiGetFeedEvents();
-   $output='<textarea rows="20">'.print_r($feedhistory,true).'</textarea>';           
+   $output='<textarea style="width:95%;height:350px;">'.print_r($feedhistory,true).'</textarea>';
+   $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'feeds history requested');
    break;
 
   case 'Post Test ACES file':
@@ -53,11 +51,11 @@ if(isset($_POST['apiaction']))
    if($wm->apiPostACESfile('/var/www/html/ACESuploads/ACES4BAD.zip', 'ACES4BAD.zip'))
    {
     $wm->saveFeed($wm->feedid,'ACES', '/var/www/html/ACESuploads/ACES1.zip', 'ACES1.zip', 0, '', 0, 0);
-    $output='<textarea rows="20">success. feedid:'.$wm->feedid.'</textarea>';
+    $output='<textarea style="width:95%;height:350px;">success. feedid:'.$wm->feedid.'</textarea>';
    }
    else
    {
-    $output='<textarea rows="20">error:'.$wm->errormessage.'</textarea>';
+    $output='<textarea style="width:95%;height:350px;">error:'.$wm->errormessage.'</textarea>';
    } 
    break;
 
@@ -72,29 +70,23 @@ if(isset($_POST['apiaction']))
     if($wm->apiPostACESfile($localtempfile, $originalFilename))
     {
      $wm->saveFeed($wm->feedid,'ACES', $localtempfile, $originalFilename, 0, '', 0, 0);
-     $output='<textarea rows="20">success. feedid:'.$wm->feedid.'</textarea>';
+     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'uploaded file: '.$originalFilename);
+     $output='<textarea style="width:95%;height:350px;">success. feedid:'.$wm->feedid.'</textarea>';
     }
     else
     {
-     $output='<textarea rows="20">error:'.$wm->errormessage.'</textarea>';
+     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'failuer uploading file: '.$originalFilename);
+     $output='<textarea style="width:95%;height:350px;">error:'.$wm->errormessage.'</textarea>';
     } 
-    break;
-
-
-    
-    
-//    $output='<textarea rows="20">tempname:'.$localtempfile.'; realname:'.$originalFilename.'</textarea>';
    }
    else
    {
-//    $logs->logSystemEvent('wmAPIupload', 0, 'Error uploading file - un-supported file format (must be a .zip file');
-  //  $output='<textarea rows="20">wrong type:'.$_FILES['fileToUpload']['type'].'</textarea>';
-
+    $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'Error uploading file - un-supported file format (must be a .zip file');
+    $output='<textarea style="width:95%;height:350px;">wrong type:'.$_FILES['fileToUpload']['type'].'</textarea>';
    }
 
     break;
   
-   
    
   default: break;
  }// close of switch
