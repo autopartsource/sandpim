@@ -133,7 +133,7 @@ class walmart
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $feed=array('id'=>$row['id'],'feedid'=>$row['feedid'],'state'=>$row['state'],'localfile'=>$row['localfile'],'postfilename'=>$row['postfilename'],'receiverprofileid'=>$row['receiverprofileid'],'messages'=>$row['messages'],'epochstart'=>$row['epochstart']);
+    $feed=array('id'=>$row['id'],'feedid'=>$row['feedid'],'state'=>$row['state'],'localfile'=>$row['localfile'],'postfilename'=>$row['postfilename'],'receiverprofileid'=>$row['receiverprofileid'],'messages'=>$row['messages'],'epochstart'=>$row['epochstart'],'progress'=>$row['progress'],'errors'=>$row['errors']);
    }
   }
   $db->close();
@@ -151,7 +151,7 @@ class walmart
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $feeds[]=array('id'=>$row['id'],'feedid'=>$row['feedid'],'type'=>$row['type'],'state'=>$row['state'],'localfile'=>$row['localfile'],'postfilename'=>$row['postfilename'],'receiverprofileid'=>$row['receiverprofileid'],'messages'=>$row['messages'],'epochstart'=>$row['epochstart']);
+    $feeds[]=array('id'=>$row['id'],'feedid'=>$row['feedid'],'type'=>$row['type'],'state'=>$row['state'],'localfile'=>$row['localfile'],'postfilename'=>$row['postfilename'],'receiverprofileid'=>$row['receiverprofileid'],'messages'=>$row['messages'],'epochstart'=>$row['epochstart'],'progress'=>$row['progress'],'errors'=>$row['errors']);
    }
   }
   $db->close();
@@ -160,12 +160,12 @@ class walmart
 
 
  
- function saveFeed($feedid,$type,$localfile,$postfilename,$receiverprofileid,$messages)
+ function saveFeed($feedid,$type,$localfile,$postfilename,$receiverprofileid,$messages,$progress,$errors)
  {
   $db = new mysql; $db->connect(); $state='NEW'; $epochstart=time();
-  if($stmt=$db->conn->prepare('insert into wmapifeed (id,feedid,`type`,state,localfile,postfilename,receiverprofileid,messages,epochstart) values(null,?,?,?,?,?,?,?,?)'))
+  if($stmt=$db->conn->prepare('insert into wmapifeed (id,feedid,`type`,state,localfile,postfilename,receiverprofileid,messages,epochstart,progress,errors) values(null,?,?,?,?,?,?,?,?,?,?)'))
   {
-   $stmt->bind_param('sssssisi', $feedid,$type,$state,$localfile,$postfilename,$receiverprofileid,$messages,$epochstart);
+   $stmt->bind_param('sssssisidi', $feedid,$type,$state,$localfile,$postfilename,$receiverprofileid,$messages,$epochstart,$progress,$errors);
    $stmt->execute();
   }
   $db->close();
@@ -182,7 +182,27 @@ class walmart
   $db->close();
  }
  
+ function updateFeedProgress($id,$progress)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update wmapifeed set progress=? where id=?'))
+  {
+   $stmt->bind_param('di',$progress,$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
+ function updateFeedErrors($id,$errors)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update wmapifeed set errors=? where id=?'))
+  {
+   $stmt->bind_param('ii',$errors,$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
  function apiGetAccessToken()
  {

@@ -1412,6 +1412,8 @@ class setup
         receiverprofileid int UNSIGNED NOT NULL,
         messages text NOT NULL,
         epochstart int UNSIGNED NOT NULL,  
+        progress decimal(5,2) not null,
+        errors int unsigned NOT NULL,
         PRIMARY KEY (id),
         INDEX idx_feedid (feedid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - wmapifeed ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - wmapifeed ('.$db->conn->error.')';}

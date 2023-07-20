@@ -52,7 +52,7 @@ if(isset($_POST['apiaction']))
    $wm->correlationid=$session['correlationid'];
    if($wm->apiPostACESfile('/var/www/html/ACESuploads/ACES4BAD.zip', 'ACES4BAD.zip'))
    {
-    $wm->saveFeed($wm->feedid,'ACES', '/var/www/html/ACESuploads/ACES1.zip', 'ACES1.zip', 0, '');
+    $wm->saveFeed($wm->feedid,'ACES', '/var/www/html/ACESuploads/ACES1.zip', 'ACES1.zip', 0, '', 0, 0);
     $output='<textarea rows="20">success. feedid:'.$wm->feedid.'</textarea>';
    }
    else
@@ -61,7 +61,7 @@ if(isset($_POST['apiaction']))
    } 
    break;
 
-  case '':
+  case 'Upload ACES':
    if($_FILES['fileToUpload']['type']=='application/x-zip-compressed')
    {
     $originalFilename= basename($_FILES['fileToUpload']['name']);
@@ -71,7 +71,7 @@ if(isset($_POST['apiaction']))
     $wm->correlationid=$session['correlationid'];
     if($wm->apiPostACESfile($localtempfile, $originalFilename))
     {
-     $wm->saveFeed($wm->feedid,'ACES', $localtempfile, $originalFilename, 0, '');
+     $wm->saveFeed($wm->feedid,'ACES', $localtempfile, $originalFilename, 0, '', 0, 0);
      $output='<textarea rows="20">success. feedid:'.$wm->feedid.'</textarea>';
     }
     else
@@ -115,6 +115,18 @@ foreach($feeds as $feed)
   {
    $wm->updateFeedState($feed['id'], $feeddetails['feedStatus']);
   }
+  
+  if(array_key_exists('itemsReceived', $feeddetails) && array_key_exists('itemsSucceeded', $feeddetails) && intval($feeddetails['itemsReceived'])>0)
+  {
+   $wm->updateFeedProgress($feed['id'], intval($feeddetails['itemsSucceeded'])/intval($feeddetails['itemsReceived']));
+  }
+  
+  if(array_key_exists('itemsFailed', $feeddetails))
+  {
+   $wm->updateFeedErrors($feed['id'], intval($feeddetails['itemsFailed']));
+  }
+
+  
  }
 }
 
@@ -168,8 +180,8 @@ $feeds=$wm->getFeeds(10);
                                     echo '<td>'.$feed['state'].'</td>';
                                     echo '<td>'.$feed['postfilename'].'</td>';
                                     echo '<td>'.$wm->timeAgo($feed['epochstart'],time()).'</td>';
-                                    echo '<td></td>';
-                                    echo '<td></td>';
+                                    echo '<td style="text-align:right;">'.$feed['errors'].'</td>';
+                                    echo '<td style="text-align:right;">'.round(100*$feed['progress'],0).'%</td>';
                                     echo '<td>';
                                     if($feed['state']=='ERROR'){echo '<form><input type="submit" name="submit" value="Download Report" /></form>';}
                                     echo '</td>';
@@ -182,7 +194,7 @@ $feeds=$wm->getFeeds(10);
                         <div class="card-body">
                             <form method="post" action="./wmFeeds.php?sessionid=<?php echo intval($_GET['sessionid']);?>" enctype="multipart/form-data">
                                 <div style="text-align: left;margin:4px;padding:5px; border:1px solid #c0c0c0;"><h5>Upload a file and create new feed</h5><input type="file" name="fileToUpload" accept=".zip"/><input name="submit" type="submit" value="Upload"/></div>
-                                <input type="hidden" name="apiaction" value=""/>
+                                <input type="hidden" name="apiaction" value="Upload ACES"/>
                             </form>
                             <form method="post" action="./wmFeeds.php?sessionid=<?php echo intval($_GET['sessionid']);?>">                                
                                 <div style="text-align: left;margin:4px;padding-top:15px;"><input type="submit" name="apiaction" value="Request Feeds History"/></div>
