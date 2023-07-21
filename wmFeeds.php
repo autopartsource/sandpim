@@ -60,7 +60,7 @@ if(isset($_POST['apiaction']))
    break;
 
   case 'Upload ACES':
-   if($_FILES['fileToUpload']['type']=='application/x-zip-compressed')
+   if($_FILES['fileToUpload']['type']=='application/x-zip-compressed' || $_FILES['fileToUpload']['type']=='application/zip')
    {
     $originalFilename= basename($_FILES['fileToUpload']['name']);
     $localtempfile=$_FILES['fileToUpload']['tmp_name'];
