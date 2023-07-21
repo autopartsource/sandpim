@@ -97,7 +97,7 @@ $sessions=$wm->getRecentSessions(10);
                             echo '<div style="background-color:#c0a0a0;padding:10px;border:solid 1px;">'.$error.'</div>';
                         }?>
 
-                        <h2 class="card-header text-start">Walmart API Utility</h2>
+                        <h2 class="card-header text-start">Walmart Uploader Utility (ACES)</h2>
                         <div class="card-body">
                             <h3 class="card-header text-start">Existing Sessions</h3>
                             <div style="text-align:left;padding:10px;">

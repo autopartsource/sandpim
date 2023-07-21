@@ -1,5 +1,6 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/logsClass.php');
@@ -21,6 +22,10 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
+$configGet = new configGet();
+$localimagestorepath=$configGet->getConfigValue('localImageStorePath');
+
+
 $asset = new asset;
 $pcdb=new pcdb();
 $error_msg = '';
@@ -34,7 +39,8 @@ $languagecode='EN';
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Retrieve') 
 {
-    $destinationpath = '/var/www/html/ACESuploads/'.$_POST['basename'];
+    
+    $destinationpath = $localimagestorepath.'/'.$_POST['basename'];
     $pathparts = pathinfo($destinationpath);
     $filesize=file_put_contents($destinationpath, fopen($_POST['uri'], 'r'));
     
