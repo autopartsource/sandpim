@@ -30,8 +30,9 @@ $localfeed=$wm->getFeed(intval($_GET['feedid']));
 $wm->accesstoken=$session['accesstoken'];
 $wm->correlationid=$session['correlationid'];
 $wm->feedid=$localfeed['feedid'];
+$wm->feedtype=$localfeed['type'];
 
-$wm->apiStreamACESreport();
+$wm->apiStreamReport();
 
 $filename='Walmart_feed_report_'.$localfeed['feedid'].'_'.date('Y-m-d').'.zip';
  header('Content-Disposition: attachment; filename="'.$filename.'"');

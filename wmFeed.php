@@ -71,25 +71,13 @@ $output='<textarea rows="20">'.print_r($feeddetails,true).'</textarea>';
                 <div class="col-xs-12 col-md-2 my-col colLeft">
                     
                 </div>
-                
+
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-
                         <h5 class="card-header text-start"><a href="./wmSessions.php">Walmart API Sessions</a> > <a href="./wmFeeds.php?sessionid=<?php echo intval($_GET['sessionid']);?>">Feeds</a> > <?php echo $localfeed['feedid'];?></h5>
-
-                        
-                        <div class="card-body">
-                            <form action="./wmStreamReport.php">
-                                <input type="hidden" name="sessionid" value="<?php echo intval($_GET['sessionid']);?>"/>
-                                <input type="hidden" name="feedid" value="<?php echo intval($_GET['feedid']);?>"/>
-                                <input type="submit" name="apiaction" value="Download Feed Report"/>
-                            </form>
-                        </div>
-                        
                         <?php if($output){echo $output;}?>
-
                     </div>
                 </div>
                 <!-- End of Main Content -->

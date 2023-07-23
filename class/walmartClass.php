@@ -11,6 +11,7 @@ class walmart
  var $errormessage='';
  var $correlationid='';
  var $feedid='';
+ var $feedtype='';
  var $reportcontent='';
  var $httpstatus;
  
@@ -85,7 +86,6 @@ class walmart
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-//    $sessions[]=array('id'=>$row['id'],'state'=>$row['state'],'accesstoken'=>$row['accesstoken'],'correlationid'=>$row['correlationid'],'feedid'=>$row['feedid'],'localfile'=>$row['localfile'],'postfilename'=>$row['postfilename'],'startepoch'=>$row['startepoch'],'receiverprofileid'=>$row['receiverprofileid'],'messages'=>$row['messages']);
     $sessions[]=array('id'=>$row['id'],'state'=>$row['state'],'accesstoken'=>$row['accesstoken'],'correlationid'=>$row['correlationid'],'startepoch'=>$row['startepoch'],'messages'=>$row['messages']);
    }
   }
@@ -103,7 +103,6 @@ class walmart
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-//    $session=array('id'=>$row['id'],'state'=>$row['state'],'accesstoken'=>$row['accesstoken'],'correlationid'=>$row['correlationid'],'feedid'=>$row['feedid'],'localfile'=>$row['localfile'],'postfilename'=>$row['postfilename'],'startepoch'=>$row['startepoch'],'receiverprofileid'=>$row['receiverprofileid'],'messages'=>$row['messages']);
     $session=array('id'=>$row['id'],'state'=>$row['state'],'accesstoken'=>$row['accesstoken'],'correlationid'=>$row['correlationid'],'startepoch'=>$row['startepoch'],'messages'=>$row['messages']);
    }
   }
@@ -133,7 +132,7 @@ class walmart
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $feed=array('id'=>$row['id'],'feedid'=>$row['feedid'],'state'=>$row['state'],'localfile'=>$row['localfile'],'postfilename'=>$row['postfilename'],'receiverprofileid'=>$row['receiverprofileid'],'messages'=>$row['messages'],'epochstart'=>$row['epochstart'],'progress'=>$row['progress'],'errors'=>$row['errors']);
+    $feed=array('id'=>$row['id'],'feedid'=>$row['feedid'],'type'=>$row['type'],'state'=>$row['state'],'localfile'=>$row['localfile'],'postfilename'=>$row['postfilename'],'receiverprofileid'=>$row['receiverprofileid'],'messages'=>$row['messages'],'epochstart'=>$row['epochstart'],'progress'=>$row['progress'],'errors'=>$row['errors']);
    }
   }
   $db->close();
@@ -248,13 +247,12 @@ class walmart
  
  
  
- function apiPostACESfile($filepath,$uploadfilename)
+ function apiPostFile($filepath,$uploadfilename,$filetype)
  {
   $success=false;
   $cf=new CURLFile($filepath, 'application/zip', $uploadfilename);
-  //var_dump($cf);
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL,'https://marketplace.walmartapis.com/v3/feeds?feedType=FITMENT_ACES');
+  curl_setopt($ch, CURLOPT_URL,'https://marketplace.walmartapis.com/v3/feeds?feedType='.$filetype);
   curl_setopt($ch, CURLOPT_POST, 1);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
@@ -266,7 +264,6 @@ class walmart
     'Authorization: Basic '.base64_encode($this->clientid.':'.$this->secret),
     'Content-Type: multipart/form-data'
   ];
-
   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   curl_setopt($ch, CURLOPT_POSTFIELDS, ['file' => $cf]);
   $response = curl_exec ($ch);
@@ -287,26 +284,23 @@ class walmart
   return $success;     
  }
  
-
- function apiStreamACESreport()
+ 
+ function apiStreamReport()
  {
   $success=false;
-  
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL,'https://marketplace.walmartapis.com/v3/feeds/'.$this->feedid.'/errorReport?feedType=FITMENT_ACES');
+  curl_setopt($ch, CURLOPT_URL,'https://marketplace.walmartapis.com/v3/feeds/'.$this->feedid.'/errorReport?feedType='.$this->feedtype);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
   $headers = [
     'feedId: '.$this->feedid,
-    'feedType: FITMENT_ACES',
+    'feedType: '.$this->feedtype,
     'Authorization: Basic '.base64_encode($this->clientid.':'.$this->secret),
     'WM_SEC.ACCESS_TOKEN: '.$this->accesstoken,
     'WM_QOS.CORRELATION_ID: '.$this->correlationid,
     'WM_SVC.NAME: Walmart Marketplace',
     'ACCEPT: application/octet-stream'
   ];
-  
-
   curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
   $this->reportcontent = curl_exec ($ch);
   $this->httpstatus=curl_getinfo($ch,CURLINFO_HTTP_CODE);

@@ -59,34 +59,65 @@ if(isset($_POST['apiaction']))
    } 
    break;
 
-  case 'Upload ACES':
+  case 'uploadACES':
    if($_FILES['fileToUpload']['type']=='application/x-zip-compressed' || $_FILES['fileToUpload']['type']=='application/zip')
    {
     $originalFilename= basename($_FILES['fileToUpload']['name']);
     $localtempfile=$_FILES['fileToUpload']['tmp_name'];
+    $uploadtype='FITMENT_ACES';
     
     $wm->accesstoken=$session['accesstoken'];
     $wm->correlationid=$session['correlationid'];
-    if($wm->apiPostACESfile($localtempfile, $originalFilename))
+    if($wm->apiPostFile($localtempfile, $originalFilename, $uploadtype))
     {
-     $wm->saveFeed($wm->feedid,'ACES', $localtempfile, $originalFilename, 0, '', 0, 0);
-     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'uploaded file: '.$originalFilename);
+     $wm->saveFeed($wm->feedid,'FITMENT_ACES', $localtempfile, $originalFilename, 0, '', 0, 0);
+     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'uploaded ACES: '.$originalFilename);
      $output='<textarea style="width:95%;height:350px;">success. feedid:'.$wm->feedid.'</textarea>';
     }
     else
     {
-     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'failuer uploading file: '.$originalFilename);
+     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'failure uploading file: '.$originalFilename);
      $output='<textarea style="width:95%;height:350px;">error:'.$wm->errormessage.'</textarea>';
     } 
    }
    else
    {
-    $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'Error uploading file - un-supported file format (must be a .zip file');
-    $output='<textarea style="width:95%;height:350px;">wrong type:'.$_FILES['fileToUpload']['type'].'</textarea>';
+    $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'Error uploading ACESS file - un-supported file format (must be a .zip file containing a ACES xml file) actual MIME type:'.$_FILES['fileToUpload']['type']);
+    $output='<textarea style="width:95%;height:350px;">wrong type:'.$_FILES['fileToUpload']['type'].'. Must be a zip containing a ACES xml file.</textarea>';
    }
-
-    break;
+   break;
   
+
+  case 'uploadPIES':
+   if($_FILES['fileToUpload']['type']=='application/x-zip-compressed' || $_FILES['fileToUpload']['type']=='application/zip')
+   {
+    $originalFilename= basename($_FILES['fileToUpload']['name']);
+    $localtempfile=$_FILES['fileToUpload']['tmp_name'];
+    $uploadtype='FITMENT_PIES';
+    
+    $wm->accesstoken=$session['accesstoken'];
+    $wm->correlationid=$session['correlationid'];
+    if($wm->apiPostFile($localtempfile, $originalFilename, $uploadtype))
+    {
+     $wm->saveFeed($wm->feedid,'FITMENT_PIES', $localtempfile, $originalFilename, 0, '', 0, 0);
+     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'uploaded PIES: '.$originalFilename);
+     $output='<textarea style="width:95%;height:350px;">success. feedid:'.$wm->feedid.'</textarea>';
+    }
+    else
+    {
+     $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'failure uploading file: '.$originalFilename);
+     $output='<textarea style="width:95%;height:350px;">error:'.$wm->errormessage.'</textarea>';
+    } 
+   }
+   else
+   {
+    $logs->logSystemEvent('WalmartAPI', $_SESSION['userid'], 'Error uploading PIES file - un-supported file format (must be a .zip file containing a PIES xml file) actual MIME type:'.$_FILES['fileToUpload']['type']);
+    $output='<textarea style="width:95%;height:350px;">wrong type:'.$_FILES['fileToUpload']['type'].'. Must be a zip containing a PIES xml file.</textarea>';
+   }
+   break;
+
+   
+   
    
   default: break;
  }// close of switch
@@ -155,28 +186,26 @@ $feeds=$wm->getFeeds(10);
                         <div style="padding:10px;text-align:left;">
                             <table class="table">
                                 <tr>
-                                    <th>FeedID</th>
+                                    <th>Feed</th>
                                     <th>Status</th>
                                     <th>Filename</th>
                                     <th>Created</th>
                                     <th>Errors</th>
                                     <th>Progress</th>
-                                    <th>Actions</th>
                                 </tr>
                             
                                 <?php
                                 foreach($feeds as $feed)
                                 {
                                     echo '<tr>';
-                                    echo '<td><a href="./wmFeed.php?feedid='.$feed['id'].'&sessionid='.$session['id'].'">'.substr($feed['feedid'],0,10).'</a></td>';
+                                    echo '<td><div style="padding-bottom:5px;"><a href="./wmFeed.php?feedid='.$feed['id'].'&sessionid='.$session['id'].'">'.substr($feed['feedid'],0,20).'</a></div>';
+                                    if($feed['state']=='PROCESSED' && intval($feed['errors'])>0){echo '<form action="./wmStreamReport.php"><input type="hidden" name="sessionid" value="'.$session['id'].'"/><input type="hidden" name="feedid" value="'.$feed['id'].'"/><input type="submit" name="apiaction" value="Download Feed Report"/></form>';}
+                                    echo '</td>';
                                     echo '<td>'.$feed['state'].'</td>';
                                     echo '<td>'.$feed['postfilename'].'</td>';
                                     echo '<td>'.$wm->timeAgo($feed['epochstart'],time()).'</td>';
                                     echo '<td style="text-align:right;">'.$feed['errors'].'</td>';
                                     echo '<td style="text-align:right;">'.round(100*$feed['progress'],0).'%</td>';
-                                    echo '<td>';
-                                    if($feed['state']=='ERROR'){echo '<form><input type="submit" name="submit" value="Download Report" /></form>';}
-                                    echo '</td>';
                                     echo '</tr>';
                                 }?>
                                                 
@@ -185,11 +214,15 @@ $feeds=$wm->getFeeds(10);
                         
                         <div class="card-body">
                             <form method="post" action="./wmFeeds.php?sessionid=<?php echo intval($_GET['sessionid']);?>" enctype="multipart/form-data">
-                                <div style="text-align: left;margin:4px;padding:5px; border:1px solid #c0c0c0;"><h5>Upload a file and create new feed</h5><input type="file" name="fileToUpload" accept=".zip"/><input name="submit" type="submit" value="Upload"/></div>
-                                <input type="hidden" name="apiaction" value="Upload ACES"/>
+                                <div style="text-align: left;margin:4px;padding:5px; border:1px solid #c0c0c0;">
+                                    <h6>Upload a zipped ACES or PIES file to create a new feed</h6>
+                                    <div style="padding-bottom: 10px;"><select name="apiaction"><option value="uploadACES">ACES</option><option value="uploadPIES">PIES</option></select></div>
+                                    <input type="file" name="fileToUpload" accept=".zip"/><div style="float: right;"><input name="submit" type="submit" value="Upload"/></div><div style="clear:both;"></div>
+                                </div>
+                                
                             </form>
                             <form method="post" action="./wmFeeds.php?sessionid=<?php echo intval($_GET['sessionid']);?>">                                
-                                <div style="text-align: left;margin:4px;padding-top:15px;"><input type="submit" name="apiaction" value="Request Feeds History"/></div>
+                                <div style="text-align: left;margin:4px;padding-top:25px;"><input type="submit" name="apiaction" value="Request Feeds History"/></div>
                             </form>
                         </div>
                         
