@@ -108,7 +108,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Upload')
 
                         <div class="card-body">
                             <div class="card shadow-sm">
-                                <h5 class="card-header">Paste tab-delimited application data for import</h5>
+                                <h5 class="card-header">Paste 9 columns of tab-delimited application data for import (no header row))</h5>
                                 <div class="card-body">
                                 <form method="post">
                                     <div class="card"><div class="card-header"><i>[cosmetic (0 or 1), BaseVehicleID, Partnumber, PartTypeID, PositionID, Qty, VCdb Attributes, Qdb Qualifiers, Notes]</i></div></div>
@@ -116,9 +116,9 @@ if(isset($_POST['submit']) && $_POST['submit']=='Upload')
                                     <div>Category for part creation <select name="partcategory"><option value="0">Do not create parts</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
                                     <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
                                     
-                                    <div class="card"><div class="card-header">VCdb Attributes format: name|value|sequence|cosmetic~name|value|sequence|cosmetic~...</div></div>
-                                    <div class="card"><div class="card-header">Qdb Qualifiers format: id|p1|UoM1|p2|UoM2…~id|p1|UoM1|p2|UoM2…~</div></div>
-                                    <div class="card"><div class="card-header">Notes Format: text|sequence|cosmetic~text|sequence|cosmetic~</div></div>
+                                    <div class="card"><div class="card-header"><strong>VCdb Attributes (tilde-delimited)</strong><br/> name|value|sequence|cosmetic</div></div>
+                                    <div class="card"><div class="card-header"><strong>Qdb Qualifiers (tilde-delimited)</strong><br/> Qdbid|sequence|cosmetic|parm1value|parm1UoM|parm2value|parm2UoM|parm3value|parm3UoM...</div></div>
+                                    <div class="card"><div class="card-header"><strong>Notes (tilde-delimited)</strong><br/> notetext|sequence|cosmetic</div></div>
                                     
                                 </form>
                                 </div>

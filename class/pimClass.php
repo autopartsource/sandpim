@@ -2863,11 +2863,27 @@ function countAppsByPartcategories($partcategories)
 
      if(strlen($fields[7]))
      {// Qdb is present.
-      $params=array();
-      //foreach($qual->param as $param){$params[]=(string)$param['value'].':'.(string)$param['uom'];}
-      //$attributes[]=array('type'=>'qdb','name'=>(string)$qual['id'],'value'=>implode(';',$params));
+      //  1234|1|0|parm1value|parm1uom|parm2value~1234|parm1value  (qdbid|sequence|cosmetic|parm1value|parm1uom)
+      $chunks=explode('~',trim($fields[7]));
+      foreach ($chunks as $chunk)
+      {//1234|1|0|parm1value|parm1uom|parm2value
+       $subchunks=explode('|',$chunk);
+       if(count($subchunks)==3)
+       {//qdb has no parameters (qdbid|sequence|cosmetic)
+        $attributes[]=array('type'=>'qdb','name'=>intval($subchunks[0]), 'value'=>'','cosmetic'=>intval($subchunks[2]),'sequence'=>intval($subchunks[1]));
+       }
+       else
+       {//qdb is either mal-formed or contains parms (not exactly 3 chuncks)
+        if(count($subchunks)>3)
+        {
+         $params=array();
+         for($i=3;$i<count($subchunks);$i++){$params[]=$subchunks[$i];}
+         $attributes[]=array('type'=>'qdb','name'=>intval($subchunks[0]), 'value'=>implode('|',$params),'cosmetic'=>intval($subchunks[2]),'sequence'=>intval($subchunks[1]));               
+        }                     
+       }
+      }
      }
-     
+ 
      if(strlen($fields[8]))
      {// notes are present.
       $notestrings=explode('~',$fields[8]);
