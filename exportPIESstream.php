@@ -19,6 +19,8 @@ $assets = new asset;
 $packaging=new packaging;
 $PIESgenerator=new PIESgenerator();
 
+session_start();
+
 
 $streamXML=true;
 
