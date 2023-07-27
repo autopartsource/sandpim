@@ -962,7 +962,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                             {
                                 $niceattributes='';
                                 if($showAppAttributesInSummary=='yes'){ $niceattributes=' '.niceAppAttributes($app['attributes']);}
-                                $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']).' '.niceAppAttributes($app['attributes']);
+                                $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']).' '.$niceattributes;
                                 echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">'.$niceappdescription.'</a>';
                                 echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description-app="'. base64_encode($niceappdescription).'">'.$app['id'].'</div>';
                             }
