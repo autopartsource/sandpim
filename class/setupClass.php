@@ -871,7 +871,9 @@ class setup
         $sql="insert into config_options values('WMconsumerid','AN36','','','Walmart API consumer ID (uuid with hyphens)');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('WMconsumerchanneltype','AN36','','','Walmart API consumer channel type (uuid with hyphens)');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('WMsecret','AN1/255','','','Walmart API secret');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-                
+        $sql="insert into config_options values('showAppAttributesInSummary','AN1/255','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        
         $sql="CREATE TABLE issue (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         status int UNSIGNED NOT NULL,

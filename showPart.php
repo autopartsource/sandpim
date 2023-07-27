@@ -85,6 +85,8 @@ $bomchangescount=$logs->countBOMchangeEvents($partnumber);
 
 $defaultdescriptionlanguagecode=$configGet->getConfigValue('defaultDescriptionLanguageCode','EN');
 $defaultdescriptiontypecode=$configGet->getConfigValue('defaultDescriptionTypeCode');
+$showAppAttributesInSummary=$configGet->getConfigValue('showAppAttributesInSummary','no');
+
 
 $balance=$pim->getPartBalance($partnumber);
 
@@ -958,6 +960,8 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                             echo '<div id="apps">';
                             foreach($apps as $app)
                             {
+                                $niceattributes='';
+                                if($showAppAttributesInSummary=='yes'){ $niceattributes=' '.niceAppAttributes($app['attributes']);}
                                 $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']);// . ' ' . niceAppAttributes($app['attributes']);
                                 echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">'.$niceappdescription.'</a>';
                                 echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description-app="'. base64_encode($niceappdescription).'">'.$app['id'].'</div>';
