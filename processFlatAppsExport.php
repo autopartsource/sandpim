@@ -1,9 +1,12 @@
 <?php
 /*
- * intended to be executed from the command-line be a cron call ("php processFlatAppsExport.php")
- * on a cycle (likely every 5 or 10 minutes). It will query the db for the oldest job that 
- * is status "started" and execute it. The job will be 
+ * intended to be executed from the command-line with a cron entry 
+ * on a cycle (mine is on a five minute cycle). It will query the db for the oldest job that 
+ * is status "started" and execute it.
  * 
+ * the crontab entry on my fedora31 box looks like this: */
+//          */5 * * * 0,1,2,3,4,5,6 root /usr/bin/php /var/www/html/processFlatAppsExport.php &> /dev/null
+ /* 
  * On my fedora 31 box, I had to apply a read/write SELinux policy to the 
  * directory where apache can write the exported files (/var/www/html/ACESexports
  * semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/html/ACESexports(/.*)?"
@@ -11,7 +14,6 @@
  * 
  * 
  */
-
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 $pim = new pim();
@@ -105,11 +107,12 @@ if(count($jobs))
      if ($appattribute['type'] == 'vcdb') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $vcdb->niceVCdbAttributePair($appattribute), 'cosmetic' => $appattribute['cosmetic']);}
      if ($appattribute['type'] == 'qdb') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $qdb->qualifierText($appattribute['name'], explode('~', str_replace('|','',$appattribute['value']))), 'cosmetic' => $appattribute['cosmetic']);}
      if ($appattribute['type'] == 'note') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $appattribute['value'], 'cosmetic' => $appattribute['cosmetic']);}
-     $nicefitmentstring = ''; $nicefitmentarray = array();
-     foreach ($niceattributes as $niceattribute){$nicefitmentarray[] = $niceattribute['text'];}
-     $record=$mmy['makename']."\t".$mmy['modelname']."\t".$mmy['year']."\t".$app['partnumber']."\t".$pcdb->parttypeName($app['parttypeid'])."\t".$pcdb->positionName($app['positionid'])."\t".$app['quantityperapp']."\t".implode('; ', $nicefitmentarray)."\r\n";
-     $writeresult=fwrite($fh, $record);  
-    }    
+    }
+
+    $nicefitmentarray = array();    
+    foreach ($niceattributes as $niceattribute){$nicefitmentarray[] = $niceattribute['text'];}
+    $record=$mmy['makename']."\t".$mmy['modelname']."\t".$mmy['year']."\t".$app['partnumber']."\t".$pcdb->parttypeName($app['parttypeid'])."\t".$pcdb->positionName($app['positionid'])."\t".$app['quantityperapp']."\t".implode('; ', $nicefitmentarray)."\r\n";
+    $writeresult=fwrite($fh, $record);  
    }
   }
   
