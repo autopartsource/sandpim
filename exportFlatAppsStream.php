@@ -32,7 +32,7 @@ $qdb=new qdb();
 $logs=new logs();
 
 $receiverprofileid=intval($_GET['receiverprofile']);
-$format='default'; if($_GET['format']=='decoded'){$format='decoded';}
+$exportformat='default'; if($_GET['format']=='decoded'){$exportformat='decoded';}
 
 $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $profile=$pim->getReceiverprofileById($receiverprofileid);
@@ -55,7 +55,7 @@ if($appscount>5000)
 { // dataset is too big - this export will be handled by the housekeeper (cron) and written to a temp directory for download
  
  $localfilename=__DIR__.'/ACESexports/'.$randomstring;
- $token=$pim->createBackgroundjob('ACESflatExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';exportformat:'.$format,date('Y-m-d H:i:s'),'text',$clientfilename);
+ $token=$pim->createBackgroundjob('ACESflatExport','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';exportformat:'.$exportformat,date('Y-m-d H:i:s'),'text',$clientfilename);
  $logs->logSystemEvent('Export', 0, 'Flat apps file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
  echo 'This export will contain '.$appscount.' apps. It will be processed by the houskeeper (CLI execution of processFlatAppsExport.php by cron) and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
  echo '<br/><br/><a href="./index.php">Home</a><br/><a href="./backgroundJobs.php">Manage background import/export jobs</a>';
@@ -65,32 +65,47 @@ else
  $apps=$pim->getAppsByPartcategories($partcategories);
 
  $filecontent='';
- foreach($apps as $app)
+
+ if($exportformat=='default')
  {
-  $vcdbattributesstring=''; $qdbattributesstring=''; $notesstring='';
-     foreach($app['attributes'] as $attribute)
+  foreach($apps as $app)
+  {
+   $vcdbattributesstring=''; $qdbattributesstring=''; $notesstring='';   
+   foreach($app['attributes'] as $attribute)
    {
-       switch ($attribute['type']) {
-           case 'vcdb':
-               $vcdbattributesstring.=$attribute['name'].'|'.$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~';
-               break;
-
-           case 'qdb':
-                //$qdbattributesstring.='not yet implimented!';
-                $qdbattributesstring.=$qdb->qualifierText($attribute['name'], explode('~', str_replace('|','',$attribute['value'])));               
-               break;
-
-           case 'note':
-               $notesstring.=$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~';
-               break;
-
-           default:
-               break;
-       } 
+    switch ($attribute['type']) 
+    {
+     case 'vcdb': $vcdbattributesstring.=$attribute['name'].'|'.$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~'; break;
+     case 'qdb': $qdbattributesstring.=$qdb->qualifierText($attribute['name'], explode('~', str_replace('|','',$attribute['value']))); break;
+     case 'note':$notesstring.=$attribute['value'].'|'.$attribute['sequence'].'|'.$attribute['cosmetic'].'~'; break;
+     default: break;
+    } 
+   }
+   $filecontent.=$app['cosmetic']."\t".$app['basevehicleid']."\t".$app['partnumber']."\t".$app['parttypeid']."\t".$app['positionid']."\t".$app['quantityperapp']."\t".$app['partnumber']."\t".$vcdbattributesstring."\t".$qdbattributesstring."\t".$notesstring."\r\n";
+  }
+ }
+     
+ if($exportformat=='decoded')
+ {
+  $filecontent.='Make'."\t".'Model'."\t".'Year'."\t".'Partnumber'."\t".'Part-Type'."\t".'Position'."\t".'App-Quantity'."\t".'Fitmant Qualifiers'."\r\n";
+  $writeresult=fwrite($fh, $record);  
+  foreach($apps as $app)    
+  {
+   $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+   $niceattributes = array();
+   foreach ($app['attributes'] as $appattribute) 
+   {
+    if ($appattribute['type'] == 'vcdb') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $vcdb->niceVCdbAttributePair($appattribute), 'cosmetic' => $appattribute['cosmetic']);}
+    if ($appattribute['type'] == 'qdb') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $qdb->qualifierText($appattribute['name'], explode('~', str_replace('|','',$appattribute['value']))), 'cosmetic' => $appattribute['cosmetic']);}
+    if ($appattribute['type'] == 'note') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $appattribute['value'], 'cosmetic' => $appattribute['cosmetic']);}
    }
 
-  $filecontent.=$app['cosmetic']."\t".$app['basevehicleid']."\t".$app['partnumber']."\t".$app['parttypeid']."\t".$app['positionid']."\t".$app['positionid']."\t".$app['quantityperapp']."\t".$app['partnumber']."\t".$vcdbattributesstring."\t".$qdbattributesstring."\t".$notesstring."\r\n";
+   $nicefitmentarray = array();    
+   foreach ($niceattributes as $niceattribute){$nicefitmentarray[] = $niceattribute['text'];}
+   $filecontent.=$mmy['makename']."\t".$mmy['modelname']."\t".$mmy['year']."\t".$app['partnumber']."\t".$pcdb->parttypeName($app['parttypeid'])."\t".$pcdb->positionName($app['positionid'])."\t".$app['quantityperapp']."\t".implode('; ', $nicefitmentarray)."\r\n";
+  }
  }
+
  
  header('Content-Disposition: attachment; filename="'.$clientfilename.'"');
  header('Content-Type: text');
