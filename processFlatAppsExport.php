@@ -96,7 +96,7 @@ if(count($jobs))
      
   if($exportformat=='decoded')
   {
-   $record='Make'."\t".'Model'."\t".'Year'."\t".'Partnumber'."\t".'Part-Type'."\t".'Position'."\t".'App-Quantity'."\t".'Fitmant Qualifiers'."\r\n";
+   $record='Make'."\t".'Model'."\t".'Year'."\t".'Partnumber'."\t".'Part-Type'."\t".'Position'."\t".'App-Quantity'."\t".'Fitment Qualifiers'."\r\n";
    $writeresult=fwrite($fh, $record);  
    foreach($apps as $app)    
    {

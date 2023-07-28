@@ -87,7 +87,7 @@ else
      
  if($exportformat=='decoded')
  {
-  $filecontent.='Make'."\t".'Model'."\t".'Year'."\t".'Partnumber'."\t".'Part-Type'."\t".'Position'."\t".'App-Quantity'."\t".'Fitmant Qualifiers'."\r\n";
+  $filecontent.='Make'."\t".'Model'."\t".'Year'."\t".'Partnumber'."\t".'Part-Type'."\t".'Position'."\t".'App-Quantity'."\t".'Fitment Qualifiers'."\r\n";
   foreach($apps as $app)    
   {
    $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
