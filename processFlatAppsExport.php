@@ -103,8 +103,8 @@ if(count($jobs))
     foreach ($app['attributes'] as $appattribute) 
     {
      if ($appattribute['type'] == 'vcdb') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $vcdb->niceVCdbAttributePair($appattribute), 'cosmetic' => $appattribute['cosmetic']);}
-     if ($appattribute['type'] == 'qdb') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $qdb->qualifierText($appattribute['name'], explode('~', str_replace('|','',$appattribute['value']))), 'cosmetic' => $appattribute['cosmetic']); 
-     if ($appattribute['type'] == 'note') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $appattribute['value'], 'cosmetic' => $appattribute['cosmetic']);}}
+     if ($appattribute['type'] == 'qdb') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $qdb->qualifierText($appattribute['name'], explode('~', str_replace('|','',$appattribute['value']))), 'cosmetic' => $appattribute['cosmetic']);}
+     if ($appattribute['type'] == 'note') {$niceattributes[] = array('sequence' => $appattribute['sequence'], 'text' => $appattribute['value'], 'cosmetic' => $appattribute['cosmetic']);}
      $nicefitmentstring = ''; $nicefitmentarray = array();
      foreach ($niceattributes as $niceattribute){$nicefitmentarray[] = $niceattribute['text'];}
      $record=$mmy['makename']."\t".$mmy['modelname']."\t".$mmy['year']."\t".$app['partnumber']."\t".$pcdb->parttypeName($app['parttypeid'])."\t".$pcdb->positionName($app['positionid'])."\t".$app['quantityperapp']."\t".implode('; ', $nicefitmentarray)."\r\n";
@@ -113,7 +113,7 @@ if(count($jobs))
    }
   }
   
-  fclose($filename);
+  fclose($fh);
   $pim->updateBackgroundjobDone($jobid,'complete',date('Y-m-d H:i:s'));
   $pim->logBackgroundjobEvent($jobid, 'Flat applications file ['.$filename.'] created containing '.count($apps).' apps for profile id '.$receiverprofileid);
   $logs->logSystemEvent('Export', 0, 'Flat applications file ['.$filename.'] (jobid:'.$jobid.') exported by houskeeper; apps: '.count($apps));
