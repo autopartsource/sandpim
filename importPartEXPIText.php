@@ -90,11 +90,11 @@ if (isset($_POST['input']))
                         else
                         {// code is valid - checck value
                             
-                            if(!array_key_exists($value, $keyedValidEXPIs[$EXPIcode]))
-                            {// bad value for given code
-                                $errors[]='Value '.$value.' is not a valid option for EXPI code '.$EXPIcode.' on line '.$recordnumber;
-                                $failedcount++;
-                            }
+                          //  if(!array_key_exists($value, $keyedValidEXPIs[$EXPIcode]))
+                          //  {// bad value for given code
+                          //      $errors[]='Value '.$value.' is not a valid option for EXPI code '.$EXPIcode.' on line '.$recordnumber;
+                          //      $failedcount++;
+                          //  }
                         }
                         
                         break;
@@ -104,18 +104,10 @@ if (isset($_POST['input']))
                         {// partnumber is valid
                             if(array_key_exists($EXPIcode, $keyedValidEXPIs))
                             {// code is valid 
-                                if(array_key_exists($value, $keyedValidEXPIs[$EXPIcode]))
-                                {//value is valid
-                                    $pim->writePartEXPI($partnumber, $EXPIcode, $value, $languagecode);
-                                    $newoid=$pim->getOIDofPart($partnumber);
-                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'EXPI ['.$EXPIcode.'='.$value.'] added by mass import in clearadd mode', $newoid);
-                                    $importcount++;
-                                }
-                                else
-                                {// bad value for given code
-                                    $errors[]='Value '.$value.' is not a valid option for EXPI code '.$EXPIcode.' on line '.$recordnumber;
-                                    $failedcount++;
-                                }
+                                $pim->writePartEXPI($partnumber, $EXPIcode, $value, $languagecode);
+                                $newoid=$pim->getOIDofPart($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'EXPI ['.$EXPIcode.'='.$value.'] added by mass import in clearadd mode', $newoid);
+                                $importcount++;
                             }
                             else
                             {// bad expi code
@@ -142,17 +134,9 @@ if (isset($_POST['input']))
                         {// partnumber is valid
                             if(array_key_exists($EXPIcode, $keyedValidEXPIs))
                             {// code is valid 
-                                if(array_key_exists($value, $keyedValidEXPIs[$EXPIcode]))
-                                {//value is valid
-                                    $pim->writePartEXPI($partnumber, $EXPIcode, $value, $languagecode);
-                                    $newoid=$pim->getOIDofPart($partnumber);
-                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'EXPI ['.$EXPIcode.'='.$value.'] added by mass import in add mode', $newoid);
-                                }
-                                else
-                                {// bad value for given code
-                                    $errors[]='Value '.$value.' is not a valid option for EXPI code '.$EXPIcode.' on line '.$recordnumber;
-                                    $failedcount++;
-                                }
+                                $pim->writePartEXPI($partnumber, $EXPIcode, $value, $languagecode);
+                                $newoid=$pim->getOIDofPart($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'EXPI ['.$EXPIcode.'='.$value.'] added by mass import in add mode', $newoid);
                             }
                             else
                             {// bad expi code
