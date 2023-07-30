@@ -53,7 +53,7 @@ if (isset($_POST['input']))
                     $sequence = intval(trim($fields[4]));
                     $pim->addPartDescription($partnumber, $descriptiontext, $descriptioncode, $sequence, $languagecode);
                     $newoid=$pim->updatePartOID($partnumber);
-                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Description ['.$descriptiontext.'] writted by mass import', $newoid);
+                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Description ['.$descriptiontext.'] written by mass import', $newoid);
                     $importcount++;
                 }
                 else

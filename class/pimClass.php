@@ -1714,12 +1714,34 @@ function countAppsByPartcategories($partcategories)
   return $expis;
  }
 
+ function writePartEXPI($partnumber,$EXPIcode,$EXPIvalue,$languagecode)
+ {
+  $id=false; $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into part_expi (id,partnumber,EXPIcode,EXPIvalue,languagecode) values(null,?,?,?,?)'))
+  {
+   $stmt->bind_param('ssss',$partnumber,$EXPIcode,$EXPIvalue,$languagecode);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;
+ }
  
- 
- 
- 
- 
+ function deletetEXPIsByPartnumber($partnumber)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from part_expi where partnumber=?'))
+  {
+   $stmt->bind_param('s',$partnumber);
+   $stmt->execute();
+  }
+  $db->close();
+ }
 
+
+
+ 
+ 
  function createPartcategory($name,$partcategory)
  {
   $db=new mysql; $db->connect();

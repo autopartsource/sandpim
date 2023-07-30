@@ -153,7 +153,7 @@ if (isset($_POST['input']))
                             // attribute name is not reserved, and not a PAdb numeric ID
                             $pim->writePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
                             $newoid=$pim->getOIDofPart($partnumber);
-                            $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] writted by mass import', $newoid);
+                            $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] written by mass import', $newoid);
                             break;
                     }
                 }
@@ -161,7 +161,7 @@ if (isset($_POST['input']))
                 {// this is a PAdb numeric ID
                     $pim->writePartAttribute($partnumber, $PAID, '', $attributevalue, $uom);
                     $newoid=$pim->getOIDofPart($partnumber);
-                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] writted by mass import', $newoid);
+                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] written by mass import', $newoid);
                 }
             }
             else

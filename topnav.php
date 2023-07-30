@@ -173,6 +173,7 @@
                     <a class="dropdown-item" href="./importPricesText.php">Prices from text</a>
                     <a class="dropdown-item" href="./importInterchangeText.php">Competitor Interchange from text</a>
                     <a class="dropdown-item" href="./importAssetText.php">Asset metadata from text</a>
+                    <a class="dropdown-item" href="./importPartEXPIText.php">EXPI from text</a>
                     <a class="dropdown-item" href="./updatePartBalances.php">Part balance data from text</a>
                     <a class="dropdown-item" href="./updateKitComponents.php">Kit components from text</a>
                     <a class="dropdown-item" href="./importBrandTableText.php">AutoCare Brand Table text</a>
