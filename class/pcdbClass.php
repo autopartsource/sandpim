@@ -457,17 +457,16 @@ class pcdb
  
  function getAllEXPIcodes()
  {
-  $codes=array();
-  $db = new mysql; $db->dbname=$db->pcdbname;
+  $db = new mysql; $db->dbname=$db->pcdbname; $codes=array();
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select ExpiCode,CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode,PIESExpiCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESExpiCodeId=PIESExpiCode.PIESExpiCodeId order by ExpiCode,CodeValue'))
+  if($stmt=$db->conn->prepare('select * from PIESExpiCode order by Expicode'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $codes[$row['ExpiCode']][$row['CodeValue']]=$row['CodeDescription'];
+    $codes[]=array('code'=>$row['ExpiCode'],'description'=>$row['ExpiCodeDescription']);
    }
   }
   $db->close();

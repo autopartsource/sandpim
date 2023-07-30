@@ -32,13 +32,10 @@ $recordnumber=0;
 
 if (isset($_POST['input']))
 {
-    $keyedValidEXPIs=$pcdb->getAllEXPIcodes();
+    $allexpicodes=$pcdb->getAllEXPIcodes(); foreach($allexpicodes as $expi){$keyedValidEXPIs[$expi['code']]=$expi['description'];}
 //    print_r($keyedValidEXPIs);
     $input = $_POST['input'];
     $records = explode("\r\n", $_POST['input']);
-    
-    
-    
     
     if($_POST['mode']=='clearadd')
     {
