@@ -1714,6 +1714,48 @@ function countAppsByPartcategories($partcategories)
   return $expis;
  }
 
+ function partEXPIvalue($partnumber,$EXPIcode,$languagecode,$respectinheritance)
+ {
+  $db = new mysql; $db->connect(); $value=false;
+
+  $basepart=$this->basepartOfPart($partnumber);
+  if($basepart && $respectinheritance)
+  {// this part has a base - we need to deal with inheritance
+   // unique key for identifying attributes is EXPIcode+language+
+   if($stmt=$db->conn->prepare('select EXPIvalue from part_expi where partnumber=? and EXPIcode=? and languagecode=?'))
+   {
+    $stmt->bind_param('sss',$basepart,$EXPIcode,$languagecode);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc()){$value=$row['EXPIvalue'];}
+   }
+  }
+  
+  if($stmt=$db->conn->prepare('select EXPIvalue from part_expi where partnumber=? and EXPIcode=? and languagecode=?'))
+  {
+   $stmt->bind_param('sss',$partnumber,$EXPIcode,$languagecode);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc()){$value=$row['EXPIvalue'];}
+  }
+  
+  $db->close();
+  return $value;
+ }
+ 
+ 
+ function updatePartEXPI($partnumber,$EXPIcode,$languagecode,$EXPIvalue)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part_expi set EXPIvalue=? where partnumber=? and EXPIcode=? and languagecode=?'))
+  {
+   $stmt->bind_param('ssss',$EXPIvalue,$partnumber,$EXPIcode,$languagecode);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ 
  function writePartEXPI($partnumber,$EXPIcode,$EXPIvalue,$languagecode)
  {
   $id=false; $db = new mysql; $db->connect();

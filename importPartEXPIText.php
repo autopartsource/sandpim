@@ -24,7 +24,7 @@ if (!isset($_SESSION['userid'])) {
 
 $pcdb=new pcdb();
 $errors=array();
-$results='';
+$results=array();
 $importcount=0;
 $failedcount=0;
 $recordnumber=0;
@@ -39,7 +39,7 @@ if (isset($_POST['input']))
     
     if($_POST['mode']=='clearadd')
     {
-        //compile a list of valid items for clear-and-load
+        //compile a list of valid items to clear before importing 
         $validparts=array();
         foreach ($records as $record)
         {
@@ -60,6 +60,8 @@ if (isset($_POST['input']))
         $fields = explode("\t", $record);
         $recordnumber++;
         
+        if((count($fields) == 1) && trim($fields[0])==''){continue;} // completely ignore empty lines
+
         if(count($fields) == 4)
         { // partnumber,EXPIcode,value,languagecode
             $partnumber = trim(strtoupper($fields[0]));
@@ -73,7 +75,11 @@ if (isset($_POST['input']))
                 switch ($_POST['mode'])
                 {
                     case 'test':
-                        if(!$pim->validPart($partnumber))
+                        if($pim->validPart($partnumber))
+                        {// good partnumber
+                            
+                        }
+                        else
                         {// bad partnumber
                             $errors[]='Partnumber '.$partnumber.' on line '.$recordnumber.' is not valid';
                             $failedcount++;
@@ -85,7 +91,7 @@ if (isset($_POST['input']))
                             $failedcount++;
                         }
                         else
-                        {// code is valid - checck value
+                        {// expi code is valid - checck value
                             
                           //  if(!array_key_exists($value, $keyedValidEXPIs[$EXPIcode]))
                           //  {// bad value for given code
@@ -102,15 +108,16 @@ if (isset($_POST['input']))
                             if(array_key_exists($EXPIcode, $keyedValidEXPIs))
                             {// code is valid 
                                 $pim->writePartEXPI($partnumber, $EXPIcode, $value, $languagecode);
-                                $newoid=$pim->getOIDofPart($partnumber);
+                                $newoid=$pim->updatePartOID($partnumber);
                                 $pim->logPartEvent($partnumber, $_SESSION['userid'], 'EXPI ['.$EXPIcode.'='.$value.'] added by mass import in clearadd mode', $newoid);
+                                $results[]=$partnumber.':'.$EXPIcode.'='.$value.' ('.$languagecode.')';
                                 $importcount++;
                             }
                             else
                             {// bad expi code
                                 $errors[]=$EXPIcode.' on line '.$recordnumber.' is not valid';
                                 $failedcount++;
-                            }                            
+                            }
                         }
                         else
                         {// bad partnumber
@@ -122,6 +129,43 @@ if (isset($_POST['input']))
                         break;
                     
                     case 'addupdate':
+                        //see if code/language entry exists for this incoming recors
+
+                        if($pim->validPart($partnumber))
+                        {// partnumber is valid
+                            if(array_key_exists($EXPIcode, $keyedValidEXPIs))
+                            {// code is valid 
+                                if($existingvalue=$pim->partEXPIvalue($partnumber,$EXPIcode,$languagecode,false))
+                                {// exsiting record - update it
+
+                                    if($existingvalue!=$value)
+                                    {// updated value is same actually different
+                                        $pim->updatePartEXPI($partnumber,$EXPIcode,$languagecode,$value);
+                                        $newoid=$pim->updatePartOID($partnumber);
+                                        $pim->logPartEvent($partnumber, $_SESSION['userid'], 'EXPI ['.$EXPIcode.'] updated from ['.$existingvalue.'] to ['.$value.'] by mass import in addupdate mode', $newoid);
+                                        $importcount++;
+                                    }
+                                }
+                                else
+                                {// no existing record - add it
+                                    $pim->writePartEXPI($partnumber, $EXPIcode, $value, $languagecode);
+                                    $newoid=$pim->updatePartOID($partnumber);
+                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'EXPI ['.$EXPIcode.'='.$value.'] added by mass import in addupdate mode', $newoid);
+                                    $results[]=$partnumber.':'.$EXPIcode.'='.$value.' ('.$languagecode.')';
+                                    $importcount++;
+                                }
+                            }
+                            else
+                            {// bad expi code
+                                $errors[]=$EXPIcode.' on line '.$recordnumber.' is not valid';
+                                $failedcount++;
+                            }                            
+                        }
+                        else
+                        {// bad partnumber
+                            $errors[]='Partnumber '.$partnumber.' on line '.$recordnumber.' is not valid';
+                            $failedcount++;
+                        }
                         
                         break;
 
@@ -132,8 +176,10 @@ if (isset($_POST['input']))
                             if(array_key_exists($EXPIcode, $keyedValidEXPIs))
                             {// code is valid 
                                 $pim->writePartEXPI($partnumber, $EXPIcode, $value, $languagecode);
-                                $newoid=$pim->getOIDofPart($partnumber);
+                                $newoid=$pim->updatePartOID($partnumber);
                                 $pim->logPartEvent($partnumber, $_SESSION['userid'], 'EXPI ['.$EXPIcode.'='.$value.'] added by mass import in add mode', $newoid);
+                                $results[]=$partnumber.':'.$EXPIcode.'='.$value.' ('.$languagecode.')';
+                                $importcount++;
                             }
                             else
                             {// bad expi code
@@ -210,9 +256,9 @@ if (isset($_POST['input']))
                                     </div>
                             </form>
                             
-                            <?php if($importcount>0){ echo '<div>Imported '.$importcount.' records.</div>';}?>
-                            
-                            <?php foreach($errors as $error){ echo '<div>'.$error.'</div>'; }?>
+                            <?php if($importcount>0){ echo '<div  class="alert alert-success" role="alert">Imported '.$importcount.' records.</div>';}?>
+                            <?php foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}?>
+                            <?php foreach($results as $result){echo '<div class="alert alert-success" role="alert">'.$result.'</div>';}?>
                                                         
                         </div>
                     </div>
