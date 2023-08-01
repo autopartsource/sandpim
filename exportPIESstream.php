@@ -153,6 +153,12 @@ foreach($partnumbers as $partnumber)
     }
  //--------------------- EXPI -------------------------------    
 
+    $expis=$pim->getPartEXPIs($partnumber);
+    foreach ($expis as $expi)
+    {
+     $item['expis'][]=array('EXPICode'=>$expi['EXPIcode'],'EXPIValue'=>$expi['EXPIvalue'],'LanguageCode'=>$expi['languagecode']); 
+    }
+    
     if(trim($part['lifecyclestatus'])!='')
     {
         $item['expis'][]=array('EXPICode'=>'LIF','EXPIValue'=>trim($part['lifecyclestatus']));   
