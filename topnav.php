@@ -109,6 +109,7 @@
                     <a class="dropdown-item" href="assetCoverageReportForm.php">Asset Matrix</a>
                     <a class="dropdown-item" href="assetHitlistReportForm.php">Asset Hitlist</a>
                     <a class="dropdown-item" href="partAttributesReportForm.php">Attribute Matrix</a>
+                    <a class="dropdown-item" href="partExpiReportForm.php">EXPI Matrix</a>
                     <a class="dropdown-item" href="partDescriptionsReportForm.php">Descriptions Matrix</a>
                     <a class="dropdown-item" href="partPackagesReportForm.php">Packages Matrix</a>
                     <a class="dropdown-item" href="interchangeCoverageReportForm.php">Interchange Matrix</a>
