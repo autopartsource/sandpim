@@ -1780,7 +1780,33 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ function deletePartEXPIbyId($id)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from part_expi where id=?'))
+  {
+   $stmt->bind_param('i',$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
 
+ function getPartEXPIbyId($id)
+ {
+  $db = new mysql; $db->connect(); $expi=false;
+  if($stmt=$db->conn->prepare('select * from part_expi where id=?'))
+  {
+   $stmt->bind_param('i',$id);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $expi=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'EXPIcode'=>$row['EXPIcode'],'EXPIvalue'=>$row['EXPIvalue'],'languagecode'=>$row['languagecode']);
+   }
+  }
+  return $expi;
+  $db->close();
+ }
 
  
  

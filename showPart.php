@@ -406,6 +406,23 @@ $kitcomponents=$pim->getKitComponents($partnumber);
              xhr.send();
             }
 
+            function deleteExpi(expiid)
+            {
+             var expisdiv = document.getElementById('expiid_'+expiid);
+             expisdiv.parentNode.removeChild(expisdiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeleteExpi.php?id='+expiid+'&partnumber=<?php echo $partnumber;?>');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              document.getElementById("sandpiperoid").innerHTML=response.oid;
+             };
+             xhr.send();
+            }
+
+
+
             function showSlectedPricesheetCurrency()
             {
              var e = document.getElementById("pricesheetnumber");
