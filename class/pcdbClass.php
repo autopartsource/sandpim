@@ -454,6 +454,25 @@ class pcdb
   return $description;    
  }
  
+ function EXPIcodeDescription($code)
+ {
+  $db = new mysql; $db->dbname=$db->pcdbname; 
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;} $db->connect();
+  $value='unknown ('.$code.')';
+  
+  if($stmt=$db->conn->prepare('select ExpiCodeDescription from PIESExpiCode where ExpiCode=?'))
+  {
+   $stmt->bind_param('s', $code);      
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $value=$row['ExpiCodeDescription'];
+   }
+  }
+  $db->close();
+  return $value;
+ }
  
  function getAllEXPIcodes()
  {
