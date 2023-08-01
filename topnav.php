@@ -90,7 +90,7 @@
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownApps">
                     <a class="dropdown-item" href="appsIndex.php">Make/Model/Year apps</a>
-                    <a class="dropdown-item" href="equipmentAppsIndex.php">Make/Equipment apps</a>
+ <?php /*                   <a class="dropdown-item" href="equipmentAppsIndex.php">Make/Equipment apps</a> */?>
                 </div>
             </li>
             <li<?php if ($navCategory == 'assets') {echo ' class="nav-item active"';} else {echo ' class="nav-item"';} ?>><a href="assetsIndex.php" class="nav-link">Assets</a></li>
@@ -99,10 +99,10 @@
                     Reports
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownReports">
-                    <a class="dropdown-item" href="applicationGuideReportForm.php">Application Guide</a>
+ <?php /*                   <a class="dropdown-item" href="applicationGuideReportForm.php">Application Guide</a>
                     <a class="dropdown-item" href="missingProductDataReportForm.php">Missing/Invalid Part Data</a>
                     <a class="dropdown-item" href="invalidApplicationsReportForm.php">Invalid Applications</a>
-<?php /*                   <a class="dropdown-item" href="applicationHolesReportForm.php">Application Holes</a>
+                    <a class="dropdown-item" href="applicationHolesReportForm.php">Application Holes</a>
                     <a class="dropdown-item" href="applicationOverlapsReportForm.php">Application Overlaps</a>
                     <a class="dropdown-item" href="applicationNotesReportForm.php">Application Note Usage</a>
  */?>
