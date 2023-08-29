@@ -1134,6 +1134,30 @@ function getBrakeConfigsForVehicleid($vehicleid)
   return $transmissions;
  }
 
+ function getEbayVehicleStuff($basevehicleid,$regionid)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; 
+  if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;}
+  $db->connect();
+  $results=array();
+  if($stmt=$db->conn->prepare('select RegionName, Region.RegionID, MakeName,ModelName,YearID,SubModelName, SubModel.SubModelID, EngineBaseID, EngineConfig2.EngineBlockID,Liter,CC,CID, BlockType,Cylinders,AspirationName, Aspiration.AspirationID,CylinderHeadTypeName, CylinderHeadType.CylinderHeadTypeID,FuelTypeName, FuelType.FuelTypeID,BodyTypeName, BodyType.BodyTypeID,BodyNumDoors, BodyNumDoors.BodyNumDoorsID  from BaseVehicle,Vehicle,Make,Model,SubModel,Region,VehicleToEngineConfig, EngineConfig2,EngineBlock,VehicleToBodyStyleConfig,BodyStyleConfig,BodyType,BodyNumDoors,Aspiration,CylinderHeadType,FuelType where BaseVehicle.BaseVehicleID=Vehicle.BaseVehicleID and BaseVehicle.ModelID=Model.ModelID and BaseVehicle.MakeID =Make.MakeID and Vehicle.SubmodelID =SubModel.SubModelID and Vehicle.RegionID = Region.RegionID  and Vehicle.VehicleID=VehicleToEngineConfig.VehicleID  and VehicleToEngineConfig.EngineConfigID =EngineConfig2.EngineConfigID and EngineConfig2.EngineBlockID =EngineBlock.EngineBlockID and Vehicle.VehicleID = VehicleToBodyStyleConfig.VehicleID and VehicleToBodyStyleConfig.BodyStyleConfigID =BodyStyleConfig.BodyStyleConfigID and BodyStyleConfig.BodyNumDoorsID =BodyNumDoors.BodyNumDoorsID and BodyStyleConfig.BodyTypeID =BodyType.BodyTypeID and EngineConfig2.AspirationID =Aspiration.AspirationID and EngineConfig2.CylinderHeadTypeID =CylinderHeadType.CylinderHeadTypeID and EngineConfig2.FuelTypeID =FuelType.FuelTypeID and  BaseVehicle.BaseVehicleID=? and Vehicle.RegionID=? order by SubModelName, Liter, BodyTypeName'))
+  {
+   $stmt->bind_param('ii', $basevehicleid,$regionid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $results[]=array('regionid'=>$row['RegionID'],'makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID'],'submodelname'=>$row['SubModelName'],'submodelid'=>$row['SubModelID'],'enginebaseid'=>$row['EngineBaseID'],'engineblockid'=>$row['EngineBlockID'],'liter'=>$row['Liter'],'cc'=>$row['CC'],'cid'=>$row['CID'],'blocktype'=>$row['BlockType'],'clyinders'=>$row['Cylinders'],'aspirationname'=>$row['AspirationName'],'aspirationid'=>$row['AspirationID'],'cylinderHeadtypename'=>$row['CylinderHeadTypeName'],'cylinderheadtypeid'=>$row['CylinderHeadTypeID'],'fueltypename'=>$row['FuelTypeName'],'fueltypeid'=>$row['FuelTypeID'],'bodytypename'=>$row['BodyTypeName'],'bodytypeid'=>$row['BodyTypeID'],'bodynumdoors'=>$row['BodyNumDoors'],'bodyNumdoorsid'=>$row['BodyNumDoorsID']);
+   }
+  }
+  $db->close();
+  return $results;
+ }
+
+ 
+ 
+ 
+ 
  function version()
  {
   $versiondate='not found';

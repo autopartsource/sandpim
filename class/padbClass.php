@@ -130,13 +130,21 @@ function version()
      // AutoCare's mysql version of the PAdb (as of 10/2021) does not have all the needed indexes for effecient lookups
      // we're using random names for the indexes that we create in case the function gets run more than once (unlikely, but possible)
      // 
+     //create index idx_MetaUOMID on MetaUOMCodes (MetaUOMID);
      //create index idx_MetaUOMID on MetaUOMCodeAssignment (MetaUOMID);
      //create index idx_PAPTID on MetaUOMCodeAssignment (PAPTID);
      //create index idx_MetaID on PartAttributeAssignment (MetaID);
      //create index idx_PAID on PartAttributeAssignment (PAID);
      //create index idx_PartTerminologyID on PartAttributeAssignment (PartTerminologyID);
      //create index idx_PAPTID on PartAttributeAssignment (PAPTID);
+     //create index idx_PAPTID on ValidValueAssignment (PAPTID);
+     //create index idx_ValidValueID on ValidValueAssignment (ValidValueID);
+    
+     // and while you're creating missing indexes, the Qdb needs this:
+     // alter table Qualifier add FULLTEXT(QualifierText);
 
+     
+     
   $result='';
   $randoname= random_int(100000, 999999);
   $db = new mysql; 
