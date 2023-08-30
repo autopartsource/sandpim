@@ -40,27 +40,28 @@ if (isset($_POST['input']))
 {
     $input = $_POST['input'];
     $records = explode("\r\n", $_POST['input']);
+    
+    if($_POST['mode']=='clearadd')
+    { //compile a list of valid items to clear before importing 
+        $validparts=array();
+        foreach ($records as $record)
+        {
+            $fields = explode("\t", $record);
+            $partnumber = trim(strtoupper($fields[0]));
+            if((count($fields) == 3 || count($fields) == 4) && $pim->validPart($partnumber)){$validparts[]=$partnumber;}
+        }
+        foreach($validparts as $validpart)
+        {
+            $pim->deletePartAttributesByPartnumber($validpart);
+            $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb (and user-defined) attributes cleared by mass import in clearadd mode', '');
+        }
+    }        
+
+        
     foreach ($records as $record)
     {
         $fields = explode("\t", $record);
         $recordnumber++;
-        
-        if($_POST['mode']=='clearadd')
-        { //compile a list of valid items to clear before importing 
-            $validparts=array();
-            foreach ($records as $record)
-            {
-                $fields = explode("\t", $record);
-                $partnumber = trim(strtoupper($fields[0]));
-                if((count($fields) == 3 || count($fields) == 4) && $pim->validPart($partnumber)){$validparts[]=$partnumber;}
-            }
-            foreach($validparts as $validpart)
-            {
-                $pim->deletePartAttributesByPartnumber($validpart);
-                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb (and user-defined) attributes cleared by mass import in clearadd mode', '');
-            }
-        }        
-        
         
         if(count($fields) == 3 || count($fields) == 4)
         { // partnumber,attributename,attributevalue[,unitOfMeasure]
