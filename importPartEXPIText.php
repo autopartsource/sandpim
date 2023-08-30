@@ -246,14 +246,14 @@ if (isset($_POST['input']))
                                 <textarea name="input" style="width:100%;height:200px;"></textarea>
                                 Mode <select name="mode"><option value="add">Add</option><option value="addupdate" selected>Add/Update</option><option value="clearadd">Clear/Add</option><option value="test">Test</option></select>
                                 <div style="padding:5px;"><input name="submit" type="submit" value="Import"/></div>
-                                    <div style="text-align: left;">Operation Modes<br/>
-                                        <div style="padding:10px;text-align: left;">
-                                            <div><strong>Add</strong> - Records will be added with no consideration of what already exists</div>
-                                            <div><strong>Add/Update</strong> - Records will be added and existing values (by EXPIcode and Language) will be updated</div>
-                                            <div><strong>Clear Add</strong> - All EXPI Records will be cleared for the Partnumbers in the dataset before import</div>
-                                            <div><strong>Test</strong> - Report on validity of EXPI codes (no actual import)</div>
-                                        </div>
+                                <div style="text-align: left;">Operation Modes<br/>
+                                    <div style="padding:10px;text-align: left;">
+                                        <div><strong>Add</strong> - Records will be added with no consideration of what already exists</div>
+                                        <div><strong>Add/Update</strong> - Records will be added and existing values (by EXPIcode and Language) will be updated</div>
+                                        <div><strong>Clear Add</strong> - All EXPI Records will be cleared for the Partnumbers in the dataset before import</div>
+                                        <div><strong>Test</strong> - Report on validity of EXPI codes (no actual import)</div>
                                     </div>
+                                </div>
                             </form>
                             
                             <?php if($importcount>0){ echo '<div  class="alert alert-success" role="alert">Imported '.$importcount.' records.</div>';}?>

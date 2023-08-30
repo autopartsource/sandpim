@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/padbClass.php');
 include_once('./class/logsClass.php');
 
 $navCategory = 'import';
@@ -23,10 +24,14 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $pcdb=new pcdb();
+$padb=new padb();
 
 $errors=array();
-$results='';
-$importcount=0;
+$results=array();
+$writtencount=0;
+$updatedcount=0;
+$deletedcount=0;
+$testedcount=0;
 $failedcount=0;
 $recordnumber=0;
 
@@ -39,6 +44,23 @@ if (isset($_POST['input']))
     {
         $fields = explode("\t", $record);
         $recordnumber++;
+        
+        if($_POST['mode']=='clearadd')
+        { //compile a list of valid items to clear before importing 
+            $validparts=array();
+            foreach ($records as $record)
+            {
+                $fields = explode("\t", $record);
+                $partnumber = trim(strtoupper($fields[0]));
+                if((count($fields) == 3 || count($fields) == 4) && $pim->validPart($partnumber)){$validparts[]=$partnumber;}
+            }
+            foreach($validparts as $validpart)
+            {
+                $pim->deletePartAttributesByPartnumber($validpart);
+                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb (and user-defined) attributes cleared by mass import in clearadd mode', '');
+            }
+        }        
+        
         
         if(count($fields) == 3 || count($fields) == 4)
         { // partnumber,attributename,attributevalue[,unitOfMeasure]
@@ -72,7 +94,7 @@ if (isset($_POST['input']))
                                 $pim->setPartGTIN($partnumber, $attributevalue, true);
                                 $newoid=$pim->getOIDofPart($partnumber);
                                 $pim->logPartEvent($partnumber, $_SESSION['userid'], 'GTIN updated to ['.$attributevalue.'] by mass import', $newoid);
-                                $importcount++;
+                                $updatedcount++;
                             }
                             else
                             {
@@ -88,7 +110,7 @@ if (isset($_POST['input']))
                                 $pim->setPartParttype($partnumber, intval($attributevalue), true);
                                 $newoid=$pim->getOIDofPart($partnumber);
                                 $pim->logPartEvent($partnumber, $_SESSION['userid'], 'part type updated to ['.$parttypename.'] by mass import', $newoid);
-                                $importcount++;
+                                $updatedcount++;
                             }
                             else
                             {// parttype was not valid
@@ -101,7 +123,7 @@ if (isset($_POST['input']))
                             $pim->setPartLifecyclestatus($partnumber, $attributevalue, true);
                             $newoid=$pim->getOIDofPart($partnumber);
                             $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle status updated to ['.$attributevalue.'] by mass import', $newoid);
-                            $importcount++;
+                            $updatedcount++;
                             break;
 
                         case 'replacedby':
@@ -113,7 +135,7 @@ if (isset($_POST['input']))
                                 $pim->setPartReplacedby($partnumber, $replacedby, true);
                                 $newoid=$pim->getOIDofPart($partnumber);
                                 $pim->logPartEvent($partnumber, $_SESSION['userid'], 'replacedby updated to ['.$attributevalue.'] by mass import', $newoid);
-                                $importcount++;
+                                $updatedcount++;
                             }
                             else
                             {// replacement part is not valid
@@ -132,7 +154,7 @@ if (isset($_POST['input']))
                                 $pim->setPartBasepart($partnumber, $basepart, true);
                                 $newoid=$pim->getOIDofPart($partnumber);
                                 $pim->logPartEvent($partnumber, $_SESSION['userid'], 'basepart updated to ['.$attributevalue.'] by mass import', $newoid);
-                                $importcount++;
+                                $updatedcount++;
                             }
                             else
                             {// replacement part is not valid
@@ -145,23 +167,140 @@ if (isset($_POST['input']))
                             $pim->setPartFirststockedDate($partnumber, $attributevalue,true);
                             $newoid=$pim->getOIDofPart($partnumber);
                             $pim->logPartEvent($partnumber, $_SESSION['userid'], 'first stock date set to ['.$attributevalue.'] by mass import', $newoid);
-                            $importcount++;
+                            $updatedcount++;
                             break;
                             
 
                         default: 
                             // attribute name is not reserved, and not a PAdb numeric ID
-                            $pim->writePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
-                            $newoid=$pim->getOIDofPart($partnumber);
-                            $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] written by mass import', $newoid);
+                            // it is assumed to be a user-defined attribute (non-padb)
+                            switch ($_POST['mode'])
+                            {                                            
+                                case 'test':
+                                    //not really much to test here
+                                    $testedcount++;
+                                    break;
+
+                                case 'add':
+                                    //Records will be added with no consideration of what already exists
+                                    $pim->writePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
+                                    $newoid=$pim->getOIDofPart($partnumber);
+                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'User-defined attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] written by mass import in add mode', $newoid);
+                                    $writtencount++;
+                                    break;
+
+                                case 'addupdate':
+                                    //Existing values (by PAdbID and UoM) will be updated, non-existent records will be added.
+
+                                    if($pim->getPartAttribute($partnumber, 0, $attributename, $uom))
+                                    {// update existing                                
+                                        $pim->updatePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
+                                        $newoid=$pim->getOIDofPart($partnumber);
+                                        $pim->logPartEvent($partnumber, $_SESSION['userid'], 'User-defined attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] updated by mass import in addupdate mode', $newoid);
+                                        $writtencount++;
+                                    }
+                                    else
+                                    {// write new
+                                        $pim->writePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
+                                        $newoid=$pim->getOIDofPart($partnumber);
+                                        $pim->logPartEvent($partnumber, $_SESSION['userid'], 'User-defined attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] written by mass import in addupdate mode', $newoid);                            
+                                        $writtencount++;
+                                    }
+
+                                    break;
+
+                                case 'clearadd':
+                                    //All PAdb and user-defined attributes were cleared (above) for the Partnumbers in the dataset. 
+                                    //Existing reserved attributes (GTIN, parttypeid, lifecyclestatus, replacedby, basepart and firststockeddate) are not affected.
+                                    $pim->writePartAttribute($partnumber, 0, $attributename, $attributevalue, $uom);
+                                    $newoid=$pim->getOIDofPart($partnumber);
+                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'User-defined attribute ['.$attributename.'='.$attributevalue.' '.$uom.'] written by mass import in clearadd mode', $newoid);      
+                                    $writtencount++;
+                                    break;
+
+                                default: break;
+                            }
+                            
                             break;
                     }
                 }
                 else
                 {// this is a PAdb numeric ID
-                    $pim->writePartAttribute($partnumber, $PAID, '', $attributevalue, $uom);
-                    $newoid=$pim->getOIDofPart($partnumber);
-                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] written by mass import', $newoid);
+                                        
+                    switch ($_POST['mode'])
+                    {                                            
+                        case 'test':
+                            //Report on validity of PAdb codes (no actual import)
+                            
+                            $part=$pim->getPart($partnumber);
+                            $parttypeid=$part['parttypeid'];
+                            $validattributes=$padb->getAttributesForParttype($parttypeid);
+                            
+                            $found=false;
+                            foreach($validattributes as $validattribute)
+                            {
+                                if($PAID==$validattribute['PAID']){$found=true; break;}    
+                            }
+                            if($found)
+                            {// valid PAdb for part type  
+                                $results[]='PAdbID '.$PAID.' ('.$padb->PAIDname($PAID).') it valid for parttype '.$parttypeid.' on partnumber '.$partnumber;
+                            }
+                            else
+                            {// not a valid PAdb id for parttype of given part
+                                $errors[]='PAdbID '.$PAID.' ('.$padb->PAIDname($PAID).') it not valid for parttype '.$parttypeid.' on partnumber '.$partnumber;
+                            }
+                            $testedcount++;
+                            break;
+
+                        case 'add':
+                            //Records will be added with no consideration of what already exists
+                            $pim->writePartAttribute($partnumber, $PAID, '', $attributevalue, $uom);
+                            $newoid=$pim->getOIDofPart($partnumber);
+                            $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] written by mass import in add mode', $newoid);
+                            $writtencount++;
+                            break;
+
+                        case 'addupdate':
+                            //Existing values (by PAdbID and UoM) will be updated, non-existent records will be added.
+
+                            if($pim->getPartAttribute($partnumber, $PAID, '', $uom))
+                            {// update existing (or deleted it)
+                                if($attributevalue=='DELETE')
+                                {
+                                    $pim->deletePartAttributesByPartnumberPAIDuom($partnumber, $PAID, '', $uom);
+                                    $newoid=$pim->getOIDofPart($partnumber);
+                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.' ('.$uom.')] deleted by mass import in addupdate mode', $newoid);
+                                    $deletedcount++;
+                                }
+                                else
+                                {// a real value was given to update to
+                                    $pim->updatePartAttribute($partnumber, $PAID, '', $attributevalue, $uom);
+                                    $newoid=$pim->getOIDofPart($partnumber);
+                                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] updated by mass import in addupdate mode', $newoid);
+                                    $updatedcount++;
+                                }
+                            }
+                            else
+                            {// write new
+                                $pim->writePartAttribute($partnumber, $PAID, '', $attributevalue, $uom);
+                                $newoid=$pim->getOIDofPart($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] written by mass import in addupdate mode', $newoid);                            
+                                $writtencount++;
+                            }
+                            
+                            break;
+                        
+                        case 'clearadd':
+                            //All PAdb and user-defined attributes were cleared (above) for the Partnumbers in the dataset. 
+                            //Existing reserved attributes (GTIN, parttypeid, lifecyclestatus, replacedby, basepart and firststockeddate) are not affected.
+                            $pim->writePartAttribute($partnumber, $PAID, '', $attributevalue, $uom);
+                            $newoid=$pim->getOIDofPart($partnumber);
+                            $pim->logPartEvent($partnumber, $_SESSION['userid'], 'PAdb Attribute ['.$PAID.'='.$attributevalue.' '.$uom.'] written by mass import in clearadd mode', $newoid);                            
+                            $writtencount++;
+                            break;
+                                                
+                        default: break;
+                    }
                 }
             }
             else
@@ -215,12 +354,20 @@ if (isset($_POST['input']))
                                 
                                 <textarea name="input" style="width:100%;height:200px;"></textarea>
                                 
-                                <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>
+                               
+                                <div style="text-align: left;">Mode <select name="mode"><option value="add">Add</option><option value="addupdate">Add/Update</option><option value="clearadd">Clear/Add</option><option value="test" selected>Test</option></select> <input name="submit" type="submit" value="Import"/>
+                                    <div style="padding:10px;text-align: left;">
+                                        <div><strong>Add</strong> - Records will be added with no consideration of what already exists</div>
+                                        <div><strong>Add/Update</strong> - Existing values (by PAdbID and UoM) will be updated, non-existent records will be added..</div>
+                                        <div><strong>Clear Add</strong> - All PAdb and user-defined attributes will be cleared for the Partnumbers in the dataset before import.</div>
+                                        <div><strong>Test</strong> - Report on validity of PAdb codes (no actual import)</div>
+                                    </div>
+                                </div>
                             </form>
                             
-                            <?php if($importcount>0){ echo '<div>Imported '.$importcount.' records.</div>';}?>
-                            
-                            <?php foreach($errors as $error){ echo '<div>'.$error.'</div>'; }?>
+                            <?php if(isset($_POST['input'])){ echo '<div class="alert alert-info" role="alert">Wrote: '.$writtencount.'<br/>Updated: '.$updatedcount.'<br/>Deleted: '.$deletedcount.'<br/>Tested: '.$testedcount.'</div>';}?>
+                            <?php foreach($errors as $error){echo '<div class="alert alert-danger" role="alert">'.$error.'</div>';}?>
+                            <?php foreach($results as $result){echo '<div class="alert alert-success" role="alert">'.$result.'</div>';}?>
                                                         
                         </div>
                     </div>

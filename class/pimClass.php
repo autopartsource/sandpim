@@ -1410,21 +1410,35 @@ function countAppsByPartcategories($partcategories)
  }
  
  
- function getPartAttribute($partnumber,$PAID,$attributename)
+ function getPartAttribute($partnumber,$PAID,$attributename,$uom=false)
  {
-  $attributes=false;
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
-  if($stmt=$db->conn->prepare('select id,PAID,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=? and PAID=? and userDefinedAttributeName=?'))
-  {
-   $stmt->bind_param('sis',$partnumber,$PAID,$attributename);
-   $stmt->execute();
-   $db->result = $stmt->get_result();
-   while($row = $db->result->fetch_assoc())
+  $db = new mysql; $db->connect(); $attributes=false;
+  
+  if($uom)
+  {// optional uom was given - include it in the selection      
+   if($stmt=$db->conn->prepare('select id,PAID,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=? and PAID=? and userDefinedAttributeName=? and uom=?'))
    {
-    $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'value'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
+    $stmt->bind_param('siss',$partnumber,$PAID,$attributename,$uom);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'value'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
+    }
    }
+  }
+  else
+  {// no uom was given - leave it off the selection criteria
+   if($stmt=$db->conn->prepare('select id,PAID,userDefinedAttributeName,`value`,uom from part_attribute where partnumber=? and PAID=? and userDefinedAttributeName=?'))
+   {
+    $stmt->bind_param('sis',$partnumber,$PAID,$attributename);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $attributes[]=array('id'=>$row['id'],'PAID'=>$row['PAID'],'value'=>$row['userDefinedAttributeName'],'value'=>$row['value'],'uom'=>$row['uom']);
+    }
+   }    
   }
   $db->close();
   return $attributes;
@@ -1671,7 +1685,28 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ function deletePartAttributesByPartnumber($partnumber)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from part_attribute where partnumber=?'))
+  {
+   $stmt->bind_param('s', $partnumber);
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
+ function deletePartAttributesByPartnumberPAIDuom($partnumber,$PAID,$userDefinedAttributeName,$uom)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from part_attribute where partnumber=? and PAID=? and userDefinedAttributeName=? and uom=?'))
+  {
+   $stmt->bind_param('siss', $partnumber,$PAID,$userDefinedAttributeName,$uom);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
  function getPartEXPIs($partnumber)
  {
   $db = new mysql; $db->connect(); $keyedexpis=array(); $expis=array();
