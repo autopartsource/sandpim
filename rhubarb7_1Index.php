@@ -1,9 +1,11 @@
 <?php
 include_once('./class/logsClass.php');
+include_once('./class/pimClass.php');
 $navCategory = 'utilities';
 session_start();
 
 $logs=new logs();
+$pim=new pim();
 
 ?>
 <!DOCTYPE html>

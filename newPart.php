@@ -6,11 +6,11 @@ include_once('./class/logsClass.php');
 $navCategory = 'parts';
 
 $pim = new pim;
+$logs = new logs;
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
- $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'newPart.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
  http_response_code(404); // nothing to see here, folks
  exit;
@@ -23,7 +23,6 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $pcdb = new pcdb;
-$logs=new logs;
 $user=new user;
 
 $partcategories = $pim->getPartCategories();
@@ -110,7 +109,7 @@ $preferedparttype=$user->getUserPreference($_SESSION['userid'], 'last part creat
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
                         <!-- Header -->
-                        <h3 class="card-header text-start">Create Parts</h3>
+                        <h3 class="card-header text-start">Create Part</h3>
                         <div class="card-body">
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item">

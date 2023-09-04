@@ -1423,9 +1423,113 @@ class setup
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - wmapifeed ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - wmapifeed ('.$db->conn->error.')';}
         
         
+        $sql="CREATE TABLE navelement (
+        navid varchar(255) not null,
+        category varchar(255) not null,
+        title varchar(255) not null,
+        path varchar(255) not null,
+        sequence int not null,
+        PRIMARY KEY (navid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - navelement ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - navelement ('.$db->conn->error.')';}
+        $sql="insert into navelement values('PARTS','','Parts','',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('APPLICATIONS','','Applications','',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('ASSETS','','Assets','',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS','','Reports','',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES','','Utilities','',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS','','Settings','',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT','','Import','',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT','','Export','',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
+        $sql="insert into navelement values('PARTS/OURS','PARTS','Search Our Parts','partsIndex.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('PARTS/COMPETITOR','PARTS','Search Competitor Parts','interchangeIndex.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('PARTS/CREATE','PARTS','Create New Part','newPart.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
+        $sql="insert into navelement values('APPLICATIONS/MMY','APPLICATIONS','Make/Model/Year apps','appsIndex.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
+        $sql="insert into navelement values('ASSETS/SEARCH','ASSETS','Search Assets','assetsIndex.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
+        
+        $sql="insert into navelement values('REPORTS/ASSETMATRIX','REPORTS','Asset Matrix','assetCoverageReportForm.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/ASSETHITLIST','REPORTS','Asset Hitlist','assetHitlistReportForm.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/ATTRIBUTEMATRIX','REPORTS','Attribute Matrix','partAttributesReportForm.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/EXPIMATRIX','REPORTS','EXPI Matrix','partExpiReportForm.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/DESCRIPTIONSMATRIX','REPORTS','Descriptions Matrix','partDescriptionsReportForm.php',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/PACKAGESMATRIX','REPORTS','Packages Matrix','partPackagesReportForm.php',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/INTERCHANGEMATRIX','REPORTS','Interchange Matrix','interchangeCoverageReportForm.php',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/PRICINGMATRIX','REPORTS','Pricing Matrix','pricingCoverageReportForm.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/COMPETITORCOVERAGE','REPORTS','Competitor Coverage','competitorCoverageReportForm.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/VIOCOVERAGE','REPORTS','VIO Coverage','vioCoverageReportForm.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+
+        
+        $sql="insert into navelement values('UTILITIES/TWOPARTMATCH','UTILITIES','Two-Part Match-maker','pairPart.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/FULLVEHICLEPARTMATCH','UTILITIES','Full-Vehicle Kit Match-maker','bundlePart.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/CLEARDATA','UTILITIES','Clear Data','clearDataSelect.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/BUYERSGUIDEBUILDER','UTILITIES','Buyers Guide Builder','buyersGuideBuilder.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/BASEVIDSTOMMYS','UTILITIES','Convert BaseVehicleIDs to Makes/Models/Years','basevidsToMMYinput.php',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/MMYSTOBASEVIDS','UTILITIES','Convert Makes/Models/Years to BaseVehicleIDs','MMYtoBasevidsInput.php',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/CODEDVALUSETOACES','UTILITIES','Convert coded-value spreadsheet to ACES','convertAiExcelToACES4_1upload.php',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/RHUBARB71','UTILITIES','Rhubarb 7.1','rhubarb7_1Index.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/RHUBARB67','UTILITIES','Rhubarb 6.7','rhubarb6_7Index.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/WMUPLOADER','UTILITIES','Walmart Content uploader','wmSessions.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/UUID','UTILITIES','UUID Generator','UUIDgenerator.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        
+        $sql="insert into navelement values('SETTINGS/CATEGORIES','SETTINGS','Part Categories','partCategories.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/DELIVERYGROUPS','SETTINGS','Delivery Groups','deliveryGroups.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/RECEIVERPROFILES','SETTINGS','Receiver Profiles','receiverProfiles.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/FAVORITEMAKES','SETTINGS','Favorite Makes','vcdbMakeBrowser.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/FAVORITEPARTTYPES','SETTINGS','Favorite Part Types','pcdbTypeBrowser.php',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/FAVORITEAPPLICATIONPOSITIONS','SETTINGS','Favorite Application Positions','pcdbPositionBrowser.php',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/FAVORITEBRANDS','SETTINGS','Favorite Brands','competitiveBrandBrowser.php',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/PRICESHEETS','SETTINGS','Price Sheets','priceSheets.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/FITMENTNOTEMANAGEMENT','SETTINGS','Fitment Note Management','noteManager.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/USERS','SETTINGS','Users','users.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/CONFIGURATION','SETTINGS','Configuration','config.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/BACKGROUNDJOBS','SETTINGS','Background import/export jobs','backgroundJobs.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/SANDPIPER','SETTINGS','Sandpiper','sandpiper.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        $sql="insert into navelement values('IMPORT/ACESFILEUPLOAD','IMPORT','ACES File Upload','importACESupload.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/ACESSNIPPET','IMPORT','ACES xml snippet','importACESxml.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/APPSFROMTEXT','IMPORT','Applications from text','importACEStext.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/APPSFROMSPREADSHEET','IMPORT','Applications from Excel spreadsheet','importACESexcelUpload.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/PARTSFROMTEXT','IMPORT','Parts from text','importPartsText.php',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/PARTDESCRIPTIONSFROMTEXT','IMPORT','Part descriptions from text','importPartDescriptionText.php',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/PARTDATTRIBUTESFROMTEXT','IMPORT','Part attributes from text','importPartAttributeText.php',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/PACKAGINGFROMTEXT','IMPORT','Packaging from text','importPackagingText.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/PRICESFROMTEXT','IMPORT','Prices from text','importPricesText.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/COMPETITORINTERCHANGEFROMTEXT','IMPORT','Competitor interchange from text','importInterchangeText.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/ASSETMETADATAFROMTEXT','IMPORT','Asset metadata from text','importAssetText.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/EXPIFROMTEXT','IMPORT','EXPI from text','importPartEXPIText.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/PARTBALANCEFROMTEXT','IMPORT','Part balance from text','updatePartBalances.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/KITCOMPONENTSFROMTEXT','IMPORT','Kit components from text','updateKitComponents.php',14);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/AUTOCAREBRANDTABLEFROMTEXT','IMPORT','AutoCare Brand Table from text','importBrandTableText.php',15);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/AUTOCAREREFERENCEDATA','IMPORT','AutoCare Databases (VCdb, PCdb, Qdb, PAdb)','AutoCareDownloads.php',16);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/EXPERIANVIO','IMPORT','Experian VIO','importExperianVIOtext.php',17);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        $sql="insert into navelement values('EXPORT/PIESXML','EXPORT','PIES xml','exportPIESselect.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/ACESXML','EXPORT','ACES xml','exportACESselect.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/APAAWDA65SPREADSHEET','EXPORT','APA/AWDA (6.5) Spreadsheet','exportAPA65pricefileSelect.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/WALMARTPRODUCTSPREADSHEET','EXPORT','Parts in Walmart format spreadsheet','exportWalmartSelect.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/FLATPARTS','EXPORT','Flattened parts file','exportFlatPartsSelect.php',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/FLATAPPS','EXPORT','Flattened applications file','exportFlatAppsSelect.php',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/APPGUIDEBASIC','EXPORT','Application Guide PDF (basic)','exportForBasicPrintSelect.php',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/APPGUIDEMULTICOLIUMN','EXPORT','Application Guide PDF (multi-column)','exportForMulticolumnPrintSelect.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/COMPETITORINTERCHANGE','EXPORT','Competitor Interchange','exportCompetitorInterchangeSelect.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
+        
+        
+        
+        
+        
+        $sql="CREATE TABLE user_navelement (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        userid int UNSIGNED NOT NULL,
+        navid varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_navid (navid),
+        INDEX idx_userid (userid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - user_navelement ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - user_navelement ('.$db->conn->error.')';}
+
+        
         //need a table(s) to store data related to "readiness certification" of what will be exported for a given 
         // receiver profile. Generally, There will be a set of go/no-go criteria for a given receiver profile - for example: 
         // all parts must have an SHO description (yes/no), All asset's URIs must be tested for validity (yes/no), All apps myst be 

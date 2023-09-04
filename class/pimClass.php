@@ -49,7 +49,45 @@ class pim
    }
   }
   return $returnval;
- } 
+ }
+ 
+ function getNavelements($category=false)
+ {
+  $db = new mysql;  $db->connect(); $elements=array();
+  if($category===false)
+  {
+   if($stmt=$db->conn->prepare('select * from navelement order by category,sequence'))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $elements[]=array('navid'=>$row['navid'],'category'=>$row['category'],'title'=>$row['title'],'path'=>$row['path'],'sequence'=>$row['sequence']);
+     }
+    }
+   }
+  }
+  else
+  {// category was passed into function call
+   if($stmt=$db->conn->prepare('select * from navelement where category=? order by category,sequence'))
+   {
+    if($stmt->bind_param('s', $category))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $elements[]=array('navid'=>$row['navid'],'category'=>$row['category'],'title'=>$row['title'],'path'=>$row['path'],'sequence'=>$row['sequence']);
+      }
+     }
+    }
+   }
+  }
+  $db->close();
+  return $elements;
+ }
  
  function getAppsByBasevehicleid($basevehicleid,$partcategories)
  {

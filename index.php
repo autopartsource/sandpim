@@ -456,6 +456,23 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
     </div>
         
         <!-- Footer -->
+        <?php
+        $navcategories=$pim->getNavelements('');
+        
+        foreach($navcategories as $navcategory)
+        {
+         echo $navcategory['title'].'<br/>';
+         $navelements=$pim->getNavelements($navcategory['navid']);
+         foreach($navelements as $navelement)
+         {
+          echo ' -- '. strtolower($navelement['category']).'<br/>';
+         }  
+        }
+        
+        
+        ?>
+        
+        
         <?php include('./includes/footer.php'); ?>
     </body>
 </html>

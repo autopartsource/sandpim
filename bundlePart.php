@@ -8,7 +8,7 @@ include_once('./class/packagingClass.php');
 include_once('./class/userClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/configGetClass.php');
-$navCategory = 'parts';
+$navCategory = 'utilities';
 
 $pim = new pim;
 
