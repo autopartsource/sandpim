@@ -84,7 +84,19 @@
                     <?php echo $navcategory['title'];?>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown<?php echo $navcategory['category'];?>">
-                    <?php $navelements=$pim->getNavelements($navcategory['navid']); foreach($navelements as $navelement){echo '<a class="dropdown-item" href="'.$navelement['path'].'">'.$navelement['title'].'</a>';}?>
+                    <?php
+                    $navelements=$pim->getNavelements($navcategory['navid']);
+                    foreach($navelements as $navelement)
+                    {
+                     if($pim->userHasNavelement($_SESSION['userid'],$navelement['navid']))
+                     {
+                      echo '<a class="dropdown-item" href="'.$navelement['path'].'">'.$navelement['title'].'</a>';
+                     }
+                     else
+                     {
+                      echo '<a class="dropdown-item disabled">'.$navelement['title'].'</a>';
+                     }
+                    }?>
                 </div>
             </li>
 

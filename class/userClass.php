@@ -150,7 +150,6 @@ class user
   return $users;
  }
 
-
  
  function userHasSelectedPartcategory($userid,$partcategory)
  {

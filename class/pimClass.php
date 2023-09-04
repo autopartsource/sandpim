@@ -88,6 +88,24 @@ class pim
   $db->close();
   return $elements;
  }
+
+ function userHasNavelement($userid,$navid)
+ {
+  return true;
+  $db = new mysql; $db->connect(); $returnval=false;
+  if($stmt=$db->conn->prepare('select * from user_navelement where userid=? and navid=?'))
+  {
+   $stmt->bind_param('is', $userid,$navid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $returnval=true;
+   }
+  }
+  $db->close();
+  return $returnval;     
+ } 
  
  function getAppsByBasevehicleid($basevehicleid,$partcategories)
  {
@@ -5061,5 +5079,5 @@ function partHealthScore($partnumber)
  $db->close(); 
  return $score;
 }
- 
+
 }?>
