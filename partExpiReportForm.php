@@ -1,22 +1,17 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/logsClass.php');
 include_once('./class/userClass.php');
 $navCategory = 'reports';
 
 $pim = new pim;
+$logs = new logs();
 
-if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
-{
- $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'partExpiReportForm.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
- http_response_code(404); // nothing to see here, folks
- exit;
-}
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR'])){$logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'partExpiReportForm.php - access denied to host '.$_SERVER['REMOTE_ADDR']); http_response_code(404); exit;}
 
 session_start();
-if (!isset($_SESSION['userid'])) {
-    echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
-    exit;
-}
+if(!isset($_SESSION['userid'])) {echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>"; exit;}
+if(!$pim->userHasNavelement($_SESSION['userid'], 'REPORTS/EXPIMATRIX')){echo 'access denied'; $logs->logSystemEvent('accesscontrol', $_SESSION['userid'], 'denied:REPORTS/EXPIMATRIX'); exit;}
 
 $user=new user;
 $receiverprofiles=$pim->getReceiverprofiles();

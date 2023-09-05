@@ -7,11 +7,11 @@ include_once('./class/logsClass.php');
 $navCategory = 'settings';
 
 $pim= new pim;
+$logs = new logs;
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
- $logs = new logs;
  $logs->logSystemEvent('accesscontrol',0, 'user.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
  http_response_code(404); // nothing to see here, folks
  exit;
@@ -25,10 +25,7 @@ $configGet= new configGet;
 $configSet= new configSet;
 $logs= new logs;
 
-
-
 $userid=intval($_GET['userid']);
-
 $error='';
 
 if(isset($_POST['submit']) && $_POST['submit']=='Update Password')
@@ -80,6 +77,7 @@ $allowedpartcategories=$user->getUserVisiblePartcategories($userid);
 $idkeyedallowlist=array(); foreach($allowedpartcategories as $allowed){$idkeyedallowlist[$allowed['id']]='';}
 $partcategories=$pim->getPartCategories();
 $user->getUserByID($userid);
+$usernavelements=$pim->getUserNavelements($userid);
 
 ?>
 <!DOCTYPE html>
@@ -112,6 +110,30 @@ $user->getUserByID($userid);
              }
             }
 
+            function addRemoveNavelement(userid,navid)
+            {
+             if(document.getElementById('navelement_'+navid).checked) 
+             { // navid has been clicked on 
+         //     console.log(navid);
+              var xhr = new XMLHttpRequest();
+              
+              document.getElementById('navelementSelectButton_'+navid).className = "btn btn-success";
+              console.log(document.getElementById('navelementSelectButton_'+navid).className);
+              
+              xhr.open('GET', 'ajaxAddRemoveUserNavelement.php?userid='+userid+'&navid='+navid+'&action=add');
+              xhr.send();
+             }
+             else
+             { // navelement has been clicked off
+              var xhr = new XMLHttpRequest();
+              
+              document.getElementById('navelementSelectButton_'+navid).className = "btn btn-secondary";
+              console.log(document.getElementById('navelementSelectButton_'+navid).className);
+              
+              xhr.open('GET', 'ajaxAddRemoveUserNavelement.php?userid='+userid+'&navid='+navid+'&action=remove');
+              xhr.send();
+             }
+            }
         </script>
     </head>
     <body>
@@ -132,11 +154,11 @@ $user->getUserByID($userid);
                         <div class="col-md-6 my-col">
                             <div class="card shadow-sm">
                                 <!-- Header -->
-                                <h3 class="card-header text-start">Edit User Account - <?php echo $user->name;?></h3>
+                                <h3 class="card-header text-start">User Account - <?php echo $user->name;?></h3>
 
                                 <div class="card-body">
                                     <form method="post" action="./user.php?userid=<?php echo $userid; ?>">
-                                        <div style="width:400px;padding:3px;border:1px solid;">
+                                        <div style="padding:3px;border:1px solid;">
                                             <div style="padding:3px;">
                                                 <div style="float:left;">Real Name</div>
                                                 <div style="float:right;">
@@ -151,6 +173,31 @@ $user->getUserByID($userid);
                                             <div style="padding:4px;color:red;"><?php echo $error; ?></div>
                                         </div>
                                     </form>
+                                    
+                                    <div style="margin-top:20px;padding:8px;border:1px solid;">
+                                        <?php
+                                        
+                                        $navcategories=$pim->getNavelements('');
+                                        foreach($navcategories as $navcategory)
+                                        {
+                                            echo '<div style="text-align:left;">'.$navcategory['title'].'</div><ul>';
+                                            $navelements=$pim->getNavelements($navcategory['navid']);
+                                            foreach($navelements as $navelement)
+                                            {
+                                                $checked=''; $buttonClass = 'btn btn-secondary';
+                                                if($pim->userHasNavelement($userid, $navelement['navid']))
+                                                {
+                                                    $checked='checked';
+                                                    $buttonClass = 'btn btn-success';                                                    
+                                                }
+                                                    
+                                                echo '<div style="margin:5px;text-align:left;"><label id="navelementSelectButton_' . $navelement['navid'] . '" class="'. $buttonClass .'" style="padding:2px;margin:1px;" for="navelement_'.$navelement['navid'].'">'.$navelement['title'].'<input type="checkbox" id="navelement_'.$navelement['navid'].'" onclick="addRemoveNavelement(\''.$userid.'\',\''.$navelement['navid'].'\')" name="navelement_'.$navelement['navid'].'" '.$checked.' style="display:none"></label></div>';
+                                            }
+                                            echo '</ul>';
+                                        }
+                                        
+                                        ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -169,7 +216,7 @@ $user->getUserByID($userid);
                                         else {
                                             $buttonClass = 'btn btn-secondary';
                                         }
-                                        echo '<div style="margin:5px"><label id="categorySelectButton_' . $partcategory['id'] . '" class="'. $buttonClass .'" for="partcategory_'.$partcategory['id'].'">'.$partcategory['name'].'<input type="checkbox" id="partcategory_'.$partcategory['id'].'" onclick="addRemovePartcategory(\''.$userid.'\',\''.$partcategory['id'].'\')" name="partcategory_'.$partcategory['id'].'" '.$checked.' style="display:none"></label></div>';}?>
+                                        echo '<div style="margin:5px;text-align:left;"><label id="categorySelectButton_' . $partcategory['id'] . '" class="'. $buttonClass .'" style="padding:2px;margin:1px;" for="partcategory_'.$partcategory['id'].'">'.$partcategory['name'].'<input type="checkbox" id="partcategory_'.$partcategory['id'].'" onclick="addRemovePartcategory(\''.$userid.'\',\''.$partcategory['id'].'\')" name="partcategory_'.$partcategory['id'].'" '.$checked.' style="display:none"></label></div>';}?>
                                 </div>
                             </div>
                         </div>

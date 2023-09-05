@@ -91,7 +91,7 @@ class pim
 
  function userHasNavelement($userid,$navid)
  {
-  return true;
+  //return true;
   $db = new mysql; $db->connect(); $returnval=false;
   if($stmt=$db->conn->prepare('select * from user_navelement where userid=? and navid=?'))
   {
@@ -106,6 +106,66 @@ class pim
   $db->close();
   return $returnval;     
  } 
+
+ function getUserNavelements($userid=false)
+ {
+  $db = new mysql; $db->connect(); $elements=array();
+  $sql='select * from user_navelement,navelement where user_navelement.navid=navelement.navid and userid=? order by category,sequence';
+  if($userid===false){$sql='select * from user_navelement,navelement where user_navelement.navid=navelement.navid order by category,sequence';}
+  
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($userid!==false){$stmt->bind_param('i', $userid);}
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $elements[]=array('userid'=>$row['userid'],'navid'=>$row['navid'],'category'=>$row['category'],'title'=>$row['title'],'path'=>$row['path'],'sequence'=>$row['sequence']);
+   }
+  }
+  $db->close();
+  return $elements;
+ } 
+
+ function addUserNavelement($userid,$navid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into user_navelement values(null,?,?)'))
+  {
+   $stmt->bind_param('is', $userid, $navid);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ function removeUserNavelement($userid,$navid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from user_navelement where userid=? and navid=?'))
+  {
+   $stmt->bind_param('is', $userid, $navid);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ function validNavelement($navid)
+ {
+  $db = new mysql; $db->connect(); $returnval=false;  
+  if($stmt=$db->conn->prepare('select * from navelement where navid=?'))
+  {
+   $stmt->bind_param('s', $navid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $returnval=true;
+   }
+  }
+  $db->close();
+  return $returnval;
+ } 
+
  
  function getAppsByBasevehicleid($basevehicleid,$partcategories)
  {
