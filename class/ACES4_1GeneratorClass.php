@@ -187,7 +187,8 @@ class ACESgenerator
    }
 
    $appElement->appendChild($partElement);
-   
+   if(array_key_exists('brand',$app) && $app['brand']!=''){$partElement->setAttribute('BrandAAIAID', $app['brand']);}
+      
    if(array_key_exists('assetname', $app) && trim($app['assetname'])!=''){
        $assetnameElement=new DOMElement('AssetName',$app['assetname']); 
        $appElement->appendChild($assetnameElement);}

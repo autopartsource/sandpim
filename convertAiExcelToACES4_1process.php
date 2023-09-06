@@ -62,9 +62,9 @@ $header=array('VcdbVersionDate'=>$vcdbVersion,'QdbVersionDate'=>$qdbVersion,'Pcd
 $assets=array();
 $options=array();
         
-$validcolumns=array('Application id','Reference','BaseVehicleid','Part','PartTypeid','Positionid','Quantity','VCdb-coded Attributes','Qdb-coded Qualifiers','Notes','Mfr Label','AssetName','Asset Item Order');
+$validcolumns=array('Application id','Reference','BaseVehicleid','Part','BrandAAIAID','PartTypeid','Positionid','Quantity','VCdb-coded Attributes','Qdb-coded Qualifiers','Notes','Mfr Label','AssetName','Asset Item Order');
 
-$RefColumnId=-1; $BaseVehicleIDColumnId=-1; $PartNumberColumnId=-1; $PartTypeIDColumnId=-1; $PositionIDColumnId=-1; $QtyColumnId=-1; $VCdbAttributesColumnId=-1; $QdbQualifiersColumnId=-1; $NotesColumnId=-1; $MfrLabelColumnId=-1; $AssetNameColumnId=-1; $assetitemordercolumnid=-1;
+$RefColumnId=-1; $BaseVehicleIDColumnId=-1; $PartNumberColumnId=-1; $PartTypeIDColumnId=-1; $BrandAAIAIDColumnId=-1; $PositionIDColumnId=-1; $QtyColumnId=-1; $VCdbAttributesColumnId=-1; $QdbQualifiersColumnId=-1; $NotesColumnId=-1; $MfrLabelColumnId=-1; $AssetNameColumnId=-1; $assetitemordercolumnid=-1;
 $columnids=array();
 
         
@@ -142,6 +142,7 @@ if($validUpload)
 $refcolumnid=$columnids['Reference'];
 $basevehicleidcolumnid=$columnids['BaseVehicleid'];
 $partnumbercolumnid=$columnids['Part'];
+$brandcolumnid=$columnids['BrandAAIAID'];
 $parttypeidcolumnid=$columnids['PartTypeid'];
 $positionidcolumnid=$columnids['Positionid'];
 $qtycolumnid=$columnids['Quantity'];
@@ -160,6 +161,7 @@ $assetitemordercolumnid=$columnids['Asset Item Order'];
   $goodrecord=true;
   $basevehicleid=intval($row[$basevehicleidcolumnid]);
   $partnumber=trim($row[$partnumbercolumnid]);
+  $brand=trim($row[$brandcolumnid]);
   $ref=trim($row[$refcolumnid]);
   $parttypeid=intval($row[$parttypeidcolumnid]);
   $positionid=intval($row[$positionidcolumnid]);
@@ -254,7 +256,7 @@ $assetitemordercolumnid=$columnids['Asset Item Order'];
   
   if($goodrecord)
   {
-   $apps[]=array('partnumber'=>$partnumber,'id'=>$ref,'basevehicleid'=>$basevehicleid,'parttypeid'=>$parttypeid,'positionid'=>$positionid,'quantityperapp'=>$qty,'attributes'=>$attributes,'cosmetic'=>0,'mfrlabel'=>$mfrlabel,'assetname'=>$assetname);
+   $apps[]=array('partnumber'=>$partnumber,'brand'=>$brand,'id'=>$ref,'basevehicleid'=>$basevehicleid,'parttypeid'=>$parttypeid,'positionid'=>$positionid,'quantityperapp'=>$qty,'attributes'=>$attributes,'cosmetic'=>0,'mfrlabel'=>$mfrlabel,'assetname'=>$assetname);
   }          
             
  }
