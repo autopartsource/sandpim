@@ -219,9 +219,17 @@ $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
                         <div class="card-body scroll">
                             <?php
                                 if (count($assets)) {
-                                    echo '<table class="table"><tr><th>AssetID</th><th>Description</th></tr>';
-                                    foreach ($assets as $record) {
-                                        echo '<tr><td><a href="showAsset.php?assetid='.$record['assetid'].'" class="btn btn-secondary">' . $record['assetid'] . '</a></td><td>' . $record['description'] . '</td></tr>';
+                                    echo '<table class="table">';
+                                    foreach ($assets as $record)
+                                    {
+                                        if($record['fileType']=='JPG' || $record['fileType']=='PNG')
+                                        {
+                                            echo '<tr><td><a href="showAsset.php?assetid='.$record['assetid'].'"><img src="' . $record['uri'] . '" style="width:180px;"/></a></td><td>' . $record['description'] . '</td></tr>';
+                                        }
+                                        else
+                                        {// not displayable as a thumbnail
+                                            echo '<tr><td><a href="showAsset.php?assetid='.$record['assetid'].'" class="btn btn-secondary">' . $record['assetid'] . '</a></td><td>' . $record['description'] . '</td></tr>';
+                                        }
                                     }
                                     echo '</table></div>';
                                 }

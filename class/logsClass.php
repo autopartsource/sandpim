@@ -6,7 +6,7 @@ class logs {
 
     function logSystemEvent($eventtype, $userid, $text) {
         $db = new mysql;
-        //$db->dbname='pim'; 
+        if(strlen($text)>65534){$text=substr($text,0,65534);}
         $db->connect();
         if ($stmt = $db->conn->prepare('insert into system_history (id,eventdatetime,eventtype,userid,description) values(null,now(),?,?,?)')) {
             $stmt->bind_param('sis', $eventtype, $userid, $text);
