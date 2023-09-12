@@ -459,7 +459,7 @@ class PIESgenerator
      if(array_key_exists('AssetType',$asset)){$AssetTypeElement=$doc->createElement('AssetType',$asset['AssetType']); $DigitalFileInformationElement->appendChild($AssetTypeElement);}
      if(array_key_exists('FileType',$asset)){$FileTypeElement=$doc->createElement('FileType',$asset['FileType']); $DigitalFileInformationElement->appendChild($FileTypeElement);}
      if(array_key_exists('Representation',$asset)){$RepresentationElement=$doc->createElement('Representation',$asset['Representation']);$DigitalFileInformationElement->appendChild($RepresentationElement);}
-     if(array_key_exists('FileSize',$asset)){$FileSizeElement=$doc->createElement('FileSize',$asset['FileSize']); $DigitalFileInformationElement->appendChild($FileSizeElement);}
+     if(array_key_exists('FileSize',$asset) && intval($asset['FileSize'])>0){$FileSizeElement=$doc->createElement('FileSize',$asset['FileSize']); $DigitalFileInformationElement->appendChild($FileSizeElement);}
      if(array_key_exists('Resolution',$asset)){$ResolutionElement=$doc->createElement('Resolution',$asset['Resolution']); $DigitalFileInformationElement->appendChild($ResolutionElement);}
      if(array_key_exists('ColorMode',$asset)){$ColorModeElement=$doc->createElement('ColorMode',$asset['ColorMode']); $DigitalFileInformationElement->appendChild($ColorModeElement);}
      if(array_key_exists('Background',$asset)){$BackgroundElement=$doc->createElement('Background',$asset['Background']); $DigitalFileInformationElement->appendChild($BackgroundElement);}
