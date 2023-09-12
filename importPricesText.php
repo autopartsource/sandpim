@@ -68,7 +68,7 @@ if (isset($_POST['input']))
       if($pim->validPart($partnumber)) 
       {
 
-       $existingprices=$pricing->getPricesByPartnumber($partnumber, $pricesheetnumber);
+       $existingprices=$pricing->getPrices($partnumber, $pricesheetnumber,$currencycode, $uom, $pricetype);
        foreach($existingprices as $existingprice)
        {
         $pricing->deletePriceById($existingprice['id']);

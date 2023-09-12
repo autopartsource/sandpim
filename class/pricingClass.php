@@ -102,6 +102,27 @@ class pricing
   return $records;   
  }
  
+ function getPrices($partnumber,$pricesheetnumber,$currency,$priceuom,$pricetype)
+ {
+  $db=new mysql; $db->connect(); $records=array(); 
+  if($stmt=$db->conn->prepare('select * from price where partnumber=? and pricesheetnumber=? and currency=? and priceuom=? and pricetype=?'))
+  {
+   if($stmt->bind_param('sssss',$partnumber,$pricesheetnumber,$currency,$priceuom,$pricetype))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $niceprice= $row['pricetype'].': '.number_format($row['amount'],2).' '.$row['currency'].' '.$row['priceuom'];
+      $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'pricesheetnumber'=>$row['pricesheetnumber'],'amount'=>$row['amount'],'currency'=>$row['currency'],'priceuom'=>$row['priceuom'],'pricetype'=>$row['pricetype'],'effectivedate'=>$row['effectivedate'],'expirationdate'=>$row['expirationdate'],'niceprice'=>$niceprice);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $records;   
+ }
  
  function getCurrentPricesByPartnumber($partnumber,$_pricesheetnumber=false)
  {
