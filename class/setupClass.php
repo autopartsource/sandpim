@@ -1006,7 +1006,16 @@ class setup
         $sql="insert into receiverprofile_lifecycleststus values(2,1000,'2')"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into receiverprofile_lifecycleststus values(3,1000,'7')"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
-        
+
+        $sql="CREATE TABLE receiverprofile_pricesheet (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        pricesheetnumber varchar(255) not null,
+        PRIMARY KEY (id),
+        index idx_receiverprofileid(receiverprofileid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_pricesheet ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_lifecycleststus ('.$db->conn->error.')';}
+
+        $sql="insert into receiverprofile_pricesheet values(1,1000,'WDNET2021')"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         // contemplating schema options to address plan-user connections
         // this table may not be the final answer

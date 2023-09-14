@@ -2,16 +2,19 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/pricingClass.php');
+include_once('./class/logsClass.php');
 
 $navCategory = 'settings';
 
 $pim = new pim;
+$logs = new logs;
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
- $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'receiverProfile.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'receiverProfile.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
  exit;
 }    
 
@@ -22,8 +25,8 @@ if (!isset($_SESSION['userid']))
  exit;
 }
 
-$logs = new logs;
 $pcdb = new pcdb;
+$pricing = new pricing;
 
 if (isset($_POST['submit']) && $_POST['submit']=='Save') 
 {
@@ -67,6 +70,8 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
 
 $lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($profile['id']);
 $alllifecyclestatuses=$pcdb->getLifeCycleCodes();
+$pricesheets=$pricing->getPricesheets();
+$includedpricesheetnumber=$pim->getReceiverprofilePricesheetnumber($profile['id']);
 
 ?>
 <!DOCTYPE html>
@@ -135,6 +140,21 @@ $alllifecyclestatuses=$pcdb->getLifeCycleCodes();
              };
              xhr.send();
             }
+            
+            function setReceiverPricesheet()
+            {
+             var pricesheetnumber = document.getElementById("pricesheetnumber").value;
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxSetReceiverprofilePricesheet.php?receiverprofileid=<?php echo $profile['id'];?>&pricesheetnumber='+encodeURIComponent(pricesheetnumber));
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+//              console.log(response);
+             };
+             xhr.send();
+            }
+            
+            
         </script>
         <?php include('./includes/header.php'); ?>
     </head>
@@ -254,6 +274,30 @@ $alllifecyclestatuses=$pcdb->getLifeCycleCodes();
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="row padding">
+                                <div class="col">
+                                    <div class="card">
+                                        <h6 class="card-header">Pricesheet to include in PIES exports</h6>
+                                        <div class="card-body">
+                                            <div style="float:left;">
+                                                <select id="pricesheetnumber" name="pricesheet" onchange="setReceiverPricesheet()"><option value="none">none</option><?php 
+                                                foreach($pricesheets as $pricesheet)
+                                                {
+                                                    $selected=''; if($includedpricesheetnumber==$pricesheet['number']){$selected=' selected';}
+                                                    echo '<option value="'.$pricesheet['number'].'"'.$selected.'>'.$pricesheet['description'].'</option>';
+                                                }
+                                                
+                                                ?></select>
+                                            </div>
+                                            <div style="clear: both;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                            
                         </div>
                     </div>                    
                 </div>
@@ -261,7 +305,6 @@ $alllifecyclestatuses=$pcdb->getLifeCycleCodes();
                 
                 <!-- Right Column -->
                 <div class="col-xs-12 col-md-2 my-col colRight">
-                    
                 </div>
             </div>
         </div>    

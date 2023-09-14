@@ -3341,6 +3341,21 @@ function countAppsByPartcategories($partcategories)
   return $profile;
  }
  
+ function receiverprofileName($receiverprofileid)
+ {
+  $db = new mysql; $db->connect(); $name='('.$receiverprofileid.') Not Found';
+  if($stmt=$db->conn->prepare('select name from receiverprofile where id=?'))
+  {
+   $stmt->bind_param('i', $receiverprofileid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc()){$name=$row['name'];}
+  }
+  $db->close();
+  return $name;
+ }
+ 
+ 
  function getReceiverprofilePartcategories($receiverprofileid)
  {  // return and array of partcategory id's for a given receiverprofile
   $partcategories=array();
@@ -3376,12 +3391,7 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $lifecyclestatuses;
  }
- 
- 
- 
- 
- 
-  
+   
  function getReceiverprofileDeliverygroupids($receiverprofileid)
  {  // return and array of partcategory id's for a given receiverprofile
   $deliverygroupids=array();
@@ -3400,6 +3410,20 @@ function countAppsByPartcategories($partcategories)
   return $deliverygroupids;
  }
 
+ function getReceiverprofilePricesheetnumber($receiverprofileid)
+ {
+  $db = new mysql; $db->connect(); $pricesheetnumber='';
+  if($stmt=$db->conn->prepare('select pricesheetnumber from receiverprofile_pricesheet where receiverprofileid=?'))
+  {
+   $stmt->bind_param('i',$receiverprofileid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc()){$pricesheetnumber=$row['pricesheetnumber'];}
+  }
+  $db->close();
+  return $pricesheetnumber;
+ }
+ 
  function createReceiverprofile($name, $data)
  {
   $db = new mysql; $db->connect();
@@ -3502,6 +3526,31 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ 
+ function setReceiverprofilePricesheet($receiverprofileid,$pricesheetnumber)
+ {
+  $db = new mysql; $db->connect();
+  
+  if($stmt=$db->conn->prepare("delete from receiverprofile_pricesheet where receiverprofileid=?"))
+  {
+   if($stmt->bind_param('i',$receiverprofileid))
+   {
+    $stmt->execute();
+   }
+  }
+  
+  if($pricesheetnumber)
+  {  
+   if($stmt=$db->conn->prepare("insert into receiverprofile_pricesheet values(null,?,?)"))
+   {
+    if($stmt->bind_param('is',$receiverprofileid,$pricesheetnumber))
+    {
+     $stmt->execute();
+    }
+   }
+  }
+  $db->close();
+ }
  
  function addDeliverygroupToReceiverProfile($receiverprofileid,$deliverygroupid)
  {

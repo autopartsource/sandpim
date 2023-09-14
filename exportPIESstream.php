@@ -8,6 +8,7 @@ include_once('./class/interchangeClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/packagingClass.php');
 include_once('./class/PIES7_1GeneratorClass.php');
+include_once('./class/userClass.php');
 
 $vcdb = new vcdb;
 $pcdb = new pcdb;
@@ -44,14 +45,23 @@ $header=array();
 $marketingcopys=array();
 
 $profile=$pim->getReceiverprofileById(intval($_GET['receiverprofile']));
+if(isset($_SESSION['userid']))
+{
+ $user=new user(); 
+ $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $profile['id']);
+}
+
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
 $profilename=$profile['name'];
 $partcategories=$pim->getReceiverprofilePartcategories($profile['id']);
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
-
+$pricesheetnumber=$pim->getReceiverprofilePricesheetnumber($profile['id']);
 $generatoroptions=array('ProfileName'=>$profilename);
-
 $marketingcopyrecords=$pim->getMarketingcopyByReceiverprofileId($profile['id']);
+
+
+
+
 
 foreach($marketingcopyrecords as $marketingcopyrecord)
 {
@@ -132,7 +142,7 @@ foreach($partnumbers as $partnumber)
     }
     
 //--------------------- prices -------------------------------    
-    $prices=$pricing->getPricesByPartnumber($partnumber);
+    $prices=$pricing->getPricesByPartnumber($partnumber,$pricesheetnumber);
     if($prices && count($prices))
     {
      foreach($prices as $pricerecord)

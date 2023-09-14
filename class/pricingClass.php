@@ -81,7 +81,7 @@ class pricing
   $records=array();
   $pricesheetnumber='%';
   
-  if($_pricesheetnumber){$pricesheetnumber=$_pricesheetnumber;}
+  if($_pricesheetnumber!==false){$pricesheetnumber=$_pricesheetnumber;}
   
   if($stmt=$db->conn->prepare('select * from price where partnumber=? and pricesheetnumber like ?'))
   {
@@ -152,15 +152,6 @@ class pricing
  }
  
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
  function getPricesheets()
  {
   $db=new mysql; $db->connect();
@@ -203,14 +194,9 @@ class pricing
  }
 
 
-
-
- 
  function getPricesheet($number)
  {
-  $db=new mysql; $db->connect();
-  $pricesheet=false;
-
+  $db=new mysql; $db->connect(); $pricesheet=false;
   if($stmt=$db->conn->prepare('select * from pricesheet where pricesheetnumber=?'))
   {
    if($stmt->bind_param('s',$number))
