@@ -9,6 +9,7 @@ include_once('./class/assetClass.php');
 include_once('./class/packagingClass.php');
 include_once('./class/PIES7_1GeneratorClass.php');
 include_once('./class/userClass.php');
+include_once('./class/logsClass.php');
 
 $vcdb = new vcdb;
 $pcdb = new pcdb;
@@ -19,7 +20,7 @@ $interchange= new interchange;
 $assets = new asset;
 $packaging=new packaging;
 $PIESgenerator=new PIESgenerator();
-
+$logs = new logs();
 session_start();
 
 
@@ -45,10 +46,12 @@ $header=array();
 $marketingcopys=array();
 
 $profile=$pim->getReceiverprofileById(intval($_GET['receiverprofile']));
+$userid=0;
 if(isset($_SESSION['userid']))
 {
  $user=new user(); 
  $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $profile['id']);
+ $userid=$_SESSION['userid'];
 }
 
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
@@ -91,6 +94,8 @@ foreach($elements as $element)
 $header['BlanketEffectiveDate']= date('Y-m-d');
 $header['PAdbVersionDate']=$padb->version();
 $header['PCdbVersionDate']=$pcdb->version();
+
+$documenttitle=''; if(array_key_exists('DocumentTitle', $header)){$documenttitle=$header['DocumentTitle'];}
 
 $logicerrors=array();
 
@@ -359,7 +364,8 @@ else
 {// validated xml is ready to give to the user
  if($streamXML)
  {// download to file
-  $filename='PIES_7_1_FULL_'.date('Y-m-d').'.xml';
+  $filename='PIES_7_1_FULL_'.$documenttitle.'_'.date('Y-m-d').'.xml';
+  $logs->logSystemEvent('Export', $userid , 'PIES file ['.$filename.'] exported. Items:'.count($items).' by:'.$_SERVER['REMOTE_ADDR']);
   header('Content-Disposition: attachment; filename="'.$filename.'"');
   header('Content-Type: application/octet-stream');
   header('Content-Length: ' . strlen($piesxml));
