@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2016 (http://www.altova.com) by Auto Care Association (Auto Care Association) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="4.2" xml:lang="en">
+	<xs:annotation>
+		<xs:documentation>
+			Auto Care Assocation ACES xml schema version 4.2 for exchanging catalog application data.
+			(c)2003-2021 Auto Care Assocation All rights reserved.
+			We do not enforce a default namespace or "targetNamespace" with this release to minimize the changes
+			required to existing instance documents and procedures.
+		</xs:documentation>
+	</xs:annotation>
+	<!-- simple type definitions -->
+	<xs:simpleType name="acesVersionType">
+		<xs:annotation>
+			<xs:documentation source="http://www.xfront.com/Versioning.pdf">
+				Ties the instance document to a schema version.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="3"/>
+			<xs:maxLength value="5"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="actionType">
+		<xs:restriction base="xs:token">
+			<xs:length value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="assetNameType">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="45"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="brandType">
+		<xs:annotation>
+			<xs:documentation source="http://www.regular-expressions.info/xmlcharclass.html">
+				Ideally four uppercase chars without vowels but legacy included some vowels so we
+				exclude just the ones necessary for each character position.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[B-Z-[EIOU]][B-Z-[EIO]][B-Z-[OU]][A-Z]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="idType">
+		<xs:restriction base="xs:positiveInteger"/>
+	</xs:simpleType>
+	<xs:simpleType name="partNumberBaseType">
+		<xs:restriction base="xs:token">
+			<xs:minLength value="0"/>
+			<xs:maxLength value="45"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="uomType">
+		<xs:restriction base="xs:token">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="yearType">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:totalDigits value="4"/>
+			<xs:minInclusive value="1896"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="yesnoType">
+		<xs:restriction base="xs:token">
+			<xs:minLength value="2"/>
+			<xs:maxLength value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="submissionType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="4"/>
+			<xs:maxLength value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- complex type definitions -->
+	<xs:complexType name="appItemsBaseType" abstract="true">
+		<xs:sequence>
+			<xs:group ref="vehicleIdentGroup"/>
+			<xs:element ref="MfrBodyCode" minOccurs="0"/>
+			<xs:element ref="BodyNumDoors" minOccurs="0"/>
+			<xs:element ref="BodyType" minOccurs="0"/>
+			<xs:element ref="DriveType" minOccurs="0"/>
+			<xs:element ref="EngineBase" minOccurs="0"/>
+			<xs:element ref="EngineBlock" minOccurs="0"/>
+			<xs:element ref="EngineBoreStroke" minOccurs="0"/>
+			<xs:element ref="EngineDesignation" minOccurs="0"/>
+			<xs:element ref="EngineVIN" minOccurs="0"/>
+			<xs:element ref="EngineVersion" minOccurs="0"/>
+			<xs:element ref="EngineMfr" minOccurs="0"/>
+			<xs:element ref="PowerOutput" minOccurs="0"/>
+			<xs:element ref="ValvesPerEngine" minOccurs="0"/>
+			<xs:element ref="FuelDeliveryType" minOccurs="0"/>
+			<xs:element ref="FuelDeliverySubType" minOccurs="0"/>
+			<xs:element ref="FuelSystemControlType" minOccurs="0"/>
+			<xs:element ref="FuelSystemDesign" minOccurs="0"/>
+			<xs:element ref="Aspiration" minOccurs="0"/>
+			<xs:element ref="CylinderHeadType" minOccurs="0"/>
+			<xs:element ref="FuelType" minOccurs="0"/>
+			<xs:element ref="IgnitionSystemType" minOccurs="0"/>
+			<xs:element ref="TransmissionMfrCode" minOccurs="0"/>
+			<xs:group ref="transGroup" minOccurs="0"/>
+			<xs:element ref="TransElecControlled" minOccurs="0"/>
+			<xs:element ref="TransmissionMfr" minOccurs="0"/>
+			<xs:element ref="BedLength" minOccurs="0"/>
+			<xs:element ref="BedType" minOccurs="0"/>
+			<xs:element ref="WheelBase" minOccurs="0"/>
+			<xs:element ref="BrakeSystem" minOccurs="0"/>
+			<xs:element ref="FrontBrakeType" minOccurs="0"/>
+			<xs:element ref="RearBrakeType" minOccurs="0"/>
+			<xs:element ref="BrakeABS" minOccurs="0"/>
+			<xs:element ref="FrontSpringType" minOccurs="0"/>
+			<xs:element ref="RearSpringType" minOccurs="0"/>
+			<xs:element ref="SteeringSystem" minOccurs="0"/>
+			<xs:element ref="SteeringType" minOccurs="0"/>
+			<xs:element ref="Region" minOccurs="0"/>
+			<xs:element ref="Qual" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="Note" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="action" type="actionType" use="required"/>
+		<xs:attribute name="id" type="idType" use="required"/>
+		<xs:attribute name="ref" type="xs:string"/>
+		<xs:attribute name="validate" type="yesnoType" default="yes"/>
+	</xs:complexType>
+	<xs:complexType name="appType">
+		<xs:complexContent>
+			<xs:extension base="appItemsBaseType">
+				<xs:sequence>
+					<xs:element ref="Qty"/>
+					<xs:element ref="PartType"/>
+					<xs:element ref="MfrLabel" minOccurs="0"/>
+					<xs:element ref="Position" minOccurs="0"/>
+					<xs:element ref="Part"/>
+					<xs:element ref="DisplayOrder" minOccurs="0"/>
+					<xs:sequence minOccurs="0">
+						<xs:element ref="AssetName"/>
+						<xs:element ref="AssetItemOrder" minOccurs="0"/>
+						<xs:element ref="AssetItemRef" minOccurs="0"/>
+					</xs:sequence>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="assetType">
+		<xs:complexContent>
+			<xs:extension base="appItemsBaseType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="noteType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="idType"/>
+				<xs:attribute name="lang" type="xs:token"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="partNumberType">
+		<xs:simpleContent>
+			<xs:extension base="partNumberBaseType">
+				<xs:attribute name="BrandAAIAID" type="brandType"/>
+				<xs:attribute name="SubBrandAAIAID" type="brandType"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="partTypeType">
+		<xs:annotation>
+			<xs:documentation>
+				A Part Type references the primary key in the Parts PCdb table.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="idType" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="positionType">
+		<xs:annotation>
+			<xs:documentation>
+				A Position references the primary key in the Position PCdb table.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="idType" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="qualType">
+		<xs:sequence>
+			<xs:element name="param" type="paramType" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="text" type="xs:string"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="idType" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="paramType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="value" type="xs:string" use="required"/>
+				<xs:attribute name="uom" type="uomType"/>
+				<xs:attribute name="altvalue" type="xs:string"/>
+				<xs:attribute name="altuom" type="uomType"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="vehAttrType">
+		<xs:annotation>
+			<xs:documentation>
+				Vehicle Attributes reference the primary key in the associated VCdb table.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="idType" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="yearRangeType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="from" use="required">
+					<xs:simpleType>
+						<xs:restriction base="yearType"/>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="to" type="yearType" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- document structure -->
+	<xs:element name="ACES">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Header"/>
+				<xs:element ref="App" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Asset" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="DigitalAsset" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="Footer"/>
+			</xs:sequence>
+			<xs:attribute name="version" type="acesVersionType" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<!-- "Header" element definition -->
+	<xs:element name="Header">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Company" type="xs:string"/>
+				<xs:element name="SenderName" type="xs:string"/>
+				<xs:element name="SenderPhone" type="xs:string"/>
+				<xs:element name="SenderPhoneExt" type="xs:string" minOccurs="0"/>
+				<xs:element name="TransferDate" type="xs:date"/>
+				<xs:element name="MfrCode" type="xs:string" minOccurs="0"/>
+				<xs:element name="BrandAAIAID" type="brandType" minOccurs="0"/>
+				<xs:element name="SubBrandAAIAID" type="brandType" minOccurs="0"/>
+				<xs:element name="DocumentTitle" type="xs:string"/>
+				<xs:element name="DocFormNumber" type="xs:string" minOccurs="0"/>
+				<xs:element name="EffectiveDate" type="xs:date"/>
+				<xs:element name="ApprovedFor" type="approvedForType" minOccurs="0"/>
+				<xs:element name="PartsApprovedFor" type="approvedForType" minOccurs="0"/>
+				<xs:element name="RegionFor" type="RegionType" minOccurs="0"/>
+				<xs:element name="SubmissionType" type="submissionType"/>
+				<xs:element name="MapperCompany" type="xs:string" minOccurs="0"/>
+				<xs:element name="MapperContact" type="xs:string" minOccurs="0"/>
+				<xs:element name="MapperPhone" type="xs:string" minOccurs="0"/>
+				<xs:element name="MapperPhoneExt" type="xs:string" minOccurs="0"/>
+				<xs:element name="MapperEmail" type="xs:string" minOccurs="0"/>
+				<xs:element name="VcdbVersionDate" type="xs:date"/>
+				<xs:element name="QdbVersionDate" type="xs:date"/>
+				<xs:element name="PcdbVersionDate" type="xs:date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- Vehicle Identification Group definition -->
+	<xs:group name="vehicleIdentGroup">
+		<xs:annotation>
+			<xs:documentation>
+				One of the following must be sent in the Vehicle Ident Group:
+				- A Base Vehicle ID
+				- A Make / Year or Make / Year-Range combination must be included with each application. 
+				- A Base Equipment ID
+				- A Mfr / Equipment Model / Vehicle Type
+			</xs:documentation>
+		</xs:annotation>
+		<xs:choice>
+			<xs:sequence>
+				<xs:element ref="BaseVehicle"/>
+				<xs:element ref="SubModel" minOccurs="0"/>
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element ref="Years"/>
+				<xs:element ref="Make"/>
+				<xs:choice minOccurs="0">
+					<xs:element ref="VehicleType"/>
+					<xs:sequence minOccurs="0">
+						<xs:element ref="Model"/>
+						<xs:element ref="SubModel" minOccurs="0"/>
+					</xs:sequence>
+				</xs:choice>
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element ref="EquipmentBase"/>
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element ref="Mfr"/>
+				<xs:element ref="EquipmentModel"/>
+				<xs:element ref="VehicleType"/>
+				<xs:element name="ProductionYears" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="ProductionStart" type="yearType"/>
+						<xs:attribute name="ProductionEnd" type="yearType"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:choice>
+	</xs:group>
+	<!-- Transmission Group definition -->
+	<xs:group name="transGroup">
+		<xs:choice>
+			<xs:element ref="TransmissionBase"/>
+			<xs:sequence>
+				<xs:element ref="TransmissionType" minOccurs="0"/>
+				<xs:element ref="TransmissionControlType" minOccurs="0"/>
+				<xs:element ref="TransmissionNumSpeeds" minOccurs="0"/>
+			</xs:sequence>
+		</xs:choice>
+	</xs:group>
+	<!-- element definitions  -->
+	<xs:element name="App" type="appType"/>
+	<xs:element name="Aspiration" type="vehAttrType"/>
+	<xs:element name="Asset">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="assetType">
+					<xs:sequence>
+						<xs:element ref="AssetName"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AssetItemOrder" type="xs:positiveInteger"/>
+	<xs:element name="AssetItemRef" type="xs:string"/>
+	<xs:element name="AssetName" type="assetNameType"/>
+	<xs:element name="BaseVehicle" type="vehAttrType"/>
+	<xs:element name="BedLength" type="vehAttrType"/>
+	<xs:element name="BedType" type="vehAttrType"/>
+	<xs:element name="BodyNumDoors" type="vehAttrType"/>
+	<xs:element name="BodyType" type="vehAttrType"/>
+	<xs:element name="BrakeABS" type="vehAttrType"/>
+	<xs:element name="BrakeSystem" type="vehAttrType"/>
+	<xs:element name="CylinderHeadType" type="vehAttrType"/>
+	<xs:element name="DisplayOrder" type="xs:positiveInteger"/>
+	<xs:element name="DriveType" type="vehAttrType"/>
+	<xs:element name="EngineBase" type="vehAttrType"/>
+	<xs:element name="EngineBlock" type="vehAttrType"/>
+	<xs:element name="EngineBoreStroke" type="vehAttrType"/>
+	<xs:element name="EngineDesignation" type="vehAttrType"/>
+	<xs:element name="EngineMfr" type="vehAttrType"/>
+	<xs:element name="EngineVIN" type="vehAttrType"/>
+	<xs:element name="EngineVersion" type="vehAttrType"/>
+	<xs:element name="EquipmentBase" type="vehAttrType"/>
+	<xs:element name="EquipmentModel" type="vehAttrType"/>
+	<xs:element name="FrontBrakeType" type="vehAttrType"/>
+	<xs:element name="FrontSpringType" type="vehAttrType"/>
+	<xs:element name="FuelDeliverySubType" type="vehAttrType"/>
+	<xs:element name="FuelDeliveryType" type="vehAttrType"/>
+	<xs:element name="FuelSystemControlType" type="vehAttrType"/>
+	<xs:element name="FuelSystemDesign" type="vehAttrType"/>
+	<xs:element name="FuelType" type="vehAttrType"/>
+	<xs:element name="IgnitionSystemType" type="vehAttrType"/>
+	<xs:element name="Make" type="vehAttrType"/>
+	<xs:element name="Mfr" type="vehAttrType"/>
+	<xs:element name="MfrBodyCode" type="vehAttrType"/>
+	<xs:element name="MfrLabel" type="xs:string"/>
+	<xs:element name="Model" type="vehAttrType"/>
+	<xs:element name="Note" type="noteType"/>
+	<xs:element name="Part" type="partNumberType"/>
+	<xs:element name="PartType" type="partTypeType"/>
+	<xs:element name="Position" type="positionType"/>
+	<xs:element name="PowerOutput" type="vehAttrType"/>
+	<xs:element name="Qty" type="xs:positiveInteger"/>
+	<xs:element name="Qual" type="qualType"/>
+	<xs:element name="RearBrakeType" type="vehAttrType"/>
+	<xs:element name="RearSpringType" type="vehAttrType"/>
+	<xs:element name="Region" type="vehAttrType"/>
+	<xs:element name="SteeringSystem" type="vehAttrType"/>
+	<xs:element name="SteeringType" type="vehAttrType"/>
+	<xs:element name="SubModel" type="vehAttrType"/>
+	<xs:element name="TransElecControlled" type="vehAttrType"/>
+	<xs:element name="TransferDate" type="xs:date"/>
+	<xs:element name="TransmissionBase" type="vehAttrType"/>
+	<xs:element name="TransmissionControlType" type="vehAttrType"/>
+	<xs:element name="TransmissionMfr" type="vehAttrType"/>
+	<xs:element name="TransmissionMfrCode" type="vehAttrType"/>
+	<xs:element name="TransmissionNumSpeeds" type="vehAttrType"/>
+	<xs:element name="TransmissionType" type="vehAttrType"/>
+	<xs:element name="ValvesPerEngine" type="vehAttrType"/>
+	<xs:element name="VehicleType" type="vehAttrType"/>
+	<xs:element name="WheelBase" type="vehAttrType"/>
+	<xs:element name="Years" type="yearRangeType"/>
+	<xs:complexType name="RegionType">
+		<xs:sequence>
+			<xs:element ref="Region" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="approvedForType">
+		<xs:sequence>
+			<xs:element name="Country" maxOccurs="unbounded">
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:length value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="DigitalAsset">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DigitalFileInformation" type="digitalFileInformationType" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="digitalFileInformationType">
+		<xs:sequence>
+			<xs:element name="FileName">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="80"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AssetDetailType" type="assetDetailType"/>
+			<xs:element name="FileType" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="assetFileType">
+						<xs:maxLength value="4"/>
+						<xs:minLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Representation" type="representationType" minOccurs="0"/>
+			<xs:element name="FileSize" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:positiveInteger">
+						<xs:totalDigits value="10"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Resolution" type="resolutionType" minOccurs="0"/>
+			<xs:element name="ColorMode" type="colorModeType" minOccurs="0"/>
+			<xs:element name="Background" type="backgroundType" minOccurs="0"/>
+			<xs:element name="OrientationView" type="orientationViewType" minOccurs="0"/>
+			<xs:element name="AssetDimensions" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="AssetHeight" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:minExclusive value="0"/>
+									<xs:totalDigits value="6"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="AssetWidth" minOccurs="0">
+							<xs:simpleType>
+								<xs:restriction base="xs:decimal">
+									<xs:minExclusive value="0"/>
+									<xs:totalDigits value="6"/>
+									<xs:fractionDigits value="4"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="UOM" type="dimensionUOMType" use="required"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="AssetDescription" type="xs:string" minOccurs="0"/>
+			<xs:element name="FilePath" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="80"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="URI" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:anyURI">
+						<xs:maxLength value="2000"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="FileDateModified" type="xs:date" minOccurs="0"/>
+			<xs:element name="EffectiveDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="ExpirationDate" type="xs:date" minOccurs="0"/>
+			<xs:element name="Country" minOccurs="0">
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:length value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="AssetName" use="required"/>
+		<xs:attribute name="action" type="actionType" use="required"/>
+		<xs:attribute name="LanguageCode" type="xs:string"/>
+	</xs:complexType>
+	<xs:simpleType name="assetDetailType">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="assetFileType">
+		<xs:annotation>
+			<xs:documentation>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="2"/>
+			<xs:maxLength value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="resolutionType">
+		<xs:annotation>
+			<xs:documentation>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="2"/>
+			<xs:maxLength value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="representationType">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="colorModeType">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="backgroundType">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="orientationViewType">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="dimensionUOMType">
+		<xs:annotation>
+			<xs:documentation/>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- "Footer" element definition -->
+	<xs:element name="Footer">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RecordCount" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
