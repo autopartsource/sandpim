@@ -106,8 +106,9 @@ class qdb
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
-   {
-    $qualifiers[]=array('qualifierid'=>$row['QualifierID'],'qualifiertext'=>$row['QualifierText'],'htmlsafequalifiertext'=> str_replace($findtags,$replacetags,$row['QualifierText']),'parmtypes'=>$this->parmTypes($row['QualifierText']));
+   {    
+    $cleaned=preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $row['QualifierText']); // this is a greasy hack - unicode needs to handled correctly here, but I had to make it work fast.
+    $qualifiers[]=array('qualifierid'=>$row['QualifierID'],'qualifiertext'=>$cleaned,'htmlsafequalifiertext'=> str_replace($findtags,$replacetags,$cleaned),'parmtypes'=>$this->parmTypes($cleaned));
    }
   }
   $db->close();

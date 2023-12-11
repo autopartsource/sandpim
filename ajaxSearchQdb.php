@@ -22,7 +22,18 @@ if(isset($_SESSION['userid']) && isset($_GET['searchterm']) && isset($_GET['type
  $searchterm= $_GET['searchterm'];
  if($_GET['type']=='any'){$type=false;}else{$type=intval($_GET['type']);}
  
- $qualifiers=$qdb->getQualifiersBySearch($searchterm,$type);
- echo json_encode($qualifiers);
+ $qualifiersraw=$qdb->getQualifiersBySearch($searchterm,$type);
+
+ //$search = array(chr(189), chr(191), chr(239)); 
+ //$replace = array('*','*','*'); 
+ 
+ $qualifiers = str_replace($search, $replace, $qualifiersraw);
+ 
+ echo json_encode($qualifiers,JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); //
+
+ $logs = new logs;
+ $logs->logSystemEvent('debug',0, 'ajaxSearchQdb.php searchterm:'. print_r($qualifiers,true));
+ 
+ 
 }
 ?>

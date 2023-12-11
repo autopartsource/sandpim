@@ -68,7 +68,7 @@ class asset
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $records[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel'],'changedDate'=>$row['changedDate']);
+       $records[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel'],'changedDate'=>$row['changedDate'],'frame'=>$row['frame'],'totalFrames'=>$row['totalFrames'],'plane'=>$row['plane'],'totalPlanes'=>$row['totalPlanes']);
    }
   }
   $db->close();
@@ -167,7 +167,7 @@ class asset
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename'],'filetype'=>$row['fileType'],'assetlabel'=>$row['assetlabel'],'inheritedfrom'=>'');
+       $connections[]=array('id'=>$row['id'],'connectionid'=>$row['connectionid'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation'],'uri'=>$row['uri'],'filename'=>$row['filename'],'filetype'=>$row['fileType'],'assetlabel'=>$row['assetlabel'],'inheritedfrom'=>'','frame'=>$row['frame'],'totalFrames'=>$row['totalFrames'],'plane'=>$row['plane'],'totalPlanes'=>$row['totalPlanes']);
      }
     }
    }
@@ -584,7 +584,7 @@ class asset
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel']);
+       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel'],'frame'=>$row['frame'],'totalFrames'=>$row['totalFrames'],'plane'=>$row['plane'],'totalPlanes'=>$row['totalPlanes']);
    }
   }
   $db->close();
@@ -603,7 +603,7 @@ class asset
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel']);
+       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel'],'frame'=>$row['frame'],'totalFrames'=>$row['totalFrames'],'plane'=>$row['plane'],'totalPlanes'=>$row['totalPlanes']);
    }
   }
   $db->close();
@@ -667,7 +667,7 @@ class asset
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel']);
+       $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel'],'frame'=>$row['frame'],'totalFrames'=>$row['totalFrames'],'plane'=>$row['plane'],'totalPlanes'=>$row['totalPlanes']);
    }
   }
   $db->close();
@@ -686,7 +686,7 @@ class asset
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-       $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel']);
+       $asset=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel'],'frame'=>$row['frame'],'totalFrames'=>$row['totalFrames'],'plane'=>$row['plane'],'totalPlanes'=>$row['totalPlanes']);
    }
   }
   $db->close();

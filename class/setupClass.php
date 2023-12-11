@@ -402,6 +402,10 @@ class setup
         languagecode varchar(255) NOT NULL,
         assetlabel varchar(255) NOT NULL,
         changedDate date not null,
+        frame int unsigned not null,
+        totalFrames int unsigned not null,
+        plane int unsigned not null,
+        totalPlanes int unsigned not null,
         PRIMARY KEY (id),
         INDEX idx_assetid (assetid),
         INDEX idx_oid (oid),
@@ -411,9 +415,9 @@ class setup
         INDEX idx_fileHashMD5(fileHashMD5)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - asset ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - asset ('.$db->conn->error.')';}
-        $sql="insert into asset values(30000,'PRC914','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914.jpg','','TOP','RGB',733,1500,'PX',300,'WHI','JPG','2021-10-01',1,1,'Primary photo of PRC914','','',501478,1,'EN','',now())"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into asset values(30001,'PRC914A','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914A.jpg','','TOP','RGB',726,1500,'PX',300,'WHI','JPG','2021-10-02',1,1,'Primary photo of PRC914A','','',202050,1,'EN','',now())"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into asset values(30002,'PRC914B','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914B.jpg','','TOP','RGB',764,1500,'PX',300,'WHI','JPG','2021-10-03',1,1,'Primary photo of PRC914B','','',213594,1,'EN','',now())"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into asset values(30000,'PRC914','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914.jpg','','TOP','RGB',733,1500,'PX',300,'WHI','JPG','2021-10-01',1,1,'Primary photo of PRC914','','',501478,1,'EN','',now(),0,0,0,0)"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into asset values(30001,'PRC914A','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914A.jpg','','TOP','RGB',726,1500,'PX',300,'WHI','JPG','2021-10-02',1,1,'Primary photo of PRC914A','','',202050,1,'EN','',now(),0,0,0,0)"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into asset values(30002,'PRC914B','PRC914.jpg','https://s3.amazonaws.com/autopartsourceimages/parts/PRC914B.jpg','','TOP','RGB',764,1500,'PX',300,'WHI','JPG','2021-10-03',1,1,'Primary photo of PRC914B','','',213594,1,'EN','',now(),0,0,0,0)"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
 
 
@@ -872,7 +876,7 @@ class setup
         $sql="insert into config_options values('WMconsumerchanneltype','AN36','','','Walmart API consumer channel type (uuid with hyphens)');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('WMsecret','AN1/255','','','Walmart API secret');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('showAppAttributesInSummary','AN1/255','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        
+        $sql="insert into config_options values('partAssetAPIenabled','AN1/255','','no','Controls part asset API');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         $sql="CREATE TABLE issue (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,

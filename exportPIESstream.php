@@ -287,12 +287,12 @@ foreach($partnumbers as $partnumber)
      $digitalasset['URI']=$digitalassetrecord['uri'];
      //$digitalasset['Duration']=$digitalassetrecord[''];
      //$digitalasset['DurationUOM']=$digitalassetrecord[''];
-     //$digitalasset['Frame']=$digitalassetrecord[''];
-     //$digitalasset['TotalFrames']=$digitalassetrecord[''];
-     //$digitalasset['Plane']=$digitalassetrecord[''];
+     $digitalasset['Frame']=$digitalassetrecord['frame'];
+     $digitalasset['TotalFrames']=$digitalassetrecord['totalFrames'];
+     $digitalasset['Plane']=$digitalassetrecord['plane'];
      //$digitalasset['Hemisphere']=$digitalassetrecord[''];
      //$digitalasset['Plunge']=$digitalassetrecord[''];
-     //$digitalasset['TotalPlanes']=$digitalassetrecord[''];
+     $digitalasset['TotalPlanes']=$digitalassetrecord['totalPlanes'];
      //$digitalasset['Description']=$digitalassetrecord[''];
      //$digitalasset['DescriptionCode']=$digitalassetrecord[''];
      //$digitalasset['DescriptionLanguageCode']=$digitalassetrecord[''];

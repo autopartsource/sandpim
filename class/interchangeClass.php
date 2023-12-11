@@ -99,7 +99,7 @@ class interchange
   $db=new mysql; $db->connect();
   $records=array();
   
-  if($stmt=$db->conn->prepare('select * from interchange where partnumber=?'))
+  if($stmt=$db->conn->prepare('select * from interchange left join brand on interchange.brandAAIAID =brand.BrandID where interchange.partnumber=? order by brand.BrandName, interchange.competitorpartnumber'))
   {
    $stmt->bind_param('s',$partnumber);
    $stmt->execute();
@@ -157,7 +157,7 @@ class interchange
   $db=new mysql; $db->connect();
   $records=array();
   
-  if($stmt=$db->conn->prepare('select distinct brandAAIAID from interchange order by brandAAIAID'))
+  if($stmt=$db->conn->prepare('select distinct brandAAIAID from interchange left join brand on interchange.brandAAIAID =brand.BrandID order by brand.BrandName;'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();

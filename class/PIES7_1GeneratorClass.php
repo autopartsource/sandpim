@@ -479,12 +479,12 @@ class PIESgenerator
      if(array_key_exists('FilePath',$asset)){$FilePathElement=$doc->createElement('FilePath',$asset['FilePath']); $DigitalFileInformationElement->appendChild($FilePathElement);}
      if(array_key_exists('URI',$asset)){$URIelement=$doc->createElement('URI',$asset['URI']); $DigitalFileInformationElement->appendChild($URIelement);}
      if(array_key_exists('Duration',$asset) && array_key_exists('DurationUOM',$asset)){$DurationElement=$doc->createElement('Duration',$asset['Duration']); $DurationElement->setAttribute('UOM', $asset['DurationUOM']); $DigitalFileInformationElement->appendChild($DurationElement);}
-     if(array_key_exists('Frame',$asset)){$FrameElement=$doc->createElement('Frame',$asset['Frame']); $DigitalFileInformationElement->appendChild($FrameElement);}
-     if(array_key_exists('TotalFrames',$asset)){$TotalFramesElement=$doc->createElement('TotalFrames',$asset['TotalFrames']); $DigitalFileInformationElement->appendChild($TotalFramesElement);}
-     if(array_key_exists('Plane',$asset)){$PlaneElement=$doc->createElement('Plane',$asset['Plane']); $DigitalFileInformationElement->appendChild($PlaneElement);}
+     if(array_key_exists('Frame',$asset) && $asset['Frame']>0){$FrameElement=$doc->createElement('Frame',$asset['Frame']); $DigitalFileInformationElement->appendChild($FrameElement);}
+     if(array_key_exists('TotalFrames',$asset) && $asset['TotalFrames']>0){$TotalFramesElement=$doc->createElement('TotalFrames',$asset['TotalFrames']); $DigitalFileInformationElement->appendChild($TotalFramesElement);}
+     if(array_key_exists('Plane',$asset) && $asset['Plane']>0){$PlaneElement=$doc->createElement('Plane',$asset['Plane']); $DigitalFileInformationElement->appendChild($PlaneElement);}
      if(array_key_exists('Hemisphere',$asset)){$HemisphereElement=$doc->createElement('Hemisphere',$asset['Hemisphere']); $DigitalFileInformationElement->appendChild($HemisphereElement);}
      if(array_key_exists('Plunge',$asset)){$PlungeElement=$doc->createElement('Plunge',$asset['Plunge']); $DigitalFileInformationElement->appendChild($PlungeElement);}
-     if(array_key_exists('TotalPlanes',$asset)){$TotalPlanesElement=$doc->createElement('TotalPlanes',$asset['TotalPlanes']); $DigitalFileInformationElement->appendChild($TotalPlanesElement);}
+     if(array_key_exists('TotalPlanes',$asset) && $asset['TotalPlanes']>0){$TotalPlanesElement=$doc->createElement('TotalPlanes',$asset['TotalPlanes']); $DigitalFileInformationElement->appendChild($TotalPlanesElement);}
 
      if(array_key_exists('Description',$asset) && array_key_exists('DescriptionCode',$asset) && trim($asset['Description'])!='')
      {
