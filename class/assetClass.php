@@ -37,16 +37,16 @@ class asset
   return $returnval;
  }
     
- function addAsset($assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic,$languagecode,$assetlabel,$createddate=false)
+ function addAsset($assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic,$languagecode,$assetlabel,$createddate,$frame,$totalframes,$plane,$totalplanes)
  {
   $db=new mysql; $db->connect(); $id=false;
 
   $created=date('Y-m-d');
   if($createddate){$created=$createddate;}
   
-  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,localpath,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,resolution,background,fileType,createdDate,public,approved,description,oid,fileHashMD5,filesize,uripublic,languagecode,assetLabel,changedDate) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())'))
+  if($stmt=$db->conn->prepare('insert into asset(id,assetid,filename,localpath,uri,orientationViewCode,colorModeCode,assetHeight,assetWidth,dimensionUOM,resolution,background,fileType,createdDate,public,approved,description,oid,fileHashMD5,filesize,uripublic,languagecode,assetLabel,changedDate,frame,totalframes,plane,totalplanes) values(null,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?,?,?)'))
   {
-   if($stmt->bind_param('ssssssiisisssiisssiiss',$assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$created,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic,$languagecode,$assetlabel))
+   if($stmt->bind_param('ssssssiisisssiisssiissiiii',$assetid,$filename,$localpath,$uri,$orientationViewCode,$colorModeCode,$assetHeight,$assetWidth,$dimensionUOM,$resolution,$background,$fileType,$created,$public,$approved,$description,$oid,$fileHashMD5,$filesize,$uripublic,$languagecode,$assetlabel,$frame,$totalframes,$plane,$totalplanes))
    {
     if($stmt->execute())
     {

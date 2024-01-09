@@ -625,7 +625,7 @@ class PIESgenerator
       $existingassets=$asset->getAssetRecordsByAssetid($digitalasset['AssetID']);      
       if(count($existingassets)==0)
       {
-       $asset->addAsset($digitalasset['AssetID'], $digitalasset['FileName'], '', $digitalasset['URI'], $digitalasset['OrientationView'], $digitalasset['ColorMode'], intval($digitalasset['AssetHeight']), intval($digitalasset['AssetWidth']), $digitalasset['UOM'], intval($digitalasset['Resolution']), $digitalasset['Background'], $digitalasset['FileType'], intval($digitalasset['Public']), 1, $digitalasset['Description'], $oid, '', intval($digitalasset['FileSize']), 1,$digitalasset['DescriptionLanguageCode'],$assetLabel,$digitalasset['CreatedDate']);
+       $asset->addAsset($digitalasset['AssetID'], $digitalasset['FileName'], '', $digitalasset['URI'], $digitalasset['OrientationView'], $digitalasset['ColorMode'], intval($digitalasset['AssetHeight']), intval($digitalasset['AssetWidth']), $digitalasset['UOM'], intval($digitalasset['Resolution']), $digitalasset['Background'], $digitalasset['FileType'], intval($digitalasset['Public']), 1, $digitalasset['Description'], $oid, '', intval($digitalasset['FileSize']), 1,$digitalasset['DescriptionLanguageCode'],$assetLabel,$digitalasset['CreatedDate'],$digitalasset['Frame'],$digitalasset['TotalFrames'],$digitalasset['Plane'],$digitalasset['TotalPlanes']);
       }
 
       $asset->connectPartToAsset($partnumber, $digitalasset['AssetID'], $digitalasset['AssetType'], $sequence, $digitalasset['Representation']);

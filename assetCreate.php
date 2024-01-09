@@ -55,7 +55,8 @@ if (isset($_POST['submit']) && $_POST['submit'] == 'Create')
         $uripublic=0; if(isset($_POST['uripublic']) && $_POST['uripublic']=='on'){$uripublic=1;}
         $languagecode=''; if(isset($_POST['languagecode'])){$languagecode=$_POST['languagecode'];}
         $assetlabel=trim($_POST['assetlabel']); // internal label like "Assembly Guide" or "QC Drawing"    
-        if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic,$languagecode,$assetlabel))
+        $createddate='2000-01-01';
+        if($id = $asset->addAsset($assetid, $filename, $localpath, $uri, $orientationviewcode, $colormodecode, $assetheight, $assetwidth, $dimensionUOM,$resolution, $background, $filetype, $public, $approved, $description, $oid, $filehash,$filesize,$uripublic,$languagecode,$assetlabel,$createddate,1,1,1,1))
         {
             $error_msg = 'Asset record ' . $id . ' was created for asset ID '.$assetid;
             $assetoid=$asset->updateAssetOID($assetid);
