@@ -991,6 +991,30 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                             }
                             
                             echo '<div id="apps">';
+                            
+                            $niceapps=array(); $makesindex=array(); $modelsindex=array(); $yearsindex=array();
+                            foreach($apps as $rowid=>$app)
+                            {
+                             $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+                             $makesindex[$rowid]=$mmy['makename'];
+                             $modelsindex[$rowid]=$mmy['modelname'];
+                             $yearsindex[$rowid]=$mmy['year'];
+                             
+                             $niceattributes='';
+                             if($showAppAttributesInSummary=='yes'){ $niceattributes=' '.niceAppAttributes($app['attributes']);}
+                             $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']).' '.$niceattributes;
+                             
+                             $niceapps[$rowid]=array('niceappdescription'=>$niceappdescription,'makename'=>$mmy['makename'],'modelname'=>$mmy['modelname'],'year'=>$mmy['year']);
+                            }
+
+                            array_multisort($makesindex,SORT_ASC,$modelsindex,SORT_ASC,$yearsindex,SORT_DESC,$niceapps);
+                            foreach($niceapps as $app)
+                            {
+                                echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">'.$app['niceappdescription'].'</a>';
+                                echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description-app="'. base64_encode($app['niceappdescription']).'">'.$app['id'].'</div>';
+                            }
+                            
+/*                            
                             foreach($apps as $app)
                             {
                                 $niceattributes='';
@@ -999,6 +1023,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                 echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">'.$niceappdescription.'</a>';
                                 echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description-app="'. base64_encode($niceappdescription).'">'.$app['id'].'</div>';
                             }
+ */
                             echo '</div>';
  
                             ?>
