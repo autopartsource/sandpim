@@ -54,7 +54,8 @@ $profile=$pim->getReceiverprofileById(intval($_GET['receiverprofile']));
 if($profile)
 {
  $partcategories=$pim->getReceiverprofilePartcategories($profile['id']);
- $partnumbers=$pim->getPartnumbersByPartcategories($partcategories);
+ $lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($profile['id']);
+ $partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
  foreach($partnumbers as $partnumber)
  {
   $digialassetconnections=$assets->getAssetsConnectedToPart($partnumber,true); // second parm cause non-public assets to be excluded from export
