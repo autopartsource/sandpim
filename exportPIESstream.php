@@ -57,7 +57,14 @@ if(isset($_SESSION['userid']))
 $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
 $profilename=$profile['name'];
 $partcategories=$pim->getReceiverprofilePartcategories($profile['id']);
-$lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($profile['id']);
+$templifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($profile['id']);
+
+$lifecyclestatuses=array();
+foreach($templifecyclestatuses as $lifecyclestatus)
+{
+    $lifecyclestatuses[]=$lifecyclestatus['lifecyclestatus'];
+}
+
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
 $pricesheetnumber=$pim->getReceiverprofilePricesheetnumber($profile['id']);
 $generatoroptions=array('ProfileName'=>$profilename);
