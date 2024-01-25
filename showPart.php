@@ -720,7 +720,12 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                             </div>
                                         </td>
                                     <tr>
-                                    <tr><th>GTIN (Item Level)</th><td><div style="float:left;"><input type="text" id="gtin" oninput="flagUnsavedGTIN();" value="<?php echo $part['GTIN']?>"/></div><div style="float:left;"><button id="btnUpdateGTIN" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','gtin'); unflagUnsavedGTIN();">Update</button></div><div style="clear:both;"></div></td><tr>
+                                        
+                                    <tr><th>Container Type</th><td></td><tr>
+                                    <tr><th>Quantities</th><td></td><tr>
+                                    <tr><th>Hazardous</th><td></td><tr>
+                                        
+                                    <tr><th>GTIN</th><td><div style="float:left;"><input type="text" id="gtin" oninput="flagUnsavedGTIN();" value="<?php echo $part['GTIN']?>"/></div><div style="float:left;"><button id="btnUpdateGTIN" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','gtin'); unflagUnsavedGTIN();">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php /*    <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><button class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></td><tr> */ ?>
                                     <tr><th>Replaced By</th><td><div style="float:left;"><input type="text" id="replacedby" oninput="flagUnsavedReplacedby();" value="<?php echo $part['replacedby']?>"/></div><div style="float:left;"><button id="btnUpdateReplacedby" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','replacedby'); unflagUnsavedReplacedby();">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php if($balance){?> <tr><th>Balance</th><td>On-Hand: <b><?php echo round($balance['qoh'],0);?></b>, Demand: <b><?php echo $balance['amd'];?></b> units/month</td><tr> <?php }?>
@@ -1004,7 +1009,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                              if($showAppAttributesInSummary=='yes'){ $niceattributes=' '.niceAppAttributes($app['attributes']);}
                              $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']).' '.$niceattributes;
                              
-                             $niceapps[$rowid]=array('niceappdescription'=>$niceappdescription,'makename'=>$mmy['makename'],'modelname'=>$mmy['modelname'],'year'=>$mmy['year']);
+                             $niceapps[$rowid]=array('id'=>$app['id'],'niceappdescription'=>$niceappdescription,'makename'=>$mmy['makename'],'modelname'=>$mmy['modelname'],'year'=>$mmy['year']);
                             }
 
                             array_multisort($makesindex,SORT_ASC,$modelsindex,SORT_ASC,$yearsindex,SORT_DESC,$niceapps);

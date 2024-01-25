@@ -636,6 +636,24 @@ class setup
 
         $sql="insert into part_expi values(null,'PRC914','CTO','CA','EN')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
         
+        // for the non-core part-level attributes. The core stuff (that we care about) is in the part table
+        $sql="CREATE TABLE part_PIESitem (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(255) NOT NULL,
+        ReferenceFieldNumber varchar (255) not null,
+        value varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber),
+        INDEX idx_ReferenceFieldNumber (ReferenceFieldNumber))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_PIESField  ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_PIESField  ('.$db->conn->error.')';}
+
+        $sql="insert into part_PIESField values(null,'PRC914','B40','1')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
+        $sql="insert into part_PIESField values(null,'PRC914','B41','EA')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
+
+
+
+
+
         
         $sql="CREATE TABLE part_balance (
         partnumber varchar(255) NOT NULL,

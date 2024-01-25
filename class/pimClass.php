@@ -1626,6 +1626,27 @@ function countAppsByPartcategories($partcategories)
  }
 
  
+ // get PIES item-segment elements that are not in the core "part" table
+ function getPartPIESitemElements($partnumber)
+ {
+  $db = new mysql; $db->connect(); $elements=array();
+  if($stmt=$db->conn->prepare('select * from part_PIESitem where partnumber=?'))
+  {
+   if($stmt->bind_param('s',$partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $elements[]=array('id'=>$row['id'],'ReferenceFieldNumber'=>$row['ReferenceFieldNumber'],'value'=>$row['value']);
+     }
+    }
+   }
+  }
+  $db->close();  
+  return $elements;
+ }
  
  
  
