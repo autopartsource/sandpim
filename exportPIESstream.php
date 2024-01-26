@@ -109,6 +109,20 @@ foreach($partnumbers as $partnumber)
     $item=array();
     $part=$pim->getPart($partnumber);
     $item['externalpart']=$pim->receiverPart($profile['id'], $partnumber);
+
+    $keyedPIESitemElements=array();
+    $PIESitemElements=$pim->getPartPIESitemElements($partnumber);
+    foreach($PIESitemElements as $PIESitemElement){$keyedPIESitemElements[$PIESitemElement['ReferenceFieldNumber']]=$PIESitemElement['value'];}
+    if(array_key_exists('B03', $keyedPIESitemElements)){$item['HazardousMaterialCode']=$keyedPIESitemElements['B03'];}
+    if(array_key_exists('B32', $keyedPIESitemElements)){$item['ItemQuantitySize']=$keyedPIESitemElements['B32'];}
+    if(array_key_exists('B33', $keyedPIESitemElements)){$item['ItemQuantitySizeUOM']=$keyedPIESitemElements['B33'];}
+    if(array_key_exists('B34', $keyedPIESitemElements)){$item['ContainerType']=$keyedPIESitemElements['B34'];}
+    if(array_key_exists('B40', $keyedPIESitemElements)){$item['QuantityPerApplication']=$keyedPIESitemElements['B40'];}
+    if(array_key_exists('B41', $keyedPIESitemElements)){$item['QuantityPerApplicationUOM']=$keyedPIESitemElements['B41'];}
+    if(array_key_exists('B35', $keyedPIESitemElements)){$item['QuantityPerApplicationQualifier']=$keyedPIESitemElements['B35'];}
+    if(array_key_exists('B55', $keyedPIESitemElements)){$item['MinimumOrderQuantity']=$keyedPIESitemElements['B55'];}
+    if(array_key_exists('B56', $keyedPIESitemElements)){$item['MinimumOrderQuantityUOM']=$keyedPIESitemElements['B56'];}
+
     
     if($part['GTIN']!='')
     {
