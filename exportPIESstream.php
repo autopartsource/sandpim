@@ -191,7 +191,8 @@ foreach($partnumbers as $partnumber)
     
     if(trim($part['lifecyclestatus'])!='')
     {
-        $item['expis'][]=array('EXPICode'=>'LIF','EXPIValue'=>trim($part['lifecyclestatus']));   
+        $item['expis'][]=array('EXPICode'=>'LIF','EXPIValue'=>trim($part['lifecyclestatus']));
+        $item['expis'][]=array('EXPICode'=>'LIS','EXPIValue'=>$pcdb->lifeCycleCodeDescription(trim($part['lifecyclestatus'])));   
     }
     
  //--------------------- attributes -------------------------------    

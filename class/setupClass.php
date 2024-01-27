@@ -645,10 +645,10 @@ class setup
         PRIMARY KEY (id),
         INDEX idx_partnumber (partnumber),
         INDEX idx_ReferenceFieldNumber (ReferenceFieldNumber))";
-        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_PIESField  ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_PIESField  ('.$db->conn->error.')';}
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_PIESitem  ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_PIESitem  ('.$db->conn->error.')';}
 
-        $sql="insert into part_PIESField values(null,'PRC914','B40','1')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
-        $sql="insert into part_PIESField values(null,'PRC914','B41','EA')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
+        $sql="insert into part_PIESitem values(null,'PRC914','B40','1')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
+        $sql="insert into part_PIESitem values(null,'PRC914','B41','EA')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
 
 
 
