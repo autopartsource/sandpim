@@ -808,7 +808,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                                 <?php foreach($expis as $expi){;?>
                                                 <div style="padding-bottom:3px;" id="expiid_<?php echo $expi['id'];?>">
                                                     <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove <?php echo $expi['EXPIcode'];?> EXPI code from this part" onclick="deleteExpi(<?php echo $expi['id'];?>)">x</button></div>
-                                                    <div style="float:left; background-color:#f49ef7;border:2px solid #808080;margin-left:4px;padding:2px"><?php echo $pcdb->EXPIcodeDescription($expi['EXPIcode']);?>: <?php echo $expi['EXPIvalue'];?></div>
+                                                    <div style="float:left; background-color:#f49ef7;border:2px solid #808080;margin-left:4px;padding:2px"><?php echo $pcdb->EXPIcodeDescription($expi['EXPIcode']).' ('.$expi['EXPIcode'].')';?>: <?php echo $expi['EXPIvalue'];?></div>
                                                     <div style="clear:both;"></div>
                                                 </div>
                                                 <?php }?>
