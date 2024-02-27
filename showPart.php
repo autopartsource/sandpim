@@ -699,7 +699,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
  
                                                 <div style="padding-bottom:3px;" id="descriptionid_<?php echo $description['id'];?>">
                                                     <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this <?php echo $description['descriptioncode'];?> code description from this part" onclick="deleteDescription(<?php echo $description['id'];?>)">x</button></div>
-                                                    <div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;"><?php echo $description['description'];?></div>
+                                                    <div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;"><?php echo '<b>['.$description['descriptioncode'].']</b> '. $description['description'];?></div>
                                                     <div style="clear:both;"></div>
                                                 </div>
                                                 
