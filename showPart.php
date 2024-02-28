@@ -58,6 +58,7 @@ $apps = $pim->getAppsByPartnumber($partnumber);
 $appsummarystruct = $pim->getAppSummary($partnumber);
 $attributes = $pim->getPartAttributes($partnumber);
 $expis=$pim->getPartEXPIs($partnumber);
+$validexpis=$pcdb->getAllEXPIcodes();
 $validpadbattributes=$padb->getAttributesForParttype($part['parttypeid']);
 $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
@@ -222,6 +223,30 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                //remove PAdb form "unapplied" list
                var unappliedattributediv = document.getElementById('unappliedattribute_'+PAID);
                unappliedattributediv.parentNode.removeChild(unappliedattributediv);
+               
+               // show new oid
+               document.getElementById("sandpiperoid").innerHTML=response.oid;               
+              }
+             };
+             xhr.send();
+            }
+
+            function addEXPI(EXPI)
+            {
+             var EXPIvalue=document.getElementById('unappliedexpivalue_'+EXPI).value;             
+             
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxUpdateEXPIofPart.php?partnumber=<?php echo $partnumber;?>&expi='+EXPI+'&value='+encodeURIComponent(EXPIvalue)+'&languagecode=<?php echo $defaultdescriptionlanguagecode;?>');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              if(response.success)
+              { //add expi to "applied" list
+               var container=document.getElementById('appliedexpis');
+               container.innerHTML+='<div style="padding:3px;" id="expiid_'+response.id+'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" onclick="deleteEXPI('+response.id+')">x</button></div><div style="border:1px solid;padding:3px; margin-left:4px; background:#f49ef7;float:left;">'+response.name+' <span style="background-color:#f8f8f8;padding-left:4px;padding-right:4px;">'+response.value+' </span></div><div style="clear:both;"></div></div>';
+               //remove EXPI form "unapplied" list
+               var unappliedexpidiv = document.getElementById('unappliedexpi_'+EXPI);
+               unappliedexpidiv.parentNode.removeChild(unappliedexpidiv);
                
                // show new oid
                document.getElementById("sandpiperoid").innerHTML=response.oid;               
@@ -406,7 +431,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
              xhr.send();
             }
 
-            function deleteExpi(expiid)
+            function deleteEXPI(expiid)
             {
              var expisdiv = document.getElementById('expiid_'+expiid);
              expisdiv.parentNode.removeChild(expisdiv);
@@ -499,6 +524,19 @@ $kitcomponents=$pim->getKitComponents($partnumber);
             function showhideUnappliedAttributes()
             {
              var x = document.getElementById("unappliedattributes");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+
+            function showhideUnappliedEXPI()
+            {
+             var x = document.getElementById("unappliedexpis");
              if (x.style.display === "none") 
              {
               x.style.display = "block";
@@ -804,14 +842,25 @@ $kitcomponents=$pim->getKitComponents($partnumber);
 
                                     <tr><th>EXPI Codes</th>
                                         <td>
-                                            <div id="expi">
+                                            <div id="appliedexpis">
                                                 <?php foreach($expis as $expi){;?>
                                                 <div style="padding-bottom:3px;" id="expiid_<?php echo $expi['id'];?>">
-                                                    <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove <?php echo $expi['EXPIcode'];?> EXPI code from this part" onclick="deleteExpi(<?php echo $expi['id'];?>)">x</button></div>
+                                                    <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove <?php echo $expi['EXPIcode'];?> EXPI code from this part" onclick="deleteEXPI(<?php echo $expi['id'];?>)">x</button></div>
                                                     <div style="float:left; background-color:#f49ef7;border:2px solid #808080;margin-left:4px;padding:2px"><?php echo $pcdb->EXPIcodeDescription($expi['EXPIcode']).' ('.$expi['EXPIcode'].')';?>: <?php echo $expi['EXPIvalue'];?></div>
                                                     <div style="clear:both;"></div>
                                                 </div>
                                                 <?php }?>
+                                                
+                                            </div>
+                                            <div onclick="showhideUnappliedEXPI()">...</div>
+                                            <div id="unappliedexpis" style="display:none; padding:5px;">
+
+                                                <?php foreach($validexpis as $validexpi){
+                                                if($pim->partEXPIvalue($partnumber, $validexpi['code'], $defaultdescriptionlanguagecode, true)){continue;}
+                                                echo '<div style="text-align:left;padding:3px;" id="unappliedexpi_'.$validexpi['code'].'">['. $validexpi['code'].'] '. $validexpi['description'] . ' <span><input size="8" id="unappliedexpivalue_'.$validexpi['code'].'"/>';
+                                                echo '</span> <button class="btn btn-sm btn-success" title="Add EXPI code '.$validexpi['code'].'" onclick="addEXPI(\''.$validexpi['code'].'\')">+</button></div>';
+                                                }?>
+
                                             </div>
                                         </td>
                                     </tr>

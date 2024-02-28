@@ -492,6 +492,12 @@ class pcdb
   return $codes;
  }
  
+ function validEXPIcode($EXPI)
+ {
+  $returnval=true;
+  return $returnval;
+ }
+ 
  
 function getValidEXPIvalues($code)
  {
