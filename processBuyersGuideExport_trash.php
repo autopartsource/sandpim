@@ -17,10 +17,11 @@ include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the fu
 
 
 $pim = new pim();
-$jobs=$pim->getBackgroundjobs('ApplicationGuideExport','started');
+$jobs=$pim->getBackgroundjobs('BuyersGuideExport','started');
 
 if(count($jobs))
 {
+ ini_set('memory_limit','6000M');
  include_once(__DIR__.'/class/logsClass.php');
  include_once(__DIR__.'/class/vcdbClass.php');
  include_once(__DIR__.'/class/pcdbClass.php');
@@ -63,6 +64,7 @@ if(count($jobs))
  {
   if($part=$pim->getPart($partnumber))
   {
+   $firstyear=9999; $lastyear=0;   
    $apps=$pim->getAppsByPartnumber($partnumber);
     
    $temp=array();
@@ -70,6 +72,8 @@ if(count($jobs))
    {
     $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
     $key=$mmy['makename'].'_'.$mmy['modelname'];
+    if($mmy['year'] < $firstyear){$firstyear=$mmy['year'];}
+    if($mmy['year'] > $lastyear){$lastyear=$mmy['year'];}
     if(array_key_exists($key, $temp))
     {// make_model exists in the array. See if year is compatible with an existing entry
          
@@ -100,7 +104,8 @@ if(count($jobs))
      $temp[$key][]=array('start'=>$mmy['year'],'end'=>$mmy['year']);
     }
    }
-    
+   unset($apps);
+   
    $nicelist=array();
    ksort($temp);
    foreach($temp as $makemodel=>$yearranges)
@@ -120,14 +125,18 @@ if(count($jobs))
      }
     }
    }
+   
+   unset($temp);
+
      
    $summary=implode(', ',$nicelist);
-   $pim->updateAppSummary($part['partnumber'], $summary);
+   $pim->updateAppSummary($part['partnumber'], $summary,$firstyear,$lastyear);
         
    $tabbedoutputrecord=$partnumber."\t".$pim->partCategoryName($part['partcategory'])."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$summary;
    $tabbedoutputrecords[]=$tabbedoutputrecord;
    $tabbedoutput.=$tabbedoutputrecord."\r\n";
   }
+  gc_collect_cycles();
  }
  
  $writer->setAuthor('SandPIM');
@@ -155,7 +164,7 @@ if(count($jobs))
   $logs->logSystemEvent('Export', 0, 'Application Guide file ['.$filename.'] (jobid:'.$jobid.') exported by background processing; parts:'.count($partnumbers));
  }
  else
- {  // writing the output xml file failed
+ {  // writing the output xlsx file failed
   //echo 'output file write failed';
   $pim->updateBackgroundjobDone($jobid,'failed',date('Y-m-d H:i:s'));
   $pim->logBackgroundjobEvent($jobid, 'file write failed ['.$filename.']' );

@@ -109,7 +109,7 @@ class packaging
       $merchandisingheight=$this->decimalsFormat($row['merchandisingheight']);
       $niceshippingdims=''; if($shippinglength+$shippingwidth+$shippingheight>0){$niceshippingdims='Ship: '.$shippinglength.'*'.$shippingwidth.'*'.$shippingheight.' '.$row['dimensionsuom'];}
       $nicemerchdims=''; if($merchandisinglength+$merchandisingwidth+$merchandisingheight>0){$nicemerchdims='Merch: '.$merchandisinglength.'*'.$merchandisingwidth.'*'.$merchandisingheight.' '.$row['dimensionsuom'] ;}
-      $nicepackage=$row['packageuom'].' '.$innerquantity.', '.$weight.' '.$row['weightsuom'].$niceshippingdims.' '.$nicemerchdims;
+      $nicepackage=$row['packageuom'].' '.$innerquantity.', '.$weight.' '.$row['weightsuom'].' '.$niceshippingdims.' '.$nicemerchdims;
       
       if($row['packagelevelGTIN']!=''){$packagelevelGTINhtml='<div>Package GTIN: '.$row['packagelevelGTIN'].'</div>';}else{$packagelevelGTINhtml='';}
       if($row['packagebarcodecharacters']!=''){$packagebarcodecharactershtml='<div>Package Barcode: '.$row['packagebarcodecharacters'].'</div>';}else{$packagebarcodecharactershtml='';}        

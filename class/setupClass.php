@@ -1538,13 +1538,14 @@ class setup
         
         $sql="insert into navelement values('EXPORT/PIESXML','EXPORT','PIES xml','exportPIESselect.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('EXPORT/ACESXML','EXPORT','ACES xml','exportACESselect.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('EXPORT/APAAWDA65SPREADSHEET','EXPORT','APA/AWDA (6.5) Spreadsheet','exportAPA65pricefileSelect.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('EXPORT/WALMARTPRODUCTSPREADSHEET','EXPORT','Parts in Walmart format spreadsheet','exportWalmartSelect.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('EXPORT/FLATPARTS','EXPORT','Flattened parts file','exportFlatPartsSelect.php',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('EXPORT/FLATAPPS','EXPORT','Flattened applications file','exportFlatAppsSelect.php',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('EXPORT/APPGUIDEBASIC','EXPORT','Application Guide PDF (basic)','exportForBasicPrintSelect.php',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('EXPORT/APPGUIDEMULTICOLIUMN','EXPORT','Application Guide PDF (multi-column)','exportForMulticolumnPrintSelect.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('EXPORT/COMPETITORINTERCHANGE','EXPORT','Competitor Interchange','exportCompetitorInterchangeSelect.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/BUYERSGUIDE','EXPORT','Buyers Guide','exportApplicationGuideSelect.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/APAAWDA65SPREADSHEET','EXPORT','APA/AWDA (6.5) Spreadsheet','exportAPA65pricefileSelect.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/WALMARTPRODUCTSPREADSHEET','EXPORT','Parts in Walmart format spreadsheet','exportWalmartSelect.php',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/FLATPARTS','EXPORT','Flattened parts file','exportFlatPartsSelect.php',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/FLATAPPS','EXPORT','Flattened applications file','exportFlatAppsSelect.php',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/APPGUIDEBASIC','EXPORT','Application Guide PDF (basic)','exportForBasicPrintSelect.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/APPGUIDEMULTICOLIUMN','EXPORT','Application Guide PDF (multi-column)','exportForMulticolumnPrintSelect.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('EXPORT/COMPETITORINTERCHANGE','EXPORT','Competitor Interchange','exportCompetitorInterchangeSelect.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         
         
