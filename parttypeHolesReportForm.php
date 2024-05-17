@@ -10,7 +10,7 @@ $pim = new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'vioCoverageReportForm.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'parttypeHolesReportForm.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  http_response_code(404); // nothing to see here, folks
  exit;
 }    
@@ -50,7 +50,7 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                         <h3 class="card-header text-start">Report vehicle-in-operation coverage by parts in a receiver profile</h3>
 
                         <div class="card-body">
-                            <form action="vioCoverageReportStream.php" method="get">
+                            <form action="parttypeHolesReportStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
                                     <div style="padding: 10px;">Receiver Profile</div>
                                     <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>

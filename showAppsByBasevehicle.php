@@ -147,11 +147,11 @@ if (count($apps))
 
         // build the distinct row keys
         $rowkey = implode('; ', $nicefitmentarray);
-        $fitmentrowkeys[$rowkey] = base64_encode(serialize($app['attributes']));
+        $fitmentrowkeys[$rowkey] = urlencode(base64_encode(serialize($app['attributes'])));
 
         // build the distinct column keys
         $columnkey = $pcdb->positionName($app['positionid']) . "<br/>" . $pcdb->parttypeName($app['parttypeid']);
-        $fitmentcolumnkeys[$columnkey] = base64_encode(serialize(array('positionid' => $app['positionid'], 'parttypeid' => $app['parttypeid'])));
+        $fitmentcolumnkeys[$columnkey] = urlencode(base64_encode(serialize(array('positionid' => $app['positionid'], 'parttypeid' => $app['parttypeid']))));
 
         $appmatrix[$rowkey][$columnkey][] = $app;
     }
@@ -424,7 +424,7 @@ ksort($fitmentcolumnkeys);
                                     echo '<div style="display:none;" id="appids">';
                                     foreach ($apps as $app)
                                     {
-                                        echo '<div data-appid="'.$app['id'].'" data-description="'.$makename.', '.$modelname.', '.$yearid.' ('.  $app['partnumber'].')">'.$app['id'].'</div>';
+                                        echo '<div data-appid="'.$app['id'].'" data-description="'.$makename.', '.  str_replace('&', ' AND ',$modelname).', '.$yearid.' ('.  $app['partnumber'].')">'.$app['id'].'</div>';
                                     }
                                     echo '</div>';                        
                                     echo '<span class="btn btn-info" onclick="addAppsToClipboard()">Copy</span>';

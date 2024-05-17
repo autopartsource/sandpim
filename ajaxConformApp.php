@@ -17,6 +17,8 @@ session_start();
 if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['fitment']) && isset($_GET['positionandparttype']))
 {
  // get the existing app for pre-comparison so we can know what to change
+// $logs = new logs;
+
  $appid=intval($_GET['appid']);
  $neednewoid=false;
  $description='fitment grid drag';
@@ -24,6 +26,9 @@ if(isset($_SESSION['userid']) && isset($_GET['appid']) && isset($_GET['fitment']
 
  if($app=$pim->getApp($appid))
  {
+//      $logs->logSystemEvent('debug',0, 'ajaxConformApp.php fitment:'. $_GET['fitment']);
+
+     
   $attributes=unserialize(base64_decode($_GET['fitment']));
   $positionandparttype=unserialize(base64_decode($_GET['positionandparttype']));
   $positionid=intval($positionandparttype['positionid']);

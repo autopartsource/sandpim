@@ -24,8 +24,8 @@ if(isset($_SESSION['userid']) && isset($_GET['searchterm']) && isset($_GET['type
  
  $qualifiersraw=$qdb->getQualifiersBySearch($searchterm,$type);
 
- //$search = array(chr(189), chr(191), chr(239)); 
- //$replace = array('*','*','*'); 
+ $search = array(chr(189), chr(191), chr(239)); 
+ $replace = array('*','*','*'); 
  
  $qualifiers = str_replace($search, $replace, $qualifiersraw);
  

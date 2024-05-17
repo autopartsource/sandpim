@@ -29,7 +29,7 @@ class pim
  {
   $output=trim(strtoupper($input));
   if(strlen($input)>20){$output= substr($input, 0, 20);}
-  $output=str_replace(array('"',';',"'","\t","\n","\r","\\",'?',',','.','>','<','`','!','@','$','%','^','&','*','(',')','+','=',':','[',']','{','}','|','/','~'), '-', $output);
+  $output=str_replace(array('"',';',"'","\t","\n","\r",'?',',','.','>','<','`','!','@','$','%','^','&','*','(',')','+','=',':','[',']','{','}','|','~'), '-', $output);
   return $output;
  }
  
@@ -1279,6 +1279,30 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $parts;
  }
+ 
+ 
+ function getKits()
+ { // all parts that are in partrelationship table with type "kit"
+     
+  $db = new mysql; $db->connect(); $kits=array();
+  if($stmt=$db->conn->prepare("select * from partrelationship where relationtype='kit' order by leftpartnumber, sequence, rightpartnumber"))
+  {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {    
+      $kits[$row['leftpartnumber']][]=array('id'=>$row['id'],'component'=>$row['rightpartnumber'],'units'=>round($row['units'],2),'sequence'=>$row['sequence']);
+     }
+    }
+  }
+  $db->close();
+  return $kits;
+ }
+ 
+  
+ 
+ 
   
  function basepartOfPart($partnumber)
  {
