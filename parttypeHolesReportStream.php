@@ -38,11 +38,7 @@ $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 $viorecords=$pim->getExperianRecords($viogeography, $vioyearquarter,$countthreshold);
 
 
-$receiverprofileid=intval($_GET['receiverprofile']);
-$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
-$partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $apps=$pim->getAppsByPartcategories($partcategories);
-
 
 
 

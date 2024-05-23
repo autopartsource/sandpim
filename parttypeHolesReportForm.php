@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/userClass.php');
+include_once('./class/configGetClass.php');
 
 $navCategory = 'reports';
 
@@ -22,8 +23,12 @@ if (!isset($_SESSION['userid'])) {
 }
 
 $user=new user;
-$receiverprofiles=$pim->getReceiverprofiles();
-$preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last receiverprofileid used');
+$configGet = new configGet;
+
+$favoriteparttypes=$pim->getFavoriteParttypes();
+$viogeography=$configGet->getConfigValue('VIOdefaultGeography');
+$vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
+
 ?>
 
 <!DOCTYPE html>
@@ -47,15 +52,16 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Report vehicle-in-operation coverage by parts in a receiver profile</h3>
+                        <h3 class="card-header text-start">Report vehicles not covered by a part-type</h3>
 
                         <div class="card-body">
                             <form action="parttypeHolesReportStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
-                                    <div style="padding: 10px;">Receiver Profile</div>
-                                    <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
-                                    <div style="padding:10px;"><label><input type="checkbox" name="hidecovered" checked="checked"/>Only report vehicles missing coverage</label></div>
-                                    <div style="padding:10px;">Report vehicles with a count greater than <input type="number" name="countthreshold" value="10000" size="6"/></div>
+                                    <div style="padding: 10px;">Part Type</div>
+
+                                    <select name="parttypeid"><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"><?php echo $parttype['name'];?></option><?php }?></select>
+                                    <div style="padding:10px;">Include model-years since <input type="number" name="fromyear" value="<?php echo intval(date('Y')-3);?>"/></div>
+                                    <div style="padding:10px;">Include vehicles with a population (<?php echo $viogeography.' '.$vioyearquarter;?>) greater than <input type="number" name="countthreshold" value="10000" size="6"/></div>
                                     
                                     <input type="submit" name="submit" value="Export"/>
                                 </div>

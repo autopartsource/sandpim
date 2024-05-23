@@ -302,6 +302,88 @@ class pim
   $db->close();
   return $apps;     
  }
+ 
+ 
+//---------
+ function getAppsByParttype($parttypeid,$statuslist=false)
+ {  
+  $db = new mysql;  $db->connect();
+  
+  //build list of partnumbers in given parttype
+  
+  $tempstatuses=false;
+  if($statuslist)
+  {
+   $tempstatuses=array();
+   foreach($statuslist as $s){$tempstatuses[]=array('lifecyclestatus'=>$s);}
+  }
+  
+  $partnumbers=$this->getPartnumbersByPartcategories($partcategories, $tempstatuses);
+  
+  $apps=array();  
+  foreach($partnumbers as $partnumber)
+  {
+   $appcount=0;
+   // look for apps with the direct partnumber
+ //  if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+   if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where status=0 and part.partnumber=?'))
+   {
+    $stmt->bind_param('s', $partnumber);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     //$attributes=$this->getAppAttributes($row['id']);
+     //$apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>'');
+     $attributes=$this->getAppAttributes($row['id']);
+     $attributeshash=$this->appAttributesHash($attributes);
+     $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'partcategory'=>$row['partcategory'],'mfrlabel'=>$row['mfrlabel'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);     
+     $appcount++;
+    }
+   }
+
+   if($appcount==0)
+   {// part has no apps - see if it has a basepart and maybe ues the baseprt's apps if they exist       
+    $basepartnumber=$this->basepartOfPart($partnumber);
+    if($basepartnumber)
+    {// this part has a base and no apps of its own - we need to deal with inheritance
+  //   if($stmt=$db->conn->prepare('select * from application where partnumber=?'))
+     if($stmt=$db->conn->prepare('select application.*,part.partcategory,partcategory.mfrlabel from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id where status=0 and part.partnumber=?'))
+     {
+      $stmt->bind_param('s', $basepartnumber);
+      $stmt->execute();
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+//       $attributes=$this->getAppAttributes($row['id']);
+//       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$partnumber,'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>$basepart);
+       $attributes=$this->getAppAttributes($row['id']);
+       $attributeshash=$this->appAttributesHash($attributes);
+       
+       $mfrlabel=$row['mfrlabel'];
+       //mfr lable in the apps result set 
+       $mfrlabel=$this->partMfrLabel($partnumber);
+       //fff
+       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$partnumber,'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'partcategory'=>$row['partcategory'],'mfrlabel'=>$mfrlabel,'attributes'=>$attributes,'attributeshash'=>$attributeshash);    
+      }
+     }
+    }  
+   }
+  }
+   
+  $db->close();
+  return $apps;     
+ }
+
+
+//--------- 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
   
 
  function getAppOids()
