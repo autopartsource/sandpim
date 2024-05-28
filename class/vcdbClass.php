@@ -330,13 +330,13 @@ class vcdb
   if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
   $basevehicles=array();
   
-  if($stmt=$db->conn->prepare('SELECT BaseVehicle.BaseVehicleID, MakeName, ModelName,YearID FROM BaseVehicle,Make,Model WHERE BaseVehicle.MakeID=Make.MakeID AND BaseVehicle.ModelID=Model.ModelID'))
+  if($stmt=$db->conn->prepare('SELECT BaseVehicle.BaseVehicleID, MakeName, ModelName,YearID,VehicleTypeID FROM BaseVehicle,Make,Model WHERE BaseVehicle.MakeID=Make.MakeID AND BaseVehicle.ModelID=Model.ModelID'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $basevehicles[$row['BaseVehicleID']] = array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID']);
+    $basevehicles[$row['BaseVehicleID']] = array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID'],'vehicletypeid'=>$row['VehicleTypeID']);
    }
   }
   $db->close();
