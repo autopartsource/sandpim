@@ -455,7 +455,7 @@ class PIESgenerator
      $DigitalFileInformationElement->setAttribute('MaintenanceType','A');
      if(array_key_exists('AssetID',$asset)){$DigitalFileInformationElement->setAttribute('AssetID',$asset['AssetID']);}
      if(array_key_exists('LanguageCode',$asset) && trim($asset['LanguageCode'])!=''){$DigitalFileInformationElement->setAttribute('LanguageCode',$asset['LanguageCode']);}
-     if(array_key_exists('FileName',$asset)){$FileNameElement=$doc->createElement('FileName',$asset['FileName']); $DigitalFileInformationElement->appendChild($FileNameElement);}
+     if(array_key_exists('FileName',$asset)){$FileNameElement=$doc->createElement('FileName',htmlspecialchars($asset['FileName'], ENT_XML1 | ENT_COMPAT, 'UTF-8')); $DigitalFileInformationElement->appendChild($FileNameElement);}
      if(array_key_exists('AssetType',$asset)){$AssetTypeElement=$doc->createElement('AssetType',$asset['AssetType']); $DigitalFileInformationElement->appendChild($AssetTypeElement);}
      if(array_key_exists('FileType',$asset)){$FileTypeElement=$doc->createElement('FileType',$asset['FileType']); $DigitalFileInformationElement->appendChild($FileTypeElement);}
      if(array_key_exists('Representation',$asset)){$RepresentationElement=$doc->createElement('Representation',$asset['Representation']);$DigitalFileInformationElement->appendChild($RepresentationElement);}
@@ -489,7 +489,7 @@ class PIESgenerator
      if(array_key_exists('Description',$asset) && array_key_exists('DescriptionCode',$asset) && trim($asset['Description'])!='')
      {
       $AssetDescriptionsElement=$doc->createElement('AssetDescriptions');
-      $DescriptionElement=$doc->createElement('Description',$asset['Description']);
+      $DescriptionElement=$doc->createElement('Description', htmlspecialchars($asset['Description'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
       $DescriptionElement->setAttribute('MaintenanceType', 'A');
       $DescriptionElement->setAttribute('DescriptionCode', $asset['DescriptionCode']);
       if(array_key_exists('DescriptionLanguageCode',$asset)){$DescriptionElement->setAttribute('LanguageCode', $asset['DescriptionLanguageCode']);}
