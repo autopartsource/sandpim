@@ -304,7 +304,7 @@ class pim
  }
  
  
- function getAppsByParttype($parttypeid)
+ function getAppsByParttype($parttypeid,$includeattributes)
  { // relies on the part-type in the part table - not the application table
   $db = new mysql;  $db->connect();    //xxx
   $apps=array();  
@@ -314,9 +314,14 @@ class pim
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
-   {
-    $attributes=$this->getAppAttributes($row['id']);
-    $attributeshash=$this->appAttributesHash($attributes);
+   {       
+    $attributes=array();
+    $attributeshash='';
+    if($includeattributes)
+    {
+     $attributes=$this->getAppAttributes($row['id']);
+     $attributeshash=$this->appAttributesHash($attributes);        
+    }
     $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'partcategory'=>$row['partcategory'],'mfrlabel'=>$row['mfrlabel'],'attributes'=>$attributes,'attributeshash'=>$attributeshash,'inheritedfrom'=>'');
    }
   }

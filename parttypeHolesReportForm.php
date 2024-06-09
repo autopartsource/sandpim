@@ -28,6 +28,7 @@ $configGet = new configGet;
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
+$favoritepositions=$pim->getFavoritePositions();
 
 ?>
 
@@ -57,12 +58,10 @@ $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
                         <div class="card-body">
                             <form action="parttypeHolesReportStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
-                                    <div style="padding: 10px;">Part Type</div>
-
-                                    <select name="parttypeid"><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"><?php echo $parttype['name'];?></option><?php }?></select>
+                                    <div style="padding: 10px;">Part Type <select name="parttypeid"><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"><?php echo $parttype['name'];?></option><?php }?></select></div>
                                     <div style="padding:10px;">Include model-years since <input type="number" name="fromyear" value="<?php echo intval(date('Y')-3);?>"/></div>
-                                    <div style="padding:10px;">Include vehicles with a population (<?php echo $viogeography.' '.$vioyearquarter;?>) greater than <input type="number" name="countthreshold" value="10000" size="6"/></div>
-                                    
+                                    <div style="padding:10px;">Position <select name="positionid"><option value="0">Any</option><?php foreach ($favoritepositions as $position) { echo '<option value="'.$position['id'].'">'.$position['name'].'</option>'; } ?></select></div>
+                                    <div style="padding:10px;">Include vehicles with a population (<?php echo $viogeography.' '.$vioyearquarter;?>) greater than <input type="number" name="countthreshold" value="10000" size="6"/></div>                                    
                                     <input type="submit" name="submit" value="Export"/>
                                 </div>
                             </form>

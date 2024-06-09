@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/vcdbClass.php');
+include_once('./class/pcdbClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/userClass.php');
 include_once('./class/configGetClass.php');
@@ -26,24 +27,31 @@ if (!isset($_SESSION['userid']))
 
 $logs=new logs();
 $vcdb=new vcdb();
+$pcdb=new pcdb();
 $user=new user();
 $configGet = new configGet();
 $writer = new XLSXWriter();
 
 $parttypeid=intval($_GET['parttypeid']);
+$positionid=intval($_GET['positionid']);
+$positionname='Any'; if($positionid>0){$positionname=$pcdb->positionName($positionid);}
+
+$parttypename=$pcdb->parttypeName($parttypeid);
 $countthreshold=10000; if(isset($_GET['countthreshold'])){$countthreshold=intval($_GET['countthreshold']);}
 $fromyear=intval($_GET['fromyear']);
 
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
-$viorecords=$pim->getExperianRecords($viogeography, $vioyearquarter,$countthreshold);  
+$viorecords=$pim->getExperianRecords($viogeography, $vioyearquarter,0);  
+$favoritepositions=$pim->getFavoritePositions();
 
 
 
+$notes='Part Type: '.$parttypename.'; Model-years from: '.$fromyear.'; VIO Threshold:'. $countthreshold.'; Position: '.$positionname;
 
 $streamXLSX=false;
 $xlsxdata='';
-$columnnames=array('Make'=>'string','Model'=>'string','Year'=>'number','Population ('.$viogeography.' '.$vioyearquarter.')'=>'number');
+$columnnames=array('Make'=>'string','Model'=>'string','Year'=>'number','Population ('.$viogeography.' '.$vioyearquarter.')'=>'number',$notes=>'string');
 $columnwidths=array(15,15,6,20);
 $columnmeta=array('widths'=>$columnwidths,'freeze_rows'=>1,['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']);
 $writer->writeSheetHeader('Sheet1', $columnnames, $columnmeta); 
@@ -68,14 +76,17 @@ foreach($viorecords as $viorecord)
  
 }
 
-$apps=$pim->getAppsByParttype($parttypeid);
+$apps=$pim->getAppsByParttype($parttypeid,false); // the false arg is telling the backend to not include app attribures for the sake for speed
 
 
 // grind apps into a basevid-keyed array for lookup
 $keyedapps=array();
 foreach($apps as $app)
 {
-    $keyedapps[$app['basevehicleid']][]=$app;
+    if($positionid==0 || $app['positionid']==$positionid)
+    {
+     $keyedapps[$app['basevehicleid']][]=$app;
+    }
 }
 
 
@@ -85,10 +96,11 @@ foreach($apps as $app)
 $availablebasevids=$vcdb->getAllBaseVehicles(); //$basevehicles[$row['BaseVehicleID']] = array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID'],'vehicletypeid'=>$row['VehicleTypeID']);
 foreach($availablebasevids as $id=>$availablebasevehicle)
 {
- if($availablebasevehicle['year']>=$fromyear && $availablebasevehicle['vehicletypeid']==5 && !array_key_exists($id, $keyedapps))
+    //&& $availablebasevehicle['vehicletypeid']==5
+ if($availablebasevehicle['year']>=$fromyear  && !array_key_exists($id, $keyedapps))
  {
   // this basevehicle is not covered by the apps with the given part-type
-  if(array_key_exists($id, $keyedvio))  
+  if(array_key_exists($id, $keyedvio) && $viototalbybasevid[$id]>$countthreshold)  
   { // basevehicleid exists in VIO - we case about it
    $row=array($availablebasevehicle['makename'],$availablebasevehicle['modelname'],$availablebasevehicle['year'],$viototalbybasevid[$id]);
    $writer->writeSheetRow('Sheet1', $row);   
