@@ -458,7 +458,7 @@ function countAppsByPartcategories($partcategories)
 }
 
 
- function getAppsByPartnumber($partnumber)
+ function getAppsByPartnumber($partnumber,$excludeattributes=false)
  {
   $db = new mysql; $db->connect(); $apps=array();
   // basepart's apps will only be returned if no apps are found for passed in to this function.
@@ -469,7 +469,12 @@ function countAppsByPartcategories($partcategories)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $attributes=$this->getAppAttributes($row['id']);
+    $attributes=array();
+    if(!$excludeattributes)
+    {   
+     $attributes=$this->getAppAttributes($row['id']);
+    }
+    
     $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>'');
    }
   }
@@ -486,7 +491,11 @@ function countAppsByPartcategories($partcategories)
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-      $attributes=$this->getAppAttributes($row['id']);
+      $attributes=array();
+      if(!$excludeattributes)
+      {
+       $attributes=$this->getAppAttributes($row['id']);
+      }
       $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'inheritedfrom'=>$basepart);
      }
     }

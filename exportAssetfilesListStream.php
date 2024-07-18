@@ -46,6 +46,8 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
+$format=''; $delimiter=' ';
+if(isset($_GET['format']) && $_GET['format']=='hashlist'){$format='hashlist'; $delimiter="\r\n";}
 $filenamekeyedlist=array();
 $filenamelist=array();
 
@@ -67,8 +69,8 @@ if($profile)
     foreach($digitalassetrecords as $digitalassetrecord)
     {
      if(!array_key_exists($digitalassetrecord['filename'], $filenamekeyedlist))
-     {
-      $filenamekeyedlist[$digitalassetrecord['filename']]='';
+     {//
+      $filenamekeyedlist[$digitalassetrecord['filename']]=$digitalassetrecord['fileHashMD5'];
      }   
     }
    }
@@ -76,19 +78,26 @@ if($profile)
  }
 
  ksort($filenamekeyedlist );
- foreach($filenamekeyedlist as $filename=>$trash)
+ foreach($filenamekeyedlist as $filename=>$hash)
  {
-  if(strstr($filename,' '))
-  {// filename contains spaces - wrap it in doublequotes
-   $filenamelist[]='"'.$filename.'"';      
+  if($format=='hashlist')
+  {// two-column list of filename,hash
+    $filenamelist[]=$filename."\t".$hash;
   }
   else
-  {// filename does not contain spaces
-   $filenamelist[]=$filename;
+  {// space-delimited list for use in a zip command
+   if(strstr($filename,' '))
+   {// filename contains spaces - wrap it in doublequotes
+    $filenamelist[]='"'.$filename.'"';      
+   }
+   else
+   {// filename does not contain spaces
+    $filenamelist[]=$filename;
+   }
   }
  }
  
- $filecontents= implode(' ', $filenamelist);
+ $filecontents= implode($delimiter, $filenamelist);
 
  $filename='assetfiles_'.date('Y-m-d').'.txt';
  header('Content-Disposition: attachment; filename="'.$filename.'"');

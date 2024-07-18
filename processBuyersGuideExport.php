@@ -91,7 +91,14 @@ if(count($jobs))
  
  $tabbedoutput='';
  $temppartcount=0; $processedcount=0;
+ 
+ $mmycache=array();
+ 
   
+ 
+ 
+ 
+ 
  foreach($partnumbers as $partnumber) 
  {
   if($part=$pim->getPart($partnumber))
@@ -102,14 +109,23 @@ if(count($jobs))
     if($summarytemp['age']>30 || $summarytemp['age']<0 || $forcesummaryupdate)
     {// existing summary is stale or missing - recapture it
            
-     $rawapps=$pim->getAppsByPartnumber($part['partnumber']);
+     $rawapps=$pim->getAppsByPartnumber($part['partnumber'],true);
     
      $apps=array();
      $makesindex=array(); $modelsindex=array(); $yearsindex=array();
      
      foreach($rawapps as $rowid=>$rawapp)
      {
-      $mmy=$vcdb->getMMYforBasevehicleid($rawapp['basevehicleid']);
+      if(array_key_exists($rawapp['basevehicleid'],$mmycache))
+      {
+       $mmy=$mmycache[$rawapp['basevehicleid']];           
+      }
+      else
+      {
+       $mmy=$vcdb->getMMYforBasevehicleid($rawapp['basevehicleid']);
+       $mmycache[$rawapp['basevehicleid']]=$mmy;           
+      }         
+      
       $apps[]=array('makename'=>$mmy['makename'],'modelname'=>$mmy['modelname'],'year'=>$mmy['year']);
       $makesindex[$rowid]=$mmy['makename'];
       $modelsindex[$rowid]=$mmy['modelname'];

@@ -38,10 +38,13 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                 var selectedBox = document.getElementById("selectBox");
                 var selectedValue = selectBox.options[selectedBox.selectedIndex].value;
                 var asset = document.getElementById("assetFilesDownload");
+                var assethash = document.getElementById("assethashFilesDownload");
                 var part = document.getElementById("partsListDownload");
                 asset.setAttribute("href",'exportAssetfilesListStream.php?receiverprofile='+selectedValue);
+                assethash.setAttribute("href",'exportAssetfilesListStream.php?format=hashlist&receiverprofile='+selectedValue);
                 part.setAttribute("href",'exportPartListStream.php?receiverprofile='+selectedValue);
                 asset.className = "btn btn-secondary btn-sm";
+                assethash.className = "btn btn-secondary btn-sm";
                 part.className = "btn btn-secondary btn-sm";
             }
         </script>
@@ -70,6 +73,7 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                                     <div>
                                         Receiver Profile <select id="selectBox" name="receiverprofile" onclick="updateSelectedID();"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
                                         <a id="assetFilesDownload" href="" role="button" class="btn btn-secondary btn-sm disabled" aria-disabled="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Asset File List for Export">Assets</a>
+                                        <a id="assethashFilesDownload" href="" role="button" class="btn btn-secondary btn-sm disabled" aria-disabled="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate asset File hashes list for export">Asset Hashes</a>
                                         <a id="partsListDownload" href="" role="button" class="btn btn-secondary btn-sm disabled" aria-disabled="true" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate Parts List">Parts</a>
                                     </div>
                                     <div><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
