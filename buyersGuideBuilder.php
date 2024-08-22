@@ -189,6 +189,14 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
     $tabbedoutputrecords[]=$tabbedoutputrecord;
     $tabbedoutput.=$tabbedoutputrecord."\r\n";
    }
+   else
+   {// item was not found
+    if(strlen(trim($fields[0]))>0)
+    {
+     $tabbedoutputrecords[]=trim($fields[0]).'*';
+     $tabbedoutput.=trim($fields[0])."*\r\n";
+    }  
+   }
   }
  }
  
