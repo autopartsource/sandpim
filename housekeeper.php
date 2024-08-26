@@ -45,7 +45,12 @@ $updatedpartcount=0;
 if($viogeography && $vioyearquarter)
 {
  $basevehicles=$vcdb->getAllBaseVehicles(); //     $basevehicles[$row['BaseVehicleID']] = array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID'],'vehicletypeid'=>$row['VehicleTypeID'])
- $activeparts=$pim->getParts('', 'contains', 'any', 'any', '2', 'any', 1000000); //array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
+ $partsavail=$pim->getParts('', 'contains', 'any', 'any', '2', 'any', 100000); //array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
+ $partsannounced=$pim->getParts('', 'contains', 'any', 'any', '3', 'any', 100000);
+ $partsdisconued=$pim->getParts('', 'contains', 'any', 'any', '8', 'any', 100000);
+ 
+ $activeparts= array_merge($partsavail,$partsannounced,$partsdisconued);
+         
  foreach($activeparts as $part)
  {
   $piorecords=$pim->getPartVIOrecords($part['partnumber'],$viogeography,$vioyearquarter);
