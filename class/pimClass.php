@@ -4671,16 +4671,14 @@ function deleteAppSummary($partnumber)
  }
 
  
-
+/*
  function partVIOexperian($partnumber, $geography, $yearquarter)
- {
-  $viototal=0;
-     
+ {     
  // start with list of all apps for a given partnumber
  // build a associative array keyed by basvid and the values being array of apps (basevid-keyed apps)
  // get the vehilceCount for the basevid
  // determine usaable vs un-usable apps within each basevid grouping. Usable are apps that have one or more Experian VCdb attributes, un-usable are apps that dont have any of the Experian attributes
- 
+  $viototal=0;
   $allappsforpart=$this->getAppsByPartnumber($partnumber);
   $basevidkeyedapps=array(); foreach($allappsforpart as $app){$basevidkeyedapps[$app['basevehicleid']][]=$app;}
   
@@ -4720,21 +4718,98 @@ function deleteAppSummary($partnumber)
      }
      $bsaevidtotal+=$this->experianVehicleCount($geography, $yearquarter, $basevehicleid, $vcdbattributes);   
     }
-   }
-   
+   }   
    $viototal+=$bsaevidtotal;
   }
   $this->updatePartVIO($partnumber,$geography,$yearquarter,$viototal);
   return $viototal;
-  //return $basevidkeyedapps;
  }
  
-
-
-
- function updatePartVIO($partnumber,$geography,$yearquarter,$vehiclecount)
+*/
+ 
+   
+ function computePartVIO($partnumber, $geography, $yearquarter, $basevehicles)
  {
-  $db=new mysql; $db->connect(); $insertednew=false;
+ // return an array that contains the pio, startyear, endyear, meanyear    
+ // "mean" model-year is the population-weighted average year. If all years had equal VIO populations, the the mean will equal the mid-point 
+ // in the year-range. If earlier model-years had a higher populatuon, the mean would skew earlier than the mid-point
+ // start with list of all apps for a given partnumber
+ // build a associative array keyed by basvid and the values being array of apps (basevid-keyed apps)
+ // get the vehilceCount for the basevid
+ // determine usaable vs un-usable apps within each basevid grouping. Usable are apps that have one or more Experian VCdb attributes, un-usable are apps that dont have any of the Experian attributes
+ // we're passing in the basevehicle reference list because we've generally avoided instancing vcdb closs opjects at this low level.
+  $viototal=0;
+  $startyear=9999;
+  $endyear=0;
+
+  $allappsforpart=$this->getAppsByPartnumber($partnumber);
+  $basevidkeyedapps=array(); foreach($allappsforpart as $app){$basevidkeyedapps[$app['basevehicleid']][]=$app;}
+  $yearpopulation=array(); //2010=>23232,2011=>324322,2012=>2432323
+  
+  foreach($basevidkeyedapps as $basevehicleid=>$apps)
+  {  // get the vio total for this basevid (mmy only, no qualifiers)
+   $bsaevidtotal=0;
+   $usableapps=array();
+   $unusableappexists=false;
+   
+   foreach($apps as $app)
+   {
+    if($this->attributesAreExperianUseful($app['attributes']))
+    {// this app contains experian-usable attributed
+     $usableapps[]=$app;
+    }
+    else
+    {
+     $unusableappexists=true;
+    }
+   }
+   
+   if($unusableappexists)
+   {
+    $bsaevidtotal=$this->experianVehicleCount($geography, $yearquarter, $basevehicleid, []);
+   }
+   else
+   {
+    foreach($usableapps as $usableapp)
+    {
+     $vcdbattributes=array();
+     foreach($usableapp['attributes'] as $attribute)
+     {
+      if($attribute['type']=='vcdb')
+      {
+      $vcdbattributes[$attribute['name']]=$attribute['value']; //$attribute['name'],$attribute['value']
+      }
+     }
+     $bsaevidtotal+=$this->experianVehicleCount($geography, $yearquarter, $basevehicleid, $vcdbattributes);   
+    }
+   }
+   $viototal+=$bsaevidtotal;
+
+   if(array_key_exists($basevehicleid,$basevehicles))
+   {
+    $year=$basevehicles[$basevehicleid]['year'];
+    if($year<$startyear){$startyear=$year;}
+    if($year>$endyear){$endyear=$year;}    
+    if(array_key_exists($year,$yearpopulation))
+    {
+     $yearpopulation[$year]+=$bsaevidtotal;    
+    }
+    else
+    {
+     $yearpopulation[$year]=$bsaevidtotal;   
+    }
+   }
+  }
+  
+  $ypsum=0; $psum=0; foreach($yearpopulation as $y=>$p){$ypsum+=($y*$p); $psum+=$p;}  
+  $meanyear=0; if($psum>0){$meanyear=round(($ypsum/$psum),0);}
+  $this->updatePartVIO($partnumber,$geography,$yearquarter,$viototal,$startyear,$endyear,$meanyear);
+  return array('vio'=>$viototal,'startyear'=>$startyear,'endyear'=>$endyear,'meanyear'=>$meanyear);
+ }
+
+ function updatePartVIOgrowthtrend($partnumber,$geography,$yearquarter,$growthtrend)
+ {
+  $db=new mysql; $db->connect(); $idupdated=false;
   if($stmt=$db->conn->prepare('select id from part_VIO where partnumber=? and geography=? and yearquarter=?'))
   {
    $stmt->bind_param('sss',$partnumber,$geography,$yearquarter);
@@ -4742,17 +4817,39 @@ function deleteAppSummary($partnumber)
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {// record exists for this part
-    if($stmt=$db->conn->prepare('update part_VIO set capturedate=now(),vehicleCount=? where partnumber=? and geography=? and yearquarter=?'))
+    $idupdated=$row['id'];
+    if($stmt=$db->conn->prepare('update part_VIO set growthtrend=? where partnumber=? and geography=? and yearquarter=?'))
     {
-     $stmt->bind_param('isss',$vehiclecount, $partnumber, $geography, $yearquarter);
+     $stmt->bind_param('dsss',$growthtrend, $partnumber, $geography, $yearquarter);
+     $stmt->execute();
+    }
+   }
+  }
+  $db->close();
+  return $idupdated;
+ }
+
+  function updatePartVIO($partnumber,$geography,$yearquarter,$vehiclecount,$startyear,$endyear,$meanyear)
+ {
+  $db=new mysql; $db->connect(); $insertednew=false;
+  if($stmt=$db->conn->prepare('select id from part_VIO where partnumber=? and geography=? and yearquarter=?'))
+  {
+   $stmt->bind_param('sss',$partnumber,$geography,$yearquarter);
+   $stmt->execute();
+   $db->result = $stmt->get_result(); //ccc
+   if($row = $db->result->fetch_assoc())
+   {// record exists for this part
+    if($stmt=$db->conn->prepare('update part_VIO set capturedate=now(),vehicleCount=?, startyear=?,endyear=?,meanyear=? where partnumber=? and geography=? and yearquarter=?'))
+    {
+     $stmt->bind_param('iiiisss',$vehiclecount, $startyear, $endyear, $meanyear, $partnumber, $geography, $yearquarter);
      $stmt->execute();
     }
    }
    else
    {// record does not exist for this part. Insert a new one
-    if($stmt=$db->conn->prepare('insert into part_VIO (id,partnumber,yearQuarter,geography,capturedate,vehicleCount) values(null,?,?,?,now(),?)'))
+    if($stmt=$db->conn->prepare('insert into part_VIO (id,partnumber,yearQuarter,geography,capturedate,vehicleCount,startyear,endyear,meanyear) values(null,?,?,?,now(),?,?,?,?)'))
     {
-     $stmt->bind_param('sssi', $partnumber, $yearquarter, $geography, $vehiclecount);
+     $stmt->bind_param('sssiiii', $partnumber, $yearquarter, $geography, $vehiclecount, $startyear,$endyear,$meanyear);
      $stmt->execute();
      $insertednew=true;
     }      
@@ -4762,7 +4859,19 @@ function deleteAppSummary($partnumber)
   return $insertednew;
  }
 
- function partVIO($partnumber,$geography,$yearquarter)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ function partVIOtotal($partnumber,$geography,$yearquarter)
  {
   $viototal=0;
   $records=$this->getPartVIOrecords($partnumber, $geography, $yearquarter);
@@ -4772,11 +4881,55 @@ function deleteAppSummary($partnumber)
   }
   return $viototal;
  }
+ 
+ function partVIOmeanYear($partnumber,$geography,$yearquarter)
+ {
+  $meanyear=0;
+  $records=$this->getPartVIOrecords($partnumber, $geography, $yearquarter);
+  if(count($records))
+  {
+   $meanyear=$records[0]['meanyear'];      
+  }
+  return $meanyear;
+ }
+ 
+ function partVIOstartYear($partnumber,$geography,$yearquarter)
+ {
+  $startyear=0;
+  $records=$this->getPartVIOrecords($partnumber, $geography, $yearquarter);
+  if(count($records))
+  {
+   $startyear=$records[0]['startyear'];      
+  }
+  return $startyear;
+ }
+ 
+ function partVIOendYear($partnumber,$geography,$yearquarter)
+ {
+  $endyear=0;
+  $records=$this->getPartVIOrecords($partnumber, $geography, $yearquarter);
+  if(count($records))
+  {
+   $endyear=$records[0]['endyear'];      
+  }
+  return $endyear;
+ }
+ 
+ function partVIOgrowthTrend($partnumber,$geography,$yearquarter)
+ {
+  $growthtrend=0;
+  $records=$this->getPartVIOrecords($partnumber, $geography, $yearquarter);
+  if(count($records))
+  {
+   $growthtrend=$records[0]['growthtrend'];      
+  }
+  return $growthtrend;
+ }
 
  function getPartVIOrecords($partnumber,$geography,$yearquarter)
  {
   $db = new mysql; $db->connect(); $returnval=array();
-  if($stmt=$db->conn->prepare('select id,partnumber,yearQuarter,geography,capturedate,vehicleCount, DATEDIFF(now(),capturedate) as age from part_VIO where partnumber=? and geography=? and yearQuarter=?'))
+  if($stmt=$db->conn->prepare('select id,partnumber,yearQuarter,geography,capturedate,vehicleCount,startyear,endyear,meanyear,growthtrend,DATEDIFF(now(),capturedate) as age from part_VIO where partnumber=? and geography=? and yearQuarter=?'))
   {
    if($stmt->bind_param('sss',$partnumber,$geography,$yearquarter))
    {
@@ -4785,7 +4938,7 @@ function deleteAppSummary($partnumber)
      $db->result = $stmt->get_result();
      if($row = $db->result->fetch_assoc())
      {
-      $returnval[]=array('id'=>$row['id'], 'partnumber'=>$row['partnumber'], 'yearquarter'=>$row['yearQuarter'],'geography'=>$row['geography'], 'capturedate'=>$row['capturedate'],'vehiclecount'=>$row['vehicleCount'],'recordage'=>$row['age']);
+      $returnval[]=array('id'=>$row['id'], 'partnumber'=>$row['partnumber'], 'yearquarter'=>$row['yearQuarter'],'geography'=>$row['geography'], 'capturedate'=>$row['capturedate'],'vehiclecount'=>$row['vehicleCount'],'recordage'=>$row['age'],'startyear'=>$row['startyear'],'endyear'=>$row['endyear'],'meanyear'=>$row['meanyear'],'growthtrend'=>$row['growthtrend']);
      }
     }
    }

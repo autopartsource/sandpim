@@ -1334,7 +1334,11 @@ class setup
         yearQuarter varchar(255) NOT NULL,
         geography varchar(255) NOT NULL,
         capturedate date not null,
-        vehicleCount int unsigned null,        
+        vehicleCount int unsigned null,
+        startyear int unsigned null,
+        endyear int unsigned null,
+        meanyear int unsigned null,    
+        growthtrend decimal(4,2) null,
         PRIMARY KEY (id),
         INDEX idx_part_geo_yrQtr (partnumber, geography, yearQuarter),
         INDEX idx_capturedate (capturedate))";

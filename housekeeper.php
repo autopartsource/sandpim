@@ -9,14 +9,20 @@ include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the fu
 include_once(__DIR__.'/class/logsClass.php');
 include_once(__DIR__.'/class/assetClass.php');
 include_once(__DIR__.'/class/configGetClass.php');
+include_once(__DIR__.'/class/vcdbClass.php');
+
 
 $starttime=time();
+
+$vioyearquarterref='2023Q4';
+
+
 
 $pim=new pim();
 $configGet = new configGet();
 $logs=new logs();
 $asset=new asset();
-
+$vcdb=new vcdb();
 
 // delete (and document) orphan records in part_asset table (assets that were deleted and left behind a part connection)
 $orphans=$asset->getOrphanPartAssetRecords();
@@ -38,6 +44,7 @@ $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 $updatedpartcount=0;
 if($viogeography && $vioyearquarter)
 {
+ $basevehicles=$vcdb->getAllBaseVehicles(); //     $basevehicles[$row['BaseVehicleID']] = array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID'],'vehicletypeid'=>$row['VehicleTypeID'])
  $activeparts=$pim->getParts('', 'contains', 'any', 'any', '2', 'any', 1000000); //array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
  foreach($activeparts as $part)
  {
@@ -51,17 +58,26 @@ if($viogeography && $vioyearquarter)
   
   if($needupdate || !$foundrecord)
   {
-   $viototal=$pim->partVIOexperian($part['partnumber'], $viogeography, $vioyearquarter);
+   $pim->computePartVIO($part['partnumber'], $viogeography, $vioyearquarter, $basevehicles);
    $updatedpartcount++;
   }
- }
+  
+  $piorecordscurrent=$pim->getPartVIOrecords($part['partnumber'],$viogeography,$vioyearquarter); // 'id'=>$row['id'], 'partnumber'=>$row['partnumber'], 'yearquarter'=>$row['yearQuarter'],'geography'=>$row['geography'], 'capturedate'=>$row['capturedate'],'vehiclecount'=>$row['vehicleCount'],'recordage'=>$row['age'],'startyear'=>$row['startyear'],'endyear'=>$row['endyear'],'meanyear'=>$row['meanyear'],'growthtrend'=>$row['growthtrend']
+  $piorecordsref=$pim->getPartVIOrecords($part['partnumber'],$viogeography,$vioyearquarterref); // 'id'=>$row['id'], 'partnumber'=>$row['partnumber'], 'yearquarter'=>$row['yearQuarter'],'geography'=>$row['geography'], 'capturedate'=>$row['capturedate'],'vehiclecount'=>$row['vehicleCount'],'recordage'=>$row['age'],'startyear'=>$row['startyear'],'endyear'=>$row['endyear'],'meanyear'=>$row['meanyear'],'growthtrend'=>$row['growthtrend']
+  if(count($piorecordscurrent) && count($piorecordsref))
+  {
+   $vionow=floatval($piorecordscurrent[0]['vehiclecount']);
+   $viothen=floatval($piorecordsref[0]['vehiclecount'])+1;
+   $viotrend=round((($vionow-$viothen)/$viothen)*100,2);
+   $pim->updatePartVIOgrowthtrend($part['partnumber'],$viogeography,$vioyearquarter,$viotrend);
+  }  
+ } 
 }
 else
 {
  $logs->logSystemEvent('housekeeper', 0, 'Background housekeeper skipped part VIO updates because VIOdefaultGeography or VIOdefaultYearQuarter is not set in the config.'); 
 }
-$logs->logSystemEvent('housekeeper', 0, 'Background houskeeper updated VIO counts on '.$updatedpartcount. ' parts.'); 
-
+$logs->logSystemEvent('housekeeper', 0, 'Background houskeeper updated VIO stats on '.$updatedpartcount. ' parts.'); 
 
 // delete apps flagged as deleted (status = 1)
 $appids=$pim->removeDeletedApps();

@@ -57,7 +57,10 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
   {   
    if($part=$pim->getPart(trim($fields[0])))
    {
-    $vio=$pim->partVIOexperian($part['partnumber'], $viogeography, $vioyearquarter);
+    //$vio=$pim->partVIOexperian($part['partnumber'], $viogeography, $vioyearquarter);
+    $vio=$pim->partVIOtotal($part['partnumber'], $viogeography, $vioyearquarter);
+    $meanyear=$pim->partVIOmeanYear($part['partnumber'], $viogeography, $vioyearquarter);
+    $viogrowthtrend=$pim->partVIOgrowthTrend($part['partnumber'], $viogeography, $vioyearquarter);
     $summarytemp=$pim->getAppSummary($part['partnumber']);  
     if($summarytemp['age']>30 || $summarytemp['age']<0 || $forcesummaryupdate)
     {// existing summary is stale or missing - recapture it
@@ -185,7 +188,7 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
      $nicepackagestring=$partpackages[0]['nicepackage'];
     }
         
-    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$qoh."\t".$amd."\t".$nicepackagestring."\t".$vio."\t".$oldestyear."\t".$newestyear."\t".$summary;
+    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$qoh."\t".$amd."\t".$nicepackagestring."\t".$vio."\t".$oldestyear."\t".$meanyear."\t".$newestyear."\t".$viogrowthtrend."\t".$summary;
     $tabbedoutputrecords[]=$tabbedoutputrecord;
     $tabbedoutput.=$tabbedoutputrecord."\r\n";
    }
@@ -204,7 +207,7 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
  {
   $writer = new XLSXWriter();
   $writer->setAuthor('SandPIM');
-  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','QoH'=>'integer','AMD'=>'integer','Packages'=>'string','VIO ('.$viogeography.' '.$vioyearquarter.')'=>'integer','First model-year'=>'integer','Last model-year'=>'integer','Applications'=>'string'), array('widths'=>array(18,20,13,30,20,18,10,10,20,16,20,20,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','QoH'=>'#,##0','AMD'=>'#,##0.0','Packages'=>'string','VIO ('.$viogeography.' '.$vioyearquarter.')'=>'#,##0','First model-year'=>'integer','Mean Model-Year'=>'integer','Last model-year'=>'integer','VIO Trend %'=>'0.00','Applications'=>'string'), array('widths'=>array(18,20,13,30,20,18,10,10,20,16,14,15,14,11,150),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
   foreach($tabbedoutputrecords as $tabbedoutputrecord)
   {
    $row=explode("\t",$tabbedoutputrecord);
