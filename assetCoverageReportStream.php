@@ -115,7 +115,7 @@ foreach($matrix as $partnumber=>$columns)
  $partbalance=$pim->getPartBalance($partnumber);
  if($partbalance){$qoh=$partbalance['qoh']; $amd=$partbalance['amd'];}
 
- $viototal=$pim->partVIO($partnumber, $viogeography, $vioyearquarter);
+ $viototal=$pim->partVIOtotal($partnumber, $viogeography, $vioyearquarter);
  
  
  $row=array($partnumber, $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']),$part['GTIN'],$qoh,$amd,$viototal);

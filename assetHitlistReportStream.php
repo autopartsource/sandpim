@@ -125,7 +125,7 @@ foreach($matrix as $partnumber=>$columns)
 
  if(isset($matrix[$partnumber][$targetassettype]) && count($matrix[$partnumber][$targetassettype])){continue;}
   
- $viototal=$pim->partVIO($partnumber, $viogeography, $vioyearquarter);
+ $viototal=$pim->partVIOtotal($partnumber, $viogeography, $vioyearquarter);
  $viograndtotal+=$viototal;
  $amdgrandtotal+=$amd;
  
