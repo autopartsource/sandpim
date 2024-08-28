@@ -110,10 +110,10 @@ $users=$user->getUsers();
                                             $nicestatus = 'Active';
                                         }
                                         echo '<div class="card">';
-                                            echo '<h6 class="card-header text-start">Username: <a href="./user.php?userid=' . $user['id'] . '">' . $user['username'] . '</a></h6>';
+                                            echo '<h6 class="card-header text-start"><a href="./user.php?userid=' . $user['id'] . '">' . $user['username'] . '</a></h6>';
                                             echo '<div class="card-body">';
                                                 echo '<div class="form-group row">';
-                                                    echo '<label for="staticRealName" class="col-sm-2 col-form-label">Real Name</label>';
+                                                    echo '<label for="staticRealName" class="col-sm-2 col-form-label">Name</label>';
                                                     echo '<div class="col-sm-10">';
                                                         echo '<input id="staticRealName" readonly type="text" class="form-control" name="realname" value="'.$user['name'].'"/>';
                                                     echo '</div>';
@@ -125,20 +125,15 @@ $users=$user->getUsers();
                                                     echo '</div>';
                                                 echo '</div>';
                                                 echo '<div class="form-group row">';
-                                                    echo '<label for="staticAppCatPerms" class="col-sm-2 col-form-label">Application Category Permissions</label>';
+                                                    echo '<label for="staticStatus" class="col-sm-2 col-form-label">Activity</label>';
                                                     echo '<div class="col-sm-10">';
-                                                        echo '<input id="staticAppCatPerms" readonly type="text" class="form-control" name="realname" value=""/>';
-                                                    echo '</div>';
-                                                echo '</div>';
-                                                echo '<div class="form-group row">';
-                                                    echo '<label for="staticSysPerms" class="col-sm-2 col-form-label">System Permissions</label>';
-                                                    echo '<div class="col-sm-10">';
-                                                        echo '<input id="staticSysPerms" readonly type="text" class="form-control" name="realname" value=""/>';
+                                                        echo '<a href="./userHistory.php?userid='.$user['id'].'">History</a>';
                                                     echo '</div>';
                                                 echo '</div>';
                                             echo '</div>';
+                                            
                                         echo '</div>';
-                                        echo '<hr>';
+                                        
                                     }
                                     ?>
                                 </div>

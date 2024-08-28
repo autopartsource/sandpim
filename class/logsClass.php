@@ -284,6 +284,105 @@ class logs {
         return $returnVal;
     }
     
+
+
+
+    function getUserEvents($userid,$limit)
+    {
+        // bring these 5 tables into one common result-set and order it by date-time
+        // application_history
+        // part_history
+        // asset_history
+        // system_history
+        // vehicle_history
+        
+        $db = new mysql; $db->connect(); $events = array();
+        
+        if ($stmt = $db->conn->prepare('select * from application_history where userid=? order by eventdatetime desc limit ?'))
+        {
+            if($stmt->bind_param('ii', $userid, $limit))
+            {                   
+                if($stmt->execute())
+                {
+                    $db->result = $stmt->get_result();
+                    while ($row = $db->result->fetch_assoc())
+                    {
+                        $events[] = array('type'=>'application','id' => $row['id'], 'reference' => $row['applicationid'], 'eventdatetime' => $row['eventdatetime'], 'description' => $row['description']);
+                    }
+                }
+            }
+        }
+        
+        if ($stmt = $db->conn->prepare('select * from part_history where userid=? order by eventdatetime desc limit ?'))
+        {
+            if($stmt->bind_param('ii', $userid, $limit))
+            {                   
+                if($stmt->execute())
+                {
+                    $db->result = $stmt->get_result();
+                    while ($row = $db->result->fetch_assoc())
+                    {
+                        $events[] = array('type'=>'part','id' => $row['id'], 'reference' => $row['partnumber'], 'eventdatetime' => $row['eventdatetime'], 'description' => $row['description']);
+                    }
+                }
+            }
+        }
+        
+        if ($stmt = $db->conn->prepare('select * from asset_history where userid=? order by eventdatetime desc limit ?'))
+        {
+            if($stmt->bind_param('ii', $userid, $limit))
+            {                   
+                if($stmt->execute())
+                {
+                    $db->result = $stmt->get_result();
+                    while ($row = $db->result->fetch_assoc())
+                    {
+                        $events[] = array('type'=>'asset','id' => $row['id'], 'reference' => $row['assetid'], 'eventdatetime' => $row['eventdatetime'], 'description' => $row['description']);
+                    }
+                }
+            }
+        }
+        
+        if ($stmt = $db->conn->prepare('select * from system_history where userid=? order by eventdatetime desc limit ?'))
+        {
+            if($stmt->bind_param('ii', $userid, $limit))
+            {                   
+                if($stmt->execute())
+                {
+                    $db->result = $stmt->get_result();
+                    while ($row = $db->result->fetch_assoc())
+                    {
+                        $events[] = array('type'=>'system - '.$row['eventtype'] ,'id' => $row['id'], 'reference' => '', 'eventdatetime' => $row['eventdatetime'], 'description' => $row['description']);
+                    }
+                }
+            }
+        }
+        
+        if ($stmt = $db->conn->prepare('select * from vehicle_history where userid=? order by eventdatetime desc limit ?'))
+        {
+            if($stmt->bind_param('ii', $userid, $limit))
+            {                   
+                if($stmt->execute())
+                {
+                    $db->result = $stmt->get_result();
+                    while ($row = $db->result->fetch_assoc())
+                    {
+                        $events[] = array('type'=>'system','id' => $row['id'], 'reference' => $row['basevehicleid'], 'eventdatetime' => $row['eventdatetime'], 'description' => $row['description']);
+                    }
+                }
+            }
+        }
+        
+        // sort the combined list by date/time and limit to original requested limit
+        $datetimeindex=array(); foreach($events as $id=>$event){$datetimeindex[$id]=$event['eventdatetime'];}
+        array_multisort($datetimeindex, SORT_DESC, $events);       
+        $limitedevents= array_slice($events, 0, $limit);
+ 
+        $db->close();
+        return $limitedevents;
+    }
+
+
     
     
     
