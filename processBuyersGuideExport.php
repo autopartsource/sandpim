@@ -104,7 +104,7 @@ if(count($jobs))
   if($part=$pim->getPart($partnumber))
   {
     $temppartcount++; $processedcount++;
-    $vio=$pim->partVIOexperian($part['partnumber'], $viogeography, $vioyearquarter);
+    $vio=$pim->partVIOtotal($part['partnumber'], $viogeography, $vioyearquarter);
     $summarytemp=$pim->getAppSummary($part['partnumber']);  
     if($summarytemp['age']>30 || $summarytemp['age']<0 || $forcesummaryupdate)
     {// existing summary is stale or missing - recapture it

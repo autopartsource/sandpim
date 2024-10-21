@@ -26,8 +26,8 @@ if(!isset($_SESSION['userid']))
 $user=new user();
 $logs=new logs();
 
-$streamXLS=false;
-
+$streamXLSX=false;
+        
 $filename='';
 $xlsxdata='';
 

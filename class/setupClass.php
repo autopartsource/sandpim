@@ -1428,7 +1428,27 @@ class setup
         INDEX idx_qdbid (qdbid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - noteqdbtranslation ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - noteqdbtranslation ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE descriptionrecipe (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partcategory int unsigned not null,
+        parttypeid int unsigned not null,
+        descriptioncode varchar(255) NOT NULL,
+        languagecode varchar(255) NOT NULL,        
+        PRIMARY KEY (id)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - descriptionrecipe ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - descriptionrecipe ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE descriptionrecipeblock (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        recipeid int UNSIGNED NOT NULL,
+        sequence int unsigned NOT NULL,
+        blocktype varchar(255) NOT NULL,
+        blockparameters text NOT NULL,
+        PRIMARY KEY (id),
+        INDEX idx_version (recipeid)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - descriptionrecipeblock ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - descriptionrecipeblock ('.$db->conn->error.')';}
+                        
         $sql="CREATE TABLE wmapisession (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         state varchar(255) NOT NULL,
