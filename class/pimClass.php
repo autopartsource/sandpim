@@ -1787,8 +1787,47 @@ function countAppsByPartcategories($partcategories)
   return $result;   
  }
  
+ //ccc
+ function getPartDescriptionRecipes()
+ {
+  $recipes=array(); 
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from descriptionrecipe'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $recipes[]=array('id'=>$row['id'], 'partcategory'=>$row['partcategory'],'parttypeid'=>$row['parttypeid'],'descriptioncode'=>$row['descriptioncode'],'languagecode'=>$row['languagecode']);
+    }
+   }
+  }
+  $db->close();
+  return $recipes;
+ }
  
- 
+ function getPartDescriptionRecipeBlocks($recipeid)
+ {
+  $blocks=array(); 
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from descriptionrecipeblock where recipeid=? order by sequence'))
+  {
+   if($stmt->bind_param('i',$recipeid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $blocks[]=array('id'=>$row['id'],'blocktype'=>$row['blocktype'],'blockparameters'=>$row['blockparameters']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $blocks;
+ }
  
 
  function getPartAttributes($partnumber)
