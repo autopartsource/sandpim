@@ -23,7 +23,9 @@ $user = new user;
 
 if($user->getUserByID(intval($_GET['userid'])))
 {
- $events = $logs->getUserEvents($user->id, 100);
+ $eventcount=300;
+ if(isset($_GET['eventcount'])){$eventcount=intval($_GET['eventcount']);}
+ $events = $logs->getUserEvents($user->id, $eventcount);
 }
 
 ?>

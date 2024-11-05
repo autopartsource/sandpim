@@ -68,10 +68,12 @@ $recipes=$pim->getPartDescriptionRecipes();
 
 // foreach record, delete existing item (by partcategory and parttype) description records matching descriptioncode and language
 
+echo '<textarea>';
+
 foreach($recipes as $recipe)
 {
  $parts=$pim->getParts('', 'contains', $recipe['partcategory'], $recipe['parttypeid'], 'any', 'any', 100000);
- echo '<br/>'.$recipe['id'].' - '.$recipe['parttypeid'].' - '.$recipe['partcategory'].' ('.count($parts).' parts)<br/>';
+ echo "\r\n".$recipe['id'].' - '.$recipe['parttypeid'].' - '.$recipe['partcategory'].' ('.count($parts).' parts)'."\r\n";
  foreach($parts as $part)
  {
   echo ' -- '.$part['partnumber'].' - ';
@@ -83,7 +85,7 @@ foreach($recipes as $recipe)
    switch($block['blocktype'])
    {
        case 'LITERAL':
-           $descriptionbits[]=$block['blockparameters'];
+           $descriptionbits[]=trim($block['blockparameters']);
            break;
 
        case 'COMPONENTTOUTER':
@@ -100,7 +102,7 @@ foreach($recipes as $recipe)
             {
              if(in_array($kitcomponent['partnumber'], $toutedcomponents))
              {
-              $descriptionbits[]=$parameterbits[1];
+              $descriptionbits[]=trim($parameterbits[1]);
               break;
              }                
             }
@@ -113,10 +115,32 @@ foreach($recipes as $recipe)
            //  9076~Yes~ w/Chamfered Edges
            //  170~Yes~ Slotted
            //  9478~~ [] Thick 
+           //  Chamfer Type~~ [] Chamfered Edges
            
            $parameterbits=explode('~',$block['blockparameters']);
            if(count($parameterbits)==3)
            {
+            $partattributes=$pim->getPartAttributes($part['partnumber']);
+            
+            foreach($partattributes as $partattribute)
+            {
+             if((intval($partattribute['PAID'])>0 && $partattribute['PAID']==$parameterbits[0]) || (intval($partattribute['PAID'])==0 && $partattribute['name']==$parameterbits[0]))
+             {// this attribute (id or user-defined) matched the recipe block - now do something with the value
+              if($parameterbits[1]==$partattribute['value'])
+              {// value is an exact match for recipe block. ex: blockparameters="170~Yes~ Slotted"    attribute is PAID=170,value=Yes
+               $descriptionbits[]=trim($parameterbits[2]);
+               break;
+              }
+              else
+              {// value is not an exact match for recipe block - maybe it's a scalar value like: blockparameters="9478~~ [] Thick"    attribute is PAID=9478,value=0.705IN
+               if(strpos($parameterbits[2],'[]')!==false)
+               {
+                $descriptionbits[]= trim(str_replace('[]',$partattribute['value'].$partattribute['uom'],$parameterbits[2]));
+                break;
+               }                  
+              }
+             }                
+            }            
            }
            
            
@@ -131,12 +155,38 @@ foreach($recipes as $recipe)
    }
 //   echo ' --- '.$block['id'].' - '.$block['blocktype'].' - '.$block['blockparameters'].'<br/>';    
   }
-  echo 'Desc:'.implode('; ',$descriptionbits).'<br/>';
+
+  $newdescription=trim(implode('; ',$descriptionbits));
+  $existingdescriptons=$pim->getPartDescriptions($part['partnumber']); //$descriptions[]=array('id'=>$row['id'],'description'=>$row['description'],'descriptioncode'=>$row['descriptioncode'],'sequence'=>$row['sequence'],'languagecode'=>$row['languagecode'],'inheritedfrom'=>'');       
+  $foundexistingcode=false;
+  foreach($existingdescriptons as $existingdescripton)
+  {
+   if($existingdescripton['inheritedfrom']!=''){continue;}
+   if($recipe['descriptioncode']==$existingdescripton['descriptioncode'])
+   {
+    $foundexistingcode=true;
+    if(trim($existingdescripton['description'])==$newdescription)
+    {// existing description for this part and description code is already the same as the recipe dictates - no action needed
+     echo 'Already good ('.$existingdescripton['descriptioncode'].')'."\r\n";
+    }
+    else
+    {// existing description for this part and description code is different then recipe dictates - need to update (drop/add)
+     echo 'Need to update ('.$recipe['descriptioncode'].'): '.$existingdescripton['description'].'!='.$newdescription."\r\n";
+    }
+   }
+  }
   
-          
+
+  
+  if(!$foundexistingcode)
+  {// no existing description for this part / description code exists - add it
+   echo 'no existing ('.$recipe['descriptioncode'].'), need to add:'.$newdescription."\r\n";       
+  }
+
  } 
  
 }
 
+echo '</textarea>';
 
 ?>
