@@ -1541,6 +1541,8 @@ class setup
         $sql="insert into navelement values('SETTINGS/CONFIGURATION','SETTINGS','Configuration','config.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/BACKGROUNDJOBS','SETTINGS','Background import/export jobs','backgroundJobs.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/SANDPIPER','SETTINGS','Sandpiper','sandpiper.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/DESCRIPTIONRECIPES','SETTINGS','Description Recipes','descriptionRecipes.php',14);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        
         
         $sql="insert into navelement values('IMPORT/ACESFILEUPLOAD','IMPORT','ACES File Upload','importACESupload.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/ACESSNIPPET','IMPORT','ACES xml snippet','importACESxml.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();

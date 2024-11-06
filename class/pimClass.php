@@ -1786,8 +1786,30 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $result;   
  }
+
+
+ function getPartDescriptionRecipe($id)
+ {
+  $recipe=false;
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from descriptionrecipe where id=?'))
+  {
+   if($stmt->bind_param('i',$id))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $recipe=array('id'=>$row['id'], 'partcategory'=>$row['partcategory'],'parttypeid'=>$row['parttypeid'],'descriptioncode'=>$row['descriptioncode'],'languagecode'=>$row['languagecode']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $recipe;
+ }
  
- //ccc
  function getPartDescriptionRecipes()
  {
   $recipes=array(); 
@@ -1820,7 +1842,7 @@ function countAppsByPartcategories($partcategories)
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-      $blocks[]=array('id'=>$row['id'],'blocktype'=>$row['blocktype'],'blockparameters'=>$row['blockparameters']);
+      $blocks[]=array('id'=>$row['id'],'blocktype'=>$row['blocktype'],'blockparameters'=>$row['blockparameters'],'sequence'=>$row['sequence']);
      }
     }
    }
@@ -1828,6 +1850,42 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $blocks;
  }
+ 
+ function addPartDescriptionRecipeBlock($recipeid,$sequence,$blocktype,$blockparameters)
+ {
+  $id=false; $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into descriptionrecipeblock (id,recipeid,sequence,blocktype,blockparameters) values(null,?,?,?,?)'))
+  {
+   $stmt->bind_param('iiss',$recipeid,$sequence,$blocktype,$blockparameters);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;
+ }
+ 
+ function deletePartDescriptionRecipeBlock($recipeid,$blockid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from descriptionrecipeblock where id=? and recipeid=?'))
+  {
+   $stmt->bind_param('ii',$blockid,$recipeid);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ function updatePartDescriptionRecipeBlock($id,$blockparameters)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update descriptionrecipeblock set blockparameters=? where id=?'))
+  {
+   $stmt->bind_param('si',$blockparameters,$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
  
 
  function getPartAttributes($partnumber)
