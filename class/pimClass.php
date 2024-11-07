@@ -1787,7 +1787,19 @@ function countAppsByPartcategories($partcategories)
   return $result;   
  }
 
-
+ function addPartDescriptionRecipe($partcategory,$parttypeid,$descriptioncode,$languagecode)
+ {
+  $id=false; $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into descriptionrecipe (id,partcategory,parttypeid,descriptioncode,languagecode) values(null,?,?,?,?)'))
+  {
+   $stmt->bind_param('iiss',$partcategory,$parttypeid,$descriptioncode,$languagecode);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;     
+ }
+ 
  function getPartDescriptionRecipe($id)
  {
   $recipe=false;
@@ -1814,7 +1826,7 @@ function countAppsByPartcategories($partcategories)
  {
   $recipes=array(); 
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('select * from descriptionrecipe'))
+  if($stmt=$db->conn->prepare('select descriptionrecipe.* from descriptionrecipe left join partcategory on descriptionrecipe.partcategory=partcategory.id order by partcategory.name,descriptionrecipe.parttypeid,descriptionrecipe.descriptioncode,descriptionrecipe.languagecode'))
   {
    if($stmt->execute())
    {
