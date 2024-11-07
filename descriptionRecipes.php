@@ -83,7 +83,7 @@ $recipes=$pim->getPartDescriptionRecipes();  //     $recipes[]=array('id'=>$row[
                      
                     foreach($blocks as $block)
                     {
-                     echo '<form><input type="hidden" name="recipeid" value="'.$recipe['id'].'"/><input type="hidden" name="blockid" value="'.$block['id'].'"/><div style="padding:5px;">'.$block['sequence'].' - '.$block['blocktype'].' <input style="width:50%;" type="text" id="parameters_'.$block['id'].'" value="'.$block['blockparameters'].'"/> <input type="submit" name="action" value="Update"/> <input type="submit" name="action" value="Delete"/> <input type="submit" name="action" value="Down"/></div></form>';
+                     echo '<form action="./descriptionRecipes.php" method="get"><input type="hidden" name="recipeid" value="'.$recipe['id'].'"/><input type="hidden" name="blockid" value="'.$block['id'].'"/><div style="padding:5px;">'.$block['sequence'].' - '.$block['blocktype'].' <input style="width:50%;" name="blockparameters" type="text" id="parameters_'.$block['id'].'" value="'.$block['blockparameters'].'"/> <input type="submit" name="action" value="Update"/> <input type="submit" name="action" value="Delete"/></div></form>';
                     }
                     
                     

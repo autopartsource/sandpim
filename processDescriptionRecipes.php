@@ -13,9 +13,10 @@
  */
 
 
-
-
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
+
+$starttime=time();
+
 $pim = new pim();
 
 
@@ -29,6 +30,8 @@ $padb=new padb();
 $logs=new logs();
 
 $recipes=$pim->getPartDescriptionRecipes();
+$evaluations=0; $updates=0; $writes=0;
+
 
 // description recipie records are keyed by parttype/cattegory
 /*
@@ -68,15 +71,16 @@ $recipes=$pim->getPartDescriptionRecipes();
 
 // foreach record, delete existing item (by partcategory and parttype) description records matching descriptioncode and language
 
-echo '<textarea>';
+//echo '<textarea>';
 
 foreach($recipes as $recipe)
 {
  $parts=$pim->getParts('', 'contains', $recipe['partcategory'], $recipe['parttypeid'], 'any', 'any', 100000);
- echo "\r\n".$recipe['id'].' - '.$recipe['parttypeid'].' - '.$recipe['partcategory'].' ('.count($parts).' parts)'."\r\n";
+ //echo "\r\n".$recipe['id'].' - '.$recipe['parttypeid'].' - '.$recipe['partcategory'].' ('.count($parts).' parts)'."\r\n";
  foreach($parts as $part)
  {
-  echo ' -- '.$part['partnumber'].' - ';
+  $evaluations++;
+  // echo ' -- '.$part['partnumber'].' - ';
       
   $blocks=$pim->getPartDescriptionRecipeBlocks($recipe['id']);
   $descriptionbits=array();
@@ -167,26 +171,34 @@ foreach($recipes as $recipe)
     $foundexistingcode=true;
     if(trim($existingdescripton['description'])==$newdescription)
     {// existing description for this part and description code is already the same as the recipe dictates - no action needed
-     echo 'Already good ('.$existingdescripton['descriptioncode'].')'."\r\n";
+     //echo 'Already good ('.$existingdescripton['descriptioncode'].')'."\r\n";
     }
     else
     {// existing description for this part and description code is different then recipe dictates - need to update (drop/add)
-     echo 'Need to update ('.$recipe['descriptioncode'].'): '.$existingdescripton['description'].'!='.$newdescription."\r\n";
+     //echo 'Need to update ('.$recipe['descriptioncode'].'): '.$existingdescripton['description'].'!='.$newdescription."\r\n";
+     $pim->deletePartDescriptionById($existingdescripton['id']);
+     $pim->addPartDescription($part['partnumber'], $newdescription, $recipe['descriptioncode'], 1, $recipe['languagecode']);
+     $oid=$pim->updatePartOID($part['partnumber']);
+     $pim->logPartEvent($part['partnumber'],0, 'Description dropped and re-added by recipe '.$recipe['id'].': '.$newdescription,$oid);
+     $updates++;
     }
    }
   }
-  
 
   
   if(!$foundexistingcode)
   {// no existing description for this part / description code exists - add it
-   echo 'no existing ('.$recipe['descriptioncode'].'), need to add:'.$newdescription."\r\n";       
+   //echo 'no existing ('.$recipe['descriptioncode'].'), need to add:'.$newdescription."\r\n";       
+   $pim->addPartDescription($part['partnumber'], $newdescription, $recipe['descriptioncode'], 1, $recipe['languagecode']);
+   $oid=$pim->updatePartOID($part['partnumber']);
+   $pim->logPartEvent($part['partnumber'],0, 'Description added by recipe '.$recipe['id'].': '.$newdescription,$oid);
+   $writes++;
   }
-
- } 
- 
+ }  
 }
 
-echo '</textarea>';
+//echo '</textarea>';
+$runtime=time()-$starttime;
+$logs->logSystemEvent('DESCRIPTIONS', 0, 'Part description recipes; Evaluated: '.$evaluations.', updates:'.$updates.', writes:'.$writes.' in '.$runtime.' seconds');
 
 ?>

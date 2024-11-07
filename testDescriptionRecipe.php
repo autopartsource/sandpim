@@ -27,6 +27,8 @@ $configSet= new configSet;
 $recipe=$pim->getPartDescriptionRecipe(intval($_GET['id']));
 $parts=$pim->getParts('', 'contains', $recipe['partcategory'], $recipe['parttypeid'], 'any', 'any', 100000);
 
+echo '<a href="./descriptionRecipes.php">Back</a>';
+
 echo '<div style="padding:10px;"><strong>Recipe:</strong> '.$recipe['id'].'<br/><strong>Part type:</strong> '.$pcdb->parttypeName($recipe['parttypeid']).'<br/><strong>Part Category:</strong> '.$pim->partCategoryName($recipe['partcategory']).'<br/><strong>Description Code:</strong> '.$recipe['descriptioncode'].'<br/>Applies to '.count($parts).' parts</div>';
 
 echo '<textarea style="width:100%;height:600px;">';
