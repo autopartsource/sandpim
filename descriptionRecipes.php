@@ -105,14 +105,15 @@ $languagecodes=$pcdb->getPartDescriptionLanguageCodes();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                 <?php
                 foreach($recipes as $recipe)
-                {                
+                {
+                    $displaystyle='none'; if(isset($_GET['recipeid']) && $_GET['recipeid']==$recipe['id']){$displaystyle='block';}
                     echo '<div class="card">';
                     echo '<h6 class="card-header text-start">'.$pim->partCategoryName($recipe['partcategory']).' / '.$pcdb->parttypeName($recipe['parttypeid']).' ['.$recipe['descriptioncode'].' '.$recipe['languagecode'].'] <span onclick="showHideRecipeBlock(\'recipe_'.$recipe['id'].'\');">...</span> <div style="float:right;"><a href="./testDescriptionRecipe.php?id='.$recipe['id'].'">Test</a></div><div style="clear:both;"></div></h6>';
                     $blocks=$pim->getPartDescriptionRecipeBlocks($recipe['id']); //      $blocks[]=array('id'=>$row['id'],'blocktype'=>$row['blocktype'],'blockparameters'=>$row['blockparameters']);
-                    echo '<div class="card-body" style="display:none;" id="recipe_'.$recipe['id'].'">';
+                    echo '<div class="card-body" style="display:'.$displaystyle.';" id="recipe_'.$recipe['id'].'">';
                     foreach($blocks as $block)
                     {
-                     echo '<form action="./descriptionRecipes.php" method="get"><input type="hidden" name="recipeid" value="recipe_'.$recipe['id'].'"/><input type="hidden" name="blockid" value="'.$block['id'].'"/><div style="padding:5px;">'.$block['sequence'].' - '.$block['blocktype'].' <input style="width:50%;" name="blockparameters" type="text" id="parameters_'.$block['id'].'" value="'.$block['blockparameters'].'"/> <input type="submit" name="action" value="Update"/> <input type="submit" name="action" value="Delete"/></div></form>';
+                     echo '<form action="./descriptionRecipes.php" method="get"><input type="hidden" name="recipeid" value="'.$recipe['id'].'"/><input type="hidden" name="blockid" value="'.$block['id'].'"/><div style="padding:5px;">'.$block['sequence'].' - '.$block['blocktype'].' <input style="width:50%;" name="blockparameters" type="text" id="parameters_'.$block['id'].'" value="'.$block['blockparameters'].'"/> <input type="submit" name="action" value="Update"/> <input type="submit" name="action" value="Delete"/></div></form>';
                     }
                     echo '<div style="padding:20px;"><form><input type="hidden" name="recipeid" value="'.$recipe['id'].'"/><input type="text" name="sequence" value="1" size="1"/> <select name="blocktype"><option value="LITERAL">Literal</option><option value="COMPONENTTOUTER">Component Touter</option><option value="ATTRIBUTE">Attribute</option></select> <input style="width:50%;" name="blockparameters" type="text"/> <input type="submit" name="action" value="Add"/></form></div>';
                     echo '</div>';                     
