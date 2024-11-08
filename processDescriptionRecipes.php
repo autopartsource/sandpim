@@ -169,6 +169,15 @@ foreach($recipes as $recipe)
    if($recipe['descriptioncode']==$existingdescripton['descriptioncode'])
    {
     $foundexistingcode=true;
+    
+    if(trim($existingdescripton['description'])=='')
+    { // special case - we just stumbled on a blank description - delete it
+     $pim->deletePartDescriptionById($existingdescripton['id']);
+     $oid=$pim->updatePartOID($part['partnumber']);
+     $pim->logPartEvent($part['partnumber'],0, 'Blank ('.$existingdescripton['descriptioncode'].') description dropped by recipe '.$recipe['id'],$oid);     
+     continue;
+    }
+    
     if(trim($existingdescripton['description'])==$newdescription)
     {// existing description for this part and description code is already the same as the recipe dictates - no action needed
      //echo 'Already good ('.$existingdescripton['descriptioncode'].')'."\r\n";
@@ -176,17 +185,27 @@ foreach($recipes as $recipe)
     else
     {// existing description for this part and description code is different then recipe dictates - need to update (drop/add)
      //echo 'Need to update ('.$recipe['descriptioncode'].'): '.$existingdescripton['description'].'!='.$newdescription."\r\n";
-     $pim->deletePartDescriptionById($existingdescripton['id']);
-     $pim->addPartDescription($part['partnumber'], $newdescription, $recipe['descriptioncode'], 1, $recipe['languagecode']);
-     $oid=$pim->updatePartOID($part['partnumber']);
-     $pim->logPartEvent($part['partnumber'],0, 'Description dropped and re-added by recipe '.$recipe['id'].': '.$newdescription,$oid);
+     
+     if(trim($newdescription)!='')
+     { // normal case: non-blank new description is about to be written to place existing non-blank description
+      $pim->deletePartDescriptionById($existingdescripton['id']);
+      $pim->addPartDescription($part['partnumber'], $newdescription, $recipe['descriptioncode'], 1, $recipe['languagecode']);
+      $oid=$pim->updatePartOID($part['partnumber']);
+      $pim->logPartEvent($part['partnumber'],0, 'Description dropped and re-added by recipe '.$recipe['id'].': '.$newdescription,$oid);
+     }
+     else
+     {// odd case: blank description is about to be written to replace non-blank description (delete the existing, but don't add new blank one)
+      $pim->deletePartDescriptionById($existingdescripton['id']);
+      $oid=$pim->updatePartOID($part['partnumber']);
+      $pim->logPartEvent($part['partnumber'],0, 'Description dropped and blank not re-added by recipe '.$recipe['id'],$oid);         
+     }     
      $updates++;
     }
    }
   }
 
   
-  if(!$foundexistingcode)
+  if(!$foundexistingcode && trim($newdescription)!='')
   {// no existing description for this part / description code exists - add it
    //echo 'no existing ('.$recipe['descriptioncode'].'), need to add:'.$newdescription."\r\n";       
    $pim->addPartDescription($part['partnumber'], $newdescription, $recipe['descriptioncode'], 1, $recipe['languagecode']);

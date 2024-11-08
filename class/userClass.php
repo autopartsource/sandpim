@@ -113,6 +113,7 @@ class user
 
  function realNameOfUserid($userid)
  {
+  if($userid==0){return 'System';}
   $name='not found (userid '.$userid.')';
   $db = new mysql; 
   //$db->dbname='pim'; 
