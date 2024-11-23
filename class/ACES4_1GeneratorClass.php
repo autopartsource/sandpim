@@ -4,7 +4,7 @@ include_once(__DIR__."/qdbClass.php");
 class ACESgenerator
 {
     
- function createACESdoc($header,$apps,$assets,$parttranslations,$options)
+ function createACESdoc($header,$apps,$assets,$parttranslations,$partdescriptions,$options)
  {
      /* options keys
       * 'IncludeCosmeticApps' (boolenan)
@@ -17,6 +17,8 @@ class ACESgenerator
   $includecosmeticapps=false; if(array_key_exists('IncludeCosmeticApps',$options)){$includecosmeticapps=$options['IncludeCosmeticApps'];}
   $suppressduplicateapps=false; if(array_key_exists('SuppressDuplicateApps',$options)){$suppressduplicateapps=$options['SuppressDuplicateApps'];}
   $profilename=''; if(array_key_exists('ProfileName',$options)){$profilename=$options['ProfileName'];}
+  $descriptiontonmfrlabel=''; if(array_key_exists('DescriptionToMfrlabel',$options)){$descriptiontonmfrlabel=$options['DescriptionToMfrlabel'];}
+  
   
   $existingapphashes=array();
   
@@ -57,10 +59,13 @@ class ACESgenerator
    { // major app problems that would cause an XSD violation //$app['positionid']==0 ||
     continue;
    }
-       
+
+   $mfrlabel=''; if(array_key_exists('mfrlabel', $app) && trim($app['mfrlabel'])!=''){$mfrlabel=$app['mfrlabel'];}
+   if($descriptiontonmfrlabel!='' && array_key_exists($app['partnumber'],$partdescriptions)){$mfrlabel=$partdescriptions[$app['partnumber']];}   
+   
    if($suppressduplicateapps)
-   {// hash what goes to the output       
-    $apphash=md5($app['basevehicleid'].$app['makeid'].$app['equipmentid'].$app['parttypeid'].$app['positionid'].$app['quantityperapp'].$app['partnumber'].$app['mfrlabel'].$this->appAttributesHash($app['attributes'], $includecosmeticattributes));     
+   {// hash what goes to the output
+    $apphash=md5($app['basevehicleid'].$app['makeid'].$app['equipmentid'].$app['parttypeid'].$app['positionid'].$app['quantityperapp'].$app['partnumber'].$mfrlabel.$this->appAttributesHash($app['attributes'], $includecosmeticattributes));     
     if(array_key_exists($apphash, $existingapphashes))
     {
      continue;
@@ -167,15 +172,14 @@ class ACESgenerator
    $appElement->appendChild($parttypeElement);
    $parttypeElement->setAttribute('id', $app['parttypeid']);
 
-   if(array_key_exists('mfrlabel', $app) && trim($app['mfrlabel'])!=''){$mfrlabelElement=new DOMElement('MfrLabel',$app['mfrlabel']); $appElement->appendChild($mfrlabelElement);}
-
+   if($mfrlabel != ''){$mfrlabelElement=new DOMElement('MfrLabel',htmlspecialchars($mfrlabel, ENT_XML1 | ENT_COMPAT, 'UTF-8')); $appElement->appendChild($mfrlabelElement);} 
+   
    if($app['positionid']!=0)
    {
     $positionElement=new DOMElement('Position');
     $appElement->appendChild($positionElement);
     $positionElement->setAttribute('id', $app['positionid']);
-   }
-   
+   }   
 
    if(array_key_exists($app['partnumber'], $parttranslations))
    {// traanslation exist for this app's partnumber - flip it

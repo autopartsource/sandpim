@@ -265,7 +265,8 @@ $assetitemordercolumnid=$columnids['Asset Item Order'];
  
  //-----------------------------------------------------
  $parttranslations=array(); // translations are not relavant here
- $doc=$ACESgenerator->createACESdoc($header, $apps, $assets, $parttranslations, $options);
+ $partdescriptions=array();
+ $doc=$ACESgenerator->createACESdoc($header, $apps, $assets, $parttranslations, $partdescriptions, $partdescriptions, $options);
  $doc->formatOutput=true;
  $acesxmlstring=$doc->saveXML();    
 

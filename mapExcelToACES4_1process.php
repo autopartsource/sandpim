@@ -436,7 +436,8 @@ if($validUpload)
 
  
  //-----------------------------------------------------
- $doc=$ACESgenerator->createACESdoc($header, $apps, $assets, $options);
+ $partdescriptions=array();
+ $doc=$ACESgenerator->createACESdoc($header, $apps, $assets, $partdescriptions, $options);
  $doc->formatOutput=true;
  $acesxmlstring=$doc->saveXML();    
 

@@ -99,7 +99,8 @@ else
 
  $parttranslations=$pim->getReceiverprofileParttranslations($receiverprofileid);
 
- $doc=$generator->createACESdoc($header,$apps,$assetapps, $parttranslations, $generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
+ $partdescriptions=array();
+ $doc=$generator->createACESdoc($header,$apps,$assetapps, $parttranslations, $partdescriptions, $generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
  $doc->formatOutput=true;
  $acesxml=$doc->saveXML();
 

@@ -82,11 +82,34 @@ if(count($jobs))
  $includecosmeticapps=false; if(array_key_exists('IncludeCosmeticApps', $keyedprofile) && $keyedprofile['IncludeCosmeticApps']=='yes'){$includecosmeticapps=true;}
  $includecosmeticattributes=false; if(array_key_exists('IncludeCosmeticAttributes', $keyedprofile) && $keyedprofile['IncludeCosmeticAttributes']=='yes'){$includecosmeticattributes=true;} 
  $suppressduplicateapps=false; if(array_key_exists('SuppressDuplicateApps', $keyedprofile) && $keyedprofile['SuppressDuplicateApps']=='yes'){$suppressduplicateapps=true;} 
- $generatoroptions=array('IncludeCosmeticApps'=>$includecosmeticapps,'IncludeCosmeticAttributes'=>$includecosmeticattributes,'SuppressDuplicateApps'=>$suppressduplicateapps,'ProfileName'=>$profilename);
+ $descriptiontonmfrlabel=''; if(array_key_exists('DescriptionToMfrlabel', $keyedprofile) && $keyedprofile['DescriptionToMfrlabel']!=''){$descriptiontonmfrlabel=$keyedprofile['DescriptionToMfrlabel'];}
+ $generatoroptions=array('IncludeCosmeticApps'=>$includecosmeticapps,'IncludeCosmeticAttributes'=>$includecosmeticattributes,'SuppressDuplicateApps'=>$suppressduplicateapps,'DescriptionToMfrlabel'=>$descriptiontonmfrlabel,'ProfileName'=>$profilename);
 
  $assetapps=array();
  
- $doc=$generator->createACESdoc($header,$apps,$assetapps, $parttranslations, $generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
+ // roll thgough apps to extract a list of parts for the purpose of getting descriptions to jam into mfr label (if that option was selected) 
+ $partdescriptions=array();
+ if($descriptiontonmfrlabel!='')
+ {
+  foreach($apps as $app)
+  {
+   if(!array_key_exists($app['partnumber'],$partdescriptions))
+   {
+    $descriptionstemp=$pim->getPartDescriptions($app['partnumber']);
+    foreach($descriptionstemp as $descriptiontemp)
+    {
+     if($descriptiontemp['descriptioncode']==$descriptiontonmfrlabel)
+     {
+      $partdescriptions[$app['partnumber']]=$descriptiontemp['description'];
+      break; // use first instance found
+     }
+    }
+   }
+  }
+ }
+ 
+ 
+ $doc=$generator->createACESdoc($header,$apps,$assetapps, $parttranslations, $partdescriptions, $generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);
 
  $schemaresults=array();
  libxml_use_internal_errors(true);

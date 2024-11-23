@@ -4636,7 +4636,7 @@ function deleteAppSummary($partnumber)
     
      if($stmt=$db->conn->prepare("insert into partrelationship values(null,?,?,'kit',?,?)"))
      {
-      if($stmt->bind_param('ssii',$partnumber,$componentpartnumber,$componentunits,$componentsequence))
+      if($stmt->bind_param('ssdi',$partnumber,$componentpartnumber,$componentunits,$componentsequence))
       {
        foreach($bom as $component)
        {

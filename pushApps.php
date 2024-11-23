@@ -57,7 +57,7 @@ if(count($localoids)==0)
  
  if($localoidhash == $responsedecoded['hash'])
  {
-  $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no apps pushed');
+  // commented 11-11-2024 to bring the noise down   $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no apps pushed');
   continue;
  }  
     
