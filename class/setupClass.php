@@ -857,7 +857,7 @@ class setup
         $sql="insert into config values('qdbProductionDatabase','qdb');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config values('defaultDescriptionLanguageCode','EN');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config values('defaultDescriptionTypeCode','LAB');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        
+               
         $sql="CREATE TABLE config_options (
         configname varchar(255) not null,
         format varchar(255) not null,
@@ -886,6 +886,7 @@ class setup
         $sql="insert into config_options values('pcdbProductionDatabase','','','pcdb','This is the name of the local MySQL database that will use for lookup of PCdb data. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('padbProductionDatabase','','','padb','This is the name of the local MySQL database that will use for lookup of PAdb data. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('qdbProductionDatabase','','','qdb','This is the name of the local MySQL database that will use for lookup of Qdb data. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('vcdbAPIcacheDatabase','','','vcdbcache','This is the name of the local MySQL database that will used caching and using vcdb API data. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();       
         $sql="insert into config_options values('assetPushURI','','','','Experimental feature for debugging - URI of peer SandPIM system to push assets to');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('recentPartAdditionsDaysBack','','','7','How many days back from today into the past to consider for the recent-addtions list on the home screen');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('navbarColorHex','AN1/255','','c0c0c0','The UI top-nav background color (6 character hex value)');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
@@ -895,6 +896,10 @@ class setup
         $sql="insert into config_options values('WMsecret','AN1/255','','','Walmart API secret');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('showAppAttributesInSummary','AN1/255','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('partAssetAPIenabled','AN1/255','','no','Controls part asset API');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('AutoCareAPIclientid','AN1/255','','','AutoCare Client ID for API - common to all subscribers');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('AutoCareAPIclientsecret','AN1/255','','','AutoCare Client secret for API - common to all subscribers');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('AutoCareAPIusername','AN1/255','','','AutoCare API username - unique to a subscriber');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('AutoCareAPIpassword','AN1/255','','','AutoCare API password - unique to a subscriber');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         $sql="CREATE TABLE issue (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
