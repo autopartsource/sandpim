@@ -3,17 +3,33 @@ include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the fu
 include_once(__DIR__.'/class/vcdbAPIClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/logsClass.php');
 include_once(__DIR__.'/class/configGetClass.php');
+include_once(__DIR__.'/class/configSetClass.php');
+
 
 $starttime=time();
-
 $pim = new pim();
 $logs = new logs();
 $configGet = new configGet();
+$configSet = new configSet();
 
+
+$daysback=7;
 $tokenlowlifeseconds=3000; //every time a new records page is requested, the remaining life of the active token is checked. If lif is less than this number, a nre token is requested 
 $tokenrefreshlimit=30; // how many new-token requests are allowed in this session (this php script execution)
-$loggingverbosity=2; // (1-10) Ten is the most verbose 
-$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
+$loggingverbosity=1; // (1-10) Ten is the most verbose 
+//$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
+
+$lastsync=$configGet->getConfigValue('lastSuccessfulVCdbAPIsync');
+if($lastsync)
+{
+ $sincedate=date('Y-m-d', intval($lastsync)-(24*3600*2));  // set sincedat to 2 days before last sync
+}
+else 
+{// no history of last successful sync - setup for full download
+ $sincedate=false;
+}
+
+
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
 $deletelocalorphans=false; // cause records in each local table (identified by primary keys) to be deleted if they are not present in API results 
 
@@ -102,7 +118,8 @@ if($vcdbapi->activetoken)
  
  $runtime=time()-$starttime;
  if($vcdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls."\r\n";}
- $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes'); 
+ $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. SinceDate set to:'.$sincedate);
+ $configSet->setConfigValue('lastSuccessfulVCdbAPIsync', time());
 }
 else
 {
