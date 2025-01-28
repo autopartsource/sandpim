@@ -591,6 +591,57 @@ class asset
   return $assets;   
  }
 
+ function getAssettags()
+ {
+  $assettags=array(); $db=new mysql; $db->connect();  
+  if($stmt=$db->conn->prepare('select * from assettag order by tagtext'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $assettags[]=array('id'=>$row['id'],'tagtext'=>$row['tagtext']);
+   }
+  }
+  $db->close();
+  return $assettags;
+ }
+
+ function assettagText($id)
+ {
+  $tagtext='unknown tag (id '.$id.')'; $db=new mysql; $db->connect();  
+  if($stmt=$db->conn->prepare('select tagtext from assettag where id=?'))
+  {
+   $stmt->bind_param('i',$id);      
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $tagtext=$row['tagtext'];
+   }
+  }
+  $db->close();
+  return $tagtext;
+ }
+ 
+ function getAssettagsForAsset($assetid)
+ { // return an array of tags hooked this the given asset
+  $tags=array(); $db=new mysql; $db->connect();  
+  if($stmt=$db->conn->prepare('select asset_assettag.id as id, assettag.id as assettagid, assettag.tagtext as tagtext from asset_assettag,assettag where asset_assettag.assettagid=assettag.id and asset_assettag.assetid=?'))
+  {
+   $stmt->bind_param('s',$assetid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $tags[]=array('id'=>$row['id'],'assettagid'=>$row['assettagid'],'tagtext'=>$row['tagtext']);
+   }
+  }
+  $db->close();
+  return $tags;   
+ }
+ 
+ 
  
  function getAssetsByRandom($limit)
  {

@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pricingClass.php');
+include_once('./class/assetClass.php');
 include_once('./class/logsClass.php');
 
 $navCategory = 'settings';
@@ -26,6 +27,7 @@ if (!isset($_SESSION['userid']))
 }
 
 $pcdb = new pcdb;
+$asset = new asset;
 $pricing = new pricing;
 
 if (isset($_POST['submit']) && $_POST['submit']=='Save') 
@@ -70,6 +72,10 @@ $parttranslations=$pim->getReceiverprofileParttranslations($profile['id']);
 
 $lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($profile['id']);
 $alllifecyclestatuses=$pcdb->getLifeCycleCodes();
+
+$assettags=$pim->getAssettagsForReceiverprofile($profile['id']);
+$allassettags=$asset->getAssettags();
+
 $pricesheets=$pricing->getPricesheets();
 $includedpricesheetnumber=$pim->getReceiverprofilePricesheetnumber($profile['id']);
 
@@ -140,7 +146,38 @@ $includedpricesheetnumber=$pim->getReceiverprofilePricesheetnumber($profile['id'
              };
              xhr.send();
             }
-            
+
+            function addAssettag()
+            {
+             var selectedassettagid = document.getElementById("assettagselector").value;
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddRemoveReceiverAssettag.php?receiverprofileid=<?php echo $profile['id'];?>&assettagid='+selectedassettagid+'&action=add');
+
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              var container=document.getElementById('assettags');
+              container.innerHTML+='<div style="padding-bottom:3px;" id="assettagid_'+response.id+'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this asset tag from this profile" onclick="removeAssettag('+response.id+')">x</button></div><div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;">'+response.tagtext+'</div><div style="clear:both;"></div></div>';
+             };
+             xhr.send();
+            }
+
+            function removeAssettag(id)
+            {
+             var assettagdiv = document.getElementById('assettagid_'+id);
+             assettagdiv.parentNode.removeChild(assettagdiv);
+                
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddRemoveReceiverAssettag.php?receiverprofileid=<?php echo $profile['id'];?>&recordid='+id+'&action=remove');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+             };
+             xhr.send();
+            }
+
+
+
             function setReceiverPricesheet()
             {
              var pricesheetnumber = document.getElementById("pricesheetnumber").value;
@@ -266,6 +303,29 @@ $includedpricesheetnumber=$pim->getReceiverprofilePricesheetnumber($profile['id'
                                             foreach($lifecyclestatuses as $lifecyclestatus)
                                             {
                                             echo '<div style="text-align:left;padding-bottom:5px;" id="lifecyclestatusid_'.$lifecyclestatus['id'].'"><button class="btn btn-sm btn-outline-danger" title="Remove this lifecyclestatus from this profile" onclick="removeLifecyclestatus('.$lifecyclestatus['id'].')">x</button> '.$pcdb->lifeCycleCodeDescription($lifecyclestatus['lifecyclestatus']).'</div>';    
+                                            }
+                                            ?>
+                                            </div>
+                                            <div style="clear: both;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row padding">
+                                <div class="col">
+                                    <div class="card">
+                                        <h6 class="card-header">Include assets with tags</h6>
+                                        <div class="card-body">
+                                            <div style="float:left;">
+                                                <select id="assettagselector"><?php foreach($allassettags as $allassettag){?> <option value="<?php echo $allassettag['id'];?>"><?php echo $allassettag['tagtext'];?></option><?php }?></select>
+                                                <button class="btn btn-sm btn-success" id="addassettag" title="Add an asset tag" onclick="addAssettag()">+</button>
+                                            </div>
+                                            <div id="assettags" style="float:left;padding-left: 80px;">
+                                            <?php 
+                                            foreach($assettags as $assettag)
+                                            {
+                                            echo '<div style="text-align:left;padding-bottom:5px;" id="assettagid_'.$assettag['id'].'"><button class="btn btn-sm btn-outline-danger" title="Remove this assettag from this profile" onclick="removeAssettag('.$assettag['id'].')">x</button> '.$assettag['tagtext'].'</div>';
                                             }
                                             ?>
                                             </div>

@@ -278,13 +278,33 @@ foreach($partnumbers as $partnumber)
  //--------------------- assets -------------------------------    
     
   $digialassetconnections=$assets->getAssetsConnectedToPart($partnumber,true); // second arg is "$excludenonpublic". Setting it to true will cause only public=1 records to be returned
+  // get assettags for filtering asset list to only tags that this profile wants
+  $profileassettags=$pim->getAssettagsForReceiverprofile($profile['id']); //$assettags[]=array('id'=>$row['id'],'assettagid'=>$row['assettagid'],'tagtext'=>$row['tagtext']);
+  //$assettags[]=array('id'=>$row['id'],'assettagid'=>$row['assettagid'],'tagtext'=>$row['tagtext']);
+  
   if($digialassetconnections && count($digialassetconnections))
   {
    foreach($digialassetconnections as $digitalassetconnection)
    {
     $digitalassetrecords=$assets->getAssetRecordsByAssetid($digitalassetconnection['assetid']);
     foreach($digitalassetrecords as $digitalassetrecord)
-    {  
+    {        
+     $assettags=$assets->getAssettagsForAsset($digitalassetrecord['assetid']); //$tags[]=array('id'=>$row['id'],'assettagid'=>$row['assettagid'],'tagtext'=>$row['tagtext']);
+     // short (continue) the loop if this asset's tag list dosn't include any tags in the profile's list
+     $foundtag=false; $firstmatchedtagtext='';
+     foreach($assettags as $assettag)
+     {
+      foreach($profileassettags as $profileassettag)
+      {
+       if($profileassettag['tagtext']==$assettag['tagtext']){$foundtag=true; $firstmatchedtagtext=$assettag['tagtext']; break;}         
+      }
+     }
+     if(!$foundtag)
+     {
+      continue; 
+     }
+     $logs->logSystemEvent('Debug', $userid , 'Export of asset ['.$digitalassetrecord['assetid'].'] included (tagmatch on:'.$firstmatchedtagtext);
+     
      $digitalasset=array();
      $digitalasset['FileName']=$digitalassetrecord['filename'];
      $digitalasset['AssetID']=$digitalassetrecord['assetid'];

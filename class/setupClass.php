@@ -430,6 +430,32 @@ class setup
         $sql="insert into assetlabel values(null,'ASSMGUIDE_PACKING')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
         
         
+        $sql="CREATE TABLE assettag (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        tagtext varchar(255) NOT NULL,
+        PRIMARY KEY (id))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - assettag ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - assetlabel ('.$db->conn->error.')';}
+        $sql="insert into assettag values(null,'MARKETPLACE')"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
+        
+        $sql="CREATE TABLE asset_assettag (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        assetid varchar(255) NOT NULL,
+        assettagid int UNSIGNED NOT NULL, 
+        PRIMARY KEY (id),
+        INDEX idx_assetid (assetid),
+        INDEX idx_assettagid (assettagid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - asset_assettag ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - assetlabel ('.$db->conn->error.')';}
+        
+        $sql="CREATE TABLE receiverprofile_assettag (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        assettagid int UNSIGNED NOT NULL, 
+        PRIMARY KEY (id),
+        index idx_receiverprofileid(receiverprofileid),
+        INDEX idx_assettagid (assettagid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiverprofile_lifecycleststus ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiverprofile_lifecycleststus ('.$db->conn->error.')';}
+        
+                
         $sql="CREATE TABLE application_history (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         applicationid int unsigned null,

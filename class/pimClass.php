@@ -3104,15 +3104,25 @@ function countAppsByPartcategories($partcategories)
  }
 
  function logAppEvent($applicationid,$userid,$description,$newoid)
- {
-  $db=new mysql; 
-  //$db->dbname='pim';
-  $db->connect();
+ { // fff
+  $db=new mysql; $db->connect();
+  
+  $app=$this->getApp($applicationid);
+  $parteventdescription='app '.$applicationid.': '.$description;
+  $partnumber=$app['partnumber'];
+  $partoid='';
+  
   if($stmt=$db->conn->prepare('insert into application_history (id,applicationid,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
   {
    $stmt->bind_param('iiss', $applicationid,$userid,$description,$newoid);
    $stmt->execute();
-  } // else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+  }
+  
+  if($stmt=$db->conn->prepare('insert into part_history (id,partnumber,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
+  {
+   $stmt->bind_param('siss', $partnumber, $userid, $parteventdescription,$partoid);
+   $stmt->execute();
+  }
   $db->close();
  }
 
@@ -3591,6 +3601,57 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $lifecyclestatuses;
  }
+ 
+  
+ function getAssettagsForReceiverprofile($receiverprofileid)
+ {  // return and array of assettag id's for a given receiverprofile
+  $assettags=array();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select receiverprofile_assettag.id, assettag.id as assettagid,tagtext from receiverprofile_assettag,assettag where receiverprofile_assettag.assettagid=assettag.id and receiverprofileid=? order by tagtext;'))
+  {
+   $stmt->bind_param('i',$receiverprofileid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $assettags[]=array('id'=>$row['id'],'assettagid'=>$row['assettagid'],'tagtext'=>$row['tagtext']);
+   }
+  }
+  $db->close();
+  return $assettags;
+ }
+ 
+ function addAssettagToReceiverProfile($receiverprofileid, $assettagid)
+ {
+  $db = new mysql; $db->connect(); $id=false;
+  if($stmt=$db->conn->prepare("insert into receiverprofile_assettag values(null,?,?)"))
+  {
+   if($stmt->bind_param('is',$receiverprofileid,$assettagid))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;
+    }
+   }
+  }
+  $db->close();
+  return $id;     
+ }
+ 
+ function removeAssettagFromReceiverProfile($id, $receiverprofileid)
+ {
+  $db = new mysql; $db->connect(); $success=false;
+  if($stmt=$db->conn->prepare("delete from receiverprofile_assettag where id=? and receiverprofileid=?"))
+  {
+   if($stmt->bind_param('ii',$id, $receiverprofileid))
+   {
+    $success=$stmt->execute();
+   }
+  }
+  $db->close();
+  return $success;     
+ }
+ 
    
  function getReceiverprofileDeliverygroupids($receiverprofileid)
  {  // return and array of partcategory id's for a given receiverprofile
