@@ -3,6 +3,7 @@
  * To be run on a cron schedule (php CLI) every day
  * housekeeping fixes/changes things - vs auditor finds and reports problems 
  * 
+ * Test change
  */
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
