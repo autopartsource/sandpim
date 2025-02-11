@@ -1,0 +1,289 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 8, 2019, 1:33:01 PM
+    Author     : Gilmar Palma
+*/
+
+html {
+    height: 100%;
+    margin: auto;
+    font-family: 'Lato', sans-serif;
+}
+
+/* Fixed sidenav, full height */
+.sidenav {
+    height: 100%;
+    width: 100%;
+    position: inherit;
+    z-index: 1;
+    top: 50;
+    left: 0;
+    background-color: #343a40;
+    overflow-x: hidden;
+    padding-top: 10px;
+}
+
+/* Style the sidenav links and the dropdown button */
+.sidenav a,.sidenav a:visited, .dropdown-btn {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+}
+
+/* On mouse-over */
+.sidenav a:hover, .dropdown-btn:hover {
+    color: #f1f1f1;
+    text-decoration: none;
+}
+
+/* Add an active class to the active dropdown button */
+.sidenavActive {
+    background-color: highlight;
+    color: white;
+}
+
+a.navbarEndNode {
+    background-color:#818181;
+    color: white;
+    text-decoration: none;
+}
+
+a.nodeSelected {
+    background-color: green;
+    color: white;
+    text-decoration: none;
+}
+
+/* Dropdown container (hidden by default). Optional: add a lighter background color and some left padding to change the design of the dropdown content */
+.dropdown-container {
+    display: none;
+    background-color: #262626;
+    padding-left: 8px;
+}
+
+/* Optional: Style the caret down icon */
+.fa-caret-down {
+    float: right;
+    padding-right: 8px;
+}
+
+/* Some media queries for responsiveness */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+body { 
+    margin: 10px; 
+    text-align: center;
+}
+
+.my-container {
+    width: 100%;
+    height: 100%;     /* full height of the content box */
+    min-height: 35em;
+}
+
+.scroll {
+    max-height: 100vh;
+    overflow-y: scroll;
+}
+
+.my-row {
+}
+
+.my-col {
+/*    border: 1px dotted red;*/
+}
+
+.my-btn { 
+    text-decoration: none;
+}
+
+.btn-snooze {
+    background-color: #FF00FF;
+    color:white;
+}
+
+.colMain {
+    text-align: center;
+    justify-content: center;
+}
+
+.apppart {padding: 1px; border: 1px solid #808080; margin: 0px; background-color:#d0f0c0;}
+.apppart-cosmetic {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#33FFD7;}
+.apppart-hidden {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FFD433;}
+.apppart-deleted { padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FF5533;}
+
+.appstatus-active {background-color:#FFFFFF;}
+.appstatus-deleted {background-color:#FF5533;}
+.appstatus-hidden {background-color:#FFD433;}
+.appcosmetic-noncosmetic {background-color:#FFFFFF;}
+.appcosmetic-cosmetic {background-color:#33FFD7;}
+
+.partstatus-announced {background-color:#3399FF;}
+.partstatus-released {background-color:#66FF99;}
+.partstatus-available {background-color:#FFFFFF;}
+.partstatus-discontinued {background-color:#FF9900;}
+.partstatus-obsolete {background-color:#FF3300;}
+.partstatus-superseded {background-color:#FF00FF;}
+.partstatus-proposed {background-color:#999966;}
+
+a:link {color: blue; text-decoration: none;}
+a:visited {color: blue; text-decoration: none;}
+a:hover {color: gray; text-decoration: none;}
+a:active {color: blue; text-decoration: none;}
+
+a.dropdown-item {color: black; text-decoration: none;}
+
+a.btn-link:link {color: white; text-decoration: none;}
+a.btn-link:visited {color: white; text-decoration: none;}
+a.btn-link:hover {color: white; text-decoration: none;}
+a.btn-link:active {color: white; text-decoration: none;}
+
+a.btn:link { color: white; }
+a.btn:visited { color: white; }
+
+a.btn-outline-secondary:link { color: grey; }
+a.btn-outline-secondary:visited { color: grey; }
+a.btn-outline-secondary:hover { color: white; }
+
+.card { margin: 10px;}
+
+table { margin: 0 auto; }
+
+table, th, td {
+    margin: 0 auto;
+    padding: 10px; 
+    border-collapse: collapse; 
+    border: 1px solid black;
+}
+
+.groupCol {
+    justify-content: center;
+}
+
+.groupButton {
+    padding: 10px;
+}
+
+.inner-col {
+    padding: 5px;
+    justify-content: center;
+}
+
+/*    Mobile View    */
+@media all and (max-width: 600px) {
+    .wrapper { flex-direction: column; }
+    
+    .contentMain, .showRow { 
+        display: flex; 
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: center; 
+        flex: 1 auto;
+    }
+    
+    .inner-col { 
+        display: flex; 
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        flex: 1 auto;
+    }
+    
+    /*.contentRight { display: none; }*/
+    .contentRight {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+    
+    .contentRight, .scrolling-wrapper-flexbox {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+
+        .card {
+          flex: 0 0 auto;
+        }
+    }
+    
+    .mobile {
+        display: none; 
+    }
+}
+
+/*    Tablet View     */
+@media all and (max-width: 800px) {
+    .wrapper { flex-flow: row wrap; }
+    .contentMain { flex: 2; }
+    .contentLeft, .colLeft { order: 3; }
+    .contentMain, .colMain { order: 1; }
+    .contentRight, .colRight { order: 2; }
+    .footer { order: 4; }
+}
+
+@media screen and (min-width: 601px) and (max-width: 800px) {
+    .contentMain { 
+         display: flex; 
+         flex-direction: row;
+         flex-flow: wrap;
+         justify-content: flex-start; 
+         flex: 1 auto; 
+    }
+    .contentLeft, .contentRight {
+        display: flex;
+        flex-direction: column;
+        outline: dotted whitesmoke;
+        justify-content: center;
+    }
+}
+
+/*    Desktop View   */
+@media all and (min-width: 801px) {
+    .contentMain { 
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex: 2 auto;
+    }
+    .contentLeft, .contentRight {
+        display: flex;
+        flex-direction: column;
+        outline: dotted whitesmoke;
+        justify-content: flex-start;
+        flex: 1 auto;
+        align-items: center;
+    }
+}
+
+.showRow, .groupCol {flex-direction: row;}
+
+h1, h2, h3 {text-align: center;}
+
+.side-nav-link[data-toggle].collapsed:before {
+    content: " ▾";
+}
+.side-nav-link[data-toggle]:not(.collapsed):before {
+    content: " ▴";
+}
+
+.footer {
+    text-align: center;
+    width: 99%;
+    height: 2.5rem;            /* Footer height */
+}

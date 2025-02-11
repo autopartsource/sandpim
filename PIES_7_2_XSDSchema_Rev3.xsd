@@ -1,0 +1,2707 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2016 (http://www.altova.com) by Auto Care Association (Auto Care Association) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.autocare.org" targetNamespace="http://www.autocare.org" elementFormDefault="qualified" version="7.2">
+	<xs:element name="PIES">
+		<xs:annotation>
+			<xs:documentation>Document Root Element</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Header">
+					<xs:annotation>
+						<xs:documentation>(Ref# A01)</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="PIESVersion">
+								<xs:annotation>
+									<xs:documentation>(Ref# A02)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="3"/>
+										<xs:maxLength value="5"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="SubmissionType">
+								<xs:annotation>
+									<xs:documentation>(Ref# A03) Use the values in the database </xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="4"/>
+										<xs:maxLength value="6"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="BlanketEffectiveDate" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A05)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="ChangesSinceDate" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A06)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="ParentDUNSNumber" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A10)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="9"/>
+										<xs:maxLength value="13"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ParentGLN" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A11)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="13"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ParentVMRSID" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A12)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="5"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ParentAAIAID" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A13)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="4"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="BrandOwnerDUNS" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A20)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="9"/>
+										<xs:maxLength value="13"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="BrandOwnerGLN" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A21)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="13"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="BrandOwnerVMRSID" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A22)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="5"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="BuyerDuns" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Ref# A30</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="9"/>
+										<xs:maxLength value="13"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="CurrencyCode" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Ref# A35</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="3"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="LanguageCode" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Ref A37</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="2"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="TechnicalContact" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Ref# A40</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="60"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="ContactEmail" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Ref# A41</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:minLength value="1"/>
+										<xs:maxLength value="254"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="PCdbVersionDate" type="xs:date">
+								<xs:annotation>
+									<xs:documentation>(Ref# A42)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							<xs:element name="PAdbVersionDate" type="xs:date" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# A43)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="PriceSheets" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Parent Element Supporting PriceSheet Iterations</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="PriceSheet" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>(Ref# A50)</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="PriceSheetNumber">
+											<xs:annotation>
+												<xs:documentation>(Ref# A52)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="15"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="PriceSheetName" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# A53)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="30"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="SupersededPriceSheetNumber" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# A55)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="15"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="CurrencyCode" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# A60)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="3"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="PriceZone" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# A65)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="10"/>
+													<xs:pattern value="[\p{L}]+"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="EffectiveDate" type="xs:date" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# A70)</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ExpirationDate" type="xs:date" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# A75)</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="MaintenanceType" use="required">
+										<xs:annotation>
+											<xs:documentation>(Ref# A51)</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="MaintenanceType"/>
+										</xs:simpleType>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="MarketingCopy" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Parent Element Supporting Non-Item Specific Market Copy</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="MarketCopy" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>(Ref# A80)</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="MarketCopyContent">
+											<xs:annotation>
+												<xs:documentation>(Ref# A87)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="Description">
+														<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+															<xs:annotation>
+																<xs:documentation>(Ref# A81)</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="MarketCopyCode" type="MarketCopyCode" use="required">
+															<xs:annotation>
+																<xs:documentation>(Ref# A82)</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="MarketCopyReference" use="required">
+															<xs:annotation>
+																<xs:documentation>(Ref# A83)</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:maxLength value="240"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+														<xs:attribute name="MarketCopySubCode" type="MarketCopyCode">
+															<xs:annotation>
+																<xs:documentation>(Ref# A84)</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="MarketCopySubCodeReference">
+															<xs:annotation>
+																<xs:documentation>(Ref# A85)</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:minLength value="1"/>
+																	<xs:maxLength value="240"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+														<xs:attribute name="MarketCopyType" type="MarketCopyTypeCode" use="required">
+															<xs:annotation>
+																<xs:documentation>(Ref# A86)</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="RecordSequence">
+															<xs:annotation>
+																<xs:documentation>(Ref# A88)</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:positiveInteger">
+																	<xs:minInclusive value="1"/>
+																	<xs:maxInclusive value="99999"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+														<xs:attribute name="LanguageCode">
+															<xs:annotation>
+																<xs:documentation>(Ref# A89)</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:length value="2"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DigitalAssets" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element Supporting DigitalFileInformation Iterations</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="DigitalFileInformation" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>(Ref# M01)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="FileName">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M05)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1"/>
+																			<xs:maxLength value="80"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="AssetType" type="AssetType">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M10)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="FileType" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M15)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="AssetFileType">
+																			<xs:minLength value="3"/>
+																			<xs:maxLength value="4"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Representation" type="Representation" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M20)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="FileSize" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M25)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:totalDigits value="10"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Resolution" type="Resolution" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M30)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="ColorMode" type="ColorModeType" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M35)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="Background" type="BackgroundType" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M40)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="OrientationView" type="OrientationViewType" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M45)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="AssetDimensions" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Parent Element for Asset Measurement Child Elements</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="AssetHeight" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# M50)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="6"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="AssetWidth" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# M55)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="6"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																		</xs:sequence>
+																		<xs:attribute name="UOM" type="DimensionUOMType" use="required">
+																			<xs:annotation>
+																				<xs:documentation>(Ref# M60)</xs:documentation>
+																			</xs:annotation>
+																		</xs:attribute>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="FilePath" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M75)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1"/>
+																			<xs:maxLength value="80"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="URI" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M80)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:anyURI">
+																			<xs:maxLength value="2000"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Duration" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#M81)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="Duration">
+																				<xs:attribute name="UOM" use="required">
+																					<xs:simpleType>
+																						<xs:restriction base="DigitalAssetDurationUOMType">
+																							<xs:length value="2"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Frame" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#M83)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:totalDigits value="3"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="TotalFrames" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#M84)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:totalDigits value="3"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Plane" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#M85)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:totalDigits value="3"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Hemisphere" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#M86)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="Hemisphere"/>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Plunge" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#M87)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:decimal">
+																			<xs:totalDigits value="6"/>
+																			<xs:minExclusive value="0"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="TotalPlanes" type="xs:positiveInteger" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#M88)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="AssetDescriptions" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#M64)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Description" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>(Ref#M73)</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:simpleContent>
+																						<xs:extension base="Description">
+																							<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required"/>
+																							<xs:attribute name="DescriptionCode" type="DescriptionCodeType" use="required"/>
+																							<xs:attribute name="LanguageCode">
+																								<xs:simpleType>
+																									<xs:restriction base="xs:string">
+																										<xs:length value="2"/>
+																									</xs:restriction>
+																								</xs:simpleType>
+																							</xs:attribute>
+																						</xs:extension>
+																					</xs:simpleContent>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="AssetDates" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#M93)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="AssetDate" minOccurs="1" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:simpleContent>
+																						<xs:extension base="xs:date">
+																							<xs:attribute name="assetDateType" type="assetDateType"/>
+																						</xs:extension>
+																					</xs:simpleContent>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Country" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# M98)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="2"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																<xs:annotation>
+																	<xs:documentation>(Ref# M02)</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="AssetID">
+																<xs:annotation>
+																	<xs:documentation>(Ref# M06)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="34"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="LanguageCode">
+																<xs:annotation>
+																	<xs:documentation>(Ref# M99)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:length value="2"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Items">
+					<xs:annotation>
+						<xs:documentation>Parent Element Supporting Item Iterations</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Item" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>(Ref# B01)</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence minOccurs="0">
+										<xs:element name="HazardousMaterialCode" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B03)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="Y"/>
+													<xs:enumeration value="N"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="BaseItemID" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B05)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="48"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ItemLevelGTIN" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B10)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="GTIN">
+														<xs:attribute name="GTINQualifier" type="GTINQualifier" use="required">
+															<xs:annotation>
+																<xs:documentation>(Ref# B11)</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="PartNumber">
+											<xs:annotation>
+												<xs:documentation>(Ref# B15)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="48"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="BrandAAIAID">
+											<xs:annotation>
+												<xs:documentation>(Ref# B20)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="4"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="BrandLabel" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation> Ref# B25)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="60"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="SubBrandAAIAID" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B27)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="4"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="SubBrandLabel" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B28)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="1"/>
+													<xs:maxLength value="60"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="VMRSBrandID" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B29)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="5"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ACESApplications" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B30)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="Y"/>
+													<xs:enumeration value="N"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="ItemQuantitySize" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B32)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="ItemQuantitySize">
+														<xs:attribute name="UOM" use="optional">
+															<xs:annotation>
+																<xs:documentation>(Ref# B33)</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:length value="2"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ContainerType" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B34)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="2"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="QuantityPerApplication" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B40)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="QuantityPerApplication">
+														<xs:attribute name="Qualifier" type="QuantityPerApplicationQualifierType">
+															<xs:annotation>
+																<xs:documentation>(Ref# B35)</xs:documentation>
+															</xs:annotation>
+														</xs:attribute>
+														<xs:attribute name="UOM" use="required">
+															<xs:annotation>
+																<xs:documentation>(Ref# B41)</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:length value="2"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ItemEffectiveDate" type="xs:date" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B45)</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="AvailableDate" type="xs:date" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B50)</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="MinimumOrderQuantity" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B55)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="MinimumOrderQuantity">
+														<xs:attribute name="UOM" use="required">
+															<xs:annotation>
+																<xs:documentation> (Ref# B56)</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:length value="2"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ManufacturerProductCodes" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element for Product Code Child Elemenets</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Group" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>(Ref# B60)</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1"/>
+																<xs:maxLength value="10"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="SubGroup" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation> (Ref# B61)</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1"/>
+																<xs:maxLength value="10"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="AAIAProductCategoryCode" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B62)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="6"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="UNSPSC" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B63)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="8"/>
+													<xs:maxLength value="10"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="PartTerminologyID" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B64)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:minLength value="4"/>
+													<xs:maxLength value="5"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="VMRSCode" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>(Ref# B65)</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="9"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Descriptions" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element Supporting Description (Ref# C01)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Description" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>(Ref# C10)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="Description">
+																	<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# C02)</xs:documentation>
+																		</xs:annotation>
+																	</xs:attribute>
+																	<xs:attribute name="DescriptionCode" type="DescriptionCodeType" use="required">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# C05)</xs:documentation>
+																		</xs:annotation>
+																	</xs:attribute>
+																	<xs:attribute name="LanguageCode">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# C15)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:length value="2"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="Sequence" type="xs:string">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# C16)</xs:documentation>
+																		</xs:annotation>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Prices" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element Supporting Price Iterations</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Pricing" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>(Ref# D01)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="PriceSheetNumber">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# D05)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1"/>
+																			<xs:maxLength value="15"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="CurrencyCode" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# D15)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="3"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="EffectiveDate" type="xs:date" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# D25)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="ExpirationDate" type="xs:date" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# D30)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="Price">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# D40)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="Price">
+																				<xs:attribute name="UOM" use="required">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# D41)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:length value="2"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="PriceTypeDescription" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# D36)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1"/>
+																			<xs:maxLength value="80"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PriceBreak" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# D45)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="PriceBreak">
+																				<xs:attribute name="UOM" use="required">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# D46)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:length value="2"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="PriceMultiplier" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# D42)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:decimal">
+																			<xs:fractionDigits value="4"/>
+																			<xs:totalDigits value="10"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																<xs:annotation>
+																	<xs:documentation>(Ref# D02)</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="PriceType" type="PriceType" use="required">
+																<xs:annotation>
+																	<xs:documentation>(Ref# D35)</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ExtendedInformation" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element Supporting ExtendedProductInformation Iterations</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ExtendedProductInformation" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>(Ref# E10)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="ExtendedProductData">
+																	<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# E02)</xs:documentation>
+																		</xs:annotation>
+																	</xs:attribute>
+																	<xs:attribute name="EXPICode" type="EXPICodeType" use="required">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# E05)</xs:documentation>
+																		</xs:annotation>
+																	</xs:attribute>
+																	<xs:attribute name="LanguageCode">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# E15)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:length value="2"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ProductAttributes" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element Supporting ProductAttribute Iterations</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="ProductAttribute" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Ref# F10</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="ProductAttribute">
+																	<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# F02)</xs:documentation>
+																		</xs:annotation>
+																	</xs:attribute>
+																	<xs:attribute name="AttributeID" use="required">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# F05)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:minLength value="1"/>
+																				<xs:maxLength value="80"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="PADBAttribute" use="required">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# F07)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:enumeration value="Y"/>
+																				<xs:enumeration value="N"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="AttributeUOM">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# F08)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:minLength value="1"/>
+																				<xs:maxLength value="20"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="StyleID">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# F11)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:positiveInteger">
+																				<xs:maxInclusive value="99999"/>
+																				<xs:minInclusive value="1"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="RecordNumber">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# F15)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:positiveInteger">
+																				<xs:maxInclusive value="999"/>
+																				<xs:minInclusive value="1"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="MultiValueQuantity">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# F17)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:positiveInteger">
+																				<xs:minInclusive value="1"/>
+																				<xs:maxInclusive value="999"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="MultiValueSequence">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# F18)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:positiveInteger">
+																				<xs:minInclusive value="1"/>
+																				<xs:maxInclusive value="999"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																	<xs:attribute name="LanguageCode">
+																		<xs:annotation>
+																			<xs:documentation>(Ref# F20)</xs:documentation>
+																		</xs:annotation>
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:length value="2"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Packages" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element Supporting Package Iterations</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Package" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>(Ref# H01)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="PackageLevelGTIN" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# H05)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="14"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="ElectronicProductCode" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# H07)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="27"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PackageBarCodeCharacters" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# H10)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1"/>
+																			<xs:maxLength value="48"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PackageUOM" type="PackageUOMType">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# H15)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="QuantityofEaches">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# H20)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:minInclusive value="1"/>
+																			<xs:maxInclusive value="99999999"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="InnerQuantity" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# H21)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="InnerQuantity">
+																				<xs:attribute name="InnerQuantityUOM" use="required">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# H22)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:length value="2"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Orderable" type="OrderablePackage" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# H24)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="Dimensions" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Parent Element Containing Dimensional Child Elements</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="MerchandisingHeight">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# H25)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="8"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="MerchandisingWidth">
+																				<xs:annotation>
+																					<xs:documentation>(Ref H30)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="8"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="MerchandisingLength">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# H35)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="8"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="ShippingHeight">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# H36)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="8"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="ShippingWidth">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# H37)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="8"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="ShippingLength">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# H38)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="8"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																		</xs:sequence>
+																		<xs:attribute name="UOM" use="required">
+																			<xs:annotation>
+																				<xs:documentation>(Ref# H40)</xs:documentation>
+																			</xs:annotation>
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:length value="2"/>
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:attribute>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Weights" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Parent Element Containing Weight Child Elements</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Weight">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# H45)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="9"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="DimensionalWeight" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# H50)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="9"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																		</xs:sequence>
+																		<xs:attribute name="UOM" use="required">
+																			<xs:annotation>
+																				<xs:documentation>(Ref# H46)</xs:documentation>
+																			</xs:annotation>
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:length value="2"/>
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:attribute>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="WeightVariance" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# H47)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:decimal">
+																			<xs:minExclusive value="0"/>
+																			<xs:totalDigits value="8"/>
+																			<xs:fractionDigits value="4"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="StackingFactor" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# H55)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:minInclusive value="1"/>
+																			<xs:totalDigits value="3"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="HazardousMaterial" minOccurs="0" maxOccurs="unbounded">
+																	<xs:annotation>
+																		<xs:documentation>5.11 (Ref# K01)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="ShippingScope">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J04)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:length value="3"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="Bulk">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J05)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:length value="1"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="RegulatingCountry">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J10)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:length value="2"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="TransportMethod">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J15)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:length value="1"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="Regulated">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J20)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:length value="1"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="Description" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J25)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="200"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="HazardousMaterialCodeQualifier" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J31)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:length value="1"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="HazardousMaterialDescription" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J33)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="80"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="HazardousMaterialLabelCode" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J34)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="ShippingName" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J35)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="260"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="UNNAIDCode" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J40)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:length value="6"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="HazardousPlacardNotation" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J45)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="40"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="WHMISCode" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J46)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="10"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="WHMISFreeText" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J47)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="80"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="PackingGroupCode" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J50)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="3"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="RegulationsExemptionCode" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J55)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="TextMessage" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J60)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:maxLength value="2000"/>
+																						<xs:minLength value="1"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="OuterPackageLabel" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# J65)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:minLength value="1"/>
+																						<xs:maxLength value="20"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																		</xs:sequence>
+																		<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																			<xs:annotation>
+																				<xs:documentation>(Ref# J02)</xs:documentation>
+																			</xs:annotation>
+																		</xs:attribute>
+																		<xs:attribute name="LanguageCode">
+																			<xs:annotation>
+																				<xs:documentation>(Ref# J70)</xs:documentation>
+																			</xs:annotation>
+																			<xs:simpleType>
+																				<xs:restriction base="xs:string">
+																					<xs:length value="2"/>
+																				</xs:restriction>
+																			</xs:simpleType>
+																		</xs:attribute>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																<xs:annotation>
+																	<xs:documentation>(Ref# H02)</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Kits" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element Supporting Kit Iterations</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="KitComponent" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>(Ref# K01)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="ComponentPartNumber" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K03)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="ComponentPartNumber">
+																				<xs:attribute name="IDQualifier" use="optional">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# K08)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:length value="2"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="ComponentBrand" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K04)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="4"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="ComponentBrandLabel" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K05)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1"/>
+																			<xs:maxLength value="60"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="ComponentSubBrand" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K06)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="4"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="ComponentSubBrandLabel" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K07)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1"/>
+																			<xs:maxLength value="60"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Description">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K10)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="Description">
+																				<xs:attribute name="DescriptionCode" type="DescriptionCodeType" use="required">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# K09)</xs:documentation>
+																					</xs:annotation>
+																				</xs:attribute>
+																				<xs:attribute name="LanguageCode">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# K12)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:length value="2"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="ComponentPartTerminologyID" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K11)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="4"/>
+																			<xs:maxLength value="8"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="QuantityInKit">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K15)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="QuantityInKit">
+																				<xs:attribute name="UOM" use="required">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# K20)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:length value="2"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="SequenceCode" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K30)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:minInclusive value="1"/>
+																			<xs:maxInclusive value="999"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="SoldSeparately">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# K31)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string"/>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																<xs:annotation>
+																	<xs:documentation>(Ref# K02)</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="PartInterchangeInfo" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element Supporting PartInterchnage Iterations</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="PartInterchange" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>(Ref# N01)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="PartNumber" maxOccurs="unbounded">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# N20)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="PartNumberType">
+																				<xs:attribute name="ReferenceItem">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# N21)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:minLength value="1"/>
+																							<xs:maxLength value="48"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																				<xs:attribute name="InterchangeQuantity">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# N26)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:decimal">
+																							<xs:minExclusive value="0"/>
+																							<xs:totalDigits value="8"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																				<xs:attribute name="UOM">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# N27)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:length value="2"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																				<xs:attribute name="InterchangeNotes">
+																					<xs:annotation>
+																						<xs:documentation>(Ref# N30)</xs:documentation>
+																					</xs:annotation>
+																					<xs:simpleType>
+																						<xs:restriction base="xs:string">
+																							<xs:minLength value="1"/>
+																							<xs:maxLength value="240"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																<xs:annotation>
+																	<xs:documentation>(Ref# N02)</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="BrandAAIAID" use="optional">
+																<xs:annotation>
+																	<xs:documentation>(Ref# N10)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:length value="4"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="BrandLabel" use="optional">
+																<xs:annotation>
+																	<xs:documentation>(Ref# N11)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="60"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="SubBrandAAIAID" use="optional">
+																<xs:annotation>
+																	<xs:documentation>(Ref# N12)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:length value="4"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="SubBrandLabel" use="optional">
+																<xs:annotation>
+																	<xs:documentation>(Ref# N13)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="60"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="VMRSBrandID" use="optional">
+																<xs:annotation>
+																	<xs:documentation>(Ref# N14)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:length value="5"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="ItemEquivalentUOM" use="optional">
+																<xs:annotation>
+																	<xs:documentation>(Ref# N16)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:length value="2"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="QualityGradeLevel" type="QualityGradeLevel" use="optional">
+																<xs:annotation>
+																	<xs:documentation>(Ref# N25)</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="InternalNotes" use="optional">
+																<xs:annotation>
+																	<xs:documentation>(Ref# N35)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="240"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="LanguageCode">
+																<xs:annotation>
+																	<xs:documentation> (Ref# N40)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:length value="2"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DigitalAssets" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Parent Element Supporting DigitalFileInformation Iterations</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="DigitalFileInformation" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>(Ref# P01)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="FileName">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P05)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1"/>
+																			<xs:maxLength value="80"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="AssetType" type="AssetType">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P10)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="FileType" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P15)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="AssetFileType">
+																			<xs:maxLength value="4"/>
+																			<xs:minLength value="3"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Representation" type="Representation" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P20)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="FileSize" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P25)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:totalDigits value="10"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Resolution" type="Resolution" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P30)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="ColorMode" type="ColorModeType" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P35)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="Background" type="BackgroundType" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P40)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="OrientationView" type="OrientationViewType" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P45)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="AssetDimensions" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Parent Element for Asset Measurement Child Elements</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="AssetHeight" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# P50)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="6"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="AssetWidth" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>(Ref# P55)</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal">
+																						<xs:minExclusive value="0"/>
+																						<xs:totalDigits value="6"/>
+																						<xs:fractionDigits value="4"/>
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																		</xs:sequence>
+																		<xs:attribute name="UOM" type="DimensionUOMType" use="required">
+																			<xs:annotation>
+																				<xs:documentation>(Ref# P60)</xs:documentation>
+																			</xs:annotation>
+																		</xs:attribute>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="FilePath" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P75)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:minLength value="1"/>
+																			<xs:maxLength value="80"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="URI" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P80)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:anyURI">
+																			<xs:maxLength value="2000"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Duration" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#P81)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="Duration">
+																				<xs:attribute name="UOM" use="required">
+																					<xs:simpleType>
+																						<xs:restriction base="DigitalAssetDurationUOMType">
+																							<xs:enumeration value="hh"/>
+																							<xs:enumeration value="mm"/>
+																							<xs:enumeration value="ss"/>
+																						</xs:restriction>
+																					</xs:simpleType>
+																				</xs:attribute>
+																			</xs:extension>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Frame" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#P83)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:totalDigits value="3"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="TotalFrames" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#P84)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:totalDigits value="3"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Plane" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#P85)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:positiveInteger">
+																			<xs:totalDigits value="3"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Hemisphere" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#P86)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:simpleContent>
+																			<xs:extension base="Hemisphere"/>
+																		</xs:simpleContent>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Plunge" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#P87)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:decimal">
+																			<xs:totalDigits value="6"/>
+																			<xs:minExclusive value="0"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="TotalPlanes" type="xs:positiveInteger" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#P88)</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="AssetDescriptions" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#P64)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="Description" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>(Ref#P73)</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:simpleContent>
+																						<xs:extension base="Description">
+																							<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required"/>
+																							<xs:attribute name="DescriptionCode" type="DescriptionCodeType" use="required"/>
+																							<xs:attribute name="LanguageCode">
+																								<xs:simpleType>
+																									<xs:restriction base="xs:string">
+																										<xs:length value="2"/>
+																									</xs:restriction>
+																								</xs:simpleType>
+																							</xs:attribute>
+																						</xs:extension>
+																					</xs:simpleContent>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="AssetDates" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref#P93)</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="AssetDate" minOccurs="1" maxOccurs="unbounded">
+																				<xs:complexType>
+																					<xs:simpleContent>
+																						<xs:extension base="xs:date">
+																							<xs:attribute name="assetDateType" type="assetDateType"/>
+																						</xs:extension>
+																					</xs:simpleContent>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="Country" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>(Ref# P98)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="2"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+															<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+																<xs:annotation>
+																	<xs:documentation>(Ref# P02)</xs:documentation>
+																</xs:annotation>
+															</xs:attribute>
+															<xs:attribute name="AssetID">
+																<xs:annotation>
+																	<xs:documentation>(Ref# P06)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="34"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="LanguageCode">
+																<xs:annotation>
+																	<xs:documentation>(Ref# P99)</xs:documentation>
+																</xs:annotation>
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:length value="2"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="MaintenanceType" type="MaintenanceType" use="required">
+										<xs:annotation>
+											<xs:documentation>(Ref# B02)</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Trailer">
+					<xs:annotation>
+						<xs:documentation>(Ref# Z01)</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="ItemCount" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>(Ref# Z05)</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:positiveInteger">
+										<xs:minInclusive value="1"/>
+										<xs:maxInclusive value="9999999"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="TransactionDate" type="xs:date">
+								<xs:annotation>
+									<xs:documentation>(Ref# Z15)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="GTIN">
+		<xs:restriction base="xs:string">
+			<xs:length value="14"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ProductAttribute">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="2000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ExtendedProductData">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="2000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="QuantityPerApplication">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="MinimumOrderQuantity">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:maxInclusive value="99999999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Description">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="2000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Price">
+		<xs:restriction base="xs:decimal">
+			<xs:minExclusive value="0"/>
+			<xs:totalDigits value="10"/>
+			<xs:fractionDigits value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ItemQuantitySize">
+		<xs:restriction base="xs:decimal">
+			<xs:minExclusive value="0"/>
+			<xs:totalDigits value="8"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="InnerQuantity">
+		<xs:restriction base="xs:decimal">
+			<xs:minExclusive value="0"/>
+			<xs:totalDigits value="8"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PriceBreak">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:maxInclusive value="99999999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ComponentPartNumber">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="48"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="QuantityInKit">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:maxInclusive value="99999999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MaintenanceType">
+		<xs:annotation>
+			<xs:documentation>
+				Maintenance Type Code Table
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OrderablePackage">
+		<xs:annotation>
+			<xs:documentation>
+				Boolean Yes No Value
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DescriptionCodeType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# C05
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="GTINQualifier">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# B11
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="QuantityPerApplicationQualifierType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# B35				
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="EXPICodeType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# E05
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PackageUOMType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# H15
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PriceType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# D35
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AssetType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# P10
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="OrientationViewType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# P45
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="BackgroundType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# P40
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ColorModeType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# P35
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="AssetFileType">
+		<xs:annotation>
+			<xs:documentation>
+					Ref# P15
+				</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="2"/>
+			<xs:maxLength value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Resolution">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# P30
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:minLength value="2"/>
+			<xs:maxLength value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Representation">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# P20
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Duration">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:totalDigits value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DigitalAssetDurationUOMType">
+		<xs:annotation>
+			<xs:documentation>
+			Ref#P82
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Hemisphere">
+		<xs:annotation>
+			<xs:documentation>
+			Ref#86
+		</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="QualityGradeLevel">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# N05
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DimensionUOMType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# P60
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MarketCopyCode">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# A82 and A84				
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MarketCopyTypeCode">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# A86
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PartNumberType">
+		<xs:annotation>
+			<xs:documentation>
+				Name	PartInterchange Part Number Type
+				Field		(Ref# N20)
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="48"/>
+			<xs:minLength value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="assetDateType">
+		<xs:annotation>
+			<xs:documentation>
+				Ref# M95 and P95
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:length value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
