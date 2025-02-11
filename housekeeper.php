@@ -92,6 +92,42 @@ if(count($appids)>0)
  $logs->logSystemEvent('housekeeper', 0, 'Removed '.count($appids).' apps flagged for delete.');
 }
 
+// find and fix free-from fitment notes that contain ";"
+// example (contains multiple semicolons)
+//+---------+---------------+------+----------------------------------+------+----------+----------+
+//| id      | applicationid | name | value                            | type | sequence | cosmetic |
+//+---------+---------------+------+----------------------------------+------+----------+----------+
+//| 4453807 |       3727376 | note | 10.25" Rotor; 4 Lugs; 8.66" Drum | note |        1 |        0 |
+//+---------+---------------+------+----------------------------------+------+----------+----------+
+
+$fixedattributecount=0;
+$badattributes=$pim->getAppAttributesByValue('note', 'note', '%;%'); // get offending notes that need splitting    //$attributes[]=array('id'=>$row['id'],'applicationid'=>$row['applicationid'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
+$logs->logSystemEvent('housekeeper', 0, 'Background houskeeper found '.count($badattributes).' fitment notes to be split');
+
+foreach($badattributes as $badattribute)
+{
+ $noteparts=explode(';',$badattribute['value']);
+ foreach($noteparts as $iteration=>$notepart)
+ {
+  if($iteration==0)
+  {// this is first chunck - it will retain it's original record instance and be updated in-place
+   $pim->updateApplicationAttribute($badattribute['id'], 'note', 'note', trim($notepart));      
+  } 
+  else
+  {// this is a subsequent chunk of the note - it will be inserted as a new attribute record with same sequence as original
+   $pim->addNoteAttributeToApp($badattribute['applicationid'], trim($notepart), $badattribute['sequence'], $badattribute['cosmetic'], false);
+  }
+ }
+ 
+ $newoid=$pim->updateAppOID($badattribute['applicationid']);
+ $pim->logAppEvent($badattribute['applicationid'], 0, 'note ['.$badattribute['value'].'] was split into '.count($noteparts).' notes by the housekeeper', $newoid);
+ 
+ $fixedattributecount++;
+ if($fixedattributecount>=1000){break;}
+}
+
+$logs->logSystemEvent('housekeeper', 0, 'Houskeeper split '.$fixedattributecount.' app notes');
+
 $runtime=time()-$starttime;
 if($runtime > 30)
 {

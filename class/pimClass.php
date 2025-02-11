@@ -3018,7 +3018,8 @@ function countAppsByPartcategories($partcategories)
  function getAppAttributesByValue($type,$name,$value)
  {
   $db=new mysql; $db->connect(); $attributes=array();
-  if($stmt=$db->conn->prepare("select * from application_attribute where `type`=? and `name`=? and `value`=?"))
+//  if($stmt=$db->conn->prepare("select * from application_attribute where `type`=? and `name`=? and `value`=?")) // changed value search from = to like on 2/11/2025 as part of a new housekeeping effort
+  if($stmt=$db->conn->prepare("select * from application_attribute where `type`=? and `name`=? and `value` like ?"))
   {  
    if($stmt->bind_param('sss', $type,$name,$value))
    {   
