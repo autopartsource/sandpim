@@ -925,14 +925,22 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                             <?php 
                                             foreach($connectedassets as $connectedasset)
                                             {
+                                                $assettags=$asset->getAssettagsForAsset($connectedasset['assetid']);
+                                                
+                                                $assettagdivs='';
+                                                
+                                                foreach($assettags as $assettag)
+                                                {
+                                                    $assettagdivs.='<div style="float:left;background-color:#c0c0c0;padding-left:5px;padding-right:5px;margin-left:5px;margin-bottom:5px;border-radius:4px;font-size:.75em;">'.$assettag['tagtext'].'</div>';
+                                                }
+                                                
                                                 if($connectedasset['inheritedfrom']=='')
                                                 {// this asset is conneted directly to this part (not inherited from a basepart)
-                                                    echo '<div style="padding-bottom:3px;" id="assetconnectionid_'.$connectedasset['connectionid'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" style="height:46px;" title="Disconnect this asset from this part" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div><div style="border:1px solid;padding:3px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> '.$pcdb->assetTypeCodeDescription($connectedasset['assettypecode']).' </div><div style="clear:both;"></div></div>';
+                                                    echo '<div style="padding-bottom:4px;" id="assetconnectionid_'.$connectedasset['connectionid'].'"><div style="float:left;"><button class="btn btn-sm btn-outline-danger" style="height:46px;" title="Disconnect this asset from this part" onclick="disconnectAsset(\''.$connectedasset['connectionid'].'\')">x</button></div><div style="border:1px solid;padding:3px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> '.$pcdb->assetTypeCodeDescription($connectedasset['assettypecode']).'</div>'.$assettagdivs.'<div style="clear:both;"></div></div>';
                                                 }
                                                 else
-                                                {// this asset is inherited from the basepart
-                                                    
-                                                    echo '<div style="float:left;"><img src="./inheritance.png" width="20" title="Inherited from '.$connectedasset['inheritedfrom'].'"/></div><div style="border:1px solid;padding:3px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> '.$pcdb->assetTypeCodeDescription($connectedasset['assettypecode']).' </div><div style="clear:both;"></div></div>';
+                                                {// this asset is inherited from the basepart                                                    
+                                                    echo '<div style="float:left;"><img src="./inheritance.png" width="20" title="Inherited from '.$connectedasset['inheritedfrom'].'"/></div><div style="border:1px solid;padding:4px;margin-left:4px;background:#7ad0fe;float:left;"><a class="btn btn-info" role="button" href="showAsset.php?assetid='.$connectedasset['assetid'].'">'.$connectedasset['assetid'].'</a> '.$pcdb->assetTypeCodeDescription($connectedasset['assettypecode']).' </div>'.$assettagdivs.'<div style="clear:both;"></div></div>';
                                                 }
                                             }
                                             ?>
