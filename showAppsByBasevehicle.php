@@ -181,6 +181,7 @@ ksort($fitmentcolumnkeys);
                 ev.dataTransfer.setData("basevehicleid", ev.target.getAttribute('data-basevehicleid'));
                 ev.dataTransfer.setData("sourcepartnumber", ev.target.getAttribute('data-partnumber'));
                 ev.dataTransfer.setData("sourcecosmetic", ev.target.getAttribute('data-cosmetic'));
+                ev.dataTransfer.setData("sourcecosmeticattributecount", ev.target.getAttribute('data-cosmeticattributecount'));                
                 ev.dataTransfer.setData("sourcequantityperapp", ev.target.getAttribute('data-quantityperapp'));
             }
 
@@ -195,6 +196,7 @@ ksort($fitmentcolumnkeys);
                 var basevehicleid = ev.dataTransfer.getData("basevehicleid");
                 var sourcepartnumber = ev.dataTransfer.getData("sourcepartnumber");
                 var sourcecosmetic = ev.dataTransfer.getData("sourcecosmetic");
+                var sourcecosmeticattributecount = ev.dataTransfer.getData("sourcecosmeticattributecount");
                 var sourcequantityperapp = ev.dataTransfer.getData("sourcequantityperapp");
 
                 if (ev.target.getAttribute('data-type') != 'dropzone') {
@@ -202,20 +204,41 @@ ksort($fitmentcolumnkeys);
                 }
                 if (ev.target.getAttribute('data-row') == sourcerow && ev.target.getAttribute('data-column') == sourcecolumn)
                 {
-                    //app was dragged to its own cell - toggle cosmetic and reload the page
+                    
+                    
+     //app was dragged to its own cell - toggle cosmetic
+     
                     var xhr = new XMLHttpRequest();
                     xhr.open('GET', 'ajaxToggleAppCosmetic.php?appid=' + sourceapp);
                     xhr.send();
 
+                    document.getElementById(data).setAttribute('data-cosmeticattributecount', sourcecosmeticattributecount);
+
                     if (sourcecosmetic == 0)
                     {
-                        document.getElementById(data).setAttribute('class', 'apppart-cosmetic');
-                        document.getElementById(data).setAttribute('data-cosmetic', '1');
-                    } else
-                    {
-                        document.getElementById(data).setAttribute('class', 'apppart');
-                        document.getElementById(data).setAttribute('data-cosmetic', '0');
+                        document.getElementById(data).setAttribute('data-cosmetic', '1');                       
+                        if(sourcecosmeticattributecount == 0)
+                        {
+                            document.getElementById(data).setAttribute('class', 'apppart-cosmetic');
+                        }
+                        else
+                        {
+                            document.getElementById(data).setAttribute('class', 'apppart-cosmetic-hascosmeticattributes');
+                        }
                     }
+                    else
+                    {
+                        document.getElementById(data).setAttribute('data-cosmetic', '0');                        
+                        if(sourcecosmeticattributecount == 0)
+                        {
+                            document.getElementById(data).setAttribute('class', 'apppart');
+                        }
+                        else
+                        {
+                            document.getElementById(data).setAttribute('class', 'apppart-hascosmeticattributes');
+                        }                        
+                    }
+                    
                     return;
                 }
 
@@ -374,13 +397,7 @@ ksort($fitmentcolumnkeys);
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
-                <!-- Left Column -->
-                <div class="col-xs-12 col-md-2 my-col colLeft">
-                    
-                </div>
                 
-                <!-- Main Content -->
-                <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
                         <div class="alert alert-danger" role="alert" id="heading-alert" style="display:none;">This is a danger alert—check it out!</div>
@@ -472,15 +489,41 @@ ksort($fitmentcolumnkeys);
                                         echo '<div id="dropzone_' . $dropzonenumber . '" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="' . $rowfitmentattributes . '" data-column="' . $positionandparttype . '" style="background-color:#c0c0c0;padding-top:2px;padding-bottom:25px;padding-left:2px;padding-right:2px;">';
                                         if (isset($appmatrix[$fitmentrowkey][$fitmentcolumnkey])) {
                                             foreach ($appmatrix[$fitmentrowkey][$fitmentcolumnkey] as $app) {
-                                                $appstyle = 'apppart';
-                                                if ($app['cosmetic'] > 0) {
-                                                    $appstyle = 'apppart-cosmetic';
-                                                } if ($app['status'] > 1) {
+                                                $appstyle = '';
+
+                                                if ($app['cosmetic'] > 0) 
+                                                {
+                                                    if ($app['cosmeticattributecount'] > 0) 
+                                                    {// app is cosmetic with cosmetic attributes
+                                                        $appstyle = 'apppart-cosmetic-hascosmeticattributes';
+                                                    }
+                                                    else
+                                                    {// app is cosmetic with NO cosmetic attributes
+                                                        $appstyle = 'apppart-cosmetic';
+                                                    }
+                                                }
+                                                else
+                                                { // app is non-cosmetic
+                                                    if ($app['cosmeticattributecount'] > 0) 
+                                                    {// app is non-cosmetic with cosmetic attributes
+                                                        $appstyle = 'apppart-hascosmeticattributes';
+                                                    }
+                                                    else
+                                                    {// app is non-cosmetic with NO cosmetic attributes
+                                                    
+                                                        $appstyle = 'apppart';                                                        
+                                                    }
+                                                }
+                                                                                                
+                                                if ($app['status'] > 1) 
+                                                {
                                                     $appstyle = 'apppart-hidden';
-                                                } if ($app['status'] == 1) {
+                                                }
+                                                
+                                                if ($app['status'] == 1) {
                                                     $appstyle = 'apppart-deleted';
                                                 }
-                                                echo '<div id="apppart_' . $app['id'] . '" class="' . $appstyle . '" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' . $rowfitmentattributes . '" data-column="' . $positionandparttype . '" data-sourceapp="' . $app['id'] . '" data-basevehicleid="' . $app['basevehicleid'] . '" data-partnumber="' . $app['partnumber'] . '" data-quantityperapp="' . $app['quantityperapp'] . '" data-cosmetic="' . $app['cosmetic'] . '" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' . $app['id'] .'&categories='. urlencode(implode(',',$partcategories)).'">' . $app['partnumber'] . '</a></div>';
+                                                echo '<div id="apppart_' . $app['id'] . '" class="' . $appstyle . '" draggable="true" ondragstart="drag(event)" data-type="app" data-row="' . $rowfitmentattributes . '" data-column="' . $positionandparttype . '" data-sourceapp="' . $app['id'] . '" data-basevehicleid="' . $app['basevehicleid'] . '" data-partnumber="'.$app['partnumber'].'" data-quantityperapp="'.$app['quantityperapp'].'" data-cosmeticattributecount="'.$app['cosmeticattributecount'].'" data-cosmetic="'.$app['cosmetic'].'" style="padding-left:3px;padding-top:3px;padding-bottom:3px;padding-right:30px;"><a href="showApp.php?appid=' . $app['id'] .'&categories='. urlencode(implode(',',$partcategories)).'">' . $app['partnumber'] . '</a></div>';
                                             }
                                         }
                                         echo '</div>';
@@ -489,13 +532,19 @@ ksort($fitmentcolumnkeys);
 
                                         echo '</td>';
                                     }
+                                    
+                                    echo '<td><div id="trash" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="trash" data-column="trash" style="background-color:#FF5533;padding:25px;"></div></td>';
+                                    
                                     echo '</tr>';
                                 }
                                 echo '</table>';
+
+                                
+                                
                                 
                                 echo '<div class="card-footer bg-transparent"><div class="row padding my-row">';
-                                echo '<div class="col-6"><div id="trash" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="trash" data-column="trash" style="padding:10px;margin:10px;border:2px solid #f5f5f5;background-color:#FF5533;">Drag apps here to delete them</div></div>';
-                                echo '<div class="col-6"><div id="hide" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="hide" data-column="hide" style="padding:10px;margin:10px;border:2px solid #f5f5f5;background-color:#FFD433;">Drag apps here to de-activate them</div></div>';
+                                // echo '<div class="col-6"><div id="trash" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="trash" data-column="trash" style="padding:10px;margin:10px;border:2px solid #f5f5f5;background-color:#FF5533;">Delete</div></div>';
+                                echo '<div class="col-6"><div id="hide" ondrop="drop(event)" ondragover="allowDrop(event)" data-type="dropzone" data-row="hide" data-column="hide" style="padding:10px;margin:10px;border:2px solid #f5f5f5;background-color:#FFD433;">Hide</div></div>';
                                 echo '</div>';           
                                       
                             } else { // no apps found
@@ -504,14 +553,7 @@ ksort($fitmentcolumnkeys);
                             ?>
                         </div>
                     </div>
-                </div>
-                <!-- End of Main Content -->
                 
-                <!-- Right Column -->
-                <div class="col-xs-12 col-md-2 my-col colRight">
-
-                    
-                </div>
             </div>
         </div>    
         <!-- End of Content Container -->

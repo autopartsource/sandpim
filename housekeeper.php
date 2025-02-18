@@ -35,7 +35,7 @@ foreach($orphans as $orphan)
 }
 if(count($orphans))
 {
- $logs->logSystemEvent('housekeeper', 0, 'Background houskeeper deleted '.count($orphans).' orphan part_asset records');    
+ $logs->logSystemEvent('housekeeper', 0, 'Housekeeper deleted '.count($orphans).' orphan part_asset records');    
 }
 
 // PIO re-calc for all active parts
@@ -81,9 +81,9 @@ if($viogeography && $vioyearquarter)
 }
 else
 {
- $logs->logSystemEvent('housekeeper', 0, 'Background housekeeper skipped part VIO updates because VIOdefaultGeography or VIOdefaultYearQuarter is not set in the config.'); 
+ $logs->logSystemEvent('housekeeper', 0, 'Housekeeper skipped part VIO updates because VIOdefaultGeography or VIOdefaultYearQuarter is not set in the config.'); 
 }
-$logs->logSystemEvent('housekeeper', 0, 'Background houskeeper updated VIO stats on '.$updatedpartcount. ' parts.'); 
+$logs->logSystemEvent('housekeeper', 0, 'Housekeeper updated VIO stats on '.$updatedpartcount. ' parts.'); 
 
 // delete apps flagged as deleted (status = 1)
 $appids=$pim->removeDeletedApps();
@@ -102,7 +102,7 @@ if(count($appids)>0)
 
 $fixedattributecount=0;
 $badattributes=$pim->getAppAttributesByValue('note', 'note', '%;%'); // get offending notes that need splitting    //$attributes[]=array('id'=>$row['id'],'applicationid'=>$row['applicationid'],'name'=>$row['name'],'value'=>$row['value'],'type'=>$row['type'],'sequence'=>$row['sequence'],'cosmetic'=>$row['cosmetic']);
-$logs->logSystemEvent('housekeeper', 0, 'Background houskeeper found '.count($badattributes).' fitment notes to be split');
+$logs->logSystemEvent('housekeeper', 0, 'Housekeeper found '.count($badattributes).' fitment notes to be split');
 
 foreach($badattributes as $badattribute)
 {
@@ -126,12 +126,12 @@ foreach($badattributes as $badattribute)
  if($fixedattributecount>=1000){break;}
 }
 
-$logs->logSystemEvent('housekeeper', 0, 'Houskeeper split '.$fixedattributecount.' app notes');
+$logs->logSystemEvent('housekeeper', 0, 'Housekeeper split '.$fixedattributecount.' app notes');
 
 $runtime=time()-$starttime;
 if($runtime > 30)
 {
- $logs->logSystemEvent('housekeeper', 0, 'Background houskeeper process ran for '.$runtime.' seconds');
+ $logs->logSystemEvent('housekeeper', 0, 'Housekeeper process ran for '.$runtime.' seconds');
 }
 
 // clear clipboard content older than 2 days for all users

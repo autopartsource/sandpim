@@ -188,10 +188,12 @@ class pim
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
-   {
-    $attributes=$this->getAppAttributes($row['id']);
+   { // ddd
+    $attributes=$this->getAppAttributes($row['id']);       
+    $cosmeticattributecount=0;
+    foreach ($attributes as $attribute){if($attribute['cosmetic']>0){$cosmeticattributecount++;}}
     $attributeshash=$this->appAttributesHash($attributes);
-    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'attributeshash'=>$attributeshash);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'attributeshash'=>$attributeshash,'cosmeticattributecount'=>$cosmeticattributecount);
    }
   }
   $db->close();
@@ -333,6 +335,28 @@ class pim
 
 //--------- 
  
+ function getAppsByAttribute($attributetype, $searchterm)
+ {
+  $db = new mysql;  $db->connect();
+  $apps=array();  
+  if($stmt=$db->conn->prepare('select application.* from application,application_attribute where application.id=application_attribute.applicationid and status=0 and type=? and value like ?'))
+  {
+   $stmt->bind_param('ss', $attributetype, $searchterm);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    
+    $attributes=$this->getAppAttributes($row['id']);
+    $cosmeticattributecount=0;
+    foreach ($attributes as $attribute){if($attribute['cosmetic']>0){$cosmeticattributecount++;}}
+    $attributeshash=$this->appAttributesHash($attributes);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'attributeshash'=>$attributeshash,'inheritedfrom'=>'','cosmeticattributecount'=>$cosmeticattributecount);
+   }
+  }   
+  $db->close();
+  return $apps;     
+ }
  
  
  

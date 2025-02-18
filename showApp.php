@@ -106,7 +106,10 @@ if(isset($_POST))
 
 $app=$pim->getApp($appid);
 
-$appcolor='#d0f0c0'; if($app['cosmetic']>0){$appcolor='#33FFD7';} if($app['status']>1){$appcolor='#FFD433';} if($app['status']==1){$appcolor='#FF5533';}
+$appcolor='#d0f0c0';
+if($app['cosmetic']>0){$appcolor='#e39aea';}
+if($app['status']>1){$appcolor='#FFD433';}
+if($app['status']==1){$appcolor='#FF5533';}
 
 $attributecolors=array('vcdb'=>'52BE80','qdb'=>'6060F0','note'=>'C0C0C0');
 $niceattributes=array();
@@ -666,9 +669,21 @@ if(isset($_GET['categories']))
                                             <a href="./showAppsByBasevehicle.php?<?php echo implode('&', $selectedcategoriesurlvars); ?>&makeid=<?php echo $mmy['MakeID']; ?>&modelid=<?php echo $mmy['ModelID']; ?>&yearid=<?php echo $year; ?>&submit=Show+Applications" class="btn btn-secondary">Base Vehicle</a>
                                         </th>
                                         <td align="left">
-                                            <?php echo '<a href="appsIndex.php"  class="btn btn-secondary">'.$makename.'</a>  <a href="mmySelectModel.php?makeid=' . $mmy['MakeID'] . '" class="btn btn-secondary">'.$modelname.'</a> <a href="mmySelectYear.php?makeid=' . $mmy['MakeID'] . '&modelid=' . $mmy['ModelID'] . '" class="btn btn-secondary">'.$year.'</a>'; ?>
+                                            <div style="background-color:<?php echo $appcolor;?>;padding:5px;">
+                                                <?php echo '<a href="appsIndex.php"  class="btn btn-secondary">'.$makename.'</a>  <a href="mmySelectModel.php?makeid=' . $mmy['MakeID'] . '" class="btn btn-secondary">'.$modelname.'</a> <a href="mmySelectYear.php?makeid=' . $mmy['MakeID'] . '&modelid=' . $mmy['ModelID'] . '" class="btn btn-secondary">'.$year.'</a>'; ?>
+                                            </div>
                                         </td>
-                                    </tr>
+                                    </tr>                                    
+                                    <tr>                                        
+                                        <th id="label-status">Status</th>
+                                        <td id="value-status" align="right">                                            
+                                                <select id="status" onchange="updateApp(<?php echo $appid; ?>,'select','status');"><option value="0">Active</option><option value="1"<?php if ($app['status'] == 1) {
+                                    echo ' selected';
+                                    } ?>>Deleted</option><option value="2"<?php if ($app['status'] == 2) {
+                                    echo ' selected';
+                                    } ?>>Hidden</option></select>                                            
+                                        </td>
+                                    </tr>                                    
                                     <tr><th>Part</th><td align="left"><a href="showPart.php?partnumber=<?php echo $app['partnumber']; ?>" class="btn btn-secondary"><?php echo $app['partnumber']; ?></a></td></tr>
                                     <tr><th>Application<br/>Part Type</th><td align="right"><select id="parttypeid" onchange="if (this.selectedIndex) updateApp(<?php echo $appid; ?>,'select','parttypeid');"><option value="0">Undefined</option><?php foreach ($favoriteparttypes as $parttype) { ?> <option value="<?php echo $parttype['id']; ?>"<?php if ($parttype['id'] == $app['parttypeid']) {
                                     echo ' selected';
@@ -807,11 +822,6 @@ if(isset($_GET['categories']))
                                         <button id="doc-cosmetic" type="button" class="btn btn-sm btn-docs" data-doc="Apps/Show App/Cosmetic" data-bs-toggle="tooltip" data-bs-placement="top">?</button>
                                     </td>
                                 </tr>
-                                <tr><th id="label-status" class="apppart-active">Status</th><td id="value-status" class="apppart-active" align="right"><select id="status" onchange="updateApp(<?php echo $appid; ?>,'select','status');"><option value="0">Active</option><option value="1"<?php if ($app['status'] == 1) {
-                                echo ' selected';
-                                } ?>>Deleted</option><option value="2"<?php if ($app['status'] == 2) {
-                                echo ' selected';
-                                } ?>>Hidden</option></select></td></tr>
                                </table>
                               </div>
                               <?php }

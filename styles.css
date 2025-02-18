@@ -122,10 +122,12 @@ body {
     justify-content: center;
 }
 
-.apppart {padding: 1px; border: 1px solid #808080; margin: 0px; background-color:#d0f0c0;}
-.apppart-cosmetic {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#33FFD7;}
-.apppart-hidden {padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FFD433;}
-.apppart-deleted { padding: 1px; border: 1px solid #aaaaaa; margin:0px; background-color:#FF5533;}
+.apppart {padding: 1px; border: 2px solid #ffffff; margin: 0px; background-color:#d0f0c0;}
+.apppart-hascosmeticattributes {padding: 1px; border: 2px solid #ff00ff; margin:0px; background-color:#d0f0c0;}
+.apppart-cosmetic {padding: 1px; border: 2px solid #ffffff; margin:0px; background-color:#e39aea;}
+.apppart-cosmetic-hascosmeticattributes {padding: 1px; border: 2px solid #ff00ff; margin:0px; background-color:#e39aea;}
+.apppart-hidden {padding: 1px; border: 2px solid #aaaaaa; margin:0px; background-color:#FFD433;}
+.apppart-deleted { padding: 1px; border: 2px solid #aaaaaa; margin:0px; background-color:#FF5533;}
 
 .appstatus-active {background-color:#FFFFFF;}
 .appstatus-deleted {background-color:#FF5533;}

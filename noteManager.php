@@ -56,7 +56,7 @@ $notes=$pim->getAppNoteAttributeCounts();
                                 <?php
                                 foreach ($notes as $note) 
                                 {
-                                 echo '<tr><td>'.$note['note'].'</td><td>'.$note['count'].'</td><td><a href="./convertNoteToQdb.php?attributeid='.$note['lastid'].'&source=noteManager">To Qdb</td></tr>';
+                                 echo '<tr><td>'.$note['note'].'</td><td><a href="./appsListBySearch.php?&mode=note&term='. urlencode(base64_encode($note['note'])).'">'.$note['count'].'</a></td><td><a href="./convertNoteToQdb.php?attributeid='.$note['lastid'].'&source=noteManager">To Qdb</td></tr>';
                                 }
                                 ?>
                             </table>
