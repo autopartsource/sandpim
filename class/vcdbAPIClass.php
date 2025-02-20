@@ -123,6 +123,8 @@ class vcdbapi
   $success=false;
   $ch = curl_init();
   $authorization = "Authorization: Bearer ".$this->token;
+  curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
   curl_setopt($ch, CURLOPT_URL,'https://common.autocarevip.com/api/v1.0/databases');
   curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization ));
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -145,6 +147,8 @@ class vcdbapi
  {
   $ch = curl_init();
   $authorization = "Authorization: Bearer ".$this->token;
+  curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
   curl_setopt($ch, CURLOPT_URL,'https://common.autocarevip.com/api/v1.0/databases/'.$database.'/tables');
   curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization ));
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -205,6 +209,8 @@ class vcdbapi
    curl_setopt($ch, CURLOPT_URL,$url);
   }
   
+  curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
   curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization ));
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   

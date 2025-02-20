@@ -13,7 +13,7 @@ $configGet = new configGet();
 $configSet = new configSet();
 
 
-$daysback=7;
+$daysback=14;
 $tokenlowlifeseconds=3000; //every time a new records page is requested, the remaining life of the active token is checked. If lif is less than this number, a nre token is requested 
 $tokenrefreshlimit=30; // how many new-token requests are allowed in this session (this php script execution)
 $loggingverbosity=1; // (1-10) Ten is the most verbose 
