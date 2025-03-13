@@ -268,6 +268,7 @@ foreach($partnumbers as $partnumber)
    $iteminterchange=array();
    $iteminterchange['CompetitorPartNumber']=$interchangerecord['competitorpartnumber'];
    $iteminterchange['BrandAAIAID']=$interchangerecord['brandAAIAID'];
+   $iteminterchange['SubBrandAAIAID']=$interchangerecord['subbrandAAIAID'];
    $iteminterchange['InterchangeQuantity']=$interchangerecord['interchangequantity'];
    $iteminterchange['UOM']=$interchangerecord['uom'];
    $iteminterchange['InterchangeNotes']=$interchangerecord['interchangenotes'];

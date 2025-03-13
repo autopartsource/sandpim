@@ -913,6 +913,7 @@ class setup
         $sql="insert into config_options values('padbProductionDatabase','','','padb','This is the name of the local MySQL database that will use for lookup of PAdb data. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('qdbProductionDatabase','','','qdb','This is the name of the local MySQL database that will use for lookup of Qdb data. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('vcdbAPIcacheDatabase','','','vcdbcache','This is the name of the local MySQL database that will used caching and using vcdb API data. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();       
+        $sql="insert into config_options values('brandAPIcacheDatabase','','','pim','This is the name of the local MySQL database that will used caching and using Brand API data from AutoCare. It is assumed to be on the same host as the main pim database');"; $stmt=$db->conn->prepare($sql); $stmt->execute();       
         $sql="insert into config_options values('assetPushURI','','','','Experimental feature for debugging - URI of peer SandPIM system to push assets to');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('recentPartAdditionsDaysBack','','','7','How many days back from today into the past to consider for the recent-addtions list on the home screen');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('navbarColorHex','AN1/255','','c0c0c0','The UI top-nav background color (6 character hex value)');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
@@ -1251,6 +1252,22 @@ class setup
         INDEX idx_BrandName (BrandName))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - brand ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - brand ('.$db->conn->error.')';}
 
+        $sql="CREATE TABLE autocarebrand (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        ParentID varchar(255) not null,
+        ParentCompany varchar(255) not null,
+        BrandID varchar(255) not null,
+        BrandName varchar(255) not null,
+        SubBrandID varchar(255) not null,
+        SubBrandName varchar(255) not null,
+        BrandOEMFlag varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_BrandID (BrandID),
+        INDEX idx_BrandName (BrandName),
+        INDEX idx_SubBrandID (SubBrandID),
+        INDEX idx_SubBrandName (SubBrandName))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - autocarebrand ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - autocarebrand ('.$db->conn->error.')';}        
+        
         $sql="CREATE TABLE competitivebrand (
         brandAAIAID varchar(255) not null,
         description varchar(255) not null,

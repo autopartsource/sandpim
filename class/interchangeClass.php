@@ -99,14 +99,32 @@ class interchange
   $db=new mysql; $db->connect();
   $records=array();
   
-  if($stmt=$db->conn->prepare('select * from interchange left join brand on interchange.brandAAIAID =brand.BrandID where interchange.partnumber=? order by brand.BrandName, interchange.competitorpartnumber'))
+  
+  
+//  if($stmt=$db->conn->prepare('select * from interchange left join brand on interchange.brandAAIAID =brand.BrandID where interchange.partnumber=? order by brand.BrandName, interchange.competitorpartnumber'))
+  if($stmt=$db->conn->prepare('select * from interchange where partnumber=? order by brandAAIAID, competitorpartnumber'))
   {
    $stmt->bind_param('s',$partnumber);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $records[]=array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID'],'interchangequantity'=>$row['interchangequantity'],'uom'=>$row['uom'],'interchangenotes'=>base64_decode($row['interchangenotes']),'internalnotes'=>base64_decode($row['internalnotes']));
+    $brandcode=$row['brandAAIAID']; $subbrandcode='';
+    if(strlen($row['brandAAIAID'])==9 && substr($row['brandAAIAID'],4,1)=='.')
+    {  // see if the brandcode is in the form xxxx.xxxx this indicates that brand.subbrand are specified - use the new brand table
+     $bits=explode('.',$row['brandAAIAID']); $brandcode=$bits[0]; $subbrandcode=$bits[1];
+    }
+            
+    $records[]=array(
+        'id'=>$row['id'],
+        'partnumber'=>$row['partnumber'],
+        'competitorpartnumber'=>$row['competitorpartnumber'],
+        'brandAAIAID'=>$brandcode,
+        'subbrandAAIAID'=>$subbrandcode,
+        'interchangequantity'=>$row['interchangequantity'],
+        'uom'=>$row['uom'],
+        'interchangenotes'=>base64_decode($row['interchangenotes']),
+        'internalnotes'=>base64_decode($row['internalnotes']));
    }
   }
   $db->close();
@@ -169,44 +187,107 @@ class interchange
   $db->close();
   return $records;      
  }
- 
+
+ function brandsubbrandName($brandAAIAID,$subbrandAAIAID)
+ {
+  if($subbrandAAIAID=='')
+  {
+   return $this->brandName($brandAAIAID);   
+  }
+  else
+  { // subbrand is non-blank      
+   return $this->brandName($brandAAIAID.'.'.$subbrandAAIAID);
+  }     
+ }
+
  function brandName($brandAAIAID)
  {
   $db=new mysql; $db->connect();
   $name='not found ('.$brandAAIAID.')';
-  
-  if($stmt=$db->conn->prepare('select BrandName from brand where BrandID=?'))
-  {
-   if($stmt->bind_param('s',$brandAAIAID))
+    
+  if(strlen($brandAAIAID)==9 && substr($brandAAIAID,4,1)=='.')
+  {  // see if the brandcode is in the form xxxx.xxxx
+     //  this indicates that brand.subbrand are specified - use the new brand table
+   $bits=explode('.',$brandAAIAID); $brandcode=$bits[0]; $subbrandcode=$bits[1];
+      
+   if($stmt=$db->conn->prepare('select BrandName,SubBrandName from autocarebrand where BrandID=? and SubBrandID=?'))
    {
-    if($stmt->execute())
+    if($stmt->bind_param('ss',$brandcode,$subbrandcode))
     {
-     $db->result = $stmt->get_result();
-     if($row = $db->result->fetch_assoc())
+     if($stmt->execute())
      {
-      $name=$row['BrandName'];
+      $db->result = $stmt->get_result();
+      if($row = $db->result->fetch_assoc())
+      {
+       $name=$row['BrandName'].' / '.$row['SubBrandName'];
+      }
+     }
+    }
+   }
+      
+  }
+  else
+  {// brandcode is not in xxxx.xxxx format - treat it simply as brandcode lookup
+   // in the old "brand" table
+      
+   if($stmt=$db->conn->prepare('select BrandName from brand where BrandID=?'))
+   {
+    if($stmt->bind_param('s',$brandAAIAID))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      if($row = $db->result->fetch_assoc())
+      {
+       $name=$row['BrandName'];
+      }
      }
     }
    }
   }
+
   $db->close();
   return $name;   
  }
  
  function validBrand($brandAAIAID)
- {
+ {     
   $db=new mysql; $db->connect();
   $returnval=false;
-  if($stmt=$db->conn->prepare('select BrandName from brand where BrandID=?'))
-  {
-   if($stmt->bind_param('s',$brandAAIAID))
+  
+  if(strlen($brandAAIAID)==9 && substr($brandAAIAID,4,1)=='.')
+  {  // see if the brandcode is in the form xxxx.xxxx
+     //  this indicates that brand.subbrand are specified - use the new brand table
+   $bits=explode('.',$brandAAIAID); $brandcode=$bits[0]; $subbrandcode=$bits[1];  
+   if($stmt=$db->conn->prepare('select BrandName,SubBrandName from autocarebrand where BrandID=? and SubBrandID=?'))
    {
-    if($stmt->execute())
+    if($stmt->bind_param('ss',$brandcode,$subbrandcode))
     {
-     $db->result = $stmt->get_result();
-     if($row = $db->result->fetch_assoc())
+     if($stmt->execute())
      {
-      $returnval=true;
+      $db->result = $stmt->get_result();
+      if($row = $db->result->fetch_assoc())
+      {
+       $returnval=true;
+      }
+     }
+    }
+   }      
+  }
+  else
+  {  // brandcode is not in xxxx.xxxx format - treat it simply as brandcode lookup
+     // in the old "brand" table
+   if($stmt=$db->conn->prepare('select BrandName from brand where BrandID=?'))
+   {
+    if($stmt->bind_param('s',$brandAAIAID))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      if($row = $db->result->fetch_assoc())
+      {
+       $returnval=true;
+      }
      }
     }
    }

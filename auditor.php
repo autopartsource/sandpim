@@ -39,7 +39,7 @@ $sandpiperPrimary=new sandpiperPrimary();
 // --- get a random group of items to examine 
 //$pim->recordIssue('SYSTEM/HEARTBEAT','test',1,'testtest','background auditor', '1234567890');
 
-$partnumbergroupsize=100;
+$partnumbergroupsize=200;
 $partnumbers=$pim->getPartnumbersByRandom($partnumbergroupsize);
 
 $partauditrequests=$pim->getAuditRequests('part-general');
@@ -50,7 +50,7 @@ foreach($partauditrequests as $partauditrequest)
 }
 
 
-$downloadlimit=4;
+$downloadlimit=8;
 
 foreach($partnumbers as $partnumber)
 {       
@@ -214,10 +214,10 @@ foreach($partnumbers as $partnumber)
     // invalid VCdb references (basevehilce, etc)
     // 
   
-$appids=$pim->getAppIDsByRandom(100);
+$appids=$pim->getAppIDsByRandom(250);
 foreach($appids as $appid)
 {
-    echo $appid."\n";
+//    echo $appid."\n";
     $app=$pim->getApp($appid);
     
     // ignore deleted or hidden apps
@@ -467,7 +467,7 @@ $pim->updateSnoozes();
 
 
 $runtime=time()-$starttime;
-if($runtime > 10)
+if($runtime > 30)
 {
  $logs->logSystemEvent('auditor', 0, 'Background auditor process ran for '.$runtime.' seconds');
 }

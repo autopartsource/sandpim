@@ -421,7 +421,7 @@ class PIESgenerator
      $PartInterchangeElement->setAttribute('BrandAAIAID',$interchange['BrandAAIAID']);
 
      if(array_key_exists('BrandLabel',$interchange)){$PartInterchangeElement->setAttribute('BrandLabel',$interchange['BrandLabel']);}
-     if(array_key_exists('SubBrandAAIAID',$interchange)){$PartInterchangeElement->setAttribute('SubBrandAAIAID',$interchange['SubBrandAAIAID']);}
+     if(array_key_exists('SubBrandAAIAID',$interchange) && $interchange['SubBrandAAIAID']!=''){$PartInterchangeElement->setAttribute('SubBrandAAIAID',$interchange['SubBrandAAIAID']);}
      if(array_key_exists('SubBrandLabel',$interchange)){$PartInterchangeElement->setAttribute('SubBrandLabel',$interchange['SubBrandLabel']);}
      if(array_key_exists('VMRSBrandID',$interchange)){$PartInterchangeElement->setAttribute('VMRSBrandID',$interchange['VMRSBrandID']);}
      if(array_key_exists('ItemEquivalentUOM',$interchange)){$PartInterchangeElement->setAttribute('ItemEquivalentUOM',$interchange['ItemEquivalentUOM']);}
