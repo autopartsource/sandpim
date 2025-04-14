@@ -30,16 +30,18 @@ $parts =array();
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $competitivebrands=$interchange->getCompetitivebrands();
 
+$searchtype = 'contains';
+$limit = 50;
 
 if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) 
 {
- $searchtype = 'equals'; if (isset($_GET['searchtype']) && ($_GET['searchtype'] == 'contains' || $_GET['searchtype'] == 'startswith' || $_GET['searchtype'] == 'endswith')) {$searchtype = $_GET['searchtype'];}
+ if (isset($_GET['searchtype']) && ($_GET['searchtype'] == 'equals' || $_GET['searchtype'] == 'startswith' || $_GET['searchtype'] == 'endswith')) {$searchtype = $_GET['searchtype'];}
  $competitorpartnumber = strtoupper($_GET['partnumber']);
 
  $brandAAIAID=$_GET['competitivebrand']; if($brandAAIAID=='any'){$brandAAIAID='%';}
  
  
- $limit = 10; if(isset($_GET['limit']) && intval($_GET['limit'])>0){$limit=intval($_GET['limit']);}
+ if(isset($_GET['limit']) && intval($_GET['limit'])>0){$limit=intval($_GET['limit']);}
  
  $parttypeid=false; if(intval($_GET['parttypeid'])>0){$parttypeid=intval($_GET['parttypeid']);}
         
@@ -74,10 +76,23 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                         <h6 class="card-header">Find Competitor Parts</h6>
                         <div class="card-body">
                             <form method="get" action="interchangeIndex.php">
-                            <div style="padding:3px;">Competitor part numbers <select name="searchtype"><option value="startswith">starting with</option><option value="contains">containing</option><option value="endswith">ending with</option><option value="equals">exactly equal to</option></select> <input type="text" name="partnumber" value="<?php if(isset($_GET['partnumber'])){echo substr(strtoupper(trim($_GET['partnumber'])),0,20); }?>"/></div>
+                            <div style="padding:3px;">Competitor part numbers 
+                                <select name="searchtype">
+                                    <option value="startswith"<?php if($searchtype=='startswith'){echo ' selected';}?>>starts with</option>
+                                    <option value="contains"<?php if($searchtype=='contains'){echo ' selected';}?>>contains</option>
+                                    <option value="endswith"<?php if($searchtype=='endswith'){echo ' selected';}?>>ends with</option>
+                                    <option value="equals"<?php if($searchtype=='equals'){echo ' selected';}?>>is exactly</option>
+                                </select> <input type="text" name="partnumber" value="<?php if(isset($_GET['partnumber'])){echo substr(strtoupper(trim($_GET['partnumber'])),0,20); }?>"/></div>
                             <div style="padding:3px;">From Competitor <select name="competitivebrand"><option value="any">Any Brand</option><?php foreach($competitivebrands as $competitivebrand){$selected=''; if(isset($_GET['competitivebrand']) && $_GET['competitivebrand']==$competitivebrand['brandAAIAID']){$selected=' selected';}  echo '<option value="'.$competitivebrand['brandAAIAID'].'"'.$selected.'>'.$competitivebrand['description'].'</option>';}?></select></div>
                             <div style="padding:3px;">Connected to our part that are <select name="parttypeid"><option value="any">Any Part Type</option><?php foreach($favoriteparttypes as $parttype){$selected=''; if(isset($_GET['parttypeid']) && $_GET['parttypeid']==$parttype['id']){$selected=' selected';}?> <option value="<?php echo $parttype['id'];?>" <?php if(isset($_GET['parttypeid']) && $_GET['parttypeid']==$parttype['id']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div>
-                            <div style="padding:3px;">Limit results to <select name="limit"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option><option value="500">500</option></select></div>
+                            <div style="padding:3px;">Limit results to <select name="limit">
+                                    <option value="10"<?php if($limit==10){echo ' selected';}?>>10</option>
+                                    <option value="20"<?php if($limit==20){echo ' selected';}?>>20</option>
+                                    <option value="50"<?php if($limit==50){echo ' selected';}?>>50</option>
+                                    <option value="100"<?php if($limit==100){echo ' selected';}?>>100</option>
+                                    <option value="200"<?php if($limit==200){echo ' selected';}?>>200</option>
+                                    <option value="500"<?php if($limit==500){echo ' selected';}?>>500</option>
+                                </select></div>
                             <div style="padding:3px;"><input type="submit" name="submit" value="Search"/></div>
                         </form>
                         </div>
@@ -88,7 +103,7 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                         <h6 class="card-header">Search Results <?php echo '<span class="badge bg-primary rounded-pill">'.count($parts).'</span>'; ?></h6>
                         <div class="card-body scroll">
                             <table class="table" border="1">
-                                <tr><th>Competitor Partnumber</th><th>Competitor Brand</th><th>Part Type</th><th>Our Partnumber</th></tr>
+                                <tr><th>Competitor Partnumber</th><th>Competitor Brand (AutoCare BrandID)</th><th>Part Type</th><th>Our Partnumber</th></tr>
                                 <?php
                                 foreach ($parts as $part) {
                                     echo '<tr> <td>'.$part['competitorpartnumber'].'</td> <td>'. $interchange->brandName($part['brandAAIAID']).' ('.$part['brandAAIAID'].')</td><td>'.$pcdb->parttypeName($part['parttypeid']).'</td><td><a href="showPart.php?partnumber=' . $part['partnumber'] . '" class="btn btn-secondary">' . $part['partnumber'] . '</a></td><tr>';
