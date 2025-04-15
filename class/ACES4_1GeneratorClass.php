@@ -136,15 +136,17 @@ class ACESgenerator
       {
        if(trim($parm)!='')
        {
-        $paramElement=new DOMElement('param');
-        $qualElement->appendChild($paramElement);
+        $parmbits=explode('|',$parm);        
+        if(count($parmbits)==2 && trim($parmbits[0])!='')
+        {
+         $paramElement=new DOMElement('param');
+         $qualElement->appendChild($paramElement);
+         $paramElement->setAttribute('value', trim($parmbits[0]));
       
-        $parmbits=explode('|',$parm);
-        $paramElement->setAttribute('value', $parmbits[0]);
-      
-        if(count($parmbits)==2 && trim($parmbits[1])!='')
-        {// uom is present "288|mm"
-         $paramElement->setAttribute('uom', $parmbits[1]);
+         if(trim($parmbits[1])!='')
+         {// uom is present "288|mm"
+          $paramElement->setAttribute('uom', trim($parmbits[1]));
+         }        
         }
        }
       }
