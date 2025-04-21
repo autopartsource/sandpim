@@ -33,14 +33,14 @@ class pcdbapi
  
  public function __construct($_localdbname=false)
  {
-//  $this->tableslist=array('Alias','Categories','PartPosition','Parts','PIESField','PIESReferenceFieldCode','Positions','Subcategories','Use','PartsDescription','PartsRelationship');
+//  $this->tableslist=array('Alias','Categories','PartPosition','Parts','PIESField','PIESReferenceFieldCode','Positions','Subcategories','Use','PartsDescription','PartsRelationship','PartsSupersession');
 
-  $this->tableslist=array('Parts');
+  $this->tableslist=array('PartsRelationship');
 
 
   
 
-  $this->tablekeyslist=array('Alias'=>'AliasID','Categories'=>'CategoryID','PartPosition'=>'PartPositionID','Parts'=>'PartTerminologyID','PIESField'=>'FieldID','PIESReferenceFieldCode'=>'ReferenceFieldCodeID','PIESSegment'=>'SegmentID','Positions'=>'PositionID','Subcategories'=>'SubCategoryID','Use'=>'UseID','PartsDescription'=>'PartsDescriptionID','PartsRelationship'=>'');   
+  $this->tablekeyslist=array('Alias'=>'AliasID','Categories'=>'CategoryID','PartPosition'=>'PartPositionID','Parts'=>'PartTerminologyID','PIESField'=>'FieldID','PIESReferenceFieldCode'=>'ReferenceFieldCodeID','PIESSegment'=>'SegmentID','Positions'=>'PositionID','Subcategories'=>'SubCategoryID','Use'=>'UseID','PartsDescription'=>'PartsDescriptionID','PartsRelationship'=>'','PartsSupersession'=>'');   
 
   //PAdb stuff for carving out
 //  $this->tableslist=array('MeasurementGroup');
@@ -727,50 +727,162 @@ class pcdbapi
     
     
     
-//PartsRelationship has no primary key
+//-------------- PartsRelationship -------- has no primary key
 
    case 'PartsRelationship':
        
-    $hashlist=array(); // compile a hashlist of the existing local table's recs
-    if($stmt=$db->conn->prepare('select PartTerminologyID,RelatedPartTerminologyID from PartsRelationship'))
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select PartTerminologyID,RelatedPartTerminologyID,`hash` from PartsRelationship'))
     {
      if($stmt->execute())
      {
       $db->result = $stmt->get_result();
       while($row = $db->result->fetch_assoc())
       {
-       $hash=md5($row['PartTerminologyID'].$row['RelatedPartTerminologyID']);
-       $hashlist[$hash]=1;
+       $localhashlist[$row['hash']]=1;
       }
      }
     }
-       
-    if($stmt=$db->conn->prepare('insert into PartsRelationship values(?,?)'))
+        
+    if($stmt=$db->conn->prepare('insert into PartsRelationship values(?,?,?)'))
     {
-     if($stmt->bind_param('ii', $PartTerminologyID,$RelatedPartTerminologyID))
+     if($stmt->bind_param('iis', $PartTerminologyID,$RelatedPartTerminologyID,$hash))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
-       $PartTerminologyID=$record['PartTerminologyID'];        
-       $RelatedPartTerminologyID=$record['RelatedPartTerminologyID'];
-       $hash=md5($PartTerminologyID.$RelatedPartTerminologyID);        
-       if(!array_key_exists($hash,$hashlist))
+       $hash=md5($record['PartTerminologyID'].$record['RelatedPartTerminologyID']);
+       $PartTerminologyID=$record['PartTerminologyID']; $RelatedPartTerminologyID=$record['RelatedPartTerminologyID'];
+       if(!array_key_exists($hash,$localhashlist))
        {
         if($stmt->execute()){$this->insertcount++;}
        }
       }
      }
-    }    
+    }
+
+    
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
+     {
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['PartTerminologyID'].$record['RelatedPartTerminologyID']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
+      {
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from PartsRelationship where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
+       }
+      }
+     }
+    }
+        
+    break;    
+    
+    
+//------------------ PartsSupersession ------------ has no primary key
+   case 'PartsSupersession':
        
-    break;
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select OldPartTerminologyID,OldPartTerminologyName,NewPartTerminologyID,NewPartTerminologyName,hash from PartsSupersession'))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $localhashlist[$row['hash']]=1;
+      }
+     }
+    }
+        
+    if($stmt=$db->conn->prepare('insert into PartsSupersession values(?,?,?,?,?,?)'))
+    {
+     if($stmt->bind_param('isisss', $OldPartTerminologyID,$OldPartTerminologyName,$NewPartTerminologyID,$NewPartTerminologyName,$RevDate,$hash))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       $OldPartTerminologyID=$record['OldPartTerminologyID'];        
+       $OldPartTerminologyName=$record['OldPartTerminologyName'];
+       $NewPartTerminologyID=$record['NewPartTerminologyID'];        
+       $NewPartTerminologyName=$record['NewPartTerminologyName'];
+       $RevDate=$record['RevDate'];
+       $hash=md5($record['OldPartTerminologyID'].$record['OldPartTerminologyName'].$record['NewPartTerminologyID'].$record['NewPartTerminologyName']);
+       if(!array_key_exists($hash,$localhashlist))
+       {
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+
+    
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
+     {
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['OldPartTerminologyID'].$record['OldPartTerminologyName'].$record['NewPartTerminologyID'].$record['NewPartTerminologyName']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
+      {
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from PartsSupersession where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
+       }
+      }
+     }
+    }
+    
+    
+    break;    
     
     
     
     
     
-//PartsSupersession has no primary key
 //PartsToAlias has no primary key
+
+    
+    
+    
+    
+    
 //PartsToUse has no primary key
 //PIESCode has no primary key
 //PIESEXPICode has no primary key
