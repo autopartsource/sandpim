@@ -33,19 +33,10 @@ class pcdbapi
  
  public function __construct($_localdbname=false)
  {
-//  $this->tableslist=array('Alias','Categories','PartPosition','Parts','PIESField','PIESReferenceFieldCode','Positions','Subcategories','Use','PartsDescription','PartsRelationship','PartsSupersession');
+  $this->tableslist=array('ACESCodedValues','Alias','Categories','PartPosition','Parts','PIESField','PIESReferenceFieldCode','Positions','Subcategories','Use','PartsDescription','PartsRelationship','PartsSupersession','PartsToAlias','PartsToUse','PIESCode','PIESEXPICode');
 
-  $this->tableslist=array('PartsRelationship');
-
-
-  
-
-  $this->tablekeyslist=array('Alias'=>'AliasID','Categories'=>'CategoryID','PartPosition'=>'PartPositionID','Parts'=>'PartTerminologyID','PIESField'=>'FieldID','PIESReferenceFieldCode'=>'ReferenceFieldCodeID','PIESSegment'=>'SegmentID','Positions'=>'PositionID','Subcategories'=>'SubCategoryID','Use'=>'UseID','PartsDescription'=>'PartsDescriptionID','PartsRelationship'=>'','PartsSupersession'=>'');   
-
-  //PAdb stuff for carving out
-//  $this->tableslist=array('MeasurementGroup');
-//  $this->tablekeyslist=array('MeasurementGroup'=>'MeasurementGroupID');   
-  
+  $this->tablekeyslist=array('ACESCodedValues'=>'','Alias'=>'AliasID','Categories'=>'CategoryID','PartPosition'=>'PartPositionID','Parts'=>'PartTerminologyID','PIESField'=>'FieldID','PIESReferenceFieldCode'=>'ReferenceFieldCodeID','PIESSegment'=>'SegmentID','Positions'=>'PositionID','Subcategories'=>'SubCategoryID','Use'=>'UseID','PartsDescription'=>'PartsDescriptionID','PartsRelationship'=>'','PartsSupersession'=>'','PartsToAlias'=>'','PartsToUse'=>'','PIESCode'=>'CodeValueID','PIESEXPICode'=>'EXPICodeID');   
+ 
   
   $this->pagelimit=0;
   $this->totalcalls=0;
@@ -349,71 +340,82 @@ class pcdbapi
   
   switch($tablename)
   {
+      
+//-------------- ACESCodedValues --------- has no key
+       
    case 'ACESCodedValues':
        
-       //WTF?! this table has no key????
-       // delete all recs and re-insert them
-       
-
-
-       
-    if($stmt=$db->conn->prepare('insert into ACESCodedValues values(?,?,?,?)'))
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select `Element`,`Attribute`,CodedValue,CodeDescription,hash from ACESCodedValues'))
     {
-     if($stmt->bind_param('ssss', $Element, $Attribute, $CodedValue,$CodeDescription))
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $localhashlist[$row['hash']]=1;
+      }
+     }
+    }
+        
+    if($stmt=$db->conn->prepare('insert into ACESCodedValues values(?,?,?,?,?)'))
+    {
+     if($stmt->bind_param('sssss', $Element,$Attribute,$CodedValue,$CodeDescription,$hash))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
-       if(!array_key_exists($record[$keyfieldname],$existingids))
-       {// key not found in local tables - do the insert
-        $Element=$record['Element'];
-        $Attribute=$record['Attribute'];
-        $CodedValue=$record['CodedValue'];
-        $CodeDescription=$record['CodeDescription'];
+       $hash=md5($record['Element'].$record['Attribute'].$record['CodedValue'].$record['CodeDescription']);
+       $Element=$record['Element'];
+       $Attribute=$record['Attribute'];
+       $CodedValue=$record['CodedValue'];
+       $CodeDescription=$record['CodeDescription'];
+       if(!array_key_exists($hash,$localhashlist))
+       {
         if($stmt->execute()){$this->insertcount++;}
        }
       }
      }
     }
+
     
-    if($stmt=$db->conn->prepare('delete from ACESCodedValues where Element=? and Attribute=? and CodedValue=? and CodeDescription=?'))
-    {
-     if($stmt->bind_param('ssss', $Element,$Attribute,$CodedValue,$CodeDescription))
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
      {
-      foreach($records as $record)
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['Element'].$record['Attribute'].$record['CodedValue'].$record['CodeDescription']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
       {
-       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
-       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
-        if(array_key_exists($record[$keyfieldname],$existingids))
-        {// record found in local tables - do the delete
-         $Abbreviation=$record['Abbreviation']; if($stmt->execute()){$this->deletecount++;}
-        }
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from ACESCodedValues where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
        }
-      }   
-      foreach($localorphanids as $localorphanid)
-      {
-       $Abbreviation=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
       }
      }
     }
- 
-    if($stmt=$db->conn->prepare('update Abbreviation set Description=?, LongDescription=? where Abbreviation=?'))
-    {
-     if($stmt->bind_param('sss', $Description, $LongDescription, $Abbreviation))
-     {
-      foreach($records as $record)
-      {
-       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
-       if(array_key_exists($record[$keyfieldname],$existingids))
-       {// key found in local tables - do the update
-        $Abbreviation=$record['Abbreviation']; $Description=$record['Description']; $LongDescription=$record['LongDescription'];
-        if($stmt->execute()){$this->updatecount++;}
-       }
-      }
-     }
-    }       
-       
-    break;
+        
+    break;    
+      
+      
+      
 
    case 'Alias':
        
@@ -868,26 +870,292 @@ class pcdbapi
       }
      }
     }
+    break;    
     
     
+//--------------------   PartsToAlias -------------- has no primary key
+   case 'PartsToAlias':
+       
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select PartTerminologyID,AliasID,hash from PartsToAlias'))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $localhashlist[$row['hash']]=1;
+      }
+     }
+    }
+        
+    if($stmt=$db->conn->prepare('insert into PartsToAlias values(?,?,?)'))
+    {
+     if($stmt->bind_param('iis', $PartTerminologyID,$AliasID,$hash))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       $hash=md5($record['PartTerminologyID'].$record['AliasID']);
+       $PartTerminologyID=$record['PartTerminologyID'];
+       $AliasID=$record['AliasID'];
+       if(!array_key_exists($hash,$localhashlist))
+       {
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+
+    
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
+     {
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['PartTerminologyID'].$record['AliasID']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
+      {
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from PartsToAlias where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
+       }
+      }
+     }
+    }
     break;    
     
     
     
-    
-    
-//PartsToAlias has no primary key
+//--------------- PartsToUse ------------ has no primary key
+   case 'PartsToUse':
+       
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select PartTerminologyID,UseID,hash from PartsToUse'))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $localhashlist[$row['hash']]=1;
+      }
+     }
+    }
+        
+    if($stmt=$db->conn->prepare('insert into PartsToUse values(?,?,?)'))
+    {
+     if($stmt->bind_param('iis', $PartTerminologyID, $UseID ,$hash))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       $hash=md5($record['PartTerminologyID'].$record['UseID']);
+       $PartTerminologyID=$record['PartTerminologyID'];
+       $UseID=$record['UseID'];
+       if(!array_key_exists($hash,$localhashlist))
+       {
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
 
     
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
+     {
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['PartTerminologyID'].$record['UseID']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
+      {
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from PartsToUse where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
+       }
+      }
+     }
+    }
+    
+    break;    
+
+    
+//----------------- PIESCode ----------------
+   case 'PIESCode':
+       
+    if($stmt=$db->conn->prepare('insert into PIESCode values(?,?,?,?,?,?)'))
+    {
+     if($stmt->bind_param('isssss', $CodeValueID, $CodeValue,$CodeFormat,$FieldFormat,$CodeDescription,$Source))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(!array_key_exists($record[$keyfieldname],$existingids))
+       {// key not found in local tables - do the insert
+        $CodeValueID=$record['CodeValueID'];
+        $CodeValue=$record['CodeValue'];
+        $CodeFormat=$record['CodeFormat'];
+        $FieldFormat=$record['FieldFormat'];
+        $CodeDescription=$record['CodeDescription'];
+        $Source=$record['Source'];
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($stmt=$db->conn->prepare('delete from PIESCode where CodeValueID=?'))
+    {
+     if($stmt->bind_param('i', $CodeValueID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
+       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
+        if(array_key_exists($record[$keyfieldname],$existingids))
+        {// record found in local tables - do the delete
+         $CodeValueID=$record['CodeValueID']; if($stmt->execute()){$this->deletecount++;}
+        }
+       }
+      }   
+      foreach($localorphanids as $localorphanid)
+      {
+       $CodeValueID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+      }
+     }
+    }
+ 
+    if($stmt=$db->conn->prepare('update PIESCode set CodeValue=?,CodeFormat=?,FieldFormat=?,CodeDescription=?,Source=? where CodeValueID=?'))
+    {
+     if($stmt->bind_param('sssssi', $CodeValue,$CodeFormat,$FieldFormat,$CodeDescription,$Source,$CodeValueID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(array_key_exists($record[$keyfieldname],$existingids))
+       {// key found in local tables - do the update
+        $CodeValueID=$record['CodeValueID'];
+        $CodeValue=$record['CodeValue']; 
+        $FieldFormat=$record['FieldFormat']; 
+        $CodeDescription=$record['CodeDescription']; 
+        $Source=$record['Source']; 
+        if($stmt->execute()){$this->updatecount++;}
+       }
+      }
+     }
+    }              
+    break;
+
+
+//---------------------  PIESExpiCode  -------------
+
+   case 'PIESEXPICode':
+       
+    if($stmt=$db->conn->prepare('insert into PIESEXPICode values(?,?,?,?)'))
+    {
+     if($stmt->bind_param('issi', $EXPICodeID, $EXPICode,$EXPICodeDescription,$EXPIGroupID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(!array_key_exists($record[$keyfieldname],$existingids))
+       {// key not found in local tables - do the insert
+        $EXPICodeID=$record['EXPICodeID'];
+        $EXPICode=$record['EXPICode'];
+        $EXPICodeDescription=$record['EXPICodeDescription'];
+        $EXPIGroupID=$record['EXPIGroupID'];
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($stmt=$db->conn->prepare('delete from PIESEXPICode where EXPICodeID=?'))
+    {
+     if($stmt->bind_param('i', $EXPICodeID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
+       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
+        if(array_key_exists($record[$keyfieldname],$existingids))
+        {// record found in local tables - do the delete
+         $EXPICodeID=$record['EXPICodeID']; if($stmt->execute()){$this->deletecount++;}
+        }
+       }
+      }   
+      foreach($localorphanids as $localorphanid)
+      {
+       $EXPICodeID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+      }
+     }
+    }
+ 
+    if($stmt=$db->conn->prepare('update PIESEXPICode set EXPICode=?,EXPICodeDescription=?,EXPIGroupID=? where EXPICodeID=?'))
+    {
+     if($stmt->bind_param('ssii', $EXPICode,$EXPICodeDescription,$EXPIGroupID,$EXPICodeID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(array_key_exists($record[$keyfieldname],$existingids))
+       {// key found in local tables - do the update
+        $EXPICodeID=$record['EXPICodeID'];
+        $EXPICode=$record['EXPICode']; 
+        $EXPICodeDescription=$record['EXPICodeDescription']; 
+        $EXPIGroupID=$record['EXPIGroupID']; 
+        if($stmt->execute()){$this->updatecount++;}
+       }
+      }
+     }
+    }       
+       
+    break;
     
     
     
     
-//PartsToUse has no primary key
-//PIESCode has no primary key
-//PIESEXPICode has no primary key
-      
+    
+    
 //------    PIESEXPIGroup -- Do we care to implement this table?
+
+
+
+
     
 //--------   PIESField --------
 

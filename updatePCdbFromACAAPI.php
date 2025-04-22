@@ -31,12 +31,11 @@ else
 }
 
 // ------------ false = all Recs!!! -----------------------
-$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
-
+//$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
 
 
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
-$deletelocalorphans=true; // cause records in each local table (identified by primary keys) to be deleted if they are not present in API results 
+$deletelocalorphans=false; // cause records in each local table (identified by primary keys) to be deleted if they are not present in API results 
 
 $pcdbapi=new pcdbapi;
 
@@ -47,7 +46,7 @@ $pcdbapi->password=$configGet->getConfigValue('AutoCareAPIpassword');
         
 $pcdbapi->getAccessToken();
 $pcdbapi->pagelimit=0;
-$pcdbapi->debug=true;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
+$pcdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
 
 if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'PCdb API sync started'); }
 
