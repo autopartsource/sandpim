@@ -32,11 +32,11 @@ else
 }
 
 // ------------ false = all Recs!!! -----------------------
-$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
+//$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
 
 
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
-$deletelocalorphans=true; // cause records in each local table (identified by primary keys or hashes) to be deleted if they are not present in API results 
+$deletelocalorphans=false; // cause records in each local table (identified by primary keys or hashes) to be deleted if they are not present in API results 
 
 $padbapi=new padbapi;
 
