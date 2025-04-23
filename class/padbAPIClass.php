@@ -33,12 +33,8 @@ class padbapi
  
  public function __construct($_localdbname=false)
  {
-//  $this->tableslist=array();
-
-  $this->tableslist=array('Use');
-  
-  $this->tablekeyslist=array();   
-
+  $this->tableslist=array('MeasurementGroup','MetaData','MetaUOMCodeAssignment','MetaUOMCodes','PartAttributeAssignment','PartAttributeStyle','PartAttributes','PartTypeStyle','Style','ValidValueAssignment','ValidValues'); 
+  $this->tablekeyslist=array('MeasurementGroup'=>'MeasurementGroupID','MetaData'=>'MetaID','MetaUOMCodeAssignment'=>'MetaUOMCodeAssignmentID','MetaUOMCodes'=>'','PartAttributeAssignment'=>'','PartAttributeStyle'=>'','PartAttributes'=>'PAID','PartTypeStyle'=>'','Style'=>'','ValidValueAssignment'=>'ValidValueAssignmentID','ValidValues'=>'ValidValueID');
   
   $this->pagelimit=0;
   $this->totalcalls=0;
@@ -207,8 +203,7 @@ class padbapi
   }
   else
   {// no continuation link exists - this is the inital call
-// curl_setopt($ch, CURLOPT_URL,'https://'.$database.'.autocarevip.com/api/v1.0/'.$database.'/'.$table.'?CultureId='.$cultureid.$sincedateclause);
-   $url='https://'.$database.'.autocarevip.com/api/v4.0/'.$database.'/'.$table.'?CultureId='.$cultureid.$sincedateclause;
+   $url='https://'.$database.'.autocarevip.com/api/v4.0/padb/'.$table.'?CultureId='.$cultureid.$sincedateclause;
    curl_setopt($ch, CURLOPT_URL,$url);
   }
   
@@ -316,9 +311,13 @@ class padbapi
   $idkeyedapirecords=array(); 
   $localorphanids=array();
   
-  foreach($records as $record)
-  {
-   $idkeyedapirecords[$record[$keyfieldname]]=$record;
+  
+  if($keyfieldname!='')
+  {// this is a keyed table
+   foreach($records as $record)
+   {
+    $idkeyedapirecords[$record[$keyfieldname]]=$record;
+   }
   }
   
   if($deletelocalorphans)
@@ -393,19 +392,693 @@ class padbapi
     }       
        
     break;
+
     
-//MetaData
-//MetaUOMCodeAssignment
-//MetaUOMCodes
-//PartAttributeAssignment
-//PartAttributes    
-//PartTypeStyle
-//Style
-//ValidValueAssignment
-//ValidValues
+//----------------- MetaData
+   case 'MetaData':
+       
+    if($stmt=$db->conn->prepare('insert into MetaData values(?,?,?,?,?,?,?)'))
+    {
+     if($stmt->bind_param('issssii', $MetaID, $MetaName,$MetaDescr,$MetaFormat,$DataType,$MinLength,$MaxLength))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(!array_key_exists($record[$keyfieldname],$existingids))
+       {// key not found in local tables - do the insert
+        $MetaID=$record['MetaID'];
+        $MetaName=$record['MetaName'];
+        $MetaDescr=$record['MetaDescr'];
+        $MetaFormat=$record['MetaFormat'];
+        $DataType=$record['DataType'];
+        $MinLength=$record['MinLength'];
+        $MaxLength=$record['MaxLength'];
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($stmt=$db->conn->prepare('delete from MetaData where MetaID=?'))
+    {
+     if($stmt->bind_param('i', $MetaID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
+       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
+        if(array_key_exists($record[$keyfieldname],$existingids))
+        {// record found in local tables - do the delete
+         $MetaID=$record['MetaID']; if($stmt->execute()){$this->deletecount++;}
+        }
+       }
+      }   
+      foreach($localorphanids as $localorphanid)
+      {
+       $MetaID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+      }
+     }
+    }
+ 
+    if($stmt=$db->conn->prepare('update MetaData set MetaName=?,MetaDescr=?,MetaFormat=?,DataType=?,MinLength=?,MaxLength=? where MetaID=?'))
+    {
+     if($stmt->bind_param('ssssiii', $MetaName,$MetaDescr,$MetaFormat,$DataType,$MinLength,$MaxLength,$MetaID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(array_key_exists($record[$keyfieldname],$existingids))
+       {// key found in local tables - do the update
+        $MetaID=$record['MetaID'];
+        $MetaName=$record['MetaName']; 
+        $MetaDescr=$record['MetaDescr']; 
+        $MetaFormat=$record['MetaFormat']; 
+        $DataType=$record['DataType']; 
+        $MinLength=$record['MinLength']; 
+        $MaxLength=$record['MaxLength']; 
+        if($stmt->execute()){$this->updatecount++;}
+       }
+      }
+     }
+    }       
+       
+    break;
+
+    
+//----------------- MetaUOMCodeAssignment
+
+   case 'MetaUOMCodeAssignment':
+       
+    if($stmt=$db->conn->prepare('insert into MetaUOMCodeAssignment values(?,?,?)'))
+    {
+     if($stmt->bind_param('iii', $MetaUOMCodeAssignmentID, $PAPTID, $MetaUOMID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(!array_key_exists($record[$keyfieldname],$existingids))
+       {// key not found in local tables - do the insert
+        $MetaUOMCodeAssignmentID=$record['MetaUOMCodeAssignmentID'];
+        $PAPTID=$record['PAPTID'];
+        $MetaUOMID=$record['MetaUOMID'];
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($stmt=$db->conn->prepare('delete from MetaUOMCodeAssignment where MetaUOMCodeAssignmentID=?'))
+    {
+     if($stmt->bind_param('i', $MetaUOMCodeAssignmentID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
+       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
+        if(array_key_exists($record[$keyfieldname],$existingids))
+        {// record found in local tables - do the delete
+         $MetaUOMCodeAssignmentID=$record['MetaUOMCodeAssignmentID']; if($stmt->execute()){$this->deletecount++;}
+        }
+       }
+      }   
+      foreach($localorphanids as $localorphanid)
+      {
+       $MetaUOMCodeAssignmentID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+      }
+     }
+    }
+ 
+    if($stmt=$db->conn->prepare('update MetaUOMCodeAssignment set PAPTID=?,MetaUOMID=? where MetaUOMCodeAssignmentID=?'))
+    {
+     if($stmt->bind_param('iii', $PAPTID, $MetaUOMID,$MetaUOMCodeAssignmentID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(array_key_exists($record[$keyfieldname],$existingids))
+       {// key found in local tables - do the update
+        $MetaUOMCodeAssignmentID=$record['MetaUOMCodeAssignmentID'];
+        $PAPTID=$record['PAPTID']; 
+        $MetaUOMID=$record['MetaUOMID']; 
+        if($stmt->execute()){$this->updatecount++;}
+       }
+      }
+     }
+    }       
+       
+    break;
+
+    
+//----------------- MetaUOMCodes -- no key
+
+   case 'MetaUOMCodes':
+       
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select MetaUOMID,UOMCode,UOMDescription,UOMLabel,MeasurementGroupID,hash from MetaUOMCodes'))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $localhashlist[$row['hash']]=1;
+      }
+     }
+    }
+        
+    if($stmt=$db->conn->prepare('insert into MetaUOMCodes values(?,?,?,?,?,?)'))
+    {
+     if($stmt->bind_param('isssis', $MetaUOMID,$UOMCode,$UOMDescription,$UOMLabel,$MeasurementGroupID,$hash))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       $hash=md5($record['MetaUOMID'].$record['UOMCode'].$record['UOMDescription'].$record['UOMLabel'].$record['MeasurementGroupID']);
+       $MetaUOMID=$record['MetaUOMID'];
+       $UOMCode=$record['UOMCode'];
+       $UOMDescription=$record['UOMDescription'];
+       $UOMLabel=$record['UOMLabel'];
+       $MeasurementGroupID=$record['MeasurementGroupID'];
+       if(!array_key_exists($hash,$localhashlist))
+       {
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+
+    
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
+     {
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['MetaUOMID'].$record['UOMCode'].$record['UOMDescription'].$record['UOMLabel'].$record['MeasurementGroupID']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
+      {
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from MetaUOMCodes where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
+       }
+      }
+     }
+    }
+    
+    
+    break;    
+    
+//----------------- PartAttributeAssignment -- no key
+
+   case 'PartAttributeAssignment':
+       
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select PAPTID,PartTerminologyID,PAID,MetaID,hash from PartAttributeAssignment'))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $localhashlist[$row['hash']]=1;
+      }
+     }
+    }
+        
+    if($stmt=$db->conn->prepare('insert into PartAttributeAssignment values(?,?,?,?,?)'))
+    {
+     if($stmt->bind_param('iiiis', $PAPTID,$PartTerminologyID,$PAID,$MetaID,$hash))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       $hash=md5($record['PAPTID'].$record['PartTerminologyID'].$record['PAID'].$record['MetaID']);
+       $PAPTID=$record['PAPTID'];
+       $PartTerminologyID=$record['PartTerminologyID'];
+       $PAID=$record['PAID'];
+       $MetaID=$record['MetaID'];
+       if(!array_key_exists($hash,$localhashlist))
+       {
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
+     {
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['PAPTID'].$record['PartTerminologyID'].$record['PAID'].$record['MetaID']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
+      {
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from PartAttributeAssignment where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
+       }
+      }
+     }
+    }
+    
+    
+    break;    
+    
+//----------------- PartAttributeStyle -- no key    
+
+   case 'PartAttributeStyle':
+       
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select StyleID,PAPTID,hash from PartAttributeStyle'))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $localhashlist[$row['hash']]=1;
+      }
+     }
+    }
+        
+    if($stmt=$db->conn->prepare('insert into PartAttributeStyle values(?,?,?)'))
+    {
+     if($stmt->bind_param('iis', $StyleID,$PAPTID,$hash))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       $hash=md5($record['StyleID'].$record['PAPTID']);
+       $StyleID=$record['StyleID'];
+       $PAPTID=$record['PAPTID'];
+       if(!array_key_exists($hash,$localhashlist))
+       {
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+
+    
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
+     {
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['StyleID'].$record['PAPTID']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
+      {
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from PartAttributeStyle where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
+       }
+      }
+     }
+    }
+    
+    
+    break;    
+    
+    
+//----------------- PartAttributes
+   case 'PartAttributes':
+       
+    if($stmt=$db->conn->prepare('insert into PartAttributes values(?,?,?)'))
+    {
+     if($stmt->bind_param('iss', $PAID,$PAName,$PADescr))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(!array_key_exists($record[$keyfieldname],$existingids))
+       {// key not found in local tables - do the insert
+        $PAID=$record['PAID'];
+        $PAName=$record['PAName'];
+        $PADescr=$record['PADescr'];
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($stmt=$db->conn->prepare('delete from PartAttributes where PAID=?'))
+    {
+     if($stmt->bind_param('i', $PAID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
+       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
+        if(array_key_exists($record[$keyfieldname],$existingids))
+        {// record found in local tables - do the delete
+         $PAID=$record['PAID']; if($stmt->execute()){$this->deletecount++;}
+        }
+       }
+      }   
+      foreach($localorphanids as $localorphanid)
+      {
+       $PAID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+      }
+     }
+    }
+ 
+    if($stmt=$db->conn->prepare('update PartAttributes set PAName=?,PADescr=? where PAID=?'))
+    {
+     if($stmt->bind_param('ssi', $PAName,$PADescr,$PAID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(array_key_exists($record[$keyfieldname],$existingids))
+       {// key found in local tables - do the update
+        $PAID=$record['PAID'];
+        $PAName=$record['PAName']; 
+        $PADescr=$record['PADescr']; 
+        if($stmt->execute()){$this->updatecount++;}
+       }
+      }
+     }
+    }       
+       
+    break;
+    
+//----------------- PartTypeStyle -- no key
+
+    case 'PartTypeStyle':
+       
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select StyleID,PartTerminologyID,hash from PartTypeStyle'))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $localhashlist[$row['hash']]=1;
+      }
+     }
+    }
+        
+    if($stmt=$db->conn->prepare('insert into PartTypeStyle values(?,?,?)'))
+    {
+     if($stmt->bind_param('iis', $StyleID,$PartTerminologyID,$hash))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       $hash=md5($record['StyleID'].$record['PartTerminologyID']);
+       $StyleID=$record['StyleID'];
+       $PartTerminologyID=$record['PartTerminologyID'];
+       if(!array_key_exists($hash,$localhashlist))
+       {
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+
+    
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
+     {
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['StyleID'].$record['PartTerminologyID']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
+      {
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from PartTypeStyle where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
+       }
+      }
+     }
+    }
+    
+    
+    break;    
+
+//----------------- Style -- no key
+
+    case 'Style':
+       
+    $localhashlist=array(); // compile a hashlist of the existing local table's recs
+    if($stmt=$db->conn->prepare('select StyleID,StyleName,hash from Style'))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      while($row = $db->result->fetch_assoc())
+      {
+       $localhashlist[$row['hash']]=1;
+      }
+     }
+    }
+        
+    if($stmt=$db->conn->prepare('insert into Style values(?,?,?)'))
+    {
+     if($stmt->bind_param('iss', $StyleID,$StyleName,$hash))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       $hash=md5($record['StyleID'].$record['StyleName']);
+       $StyleID=$record['StyleID'];
+       $StyleName=$record['StyleName'];
+       if(!array_key_exists($hash,$localhashlist))
+       {
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+
+    
+    if($deletelocalorphans)
+    {   // find hash diffs that imply local orphans to delete
+     
+     $remotehashlist=array();  // compile a hashlist of remote recs
+     foreach($records as $record)
+     {
+      if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+      $hash=md5($record['StyleID'].$record['StyleName']);
+      $remotehashlist[$hash]= 1;
+     }
+    
+     $localhashestodelete=array();
+     foreach($localhashlist as $localhash=>$trash)
+     {
+      if(!array_key_exists($localhash,$remotehashlist))
+      {
+       $localhashestodelete[]=$localhash;
+      }  
+     }
+        
+     if($stmt=$db->conn->prepare('delete from `Style` where `hash`=?'))
+     {
+      if($stmt->bind_param('s', $hash))
+      {
+       foreach($localhashestodelete as $hashtodlete)
+       {
+        $hash=$hashtodlete;
+        if($stmt->execute()){$this->deleteorphancount++; $this->deletecount++;}
+       }
+      }
+     }
+    }
+    
+    
+    break;    
     
     
     
+//----------------- ValidValueAssignment
+
+    case 'ValidValueAssignment':
+       
+    if($stmt=$db->conn->prepare('insert into ValidValueAssignment values(?,?,?)'))
+    {
+     if($stmt->bind_param('iii', $ValidValueAssignmentID, $PAPTID,$ValidValueID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(!array_key_exists($record[$keyfieldname],$existingids))
+       {// key not found in local tables - do the insert
+        $ValidValueAssignmentID=$record['ValidValueAssignmentID'];
+        $PAPTID=$record['PAPTID'];
+        $ValidValueID=$record['ValidValueID'];
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($stmt=$db->conn->prepare('delete from ValidValueAssignment where ValidValueAssignmentID=?'))
+    {
+     if($stmt->bind_param('i', $ValidValueAssignmentID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
+       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
+        if(array_key_exists($record[$keyfieldname],$existingids))
+        {// record found in local tables - do the delete
+         $ValidValueAssignmentID=$record['ValidValueAssignmentID']; if($stmt->execute()){$this->deletecount++;}
+        }
+       }
+      }   
+      foreach($localorphanids as $localorphanid)
+      {
+       $ValidValueAssignmentID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+      }
+     }
+    }
+ 
+    if($stmt=$db->conn->prepare('update ValidValueAssignment set PAPTID=?,ValidValueID=? where ValidValueAssignmentID=?'))
+    {
+     if($stmt->bind_param('iii', $PAPTID,$ValidValueID,$ValidValueAssignmentID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(array_key_exists($record[$keyfieldname],$existingids))
+       {// key found in local tables - do the update
+        $ValidValueAssignmentID=$record['ValidValueAssignmentID'];
+        $PAPTID=$record['PAPTID']; 
+        $ValidValueID=$record['ValidValueID']; 
+        if($stmt->execute()){$this->updatecount++;}
+       }
+      }
+     }
+    }       
+       
+    break;
+        
+//----------------- ValidValues
+    
+    case 'ValidValues':
+       
+    if($stmt=$db->conn->prepare('insert into ValidValues values(?,?)'))
+    {
+     if($stmt->bind_param('is', $ValidValueID, $ValidValue))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(!array_key_exists($record[$keyfieldname],$existingids))
+       {// key not found in local tables - do the insert
+        $ValidValueID=$record['ValidValueID'];
+        $ValidValue=$record['ValidValue'];
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($stmt=$db->conn->prepare('delete from ValidValues where ValidValueID=?'))
+    {
+     if($stmt->bind_param('i', $ValidValueID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
+       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
+        if(array_key_exists($record[$keyfieldname],$existingids))
+        {// record found in local tables - do the delete
+         $ValidValueID=$record['ValidValueID']; if($stmt->execute()){$this->deletecount++;}
+        }
+       }
+      }   
+      foreach($localorphanids as $localorphanid)
+      {
+       $ValidValueID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+      }
+     }
+    }
+ 
+    if($stmt=$db->conn->prepare('update ValidValues set ValidValue=? where ValidValueID=?'))
+    {
+     if($stmt->bind_param('si', $ValidValue,$ValidValueID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(array_key_exists($record[$keyfieldname],$existingids))
+       {// key found in local tables - do the update
+        $ValidValueID=$record['ValidValueID'];
+        $ValidValue=$record['ValidValue']; 
+        if($stmt->execute()){$this->updatecount++;}
+       }
+      }
+     }
+    }   
+    break;
     
    default: break;      
   }
