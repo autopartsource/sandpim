@@ -32,11 +32,11 @@ else
 }
 
 // ------------ false = all Recs!!! -----------------------
-$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
+//$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
 
 
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
-$deletelocalorphans=true; // cause records in each local table (identified by primary keys or hashes) to be deleted if they are not present in API results 
+$deletelocalorphans=false; // cause records in each local table (identified by primary keys or hashes) to be deleted if they are not present in API results 
 
 $qdbapi=new qdbapi;
 
@@ -47,7 +47,7 @@ $qdbapi->password=$configGet->getConfigValue('AutoCareAPIpassword');
         
 $qdbapi->getAccessToken();
 $qdbapi->pagelimit=0;
-$qdbapi->debug=true;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
+$qdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
 
 if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'Qdb API sync started'); }
 

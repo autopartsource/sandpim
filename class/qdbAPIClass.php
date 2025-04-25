@@ -29,15 +29,12 @@ class qdbapi
  public $updatecount;
  public $deletecount;
  public $deleteorphancount;
-
  
  public function __construct($_localdbname=false)
  {
   $this->tableslist=array('GroupNumber','Qualifier','QualifierGroup','QualifierType');
   $this->tablekeyslist=array('GroupNumber'=>'GroupNumberID','Qualifier'=>'QualifierID','QualifierGroup'=>'QualifierGroupID','QualifierType'=>'QualifierTypeID');   
- 
-  $this->tableslist=array('Qualifier');
-      
+       
   $this->pagelimit=0;
   $this->totalcalls=0;
   $this->activetoken=false;
@@ -469,8 +466,133 @@ class qdbapi
       
       
       
-//QualifierGroup    
-//QualifierType    
+//------------------------- QualifierGroup
+
+   case 'QualifierGroup':
+       
+    if($stmt=$db->conn->prepare('insert into QualifierGroup values(?,?,?)'))
+    {
+     if($stmt->bind_param('iii', $QualifierGroupID, $GroupNumberID, $QualifierID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(!array_key_exists($record[$keyfieldname],$existingids))
+       {// key not found in local tables - do the insert
+        $QualifierGroupID=$record['QualifierGroupID'];
+        $GroupNumberID=$record['GroupNumberID'];
+        $QualifierID=$record['QualifierID'];
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($stmt=$db->conn->prepare('delete from QualifierGroup where QualifierGroupID=?'))
+    {
+     if($stmt->bind_param('i', $QualifierGroupID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
+       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
+        if(array_key_exists($record[$keyfieldname],$existingids))
+        {// record found in local tables - do the delete
+         $QualifierGroupID=$record['QualifierGroupID']; if($stmt->execute()){$this->deletecount++;}
+        }
+       }
+      }   
+      foreach($localorphanids as $localorphanid)
+      {
+       $QualifierGroupID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+      }
+     }
+    }
+ 
+    if($stmt=$db->conn->prepare('update QualifierGroup set GroupNumberID=?,QualifierID=? where QualifierGroupID=?'))
+    {
+     if($stmt->bind_param('iii', $GroupNumberID,$QualifierID,$QualifierGroupID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(array_key_exists($record[$keyfieldname],$existingids))
+       {// key found in local tables - do the update
+        $QualifierGroupID=$record['QualifierGroupID'];
+        $GroupNumberID=$record['GroupNumberID']; 
+        $QualifierID=$record['QualifierID']; 
+        if($stmt->execute()){$this->updatecount++;}
+       }
+      }
+     }
+    }       
+       
+    break;
+    
+    
+    
+    
+//----------------------- QualifierType    
+    
+    case 'QualifierType':
+       
+    if($stmt=$db->conn->prepare('insert into QualifierType values(?,?)'))
+    {
+     if($stmt->bind_param('is', $QualifierTypeID, $QualifierType))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(!array_key_exists($record[$keyfieldname],$existingids))
+       {// key not found in local tables - do the insert
+        $QualifierTypeID=$record['QualifierTypeID'];
+        $QualifierType=$record['QualifierType'];
+        if($stmt->execute()){$this->insertcount++;}
+       }
+      }
+     }
+    }
+    
+    if($stmt=$db->conn->prepare('delete from QualifierType where QualifierTypeID=?'))
+    {
+     if($stmt->bind_param('i', $QualifierTypeID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10)
+       {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
+        if(array_key_exists($record[$keyfieldname],$existingids))
+        {// record found in local tables - do the delete
+         $QualifierTypeID=$record['QualifierType']; if($stmt->execute()){$this->deletecount++;}
+        }
+       }
+      }   
+      foreach($localorphanids as $localorphanid)
+      {
+       $QualifierTypeID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+      }
+     }
+    }
+ 
+    if($stmt=$db->conn->prepare('update QualifierType set QualifierType=? where QualifierTypeID=?'))
+    {
+     if($stmt->bind_param('si', $QualifierType,$QualifierTypeID))
+     {
+      foreach($records as $record)
+      {
+       if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+       if(array_key_exists($record[$keyfieldname],$existingids))
+       {// key found in local tables - do the update
+        $QualifierTypeID=$record['QualifierTypeID'];
+        $QualifierType=$record['QualifierType']; 
+        if($stmt->execute()){$this->updatecount++;}
+       }
+      }
+     }
+    }       
+       
+    break;
+
     
     
    default: break;      
