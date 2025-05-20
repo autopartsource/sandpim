@@ -32,6 +32,7 @@ $logs=new logs;
 $allassettypes=$pcdb->getAssetTypeCodes();
 $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
 $labels=$asset->getAssetlabels();
+$allassettags=$asset->getAssettags();
 
 
 if (isset($_POST['submit']) && $_POST['submit'] == 'Connect') {
@@ -226,12 +227,35 @@ $brands=$interchange->getCompetitivebrands();
               document.getElementById("changeddate").innerHTML = new Date().toISOString().slice(0, 10);
              };
              xhr.send();
-
-    
-    
             }
-
-
+            
+            function addAssettag()
+            {
+             var selectedassettagid = document.getElementById("assettagselector").value;
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddRemoveAssetAssettag.php?assetid=<?php echo $assetid;?>&assettagid='+selectedassettagid+'&action=add');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              var container=document.getElementById('assettags');
+              container.innerHTML+='<div style="padding-bottom:5px;" id="assettagid_'+selectedassettagid+'"><button class="btn btn-sm btn-outline-danger" title="Remove this assettag from this asset" onclick="removeAssettag('+selectedassettagid+')">x</button> '+response.tagtext+'</div>';
+             };
+             xhr.send();
+            }
+    
+            function removeAssettag(id)
+            {
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxAddRemoveAssetAssettag.php?assetid=<?php echo $assetid;?>&assettagid='+id+'&action=remove');
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+              var assettagdiv = document.getElementById('assettagid_'+id);
+              assettagdiv.parentNode.removeChild(assettagdiv);
+             };
+             xhr.send();
+            }
+             
             </script>
     </head>
     <body>
@@ -345,10 +369,16 @@ $brands=$interchange->getCompetitivebrands();
                                             <tr>
                                                 <th>Tags</th>
                                                 <td>
-                                                    <?php foreach($assettags as $assettag)
-                                                    {
-                                                        echo '<div style="text-align:left;padding-bottom:5px;" id="assettagid_'.$assettag['id'].'"><button class="btn btn-sm btn-outline-danger" title="Remove this assettag from this asset" onclick="removeAssettag('.$assettag['id'].')">x</button> '.$assettag['tagtext'].'</div>';
-                                                    }?>                                                    
+                                                    <div id="assettags">
+                                                     <?php foreach($assettags as $assettag)
+                                                     {
+                                                      echo '<div style="padding-bottom:5px;" id="assettagid_'.$assettag['assettagid'].'"><button class="btn btn-sm btn-outline-danger" title="Remove this assettag from this asset" onclick="removeAssettag('.$assettag['assettagid'].')">x</button> '.$assettag['tagtext'].'</div>';
+                                                     }?>  
+                                                    </div>
+                                                    <div style="padding:10px;">
+                                                        <select id="assettagselector"><?php foreach($allassettags as $allassettag){?> <option value="<?php echo $allassettag['id'];?>"><?php echo $allassettag['tagtext'];?></option><?php }?></select>
+                                                        <button class="btn btn-sm btn-success" id="addassettag" title="Add an asset tag" onclick="addAssettag()">+</button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                                                                         
