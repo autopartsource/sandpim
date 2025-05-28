@@ -862,7 +862,7 @@ class vcdb
    {
     if($drivetype['value']!=$wildcard){$attributesList[]=array('name'=>'DriveType','value'=>$drivetype['drivetypeid'], 'display'=>$drivetype['value']);}
    }
-
+//print_r($brakeconfigs);
    foreach($brakeconfigs as $brakeconfig)
    {
     if($brakeconfig['frontbraketypename']!=$wildcard){$attributesList[]=array('name'=>'FrontBrakeType','value'=>$brakeconfig['frontbraketypeid'],'display'=>'Front '.$brakeconfig['frontbraketypename']);}
@@ -985,7 +985,7 @@ function getBrakeConfigsForVehicleid($vehicleid)
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $brakeconfigs[]=array("frontbraketypename"=>$row['FrontBrakeTypeName'],"rearbraketypename"=>$row['FrontBrakeTypeName'],"brakeabsname"=>$row['BrakeABSName'],"brakesystemname"=>$row['BrakeSystemName'],"brakesystemid"=>$row['BrakeSystemID'],"brakeabsid"=>$row['BrakeABSID'],"frontbraketypeid"=>$row['FrontBrakeTypeID'],"rearbraketypeid"=>$row['RearBrakeTypeID']);
+    $brakeconfigs[]=array("frontbraketypename"=>$row['FrontBrakeTypeName'],"rearbraketypename"=>$row['RearBrakeTypeName'],"brakeabsname"=>$row['BrakeABSName'],"brakesystemname"=>$row['BrakeSystemName'],"brakesystemid"=>$row['BrakeSystemID'],"brakeabsid"=>$row['BrakeABSID'],"frontbraketypeid"=>$row['FrontBrakeTypeID'],"rearbraketypeid"=>$row['RearBrakeTypeID']);
    }
   }
   $db->close();

@@ -126,6 +126,9 @@ $nicefitmentstring=implode('; ',$nicefitmentarray);
 
 $allattributes=$vcdb->getACESattributesForBasevehicle($app['basevehicleid'],false); //print_r($allattributes);
 
+//print_r($allattributes);
+
+
 $appassets=$pim->getAppAssets($appid);
 $partassets=$asset->getAssetsConnectedToPart($app['partnumber']);
 $favoriteparttypes=$pim->getFavoriteParttypes();
