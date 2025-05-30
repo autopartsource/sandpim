@@ -1070,6 +1070,7 @@ class pcdbapi
        {// key found in local tables - do the update
         $CodeValueID=$record['CodeValueID'];
         $CodeValue=$record['CodeValue']; 
+        $CodeFormat=$record['CodeFormat']; 
         $FieldFormat=$record['FieldFormat']; 
         $CodeDescription=$record['CodeDescription']; 
         $Source=$record['Source']; 
@@ -1267,8 +1268,8 @@ class pcdbapi
       }
      }
     }
- 
-    if($stmt=$db->conn->prepare('update TableName set FieldID=?,CodeValueID=?,EXPICodeID=?,ReferenceNotes=? where ReferenceFieldCodeID=?'))
+
+    if($stmt=$db->conn->prepare('update PIESReferenceFieldCode set FieldID=?,CodeValueID=?,EXPICodeID=?,ReferenceNotes=? where ReferenceFieldCodeID=?'))
     {
      if($stmt->bind_param('iiisi', $FieldID,$CodeValueID,$EXPICodeID,$ReferenceNotes,$ReferenceFieldCodeID))
      {
