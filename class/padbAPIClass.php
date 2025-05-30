@@ -269,7 +269,7 @@ class padbapi
   } 
   $db->close();     
  }
- 
+
  function getTableIDs($tablename)
  {
   // returns an array keyed by the primary key of the given table
@@ -279,8 +279,8 @@ class padbapi
    echo 'missing table name in keyfields list: '.$tablename."\r\n";
    return $existingids;
   }
-  
   $keyfieldname=$this->tablekeyslist[$tablename];
+  if($keyfieldname){return $existingids;}
   $db = new mysql; $db->dbname=$this->localdbname; $db->connect();
   
   if($stmt=$db->conn->prepare('select `'.$keyfieldname.'` from `'.$tablename.'`'))
