@@ -19,11 +19,10 @@ $tokenrefreshlimit=30; // how many new-token requests are allowed in this sessio
 $loggingverbosity=1; // (1-10) Ten is the most verbose 
 
 
-
 $lastsync=$configGet->getConfigValue('lastSuccessfulPCdbAPIsync');
 if($lastsync)
 {
- $sincedate=date('Y-m-d', intval($lastsync)-(24*3600*2));  // set sincedat to 2 days before last sync
+ $sincedate=date('Y-m-d', intval($lastsync)-(24*3600*$daysback));  // set sincedat to [daysback] days before last sync
 }
 else 
 {// no history of last successful sync - setup for full download

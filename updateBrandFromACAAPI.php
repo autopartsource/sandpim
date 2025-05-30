@@ -26,7 +26,8 @@ else
  $sincedate=false;
 }
 
-$sincedate=false;
+
+$sincedate=false; // ignore date - we must grab all time because there's no prime key for compare
 
 $brandapi=new brandapi();
 

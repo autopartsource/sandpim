@@ -14,17 +14,16 @@ $configSet = new configSet();
 
 
 
-$daysback=14;
+$daysback=7;
 $tokenlowlifeseconds=3000; //every time a new records page is requested, the remaining life of the active token is checked. If lif is less than this number, a nre token is requested 
 $tokenrefreshlimit=30; // how many new-token requests are allowed in this session (this php script execution)
 $loggingverbosity=1; // (1-10) Ten is the most verbose 
 
 
-
 $lastsync=$configGet->getConfigValue('lastSuccessfulPAdbAPIsync');
 if($lastsync)
 {
- $sincedate=date('Y-m-d', intval($lastsync)-(24*3600*2));  // set sincedat to 2 days before last sync
+ $sincedate=date('Y-m-d', intval($lastsync)-(24*3600*$daysback));  // set sincedate to [daysback] days before last sync
 }
 else 
 {// no history of last successful sync - setup for full download
