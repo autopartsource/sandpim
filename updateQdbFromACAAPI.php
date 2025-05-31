@@ -125,6 +125,7 @@ if($qdbapi->activetoken)
  if($qdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$qdbapi->totalcalls."\r\n";}
  $logs->logSystemEvent('AutoCare API Client', 0, 'Qdb API sync completed in '.$runtime.' seconds. '.$qdbapi->totalcalls.' API calls, '.$qdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. SinceDate set to:'.$sincedate);
  $configSet->setConfigValue('lastSuccessfulQdbAPIsync', time());
+ $qdbapi->setVersionDate(date('Y-m-d'));
 }
 else
 {

@@ -123,6 +123,7 @@ if($pcdbapi->activetoken)
  if($pcdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$pcdbapi->totalcalls."\r\n";}
  $logs->logSystemEvent('AutoCare API Client', 0, 'PCdb API sync completed in '.$runtime.' seconds. '.$pcdbapi->totalcalls.' API calls, '.$pcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. SinceDate set to:'.$sincedate);
  $configSet->setConfigValue('lastSuccessfulPCdbAPIsync', time());
+ $pcdbapi->setVersionDate(date('Y-m-d'));
 }
 else
 {

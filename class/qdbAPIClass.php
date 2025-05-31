@@ -66,6 +66,26 @@ class qdbapi
    }
   }  
  }
+
+ function setVersionDate($_date)
+ {
+  $date=$_date.' 00:00:00';
+  $returnval=false;
+  $db = new mysql; $db->dbname=$this->localdbname; $db->connect();
+  if($stmt=$db->conn->prepare('update Version set VersionDate=?'))
+  {
+   if($stmt->bind_param('s', $date))
+   {   
+    if($stmt->execute())
+    {
+     $returnval=true;
+    }
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
+
  
  function getAccessToken()
  {

@@ -124,6 +124,7 @@ if($padbapi->activetoken)
  if($padbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$padbapi->totalcalls."\r\n";}
  $logs->logSystemEvent('AutoCare API Client', 0, 'PAdb API sync completed in '.$runtime.' seconds. '.$padbapi->totalcalls.' API calls, '.$padbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. SinceDate set to:'.$sincedate);
  $configSet->setConfigValue('lastSuccessfulPAdbAPIsync', time());
+ $padbapi->setVersionDate(date('Y-m-d'));
 }
 else
 {

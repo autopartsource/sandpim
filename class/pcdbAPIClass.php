@@ -50,7 +50,7 @@ class pcdbapi
   $this->localdbname=$_localdbname;  // default to the hard-coded dbname from the class file (prob "pcdb")
   if(!$_localdbname)
   { // no secific vsersion was passed in. Consult pim database for the name
-    // of the active pcdb database. It will be something like pcdb20210827
+    // of the active pcdb database. It will be something like pcdbcache
       
    $db = new mysql; $db->connect();
    if($stmt=$db->conn->prepare("select configvalue from config where configname='pcdbAPIcacheDatabase'"))
@@ -68,6 +68,24 @@ class pcdbapi
     $db->close();
    }
   }  
+ }
+ 
+ function setVersionDate($date)
+ {
+  $returnval=false;
+  $db = new mysql; $db->dbname=$this->localdbname; $db->connect();
+  if($stmt=$db->conn->prepare('update Version set VersionDate=?'))
+  {
+   if($stmt->bind_param('s', $date))
+   {   
+    if($stmt->execute())
+    {
+     $returnval=true;
+    }
+   }
+  }
+  $db->close();
+  return $returnval;
  }
  
  function getAccessToken()

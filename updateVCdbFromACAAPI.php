@@ -120,6 +120,7 @@ if($vcdbapi->activetoken)
  if($vcdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls."\r\n";}
  $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. SinceDate set to:'.$sincedate);
  $configSet->setConfigValue('lastSuccessfulVCdbAPIsync', time());
+ $vcdbapi->setVersionDate(date('Y-m-d'));
 }
 else
 {

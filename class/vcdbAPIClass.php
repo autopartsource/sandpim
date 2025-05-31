@@ -69,6 +69,24 @@ class vcdbapi
   }  
  }
  
+ function setVersionDate($date)
+ {
+  $returnval=false;
+  $db = new mysql; $db->dbname=$this->localdbname; $db->connect();
+  if($stmt=$db->conn->prepare('update Version set VersionDate=?'))
+  {
+   if($stmt->bind_param('s', $date))
+   {   
+    if($stmt->execute())
+    {
+     $returnval=true;
+    }
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
+
  function getAccessToken()
  {
   $success=false;
