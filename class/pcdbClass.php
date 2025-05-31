@@ -276,7 +276,15 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESReferenceFieldCode.PIESFieldId=93 order by CodeDescription'))
+
+  echo '***'.$db->pcdbname.'***';
+  $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESReferenceFieldCode.PIESFieldId=93 order by CodeDescription';
+  if($db->pcdbname=='pcdbcache')
+  {// the API-based schema has diffenent naming of some fields
+   $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and  PIESReferenceFieldCode.FieldId=93 order by CodeDescription';
+  }
+  
+  if($stmt=$db->conn->prepare($sql))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();

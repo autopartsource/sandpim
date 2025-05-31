@@ -3,12 +3,12 @@ class mysql
 {
  var $host = "localhost";
  var $user = 'webservice';
- var $passwd = 'OsBBVrgJKw';
+ var $passwd = 'OsBBVrgJKwGBH7f';
  var $dbname = 'pim';
- var $vcdbname='vcdb';
- var $pcdbname='pcdb';
- var $padbname='padb';
- var $qdbname=  'qdb';
+ var $vcdbname='vcdbcache';
+ var $pcdbname='pcdbcache';
+ var $padbname='padbcache';
+ var $qdbname= 'qdbcache';
  var $debug;
  var $conn;
  var $sql;
