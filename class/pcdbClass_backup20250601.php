@@ -277,7 +277,7 @@ class pcdb
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
   $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESReferenceFieldCode.PIESFieldId=93 order by CodeDescription';
-  if($db->dbname=='pcdbcache')
+  if($db->pcdbname=='pcdbcache')
   {// the API-based schema has diffenent naming of some fields
    $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and  PIESReferenceFieldCode.FieldId=93 order by CodeDescription';
   }
@@ -302,12 +302,7 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  $sql='select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=93 and CodeValue=?';
-  if($db->dbname=='pcdbcache')
-  {
-   $sql='select CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=93 and CodeValue=?';
-  }
-  if($stmt=$db->conn->prepare($sql))
+  if($stmt=$db->conn->prepare('select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=93 and CodeValue=?'))
   {
    $stmt->bind_param('s', $code);
    $stmt->execute();
@@ -371,13 +366,7 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  $sql='select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=32 order by CodeValue';
-  if($db->dbname=='pcdbcache')
-  {
-   $sql='select CodeValue, CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=32 order by CodeValue';
-  }
-
-  if($stmt=$db->conn->prepare($sql))
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=32 order by CodeValue'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -397,13 +386,7 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  $sql='select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=32 and CodeValue=?';
-  if($db->dbname=='pcdbcache')
-  {
-   $sql='select CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=32 and CodeValue=?';
-  }
-
-  if($stmt=$db->conn->prepare($sql))
+  if($stmt=$db->conn->prepare('select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=32 and CodeValue=?'))
   {
    $stmt->bind_param('s', $code);
    $stmt->execute();
@@ -423,13 +406,7 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-//ccc
-  $sql='select CodeValue,CodeDescription,FieldFormat from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESFieldId=60 order by CodeDescription';
-  if($db->dbname=='pcdbcache')
-  {
-   $sql='select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=60 order by CodeDescription';
-  }
-  if($stmt=$db->conn->prepare($sql))
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription,FieldFormat from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=60 order by CodeDescription'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -448,13 +425,7 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  $sql='select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=31 order by CodeDescription';
-  if($db->dbname=='pcdbcache')
-  {
-   $sql='select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=31 order by CodeDescription';
-  }
-
-  if($stmt=$db->conn->prepare($sql))
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=31 order by CodeDescription'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -514,9 +485,7 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname; $codes=array();
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  $sql='select * from PIESExpiCode order by Expicode';
-  if($db->dbname=='pcdbcache'){$sql='select EXPICode as ExpiCode,EXPICodeDescription as ExpiCodeDescription from PIESEXPICode order by Expicode';}
-  if($stmt=$db->conn->prepare($sql))
+  if($stmt=$db->conn->prepare('select * from PIESExpiCode order by Expicode'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -594,14 +563,8 @@ function getValidEXPIvalues($code)
    case 'Package UOM': $type=27; break;
    default : break;
   }
-
- $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=? order by CodeDescription';
- if($db->dbname=='pcdbcache')
- {
-  $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=? order by CodeDescription';
- }
-
-  if($stmt=$db->conn->prepare($sql))
+  
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=? order by CodeDescription'))
   {
    if($stmt->bind_param('i',$type))
    {
@@ -626,14 +589,7 @@ function getValidEXPIvalues($code)
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect(); 
   $records=array();
-
-  $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=34 order by CodeDescription';
-  if($db->dbname=='pcdbcache')
-  {
-   $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=34 order by CodeDescription';
-  }
-
-  if($stmt=$db->conn->prepare($sql))
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=34 order by CodeDescription'))
   {
    if($stmt->execute())
    {
@@ -654,14 +610,7 @@ function getValidEXPIvalues($code)
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-
-  $sql='select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=47 order by CodeValue';
-  if($db->dbname=='pcdbcache')
-  {
-   $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=47 order by CodeDescription';
-  }
-
-  if($stmt=$db->conn->prepare($sql))
+  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=47 order by CodeValue'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -697,20 +646,15 @@ function getValidEXPIvalues($code)
   $db->close();
   return $description;
  }
-
+          
+ 
  function getAssetOrientationViewCodes()
  {
   $codes=array();
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  $sql="select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=103 and CodeDescription <>'User Defined' order by CodeDescription";
-  if($db->dbname=='pcdbcache')
-  {
-   $sql="select CodeValue, CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=103 and CodeDescription <>'User Defined' order by CodeValue";
-  }
-
-  if($stmt=$db->conn->prepare($sql))
+  if($stmt=$db->conn->prepare("select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=103 and CodeDescription <>'User Defined' order by CodeDescription"))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
@@ -720,10 +664,10 @@ function getValidEXPIvalues($code)
    }
   }
   $db->close();
-  return $codes;
+  return $codes;    
  }
-
-
-
+ 
+ 
+ 
 }
 ?>

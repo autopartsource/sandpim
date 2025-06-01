@@ -298,9 +298,8 @@ class padbapi
    return $existingids;
   }
   $keyfieldname=$this->tablekeyslist[$tablename];
-  if($keyfieldname){return $existingids;}
+  if($keyfieldname==''){return $existingids;}
   $db = new mysql; $db->dbname=$this->localdbname; $db->connect();
-  
   if($stmt=$db->conn->prepare('select `'.$keyfieldname.'` from `'.$tablename.'`'))
   {
    if($stmt->execute())
@@ -345,7 +344,7 @@ class padbapi
     if(!array_key_exists($id,$idkeyedapirecords)){$localorphanids[]=$id;}
    }
   }
-  
+
 //----------------------------------------------------------
   
   switch($tablename)
