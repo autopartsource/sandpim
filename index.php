@@ -34,6 +34,28 @@ $qdb = new qdb();
 $kpi=new kpi();
 
 
+function acaVersionAgeColor($date)
+{
+ $returnval='#ffffff';
+ if(strlen($date)==10)
+ {
+  $year=intval(substr($date,0,4)); $month=intval(substr($date,5,2)); $day=intval(substr($date,8,2));
+  if($year>=1900 && $month>0 & $month <13 && $day>0 && $day<32)
+  {
+   $returnval='#ff0000';
+   $diffseconds=time()-mktime(0, 0, 0, $month, $day, $year);
+   if($diffseconds<=(60*60*24*4)){$returnval='#ff8800';}
+   if($diffseconds<=(60*60*24*3)){$returnval='#ffd433';}
+   if($diffseconds<=(60*60*24*2)){$returnval='#33ffd7';}
+   if($diffseconds<=(60*60*24*1)){$returnval='#66FF99';}   
+   if($diffseconds<=(60*60*12)){$returnval='#00FF00';}   
+  }
+ }
+ return  $returnval;    
+}
+
+
+
 $configGet = new configGet;
 $appshistory = $logs->getAppsEvents(100);
 $assetshistory = $logs->getAssetsEvents(100);
@@ -301,10 +323,10 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td><?php echo $vcdb->version();?></td>
-                                                <td><?php echo $pcdb->version();?></td>
-                                                <td><?php echo $padb->version();?></td>
-                                                <td><?php echo $qdb->version();?></td>
+                                                <td style="background-color: <?php echo acaVersionAgeColor($vcdb->version());?>;"><?php echo $vcdb->version();?></td>
+                                                <td style="background-color: <?php echo acaVersionAgeColor($pcdb->version());?>;"><?php echo $pcdb->version();?></td>
+                                                <td style="background-color: <?php echo acaVersionAgeColor($padb->version());?>;"><?php echo $padb->version();?></td>
+                                                <td style="background-color: <?php echo acaVersionAgeColor($qdb->version());?>;"><?php echo $qdb->version();?></td>
                                             </tr>
                                         </tbody>
                                     </table>

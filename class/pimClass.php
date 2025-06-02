@@ -6,7 +6,7 @@ class pim
 
  function buildVersion()
  {
-  return '2023-06-13';
+  return '2025-06-01';
  }
 
  function uuidv4()
