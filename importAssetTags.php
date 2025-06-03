@@ -48,12 +48,12 @@ if (!isset($_SESSION['userid'])) {
 
                         <div class="card-body">
                             <form method="post" action="importAssetTagsProcess.php">
-                                <div class="alert alert-secondary" role="alert">Paste 2 tab-delimited columns (no header row)</div>
+                                <div class="alert alert-secondary" role="alert">Paste 2 tab-delimited columns (no header row): AssetID, AssetTag</div>
                                 <div style="padding:10px;">
                                     <textarea style="width:100%;" name="assets" rows="10"></textarea>
                                 </div>
                                 
-                                <div style="padding:10px;"><input type="checkbox" name="removeexisting"/>Remove existing tags for the assets included</div>
+                                <div style="padding:10px;"><input type="checkbox" name="removeexisting"/>Remove existing tags for the assets included before adding new ones</div>
                                 <div style="padding:10px;"><input name="submit" type="submit" value="Next"/></div>
                             </form>
                         </div>
