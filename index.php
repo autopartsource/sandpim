@@ -44,11 +44,11 @@ function acaVersionAgeColor($date)
   {
    $returnval='#ff0000';
    $diffseconds=time()-mktime(0, 0, 0, $month, $day, $year);
-   if($diffseconds<=(60*60*24*6)){$returnval='#ff8800';}
-   if($diffseconds<=(60*60*24*4)){$returnval='#ffd433';}
-   if($diffseconds<=(60*60*24*2)){$returnval='#33ffd7';}
-   if($diffseconds<=(60*60*24*1)){$returnval='#66FF99';}   
-   if($diffseconds<=(60*60*12)){$returnval='#00FF00';}   
+   if($diffseconds<=(60*60*24*8)){$returnval='#ff8800';}
+   if($diffseconds<=(60*60*24*6)){$returnval='#ffd433';}
+   if($diffseconds<=(60*60*24*4)){$returnval='#33ffd7';}
+   if($diffseconds<=(60*60*24*2)){$returnval='#66FF99';}   
+   if($diffseconds<=(60*60*24)){$returnval='#00FF00';}   
   }
  }
  return  $returnval;    
