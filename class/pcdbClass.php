@@ -81,16 +81,19 @@ class pcdb
  
  
  function validParttypePosition($parttypeid,$positionid)
- {
-     
+ {     
      // the native MySQL published database from ACA does not have an index on CodeMaster that makes this query fast
      // add this index after installation
      //create index idx_PartTerminologyID_PositionID on CodeMaster (PartTerminologyID,PositionID);
   $db = new mysql; $db->dbname=$db->pcdbname; $valid=false;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-//  if($stmt=$db->conn->prepare('select * from PartPosition where PartTerminologyID=? and PositionID=?')) // Only the PCAdb has this table 
-  if($stmt=$db->conn->prepare('select * from CodeMaster where PartTerminologyID=? and PositionID=?'))
+  $sql='select * from CodeMaster where PartTerminologyID=? and PositionID=?';
+  if($db->dbname=='pcdbcache')
+  { // API-based schema is different
+   $sql='select * from PartPosition where PartTerminologyID=? and PositionID=?';   
+  }
+  if($stmt=$db->conn->prepare($sql))
   {
    $stmt->bind_param('ii', $parttypeid, $positionid);
    $stmt->execute();
