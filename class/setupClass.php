@@ -1573,8 +1573,8 @@ class setup
         $sql="insert into navelement values('UTILITIES/RHUBARB71','UTILITIES','Rhubarb 7.1','rhubarb7_1Index.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('UTILITIES/RHUBARB67','UTILITIES','Rhubarb 6.7','rhubarb6_7Index.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('UTILITIES/WMUPLOADER','UTILITIES','Walmart Content uploader','wmSessions.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/UUID','UTILITIES','UUID Generator','UUIDgenerator.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        
+        $sql="insert into navelement values('UTILITIES/UUID','UTILITIES','UUID Generator','UUIDgenerator.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();  
+        $sql="insert into navelement values('UTILITIES/NOTECONVERTER','UTILITIES','Note Converter','noteConverterInput.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         $sql="insert into navelement values('SETTINGS/CATEGORIES','SETTINGS','Part Categories','partCategories.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/DELIVERYGROUPS','SETTINGS','Delivery Groups','deliveryGroups.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
