@@ -72,6 +72,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='Search' && $part=$pim->getPart($_
   case 'platinum-cer-coated': $categories=array(102,108); break;
   case 'platinum-met-platinum': $categories=array(100,97); break;
   case 'platinum-cer-platinum': $categories=array(102,97); break;
+  case 'severeduty-coated': $categories=array(105,108); break;
   default: break;
  }
 
@@ -255,6 +256,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='Search' && $part=$pim->getPart($_
                                         <option value="platinum-cer-coated"<?php if($pairmode=='platinum-cer-coated'){echo ' selected';}?>>Platinum Ceramic and coated rotors</option>
                                         <option value="platinum-met-platinum"<?php if($pairmode=='platinum-met-platinum'){echo ' selected';}?>>Platinum Metalic and Platinum rotors</option>
                                         <option value="platinum-cer-platinum"<?php if($pairmode=='platinum-cer-platinum'){echo ' selected';}?>>Platinum Ceramic and Platinum rotors</option>
+                                        <option value="severeduty-coated"<?php if($pairmode=='severeduty-coated'){echo ' selected';}?>>Platinum Severe-Duty and coated rotors</option>
                                     </select></div>
                                 <div style="padding:5px;"><input type="submit" name="submit" value="Search"/></div>
                             </form>

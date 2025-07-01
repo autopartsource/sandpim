@@ -3326,6 +3326,7 @@ function countAppsByPartcategories($partcategories)
      
      if(strlen($fields[6]))
      {// VCdb attributes are present. parse them.
+      $arrivalsequence=1;
       $attributestrings=explode('~',$fields[6]);
       foreach($attributestrings as $attributestring)
       {
@@ -3334,6 +3335,11 @@ function countAppsByPartcategories($partcategories)
        {// FrontBrakeType|5|1|0   (Disc, sequence 1, non-cosmetic)
         $attributes[]=array('type'=>'vcdb','name'=>$attributechunks[0], 'value'=>intval($attributechunks[1]),'cosmetic'=>intval($attributechunks[3]),'sequence'=>intval($attributechunks[2]));
        }
+       if(count($attributechunks)==2)
+       {// FrontBrakeType|5   (sequence will be defaulted to 1 and non-cosmetic)
+        $attributes[]=array('type'=>'vcdb','name'=>$attributechunks[0], 'value'=>intval($attributechunks[1]),'cosmetic'=>0,'sequence'=>$arrivalsequence);
+       }
+       $arrivalsequence++;
       }
      }
 
