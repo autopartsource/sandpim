@@ -34,10 +34,11 @@ $partcategories = $pim->getPartCategories();
 $validpartcategoryids=array(); foreach ($partcategories as $partcategory) {$validpartcategoryids[]=$partcategory['id'];}
 
 $favoriteparttypes=$pim->getFavoriteParttypes();
+$searchtype = 'contains';
 
 if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) 
 {
- $searchtype = 'equals'; if (isset($_GET['searchtype']) && ($_GET['searchtype'] == 'contains' || $_GET['searchtype'] == 'startswith' || $_GET['searchtype'] == 'endswith')) {$searchtype = $_GET['searchtype'];}
+ if (isset($_GET['searchtype']) && ($_GET['searchtype'] == 'contains' || $_GET['searchtype'] == 'startswith' || $_GET['searchtype'] == 'endswith')) {$searchtype = $_GET['searchtype'];}
 
  $partnumber = strtoupper($_GET['partnumber']);
  $basepart = strtoupper($_GET['basepart']);
@@ -78,8 +79,19 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                         <h6 class="card-header">Search Our Parts</h6>
                         <div class="card-body">
                             <form method="get" action="partsIndex.php">
-                            <div style="padding:3px;">Show part numbers <select name="searchtype"><option value="startswith">starting with</option><option value="contains">containing</option><option value="endswith">ending with</option><option value="equals">exactly equal to</option></select> <input type="text" name="partnumber" value="<?php if(isset($_GET['partnumber'])){echo substr(strtoupper(trim($_GET['partnumber'])),0,20); }?>"/></div>
-                            <div style="padding:3px;">In Category <select name="partcategory"><option value="any">Any Category</option><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>" <?php if(isset($_GET['partcategory']) && $_GET['partcategory']==$partcategory['id']){echo ' selected';}?>><?php echo $partcategory['name']; ?></option><?php } ?> </select></div>
+                            <div style="padding:3px;">Show part numbers 
+                                <select name="searchtype">
+                                    <option value="startswith" <?php if($searchtype=='startswith'){echo ' selected';}?>>starting with</option>
+                                    <option value="contains" <?php if($searchtype=='contains'){echo ' selected';}?>>containing</option>
+                                    <option value="endswith" <?php if($searchtype=='endswith'){echo ' selected';}?>>ending with</option>
+                                    <option value="equals" <?php if($searchtype=='equals'){echo ' selected';}?>>exactly equal to</option>
+                                </select>
+                                <input type="text" name="partnumber" value="<?php if(isset($_GET['partnumber'])){echo substr(strtoupper(trim($_GET['partnumber'])),0,20); }?>"/></div>
+                            <div style="padding:3px;">In Category 
+                                <select name="partcategory">
+                                    <option value="any">Any Category</option><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>" <?php if(isset($_GET['partcategory']) && $_GET['partcategory']==$partcategory['id']){echo ' selected';}?>><?php echo $partcategory['name']; ?></option><?php } ?> 
+                                </select>
+                            </div>
                             <div style="padding:3px;">Of type <select name="parttypeid"><option value="any">Any Part Type</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>" <?php if(isset($_GET['parttypeid']) && $_GET['parttypeid']==$parttype['id']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div>
                             <div style="padding:3px;">With status <select name="lifecyclestatus"><option value="any">Any Status</option><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>" <?php if(isset($_GET['lifecyclestatus']) && $_GET['lifecyclestatus']==$lifecyclestatus['code']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></div>
                             <div style="padding:3px;">With basepart <input type="text" name="basepart" value="<?php if(isset($_GET['basepart'])){echo substr(strtoupper(trim($_GET['basepart'])),0,20); }?>"/></div>
