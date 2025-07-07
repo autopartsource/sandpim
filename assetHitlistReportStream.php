@@ -121,7 +121,7 @@ foreach($matrix as $partnumber=>$columns)
 
  
   // exclude zero-onhand and non-avail lifecycle 
- if($part['lifecyclestatus']!='2' || ($partbalance && $qoh==0)){continue;}
+ if($part['lifecyclestatus']!='2' || $qoh==0){continue;}
 
  if(isset($matrix[$partnumber][$targetassettype]) && count($matrix[$partnumber][$targetassettype])){continue;}
   
