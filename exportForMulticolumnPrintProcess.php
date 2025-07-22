@@ -13,6 +13,7 @@ class PDF extends FPDF
 {
  var $currentY;
  var $Xoffset;
+ var $debugtextlines;
  
     function newPageWithHeader()
     {
@@ -36,6 +37,25 @@ class PDF extends FPDF
         $this->currentY=10;
     }
 
+    function newDebugPage()
+    {
+        $this->AddPage();
+        $this->SetXY(10, 10);
+        $this->SetTextColor(0,0,0);
+        $this->SetFillColor(255,255,255);
+        $this->SetFont('Arial','',10);
+        
+        foreach($this->debugtextlines as $i=>$debugtextline)
+        {
+            $this->SetXY(10, 10+(5*$i));
+            
+            $this->Cell(1,1,$debugtextline,0,1,'L',false);
+
+        }        
+    }
+    
+    
+    
     function renderMakeName($make)
     {
         $this->SetFont('Arial','B',22);
@@ -84,12 +104,16 @@ class PDF extends FPDF
      {
         $notesandpartcolumnswidth+=$width;
      }     
+
+     // draw top boder
+     $this->Line($this->Xoffset+35, $this->currentY, $this->Xoffset+$notesandpartcolumnswidth+65, $this->currentY); 
+
      
      // find the tallest stack of parts
      $biggestpartscount=0; foreach($columns as $columnkey=>$parts){if($biggestpartscount>count($parts)){$biggestpartscount=count($parts);}}
-     $maxheight=(4*$biggestpartscount)+4;
+     $maxheight=(4*$biggestpartscount)+7;
 
-     $this->Line(35+$this->Xoffset, $this->currentY, ($notewidth)+$this->Xoffset, $this->currentY); // draw top boder
+     
      if($renderyears)
      {
         $this->SetFont('Arial','',12);
@@ -137,18 +161,17 @@ class PDF extends FPDF
      }
      // total avail width (qualiriers and parts): 160mm (6.3in)
      
-     
-     
-     
      $this->Line(5+$this->Xoffset, $this->currentY, 5+$this->Xoffset, $this->currentY+$maxheight); // left vertical border of yearblock
-//     $this->Line(195+$this->Xoffset, $this->currentY, 195+$this->Xoffset, $this->currentY+$maxheight); //right vertical border of ending part column
-        
-     $this->Line(35+$this->Xoffset, $this->currentY, 35+$this->Xoffset, $this->currentY+$maxheight); // vertical line between yearblock and notes
-//     $this->Line(165+$this->Xoffset, $this->currentY, 165+$this->Xoffset, $this->currentY+$maxheight);// vertical line between notes and parts
-        
+     $this->Line(35+$this->Xoffset, $this->currentY, 35+$this->Xoffset, $this->currentY+$maxheight); // vertical line between yearblock and notes        
      if($renderyeartop){$this->Line(5+$this->Xoffset, $this->currentY, 35+$this->Xoffset, $this->currentY);}
      if($renderyearbottom){$this->Line(5+$this->Xoffset, $this->currentY+$maxheight, 35+$this->Xoffset, $this->currentY+$maxheight);}
-     $this->Line(35+$this->Xoffset, $this->currentY+$maxheight, 35+$notesandpartcolumnswidth+$this->Xoffset, $this->currentY+$maxheight); //horizontal line closing bottom of notes and parts
+     
+     //horizontal line closing bottom of notes and parts
+     $this->Line(35+$this->Xoffset, $this->currentY+$maxheight, $notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY+$maxheight);
+
+     // Right-most vertical line
+     $this->Line($notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY, $notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY+$maxheight); 
+
      
      $this->currentY=$this->currentY+$maxheight;
     }
@@ -213,17 +236,27 @@ foreach($content as $make => $models)
 
 //print_r($columnkeys);
 
+
 $limitY=250;
 $pdf = new PDF('P','mm','Letter');
 $pdf->Xoffset=0;
 $pdf->currentY=0;
+$pdf->debugtextlines=array();
 $pdf->SetTitle('AirQualitee Cabin Air Filters');
 $pdf->AliasNbPages();
 $pdf->SetAutoPageBreak(false, 0);
 $pdf->SetMargins(0, 0, 0);
 $pdf->SetAuthor('AutoPartSource');
 $pdf->newPageWithHeader();
-$columnsettings=array('keys'=>$columnkeys,'widths'=>array(60,20,20,20,20));
+//$columnsettings=array('keys'=>$columnkeys,'widths'=>array(60,20,20,20,20));
+$columnsettings=array('keys'=>$columnkeys,'widths'=>array(75,25,25));//
+
+
+foreach($columnkeys as $columnkey)
+{
+   $pdf->debugtextlines[]= $columnkey;
+}
+
 
 
 
@@ -330,6 +363,13 @@ foreach($content as $make => $models)
   }
  }
 }
+
+
+// add a debug page if anything was added to the debug array
+if(count($pdf->debugtextlines)){$pdf->newDebugPage();}
+
+
+
 
 
 $pdf->Output('D',$filename);
