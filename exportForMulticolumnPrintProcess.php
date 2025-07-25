@@ -30,9 +30,11 @@ class PDF extends FPDF
         $this->SetLineWidth(.3);        
         $this->Cell(30,7,'Vehicle',1,1,'C',true);
         $this->SetXY(35+$this->Xoffset, 5);
-        $this->Cell(136,7,'Notes',1,1,'C',true);
-        $this->SetXY(165+$this->Xoffset, 5);
-        $this->Cell(30,7,'Parts',1,1,'C',true);
+        $this->Cell(110,7,'Notes',1,1,'C',true);
+        $this->SetXY(145+$this->Xoffset, 5);
+        $this->Cell(25,7,'Front',1,1,'C',true);
+        $this->SetXY(170+$this->Xoffset, 5);
+        $this->Cell(25,7,'Rear',1,1,'C',true);
         // Save ordinate
         $this->currentY=10;
     }
@@ -106,7 +108,7 @@ class PDF extends FPDF
      }     
 
      // draw top boder
-     $this->Line($this->Xoffset+35, $this->currentY, $this->Xoffset+$notesandpartcolumnswidth+65, $this->currentY); 
+     $this->Line($this->Xoffset+35, $this->currentY, $this->Xoffset+$notesandpartcolumnswidth+36, $this->currentY); 
 
      
      // find the tallest stack of parts
@@ -140,7 +142,6 @@ class PDF extends FPDF
      foreach($columnsettings['keys'] as $columnkey)
      {
         $columnwidth=$columnsettings['widths'][$columnindex];
-        $columnsx+=$columnwidth;
         
         if(array_key_exists($columnkey, $columns))
         {
@@ -151,13 +152,24 @@ class PDF extends FPDF
                foreach($columns[$columnkey] as $i=>$part)
                {
                   $w=$this->GetStringWidth($part);
-                  $this->SetXY(($columnsx-($w/2))+$this->Xoffset, ($this->currentY+(($i+1)*4)));// center the text in the cell
+//                  $this->SetXY(($columnsx-($w/2))+$this->Xoffset, ($this->currentY+(($i+1)*4)));// center the text in the cell
+                  $this->SetXY($columnsx+($columnwidth/2)-($w/2)-1, ($this->currentY+(($i+1)*4)));// center the text in the cell
                   $this->Cell(0,0,$part);
                }
-            }        
-        }        
-        $this->Line($columnsx+$this->Xoffset-($columnwidth/2), $this->currentY, $columnsx+$this->Xoffset-($columnwidth/2), $this->currentY+$maxheight);// vertical line between notes and parts
+            }
+        }    
+        
+        // vertical line on the left side of the current part column
+//        $this->Line($columnsx+$this->Xoffset-($columnwidth/2), $this->currentY, $columnsx+$this->Xoffset-($columnwidth/2), $this->currentY+$maxheight);
+       $this->Line($columnsx, $this->currentY, $columnsx, $this->currentY+$maxheight);
+
+       // vertical line on the right side of the current part column
+       $this->Line($columnsx+$columnwidth, $this->currentY, $columnsx+$columnwidth, $this->currentY+$maxheight);
+       
+       
+       
         $columnindex++;
+        $columnsx+=$columnwidth;
      }
      // total avail width (qualiriers and parts): 160mm (6.3in)
      
@@ -167,10 +179,10 @@ class PDF extends FPDF
      if($renderyearbottom){$this->Line(5+$this->Xoffset, $this->currentY+$maxheight, 35+$this->Xoffset, $this->currentY+$maxheight);}
      
      //horizontal line closing bottom of notes and parts
-     $this->Line(35+$this->Xoffset, $this->currentY+$maxheight, $notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY+$maxheight);
+     $this->Line(35+$this->Xoffset, $this->currentY+$maxheight, $notesandpartcolumnswidth+$this->Xoffset+36, $this->currentY+$maxheight);
 
      // Right-most vertical line
-     $this->Line($notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY, $notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY+$maxheight); 
+//     $this->Line($notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY, $notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY+$maxheight); 
 
      
      $this->currentY=$this->currentY+$maxheight;
@@ -249,7 +261,7 @@ $pdf->SetMargins(0, 0, 0);
 $pdf->SetAuthor('AutoPartSource');
 $pdf->newPageWithHeader();
 //$columnsettings=array('keys'=>$columnkeys,'widths'=>array(60,20,20,20,20));
-$columnsettings=array('keys'=>$columnkeys,'widths'=>array(75,25,25));//
+$columnsettings=array('keys'=>$columnkeys,'widths'=>array(109,25,25));//
 
 
 foreach($columnkeys as $columnkey)
