@@ -1576,6 +1576,7 @@ class setup
         $sql="insert into navelement values('UTILITIES/UUID','UTILITIES','UUID Generator','UUIDgenerator.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();  
         $sql="insert into navelement values('UTILITIES/NOTECONVERTER','UTILITIES','Note Converter','noteConverterInput.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('UTILITIES/APPTOUCHER','UTILITIES','App Toucher','appToucher.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/PARTTOUCHER','UTILITIES','Part Toucher','partToucher.php',14);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         $sql="insert into navelement values('SETTINGS/CATEGORIES','SETTINGS','Part Categories','partCategories.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/DELIVERYGROUPS','SETTINGS','Delivery Groups','deliveryGroups.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
