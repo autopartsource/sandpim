@@ -1178,6 +1178,87 @@ function getBrakeConfigsForVehicleid($vehicleid)
   return $versiondate;
  }
  
+ function integrityCheck()
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname; if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;} $db->connect();
+  $results=array();
+  $targets=array();
+  $targets[]=array('description'=>'BaseVehicle/Model','sql'=>'select BaseVehicle.ModelID as id from BaseVehicle left join Model on BaseVehicle.ModelID = Model.ModelID where Model.ModelID is null');
+  $targets[]=array('description'=>'BaseVehicle/Make','sql'=>'select BaseVehicle.BaseVehicleID as id from BaseVehicle left join Make on BaseVehicle.MakeID = Make.MakeID where Make.MakeID is null');
+  $targets[]=array('description'=>'BaseVehicle/Year','sql'=>'select BaseVehicle.BaseVehicleID as id from BaseVehicle left join Year on BaseVehicle.YearID = Year.YearID where Year.YearID is null');
+  $targets[]=array('description'=>'Vehicle/BaseVehicle','sql'=>'select Vehicle.VehicleID as id from Vehicle left join BaseVehicle on Vehicle.BaseVehicleID = BaseVehicle.BaseVehicleID where BaseVehicle.BaseVehicleID is null');
+  $targets[]=array('description'=>'Vehicle/SubModel','sql'=>'select Vehicle.VehicleID as id from Vehicle left join SubModel on Vehicle.SubmodelID = SubModel.SubModelID where SubModel.SubModelID is null');
+  $targets[]=array('description'=>'Vehicle/Region','sql'=>'select Vehicle.VehicleID as id from Vehicle left join Region on Vehicle.RegionID=Region.RegionID where Region.RegionID is null;');
+  $targets[]=array('description'=>'Vehicle/PublicationStage','sql'=>'select Vehicle.VehicleID as id from Vehicle left join PublicationStage on Vehicle.PublicationStageID=PublicationStage.PublicationStageID where PublicationStage.PublicationStageID is null');
+  $targets[]=array('description'=>'VehicleToEngineConfig/Vehicle','sql'=>'select VehicleToEngineConfig.VehicleToEngineConfigID as id from VehicleToEngineConfig left join Vehicle on VehicleToEngineConfig.VehicleID = Vehicle.VehicleID where Vehicle.VehicleID is null');     
+  $targets[]=array('description'=>'VehicleToBedConfig/Vehicle','sql'=>'select VehicleToBedConfig.VehicleToBedConfigID as id from VehicleToBedConfig left join Vehicle on VehicleToBedConfig.VehicleID =Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToBodyConfig/Vehicle','sql'=>'select VehicleToBodyConfig.VehicleToBodyConfigID as id from VehicleToBodyConfig left join Vehicle on VehicleToBodyConfig.VehicleID =Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToBodyStyleConfig/Vehicle','sql'=>'select VehicleToBodyStyleConfig.VehicleToBodyStyleConfigID as id from VehicleToBodyStyleConfig left join Vehicle on VehicleToBodyStyleConfig.VehicleID =Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToBrakeConfig/Vehicle','sql'=>'select VehicleToBrakeConfig.VehicleToBrakeConfigID as id from VehicleToBrakeConfig left join Vehicle on VehicleToBrakeConfig.VehicleID = Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToDriveType/Vehicle','sql'=>'select VehicleToDriveType.VehicleToDriveTypeID as id from VehicleToDriveType left join Vehicle on VehicleToDriveType.VehicleID=Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToDriveType/DriveType','sql'=>'select VehicleToDriveType.VehicleToDriveTypeID as id from VehicleToDriveType left join DriveType on VehicleToDriveType.DriveTypeID=DriveType.DriveTypeID where DriveType.DriveTypeID is null');
+  $targets[]=array('description'=>'VehicleToMfrBodyCode/Vehicle','sql'=>'select VehicleToMfrBodyCode.VehicleToMfrBodyCodeID as id from VehicleToMfrBodyCode left join Vehicle on VehicleToMfrBodyCode.VehicleID = Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToSpringTypeConfig/Vehicle','sql'=>'select VehicleToSpringTypeConfig.VehicleToSpringTypeConfigID as id from VehicleToSpringTypeConfig left join Vehicle on VehicleToSpringTypeConfig.VehicleID = Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToSpringTypeConfig/SpringTypeConfig','sql'=>'select VehicleToSpringTypeConfig.VehicleToSpringTypeConfigID as id from VehicleToSpringTypeConfig left join SpringTypeConfig on VehicleToSpringTypeConfig.SpringTypeConfigID=SpringTypeConfig.SpringTypeConfigID where SpringTypeConfig.SpringTypeConfigID is null');
+  $targets[]=array('description'=>'SpringTypeConfig/SpringType (front)','sql'=>'select SpringTypeConfig.SpringTypeConfigID as id from SpringTypeConfig left join SpringType on SpringTypeConfig.FrontSpringTypeID=SpringType.SpringTypeID where SpringType.SpringTypeID is null');
+  $targets[]=array('description'=>'SpringTypeConfig/SpringType (rear)','sql'=>'select SpringTypeConfig.SpringTypeConfigID as id from SpringTypeConfig left join SpringType on SpringTypeConfig.RearSpringTypeID=SpringType.SpringTypeID where SpringType.SpringTypeID is null');
+  $targets[]=array('description'=>'VehicleToSteeringConfig/Vehicle','sql'=>'select VehicleToSteeringConfig.VehicleToSteeringConfigID as id from VehicleToSteeringConfig left join Vehicle on VehicleToSteeringConfig.VehicleID = Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToTransmission/Vehicle','sql'=>'select VehicleToTransmission.VehicleToTransmissionID as id from VehicleToTransmission left join Vehicle on VehicleToTransmission.VehicleID =Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToWheelbase/Vehicle','sql'=>'select VehicleToWheelbase.VehicleToWheelbaseID as id from VehicleToWheelbase left join Vehicle on VehicleToWheelbase.VehicleID =Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToWheelbase/WheelBase','sql'=>'select VehicleToWheelbase.VehicleToWheelbaseID as id from VehicleToWheelbase left join WheelBase on VehicleToWheelbase.WheelbaseID=WheelBase.WheelBaseID where WheelBase.WheelBaseID is null');
+  $targets[]=array('description'=>'VehicleToBedConfig/BedConfig','sql'=>'select VehicleToBedConfig.VehicleToBedConfigID as id from VehicleToBedConfig left join BedConfig on VehicleToBedConfig.BedConfigID = BedConfig.BedConfigID where BedConfig.BedConfigID is null');
+  $targets[]=array('description'=>'BedConfig/BedLength','sql'=>'select BedConfig.BedConfigID as id from BedConfig left join BedLength on BedConfig.BedLengthID = BedLength.BedLengthID where BedLength.BedLengthID is null');
+  $targets[]=array('description'=>'BedConfig/BedType','sql'=>'select BedConfig.BedConfigID as id from BedConfig left join BedType on BedConfig.BedTypeID = BedType.BedTypeID where BedType.BedTypeID is null');
+  $targets[]=array('description'=>'BodyStyleConfig/BodyNumDoors','sql'=>'select BodyStyleConfig.BodyStyleConfigID as id from BodyStyleConfig left join BodyNumDoors on BodyStyleConfig.BodyNumDoorsID =BodyNumDoors.BodyNumDoorsID where BodyNumDoors.BodyNumDoorsID is null');
+  $targets[]=array('description'=>'BodyStyleConfig/BodyType','sql'=>'select BodyStyleConfig.BodyStyleConfigID as id from BodyStyleConfig left join BodyType on BodyStyleConfig.BodyTypeID = BodyType.BodyTypeID where BodyType.BodyTypeID is null');
+  $targets[]=array('description'=>'VehicleToMfrBodyCode/MfrBodyCode','sql'=>'select VehicleToMfrBodyCode.VehicleToMfrBodyCodeID as id from VehicleToMfrBodyCode left join MfrBodyCode on VehicleToMfrBodyCode.MfrBodyCodeID =MfrBodyCode.MfrBodyCodeID where MfrBodyCode.MfrBodyCodeID is null');
+  $targets[]=array('description'=>'VehicleToBrakeConfig/BrakeConfig','sql'=>'select VehicleToBrakeConfig.VehicleToBrakeConfigID as id from VehicleToBrakeConfig left join BrakeConfig on VehicleToBrakeConfig.BrakeConfigID = BrakeConfig.BrakeConfigID where BrakeConfig.BrakeConfigID is null');
+  $targets[]=array('description'=>'BrakeConfig/BrakeType (front)','sql'=>'select BrakeConfig.BrakeConfigID as id from BrakeConfig left join BrakeType on BrakeConfig.FrontBrakeTypeID = BrakeType.BrakeTypeID where BrakeType.BrakeTypeID is null');
+  $targets[]=array('description'=>'BrakeConfig/BrakeType (rear)','sql'=>'select BrakeConfig.BrakeConfigID as id from BrakeConfig left join BrakeType on BrakeConfig.RearBrakeTypeID = BrakeType.BrakeTypeID where BrakeType.BrakeTypeID is null');
+  $targets[]=array('description'=>'BrakeConfig/BrakeSystem','sql'=>'select BrakeConfig.BrakeConfigID as id from BrakeConfig left join BrakeSystem on BrakeConfig.BrakeSystemID = BrakeSystem.BrakeSystemID where BrakeSystem.BrakeSystemID is null');
+  $targets[]=array('description'=>'BrakeConfig/BrakeABS','sql'=>'select BrakeConfig.BrakeConfigID as id from BrakeConfig left join BrakeABS on BrakeConfig.BrakeABSID = BrakeABS.BrakeABSID where BrakeABS.BrakeABSID is null');
+  $targets[]=array('description'=>'VehicleToEngineConfig/EngineConfig','sql'=>'select VehicleToEngineConfig.VehicleToEngineConfigID as id from VehicleToEngineConfig left join EngineConfig on VehicleToEngineConfig.EngineConfigID = EngineConfig.EngineConfigID where EngineConfig.EngineConfigID is null');
+  $targets[]=array('description'=>'EngineConfig/EngineDesignation','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join EngineDesignation on EngineConfig.EngineDesignationID = EngineDesignation.EngineDesignationID where EngineDesignation.EngineDesignationID is null');
+  $targets[]=array('description'=>'EngineConfig/EngineVIN','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join EngineVIN on EngineConfig.EngineVINID  = EngineVIN.EngineVINID where EngineVIN.EngineVINID is null');
+  $targets[]=array('description'=>'EngineConfig/Valves','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join Valves on EngineConfig.ValvesID = Valves.ValvesID where Valves.ValvesID is null');
+  $targets[]=array('description'=>'EngineConfig/EngineBase','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join EngineBase on EngineConfig.EngineBaseID = EngineBase.EngineBaseID where EngineBase.EngineBaseID is null');
+  $targets[]=array('description'=>'EngineConfig/FuelDeliveryConfig','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join FuelDeliveryConfig on EngineConfig.FuelDeliveryConfigID = FuelDeliveryConfig.FuelDeliveryConfigID where FuelDeliveryConfig.FuelDeliveryConfigID is null');
+  $targets[]=array('description'=>'EngineConfig/Aspiration','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join Aspiration on EngineConfig.AspirationID = Aspiration.AspirationID where Aspiration.AspirationID is null');
+  $targets[]=array('description'=>'EngineConfig/CylinderHeadType','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join CylinderHeadType on EngineConfig.CylinderHeadTypeID = CylinderHeadType.CylinderHeadTypeID where CylinderHeadType.CylinderHeadTypeID is null');
+  $targets[]=array('description'=>'EngineConfig/FuelType','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join FuelType on EngineConfig.FuelTypeID = FuelType.FuelTypeID where FuelType.FuelTypeID is null');
+  $targets[]=array('description'=>'EngineConfig/IgnitionSystemType','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join IgnitionSystemType on EngineConfig.IgnitionSystemTypeID=IgnitionSystemType.IgnitionSystemTypeID where IgnitionSystemType.IgnitionSystemTypeID is null');
+  $targets[]=array('description'=>'EngineConfig/Mfr','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join Mfr on EngineConfig.EngineMfrID=Mfr.MfrID where Mfr.MfrID is null');
+  $targets[]=array('description'=>'EngineConfig/EngineVersion','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join EngineVersion on EngineConfig.EngineVersionID = EngineVersion.EngineVersionID where EngineVersion.EngineVersionID is null');
+  $targets[]=array('description'=>'EngineConfig/PowerOutput','sql'=>'select EngineConfig.EngineConfigID as id from EngineConfig left join PowerOutput on EngineConfig.PowerOutputID=PowerOutput.PowerOutputID where PowerOutput.PowerOutputID is null');
+  $targets[]=array('description'=>'VehicleToTransmission/Transmission','sql'=>'select VehicleToTransmission.VehicleToTransmissionID as id from VehicleToTransmission left join Transmission on VehicleToTransmission.TransmissionID = Transmission.TransmissionID where Transmission.TransmissionID is null');
+  $targets[]=array('description'=>'Transmission/TransmissionBase','sql'=>'select Transmission.TransmissionID as id from Transmission left join TransmissionBase on Transmission.TransmissionBaseID = TransmissionBase.TransmissionBaseID where TransmissionBase.TransmissionBaseID is null');
+  $targets[]=array('description'=>'Transmission/TransmissionMfrCode','sql'=>'select Transmission.TransmissionID as id from Transmission left join TransmissionMfrCode on Transmission.TransmissionMfrCodeID=TransmissionMfrCode.TransmissionMfrCodeID where TransmissionMfrCode.TransmissionMfrCodeID is null');
+  $targets[]=array('description'=>'Transmission/ElecControlled','sql'=>'select Transmission.TransmissionID as id from Transmission left join ElecControlled on Transmission.TransmissionElecControlledID=ElecControlled.ElecControlledID where ElecControlled.ElecControlledID is null');
+  $targets[]=array('description'=>'Transmission/Mfr','sql'=>'select Transmission.TransmissionID as id from Transmission left join Mfr on Transmission.TransmissionMfrID = Mfr.MfrID where Mfr.MfrID is null');  
+  $targets[]=array('description'=>'TransmissionBase/TransmissionType','sql'=>'select TransmissionBase.TransmissionBaseID as id from TransmissionBase left join TransmissionType on TransmissionBase.TransmissionTypeID = TransmissionType.TransmissionTypeID where TransmissionType.TransmissionTypeID is null');
+  $targets[]=array('description'=>'TransmissionBase/TransmissionNumSpeeds','sql'=>'select TransmissionBase.TransmissionBaseID as id from TransmissionBase left join TransmissionNumSpeeds on TransmissionBase.TransmissionNumSpeedsID=TransmissionNumSpeeds.TransmissionNumSpeedsID where TransmissionNumSpeeds.TransmissionNumSpeedsID is null');
+  $targets[]=array('description'=>'TransmissionBase/TransmissionControlType','sql'=>'select TransmissionBase.TransmissionBaseID as id from TransmissionBase left join TransmissionControlType on TransmissionBase.TransmissionControlTypeID=TransmissionControlType.TransmissionControlTypeID where TransmissionControlType.TransmissionControlTypeID is null');
+//  $targets[]=array('description'=>'','sql'=>'');
+//  $targets[]=array('description'=>'','sql'=>'');
+//  $targets[]=array('description'=>'','sql'=>'');
+//  $targets[]=array('description'=>'','sql'=>'');
+//  $targets[]=array('description'=>'','sql'=>'');
+  
+  
+  
+  foreach($targets as $target)
+  {  
+   $db->sql = $target['sql'];
+   $db->result = $db->conn->query($db->sql);
+   while($row = $db->result->fetch_assoc()) 
+   {
+    $results[]=$target['description'].':'.$row['id'];
+   }  
+  }
+  $db->close();
+  return $results;
+ }
+
 }
 
 ?>

@@ -2638,7 +2638,7 @@ function countAppsByPartcategories($partcategories)
   $db = new mysql; 
   //$db->dbname='pim';
   $db->connect();
-  if($stmt=$db->conn->prepare('update backgroundjob set status=?,percentage=1,datetimeended=? where id=?'))
+  if($stmt=$db->conn->prepare('update backgroundjob set status=?,percentage=100,datetimeended=? where id=?'))
   {
    if($stmt->bind_param('ssi', $status,$datetimeended,$jobid))
    {
@@ -2647,9 +2647,34 @@ function countAppsByPartcategories($partcategories)
   }
   $db->close();
  }
- 
- 
 
+ function updateBackgroundjobClientfilename($jobid,$clientfilename)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update backgroundjob set clientfilename=? where id=?'))
+  {
+   if($stmt->bind_param('si', $clientfilename,$jobid))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+ 
+ function updateBackgroundjobOutputfile($jobid,$outputfile)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update backgroundjob set outputfile=? where id=?'))
+  {
+   if($stmt->bind_param('si', $outputfile,$jobid))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+
+ 
  function logBackgroundjobEvent($jobid,$text)
  {
   $db = new mysql; $db->connect();

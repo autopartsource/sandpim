@@ -126,7 +126,23 @@ foreach($badattributes as $badattribute)
  if($fixedattributecount>=1000){break;}
 }
 
-$logs->logSystemEvent('housekeeper', 0, 'Housekeeper split '.$fixedattributecount.' app notes');
+if($fixedattributecount>0){$logs->logSystemEvent('housekeeper', 0, 'Housekeeper split '.$fixedattributecount.' app notes');}
+
+// VCdb integrity check
+$integrityissues=$vcdb->integrityCheck();
+if(count($integrityissues)==0)
+{
+ $logs->logSystemEvent('housekeeper', 0, 'VCdb integrity check clean');
+}
+else
+{
+ $logs->logSystemEvent('housekeeper', 0, 'VCdb integrity check failed: '.implode(',',$integrityissues));
+}
+
+
+
+
+
 
 $runtime=time()-$starttime;
 if($runtime > 30)
@@ -136,6 +152,5 @@ if($runtime > 30)
 
 // clear clipboard content older than 2 days for all users
 $pim->deleteOldClipboardObjects(2);
-
 
 ?>

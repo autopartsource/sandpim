@@ -62,8 +62,16 @@ $job = $pim->getBackgroundjob(intval($_GET['id']));
                                 <table class="table">
                                     <tr><th>ID</th><td><?php echo $job['id']; ?></td></tr>
                                     <tr><th>Type</th><td><?php echo $job['jobtype']; ?></td></tr>
-                                    <tr><th>Status</th><td><?php echo $job['status']; ?></td></tr>
-                                    <tr><th>Token</th><td><a href="./downloadBackgroundExport.php?token=<?php echo $job['token']; ?>"><?php echo $job['token']; ?></a></td></tr>
+                                    <tr><th>Status</th><td><?php echo $job['status']; ?><?php if($job['status']=='running'){echo ' ('.number_format($job['percentage'],0).'% complete)';}?></td></tr>
+                                    <tr><th>Token</th>
+                                        <td>
+                                            <?php if($job['contenttype']=='application/zip'){?>
+                                            <a href="./ACESexports/<?php echo $job['clientfilename'];?>"><?php echo $job['clientfilename'];?></a>
+                                            <?php }else{?>
+                                            <a href="./downloadBackgroundExport.php?token=<?php echo $job['token']; ?>"><?php echo $job['token']; ?></a>
+                                            <?php }?>                                            
+                                        </td>
+                                    </tr>                                                                                                                                                
                                     <tr><th>Server-side Input File</th><td><?php echo $job['inputfile']; ?></td></tr>
                                     <tr><th>Server-side Output File</th><td><?php echo $job['outputfile']; ?></td></tr>
                                     <tr><th>Client-side Filename</th><td><?php echo $job['clientfilename']; ?></td></tr>

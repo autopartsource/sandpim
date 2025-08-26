@@ -1623,9 +1623,7 @@ class setup
         $sql="insert into navelement values('EXPORT/APPGUIDEBASIC','EXPORT','Application Guide PDF (basic)','exportForBasicPrintSelect.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('EXPORT/APPGUIDEMULTICOLIUMN','EXPORT','Application Guide PDF (multi-column)','exportForMulticolumnPrintSelect.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('EXPORT/COMPETITORINTERCHANGE','EXPORT','Competitor Interchange','exportCompetitorInterchangeSelect.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        
-        
-        
+        $sql="insert into navelement values('EXPORT/ASSETBUNDLE','EXPORT','Asset Bundle','exportAssetBundle.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         
         
