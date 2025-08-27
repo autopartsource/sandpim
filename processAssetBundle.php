@@ -52,7 +52,7 @@ if(count($jobs))
  $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
  $partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuslist);
  
- $pim->logBackgroundjobEvent($jobid, 'Partcategories in export:'.implode(',',$partcategories));
+ $pim->logBackgroundjobEvent($jobid, 'Part Categories:'.implode(',',$partcategories));
  
  $outputpath=$jobs[0]['outputfile'];
  $profileelements=explode(';',$profiledata);
@@ -69,10 +69,12 @@ if(count($jobs))
  $errorcount=0;
  $zipfilename= random_int(1000000, 9999999).'.zip';
  $tempdirname= random_int(1000000, 9999999);
+ $totalretrycount=0;
+ $retrycount=0;
  
  $shellresult= shell_exec('mkdir '.$outputpath.$tempdirname);
+ $pim->logBackgroundjobEvent($jobid, 'Profile: '.$profilename);
  $pim->logBackgroundjobEvent($jobid, 'Created temp directory ('.$outputpath.$tempdirname.') '.$shellresult);
- 
  
  foreach($partnumbers as $partnumberindex=>$partnumber)
  {     
@@ -107,16 +109,24 @@ if(count($jobs))
      $uri=$digitalassetrecord['uri'];
      $fileHashMD5=$digitalassetrecord['fileHashMD5'];
      
-     
-     if(in_array($filename,$uniquefilenames)){continue;}
-          
-//   $logs->logSystemEvent('Debug', $userid , 'Export of asset ['.$digitalassetrecord['assetid'].'] included (tagmatch on:'.$firstmatchedtagtext);
-     
+     if(in_array($filename,$uniquefilenames)){continue;} // skip file if it has already been added
+               
      if($uri!='' && in_array($filetype,['JPG','PNG','PDF','BMP','TIF']))
      { 
-      $fixedescapeduri = str_replace(['%2F', '%3A'], ['/', ':'], urlencode($uri));    
-      $assetfilecontents = file_get_contents($fixedescapeduri);
-      $downloadsize=strlen($assetfilecontents);
+      $fixedescapeduri = str_replace(['%2F', '%3A'], ['/', ':'], urlencode($uri));
+            
+      $retrycount=0;
+      while($retrycount<=5)
+      {
+       $assetfilecontents = file_get_contents($fixedescapeduri);
+       $downloadsize=strlen($assetfilecontents);
+       if($downloadsize>0){break;} // move on if the download has size
+       $pim->logBackgroundjobEvent($jobid, $filename.': download failed - retrying');
+       $retrycount++;
+       sleep(5);
+      }
+      if($retrycount>0){$totalretrycount+=$retrycount;}
+            
       $downloadhash=md5($assetfilecontents);
       if($downloadsize)
       {// downloaded something. If we were being strict, a size and hash check would be wise here
@@ -195,7 +205,8 @@ if(count($jobs))
  $pim->updateBackgroundjobOutputfile($jobid, $outputpath.$zipfilename);
 
  $runtime=time()-$starttime;
- $pim->logBackgroundjobEvent($jobid, 'processed '.count($uniquefilenames).' files for '.count($partnumbers).' partnumbers in '.$runtime.' seconds. Total uncomressed size: '.number_format($uncompressedbytetotal/1000000,0,'.',',').'MB. Error count: '.$errorcount);
+ $pim->logBackgroundjobEvent($jobid, 'processed '.count($uniquefilenames).' files for '.count($partnumbers).' partnumbers in '.$runtime.' seconds. Total uncomressed size: '.number_format($uncompressedbytetotal/1000000,0,'.',',').'MB; Error count: '.$errorcount.'; retries:'.$totalretrycount);
+ $logs->logSystemEvent('assetbundle', 0 , $profilename.' - bundled '.count($uniquefilenames).' files for '.count($partnumbers).' partnumbers in '.$runtime.' seconds. Total uncomressed size: '.number_format($uncompressedbytetotal/1000000,0,'.',',').'MB; Error count:'.$errorcount.'; retries:'.$totalretrycount); 
 }
 else
 {

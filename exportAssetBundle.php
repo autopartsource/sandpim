@@ -29,6 +29,8 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
 if(isset($_POST['submit']) && $_POST['submit']=='Export')
 {
  $receiverprofile=intval($_POST['receiverprofile']);
+ $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofile);
+ 
  $pim->createBackgroundjob('AssetBundle', 'started', $_SESSION['userid'], '', '/var/www/html/ACESexports/', 'receiverprofile:'.$receiverprofile.';verifyhashes:yes;', date('Y-m-d H:i:s'), 'application/zip', '');   
  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./backgroundJobs.php'\" /></head><body></body></html>";
  exit;   
