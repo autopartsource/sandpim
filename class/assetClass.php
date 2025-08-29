@@ -491,7 +491,17 @@ class asset
   }
   $db->close();
  }
- 
+
+ function setAssetWidthHeight($id,$assetwidth,$assetheight)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update asset set assetWidth=?, assetHeight=? where id=?'))
+  {
+   $stmt->bind_param('iii', $assetwidth,$assetheight, $id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
  
  function updateAssetOIDbyRecordID($id)
  {

@@ -108,6 +108,9 @@ if(count($jobs))
      $filetype=$digitalassetrecord['fileType'];
      $uri=$digitalassetrecord['uri'];
      $fileHashMD5=$digitalassetrecord['fileHashMD5'];
+     $assetwidth=$digitalassetrecord['assetWidth'];
+     $assetheight=$digitalassetrecord['assetHeight'];
+     $assetrecordid=$digitalassetrecord['id'];
      
      if(in_array($filename,$uniquefilenames)){continue;} // skip file if it has already been added
                
@@ -137,8 +140,22 @@ if(count($jobs))
        {// local official hash does not agree with the content just downloaded
         $pim->logBackgroundjobEvent($jobid, $filename.' - md5 of download disagrees with local record');
         $errorcount++;           
-       }          
-          
+       }
+       
+       if($downloadhash==$fileHashMD5)
+       {
+        // hash is good - we have reliable content - extract pixel dims from downloaded file
+        $downloadwidth=0; $downloadheight=0; $downloadimagetype=0; $downloadimageattr='';
+        list($downloadwidth, $downloadheight, $downloadimagetype, $downloadimageattr) = getimagesizefromstring($assetfilecontents);
+        if(($downloadimagetype==IMAGETYPE_JPEG || $downloadimagetype==IMAGETYPE_PNG) && $downloadwidth > 0 && $downloadheight > 0 &&($downloadwidth != $assetwidth || $downloadheight != $assetheight))
+        {
+         $pim->logBackgroundjobEvent($jobid, $filename.' - updating mismatch: local='.$assetwidth.'x'.$assetheight.', download='.$downloadwidth.'x'.$downloadheight);
+         $assets->setAssetWidthHeight($assetrecordid, $downloadwidth, $downloadheight);
+         $newoid=$assets->updateAssetOID($assetrecordid);
+         $assets->logAssetEvent($assetrecordid, 0, 'AssetBundle process fixed incorrect dims after downloading file from CND and validating hash', $newoid);
+        }
+       }
+       
        $uniquefilenames[]=$filename;
        
        if(file_put_contents($outputpath.$tempdirname.'/'.$filename,$assetfilecontents)===false)
