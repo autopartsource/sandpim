@@ -23,6 +23,7 @@ if(count($jobs))
  include_once(__DIR__.'/class/assetClass.php');
  include_once(__DIR__.'/class/logsClass.php');
  
+ 
  $assets = new asset();
  $logs=new logs();
  
@@ -106,6 +107,7 @@ if(count($jobs))
      $assetid=$digitalassetrecord['assetid'];
      $assetype=$digitalassetconnection['assettypecode'];
      $filetype=$digitalassetrecord['fileType'];
+     $filesize=$digitalassetrecord['filesize'];
      $uri=$digitalassetrecord['uri'];
      $fileHashMD5=$digitalassetrecord['fileHashMD5'];
      $assetwidth=$digitalassetrecord['assetWidth'];
@@ -138,7 +140,7 @@ if(count($jobs))
           
        if($verifyhashes && $downloadhash!=$fileHashMD5)
        {// local official hash does not agree with the content just downloaded
-        $pim->logBackgroundjobEvent($jobid, $filename.' - md5 of download disagrees with local record');
+        $pim->logBackgroundjobEvent($jobid, $assetid.' ('.$filename.') - md5 hash of download disagrees with local record');
         $errorcount++;           
        }
        
@@ -149,11 +151,21 @@ if(count($jobs))
         list($downloadwidth, $downloadheight, $downloadimagetype, $downloadimageattr) = getimagesizefromstring($assetfilecontents);
         if(($downloadimagetype==IMAGETYPE_JPEG || $downloadimagetype==IMAGETYPE_PNG) && $downloadwidth > 0 && $downloadheight > 0 &&($downloadwidth != $assetwidth || $downloadheight != $assetheight))
         {
-         $pim->logBackgroundjobEvent($jobid, $filename.' - updating mismatch: local='.$assetwidth.'x'.$assetheight.', download='.$downloadwidth.'x'.$downloadheight);
+         $pim->logBackgroundjobEvent($jobid, $assetid.' ('.$filename.') - updating pixel dims mismatch: local='.$assetwidth.'x'.$assetheight.', download='.$downloadwidth.'x'.$downloadheight);
          $assets->setAssetWidthHeight($assetrecordid, $downloadwidth, $downloadheight);
          $newoid=$assets->updateAssetOID($assetrecordid);
          $assets->logAssetEvent($assetrecordid, 0, 'AssetBundle process fixed incorrect dims after downloading file from CND and validating hash', $newoid);
         }
+        
+        if($downloadsize != $filesize)
+        {// need to update size on local metadata
+         $pim->logBackgroundjobEvent($jobid, $assetid.' ('.$filename.') - updating size mismatch: local='.$filesize.', download='.$downloadsize);
+         $assets->setAssetFilesize($assetrecordid, $downloadsize);
+         $newoid=$assets->updateAssetOID($assetrecordid);
+         $assets->logAssetEvent($assetrecordid, 0, 'AssetBundle process fixed incorrect filesize after downloading file from CND and validating hash', $newoid);
+        }
+        
+        
        }
        
        $uniquefilenames[]=$filename;
@@ -185,7 +197,7 @@ if(count($jobs))
  }
  
  // zip all local files from temp directory
- $shellresult= shell_exec('zip -q -j '.$outputpath.$zipfilename.' '.$outputpath.$tempdirname.'/*');
+ $shellresult= shell_exec('zip -q -j -m '.$outputpath.$zipfilename.' '.$outputpath.$tempdirname.'/*');
  if(strlen($shellresult)>0)
  {
   $pim->logBackgroundjobEvent($jobid, 'zipped all files in '.$outputpath.$tempdirname.' into '.$outputpath.$zipfilename.' '.$shellresult);

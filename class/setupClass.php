@@ -927,6 +927,9 @@ class setup
         $sql="insert into config_options values('AutoCareAPIclientsecret','AN1/255','','','AutoCare Client secret for API - common to all subscribers');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareAPIusername','AN1/255','','','AutoCare API username - unique to a subscriber');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareAPIpassword','AN1/255','','','AutoCare API password - unique to a subscriber');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('ExportsDirectory','AN1/255','','','local server absolute path (with trailing slash) where ACES (etc.) exports are to be written');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+
+
         
         $sql="CREATE TABLE issue (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,

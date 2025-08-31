@@ -130,6 +130,7 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                     <table class="table">
                                         <thead>
                                             <tr>
+                                                <th scope="col">Type</th>
                                                 <th scope="col">Filename</th>
                                                 <th scope="col">Status</th>
                                             </tr>
@@ -137,6 +138,7 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                         <tbody>
                                             <?php foreach($myjobs as $job){?>
                                             <tr>
+                                                <td><?php echo $job['jobtype'];?></td>
                                                 <td><?php if($job['status']=='complete'){echo '<a href="./downloadBackgroundExport.php?token='.$job['token'].'">'.$job['clientfilename'].'</a>';}else{echo $job['clientfilename'];}?></td>
                                                 <td><?php echo '<a href="./backgroundJob.php?id='.$job['id'].'">'.$job['status'].'</a>';?></td>
                                             </tr>
