@@ -121,12 +121,12 @@ if(count($jobs))
       $fixedescapeduri = str_replace(['%2F', '%3A'], ['/', ':'], urlencode($uri));
             
       $retrycount=0;
-      while($retrycount<=5)
+      while($retrycount<=2)
       {
        $assetfilecontents = file_get_contents($fixedescapeduri);
        $downloadsize=strlen($assetfilecontents);
        if($downloadsize>0){break;} // move on if the download has size
-       $pim->logBackgroundjobEvent($jobid, $filename.': download failed - retrying');
+       $pim->logBackgroundjobEvent($jobid, $assetid.' ('.$filename.') - download failed - retrying');
        $retrycount++;
        sleep(5);
       }
@@ -203,7 +203,8 @@ if(count($jobs))
   $pim->logBackgroundjobEvent($jobid, 'zipped all files in '.$outputpath.$tempdirname.' into '.$outputpath.$zipfilename.' '.$shellresult);
  }
  
- // delete local files in temp dir by hitlist
+ // delete local files in temp dir by hitlist - not needed if the -m switch is used on the zip
+ /*
  foreach($hitlistfiles as $hitlistfile)
  {
   $shellresult= shell_exec('rm -f "'.$hitlistfile.'"');
@@ -212,7 +213,8 @@ if(count($jobs))
    $pim->logBackgroundjobEvent($jobid, $filename.' - local delete from '.$hitlistfile.' '.$shellresult);
   }
  }
-
+*/
+ 
  // remove temp dir 
  $shellresult= shell_exec('rmdir '.$outputpath.$tempdirname);
  if(strlen($shellresult)>0)
