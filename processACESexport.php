@@ -83,7 +83,8 @@ if(count($jobs))
  $includecosmeticattributes=false; if(array_key_exists('IncludeCosmeticAttributes', $keyedprofile) && $keyedprofile['IncludeCosmeticAttributes']=='yes'){$includecosmeticattributes=true;} 
  $suppressduplicateapps=false; if(array_key_exists('SuppressDuplicateApps', $keyedprofile) && $keyedprofile['SuppressDuplicateApps']=='yes'){$suppressduplicateapps=true;} 
  $descriptiontonmfrlabel=''; if(array_key_exists('DescriptionToMfrlabel', $keyedprofile) && $keyedprofile['DescriptionToMfrlabel']!=''){$descriptiontonmfrlabel=$keyedprofile['DescriptionToMfrlabel'];}
- $generatoroptions=array('IncludeCosmeticApps'=>$includecosmeticapps,'IncludeCosmeticAttributes'=>$includecosmeticattributes,'SuppressDuplicateApps'=>$suppressduplicateapps,'DescriptionToMfrlabel'=>$descriptiontonmfrlabel,'ProfileName'=>$profilename);
+ $suppressrefs=false; if(array_key_exists('SuppressRefs', $keyedprofile) && $keyedprofile['SuppressRefs']=='yes'){$suppressrefs=true;}
+ $generatoroptions=array('IncludeCosmeticApps'=>$includecosmeticapps,'IncludeCosmeticAttributes'=>$includecosmeticattributes,'SuppressDuplicateApps'=>$suppressduplicateapps,'DescriptionToMfrlabel'=>$descriptiontonmfrlabel,'ProfileName'=>$profilename,'SuppressRefs'=>$suppressrefs);
 
  $assetapps=array();
  
