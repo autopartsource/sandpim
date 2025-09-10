@@ -426,13 +426,13 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                         if(count($systemhistory))
                                         {
                                             echo '<div class="tab-pane fade mt-3" id="system" role="tabpanel" aria-labelledby="system-tab">'
-                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Change Description</th></tr>';
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Description</th></tr>';
                                             foreach ($systemhistory as $record) {
                                                 $nicedescription = $record['description'];
                                                 if (strlen  ($nicedescription) > $logpreviewlength) {
                                                     $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
                                                 }
-                                                echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td><code>' . $nicedescription . '</code></td></tr>';
+                                                echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td style="max-width:400px;"><div class="text-truncate">' . $nicedescription . '</div></td></tr>';
                                             }
                                             echo '</table></div>';
                                         }      
