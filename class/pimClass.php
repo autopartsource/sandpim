@@ -6,7 +6,7 @@ class pim
 
  function buildVersion()
  {
-  return '2025-06-01';
+  return '2025-09-18';
  }
 
  function uuidv4()
@@ -33,6 +33,50 @@ class pim
   return $output;
  }
  
+ 
+ function timeAgoFromSeconds($secondsago)
+ {
+  if($secondsago<0){return 'in the future';}
+  if($secondsago>189216000){return 'a long time ago';}
+  if($secondsago>189216000){return '6 years ago';}      
+  if($secondsago>157680000){return '5 years ago';}      
+  if($secondsago>126144000){return '4 years ago';}      
+  if($secondsago>94608000){return '3 years ago';}      
+  if($secondsago>62072000){return '2 years ago';}      
+  if($secondsago>46656000){return 'A year and a half ago';}      
+  if($secondsago>31536000){return 'A year ago';}    
+  if($secondsago>23328000){return '9 months ago';}  
+  if($secondsago>20736000){return '8 months ago';}
+  if($secondsago>18144000){return '7 months ago';}
+  if($secondsago>15552000){return '6 months ago';}
+  if($secondsago>12960000){return '5 months ago';}
+  if($secondsago>10368000){return '4 months ago';}
+  if($secondsago>7776000){return '3 months ago';}
+  if($secondsago>5184000){return '2 months ago';}
+  if($secondsago>2592000){return 'a month ago';}
+  if($secondsago>1814400){return '3 weeks ago';}
+  if($secondsago>1209600){return '2 weeks ago';}
+  if($secondsago>604800){return 'a week ago';}
+  if($secondsago>518400){return '6 days ago';}
+  if($secondsago>432000){return '5 days ago';}
+  if($secondsago>345600){return '4 days ago';}
+  if($secondsago>259200){return '3 days ago';}
+  if($secondsago>172800){return '2 days ago';}
+  if($secondsago>86400){return 'yesterday';}     
+  if($secondsago>43200){return '12 hours ago';}
+  if($secondsago>36000){return '10 hours ago';}
+  if($secondsago>32400){return '9 hours ago';}
+  if($secondsago>28800){return '8 hours ago';}
+  if($secondsago>25200){return '7 hours ago';}
+  if($secondsago>21600){return '6 hours ago';}
+  if($secondsago>18000){return '5 hours ago';}
+  if($secondsago>14400){return '4 hours ago';}
+  if($secondsago>10800){return '3 hours ago';}
+  if($secondsago>7200){return '2 hours ago';}
+  if($secondsago>3600){return 'an hour ago';}
+  // diff is less than an hour
+  return round($secondsago/60,0).' minutes ago';      
+ } 
  
  function navbarColor()
  {
@@ -358,6 +402,46 @@ class pim
   return $apps;     
  }
  
+ function getAppsBySearch($status,$cosmetic,$parttypeid,$positionid,$quantityperapp,$secondsback)
+ {//qqq
+  $db = new mysql;  $db->connect();
+  $apps=array();
+
+
+  $sql="create temporary table latestappdatetimes as select applicationid, max(eventdatetime) as latesttouch from application_history where eventdatetime > '".date('Y-m-d H:i:s',time()-$secondsback)."' group by applicationid order by applicationid";
+  if($stmt=$db->conn->prepare($sql))
+  {
+   $stmt->execute();
+  }
+  
+  $statusclause=''; if($status!='any'){$statusclause=' and status ='.intval($status);}
+  $cosmeticclause=''; if($cosmetic!='any'){$cosmeticclause=' and cosmetic ='.intval($cosmetic);}
+  $parttypeidclause=''; if($parttypeid!='any'){$parttypeidclause=' and parttypeid ='.intval($parttypeid);}
+  $positionidclause=''; if($positionid!='any'){$positionidclause=' and positionid ='.intval($positionid);}
+  $quantityperappclause=''; if($quantityperapp!='any'){$quantityperappclause=' and quantityperapp ='.intval($quantityperapp);}
+  
+  if($stmt=$db->conn->prepare('select application.*,latestappdatetimes.latesttouch from application,latestappdatetimes where application.id=latestappdatetimes.applicationid'.$statusclause.$cosmeticclause.$parttypeidclause.$positionidclause.$quantityperappclause.' order by latesttouch desc'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+//    $appageseconds=$this->ageSecondsOfApp($row['id']);
+//    if($secondsback!='any')
+//    {
+//     if($appageseconds<intval($secondsback)){continue;}     
+//    }
+    
+    $attributes=$this->getAppAttributes($row['id']);
+    $cosmeticattributecount=0;
+    foreach ($attributes as $attribute){if($attribute['cosmetic']>0){$cosmeticattributecount++;}}
+    $attributeshash=$this->appAttributesHash($attributes);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'attributeshash'=>$attributeshash,'inheritedfrom'=>'','cosmeticattributecount'=>$cosmeticattributecount,'ageseconds'=>0,'latesttouch'=>$row['latesttouch']);
+   }
+  }   
+  $db->close();
+  return $apps;     
+ }
  
  
  
@@ -3176,6 +3260,8 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
 
+ 
+ 
  function getAppEvents($applicationid,$limit)
  {
   $db=new mysql; 
@@ -3196,6 +3282,33 @@ function countAppsByPartcategories($partcategories)
   return $events;
  }
 
+ function ageSecondsOfApp($applicationid)
+ {// return the number of seconds since a given app was touched (based on records in application_history)
+  $db=new mysql; $db->connect(); $latest=false;
+  if($stmt=$db->conn->prepare('select eventdatetime from application_history where applicationid=? order by eventdatetime desc limit 1'))
+  {
+   $stmt->bind_param('i', $applicationid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $latest=$row['eventdatetime'];
+   }
+  }
+  $db->close();
+ 
+  if($latest===false)
+  {// no history records found for app
+   return -1;      
+  }
+  else
+  {
+   list($date, $time) = explode(' ', $latest);
+   list($year, $month, $day) = explode('-', $date);
+   list($hour, $minute, $second) = explode(':', $time);
+   return mktime($hour, $minute, $second, $month, $day, $year);
+  }
+ }
 
 
 
