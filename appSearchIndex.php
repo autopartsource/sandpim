@@ -40,10 +40,10 @@ $selectedparttype='any';
 $selectedposition='any';
 $quantityperapp='any';
 $secondsback='604800';
-$limit=1000;
+$limit=250;
 
 
-if(isset($_GET['submit']) && $_GET['submit']=='Display')
+if(isset($_GET['submit']) && $_GET['submit']=='Search')
 {
  if(in_array($_GET['appstatus'],['any','0','1','2'])){$appstatus=$_GET['appstatus'];}
  if(in_array($_GET['appcosmetic'],['any','0','1'])){$appcosmetic=$_GET['appcosmetic'];}
@@ -86,22 +86,17 @@ $limited=false;
                         <div class="card-body">
                             <form action="appSearchIndex.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">
-                                    <div style="padding: 5px;">
-                                        <select name="appstatus">
-                                            <option value="any"<?php if($appstatus=='any'){echo ' selected';}?>>Any Status</option>
-                                            <option value="0"<?php if($appstatus=='0'){echo ' selected';}?>>Active</option>
-                                            <option value="2"<?php if($appstatus=='2'){echo ' selected';}?>>Hidden</option>
-                                            <option value="1"<?php if($appstatus=='1'){echo ' selected';}?>>Deleted</option>
+                                    
+                                    <div style="padding: 5px;">Created or Modified
+                                        <select name="secondsback">
+                                            <option value="86400"<?php if($secondsback=='86400'){echo ' selected';}?>>in the past 24 hours</option>
+                                            <option value="259200"<?php if($secondsback=='259200'){echo ' selected';}?>>in the past 3 days</option>
+                                            <option value="604800"<?php if($secondsback=='604800'){echo ' selected';}?>>in the past week</option>
+                                            <option value="2592000"<?php if($secondsback=='2592000'){echo ' selected';}?>>in the past month</option>
+                                            <option value="7776000"<?php if($secondsback=='7776000'){echo ' selected';}?>>in the 3 months</option>
                                         </select>
                                     </div>
-                                    <div style="padding: 5px;">
-                                        <select name="appcosmetic">
-                                            <option value="any"<?php if($appcosmetic=='any'){echo ' selected';}?>>Both (cosmetic and non-cosmetic)</option>
-                                            <option value="1"<?php if($appcosmetic=='1'){echo ' selected';}?>>Cosmetic</option>
-                                            <option value="0"<?php if($appcosmetic=='0'){echo ' selected';}?>>Non-Cosmetic</option>
-                                        </select>
-                                    </div>
-
+                                    
                                     <div style="padding: 5px;">
                                         <select name="parttype"><option value="any"<?php if($selectedparttype=='any'){echo ' selected';}?>>Any Part Type</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$selectedparttype){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select>
                                     </div>
@@ -123,25 +118,25 @@ $limited=false;
                                             <option value="6"<?php if($quantityperapp=='6'){echo ' selected';}?>>4</option>
                                         </select> quantity per app
                                     </div>
-                                                                       
-                                    <div style="padding: 5px;">Created or Modified
-                                        <select name="secondsback">
-                                            <option value="3600"<?php if($secondsback=='3600'){echo ' selected';}?>>in the past hour</option>
-                                            <option value="21600"<?php if($secondsback=='21600'){echo ' selected';}?>>in the past 6 hours</option>
-                                            <option value="86400"<?php if($secondsback=='86400'){echo ' selected';}?>>in the past 24 hours</option>
-                                            <option value="259200"<?php if($secondsback=='259200'){echo ' selected';}?>>in the past 3 days</option>
-                                            <option value="604800"<?php if($secondsback=='604800'){echo ' selected';}?>>in the past week</option>
-                                            <option value="2592000"<?php if($secondsback=='2592000'){echo ' selected';}?>>in the past month</option>
-                                            <option value="7776000"<?php if($secondsback=='7776000'){echo ' selected';}?>>in the 3 months</option>
-                                            <option value="15552000"<?php if($secondsback=='15552000'){echo ' selected';}?>>in the 6 months</option>
-                                            <option value="31536000"<?php if($secondsback=='31536000'){echo ' selected';}?>>in the past year</option>
+                                    
+                                    <div style="padding: 5px;">
+                                        <select name="appstatus">
+                                            <option value="any"<?php if($appstatus=='any'){echo ' selected';}?>>Any Status</option>
+                                            <option value="0"<?php if($appstatus=='0'){echo ' selected';}?>>Active</option>
+                                            <option value="2"<?php if($appstatus=='2'){echo ' selected';}?>>Hidden</option>
+                                            <option value="1"<?php if($appstatus=='1'){echo ' selected';}?>>Deleted</option>
                                         </select>
                                     </div>
-
+                                    <div style="padding: 5px;">
+                                        <select name="appcosmetic">
+                                            <option value="any"<?php if($appcosmetic=='any'){echo ' selected';}?>>Both (cosmetic and non-cosmetic)</option>
+                                            <option value="1"<?php if($appcosmetic=='1'){echo ' selected';}?>>Cosmetic</option>
+                                            <option value="0"<?php if($appcosmetic=='0'){echo ' selected';}?>>Non-Cosmetic</option>
+                                        </select>
+                                    </div>
                                     
-                                    <div style="padding: 20px;">                                    
-                                        <input type="submit" name="submit" value="Display"/>
-                                        <input type="submit" name="submit" value="Export"/>
+                                    <div style="padding: 20px;">
+                                        <input type="submit" name="submit" value="Search"/>
                                     </div>
                                 </div>
                             </form>
@@ -150,19 +145,26 @@ $limited=false;
                     
                     <?php if(count($apps)){?>
                     <table class="table">
-                        <tr><th>Make</th><th>Model</th><th>Year</th><th>Part Type</th><th>Position</th><th>Qty</th><th>Part</th><th>Last Touched</th></tr>
+                        <tr><th>Make</th><th>Model</th><th>Year</th><th>Part Type</th><th>Position</th><th>Qty</th><th>Part</th><th>Date/Time</th></tr>
                         
                         <?php foreach($apps as $index=>$app)
                         {
+                         $appcolor='#d0f0c0';
+                         if($app['cosmetic']>0){$appcolor='#e39aea';}
+                         if($app['status']>1){$appcolor='#ffd433';}
+                         if($app['status']==1){$appcolor='#ff5533';}
+                            
+                            
+                            
                          if($index>=$limit){$limited=true; break;}
                          
                          $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
                          
-                         echo '<tr><td>'.$mmy['makename'].'</td><td>'.$mmy['modelname'].'</td><td>'.$mmy['year'].'</td><td>'.$pcdb->parttypeName($app['parttypeid']).'</td><td>'.$pcdb->positionName($app['positionid']).'</td><td>'.$app['quantityperapp'].'</td><td><a href="./showPart.php?partnumber='.$app['partnumber'].'">'.$app['partnumber'].'</a></td><td><a href="./appHistory.php?appid='.$app['id'].'">'.$app['latesttouch'].'</a></td></tr>';
+                         echo '<tr><td>'.$mmy['makename'].'</td><td>'.$mmy['modelname'].'</td><td>'.$mmy['year'].'</td><td>'.$pcdb->parttypeName($app['parttypeid']).'</td><td>'.$pcdb->positionName($app['positionid']).'</td><td>'.$app['quantityperapp'].'</td><td style="background-color:'.$appcolor.'"><a href="./showPart.php?partnumber='.$app['partnumber'].'">'.$app['partnumber'].'</a></td><td><a href="./appHistory.php?appid='.$app['id'].'">'.$app['latesttouch'].'</a></td></tr>';
                         }?>                   
                     </table>
                     
-                    <?php if($limited){echo '<div>Display results are limited to '.$limit.' records. Use the export feature to see all in a spreadsheet.</div>';}?>
+                    <?php if($limited){echo '<div>Display results are limited to '.$limit.' records. Use the export feature to see all '.count($apps).' results in a spreadsheet.</div>';}?>
                     
                     <?php }?>
                     

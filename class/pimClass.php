@@ -493,6 +493,26 @@ class pim
   return $ids;
  }
  
+ function appPositions($partnumber)
+ {
+  $db = new mysql; $db->connect(); $positionids=[];
+  if($stmt=$db->conn->prepare('select distinct positionid from application where partnumber=? order by positionid'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $positionids[]=$row['positionid'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $positionids;
+ }
  
  function typicalAppPosition($partnumber)
  {
