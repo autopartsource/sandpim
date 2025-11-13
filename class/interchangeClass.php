@@ -385,6 +385,41 @@ class interchange
    }
   }
   $db->close(); 
- } 
+ }
+
+ function findDuplicateInterchanges()
+ {
+  $db=new mysql; $db->connect();
+  $interchanges=array();
+  if($stmt=$db->conn->prepare('CREATE TEMPORARY TABLE duplicatestemp as select partnumber,competitorpartnumber,brandAAIAID,count(*) as mycount from interchange group by partnumber,competitorpartnumber,brandAAIAID'))
+  {
+   $stmt->execute();
+   
+   if($stmt=$db->conn->prepare('select * from duplicatestemp where mycount>1'))
+   {
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $interchanges[]=array('partnumber'=>$row['partnumber'],'competitorpartnumber'=>$row['competitorpartnumber'],'brandAAIAID'=>$row['brandAAIAID']);
+    }
+   }
+  }
+  $db->close();
+  return $interchanges;
+ }
+
+ function deleteInterchangeByValues($partnumber,$competitorpartnumber,$brandAAIAID)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from interchange where partnumber=? and competitorpartnumber=? and brandAAIAID=? limit 1'))
+  {
+   if($stmt->bind_param('sss',$partnumber,$competitorpartnumber,$brandAAIAID))
+   {
+    $stmt->execute();
+   }
+  }  
+ }
+
  
-}?>
+}

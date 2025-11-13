@@ -207,7 +207,6 @@ foreach($partnumbers as $partnumber)
 }
 
 
-
 //---------------------------------------------------- 
 // application audits
     // invalid parttype-position combinations

@@ -139,9 +139,15 @@ else
  $logs->logSystemEvent('housekeeper', 0, 'VCdb integrity check failed: '.implode(',',$integrityissues));
 }
 
-
-
-
+// delete duplicate interchange records
+$interchangedups=$interchange->findDuplicateInterchanges();
+$duptouchlimit=25;
+foreach($interchangedups as $duprecordindex=> $interchangedup)
+{
+ $interchange->deleteInterchangeByValues($interchangedup['partnumber'], $interchangedup['competitorpartnumber'], $interchangedup['brandAAIAID']);
+ $logs->logSystemEvent('housekeeper', 0, 'Duplicate interchange deleted: partnumber ['.$interchangedup['partnumber'].'] competitor part ['.$interchangedup['competitorpartnumber'].'] brand['.$interchangedup['brandAAIAID'].']');
+ if($duprecordindex>=($duptouchlimit-1)){break;}
+}
 
 
 $runtime=time()-$starttime;
