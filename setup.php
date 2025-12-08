@@ -1,4 +1,5 @@
 <?php
+include_once('./class/pimClass.php');
 include_once('./class/setupClass.php');
 include_once('./class/userClass.php');
 
@@ -7,6 +8,8 @@ session_start();
 
 $setup= new setup;
 $user = new user;
+$pim = new pim;
+
 $dbname='pim';
 $successfulsetup=false;
 
@@ -96,9 +99,17 @@ else
 if($successfulsetup)
 {
     echo 'Successfully created database tables for SandPIM in database ('.$dbname.')<br/>';
- 
-    $setupuser = $user->createSetupUser();
-    echo '<div style="background-color: #FF5533">A temporary account was created for completing the setup process. Be sure to record these credentials - the password will not be shown again.  <br/>';
+    $setupuser = $user->createSetupUser();    
+    // write user-permissions for the setup user
+    $pim->addUserNavelement($setupuser['userid'], 'SETTINGS/USERS');
+    $pim->addUserNavelement($setupuser['userid'], 'SETTINGS/CONFIGURATION');
+    $pim->addUserNavelement($setupuser['userid'], 'SETTINGS/CATEGORIES');
+    $pim->addUserNavelement($setupuser['userid'], 'SETTINGS/FAVORITEBRANDS');
+    $pim->addUserNavelement($setupuser['userid'], 'SETTINGS/FAVORITEMAKES');
+    $pim->addUserNavelement($setupuser['userid'], 'SETTINGS/FAVORITEPARTTYPES');
+    $pim->addUserNavelement($setupuser['userid'], 'SETTINGS/DELIVERYGROUPS');
+    
+    echo '<div style="background-color: #FF5533;padding:10px;">A temporary account was created for completing the setup process. Be sure to record these credentials - the password will not be shown again.  <br/>';
     echo 'username:'.$setupuser['username'].'<br/>';
     echo 'password:'.$setupuser['password'].'<br/>';
     echo '</div>';

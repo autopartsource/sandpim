@@ -351,7 +351,9 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESFieldId=60 and CodeValue=?'))
+  $sql='select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESFieldId=60 and CodeValue=?';
+  if($db->dbname=='pcdbcache'){$sql='select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=60 and CodeValue=?';}  
+  if($stmt=$db->conn->prepare($sql))
   {
    if($stmt->bind_param('s', $code))
    {
@@ -478,7 +480,9 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-  if($stmt=$db->conn->prepare('select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=60 and CodeValue=?'))
+  $sql='select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=60 and CodeValue=?';
+  if($db->dbname=='pcdbcache'){$sql='select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESReferenceFieldCode.FieldId=60 and CodeValue=?';}  
+  if($stmt=$db->conn->prepare($sql))
   {
    $stmt->bind_param('s', $code);
    $stmt->execute();

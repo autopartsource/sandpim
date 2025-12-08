@@ -409,7 +409,7 @@ class user
    $userid= $this->addUser($username,$password_hashed,'Setup User');
    if($userid)
    {
-    $returnvalue=array('username'=>$username,'password'=>$password);
+    $returnvalue=array('username'=>$username,'password'=>$password,'userid'=>$userid);
     $configSet->setConfigValue('setupUsername', $username);
    }
   }

@@ -63,7 +63,19 @@ $validpadbattributes=$padb->getAttributesForParttype($part['parttypeid']);
 $assets_linked_to_item = array();
 $partcategories = $pim->getPartCategories();
 $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
-$descriptions=$pim->getPartDescriptions($partnumber);
+$descriptionswhole=$pim->getPartDescriptions($partnumber);
+$descriptions=[];
+foreach($descriptionswhole as $descriptionwhole)
+{// 'id'=>$row['id'],'description'=>$row['description'],'descriptioncode'=>$row['descriptioncode'],'sequence'=>$row['sequence'],'languagecode'=>$row['languagecode'],'inheritedfrom'=>''
+ $descriptiontemp=$descriptionwhole;
+ if(strlen($descriptionwhole['description'])>80)
+ {
+  $descriptiontemp['description']=substr($descriptionwhole['description'],0,100).' ......';
+  $descriptiontemp['descriptionfull']=$descriptionwhole['description'];
+ }
+ $descriptions[]=$descriptiontemp;
+}    
+
 $prices=$pricing->getPricesByPartnumber($partnumber);
 $competitorparts=$interchange->getInterchangeByPartnumber($partnumber);
 $competitivebrands=$interchange->getCompetitivebrands();
@@ -740,7 +752,7 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                                 { // this description is applied directly to this part (not inherited from a basepart) ?>
  
                                                 <div style="padding-bottom:3px;" id="descriptionid_<?php echo $description['id'];?>">
-                                                    <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this <?php echo $description['descriptioncode'];?> code description from this part" onclick="deleteDescription(<?php echo $description['id'];?>)">x</button></div>
+                                                    <div style="float:left;"><button class="btn btn-sm btn-outline-danger" title="Remove this <?php echo $description['descriptioncode'];?> code description from this part - ".$description['descriptionfull'] onclick="deleteDescription(<?php echo $description['id'];?>)">x</button></div>
                                                     <div style="float:left; background-color: #e8e8e8;margin-left:4px; padding:5px;font-size:85%;"><?php echo '<b>['.$description['descriptioncode'].']</b> '. $description['description'];?></div>
                                                     <div style="clear:both;"></div>
                                                 </div>
