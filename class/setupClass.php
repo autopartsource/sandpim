@@ -1549,6 +1549,7 @@ class setup
         $sql="insert into navelement values('PARTS/OURS','PARTS','Search Our Parts','partsIndex.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('PARTS/COMPETITOR','PARTS','Search Competitor Parts','interchangeIndex.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('PARTS/CREATE','PARTS','Create New Part','newPart.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('PARTS/LIFECYCLE','PARTS','Lifecycle Management','partLifecycleIndex.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
         $sql="insert into navelement values('APPLICATIONS/MMY','APPLICATIONS','Make/Model/Year apps','appsIndex.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('APPLICATIONS/SEARCH','APPLICATIONS','Search Apps','appSearchIndex.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
