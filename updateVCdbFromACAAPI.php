@@ -17,9 +17,15 @@ $daysback=7;
 $tokenlowlifeseconds=3000; //every time a new records page is requested, the remaining life of the active token is checked. If lif is less than this number, a nre token is requested 
 $tokenrefreshlimit=30; // how many new-token requests are allowed in this session (this php script execution)
 $loggingverbosity=1; // (1-10) Ten is the most verbose 
-//$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
+$sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
+
 
 $lastsync=$configGet->getConfigValue('lastSuccessfulVCdbAPIsync');
+
+//-------
+  $lastsync=false;
+  
+
 if($lastsync)
 {
  $sincedate=date('Y-m-d', intval($lastsync)-(24*3600*$daysback));  // set sincedate to [daysback] days before last sync
@@ -31,6 +37,11 @@ else
 
 
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
+
+//-------
+  $clearfirst=true;
+
+
 $deletelocalorphans=false; // cause records in each local table (identified by primary keys) to be deleted if they are not present in API results 
 
 $vcdbapi=new vcdbapi;
@@ -43,6 +54,10 @@ $vcdbapi->password=$configGet->getConfigValue('AutoCareAPIpassword');
 $vcdbapi->getAccessToken();
 $vcdbapi->pagelimit=0;
 $vcdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
+
+//-------
+  $vcdbapi->debug=true;
+
 
 if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync started'); }
 

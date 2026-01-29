@@ -29,12 +29,11 @@ class vcdbapi
  public $updatecount;
  public $deletecount;
  public $deleteorphancount;
-
  
  public function __construct($_localdbname=false)
  {
   $this->tableslist=array('Abbreviation','Aspiration','BaseVehicle','BedConfig','BedLength','BedType','BodyNumDoors','BodyStyleConfig','BodyType','BrakeABS','BrakeConfig','BrakeSystem','BrakeType','Class','CylinderHeadType','DriveType','ElecControlled','EngineBase','EngineBase2','EngineBlock','EngineBoreStroke','EngineConfig','EngineConfig2','EngineDesignation','EngineVIN','EngineVersion','FuelDeliveryConfig','FuelDeliverySubType','FuelDeliveryType','FuelSystemControlType','FuelSystemDesign','FuelType','IgnitionSystemType','Make','Mfr','MfrBodyCode','Model','PowerOutput','PublicationStage','Region','SpringType','SpringTypeConfig','SteeringConfig','SteeringSystem','SteeringType','SubModel','Transmission','TransmissionBase','TransmissionControlType','TransmissionMfrCode','TransmissionNumSpeeds','TransmissionType','VCdbChanges','Valves','Vehicle','VehicleToBedConfig','VehicleToBodyConfig','VehicleToBodyStyleConfig','VehicleToBrakeConfig','VehicleToClass','VehicleToDriveType','VehicleToEngineConfig','VehicleToMfrBodyCode','VehicleToSpringTypeConfig','VehicleToSteeringConfig','VehicleToTransmission','VehicleToWheelbase','VehicleType','VehicleTypeGroup','WheelBase','Year');
-  //$this->tableslist=array('VehicleToMfrBodyCode');
+  //$this->tableslist=array('VehicleToBodyStyleConfig');
   $this->tablekeyslist=array('Abbreviation'=>'Abbreviation','Aspiration'=>'AspirationID','BaseVehicle'=>'BaseVehicleID','BedConfig'=>'BedConfigID','BedLength'=>'BedLengthID','BedType'=>'BedTypeID','BodyNumDoors'=>'BodyNumDoorsID','BodyStyleConfig'=>'BodyStyleConfigID','BodyType'=>'BodyTypeID','BrakeABS'=>'BrakeABSID','BrakeConfig'=>'BrakeConfigID','BrakeSystem'=>'BrakeSystemID','BrakeType'=>'BrakeTypeID','Class'=>'ClassID','CylinderHeadType'=>'CylinderHeadTypeID','DriveType'=>'DriveTypeID','ElecControlled'=>'ElecControlledID','EngineBase'=>'EngineBaseID','EngineBase2'=>'EngineBaseID','EngineBlock'=>'EngineBlockID','EngineBoreStroke'=>'EngineBoreStrokeID','EngineConfig'=>'EngineConfigID','EngineConfig2'=>'EngineConfigID','EngineDesignation'=>'EngineDesignationID','EngineVIN'=>'EngineVINID','EngineVersion'=>'EngineVersionID','FuelDeliveryConfig'=>'FuelDeliveryConfigID','FuelDeliverySubType'=>'FuelDeliverySubTypeID','FuelDeliveryType'=>'FuelDeliveryTypeID','FuelSystemControlType'=>'FuelSystemControlTypeID','FuelSystemDesign'=>'FuelSystemDesignID','FuelType'=>'FuelTypeID','IgnitionSystemType'=>'IgnitionSystemTypeID','Make'=>'MakeID','Mfr'=>'MfrID','MfrBodyCode'=>'MfrBodyCodeID','Model'=>'ModelID','PowerOutput'=>'PowerOutputID','PublicationStage'=>'PublicationStageID','Region'=>'RegionID','SpringType'=>'SpringTypeID','SpringTypeConfig'=>'SpringTypeConfigID','SteeringConfig'=>'SteeringConfigID','SteeringSystem'=>'SteeringSystemID','SteeringType'=>'SteeringTypeID','SubModel'=>'SubModelID','Transmission'=>'TransmissionID','TransmissionBase'=>'TransmissionBaseID','TransmissionControlType'=>'TransmissionControlTypeID','TransmissionMfrCode'=>'TransmissionMfrCodeID','TransmissionNumSpeeds'=>'TransmissionNumSpeedsID','TransmissionType'=>'TransmissionTypeID','VCdbChanges'=>'ID','Valves'=>'ValvesID','Vehicle'=>'VehicleID','VehicleToBedConfig'=>'VehicleToBedConfigID','VehicleToBodyConfig'=>'VehicleToBodyConfigID','VehicleToBodyStyleConfig'=>'VehicleToBodyStyleConfigID','VehicleToBrakeConfig'=>'VehicleToBrakeConfigID','VehicleToClass'=>'VehicleToClassID','VehicleToDriveType'=>'VehicleToDriveTypeID','VehicleToEngineConfig'=>'VehicleToEngineConfigID','VehicleToMfrBodyCode'=>'VehicleToMfrBodyCodeID','VehicleToSpringTypeConfig'=>'VehicleToSpringTypeConfigID','VehicleToSteeringConfig'=>'VehicleToSteeringConfigID','VehicleToTransmission'=>'VehicleToTransmissionID','VehicleToWheelbase'=>'VehicleToWheelbaseID','VehicleType'=>'VehicleTypeID','VehicleTypeGroup'=>'VehicleTypeGroupID','WheelBase'=>'WheelBaseID','Year'=>'YearID');   
 
   $this->pagelimit=0;
@@ -195,12 +194,24 @@ class vcdbapi
   $this->records=array();  
   $this->nextpagelink='';
   while(true)
-  {    
+  {
    $success=$this->getRecordsPage($database, $table, $cultureid, $sincedate);
    if(!$success){return false;}
    $pagecount++;
    if(!$this->morepages){break;}
    if($this->pagelimit > 0 && $pagecount>=$this->pagelimit){break;}
+   
+   if($this->tokenLife()<60)
+   {// need to refresh token
+    if($this->debug){echo " Token-refresh needed before table complete.\r\n";}
+
+    $this->activetoken=false;  $this->getAccessToken();
+    if(!$this->activetoken)
+    {
+     if($this->debug){echo " Token refresh request failed.\r\n";}
+     return false;
+    }
+   }
   }
   return true;
  } 
