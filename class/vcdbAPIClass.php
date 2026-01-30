@@ -201,8 +201,8 @@ class vcdbapi
    if(!$this->morepages){break;}
    if($this->pagelimit > 0 && $pagecount>=$this->pagelimit){break;}
    
-   if($this->tokenLife()<60)
-   {// need to refresh token
+   if($this->tokenLife()<300)
+   {// need to refresh token - it less than 5 minutes life left
     if($this->debug){echo " Token-refresh needed before table complete.\r\n";}
 
     $this->activetoken=false;  $this->getAccessToken();
