@@ -1527,7 +1527,21 @@ class setup
         PRIMARY KEY (id),
         INDEX idx_feedid (feedid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - wmapifeed ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - wmapifeed ('.$db->conn->error.')';}
-        
+ 
+                
+        $sql="CREATE TABLE notificationqueue (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        status varchar(255) NOT NULL,
+        type varchar(255) NOT NULL,
+        data text NOT NULL,
+        createdDate date not null,
+        completedDate date not null,
+        PRIMARY KEY (id),
+        INDEX idx_type (type),
+        INDEX idx_status (status),
+        INDEX idx_createdDate (createdDate))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - notificationqueue ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - notificationqueue ('.$db->conn->error.')';}
+       
         
         $sql="CREATE TABLE navelement (
         navid varchar(255) not null,

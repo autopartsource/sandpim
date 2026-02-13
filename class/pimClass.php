@@ -1687,41 +1687,86 @@ function countAppsByPartcategories($partcategories)
   $db->close();
  }
    
- function setPartCreatedDate($partnumber,$createdDate,$updateoid)
+ function setPartCreatedDate($partnumber,$createddate,$updateoid)
  {
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('update part set createdDate=? where partnumber=?'))
   {
-   $stmt->bind_param('ss', $createdDate, $partnumber);
+   $stmt->bind_param('ss', $createddate, $partnumber);
    $stmt->execute();
   }
   if($updateoid){$this->updatePartOID($partnumber);}
   $db->close();
  }
   
- function setPartFirststockedDate($partnumber,$firststockedDate,$updateoid)
+ function setPartFirststockedDate($partnumber,$firststockeddate,$updateoid)
  {
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('update part set firststockedDate=? where partnumber=?'))
   {
-   $stmt->bind_param('ss', $firststockedDate, $partnumber);
+   $stmt->bind_param('ss', $firststockeddate, $partnumber);
    $stmt->execute();
   }
   if($updateoid){$this->updatePartOID($partnumber);}
   $db->close();
  }
  
- function setPartDiscontinuedDate($partnumber,$discontinuedDate,$updateoid)
+ function setPartDiscontinuedDate($partnumber,$discontinueddate,$updateoid)
  {
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('update part set discontinuedDate=? where partnumber=?'))
   {
-   $stmt->bind_param('ss', $discontinuedDate, $partnumber);
+   $stmt->bind_param('ss', $discontinueddate, $partnumber);
    $stmt->execute();
   }
   if($updateoid){$this->updatePartOID($partnumber);}
   $db->close();
  }
+ 
+ function setPartSupersededdDate($partnumber,$supersededdate,$updateoid)
+ {
+  /*  this function is a place-holder until we add "supersededDate" to the part table
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set supersededdate=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $supersededDate, $partnumber);
+   $stmt->execute();
+  }
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+   */
+ }
+ 
+ function setPartObsoletedDate($partnumber,$obsoleteddate,$updateoid)
+ {
+  /*  this function is a place-holder until we add "obsoletedDate" to the part table
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set obsoletedDate=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $obsoleteddate, $partnumber);
+   $stmt->execute();
+  }
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+   */
+ }
+
+ function setPartAvailableDate($partnumber,$availabledate,$updateoid)
+ {
+  /*  this function is a place-holder until we add "availableDate" to the part table
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part set availableDate=? where partnumber=?'))
+  {
+   $stmt->bind_param('ss', $availabledate, $partnumber);
+   $stmt->execute();
+  }
+  if($updateoid){$this->updatePartOID($partnumber);}
+  $db->close();
+   */
+ }
+
+
+
  
  
  function getPartAttribute($partnumber,$PAID,$attributename,$uom=false)
@@ -5500,6 +5545,20 @@ function attributesAreExperianUseful($attributes)
   $db->close();
   return $records;
  }
+ 
+ function addNotificationToQueue($notificationtype,$notificationdata)
+ {
+  $id=false; $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare("insert into notificationqueue values(null,'PENDING',?,?,now(),'0000-00-00')"))
+  {
+   $stmt->bind_param('ss',$notificationtype,$notificationdata);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;     
+ } 
+ 
  
  function getHousekeepingRequests($requesttype)
  {
