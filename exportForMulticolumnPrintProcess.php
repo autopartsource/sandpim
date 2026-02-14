@@ -112,8 +112,15 @@ class PDF extends FPDF
 
      
      // find the tallest stack of parts
-     $biggestpartscount=0; foreach($columns as $columnkey=>$parts){if($biggestpartscount>count($parts)){$biggestpartscount=count($parts);}}
-     $maxheight=(4*$biggestpartscount)+7;
+     $biggestpartscount=0; 
+     foreach($columns as $columnkey=>$parts)
+     {
+         if($biggestpartscount>count($parts))
+         {
+             $biggestpartscount=count($parts);             
+         }         
+     }
+     $maxheight=(4*$biggestpartscount)+15;
 
      
      if($renderyears)
@@ -152,8 +159,7 @@ class PDF extends FPDF
                foreach($columns[$columnkey] as $i=>$part)
                {
                   $w=$this->GetStringWidth($part);
-//                  $this->SetXY(($columnsx-($w/2))+$this->Xoffset, ($this->currentY+(($i+1)*4)));// center the text in the cell
-                  $this->SetXY($columnsx+($columnwidth/2)-($w/2)-1, ($this->currentY+(($i+1)*4)));// center the text in the cell
+                  $this->SetXY($columnsx+($columnwidth/2)-($w/2)-1, ($this->currentY+($i+1)*4));// center the text in the cell
                   $this->Cell(0,0,$part);
                }
             }

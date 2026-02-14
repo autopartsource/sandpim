@@ -460,7 +460,6 @@ foreach ($slices as $slice)
  }
 }
 
-
 // update issue snoozes. look for status3 records with a snoozeduntil before now and set them back to status1
 $pim->updateSnoozes();
 
