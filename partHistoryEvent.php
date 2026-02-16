@@ -1,4 +1,5 @@
 <?php
+include_once('./includes/loginCheck.php');
 include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
@@ -6,7 +7,17 @@ include_once('./class/logsClass.php');
 include_once('./class/userClass.php');
 $navCategory = 'parts';
 
-session_start();
+$pim = new pim;
+$logs=new logs;
+
+
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{
+ $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'partHistoryEvent.php - access denied (404 returned) to client '.$_SERVER['REMOTE_ADDR']);
+ http_response_code(404); // nothing to see here, folks
+ exit;
+}
+
 if (!isset($_SESSION['userid'])) {
     echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
     exit;
@@ -14,13 +25,20 @@ if (!isset($_SESSION['userid'])) {
 
 $vcdb = new vcdb;
 $pcdb = new pcdb;
-$pim = new pim;
-$logs=new logs;
 $user=new user;
 
-$partnumber = $_GET['partnumber'];
-$part = $pim->getPart($partnumber);
-$history = $logs->getPartEvents($partnumber, 100);
+$event = $logs->getPartEvent(intval($_GET['id']));
+$partnumber='';
+if($event)
+{
+ if($part=$pim->getPart($event['partnumber']))
+ {
+  $partnumber=$event['partnumber'];
+ } 
+}
+
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -43,17 +61,17 @@ $history = $logs->getPartEvents($partnumber, 100);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
                         <!-- Header -->
-                        <h3 class="card-header text-start">History for <a href="./showPart.php?partnumber=<?php echo $partnumber?>"><span class="text-info"><?php echo $partnumber?></span></a></h3>
+                        <h3 class="card-header text-start">History Event for part <a href="./showPart.php?partnumber=<?php echo $partnumber;?>"><span class="text-info"><?php echo $partnumber?></span></a></h3>
                         <div class="card-body">
                             <?php
-                            if ($part && count($history)) {
-                                echo '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
-                                foreach ($history as $record) {
-                                    echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $record['description'] . '</td><td>' . $record['new_oid'] . '</td></tr>';
-                                }
+                            if($event)
+                            {
+                                echo '<table class="table">';
+                                echo '<tr><th>Date/Time</th><td>'.$event['eventdatetime'].'</td></tr>';
+                                echo '<tr><th>User Name</th><td>'.$user->realNameOfUserid($event['userid']).'</td></tr>';
+                                echo '<tr><th>Description</th><td>'.$event['description'].'</td></tr>';
+                                if($event['new_oid']!=''){echo '<tr><th>Part OID After Change</th><td>'.$event['new_oid'].'</td></tr>';}
                                 echo '</table>';
-                            } else { // no apps found
-                                echo 'No history found';
                             }
                             ?>
                         </div>

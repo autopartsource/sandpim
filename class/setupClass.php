@@ -583,6 +583,9 @@ class setup
         createdDate date not null,
         firststockedDate date not null,
         discontinuedDate date not null,
+        obsoletedDate date not null,
+        supersededDate date not null,
+        availableDate date not null,
         oid varchar(255) not null,
         basepart varchar(255) not null,
         PRIMARY KEY (partnumber),
@@ -593,9 +596,9 @@ class setup
         INDEX idx_basepart (basepart))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part ('.$db->conn->error.')';}
 
-        $sql="insert into part values('PRC914',10,1684,'','2','','','841929101122','','2021-09-30','2000-01-01','2000-01-01','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into part values('PRC914A',10,1684,'','2','','','841929127160','','2021-10-01','2000-01-01','2000-01-01','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into part values('PRC914B',10,1684,'','1','','','841929127177','','2021-10-02','2000-01-01','2000-01-01','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into part values('PRC914',10,1684,'','2','','','841929101122','','2021-09-30','2000-01-01','2000-01-01','2000-01-01','2000-01-01','2000-01-01','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into part values('PRC914A',10,1684,'','2','','','841929127160','','2021-10-01','2000-01-01','2000-01-01','2000-01-01','2000-01-01','2000-01-01','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into part values('PRC914B',10,1684,'','1','','','841929127177','','2021-10-02','2000-01-01','2000-01-01','2000-01-01','2000-01-01','2000-01-01','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
                 
         $sql="CREATE TABLE part_attribute (
@@ -928,6 +931,7 @@ class setup
         $sql="insert into config_options values('AutoCareAPIusername','AN1/255','','','AutoCare API username - unique to a subscriber');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareAPIpassword','AN1/255','','','AutoCare API password - unique to a subscriber');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('ExportsDirectory','AN1/255','','','local server absolute path (with trailing slash) where ACES (etc.) exports are to be written');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('unrestrictedLifecycleEdits','AN1/255','yes,no','yes','If yes, any user can change a part lifecycle status on the showPart page. Otherwise, parts/lifecycle management page must be used');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
 
         

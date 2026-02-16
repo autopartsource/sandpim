@@ -28,7 +28,7 @@ $pcdb = new pcdb;
 $configGet = new configGet;
 
 $partnumber = $pim->sanitizePartnumber($_GET['partnumber']);
-$historyevents=$logs->getPartEvents($partnumber,20);
+$historyevents=$logs->getPartEvents($partnumber,200);
 
 $part = $pim->getPart($partnumber);
 
@@ -107,11 +107,11 @@ $balance=$pim->getPartBalance($partnumber);
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 <!-- Left Column -->
-                <div class="col-xs-12 col-md-2 my-col colLeft">
+                <div class="col-xs-12 col-md-1 my-col colLeft">
                 </div>
                 
                 <!-- Main Content -->
-                <div class="col-xs-12 col-md-6 my-col colMain">
+                <div class="col-xs-12 col-md-5 my-col colMain">
                     <div class="card shadow-sm">
                         <h3 class="card-header text-start">
                             <div>Part Number  <a href="./showPart.php?partnumber=<?php echo $partnumber?>"><span class="text-info"><?php echo $partnumber?></span></a>    </div>
@@ -202,7 +202,18 @@ $balance=$pim->getPartBalance($partnumber);
                                     
                                     <?php if($balance){?> <tr><th>Balance</th><td>On-Hand: <b><?php echo round($balance['qoh'],0);?></b>, Demand: <b><?php echo $balance['amd'];?></b> units/month</td><tr> <?php }?>
                                     <tr><th>Internal<br/>Notes</th><td><?php echo $part['internalnotes']?></td><tr>
-                                    <tr><th>Dates</th><td>First Stocked <?php echo $part['firststockedDate']?></td><tr>
+                                    <tr><th>Dates</th>
+                                        <td>
+                                            <div>Created in PIM: <?php echo $part['createdDate'];?></div>
+                                            <?php
+                                            if($part['firststockedDate']!='0000-00-00'){echo '<div>First Stocked: '.$part['firststockedDate'].'</div>';}
+                                            if($part['availableDate']!='0000-00-00' && $part['availableDate']!=''){echo '<div>Available: '.$part['availableDate'].'</div>';}
+                                            if($part['supersededDate']!='0000-00-00' && $part['supersededDate']!=''){echo '<div>Superseded: '.$part['supersededDate'].'</div>';}
+                                            if($part['discontinuedDate']!='0000-00-00' && $part['discontinuedDate']!=''){echo '<div>Discontinued: '.$part['discontinuedDate'].'</div>';}
+                                            if($part['obsoletedDate']!='0000-00-00' && $part['obsoletedDate']!=''){echo '<div>Obsoleted: '.$part['obsoletedDate'].'</div>';}                                            
+                                            ?>
+                                        </td>
+                                    <tr>
                                     <tr><th>Health Score</th><td><div style="float:left;"></div><?php echo $pim->partHealthScore($part['partnumber']);?><div style="clear:both;"></div></td><tr>
                                 </table>
                             </div>
@@ -212,21 +223,28 @@ $balance=$pim->getPartBalance($partnumber);
                             }
                             ?>
                         </div>
-                    </div>                    
+                    </div>                   
                 </div>
                 <!-- End of Main Content -->
-                
+               
                 <!-- Right Column -->
-                <div class="col-xs-12 col-md-4 my-col colRight">
+                <div class="col-xs-12 col-md-6 my-col colRight">
                     
                     <div class="card shadow-sm">
                         <h4 class="card-header text-start"><a href="./partHistory.php?partnumber=<?php echo $partnumber;?>">History</a></h4>
 
                         <div class="card-body d-flex flex-column scroll">                            
                             <div id="history">
-                                <?php foreach($historyevents as $event){?>
+                                <?php foreach($historyevents as $event){
+                                    $eventtext=$event['description'];
+                                    if(strstr($event['description'],'fitment grid drag')!==false){$eventtext=substr($event['description'],0,53).'......';}
+                                    $eventdatetimebits=explode(' ',$event['eventdatetime']);
+                                    $eventdate=$eventdatetimebits[0];
+                                    
+                                    
+                                    ?>
 
-                                <div style="padding:10px; text-align: left;"><?php echo $event['description'];?></div>
+                                <div style="padding:10px; text-align: left;"><?php echo '<a href="./partHistoryEvent.php?id='.$event['id'].'">'.$eventdate.'</a> '.$eventtext;?></div>
                                 
                                 <?php }?>
                             </div>

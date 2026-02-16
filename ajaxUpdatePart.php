@@ -42,9 +42,14 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   break;
 
   case 'lifecyclestatus':
-  if($part['lifecyclestatus']!=$_GET['value'])
+  if($part['lifecyclestatus']!=$_GET['value'] && in_array($_GET['value'], ['0','1','2','3','4','5','6','7','8','9','A','B']))
   {
    $pim->setPartLifecyclestatus($partnumber,$_GET['value'],true);
+   // deal with updating date fields in the part table   
+   if($_GET['value']=='2'){$pim->setPartAvailableDate($partnumber, date('Y-m-d'), false);}
+   if($_GET['value']=='7'){$pim->setPartSupersededdDate($partnumber, date('Y-m-d'), false);}
+   if($_GET['value']=='8'){$pim->setPartDiscontinuedDate($partnumber, date('Y-m-d'), false);}
+   if($_GET['value']=='9'){$pim->setPartObsoletedDate($partnumber, date('Y-m-d'), false);}
    $oid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber,$userid,'lifecycle status changed to:'.$_GET['value'],$oid);
    $success=true;

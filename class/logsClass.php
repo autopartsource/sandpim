@@ -152,6 +152,23 @@ class logs {
         $db->close();
         return $events;
     }
+        
+    function getPartEvent($id)
+    {
+        $db = new mysql; $db->connect(); $event = array();
+        if ($stmt = $db->conn->prepare('select * from part_history where id=?'))
+        {
+            $stmt->bind_param('i', $id);
+            $stmt->execute();
+            $db->result = $stmt->get_result();
+            while ($row = $db->result->fetch_assoc())
+            {
+                $event = array('id' => $row['id'], 'partnumber' => $row['partnumber'], 'eventdatetime' => $row['eventdatetime'], 'userid' => $row['userid'], 'description' => $row['description'], 'new_oid' => $row['new_oid']);
+            }
+        }
+        $db->close();
+        return $event;
+    }    
 
     function getAssetsEvents($limit)
     {

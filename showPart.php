@@ -728,20 +728,43 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                             <div>Part Number <span class="text-info"><?php echo $part['partnumber']; ?></span>
                                 <?php if(count($dependantparts)){?> <span style="font-size:50%;">Base for <?php echo count($dependantparts); ?> <a href="./partsIndex.php?searchtype=startswith&partnumber=&partcategory=any&parttypeid=any&lifecyclestatus=any&basepart=<?php echo $partnumber;?>&limit=20">parts</a></span> <?php }?>
                                 <?php if($pim->validPart($part['basepart'])){?> <span style="font-size:50%;">Based on <a href="./showPart.php?partnumber=<?php echo $part['basepart'];?>"><?php echo $part['basepart'];?></a></span> <?php }?>
-                            <div style="float:right;">
-                                <span class="btn btn-info" onclick="addPartToClipboard()">Copy</span>
-                                <?php if(count($history)){echo '<span><a class="btn btn-secondary" href="./partHistory.php?partnumber='.$partnumber.'">History</a></span>';} ?>
-                            </div>
+                                <div style="float:right;">
+                                    <span class="btn btn-info" onclick="addPartToClipboard()">Copy</span>
+                                    <?php if(count($history)){echo '<span><a class="btn btn-secondary" href="./partHistory.php?partnumber='.$partnumber.'">History</a></span>';} ?>
+                                </div>
                             </div>
                         </h3>
                         <div class="alert alert-danger" role="alert" id="heading-alert" style="display:none;">This is a danger alert—check it out!</div>
                         <div class="card-body">
-                            <?php if ($part) {; ?>
+                            <?php if ($part) {?>
                             <div style="padding:10px;">
                                 <table class="table" border="1" cellpadding="5">
                                     <tr><th>Part Type</th><td><div style="float:left;"><select id="parttypeid" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','parttypeid');"><option value="0">Undefined</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"<?php if($parttype['id']==$part['parttypeid']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div><div style="float:left;padding-left:10px;"><a href="./pcdbTypeBrowser.php?searchtype=selected&searchterm=&submit=Search"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
                                     <tr><th>Category</th><td><div style="float:left;"><select id="partcategory" onchange="if (this.selectedIndex) updatePart('<?php echo $partnumber;?>','select','partcategory');"><option value="0">Undefined</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if ($partcategory['id'] == $part['partcategory']) {echo ' selected';} ?>><?php echo $partcategory['name']; ?></option><?php } ?></select></div><div style="float:left;padding-left:10px;"><a href="./partCategories.php"><img src="./settings.png" width="18" alt="settings"/></a></div><div style="clear:both;"></div></td></tr>
-                                    <tr><th id="label-status" class="partstatus-available">Status</th><td id="value-status" class="partstatus-available"><select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></td><tr/>
+                                    <tr>
+                                        <th id="label-status" class="partstatus-available">Status</th>
+                                        <td id="value-status" class="partstatus-available">
+                                            
+                                            <?php                                            
+                                            $unrestrictedlifecycleedits=$configGet->getConfigValue('unrestrictedLifecycleEdits', 'yes');                                            
+                                            if($unrestrictedlifecycleedits=='yes'){?>                                            
+                                                <select id="lifecyclestatus" onchange="updatePart('<?php echo $partnumber;?>','select','lifecyclestatus');"><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>"<?php if($lifecyclestatus['code']==$part['lifecyclestatus']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select>
+                                            <?php
+                                            }
+                                            else
+                                            {
+                                                if($pim->userHasNavelement($_SESSION['userid'], 'PARTS/LIFECYCLE'))
+                                                {
+                                                    echo '<a href="./partLifecycle.php?partnumber='.$partnumber.'">'.$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']).'</a>';
+                                                }
+                                                else
+                                                {
+                                                    echo $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']);
+                                                }
+                                            }
+                                            ?>                                
+                                        </td>
+                                    <tr/>
                                     <tr>
                                         <th>Descriptions</th>
                                         <td>
@@ -1021,7 +1044,18 @@ $kitcomponents=$pim->getKitComponents($partnumber);
 
                                     <tr><th>Base Part</th><td><div style="float:left;"><input type="text" id="basepart" oninput="flagUnsavedBasepart();" value="<?php echo $part['basepart']?>"/></div><div style="float:left;"><button id="btnUpdateBasepart" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','basepart'); unflagUnsavedBasepart();">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php if($vio){echo '<tr><th>VIO ('.$viogeography.' '.$vioyearquarter.')</th><td>'.number_format($vio,0,'.',',').'<br/>Min,Mean,Max: '.$viostartyear.', '.$viomeanyear.', '.$vioendyear.'</td><tr>';}?>
-                                    <tr><th>Dates</th><td><div style="float:left;">First Stocked <input type="text" id="firststockeddate" oninput="flagUnsavedFirststockeddate();" value="<?php echo $part['firststockedDate']?>"/></div><div style="float:left;"><button id="btnUpdateFirststockedDate" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','firststockeddate'); unflagUnsavedFirststockeddate();">Update</button></div><div style="clear:both;"></div></td><tr>
+                                    <tr><th>Dates</th>
+                                        <td>
+                                            <div>Created in PIM: <?php echo $part['createdDate'];?></div>
+                                            <?php 
+                                            if($part['firststockedDate']!='0000-00-00'){echo '<div>First Stocked: '.$part['firststockedDate'].'</div>';}
+                                            if($part['availableDate']!='0000-00-00' && $part['availableDate']!=''){echo '<div>Available: '.$part['availableDate'].'</div>';}
+                                            if($part['supersededDate']!='0000-00-00' && $part['supersededDate']!=''){echo '<div>Superseded: '.$part['supersededDate'].'</div>';}
+                                            if($part['discontinuedDate']!='0000-00-00' && $part['discontinuedDate']!=''){echo '<div>Discontinued: '.$part['discontinuedDate'].'</div>';}
+                                            if($part['obsoletedDate']!='0000-00-00' && $part['obsoletedDate']!=''){echo '<div>Obsoleted: '.$part['obsoletedDate'].'</div>';}
+                                            ?>
+                                        </td>
+                                    <tr>
                                     <tr><th>Health Score</th><td><div style="float:left;"></div><?php echo $pim->partHealthScore($part['partnumber']);?><div style="clear:both;"></div></td><tr>
                                     
                                     <tr><th>Sandpiper OID</th><td><div id="sandpiperoid"><?php echo $part['oid']; ?></div></td><tr>
@@ -1092,16 +1126,6 @@ $kitcomponents=$pim->getKitComponents($partnumber);
                                 echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description-app="'. base64_encode($app['niceappdescription']).'">'.$app['id'].'</div>';
                             }
                             
-/*                            
-                            foreach($apps as $app)
-                            {
-                                $niceattributes='';
-                                if($showAppAttributesInSummary=='yes'){ $niceattributes=' '.niceAppAttributes($app['attributes']);}
-                                $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']).' '.$niceattributes;
-                                echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid=' . $app['id'] . '">'.$niceappdescription.'</a>';
-                                echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description-app="'. base64_encode($niceappdescription).'">'.$app['id'].'</div>';
-                            }
- */
                             echo '</div>';
  
                             ?>

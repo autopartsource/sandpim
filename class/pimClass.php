@@ -1156,6 +1156,9 @@ function countAppsByPartcategories($partcategories)
         'createdDate'=>$row['createdDate'],
         'firststockedDate'=>$row['firststockedDate'],
         'discontinuedDate'=>$row['discontinuedDate'],
+        'obsoletedDate'=>$row['obsoletedDate'],
+        'supersededDate'=>$row['supersededDate'],
+        'availableDate'=>$row['availableDate'],
         'typicalposition'=>$typicalPosition,
         'typicalqtyperapp'=>$typicalQty,
         'basepart'=>$row['basepart']);
@@ -1262,6 +1265,9 @@ function countAppsByPartcategories($partcategories)
         'createdDate'=>$row['createdDate'],
         'firststockedDate'=>$row['firststockedDate'],
         'discontinuedDate'=>$row['discontinuedDate'],
+        'obsoletedDate'=>$row['obsoletedDate'],
+        'supersededDate'=>$row['supersededDate'],
+        'availableDate'=>$row['availableDate'],        
         'oid'=>$row['oid'],
         'basepart'=>$row['basepart']);    
    }
@@ -1293,6 +1299,9 @@ function countAppsByPartcategories($partcategories)
         'createdDate'=>$row['createdDate'],
         'firststockedDate'=>$row['firststockedDate'],
         'discontinuedDate'=>$row['discontinuedDate'],
+        'obsoletedDate'=>$row['obsoletedDate'],
+        'supersededDate'=>$row['supersededDate'],
+        'availableDate'=>$row['availableDate'],
         'oid'=>$row['oid'],
         'basepart'=>$row['basepart']);    
    }
@@ -1725,21 +1734,18 @@ function countAppsByPartcategories($partcategories)
  
  function setPartSupersededdDate($partnumber,$supersededdate,$updateoid)
  {
-  /*  this function is a place-holder until we add "supersededDate" to the part table
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('update part set supersededdate=? where partnumber=?'))
+  if($stmt=$db->conn->prepare('update part set supersededDate=? where partnumber=?'))
   {
-   $stmt->bind_param('ss', $supersededDate, $partnumber);
+   $stmt->bind_param('ss', $supersededdate, $partnumber);
    $stmt->execute();
   }
   if($updateoid){$this->updatePartOID($partnumber);}
   $db->close();
-   */
  }
  
  function setPartObsoletedDate($partnumber,$obsoleteddate,$updateoid)
  {
-  /*  this function is a place-holder until we add "obsoletedDate" to the part table
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('update part set obsoletedDate=? where partnumber=?'))
   {
@@ -1748,12 +1754,10 @@ function countAppsByPartcategories($partcategories)
   }
   if($updateoid){$this->updatePartOID($partnumber);}
   $db->close();
-   */
  }
 
  function setPartAvailableDate($partnumber,$availabledate,$updateoid)
  {
-  /*  this function is a place-holder until we add "availableDate" to the part table
   $db = new mysql; $db->connect();
   if($stmt=$db->conn->prepare('update part set availableDate=? where partnumber=?'))
   {
@@ -1762,11 +1766,7 @@ function countAppsByPartcategories($partcategories)
   }
   if($updateoid){$this->updatePartOID($partnumber);}
   $db->close();
-   */
  }
-
-
-
  
  
  function getPartAttribute($partnumber,$PAID,$attributename,$uom=false)
@@ -2933,7 +2933,7 @@ function countAppsByPartcategories($partcategories)
   if(!$this->validPart($partnumber))
   {
    $replacedby=''; $lifecyclestatus='0'; $oid=$this->newoid();
-   if($stmt=$db->conn->prepare("insert into part (partnumber,partcategory,parttypeid,replacedby,lifecyclestatus,internalnotes,description,GTIN,UNSPC,createdDate,firststockedDate,discontinuedDate,oid,basepart) values(?,?,?,?,?,'','','','',now(),'0000-00-00','0000-00-00',?,'')"))
+   if($stmt=$db->conn->prepare("insert into part (partnumber,partcategory,parttypeid,replacedby,lifecyclestatus,internalnotes,description,GTIN,UNSPC,createdDate,firststockedDate,discontinuedDate,obsoletedDate,supersededDate,availableDate,oid,basepart) values(?,?,?,?,?,'','','','',now(),'0000-00-00','0000-00-00','0000-00-00','0000-00-00','0000-00-00',?,'')"))
    {
     if($stmt->bind_param('siisss', $partnumber,$partcategory,$parttypeid,$replacedby,$lifecyclestatus,$oid))
     {
