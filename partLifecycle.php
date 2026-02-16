@@ -181,6 +181,7 @@ $balance=$pim->getPartBalance($partnumber);
                                                     break;
                                                 case '9':
                                                     //Obsolete
+                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=whilesupplieslast&partnumber='.$part['partnumber'].'">While Supplies Last</a>';
                                                     echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a>';
                                                     break;
                                                 case 'A':

@@ -51,6 +51,10 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
    $pim->setPartLifecyclestatus($partnumber, '3', true);
    $newoid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Electronically Announced', $newoid);
+   if(array_key_exists('addnotification', $_POST))
+   {
+    $pim->addNotificationToQueue('PART-ELECTRONIC', 'partnumber:'.$partnumber.';availabledate:'.$actiondate);       
+   }
    break;
 
   case 'available':
@@ -146,6 +150,7 @@ switch($fromtostatus)
  case '7-discontinue': $message='You are about to change the status of this part from <strong>Superseded</strong> to <strong>Discontinued</strong>'; $showdiscontinuedate=true; $showaddtoqueuecheck=true; break;
  case '8-available': $message='You are about to change the status of this part from <strong>Discontinued</strong> back to <strong>Available to Order</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showavailabledate=true; break;
  case '8-obsolete': $message='You are about to change the status of this part from <strong>Discontinued</strong> to <strong>Obsolete</strong>'; $showobsoletedate=true; $showaddtoqueuecheck=true; break;
+ case '9-whilesupplieslast': $message='You are about to change the status of this part from <strong>Obsolete</strong> back to <strong>Available While Supplies Last</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; break;
  case '9-discontinue': $message='You are about to change the status of this part from <strong>Obsolete</strong> back to <strong>Discontinued</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; break;
  case 'A-available': $message='You are about to change the status of this part from <strong>Available only while supplies last</strong> to <strong>Available to Order</strong>'; $showavailabledate=true; $showaddtoqueuecheck=true; break;
  case 'A-supersede': $message='You are about to change the status of this part from <strong>Available only while supplies last</strong> to <strong>Superseded</strong>'; $showsupersededdate=true; $showaddtoqueuecheck=true; break;
