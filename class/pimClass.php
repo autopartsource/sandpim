@@ -5558,7 +5558,25 @@ function attributesAreExperianUseful($attributes)
   $db->close();
   return $id;     
  } 
- 
+
+ function getNotificationEvents($status)
+ {
+  $db = new mysql; $db->connect(); $events=array();
+  if($stmt=$db->conn->prepare('select * from notificationqueue where status=? order by createdDate'))
+  {
+   $stmt->bind_param('s', $status);      
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $events[]=array('id'=>$row['id'],'status'=>$row['status'],'type'=>$row['type'],'data'=>$row['data'],'createdDate'=>$row['createdDate'],'completedDate'=>$row['completedDate']);
+    }
+   }
+  }
+  $db->close();
+  return $events;
+ }
  
  function getHousekeepingRequests($requesttype)
  {

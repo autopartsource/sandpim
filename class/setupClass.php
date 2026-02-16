@@ -1585,6 +1585,7 @@ class setup
         $sql="insert into navelement values('REPORTS/COMPETITORCOVERAGE','REPORTS','Competitor Coverage','competitorCoverageReportForm.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('REPORTS/VIOCOVERAGE','REPORTS','VIO Coverage','vioCoverageReportForm.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('REPORTS/PARTTYPEVEHICLEHOLES','REPORTS','Vehicle Coverage Holes','parttypeHolesReportForm.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('REPORTS/NOTIFICATIONSQUEUE','REPORTS','Lifecycle Events','lifecycleEvents.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         $sql="insert into navelement values('UTILITIES/TWOPARTMATCH','UTILITIES','Two-Part Match-maker','pairPart.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('UTILITIES/FULLVEHICLEPARTMATCH','UTILITIES','Full-Vehicle Kit Match-maker','bundlePart.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();

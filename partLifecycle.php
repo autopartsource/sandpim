@@ -145,6 +145,7 @@ $balance=$pim->getPartBalance($partnumber);
                                                 case '2':
                                                     // Available to order
                                                     echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a>';
+                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=whilesupplieslast&partnumber='.$part['partnumber'].'">While Supplies Last</a>';
                                                     echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a>';
                                                     echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a>';
                                                     break;

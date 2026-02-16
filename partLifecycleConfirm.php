@@ -30,7 +30,7 @@ $partnumber = $pim->sanitizePartnumber($_GET['partnumber']);
 $part = $pim->getPart($partnumber);
 $balance=$pim->getPartBalance($partnumber);
 $action='';
-if(in_array($_GET['action'], ['propose','electronic','available','supersede','discontinue','obsolete']))
+if(in_array($_GET['action'], ['propose','electronic','available','whilesupplieslast','supersede','discontinue','obsolete']))
 {
  $action=$_GET['action']; 
 }
@@ -63,7 +63,18 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
     $pim->addNotificationToQueue('PART-AVAILABLE', 'partnumber:'.$partnumber.';availabledate:'.$actiondate);       
    }
    break;
-
+   
+  case 'whilesupplieslast':
+   $pim->setPartAvailableDate($partnumber, $actiondate, false);
+   $pim->setPartLifecyclestatus($partnumber, 'A', true);
+   $newoid=$pim->getOIDofPart($partnumber);
+   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Available while supplies last', $newoid);
+   if(array_key_exists('addnotification', $_POST))
+   {
+    $pim->addNotificationToQueue('PART-AVAILABLE-WHILE-SUPPLIES-LAST', 'partnumber:'.$partnumber.';availabledate:'.$actiondate);
+   }
+   break;
+   
   case 'supersede':
    $pim->setPartSupersededdDate($partnumber, $actiondate, false);
    $pim->setPartLifecyclestatus($partnumber, '7', true);
@@ -91,6 +102,10 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
    $pim->setPartLifecyclestatus($partnumber, '9', true);
    $newoid=$pim->getOIDofPart($partnumber);
    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Obsolete', $newoid);
+   if(array_key_exists('addnotification', $_POST))
+   {
+    $pim->addNotificationToQueue('PART-OBSOLETE', 'partnumber:'.$partnumber.';obsoleteddate:'.$actiondate);
+   }
    break;
 
   default: break;
@@ -116,6 +131,7 @@ switch($fromtostatus)
  case '1-electronic': $message='You are about to change the status of this part from <strong>Released</strong> to <strong>Electronically Announced</strong>'; $showaddtoqueuecheck=true; break;
  case '1-available': $message='You are about to change the status of this part from <strong>Released</strong> to <strong>Available to Order</strong>'; $showavailabledate=true; break;
  case '2-propose': $message='You are about to change the status of this part from <strong>Available to Order</strong> back to <strong>Proposed</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
+ case '2-whilesupplieslast': $message='You are about to change the status of this part from <strong>Available to Order</strong> to <strong>Available Only While Supplies Last</strong>.'; $showaddtoqueuecheck=true; break; 
  case '2-supersede': $message='You are about to change the status of this part from <strong>Available to Order</strong> to <strong>Superseded</strong>'; $showsupersededdate=true;  $showaddtoqueuecheck=true; break; 
  case '2-discontinue': $message='You are about to change the status of this part from <strong>Available to Order</strong> to <strong>Discontinued</strong>'; $showdiscontinuedate=true; $showaddtoqueuecheck=true; break;
  case '3-propose': $message='You are about to change the status of this part from <strong>Electronically Announced</strong> back to <strong>Proposed</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
