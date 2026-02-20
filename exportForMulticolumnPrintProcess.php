@@ -110,24 +110,22 @@ class PDF extends FPDF
      // draw top boder
      $this->Line($this->Xoffset+35, $this->currentY, $this->Xoffset+$notesandpartcolumnswidth+36, $this->currentY); 
 
-     
      // find the tallest stack of parts
      $biggestpartscount=0; 
      foreach($columns as $columnkey=>$parts)
      {
-         if($biggestpartscount>count($parts))
+         if(count($parts)>$biggestpartscount)
          {
              $biggestpartscount=count($parts);             
          }         
-     }
-     $maxheight=(6*$biggestpartscount)+15;
-
+     }     
+     $maxheight=(4*$biggestpartscount)+2;
      
      if($renderyears)
      {
         $this->SetFont('Arial','',12);
         $w=$this->GetStringWidth($years);
-        $this->SetXY((19-($w/2))+$this->Xoffset, $this->currentY+4);// center the text in the cell
+        $this->SetXY((19-($w/2))+$this->Xoffset, $this->currentY+3);// center the text in the cell
         $this->Cell(0,0,$years);
      }
 
@@ -138,11 +136,10 @@ class PDF extends FPDF
         $this->SetXY(36+$this->Xoffset, $this->currentY+1);
         $tempy=$this->GetY();
         $this->MultiCell($notewidth,4,$notes,0,'L',false );
-        $notesheight=4+$this->GetY()-$tempy;
+        $notesheight=2+$this->GetY()-$tempy;
      }
      if($notesheight>$maxheight){$maxheight=$notesheight;}
 
-     
      $columnindex=1;
      $columnsx=36+$this->Xoffset+$notewidth;
              
@@ -159,7 +156,7 @@ class PDF extends FPDF
                foreach($columns[$columnkey] as $i=>$part)
                {
                   $w=$this->GetStringWidth($part);
-                  $this->SetXY($columnsx+($columnwidth/2)-($w/2)-1, ($this->currentY+($i+1)*4));// center the text in the cell
+                  $this->SetXY($columnsx+($columnwidth/2)-($w/2)-1, ($this->currentY+(($i+1)*4))-1);// center the text in the cell
                   $this->Cell(0,0,$part);
                }
             }
