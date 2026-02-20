@@ -120,7 +120,7 @@ class PDF extends FPDF
              $biggestpartscount=count($parts);             
          }         
      }
-     $maxheight=(4*$biggestpartscount)+15;
+     $maxheight=(6*$biggestpartscount)+15;
 
      
      if($renderyears)
