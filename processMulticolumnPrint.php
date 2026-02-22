@@ -1,0 +1,414 @@
+<?php
+/* Render to PDF a printable application guide (Catalog)
+ * parts will be put in columns based in part-type/position
+ * 
+ * intended to be executed from the command-line be a cron call ("php processMulticolumnPrint.php")
+ * on a cycle (likely every 5 or 10 minutes). It will query the db for the oldest job that 
+ * is status "started" and execute it.
+ * 
+ * On my fedora 31 box, I had to apply a read/write SELinux policy to the 
+ * directory where apache can write the exported files (/var/www/html/ACESexports
+ * semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/html/ACESexports(/.*)?"
+ * restorecon -Rv /var/www/html/ACESexports/
+ * 
+ * 
+ */
+
+
+// bail out if this script is being called from a web client (not cli)
+if (php_sapi_name() !== 'cli'){exit;}
+
+$starttime=time();
+
+include_once(__DIR__.'/class/pimClass.php'); // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
+
+$pim = new pim;
+$jobs=$pim->getBackgroundjobs('MulticolumnPrint','started');
+
+if(count($jobs))
+{
+ ini_set('memory_limit','1000M'); 
+ include_once(__DIR__.'/class/bookMulticolumnClass.php');
+ include_once(__DIR__.'/class/fpdf.php');
+ include_once(__DIR__.'/class/logsClass.php');
+ 
+ $logs=new logs;
+ $filename=$jobs[0]['outputfile'];
+ $jobid=$jobs[0]['id'];
+ $pim->updateBackgroundjobRunning($jobid, date('Y-m-d H:i:s'));
+ $jobparameters=array();
+ $parameterbits=explode(';',$jobs[0]['parameters']);
+ foreach($parameterbits as $parameterbit)
+ {
+  $temp=explode(':',$parameterbit); if(count($temp)==2){$jobparameters[$temp[0]]=$temp[1];}
+ }
+
+ $receiverprofileid=intval($jobparameters['receiverprofile']);
+ $categories=$pim->getReceiverprofilePartcategories($receiverprofileid);
+ $pim->logBackgroundjobEvent($jobid, 'Categories:'.implode(',',$categories).' extracted from profile '.$receiverprofileid);
+ 
+ $profile=$pim->getReceiverprofileById($receiverprofileid);
+ $profiledata=$profile['data'];
+ $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
+ $profileelements=explode(';',$profiledata);
+ $keyedprofile=array(); foreach($profileelements as $profileelement){$bits=explode(':',$profileelement);if(count($bits)==2){$keyedprofile[$bits[0]]=$bits[1];}}
+
+}
+else
+{ // no jobs 
+ exit;
+}
+
+
+class PDF extends FPDF
+{
+ var $currentY;
+ var $Xoffset;
+ var $debugtextlines;
+ var $pagenumberoffset;
+ 
+    function newPageWithHeader()
+    {
+        $this->AddPage();
+        $this->Xoffset=0;
+        if($this->PageNo()%2==0){$this->Xoffset=15;}
+
+        
+        $this->SetFont('Arial','',10);
+        $this->SetXY(5+$this->Xoffset, 5);
+        $this->SetDrawColor(0,0,0);
+        $this->SetFillColor(210,210,210);
+        $this->SetTextColor(0,0,0);
+        $this->SetLineWidth(.3);        
+        $this->Cell(30,7,'Vehicle',1,1,'C',true);
+        $this->SetXY(35+$this->Xoffset, 5);
+        $this->Cell(110,7,'Notes',1,1,'C',true);
+        $this->SetXY(145+$this->Xoffset, 5);
+        $this->Cell(25,7,'Front',1,1,'C',true);
+        $this->SetXY(170+$this->Xoffset, 5);
+        $this->Cell(25,7,'Rear',1,1,'C',true);
+                
+        $this->SetXY(92+$this->Xoffset, 268);
+        $this->Cell(10,7, $this->PageNo()+$this->pagenumberoffset,0,1,'C',false);
+                
+        // Save ordinate
+        $this->currentY=10;
+    }
+
+    function newDebugPage()
+    {
+        $this->AddPage();
+        $this->SetXY(10, 10);
+        $this->SetTextColor(0,0,0);
+        $this->SetFillColor(255,255,255);
+        $this->SetFont('Arial','',10);
+        
+        foreach($this->debugtextlines as $i=>$debugtextline)
+        {
+            $this->SetXY(10, 10+(5*$i));
+            
+            $this->Cell(1,1,$debugtextline,0,1,'L',false);
+
+        }        
+    }
+    
+    
+    
+    function renderMakeName($make)
+    {
+        $this->SetFont('Arial','B',22);
+        $this->SetXY(5+$this->Xoffset, $this->currentY+10);        
+        $this->Cell(0,0,$make);
+        $this->currentY+=10;
+    }   
+
+    function renderModelName($model,$continued)
+    {
+        $this->SetFont('Arial','B',16);
+        $this->SetXY(5+$this->Xoffset, $this->currentY+8);        
+        $this->Cell(0,0,$model);
+        if($continued)
+        {
+         $w=$this->GetStringWidth($model);
+         $this->SetFont('Arial','',10);
+         $this->SetXY(7+$w+$this->Xoffset, $this->currentY+8);        
+         $this->Cell(0,0,"(continued)");
+        }
+        $this->currentY+=12;
+    }   
+
+    function drawLastYearblockBorder()
+    {
+        $this->Line(5+$this->Xoffset, $this->currentY, 35+$this->Xoffset, $this->currentY);
+    }
+
+
+    
+    function renderContinuedOnNextPage($model)
+    {
+        $this->SetFont('Arial','',9);
+        $this->SetXY(7+$this->Xoffset, $this->currentY+3);
+        $this->Cell(0,0,$model.' continued on next page...');
+    }
+    
+    function renderRow($years,$notes,$columns,$columnsettings,$renderyeartop, $renderyearbottom, $renderyears)
+    {
+        // xoffset of 0 will center the content with 10mm of left and right margin
+        // notes is column 0
+     $notewidth=$columnsettings['widths'][0];
+     $notesandpartcolumnswidth=0;
+     
+     foreach($columnsettings['widths'] as $width)
+     {
+        $notesandpartcolumnswidth+=$width;
+     }     
+
+     // draw top boder
+     $this->Line($this->Xoffset+35, $this->currentY, $this->Xoffset+$notesandpartcolumnswidth+36, $this->currentY); 
+
+     // find the tallest stack of parts
+     $biggestpartscount=0; 
+     foreach($columns as $columnkey=>$parts)
+     {
+         if(count($parts)>$biggestpartscount)
+         {
+             $biggestpartscount=count($parts);             
+         }         
+     }     
+     $maxheight=(4*$biggestpartscount)+2;
+     
+     if($renderyears)
+     {
+        $this->SetFont('Arial','',12);
+        $w=$this->GetStringWidth($years);
+        $this->SetXY((19-($w/2))+$this->Xoffset, $this->currentY+3);// center the text in the cell
+        $this->Cell(0,0,$years);
+     }
+
+     $notesheight=0;
+     if($notes!='')
+     {
+        $this->SetFont('Arial','',10);
+        $this->SetXY(36+$this->Xoffset, $this->currentY+1);
+        $tempy=$this->GetY();
+        $this->MultiCell($notewidth,4,$notes,0,'L',false );
+        $notesheight=2+$this->GetY()-$tempy;
+     }
+     if($notesheight>$maxheight){$maxheight=$notesheight;}
+
+     $columnindex=1;
+     $columnsx=36+$this->Xoffset+$notewidth;
+             
+     foreach($columnsettings['keys'] as $columnkey)
+     {
+        $columnwidth=$columnsettings['widths'][$columnindex];
+        
+        if(array_key_exists($columnkey, $columns))
+        {
+            
+            if(count($columns[$columnkey]))
+            {
+               $this->SetFont('Arial','',11);
+               foreach($columns[$columnkey] as $i=>$part)
+               {
+                  $w=$this->GetStringWidth($part);
+                  $this->SetXY($columnsx+($columnwidth/2)-($w/2)-1, ($this->currentY+(($i+1)*4))-1);// center the text in the cell
+                  $this->Cell(0,0,$part);
+               }
+            }
+        }    
+        
+        // vertical line on the left side of the current part column
+//        $this->Line($columnsx+$this->Xoffset-($columnwidth/2), $this->currentY, $columnsx+$this->Xoffset-($columnwidth/2), $this->currentY+$maxheight);
+       $this->Line($columnsx, $this->currentY, $columnsx, $this->currentY+$maxheight);
+
+       // vertical line on the right side of the current part column
+       $this->Line($columnsx+$columnwidth, $this->currentY, $columnsx+$columnwidth, $this->currentY+$maxheight);
+       
+       
+       
+        $columnindex++;
+        $columnsx+=$columnwidth;
+     }
+     // total avail width (qualiriers and parts): 160mm (6.3in)
+     
+     $this->Line(5+$this->Xoffset, $this->currentY, 5+$this->Xoffset, $this->currentY+$maxheight); // left vertical border of yearblock
+     $this->Line(35+$this->Xoffset, $this->currentY, 35+$this->Xoffset, $this->currentY+$maxheight); // vertical line between yearblock and notes        
+     if($renderyeartop){$this->Line(5+$this->Xoffset, $this->currentY, 35+$this->Xoffset, $this->currentY);}
+     if($renderyearbottom){$this->Line(5+$this->Xoffset, $this->currentY+$maxheight, 35+$this->Xoffset, $this->currentY+$maxheight);}
+     
+     //horizontal line closing bottom of notes and parts
+     $this->Line(35+$this->Xoffset, $this->currentY+$maxheight, $notesandpartcolumnswidth+$this->Xoffset+36, $this->currentY+$maxheight);
+
+     // Right-most vertical line
+//     $this->Line($notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY, $notesandpartcolumnswidth+$this->Xoffset+65, $this->currentY+$maxheight); 
+
+     
+     $this->currentY=$this->currentY+$maxheight;
+    }
+}
+
+$book = new book;
+$pim->logBackgroundjobEvent($jobid, 'getting applications');
+$content=$book->getContent($categories);
+$pim->logBackgroundjobEvent($jobid, count($content).' vehicle makes queried from applications');
+
+//extract a dictinct list of all column keys
+$columnkeys=array();
+foreach($content as $make => $models)
+{
+ foreach($models as $model=>$blocks)
+ {
+  foreach($blocks as $block)
+  {
+   foreach($block['qualifierblocks'] as $columns)
+   {
+    foreach($columns as $columnkey=>$column)
+    {
+     if(!in_array($columnkey,$columnkeys)){$columnkeys[]=$columnkey;}     
+    }       
+   }
+  }
+ }
+}
+
+$limitY=250;
+$pdf = new PDF('P','mm','Letter');
+$pdf->Xoffset=0;
+$pdf->currentY=0;
+$pdf->pagenumberoffset=3;
+$pdf->debugtextlines=array();
+$pdf->SetTitle('SandPIM application guide');
+$pdf->AliasNbPages();
+$pdf->SetAutoPageBreak(false, 0);
+$pdf->SetMargins(0, 0, 0);
+$pdf->SetAuthor('AutoPartSource');
+$pdf->newPageWithHeader();
+//$columnsettings=array('keys'=>$columnkeys,'widths'=>array(60,20,20,20,20));
+$columnsettings=array('keys'=>$columnkeys,'widths'=>array(109,25,25,0,0,0,0));//
+
+foreach($columnkeys as $columnkey)
+{
+   $pdf->debugtextlines[]= $columnkey;
+}
+
+
+$makecount=0;
+foreach($content as $make => $models)
+{
+ //if($make!='Honda'){continue;}
+ $makecount++;    
+ if($pdf->currentY>($limitY-30)){$pdf->newPageWithHeader();}
+ $pdf->renderMakeName($make);
+
+  
+ foreach($models as $model=>$blocks)
+ {
+      
+   //need to render a new model name - see if we're close enough to the page end to break early
+   // so that the model name and the table content are on the next page together
+  if($pdf->currentY>$limitY-15){$pdf->newPageWithHeader(); $pdf->renderMakeName($make);}  
+  $pdf->renderModelName($model, false);
+     
+  foreach($blocks as $block)
+  {
+   $rownumber=0;
+   foreach($block['qualifierblocks'] as $qualifiers=>$columns)
+   {
+    $freshlybroken=false;
+    if($pdf->currentY>$limitY)
+    {
+         // render "continued on next page" message at
+     $pdf->renderContinuedOnNextPage($model);
+     $pdf->drawLastYearblockBorder();
+     $pdf->newPageWithHeader();
+     $pdf->renderMakeName($make);
+     $pdf->renderModelName($model, true);
+     $freshlybroken=true;
+    }
+     
+    switch(count($block['qualifierblocks']))
+    {
+        case 1:
+           $drawtopborder=true; $drawbottomborder=true; $renderyears=true; break;
+         
+        case 2:
+           if($rownumber==0)
+           {// on the first row of a merged pair
+               $drawtopborder=true; $drawbottomborder=false; $renderyears=true;
+           }
+           else
+           {// second row of a merged pair
+               $drawtopborder=false; $drawbottomborder=true; $renderyears=false;
+           } 
+           break;
+
+        case 3:
+            // three row block
+            if($rownumber==0)
+            {//on first row
+               $drawtopborder=true; $drawbottomborder=false; $renderyears=true;
+            }
+            else
+            {// not on first row 
+               $renderyears=false;
+               if($rownumber==count($block['qualifierblocks'])-1)
+               {//on last row
+                   $drawtopborder=false; $drawbottomborder=true;                 
+               }
+               else
+               {// not on last row (on the middle one)
+                   $drawtopborder=false; $drawbottomborder=false;
+               }
+            }
+            
+            break;
+
+            default :
+            //4 or more rows in this block
+            
+            if($rownumber==0)
+            {//on first row
+               $drawtopborder=true; $drawbottomborder=false; $renderyears=true;
+            }
+            else
+            {// not on first row 
+               $renderyears=false;
+               if($rownumber==count($block['qualifierblocks'])-1)
+               {//on last row
+                   $drawtopborder=false; $drawbottomborder=true;                 
+               }
+               else
+               {// not on last row (on the middle one)
+                   $drawtopborder=false; $drawbottomborder=false;
+               }
+            }
+                
+            break;
+    }
+     
+    if($freshlybroken){$drawtopborder=true;$renderyears=true;}
+
+    $niceyears=$block['startyear'].' - '.$block['endyear']; if($block['startyear']==$block['endyear']){$niceyears=$block['startyear'];}
+     
+    $pdf->renderRow($niceyears, $qualifiers, $columns, $columnsettings, $drawtopborder, $drawbottomborder,$renderyears);
+     
+    $rownumber++;
+   }
+  }
+ }
+ $pim->updateBackgroundjobStatus($jobid, 'running', round(50+(50*($makecount/count($content))),0)); 
+}
+
+// add a debug page if anything was added to the debug array
+if(count($pdf->debugtextlines)){$pdf->newDebugPage();}
+
+$pdf->Output('F',$filename);
+
+$runtime=time()-$starttime;
+
+$pim->updateBackgroundjobDone($jobid,'complete',date('Y-m-d H:i:s'));
+$pim->logBackgroundjobEvent($jobid, 'Application Guide file PDF ['.$filename.'] created containing '.count($content).' makes. Process took '.$runtime.' seconds.');
+$logs->logSystemEvent('Export', 0, 'Application Guide file PDF ['.$filename.'] (jobid:'.$jobid.') exported by background processing in '.$runtime.' seconds');
+
+?>

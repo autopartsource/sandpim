@@ -23,6 +23,23 @@ if (!isset($_SESSION['userid'])) {
 
 $user = new user;
 
+if(isset($_POST['submit']) && $_POST['submit']=='Export')
+{
+ $configGet = new configGet;
+ $exportsdirectory = $configGet->getConfigValue('ExportsDirectory', '');   
+ $receiverprofileid=intval($_POST['receiverprofile']);
+ $receiverprofile=$pim->getReceiverprofileById($receiverprofileid);
+ if($receiverprofile)
+ {
+  $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
+  $profileelements=explode(';',$receiverprofile['data']);
+  $keyedprofile=array(); foreach($profileelements as $profileelement){$bits=explode(':',$profileelement);if(count($bits)==2){$keyedprofile[$bits[0]]=$bits[1];}}
+  $filename=$keyedprofile['PrintedDocumentFilename'].'_'.random_int(100000, 999999).'.pdf';  
+  $pim->createBackgroundjob('MulticolumnPrint', 'started', $_SESSION['userid'], '', $exportsdirectory.$filename, ';receiverprofile:'.$receiverprofileid.';PrintedDocumentFilename:'.$filename.';', date('Y-m-d H:i:s'), 'application/pdf', $filename);
+  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./backgroundJobs.php'\" /></head><body></body></html>";   
+ }
+ exit;
+}
 
 $partcategories = $pim->getPartCategories();
 $allreceiverprofiles=$pim->getReceiverprofiles();
@@ -41,12 +58,9 @@ foreach($allreceiverprofiles as $receiverprofile)
     }
 }
 
-
 $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last receiverprofileid used');
 
-
 ?>
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -71,7 +85,7 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                         <h3 class="card-header text-start">Export PDF application guide (multiple part-type/position columns)</h3>
 
                         <div class="card-body">
-                            <form action="exportForMulticolumnPrintProcess.php" method="get">
+                            <form action="exportForMulticolumnPrintSelect.php" method="post">
                                 
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
                                     Printable Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
