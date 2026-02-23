@@ -25,6 +25,14 @@ $logs=new logs();
 $asset=new asset();
 $vcdb=new vcdb();
 
+$existinglocks=$pim->getLocksByType('HOUSEKEEPER');
+if(count($existinglocks))
+{
+ $logs->logSystemEvent('housekeeper', 0, 'Housekeeper found lock record (id:'.$existinglocks[0]['id'].') and declined to run');
+ exit; 
+}
+$mylockid=$pim->addLock('HOUSEKEEPER', 'pid:'. getmypid());
+
 // delete (and document) orphan records in part_asset table (assets that were deleted and left behind a part connection)
 $orphans=$asset->getOrphanPartAssetRecords();
 foreach($orphans as $orphan)
@@ -158,5 +166,5 @@ if($runtime > 30)
 
 // clear clipboard content older than 2 days for all users
 $pim->deleteOldClipboardObjects(2);
-
+$pim->removeLockById($mylockid);
 ?>

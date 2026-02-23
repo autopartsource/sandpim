@@ -10,6 +10,14 @@ $pim = new pim();
 $logs=new logs();
 $replication=new replication();
 
+$existinglocks=$pim->getLocksByType('PUSHAPPS');
+if(count($existinglocks))
+{
+ $logs->logSystemEvent('replication', 0, 'pushApps found lock record (id:'.$existinglocks[0]['id'].') and declined to run');
+ exit; 
+}
+$mylockid=$pim->addLock('PUSHAPPS', 'pid:'. getmypid());
+
 $peers=$replication->getPeers('%','app', 'secondary');
 
 foreach($peers as $peer)
@@ -144,4 +152,6 @@ if(count($localoids)==0)
  }
 
 }
+
+$pim->removeLockById($mylockid);
 ?>

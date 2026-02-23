@@ -11,11 +11,21 @@ $asset=new asset();
 $replication=new replication();
 $logs=new logs();
 
+$existinglocks=$pim->getLocksByType('PUSHASSETS');
+if(count($existinglocks))
+{
+ $logs->logSystemEvent('replication', 0, 'pushAssets found lock record (id:'.$existinglocks[0]['id'].') and declined to run');
+ exit; 
+}
+
+$mylockid=$pim->addLock('PUSHASSETS', 'pid:'. getmypid());
+
 $allassets=$asset->getAssets('', 'startswith', 'any', 'any',  '2000-01-01' , 'any', '', '','' ,'startswith', '', 'startswith', 0);
 if(count($allassets)==0)
 {
  echo "refusing to push an empty local list\r\n";
  $logs->logSystemEvent('replication', 0, 'local assets list is empty. No push completed (too risky).');
+ $pim->removeLockById($mylockid);
  exit;
 }
 
@@ -109,7 +119,7 @@ foreach($peers as $peer)
  $logstring.='local assets to push: '.count($assetstopush).'; ';
  
  // compare sets of oids to determine what's extra in remote system 
- // don't bother converting them to real assetsid - they may not exit locally
+ // don't bother converting them to real assetsid - they may not exist locally
  $oidstodrop=array();
  foreach($responsedecoded['oids'] as $oid)
  {
@@ -156,4 +166,5 @@ foreach($peers as $peer)
   $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($assetstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. Pushed:'.$pushsummary.'. '.$logstring);
  }
 }
+$pim->removeLockById($mylockid);
 ?>

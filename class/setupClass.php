@@ -1546,6 +1546,14 @@ class setup
         INDEX idx_createdDate (createdDate))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - notificationqueue ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - notificationqueue ('.$db->conn->error.')';}
        
+        $sql="CREATE TABLE locks (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        type varchar(255) NOT NULL,
+        data text NOT NULL,
+        createdDatetime date not null,
+        PRIMARY KEY (id),
+        INDEX idx_type (type))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - on create of lock table ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - lock ('.$db->conn->error.')';}                
         
         $sql="CREATE TABLE navelement (
         navid varchar(255) not null,
@@ -1616,8 +1624,8 @@ class setup
         $sql="insert into navelement values('SETTINGS/BACKGROUNDJOBS','SETTINGS','Background import/export jobs','backgroundJobs.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/SANDPIPER','SETTINGS','Sandpiper','sandpiper.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/DESCRIPTIONRECIPES','SETTINGS','Description Recipes','descriptionRecipes.php',14);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        
-        
+        $sql="insert into navelement values('SETTINGS/PROCESSLOCKS','SETTINGS','Process Locks','processLocks.php',15);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+                
         $sql="insert into navelement values('IMPORT/ACESFILEUPLOAD','IMPORT','ACES File Upload','importACESupload.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/ACESSNIPPET','IMPORT','ACES xml snippet','importACESxml.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/APPSFROMTEXT','IMPORT','Applications from text','importACEStext.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();

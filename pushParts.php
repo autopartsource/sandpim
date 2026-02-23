@@ -17,11 +17,20 @@ $packaging = new packaging();
 $asset = new asset();
 $logs=new logs();
 
+$existinglocks=$pim->getLocksByType('PUSHPARTS');
+if(count($existinglocks))
+{
+ $logs->logSystemEvent('replication', 0, 'pushParts found lock record (id:'.$existinglocks[0]['id'].') and declined to run');
+ exit; 
+}
+$mylockid=$pim->addLock('PUSHPARTS', 'pid:'. getmypid());
+
 $localparts=$pim->getParts('', 'startswith', 'any', 'any', 'any', 'any', 999999);
 if(count($localparts)==0)
 {
  echo "refusing to push an empty local list\r\n";
  $logs->logSystemEvent('replication', 0, 'local part list is empty. No push completed (too risky).');
+ $pim->removeLockById($mylockid);
  exit;
 }
 
@@ -168,4 +177,5 @@ foreach($peers as $peer)
  }
 
 }
+$pim->removeLockById($mylockid);
 ?>

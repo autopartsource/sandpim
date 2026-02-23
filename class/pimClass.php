@@ -2863,11 +2863,67 @@ function countAppsByPartcategories($partcategories)
  }
 
 
+ function addLock($type,$data)
+ {
+  $db = new mysql; $db->connect(); $lockid=false;
+  if($stmt=$db->conn->prepare('insert into locks values(null,?,?,now())'))
+  {
+   $stmt->bind_param('ss',$type,$data);
+   $stmt->execute();
+   $lockid=$db->conn->insert_id;
+  }
+  $db->close();
+  return $lockid;
+ }
 
+ function removeLockById($lockid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from locks where id=?'))
+  {
+   $stmt->bind_param('i',$lockid);
+   $stmt->execute();
+  }
+  $db->close();
+ }
 
+ function getLocksByType($type=false)
+ {
+  $db = new mysql; $db->connect(); $locks=array();
+  $sql='select * from locks where type=? order by id';
+  if($type===false){$sql='select * from locks order by id';}
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($type!==false){$stmt->bind_param('s', $type);}
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $locks[]=array('id'=>$row['id'],'type'=>$row['type'],'data'=>$row['data'],'createdDatetime'=>$row['createdDatetime']);
+   }
+  }
+  $db->close();
+  return $locks;
+ }
 
-
-
+ function getLockById($lockid)
+ {
+  $db = new mysql; $db->connect(); $lock=false;
+  if($stmt=$db->conn->prepare('select * from locks where id=?'))
+  {
+   $stmt->bind_param('i', $lockid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $lock=array('id'=>$row['id'],'type'=>$row['type'],'data'=>$row['data'],'createdDatetime'=>$row['createdDatetime']);
+   }
+  }
+  $db->close();
+  return $lock;
+ }
+ 
+ 
  function createBackgroundjob($jobtype,$status,$userid,$inputfile,$outputfile,$parameters,$datetimetostart,$contenttype,$clientfilename)
  {
   $db = new mysql; $db->connect(); $jobid=false; $token=$this->newoid();

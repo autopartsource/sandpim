@@ -5,13 +5,19 @@ include_once(__DIR__.'/class/logsClass.php');
 include_once(__DIR__.'/class/configGetClass.php');
 include_once(__DIR__.'/class/configSetClass.php');
 
-
 $starttime=time();
 $pim = new pim();
 $logs = new logs();
 $configGet = new configGet();
 $configSet = new configSet();
 
+$existinglocks=$pim->getLocksByType('UPDATEFROMVCDBAPI');
+if(count($existinglocks))
+{
+ $logs->logSystemEvent('AutoCare API Client', 0, 'updateVCdbFromACAAPI found lock record (id:'.$existinglocks[0]['id'].') and declined to run');
+ exit; 
+}
+$mylockid=$pim->addLock('UPDATEFROMVCDBAPI', 'pid:'. getmypid());
 
 $daysback=7;
 $tokenlowlifeseconds=3000; //every time a new records page is requested, the remaining life of the active token is checked. If lif is less than this number, a nre token is requested 
@@ -22,10 +28,8 @@ $sincedate=false; //'2024-12-01'; // set this data to false to query the API for
 
 $lastsync=$configGet->getConfigValue('lastSuccessfulVCdbAPIsync');
 
-//-------
-  $lastsync=false;
+// $lastsync=false;
   
-
 if($lastsync)
 {
  $sincedate=date('Y-m-d', intval($lastsync)-(24*3600*$daysback));  // set sincedate to [daysback] days before last sync
@@ -35,12 +39,9 @@ else
  $sincedate=false;
 }
 
-
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
 
-//-------
-  $clearfirst=true;
-
+//  $clearfirst=true;
 
 $deletelocalorphans=false; // cause records in each local table (identified by primary keys) to be deleted if they are not present in API results 
 
@@ -103,7 +104,7 @@ if($vcdbapi->activetoken)
    if($vcdbapi->tokenrefreshcount>=$tokenrefreshlimit)
    {
     if($vcdbapi->debug){echo " Local token-refresh limit reached. Terminating Process.\r\n";}
-    $logs->logSystemEvent('AutoCare API Client', 0,'Local token-refresh limit reached. Exiting Process.');
+    $logs->logSystemEvent('AutoCare API Client', 0,'Local token-refresh limit reached. Existing Process.');
     break;       
    }
    
@@ -142,3 +143,4 @@ else
  if($vcdbapi->debug){echo 'API auth failed - http status:'.$vcdbapi->httpstatus."\r\n";}
  $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync failed (http response: '.$vcdbapi->httpstatus.')'); 
 }
+$pim->removeLockById($mylockid);

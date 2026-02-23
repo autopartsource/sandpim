@@ -29,6 +29,15 @@ $vcdb=new vcdb();
 $logs=new logs();
 $sandpiperPrimary=new sandpiperPrimary();
 
+$existinglocks=$pim->getLocksByType('AUDITOR');
+if(count($existinglocks))
+{
+ $logs->logSystemEvent('auditor', 0, 'Background auditor found lock record (id:'.$existinglocks[0]['id'].') and declined to run');
+ exit; 
+}
+
+$mylockid=$pim->addLock('AUDITOR', 'pid:'. getmypid());
+
 // part audits - grab random groups of parts
     // missing packages
     // missing (or zero) package elements
@@ -412,7 +421,7 @@ foreach($assetrecords as $assetrecord)
     $issuehash=md5('ASSET/HASH/MISMATCH'.$assetrecord['assetid'].'filehash from ['.$assetrecord['uri'].'] does not match the hash in the local metatdata store'.'background auditor');
     if(!$pim->getIssueByHash($issuehash))
     {// this issue is not already recorded 
-     $pim->recordIssue('ASSET/HASH/MISMATCH','',$assetrecord['assetid'].'filehash from ['.$assetrecord['uri'].'] does not match the hash in the local metatdata store','background auditor', $issuehash);
+     $pim->recordIssue('ASSET/HASH/MISMATCH',$assetrecord['assetid'],0,'filehash from ['.$assetrecord['uri'].'] does not match local record','auditor', $issuehash);
     }
    }
   }
@@ -470,4 +479,5 @@ if($runtime > 30)
  $logs->logSystemEvent('auditor', 0, 'Background auditor process ran for '.$runtime.' seconds');
 }
 
+$pim->removeLockById($mylockid);
 ?>
