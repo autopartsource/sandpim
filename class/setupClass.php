@@ -932,6 +932,7 @@ class setup
         $sql="insert into config_options values('AutoCareAPIpassword','AN1/255','','','AutoCare API password - unique to a subscriber');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('ExportsDirectory','AN1/255','','','local server absolute path (with trailing slash) where ACES (etc.) exports are to be written');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('unrestrictedLifecycleEdits','AN1/255','yes,no','yes','If yes, any user can change a part lifecycle status on the showPart page. Otherwise, parts/lifecycle management page must be used');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('VIOyearQuarterRef','AN1/255','','','YearQuarter (like 2025Q4) for use in VIO trend calculation against the VIOdefaultYearQuarter in the VIOdefaultGeography');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
 
         

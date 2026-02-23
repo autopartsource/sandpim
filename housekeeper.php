@@ -3,19 +3,18 @@
  * To be run on a cron schedule (php CLI) every day
  * housekeeping fixes/changes things - vs auditor finds and reports problems 
  * 
- * Test change
  */
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/logsClass.php');
 include_once(__DIR__.'/class/assetClass.php');
+include_once(__DIR__.'/class/interchangeClass.php');
 include_once(__DIR__.'/class/configGetClass.php');
 include_once(__DIR__.'/class/vcdbClass.php');
 
 
 $starttime=time();
 
-$vioyearquarterref='2023Q4';
 
 
 
@@ -23,6 +22,7 @@ $pim=new pim();
 $configGet = new configGet();
 $logs=new logs();
 $asset=new asset();
+$interchange=new interchange();
 $vcdb=new vcdb();
 
 $existinglocks=$pim->getLocksByType('HOUSEKEEPER');
@@ -49,6 +49,7 @@ if(count($orphans))
 // PIO re-calc for all active parts
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
+$vioyearquarterref=$configGet->getConfigValue('VIOyearQuarterRef'); //like '2023Q4';
 
 $updatedpartcount=0;
 if($viogeography && $vioyearquarter)
