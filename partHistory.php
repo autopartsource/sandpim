@@ -35,12 +35,12 @@ $history = $logs->getPartEvents($partnumber, 100);
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 <!-- Left Column -->
-                <div class="col-xs-12 col-md-2 my-col colLeft">
+                <div class="col-xs-12 col-md-1 my-col colLeft">
                     
                 </div>
                 
                 <!-- Main Content -->
-                <div class="col-xs-12 col-md-8 my-col colMain">
+                <div class="col-xs-12 col-md-10 my-col colMain">
                     <div class="card shadow-sm">
                         <!-- Header -->
                         <h3 class="card-header text-start">History for <a href="./showPart.php?partnumber=<?php echo $partnumber?>"><span class="text-info"><?php echo $partnumber?></span></a></h3>
@@ -62,7 +62,7 @@ $history = $logs->getPartEvents($partnumber, 100);
                 <!-- End of Main Content -->
                 
                 <!-- Right Column -->
-                <div class="col-xs-12 col-md-2 my-col colRight">
+                <div class="col-xs-12 col-md-1 my-col colRight">
                     
                 </div>
             </div>

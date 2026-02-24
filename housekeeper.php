@@ -158,6 +158,30 @@ foreach($interchangedups as $duprecordindex=> $interchangedup)
  if($duprecordindex>=($duptouchlimit-1)){break;}
 }
 
+// clear clipboard content older than 1 day for all users
+$pim->deleteOldClipboardObjects(1);
+
+
+// update user-defined part attribute: "App Positons"
+$partnumbers=$pim->getPartnumbersByRandom(1000);
+foreach($partnumbers as $partnumber)
+{
+ $typicalappposition=$pim->typicalAppPosition($partnumber);
+ $positionname='';
+ if($typicalappposition==22){$positionname='Front';}
+ if($typicalappposition==30){$positionname='Rear';}
+ if($positionname!='')
+ {
+  $existingattributes=$pim->getPartAttribute($partnumber, 0, 'Typical App Position');
+  if(!$existingattributes)
+  { // 'Typical App Position' does not already exist on this part
+   $pim->writePartAttribute($partnumber, 0, 'Typical App Position', $positionname, '');
+   $newoid=$pim->updatePartOID($partnumber);
+   $pim->logPartEvent($partnumber, 0, 'Housekeeper added Typical-App-Position:'.$positionname, $newoid);
+  }
+ }
+}
+
 
 $runtime=time()-$starttime;
 if($runtime > 30)
@@ -165,7 +189,5 @@ if($runtime > 30)
  $logs->logSystemEvent('housekeeper', 0, 'Housekeeper process ran for '.$runtime.' seconds');
 }
 
-// clear clipboard content older than 2 days for all users
-$pim->deleteOldClipboardObjects(2);
 $pim->removeLockById($mylockid);
 ?>
