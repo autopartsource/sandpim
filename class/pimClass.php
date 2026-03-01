@@ -4468,7 +4468,7 @@ function gtinCheckDigit($barcode)
  function getPartIssuesPrioritized($limit)
  {
   $db=new mysql; $db->connect(); $issues=array();
-  if($stmt=$db->conn->prepare("select issue.* from issue, part, part_balance where issue.issuekeyalpha=part.partnumber and issuekeyalpha=part_balance.partnumber and issue.issuetype like 'PART/%' and issue.status=1 and part.lifecyclestatus='2'  order by amd desc limit ?"))
+  if($stmt=$db->conn->prepare("select issue.* from issue, part, part_balance where issue.issuekeyalpha=part.partnumber and issuekeyalpha=part_balance.partnumber and issue.issuetype like 'PART/%' and issue.status=1 and part.lifecyclestatus in('2','3') order by amd desc limit ?"))
   {
    $stmt->bind_param('i',$limit);
    $stmt->execute();

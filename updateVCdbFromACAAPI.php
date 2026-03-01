@@ -28,7 +28,7 @@ $sincedate=false; //'2024-12-01'; // set this data to false to query the API for
 
 $lastsync=$configGet->getConfigValue('lastSuccessfulVCdbAPIsync');
 
-// $lastsync=false;
+      $lastsync=false;
   
 if($lastsync)
 {
@@ -41,7 +41,7 @@ else
 
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
 
-//  $clearfirst=true;
+  $clearfirst=true;
 
 $deletelocalorphans=false; // cause records in each local table (identified by primary keys) to be deleted if they are not present in API results 
 

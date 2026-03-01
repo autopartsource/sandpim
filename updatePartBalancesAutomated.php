@@ -82,14 +82,7 @@ if(isset($_POST['input']))
    $GTIN=trim(strtoupper($fields[4]));
    $erpstatus=trim(strtoupper($fields[5]));
    $replacedby=trim(strtoupper($fields[6]));
-   
-   switch ($erpstatus)
-   {
-    case 'SX1': $impliedlifecycle='7'; break;
-    case 'XXC': $impliedlifecycle='B'; break;
-    case 'XXX': $impliedlifecycle='9'; break;
-    default: $impliedlifecycle='2'; break;
-   }
+      
       
    if(strlen($partnumber) <= 20 && strlen($partnumber) > 0) 
    {    
@@ -107,7 +100,25 @@ if(isset($_POST['input']))
       $gtinissuecount++;
      }
      
-     if($part['lifecyclestatus']!=$impliedlifecycle && $part['lifecyclestatus']!='0')
+     $lifecyclemismatch=false;   
+     switch ($erpstatus)
+     {
+      case 'SX1': $impliedlifecycle='7';
+       if(!in_array($part['lifecyclestatus'],['7'])){$lifecyclemismatch=true;}        
+       break;
+      case 'XXC': $impliedlifecycle='8';
+       if(!in_array($part['lifecyclestatus'],['A','7','8'])){$lifecyclemismatch=true;}        
+       break;
+      case 'XXX': $impliedlifecycle='9';         
+       if(!in_array($part['lifecyclestatus'],['9'])){$lifecyclemismatch=true;}        
+       break;
+      default: $impliedlifecycle='2';
+       if(!in_array($part['lifecyclestatus'],['1','2','3','4','5','A'])){$lifecyclemismatch=true;}
+       break;
+     }
+
+               
+     if($lifecyclemismatch)
      {
       $issuehash=md5('PART/LIFECYCLE/MISMATCH'.$partnumber.$part['lifecyclestatus'].$impliedlifecycle);
       if(!$pim->getIssueByHash($issuehash))
