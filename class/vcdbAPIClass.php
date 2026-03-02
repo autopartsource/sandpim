@@ -1,7 +1,38 @@
 <?php
 /*
  *              Changes to accomodate VCdb API version 2 upgrade
-
+ * FuelSystemControlType table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table FuelSystemControlType add CultureID varchar(255) not null;
+ * 
+ * FuelSystemDesign table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table FuelSystemDesign add CultureID varchar(255) not null;
+ * 
+ * FuelType table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table FuelType add CultureID varchar(255) not null;
+ * 
+ * IgnitionSystemType table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table IgnitionSystemType add CultureID varchar(255) not null;
+ * 
+ * Make table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table Make add CultureID varchar(255) not null;
+ * 
+ * Mfr table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table Mfr add CultureID varchar(255) not null;
+ * 
+ * MfrBodyCode table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table MfrBodyCode add CultureID varchar(255) not null;
+ * 
+ * Model table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table Model add CultureID varchar(255) not null;
+ * 
+ * Model table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table Model add CultureID varchar(255) not null;
+ * 
+ * PowerOutput table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table PowerOutput add CultureID varchar(255) not null;
+ * 
+ * PublicationStage table: Add CultureID and fix insert/update SQL statements to match
+ *  alter table PublicationStage add CultureID varchar(255) not null;
  * 
  * Region table: Drop ParentID, add CultureID and fix insert/update SQL statements to match
  *  alter table Region drop ParentID;
@@ -2097,16 +2128,16 @@ class vcdbapi
     
    case 'FuelSystemControlType':
 
-    if($stmt=$db->conn->prepare('insert into FuelSystemControlType values(?,?)'))
+    if($stmt=$db->conn->prepare('insert into FuelSystemControlType values(?,?,?)'))
     {
-     if($stmt->bind_param('is', $FuelSystemControlTypeID, $FuelSystemControlTypeName))
+     if($stmt->bind_param('iss', $FuelSystemControlTypeID, $CultureID, $FuelSystemControlTypeName))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $FuelSystemControlTypeID=$record['FuelSystemControlTypeID']; $FuelSystemControlTypeName=$record['FuelSystemControlTypeName'];
+        $FuelSystemControlTypeID=$record['FuelSystemControlTypeID']; $FuelSystemControlTypeName=$record['FuelSystemControlTypeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2134,16 +2165,16 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update FuelSystemControlType set FuelSystemControlTypeName=? where FuelSystemControlTypeID=?'))
+    if($stmt=$db->conn->prepare('update FuelSystemControlType set FuelSystemControlTypeName=?, CultureID=? where FuelSystemControlTypeID=?'))
     {
-     if($stmt->bind_param('si', $FuelSystemControlTypeName, $FuelSystemControlTypeID))
+     if($stmt->bind_param('ssi', $FuelSystemControlTypeName, $CultureID, $FuelSystemControlTypeID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $FuelSystemControlTypeID=$record['FuelSystemControlTypeID']; $FuelSystemControlTypeName=$record['FuelSystemControlTypeName'];
+        $FuelSystemControlTypeID=$record['FuelSystemControlTypeID']; $FuelSystemControlTypeName=$record['FuelSystemControlTypeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
@@ -2154,16 +2185,16 @@ class vcdbapi
     
    case 'FuelSystemDesign':
        
-    if($stmt=$db->conn->prepare('insert into FuelSystemDesign values(?,?)'))
+    if($stmt=$db->conn->prepare('insert into FuelSystemDesign values(?,?,?)'))
     {
-     if($stmt->bind_param('is', $FuelSystemDesignID, $FuelSystemDesignName))
+     if($stmt->bind_param('iss', $FuelSystemDesignID, $FuelSystemDesignName, $CultureID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $FuelSystemDesignID=$record['FuelSystemDesignID']; $FuelSystemDesignName=$record['FuelSystemDesignName'];
+        $FuelSystemDesignID=$record['FuelSystemDesignID']; $FuelSystemDesignName=$record['FuelSystemDesignName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2191,16 +2222,16 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update FuelSystemDesign set FuelSystemDesignName=? where FuelSystemDesignID=?'))
+    if($stmt=$db->conn->prepare('update FuelSystemDesign set FuelSystemDesignName=?, CultureID=? where FuelSystemDesignID=?'))
     {
-     if($stmt->bind_param('si', $FuelSystemDesignName, $FuelSystemDesignID))
+     if($stmt->bind_param('ssi', $FuelSystemDesignName, $CultureID, $FuelSystemDesignID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $FuelSystemDesignID=$record['FuelSystemDesignID']; $FuelSystemDesignName=$record['FuelSystemDesignName'];
+        $FuelSystemDesignID=$record['FuelSystemDesignID']; $FuelSystemDesignName=$record['FuelSystemDesignName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
@@ -2211,16 +2242,16 @@ class vcdbapi
     
    case 'FuelType':
        
-    if($stmt=$db->conn->prepare('insert into FuelType values(?,?)'))
+    if($stmt=$db->conn->prepare('insert into FuelType values(?,?,?)'))
     {
-     if($stmt->bind_param('is', $FuelTypeID, $FuelTypeName))
+     if($stmt->bind_param('iss', $FuelTypeID, $FuelTypeName, $CultureID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $FuelTypeID=$record['FuelTypeID']; $FuelTypeName=$record['FuelTypeName'];
+        $FuelTypeID=$record['FuelTypeID']; $FuelTypeName=$record['FuelTypeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2248,16 +2279,16 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update FuelType set FuelTypeName=? where FuelTypeID=?'))
+    if($stmt=$db->conn->prepare('update FuelType set FuelTypeName=?, CultureID=? where FuelTypeID=?'))
     {
-     if($stmt->bind_param('si', $FuelTypeName, $FuelTypeID))
+     if($stmt->bind_param('ssi', $FuelTypeName, $CultureID, $FuelTypeID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $FuelTypeID=$record['FuelTypeID']; $FuelTypeName=$record['FuelTypeName'];
+        $FuelTypeID=$record['FuelTypeID']; $FuelTypeName=$record['FuelTypeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
@@ -2267,16 +2298,16 @@ class vcdbapi
 
    case 'IgnitionSystemType':
        
-    if($stmt=$db->conn->prepare('insert into IgnitionSystemType values(?,?)'))
+    if($stmt=$db->conn->prepare('insert into IgnitionSystemType values(?,?,?)'))
     {
-     if($stmt->bind_param('is', $IgnitionSystemTypeID, $IgnitionSystemTypeName))
+     if($stmt->bind_param('iss', $IgnitionSystemTypeID, $CultureID, $IgnitionSystemTypeName))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $IgnitionSystemTypeID=$record['IgnitionSystemTypeID']; $IgnitionSystemTypeName=$record['IgnitionSystemTypeName'];
+        $IgnitionSystemTypeID=$record['IgnitionSystemTypeID']; $IgnitionSystemTypeName=$record['IgnitionSystemTypeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2304,16 +2335,16 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update IgnitionSystemType set IgnitionSystemTypeName=? where IgnitionSystemTypeID=?'))
+    if($stmt=$db->conn->prepare('update IgnitionSystemType set IgnitionSystemTypeName=?, CultureID=? where IgnitionSystemTypeID=?'))
     {
-     if($stmt->bind_param('si', $IgnitionSystemTypeName, $IgnitionSystemTypeID))
+     if($stmt->bind_param('ssi', $IgnitionSystemTypeName, $CultureID, $IgnitionSystemTypeID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $IgnitionSystemTypeID=$record['IgnitionSystemTypeID']; $IgnitionSystemTypeName=$record['IgnitionSystemTypeName'];
+        $IgnitionSystemTypeID=$record['IgnitionSystemTypeID']; $IgnitionSystemTypeName=$record['IgnitionSystemTypeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
@@ -2323,16 +2354,16 @@ class vcdbapi
 
    case 'Make':
        
-    if($stmt=$db->conn->prepare('insert into Make values(?,?)'))
+    if($stmt=$db->conn->prepare('insert into Make values(?,?,?)'))
     {
-     $stmt->bind_param('is', $MakeID, $MakeName);
+     $stmt->bind_param('iss', $MakeID, $MakeName, $CultureID);
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $MakeID=$record['MakeID']; $MakeName=$record['MakeName'];
+        $MakeID=$record['MakeID']; $MakeName=$record['MakeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2360,16 +2391,16 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update Make set MakeName=? where MakeID=?'))
+    if($stmt=$db->conn->prepare('update Make set MakeName=?, ClultureID=? where MakeID=?'))
     {
-     if($stmt->bind_param('si', $MakeName, $MakeID))
+     if($stmt->bind_param('ssi', $MakeName, $CultureID, $MakeID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $MakeID=$record['MakeID']; $MakeName=$record['MakeName'];
+        $MakeID=$record['MakeID']; $MakeName=$record['MakeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
@@ -2379,16 +2410,16 @@ class vcdbapi
     
    case 'Mfr':
 
-    if($stmt=$db->conn->prepare('insert into Mfr values(?,?)'))
+    if($stmt=$db->conn->prepare('insert into Mfr values(?,?,?)'))
     {
-     $stmt->bind_param('is', $MfrID, $MfrName);
+     $stmt->bind_param('iss', $MfrID, $MfrName, $CultureID);
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $MfrID=$record['MfrID']; $MfrName=$record['MfrName']; 
+        $MfrID=$record['MfrID']; $MfrName=$record['MfrName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2416,36 +2447,35 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update Mfr set MfrName=? where MfrID=?'))
+    if($stmt=$db->conn->prepare('update Mfr set MfrName=?, CultureID=? where MfrID=?'))
     {
-     if($stmt->bind_param('si', $MfrName, $MfrID))
+     if($stmt->bind_param('ssi', $MfrName, $CultureID, $MfrID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $MfrID=$record['MfrID']; $MfrName=$record['MfrName'];
+        $MfrID=$record['MfrID']; $MfrName=$record['MfrName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
      }
     }
-
     break;
 
    case 'MfrBodyCode':
 
-    if($stmt=$db->conn->prepare('insert into MfrBodyCode values(?,?)'))
+    if($stmt=$db->conn->prepare('insert into MfrBodyCode values(?,?,?)'))
     {
-     $stmt->bind_param('is', $MfrBodyCodeID, $MfrBodyCodeName);
+     $stmt->bind_param('iss', $MfrBodyCodeID, $MfrBodyCodeName, $CultureID);
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $MfrBodyCodeID=$record['MfrBodyCodeID']; $MfrBodyCodeName=$record['MfrBodyCodeName'];
+        $MfrBodyCodeID=$record['MfrBodyCodeID']; $MfrBodyCodeName=$record['MfrBodyCodeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2473,37 +2503,35 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update MfrBodyCode set MfrBodyCodeName=? where MfrBodyCodeID=?'))
+    if($stmt=$db->conn->prepare('update MfrBodyCode set MfrBodyCodeName=?, CultureID=? where MfrBodyCodeID=?'))
     {
-     if($stmt->bind_param('si', $MfrBodyCodeName, $MfrBodyCodeID))
+     if($stmt->bind_param('ssi', $MfrBodyCodeName, $CultureID, $MfrBodyCodeID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $MfrBodyCodeID=$record['MfrBodyCodeID']; $MfrBodyCodeName=$record['MfrBodyCodeName'];
+        $MfrBodyCodeID=$record['MfrBodyCodeID']; $MfrBodyCodeName=$record['MfrBodyCodeName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
      }
     }
-       
-       
     break;
 
-   case 'Model':
-       
-    if($stmt=$db->conn->prepare('insert into Model values(?,?,?)'))
+    
+   case 'Model':       
+    if($stmt=$db->conn->prepare('insert into Model values(?,?,?,?)'))
     {
-     $stmt->bind_param('isi', $ModelID, $ModelName, $VehicleTypeID);
+     $stmt->bind_param('isis', $ModelID, $ModelName, $VehicleTypeID, $CultureID);
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $ModelID=$record['ModelID']; $ModelName=$record['ModelName']; $VehicleTypeID=$record['VehicleTypeID'];
+        $ModelID=$record['ModelID']; $ModelName=$record['ModelName']; $VehicleTypeID=$record['VehicleTypeID']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2531,16 +2559,16 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update Model set ModelName=?,VehicleTypeID=? where ModelID=?'))
+    if($stmt=$db->conn->prepare('update Model set ModelName=?,VehicleTypeID=?, ClutureID=? where ModelID=?'))
     {
-     if($stmt->bind_param('sii', $ModelName, $VehicleTypeID, $ModelID))
+     if($stmt->bind_param('sisi', $ModelName, $VehicleTypeID, $CultureID, $ModelID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $ModelID=$record['ModelID']; $ModelName=$record['ModelName']; $VehicleTypeID=$record['VehicleTypeID'];
+        $ModelID=$record['ModelID']; $ModelName=$record['ModelName']; $VehicleTypeID=$record['VehicleTypeID']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
@@ -2551,16 +2579,16 @@ class vcdbapi
     
    case 'PowerOutput':
        
-    if($stmt=$db->conn->prepare('insert into PowerOutput values(?,?,?)'))
+    if($stmt=$db->conn->prepare('insert into PowerOutput values(?,?,?,?)'))
     {
-     $stmt->bind_param('iss', $PowerOutputID, $HorsePower, $KilowattPower);
+     $stmt->bind_param('isss', $PowerOutputID, $HorsePower, $KilowattPower, $CultureID);
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $PowerOutputID=$record['PowerOutputID']; $HorsePower=$record['HorsePower']; $KilowattPower=$record['KilowattPower'];
+        $PowerOutputID=$record['PowerOutputID']; $HorsePower=$record['HorsePower']; $KilowattPower=$record['KilowattPower']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2588,16 +2616,16 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update PowerOutput set HorsePower=?,KilowattPower=? where PowerOutputID=?'))
+    if($stmt=$db->conn->prepare('update PowerOutput set HorsePower=?,KilowattPower=?,CultureID=? where PowerOutputID=?'))
     {
-     if($stmt->bind_param('ssi', $HorsePower, $KilowattPower, $PowerOutputID))
+     if($stmt->bind_param('sssi', $HorsePower, $KilowattPower, $CultureID, $PowerOutputID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $PowerOutputID=$record['PowerOutputID']; $HorsePower=$record['HorsePower']; $KilowattPower=$record['KilowattPower'];
+        $PowerOutputID=$record['PowerOutputID']; $HorsePower=$record['HorsePower']; $KilowattPower=$record['KilowattPower']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
@@ -2607,16 +2635,16 @@ class vcdbapi
 
    case 'PublicationStage':
 
-    if($stmt=$db->conn->prepare('insert into PublicationStage values(?,?)'))
+    if($stmt=$db->conn->prepare('insert into PublicationStage values(?,?,?)'))
     {
-     $stmt->bind_param('is', $PublicationStageID, $PublicationStageName);
+     $stmt->bind_param('iss', $PublicationStageID, $PublicationStageName, $CultureID);
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $PublicationStageID=$record['PublicationStageID']; $PublicationStageName=$record['PublicationStageName']; 
+        $PublicationStageID=$record['PublicationStageID']; $PublicationStageName=$record['PublicationStageName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -2644,26 +2672,24 @@ class vcdbapi
      }
     }
  
-    if($stmt=$db->conn->prepare('update PublicationStage set PublicationStageName=? where PublicationStageID=?'))
+    if($stmt=$db->conn->prepare('update PublicationStage set PublicationStageName=?, CultureID=? where PublicationStageID=?'))
     {
-     if($stmt->bind_param('si', $PublicationStageName, $PublicationStageID))
+     if($stmt->bind_param('ssi', $PublicationStageName, $CultureID, $PublicationStageID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $PublicationStageID=$record['PublicationStageID']; $PublicationStageName=$record['PublicationStageName']; 
+        $PublicationStageID=$record['PublicationStageID']; $PublicationStageName=$record['PublicationStageName']; $CultureID=$record['CultureID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }
      }
-    }
-       
+    }      
     break;
 
-    
-    
+        
    case 'Region':
     if($stmt=$db->conn->prepare('insert into Region values(?,?,?,?)'))
     {
