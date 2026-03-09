@@ -116,6 +116,8 @@ $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
 $dependantparts=$pim->getPartnumbersByBasepart($partnumber);
 $kitcomponents=$pim->getKitComponents($partnumber);
 
+// for good measure, flag this part for background audit since a human looked it up and cares about it
+$pim->addAuditRequest('part-general', $partnumber);
 ?>
 <!DOCTYPE html>
 <html>

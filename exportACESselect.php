@@ -49,11 +49,20 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
 			<!-- Header -->
                         <h3 class="card-header text-start">Export ACES xml - select source and options</h3>
                         <div class="card-body">
-                            <form action="exportACESstream.php" method="post">
+                            <form action="exportACEScreateJob.php" method="post">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
-                                    Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
-                                    <input type="submit" name="submit" value="Export"/>
-                                    <input type="hidden" name="exporttype" value="profile"/>
+                                    <div style="margin:10px;">
+                                        Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
+                                    </div>
+                                    <div style="margin:10px;">
+                                        Export Type <select name="exporttype"><option value="FULL">FULL</option><option value="UPDATE">UPDATE</option></select>
+                                    </div>
+                                    <div style="margin:10px;">
+                                        Update Receiver App States <select name="updatereceiverappstates"><option value="yes">Yes</option><option value="no">No</option></select>
+                                    </div>
+                                    <div style="margin:10px;">
+                                        <input type="submit" name="submit" value="Export"/>
+                                    </div>
                                 </div>
                             </form>
                         </div>

@@ -1555,6 +1555,46 @@ class setup
         PRIMARY KEY (id),
         INDEX idx_type (type))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - on create of lock table ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - lock ('.$db->conn->error.')';}                
+
+        
+        $sql="CREATE TABLE export (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        type varchar(255) not null,
+        identifier varchar(255) not null,
+        datetimeexported datetime not null,
+        notes text not null,
+        PRIMARY KEY (id),
+        index idx_receiverprofileid(receiverprofileid),
+        index idx_type(type),
+        index idx_identifier(identifier))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - on create of export table ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - export ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE export_detail (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        exportid int UNSIGNED NOT NULL,
+        objecttype varchar(255) not null,
+        objectdata text not null,
+        keynumeric int UNSIGNED NOT NULL,
+        keyalhpa varchar(255) not null,
+        oid varchar(255) not null,
+        PRIMARY KEY (id),
+        index idx_submissionid(exportid),
+        index idx_objecttype_oid(objecttype,oid),
+        index idx_objecttype_keys(objecttype,keynumeric,keyalhpa))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - on create of export_detail table ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - export_detail ('.$db->conn->error.')';}
+        
+        $sql="CREATE TABLE receiver_applicationstate (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        applicationid int unsigned null,
+        oid varchar(255) not null default '',
+        exportid int UNSIGNED NOT NULL,        
+        PRIMARY KEY (id),
+        INDEX idx_oid (oid),
+        INDEX idx_rec_app_oid (receiverprofileid,applicationid,oid),
+        unique key idx_receiverprofileid (receiverprofileid,applicationid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiver_applicationstate ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiver_applicationstate ('.$db->conn->error.')';}
         
         $sql="CREATE TABLE navelement (
         navid varchar(255) not null,

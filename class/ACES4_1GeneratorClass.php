@@ -78,7 +78,14 @@ class ACESgenerator
    $appElement=new DOMElement('App');
    $root->appendChild($appElement);
 
-   $appElement->setAttribute('action', 'A');
+   if(array_key_exists('action', $app))
+   {
+    $appElement->setAttribute('action', $app['action']);
+   }
+   else
+   {
+    $appElement->setAttribute('action', 'A');
+   }
    $appElement->setAttribute('id', $appnumber);
    
    if(!$suppressrefs){$appElement->setAttribute('ref', $app['id']);}

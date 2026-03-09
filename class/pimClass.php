@@ -6,7 +6,7 @@ class pim
 
  function buildVersion()
  {
-  return '2025-09-18';
+  return '2026-03-07';
  }
 
  function uuidv4()
@@ -2924,6 +2924,18 @@ function countAppsByPartcategories($partcategories)
  }
  
  
+ function addSubmission($receiverprofileid,$identifier,$notes)
+ {
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into submission values(null,?,?,now(),?)'))
+  {
+   $stmt->bind_param('iss', $receiverprofileid,$identifier,$notes);
+   $stmt->execute();
+  }
+  $db->close();
+ } 
+ 
+ 
  function createBackgroundjob($jobtype,$status,$userid,$inputfile,$outputfile,$parameters,$datetimetostart,$contenttype,$clientfilename)
  {
   $db = new mysql; $db->connect(); $jobid=false; $token=$this->newoid();
@@ -4775,11 +4787,7 @@ function allowedHost($address)
   return $result;
  }
  
- 
- 
- 
-
-  function deleteClipboardObject($userid,$id)
+ function deleteClipboardObject($userid,$id)
  {
   $db=new mysql; $db->connect();
   if($stmt=$db->conn->prepare('delete from clipboard where userid=? and id=?'))
@@ -4814,72 +4822,71 @@ function allowedHost($address)
   $db->close();
  }
  
-function getAppSummary($partnumber)
-{
- $db=new mysql; $db->connect(); $returnval=array('summary'=>'','age'=>-1);
- if($stmt=$db->conn->prepare('select summary,firstyear,lastyear,DATEDIFF(now(),capturedatetime) as age from part_application_summary where partnumber=?'))
+ function getAppSummary($partnumber)
  {
-  $stmt->bind_param('s',$partnumber);
-  $stmt->execute();
-  $db->result = $stmt->get_result();
-  if($row = $db->result->fetch_assoc())
+  $db=new mysql; $db->connect(); $returnval=array('summary'=>'','age'=>-1);
+  if($stmt=$db->conn->prepare('select summary,firstyear,lastyear,DATEDIFF(now(),capturedatetime) as age from part_application_summary where partnumber=?'))
   {
-   $returnval['summary']=$row['summary'];
-   $returnval['age']=intval($row['age']);
-   $returnval['firstyear']=intval($row['firstyear']);   
-   $returnval['lastyear']=intval($row['lastyear']);   
-  }    
- }
- $db->close();
- return $returnval;
-}
-
-function updateAppSummary($partnumber,$summary,$firstyear,$lastyear)
-{
- $db=new mysql; $db->connect(); $insertednew=false;
- if($stmt=$db->conn->prepare('select summary,DATEDIFF(now(),capturedatetime) as age from part_application_summary where partnumber=?'))
- {
-  $stmt->bind_param('s',$partnumber);
-  $stmt->execute();
-  $db->result = $stmt->get_result();
-  if($row = $db->result->fetch_assoc())
-  {// record exists for this part
-   if($stmt=$db->conn->prepare('update part_application_summary set summary=?,firstyear=?,lastyear=?,capturedatetime=now() where partnumber=?'))
+   $stmt->bind_param('s',$partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
    {
-    $stmt->bind_param('siis',$summary, $firstyear, $lastyear, $partnumber);
-    $stmt->execute();
-   }
+    $returnval['summary']=$row['summary'];
+    $returnval['age']=intval($row['age']);
+    $returnval['firstyear']=intval($row['firstyear']);   
+    $returnval['lastyear']=intval($row['lastyear']);   
+   }    
   }
-  else
-  {// record does not exist for this part
-   if($summary!='')
-   {
-    if($stmt=$db->conn->prepare('insert into part_application_summary (partnumber,summary,firstyear,lastyear,capturedatetime) values(?,?,?,?,now())'))
+  $db->close();
+  return $returnval;
+ }
+
+ function updateAppSummary($partnumber,$summary,$firstyear,$lastyear)
+ {
+  $db=new mysql; $db->connect(); $insertednew=false;
+  if($stmt=$db->conn->prepare('select summary,DATEDIFF(now(),capturedatetime) as age from part_application_summary where partnumber=?'))
+  {
+   $stmt->bind_param('s',$partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {// record exists for this part
+    if($stmt=$db->conn->prepare('update part_application_summary set summary=?,firstyear=?,lastyear=?,capturedatetime=now() where partnumber=?'))
     {
-     $stmt->bind_param('ssii', $partnumber, $summary, $firstyear, $lastyear);
+     $stmt->bind_param('siis',$summary, $firstyear, $lastyear, $partnumber);
      $stmt->execute();
-     $insertednew=true;
+    }
+   }
+   else
+   {// record does not exist for this part
+    if($summary!='')
+    {
+     if($stmt=$db->conn->prepare('insert into part_application_summary (partnumber,summary,firstyear,lastyear,capturedatetime) values(?,?,?,?,now())'))
+     {
+      $stmt->bind_param('ssii', $partnumber, $summary, $firstyear, $lastyear);
+      $stmt->execute();
+      $insertednew=true;
+     }
     }
    }
   }
+  $db->close();
+  return $insertednew;
  }
- $db->close();
- return $insertednew;
-}
 
-
-function deleteAppSummary($partnumber)
-{
- $db=new mysql; $db->connect();
- if($stmt=$db->conn->prepare('delete from part_application_summary where partnumber=?'))
+ function deleteAppSummary($partnumber)
  {
-  if($stmt->bind_param('s',$partnumber))
+  $db=new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from part_application_summary where partnumber=?'))
   {
-   $stmt->execute();
+   if($stmt->bind_param('s',$partnumber))
+   {
+    $stmt->execute();
+   }
   }
+  $db->close();
  }
- $db->close();
-}
 
  function getPartBalance($partnumber)
  {
@@ -4901,8 +4908,6 @@ function deleteAppSummary($partnumber)
   $db->close();
   return $balance;
  }
-
-
  
  function updatePartBalance($partnumber,$qoh,$amd,$cost)
  {
@@ -5318,18 +5323,6 @@ function deleteAppSummary($partnumber)
   $db->close();
   return $insertednew;
  }
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
  
  function partVIOtotal($partnumber,$geography,$yearquarter)
  {
@@ -5407,12 +5400,7 @@ function deleteAppSummary($partnumber)
   return $returnval;
  }
 
-
-
-
-
-
-function attributesAreExperianUseful($attributes)
+ function attributesAreExperianUseful($attributes)
  {
   $returnval=false;
 
@@ -5655,27 +5643,27 @@ function attributesAreExperianUseful($attributes)
  }
  
 
-function deleteHousekeepingRequest($id)
-{
- $db = new mysql; $db->connect();
- if($stmt=$db->conn->prepare('delete from housekeepingrequest where id=?'))
+ function deleteHousekeepingRequest($id)
  {
-  $stmt->bind_param('i', $id);
-  $stmt->execute();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from housekeepingrequest where id=?'))
+  {
+   $stmt->bind_param('i', $id);
+   $stmt->execute();
+  }
+  $db->close();
  }
- $db->close();
-}
 
-function addHousekeepingRequest($requesttype,$requestdata)
-{
- $db = new mysql; $db->connect();
- if($stmt=$db->conn->prepare('insert into housekeepingrequest values(null,?,?)'))
+ function addHousekeepingRequest($requesttype,$requestdata)
  {
-  $stmt->bind_param('ss', $requesttype, $requestdata);
-  $stmt->execute();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into housekeepingrequest values(null,?,?)'))
+  {
+   $stmt->bind_param('ss', $requesttype, $requestdata);
+   $stmt->execute();
+  }
+  $db->close();
  }
- $db->close();
-}
 
 
  function getAuditRequests($requesttype)
@@ -5698,231 +5686,348 @@ function addHousekeepingRequest($requesttype,$requestdata)
   return $records;
  }
 
-function deleteAuditRequest($id)
-{
- $db = new mysql; $db->connect();
- if($stmt=$db->conn->prepare('delete from auditrequest where id=?'))
+ function deleteAuditRequest($id)
  {
-  $stmt->bind_param('i', $id);
-  $stmt->execute();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from auditrequest where id=?'))
+  {
+   $stmt->bind_param('i', $id);
+   $stmt->execute();
+  }
+  $db->close();
  }
- $db->close();
-}
 
-function addAuditRequest($requesttype,$requestdata)
-{
- $db = new mysql; $db->connect();
- if($stmt=$db->conn->prepare('insert into auditrequest values(null,?,?)'))
+ function addAuditRequest($requesttype,$requestdata)
  {
-  $stmt->bind_param('ss', $requesttype, $requestdata);
-  $stmt->execute();
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into auditrequest values(null,?,?)'))
+  {
+   $stmt->bind_param('ss', $requesttype, $requestdata);
+   $stmt->execute();
+  }
+  $db->close();
  }
- $db->close();
-}
  
-function logAudit($audittype,$objectkeyalpha,$objectkeynumeric,$result,$oidataudit)
-{
- $db = new mysql; $db->connect();
- if($stmt=$db->conn->prepare('insert into auditlog values(null,?,?,?,?,now(),?)'))
+ function logAudit($audittype,$objectkeyalpha,$objectkeynumeric,$result,$oidataudit)
  {
-  $stmt->bind_param('ssiss', $audittype,$objectkeyalpha,$objectkeynumeric,$result,$oidataudit);
-  $stmt->execute();
- }
- $db->close();
-}
-
-function needAudit($audittype,$objectkeyalpha,$objectkeynumeric,$oidataudit)
-{
- $db = new mysql; $db->connect(); $need=true;
- if($stmt=$db->conn->prepare('select result from auditlog where audittype=? and objectkeyalpha=? and objectkeynumeric=? and oidataudit=?'))
- {
-  $stmt->bind_param('ssis', $audittype,$objectkeyalpha,$objectkeynumeric,$oidataudit);
-  if($stmt->execute())
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into auditlog values(null,?,?,?,?,now(),?)'))
   {
-   $db->result = $stmt->get_result();
-   if($row = $db->result->fetch_assoc())
+   $stmt->bind_param('ssiss', $audittype,$objectkeyalpha,$objectkeynumeric,$result,$oidataudit);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+ function needAudit($audittype,$objectkeyalpha,$objectkeynumeric,$oidataudit)
+ {
+  $db = new mysql; $db->connect(); $need=true;
+  if($stmt=$db->conn->prepare('select result from auditlog where audittype=? and objectkeyalpha=? and objectkeynumeric=? and oidataudit=?'))
+  {
+   $stmt->bind_param('ssis', $audittype,$objectkeyalpha,$objectkeynumeric,$oidataudit);
+   if($stmt->execute())
    {
-    $need=false;
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $need=false;
+    }
    }
   }
+  $db->close();
+  return $need;
  }
- $db->close();
- return $need;
-}
 
 
-function partHealthScore($partnumber)
-{
- // 10 points each: 
- // has package(s) with weight
- // has package(s) with dims
- // has GTIN
- // has public primary photo
- // has public non-primary photo
- // has competitive interchange
- // has apps
- // has attributes
- // has prices
- // has descriptions
+ function partHealthScore($partnumber)
+ {
+  // 10 points each: 
+  // has package(s) with weight
+  // has package(s) with dims
+  // has GTIN
+  // has public primary photo
+  // has public non-primary photo
+  // has competitive interchange
+  // has apps
+  // has attributes
+  // has prices
+  // has descriptions
     
- $db = new mysql; $db->connect(); $score=0;
+  $db = new mysql; $db->connect(); $score=0;
 
- if($stmt=$db->conn->prepare("select part_asset.id from part_asset,asset where part_asset.partnumber=asset.assetId and partnumber=? and public=1 and part_asset.assettypecode='P04'"))
- {
-  if($stmt->bind_param('s', $partnumber))
+  if($stmt=$db->conn->prepare("select part_asset.id from part_asset,asset where part_asset.partnumber=asset.assetId and partnumber=? and public=1 and part_asset.assettypecode='P04'"))
   {
-   if($stmt->execute())
+   if($stmt->bind_param('s', $partnumber))
    {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
+    if($stmt->execute())
     {
-     $score+=10;
-    }
-   }
-  }
- }
-
- if($stmt=$db->conn->prepare("select part_asset.id from part_asset,asset where part_asset.partnumber=asset.assetId and partnumber=? and public=1 and part_asset.assettypecode<>'P04'"))
- {
-  if($stmt->bind_param('s', $partnumber))
-  {
-   if($stmt->execute())
-   {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
-    {
-     $score+=10;
-    }
-   }
-  }
- }
-
- if($stmt=$db->conn->prepare('select price.id from price where partnumber=?'))
- {
-  if($stmt->bind_param('s', $partnumber))
-  {
-   if($stmt->execute())
-   {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
-    {
-     $score+=10;
-    }
-   }
-  }
- }
-
- if($stmt=$db->conn->prepare('select part_attribute.id from part_attribute where partnumber=? and PAID>0'))
- {
-  if($stmt->bind_param('s', $partnumber))
-  {
-   if($stmt->execute())
-   {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
-    {
-     $score+=10;
-    }
-   }
-  }
- }
-  
- if($stmt=$db->conn->prepare('select id from interchange where partnumber=?'))
- {
-  if($stmt->bind_param('s', $partnumber))
-  {
-   if($stmt->execute())
-   {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
-    {
-     $score+=10;
-    }
-   }
-  }
- }
-   
- if($stmt=$db->conn->prepare('select GTIN from part where partnumber=?'))
- {
-  if($stmt->bind_param('s', $partnumber))
-  {
-   if($stmt->execute())
-   {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
-    {
-     if(strlen(trim($row['GTIN']))==12)
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
      {
       $score+=10;
      }
     }
    }
   }
- }
-  
- if($stmt=$db->conn->prepare('select id from package where partnumber=? and weight>0'))
- {
-  if($stmt->bind_param('s', $partnumber))
+
+  if($stmt=$db->conn->prepare("select part_asset.id from part_asset,asset where part_asset.partnumber=asset.assetId and partnumber=? and public=1 and part_asset.assettypecode<>'P04'"))
   {
-   if($stmt->execute())
+   if($stmt->bind_param('s', $partnumber))
    {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
+    if($stmt->execute())
     {
-     $score+=10;
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $score+=10;
+     }
     }
    }
   }
- }
-  
- if($stmt=$db->conn->prepare('select id from package where partnumber=? and (shippingheight+shippingwidth+shippinglength)>0'))
- {
-  if($stmt->bind_param('s', $partnumber))
+
+  if($stmt=$db->conn->prepare('select price.id from price where partnumber=?'))
   {
-   if($stmt->execute())
+   if($stmt->bind_param('s', $partnumber))
    {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
+    if($stmt->execute())
     {
-     $score+=10;
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $score+=10;
+     }
     }
    }
   }
- }
+
+  if($stmt=$db->conn->prepare('select part_attribute.id from part_attribute where partnumber=? and PAID>0'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $score+=10;
+     }
+    }
+   }
+  }
+  
+  if($stmt=$db->conn->prepare('select id from interchange where partnumber=?'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $score+=10;
+     }
+    }
+   }
+  }
+   
+  if($stmt=$db->conn->prepare('select GTIN from part where partnumber=?'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      if(strlen(trim($row['GTIN']))==12)
+      {
+       $score+=10;
+      }
+     }
+    }
+   }
+  }
+  
+  if($stmt=$db->conn->prepare('select id from package where partnumber=? and weight>0'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $score+=10;
+     }
+    }
+   }
+  }
+  
+  if($stmt=$db->conn->prepare('select id from package where partnumber=? and (shippingheight+shippingwidth+shippinglength)>0'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $score+=10;
+     }
+    }
+   }
+  }
+
+  if($stmt=$db->conn->prepare('select id from application where partnumber=? and status=0'))
+  {
+   if($stmt->bind_param('s', $partnumber))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $score+=10;
+     }
+    }
+   }
+  }
  
-  
- if($stmt=$db->conn->prepare('select id from application where partnumber=? and status=0'))
- {
-  if($stmt->bind_param('s', $partnumber))
+  if($stmt=$db->conn->prepare('select id from part_description where partnumber=?'))
   {
-   if($stmt->execute())
+   if($stmt->bind_param('s', $partnumber))
    {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
+    if($stmt->execute())
     {
-     $score+=10;
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $score+=10;
+     }
     }
    }
   }
- }
- 
- if($stmt=$db->conn->prepare('select id from part_description where partnumber=?'))
- {
-  if($stmt->bind_param('s', $partnumber))
-  {
-   if($stmt->execute())
-   {
-    $db->result = $stmt->get_result();
-    if($row = $db->result->fetch_assoc())
-    {
-     $score+=10;
-    }
-   }
-  }
+
+  $db->close(); 
+  return $score;
  }
 
- $db->close(); 
- return $score;
-}
+ function logExport($receiverprofileid,$type,$identifier,$notes)
+ {
+  $db = new mysql; $db->connect(); $id=false;
+  if($stmt=$db->conn->prepare('insert into export values(null,?,?,?,now(),?)'))
+  {
+   $stmt->bind_param('isss', $receiverprofileid,$type,$identifier,$notes);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;
+ }
+
+ function logExportDetail($exportid,$objecttype,$objectdata,$keynumeric,$keyalpha,$oid)
+ {
+  $db = new mysql; $db->connect(); $id=false;
+  if($stmt=$db->conn->prepare('insert into export_detail values(null,?,?,?,?,?,?)'))
+  {
+   $stmt->bind_param('ississ', $exportid,$objecttype,$objectdata,$keynumeric,$keyalpha,$oid);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;
+ }
+ 
+ function getAppFromHistoricalExport($applicationid,$oid)
+ {
+  $db = new mysql; $db->connect(); $app=false;
+  if($stmt=$db->conn->prepare("select objectdata from export_detail where objecttype='APP' and keynumeric=? and oid=?"))
+  {
+   if($stmt->bind_param('is',$applicationid,$oid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $app= unserialize($row['objectdata']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $app;
+ }
+
+  
+ function getReceiverAppStates($receiverprofileid)
+ {
+  $db = new mysql; $db->connect(); $appstates=array();
+  if($stmt=$db->conn->prepare('select * from receiver_applicationstate where receiverprofileid=?'))
+  {
+   if($stmt->bind_param('i',$receiverprofileid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $appstates[]=array('id'=>$row['id'],'receiverprofileid'=>$row['receiverprofileid'],'applicationid'=>$row['applicationid'],'oid'=>$row['oid'],'exportid'=>$row['exportid']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $appstates;
+ }
+
+
+ function getReceiverAppState($receiverprofileid,$applicationid)
+ {
+  $db = new mysql; $db->connect(); $oid=false;
+  if($stmt=$db->conn->prepare('select oid from receiver_applicationstate where receiverprofileid=? and applicationid=?'))
+  {
+   if($stmt->bind_param('ii',$receiverprofileid,$applicationid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $oid=$row['oid'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $oid;
+ }
+
+ function writeReceiverAppState($receiverprofileid,$applicationid,$oid,$exportid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into receiver_applicationstate values(null,?,?,?,?)'))
+  {
+   if($stmt->bind_param('iisi',$receiverprofileid,$applicationid,$oid,$exportid))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+
+ function deleteReceiverAppState($receiverprofileid,$applicationid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from receiver_applicationstate where receiverprofileid=? and applicationid=?'))
+  {
+   if($stmt->bind_param('ii',$receiverprofileid,$applicationid))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+ 
 
 }?>

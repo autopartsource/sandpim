@@ -1,0 +1,61 @@
+<?php
+include_once('./class/pimClass.php');
+include_once('./class/userClass.php');
+include_once('./class/logsClass.php');
+include_once('./class/ACES4_1GeneratorClass.php');
+
+$navCategory = 'export';
+
+$pim = new pim;
+
+//ip-based ACL enforcement 
+if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
+{// bail out if this is a clinet we don't like
+ $logs = new logs;
+ $logs->logSystemEvent('accesscontrol',0, 'exportACESstream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}    
+
+session_start();
+if(!isset($_SESSION['userid']))
+{
+ echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./login.php'\" /></head><body></body></html>";
+ exit;
+}
+
+$user=new user();
+$logs=new logs();
+$generator=new ACESgenerator();
+
+$receiverprofileid=intval($_POST['receiverprofile']);
+$exporttype='FULL'; if(in_array($_POST['exporttype'], ['FULL','UPDATE'])){$exporttype=$_POST['exporttype'];}
+$updatereceiverappstates='yes'; if(in_array($_POST['updatereceiverappstates'], ['yes','no'])){$updatereceiverappstates=$_POST['updatereceiverappstates'];}
+$user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
+$profile=$pim->getReceiverprofileById($receiverprofileid);
+$profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
+$profilename=$profile['name'];
+
+
+
+$profileelements=explode(';',$profiledata);
+$keyedprofile=array();
+foreach($profileelements as $profileelement)
+{
+ $bits=explode(':',$profileelement);
+ if(count($bits)==2){$keyedprofile[$bits[0]]=$bits[1];}
+}
+
+$partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
+$appscount=$pim->countAppsByPartcategories($partcategories);
+
+$lifecyclestatuslist=array();
+$lifecyclestatusestemp=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
+foreach ($lifecyclestatusestemp as $status){$lifecyclestatuslist[]=$status['lifecyclestatus'];}
+
+$randomstring=$pim->newoid();
+$clientfilename='ACES_4_1_'.$keyedprofile['DocumentTitle'].'_'.$randomstring.'_FULL_'.date('Y-m-d').'.xml';
+$localfilename=__DIR__.'/ACESexports/'.$randomstring;
+$token=$pim->createBackgroundjob('ACESxmlExport','started',$_SESSION['userid'],'',$localfilename,'ExportType:'.$exporttype.';UpdateReceiverAppStates:'.$updatereceiverappstates.';receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text/xml',$clientfilename);
+$logs->logSystemEvent('Export', $_SESSION['userid'], 'ACES file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
+echo 'This export will contain '.$appscount.' apps. It will be processed in the background and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
+echo '<br/><br/><a href="./backgroundJobs.php">Go to background export jobs list</a>';
