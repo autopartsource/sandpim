@@ -508,8 +508,8 @@ class PIESgenerator
       $AssetDateElement->setAttribute('assetDateType', $asset['AssetDateType']);
       $AssetDatesElement->appendChild($AssetDateElement); 
       $DigitalFileInformationElement->appendChild($AssetDatesElement);
-     }
-     
+     }     
+     if(array_key_exists('AssetSequence',$asset) && intval($asset['AssetSequence'])>0){$AssetSequenceElement=$doc->createElement('AssetSequence',intval($asset['AssetSequence'])); $DigitalFileInformationElement->appendChild($AssetSequenceElement);}
      if(array_key_exists('Country',$asset)){$CountryElement=$doc->createElement('Country',$asset['Country']); $DigitalFileInformationElement->appendChild($CountryElement);}
      
      $DigitalAssetsElement->appendChild($DigitalFileInformationElement);

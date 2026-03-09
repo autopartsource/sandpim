@@ -339,6 +339,7 @@ foreach($partnumbers as $partnumber)
      //$digitalasset['DescriptionLanguageCode']=$digitalassetrecord[''];
      $digitalasset['AssetDate']=$digitalassetrecord['createdDate'];
      $digitalasset['AssetDateType']='CRE';// according to PCdb20201030, valid options are: MOD="Modified", EXP="Expired", EFF="Effective", CRE="Created"
+     $digitalasset['AssetSequence']=$digitalassetconnection['sequence'];
      //$digitalasset['Country']=$digitalassetrecord[''];
      $digitalasset['LanguageCode']=$digitalassetrecord['languagecode'];
             
