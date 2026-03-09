@@ -55,6 +55,9 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                                         Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
                                     </div>
                                     <div style="margin:10px;">
+                                        Export Purpose <select name="purpose"><option value="audit">Internal Audit</option><option value="candidate">Release Candidate</option><option value="publish">Publishing to external receiver</option></select>
+                                    </div>
+                                    <div style="margin:10px;">
                                         Export Type <select name="exporttype"><option value="FULL">FULL</option><option value="UPDATE">UPDATE</option></select>
                                     </div>
                                     <div style="margin:10px;">

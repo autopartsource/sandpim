@@ -12,7 +12,7 @@ $pim = new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'exportACESstream.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'exportACEScreateJob.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }    
 
@@ -29,6 +29,7 @@ $generator=new ACESgenerator();
 
 $receiverprofileid=intval($_POST['receiverprofile']);
 $exporttype='FULL'; if(in_array($_POST['exporttype'], ['FULL','UPDATE'])){$exporttype=$_POST['exporttype'];}
+$exportpurpose=''; if(in_array($_POST['purpose'], ['audit','candidate','publish'])){$exportpurpose=$_POST['purpose'];}
 $updatereceiverappstates='yes'; if(in_array($_POST['updatereceiverappstates'], ['yes','no'])){$updatereceiverappstates=$_POST['updatereceiverappstates'];}
 $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofileid);
 $profile=$pim->getReceiverprofileById($receiverprofileid);
@@ -55,7 +56,7 @@ foreach ($lifecyclestatusestemp as $status){$lifecyclestatuslist[]=$status['life
 $randomstring=$pim->newoid();
 $clientfilename='ACES_4_1_'.$keyedprofile['DocumentTitle'].'_'.$randomstring.'_FULL_'.date('Y-m-d').'.xml';
 $localfilename=__DIR__.'/ACESexports/'.$randomstring;
-$token=$pim->createBackgroundjob('ACESxmlExport','started',$_SESSION['userid'],'',$localfilename,'ExportType:'.$exporttype.';UpdateReceiverAppStates:'.$updatereceiverappstates.';receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text/xml',$clientfilename);
+$token=$pim->createBackgroundjob('ACESxmlExport','started',$_SESSION['userid'],'',$localfilename,'ExportPurpose:'.$exportpurpose.';ExportType:'.$exporttype.';UpdateReceiverAppStates:'.$updatereceiverappstates.';receiverprofile:'.$receiverprofileid.';DocumentTitle:'.$keyedprofile['DocumentTitle'].';',date('Y-m-d H:i:s'),'text/xml',$clientfilename);
 $logs->logSystemEvent('Export', $_SESSION['userid'], 'ACES file ['.$clientfilename.'] export setup for houskeeper; apps:'.$appscount.' by:'.$_SERVER['REMOTE_ADDR']);
 echo 'This export will contain '.$appscount.' apps. It will be processed in the background and be available in a few minutes at <a href="./downloadBackgroundExport.php?token='.$token.'">this link</a>';
 echo '<br/><br/><a href="./backgroundJobs.php">Go to background export jobs list</a>';

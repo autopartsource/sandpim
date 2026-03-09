@@ -47,7 +47,9 @@ if(count($jobs))
  $receiverprofileid=intval($parameters['receiverprofile']);
  $updatereceiverappstates=false; if(array_key_exists('UpdateReceiverAppStates', $parameters) && $parameters['UpdateReceiverAppStates']=='yes'){$updatereceiverappstates=true;}
  $exporttype='FULL'; if(array_key_exists('ExportType', $parameters) && $parameters['ExportType']=='UPDATE'){$exporttype='UPDATE';}
+ $exportpurpose=''; if(array_key_exists('ExportPurpose', $parameters) && trim($parameters['ExportPurpose'])!=''){$exportpurpose='Exported for '.$parameters['ExportPurpose'];}
   
+ 
  $profile=$pim->getReceiverprofileById($receiverprofileid);
  $profiledata=$profile['data'];//'ParentAAIAID:BQMC;BrandOwnerAAIAID:FLMK;CurrencyCode:USD;LanguageCode:EN;TechnicalContact:Luke Smith;ContactEmail:lsmith@autopartsource.com;';
  $profilename=$profile['name'];
@@ -120,7 +122,7 @@ if(count($jobs))
  
  // record the export for future nets a posterity
  $appidkeyedoids=array();
- $exportid=$pim->logExport($receiverprofileid, 'ACES-xml', $filename, count($apps).' apps');
+ $exportid=$pim->logExport($receiverprofileid, 'ACES-xml', $filename, count($apps).' apps '.$exportpurpose);
  $pim->logBackgroundjobEvent($jobid, 'Export '.$exportid.' created for this job');
 
  foreach($apps as $app)

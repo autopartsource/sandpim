@@ -5959,11 +5959,49 @@ function allowedHost($address)
   return $app;
  }
 
+ function getExport($id)
+ {
+  $db = new mysql; $db->connect(); $export=false;
+  if($stmt=$db->conn->prepare('select * from export where id=?'))
+  {
+   if($stmt->bind_param('i',$id))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $export=array('id'=>$row['id'],'datetimeexported'=>$row['datetimeexported'],'receiverprofileid'=>$row['receiverprofileid'],'type'=>$row['type'],'identifier'=>$row['identifier'],'notes'=>$row['notes']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $export;
+ }
+
+ function getExports()
+ {
+  $db = new mysql; $db->connect(); $exports=array();
+  if($stmt=$db->conn->prepare('select * from export order by id desc'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $exports[]=array('id'=>$row['id'],'datetimeexported'=>$row['datetimeexported'],'receiverprofileid'=>$row['receiverprofileid'],'type'=>$row['type'],'identifier'=>$row['identifier'],'notes'=>$row['notes']);
+    }
+   }
+  }
+  $db->close();
+  return $exports;
+ }
  
  function getAppExportHistory($applicationid)
  {
   $db = new mysql; $db->connect(); $exports=array();
-  if($stmt=$db->conn->prepare("select receiverprofile.name,type,identifier,datetimeexported,export.notes,oid from receiverprofile,export,export_detail where export.id=export_detail.exportid and receiverprofile.id=export.receiverprofileid and objecttype ='APP' and keynumeric=?"))
+  if($stmt=$db->conn->prepare("select receiverprofile.name,type,identifier,datetimeexported,export.notes,oid from receiverprofile,export,export_detail where export.id=export_detail.exportid and receiverprofile.id=export.receiverprofileid and objecttype ='APP' and keynumeric=? order by datetimeexported desc"))
   {
    if($stmt->bind_param('i',$applicationid))
    {
