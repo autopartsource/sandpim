@@ -140,6 +140,7 @@ $year=$mmy['year'];
 $pcdbversion=$pcdb->version();
 $historylimit=10;
 $history=$pim->getAppEvents($appid,$historylimit);
+$exports=$pim->getAppExportHistory($appid);
 
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
@@ -650,7 +651,10 @@ if(isset($_GET['categories']))
                         <h6 class="card-header text-start">
                             <div style="float:right">
                                 <span class="btn btn-info" onclick="addAppToClipboard(),refreshClipboard()">Copy</span>
-                                <?php if(count($history)){echo '<a class="btn btn-secondary" href="./appHistory.php?appid='.$appid.'">History</a>';}?>
+                                <?php
+                                if(count($history)){echo '<a class="btn btn-secondary" href="./appHistory.php?appid='.$appid.'">Change History</a>';}
+                                if(count($exports)){echo ' <a class="btn btn-secondary" href="./appExportHistory.php?appid='.$appid.'">Exports History</a>';}
+                                ?>
                             </div>
                             <div style="clear:both;"></div>
                         </h6>

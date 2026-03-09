@@ -5959,6 +5959,29 @@ function allowedHost($address)
   return $app;
  }
 
+ 
+ function getAppExportHistory($applicationid)
+ {
+  $db = new mysql; $db->connect(); $exports=array();
+  if($stmt=$db->conn->prepare("select receiverprofile.name,type,identifier,datetimeexported,export.notes,oid from receiverprofile,export,export_detail where export.id=export_detail.exportid and receiverprofile.id=export.receiverprofileid and objecttype ='APP' and keynumeric=?"))
+  {
+   if($stmt->bind_param('i',$applicationid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $exports[] = array('receivername'=>$row['name'],'type'=>$row['type'],'identifier'=>$row['identifier'],'datetimeexported'=>$row['datetimeexported'],'notes'=>$row['notes'],'oid'=>$row['oid']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $exports;
+ }
+ 
+ 
   
  function getReceiverAppStates($receiverprofileid)
  {

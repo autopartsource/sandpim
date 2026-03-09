@@ -12,7 +12,7 @@ $pim = new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'appHistory.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'appExportHistory.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }    
 
@@ -50,7 +50,7 @@ $user=new user;
 
 $appid = intval($_GET['appid']);
 $app = $pim->getApp($appid);
-$history = $pim->getAppEvents($appid, 50);
+$history = $pim->getAppExportHistory($appid);
 ?>
 <!DOCTYPE html>
 <html>
@@ -77,7 +77,7 @@ $history = $pim->getAppEvents($appid, 50);
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">History for application <a href="./showApp.php?appid=<?php echo $appid?>"><span class="text-info"><?php echo $appid?></span></a></h3>
+                        <h3 class="card-header text-start">Export History for application <a href="./showApp.php?appid=<?php echo $appid?>"><span class="text-info"><?php echo $appid?></span></a></h3>
 
                         <div class="card-body">
                             
@@ -99,9 +99,11 @@ $history = $pim->getAppEvents($appid, 50);
                                 <div class="card-body scroll">
                                     <?php
                                     if ($app && count($history)) {
-                                        echo '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Change Description</th><th>OID After Change</th></tr>';
-                                        foreach ($history as $record) {
-                                            echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>' . $record['description'] . '</td><td>' . $record['new_oid'] . '</td></tr>';
+                                        echo '<table class="table"><tr><th>Date/Time</th><th>Receiver Profile</th><th>File Identifier</th><th>OID at Export</th></tr>';
+                                        foreach ($history as $export)
+                                        {
+                                            $oidstyle='color:orange;'; if($export['oid']==$app['oid']){$oidstyle='color:green;';}
+                                            echo '<tr><td>'.$export['datetimeexported'].'</td><td>'.$export['receivername'].'</td><td>'.$export['identifier'].'</td><td style="'.$oidstyle.'">'.$export['oid'].'</td></tr>';
                                         }
                                         echo '</table>';
                                     } else { // no apps found
