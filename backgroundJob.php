@@ -47,12 +47,12 @@ $job = $pim->getBackgroundjob(intval($_GET['id']));
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 <!-- Left Column -->
-                <div class="col-xs-12 col-md-2 my-col colLeft">
+                <div class="col-xs-12 col-md-1 my-col colLeft">
                     
                 </div>
                 
                 <!-- Main Content -->
-                <div class="col-xs-12 col-md-8 my-col colMain">
+                <div class="col-xs-12 col-md-10 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
                         <h3 class="card-header text-start">Background import/export job</h3>
@@ -91,7 +91,7 @@ $job = $pim->getBackgroundjob(intval($_GET['id']));
                 <!-- End of Main Content -->
                 
                 <!-- Right Column -->
-                <div class="col-xs-12 col-md-2 my-col colRight">
+                <div class="col-xs-12 col-md-1 my-col colRight">
                     
                 </div>
             </div>

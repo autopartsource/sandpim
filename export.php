@@ -13,30 +13,14 @@ $pim = new pim;
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {// bail out if this is a clinet we don't like
  $logs = new logs;
- $logs->logSystemEvent('accesscontrol',0, 'exports.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'export.php - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
 
 $logs = new logs;
 
-if(isset($_GET['exportid']) && isset($_GET['action']))
-{
- $userid=$_SESSION['userid'];
- $export=$pim->getExport(intval($_GET['exportid']));
- if($export)
- {
-  if($_GET['action']=='delete')
-  {
-   $pim->deleteExport(intval($_GET['exportid']));
-   $logs->logSystemEvent('exports', $userid, 'deleted export '.$export['id'].' of type '.$export['type'].' that was created on ['.$export['datetimeexported'].']');
-  }    
- }
-}
+$export=$pim->getExport(intval($_GET['exportid']));
 
-
-
-
-$exports=$pim->getExports();
 
 ?>
 
@@ -61,16 +45,19 @@ $exports=$pim->getExports();
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start">Exports</h3>
+                        <h3 class="card-header text-start">Export <?php echo $export['id'];?></h3>
 
                         <div class="card-body">
                             <table class="table">
-                                <tr><th>Exported Date/Time</th><th>Receiver Profile</th><th>Type</th><th>Notes</th></tr>
-                            <?php
-                            foreach ($exports as $export)
-                            {
-                                echo '<tr><td><a href="./export.php?exportid='.$export['id'].'">'.$export['datetimeexported'].'</a></td><td>'.$pim->receiverprofileName($export['receiverprofileid']).'</td><td>'.$export['type'].'</td><td>'.$export['notes'].'</td></tr>';
-                            } ?>
+                                <tr><th>Receiver Profile</th><td><?php echo $pim->receiverprofileName($export['receiverprofileid']);?></td></tr>
+                                <tr><th>Export Type</th><td><?php echo $export['type'];?></td></tr>
+                                <tr><th>Date/Time Exported</th><td><?php echo $export['datetimeexported'];?></td></tr>
+                                <tr><th>Notes</th><td><?php echo $export['notes'];?></td></tr>
+                                <tr><th>Tracked apps depending on this export</th><td><?php echo $pim->countReceiverAppStatesForExport($export['id']);?></td></tr>
+                                <tr><th>Actions</th><td><a href="./exports.php?action=delete&exportid=<?php echo $export['id'];?>">Delete</a></td></tr>
+                                
+                                
+
                             </table>
                         </div>
                     </div>

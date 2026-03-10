@@ -1593,6 +1593,7 @@ class setup
         PRIMARY KEY (id),
         INDEX idx_oid (oid),
         INDEX idx_rec_app_oid (receiverprofileid,applicationid,oid),
+        INDEX idx_exportid (exportid),
         unique key idx_receiverprofileid (receiverprofileid,applicationid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiver_applicationstate ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiver_applicationstate ('.$db->conn->error.')';}
         
@@ -1666,6 +1667,7 @@ class setup
         $sql="insert into navelement values('SETTINGS/SANDPIPER','SETTINGS','Sandpiper','sandpiper.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/DESCRIPTIONRECIPES','SETTINGS','Description Recipes','descriptionRecipes.php',14);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/PROCESSLOCKS','SETTINGS','Process Locks','processLocks.php',15);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/EXPORTS','SETTINGS','Manage Exports','exports.php',16);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
                 
         $sql="insert into navelement values('IMPORT/ACESFILEUPLOAD','IMPORT','ACES File Upload','importACESupload.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/ACESSNIPPET','IMPORT','ACES xml snippet','importACESxml.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();

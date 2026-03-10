@@ -5979,6 +5979,22 @@ function allowedHost($address)
   $db->close();
   return $export;
  }
+ 
+ function deleteExport($id)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('delete from export where id=?'))
+  {
+   if($stmt->bind_param('i',$id)){$stmt->execute();}
+  }
+  if($stmt=$db->conn->prepare('delete from export_detail where exportid=?'))
+  {
+   if($stmt->bind_param('i',$id)){$stmt->execute();}
+  }  
+  $db->close();
+ }
+ 
+ 
 
  function getExports()
  {
@@ -6042,6 +6058,26 @@ function allowedHost($address)
   return $appstates;
  }
 
+ function countReceiverAppStatesForExport($exportid)
+ {
+  $db = new mysql; $db->connect(); $count=0;
+  if($stmt=$db->conn->prepare('select count(*) as appcount from receiver_applicationstate where exportid=?'))
+  {
+   if($stmt->bind_param('i',$exportid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $count=$row['appcount'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $count;
+ }
 
  function getReceiverAppState($receiverprofileid,$applicationid)
  {
