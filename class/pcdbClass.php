@@ -502,7 +502,7 @@ class pcdb
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;} $db->connect();
   $value='unknown ('.$code.')';
   
-  if($stmt=$db->conn->prepare('select ExpiCodeDescription from PIESExpiCode where ExpiCode=?'))
+  if($stmt=$db->conn->prepare('select ExpiCodeDescription from PIESEXPICode where ExpiCode=?'))
   {
    $stmt->bind_param('s', $code);      
    $stmt->execute();
