@@ -54,7 +54,13 @@ $export=$pim->getExport(intval($_GET['exportid']));
                                 <tr><th>Date/Time Exported</th><td><?php echo $export['datetimeexported'];?></td></tr>
                                 <tr><th>Notes</th><td><?php echo $export['notes'];?></td></tr>
                                 <tr><th>Tracked apps depending on this export</th><td><?php echo $pim->countReceiverAppStatesForExport($export['id']);?></td></tr>
-                                <tr><th>Actions</th><td><a href="./exports.php?action=delete&exportid=<?php echo $export['id'];?>">Delete</a></td></tr>
+                                <tr><th>Actions</th>
+                                    <td>
+                                        <a href="./exports.php?action=delete&exportid=<?php echo $export['id'];?>" class="btn btn-secondary">Delete</a>
+                                        <a href="./exports.php?action=capture-merge&exportid=<?php echo $export['id'];?>&receiverprofileid=<?php echo $export['receiverprofileid'];?>" class="btn btn-secondary">Capture (merge)</a>
+                                        <a href="./exports.php?action=capture-replace&exportid=<?php echo $export['id'];?>&receiverprofileid=<?php echo $export['receiverprofileid'];?>"class="btn btn-secondary">Capture (replace)</a>
+                                    </td>
+                                </tr>
                                 
                                 
 

@@ -29,7 +29,26 @@ if(isset($_GET['exportid']) && isset($_GET['action']))
   {
    $pim->deleteExport(intval($_GET['exportid']));
    $logs->logSystemEvent('exports', $userid, 'deleted export '.$export['id'].' of type '.$export['type'].' that was created on ['.$export['datetimeexported'].']');
-  }    
+  }
+  
+  if($_GET['action']=='capture-merge')
+  {
+   $clientfilename='capture_report.txt';
+   $localfilename=random_int(1000000, 9999999);
+   $receiverprofileid=intval($_GET['receiverprofileid']);
+   $token=$pim->createBackgroundjob('ReceiverAppStateCapture','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';exportid:'.$export['id'].';CaptureMode:MERGE',date('Y-m-d H:i:s'),'text',$clientfilename);
+   $logs->logSystemEvent('exports', $userid, 'Created background job to capture (merge) app states from export '.$export['id'].' into receiverprofile '.$receiverprofileid);
+  }
+  
+  if($_GET['action']=='capture-replace')
+  {
+   $clientfilename='capture_report.txt';
+   $localfilename=random_int(1000000, 9999999);
+   $receiverprofileid=intval($_GET['receiverprofileid']);
+   $token=$pim->createBackgroundjob('ReceiverAppStateCapture','started',$_SESSION['userid'],'',$localfilename,'receiverprofile:'.$receiverprofileid.';exportid:'.$export['id'].';CaptureMode:REPLACE',date('Y-m-d H:i:s'),'text',$clientfilename);
+   $logs->logSystemEvent('exports', $userid, 'Created background job to capture (replace) app states from export '.$export['id'].' into receiverprofile '.$receiverprofileid);
+  }
+  
  }
 }
 

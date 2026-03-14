@@ -160,7 +160,7 @@ if(count($jobs))
    }
   }
   else
-  {// appid is not on-record for this reciever - add it and include in export
+  {// appid is not on-record for this reciever (from any export) - add it and include in ACES file
    $netapps[]=$app;
    if($updatereceiverappstates)
    {

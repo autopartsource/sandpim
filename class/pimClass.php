@@ -5979,6 +5979,29 @@ function allowedHost($address)
   $db->close();
   return $export;
  }
+
+ function getExportDetail($id)
+ {
+  $db = new mysql; $db->connect(); $records=array();
+  if($stmt=$db->conn->prepare('select * from export_detail where exportid=?'))
+  {
+   if($stmt->bind_param('i',$id))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $records[]=array('id'=>$row['id'],'exportid'=>$row['exportid'],'objecttype'=>$row['objecttype'],'objectdata'=>$row['objectdata'],'keynumeric'=>$row['keynumeric'],'keyalhpa'=>$row['keyalhpa'],'oid'=>$row['oid']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $records;
+ }
+
+
  
  function deleteExport($id)
  {
@@ -6113,15 +6136,38 @@ function allowedHost($address)
   $db->close();
  }
 
- function deleteReceiverAppState($receiverprofileid,$applicationid)
+ function updateReceiverAppState($receiverprofileid,$applicationid,$oid,$exportid)
  {
   $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare('delete from receiver_applicationstate where receiverprofileid=? and applicationid=?'))
+  if($stmt=$db->conn->prepare('update receiver_applicationstate set oid=?, exportid=? where receiverprofileid=? and applicationid=?'))
   {
-   if($stmt->bind_param('ii',$receiverprofileid,$applicationid))
+   if($stmt->bind_param('siii',$oid,$exportid,$receiverprofileid,$applicationid))
    {
     $stmt->execute();
    }
+  }
+  $db->close();
+ }
+
+ 
+ 
+ function deleteReceiverAppState($receiverprofileid,$applicationid=false)
+ {
+  $db = new mysql; $db->connect();  
+  $sql='delete from receiver_applicationstate where receiverprofileid=? and applicationid=?';
+  if($applicationid===false){$sql='delete from receiver_applicationstate where receiverprofileid=?';}
+  
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($applicationid===false)
+   {
+    $stmt->bind_param('i',$receiverprofileid);
+   }
+   else
+   {
+    $stmt->bind_param('ii',$receiverprofileid,$applicationid);       
+   }
+   $stmt->execute();
   }
   $db->close();
  }
