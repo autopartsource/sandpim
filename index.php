@@ -112,9 +112,9 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 <!-- Left Column -->
-                <div class="col-xs-12 col-md-2 my-col colLeft"></div>
+                <div class="col-xs-12 col-md-1 my-col colLeft"></div>
                 
-                <div class="col-xs-12 col-md-8 my-col colMain">
+                <div class="col-xs-12 col-md-10 my-col colMain">
                     <div class="card shadow-sm">
                         
                         <!-- Header -->
@@ -472,7 +472,7 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
             </div>
         </div>
                 <!-- Right Column -->
-                <div class="col-xs-12 col-md-2 my-col colRight">
+                <div class="col-xs-12 col-md-1 my-col colRight">
                     
                     <?php //print_r($orphans);?>
                     

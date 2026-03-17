@@ -6102,6 +6102,27 @@ function allowedHost($address)
   return $count;
  }
 
+ function countReceiverAppStates($receiverprofileid)
+ {
+  $db = new mysql; $db->connect(); $count=0;
+  if($stmt=$db->conn->prepare('select count(*) as appcount from receiver_applicationstate where receiverprofileid=?'))
+  {
+   if($stmt->bind_param('i',$receiverprofileid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $count=$row['appcount'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $count;
+ }
+ 
  function getReceiverAppState($receiverprofileid,$applicationid)
  {
   $db = new mysql; $db->connect(); $oid=false;
