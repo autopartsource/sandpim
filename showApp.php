@@ -106,6 +106,9 @@ if(isset($_POST))
 
 $app=$pim->getApp($appid);
 
+// for good measure, flag this part for background audit since a human looked it up and cares about it
+$pim->addAuditRequest('app-general', $appid);
+
 $appcolor='#d0f0c0';
 if($app['cosmetic']>0){$appcolor='#e39aea';}
 if($app['status']>1){$appcolor='#FFD433';}

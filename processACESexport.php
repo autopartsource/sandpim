@@ -195,8 +195,7 @@ if(count($jobs))
   }
  }
 
- 
- 
+  
  if($exporttype=='UPDATE')
  {
   $doc=$generator->createACESdoc($header,$netapps,$assetapps, $parttranslations, $partdescriptions, $generatoroptions);//,$descriptions,$prices,$expi,$attributes,$packages,$kits,$interchanges,$assets);

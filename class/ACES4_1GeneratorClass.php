@@ -202,12 +202,152 @@ class ACESgenerator
    $appElement->appendChild($partElement);
    if(array_key_exists('brand',$app) && $app['brand']!=''){$partElement->setAttribute('BrandAAIAID', $app['brand']);}
       
-   if(array_key_exists('assetname', $app) && trim($app['assetname'])!=''){
-       $assetnameElement=new DOMElement('AssetName',$app['assetname']); 
-       $appElement->appendChild($assetnameElement);}
+   if(array_key_exists('assetname', $app) && trim($app['assetname'])!='')
+   {
+    $assetnameElement=new DOMElement('AssetName',$app['assetname']); 
+    $appElement->appendChild($assetnameElement);       
+   }
+   
+   if(array_key_exists('assetitemorder', $app) && intval($app['assetitemorder'])!=0)
+   {
+    $assetitemorderElement=new DOMElement('AssetItemOrder',$app['assetitemorder']); 
+    $appElement->appendChild($assetitemorderElement);       
+   }
   
    $appnumber++;
   }
+  
+  // --- roll back through the apps to sythesize asset apps and add them to the end of the file
+  
+  $appnumber=1;
+  $existingapphashes=array();
+  foreach($apps as $app)
+  {
+   if(!array_key_exists('assetname', $app)){continue;}
+   if(trim($app['assetname'])==''){continue;}
+   if($includecosmeticapps==false && $app['cosmetic']==1){continue;}
+      
+   if($suppressduplicateapps)
+   {// hash what goes to the output
+    $apphash=md5($app['basevehicleid'].$app['makeid'].$app['equipmentid'].$app['parttypeid'].$app['positionid'].$app['quantityperapp'].$app['partnumber'].$mfrlabel.$this->appAttributesHash($app['attributes'], $includecosmeticattributes));
+    if(array_key_exists($apphash, $existingapphashes))
+    {
+     continue;
+    }
+    else  
+    {// first time seeing this hash
+     $existingapphashes[$apphash]='';
+    }
+   }  
+   
+   $assetElement=new DOMElement('Asset');
+   $root->appendChild($assetElement);
+
+   if(array_key_exists('action', $app))
+   {
+    $assetElement->setAttribute('action', $app['action']);
+   }
+   else
+   {
+    $assetElement->setAttribute('action', 'A');
+   }
+   $assetElement->setAttribute('id', $appnumber);
+      
+   $basevehicleElement=new DOMElement('BaseVehicle');
+   $assetElement->appendChild($basevehicleElement);
+   $basevehicleElement->setAttribute('id', $app['basevehicleid']);
+   
+   
+   // get sorted copy of the attributes
+   $vcdbattributes=array();
+   foreach($app['attributes'] as $attribute)
+   {
+    if($includecosmeticattributes==false && $attribute['cosmetic']==1){continue;}
+    if($attribute['type']=='vcdb' && $attribute['value']!=0)
+    {
+     $vcdbattributes[]=$attribute;
+    }
+   }
+   
+   usort($vcdbattributes, function($a,$b) 
+   {
+    $reflist=array('SubModel'=>1,'MfrBodyCode'=>2,'BodyNumDoors'=>3,'BodyType'=>4,'DriveType'=>5,'EngineBase'=>6,'EngineBlock'=>7,'EngineBoreStroke'=>8,'EngineDesignation'=>9,'EngineVIN'=>10,'EngineVersion'=>11,'EngineMfr'=>12,'PowerOutput'=>13,'ValvesPerEngine'=>14,'FuelDeliveryType'=>15,'FuelDeliverySubType'=>16,'FuelSystemControlType'=>17,'FuelSystemDesign'=>18,'Aspiration'=>19,'CylinderHeadType'=>20,'FuelType'=>21,'IgnitionSystemType'=>22,'TransmissionMfrCode'=>23,'TransmissionBase'=>24,'TransmissionType'=>25,'TransmissionControlType'=>26,'TransmissionNumSpeeds'=>27,'TransElecControlled'=>28,'TransmissionMfr'=>29,'BedLength'=>30,'BedType'=>31,'WheelBase'=>32,'BrakeSystem'=>33,'FrontBrakeType'=>34,'RearBrakeType'=>35,'BrakeABS'=>36,'FrontSpringType'=>37,'RearSpringType'=>38,'SteeringSystem'=>39,'SteeringType'=>40,'Region'=>41);
+    if(array_key_exists($a['name'], $reflist) && array_key_exists($b['name'], $reflist))
+    {
+    if($reflist[$a['name']]==$reflist[$b['name']]){return 0;}
+    if(intval($reflist[$a['name']]) > intval($reflist[$b['name']])){return 1;}else{return -1;}
+   }
+   else
+   { // one (or both) of the attribute names is not valid. return "=" (0)
+    return 0;
+   }});
+   
+   foreach($vcdbattributes as $attribute)
+   {
+     $vcdbElement=new DOMElement($attribute['name']);
+     $assetElement->appendChild($vcdbElement);
+     $vcdbElement->setAttribute('id', $attribute['value']);
+   }
+
+   foreach($app['attributes'] as $attribute)
+   {
+    if($includecosmeticattributes==false && $attribute['cosmetic']==1){continue;}
+    if($attribute['type']=='qdb')
+    {
+     $qdbtext=$qdb->qualifierText($attribute['name'],explode('~', str_replace('|','',$attribute['value'])));
+     $qualElement=new DOMElement('Qual');
+     $assetElement->appendChild($qualElement);
+     $qualElement->setAttribute('id', $attribute['name']);
+     
+     if($attribute['value']!='')
+     {
+      $parms=explode('~',$attribute['value']);
+      foreach($parms as $parm)
+      {
+       if(trim($parm)!='')
+       {
+        $parmbits=explode('|',$parm);        
+        if(count($parmbits)==2 && trim($parmbits[0])!='')
+        {
+         $paramElement=new DOMElement('param');
+         $qualElement->appendChild($paramElement);
+         $paramElement->setAttribute('value', trim($parmbits[0]));
+      
+         if(trim($parmbits[1])!='')
+         {// uom is present "288|mm"
+          $paramElement->setAttribute('uom', trim($parmbits[1]));
+         }        
+        }
+       }
+      }
+     }
+     
+     $qdbtextElement=new DOMElement('text', htmlspecialchars($qdbtext, ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+     $qualElement->appendChild($qdbtextElement);
+    }       
+   }   
+
+   foreach($app['attributes'] as $attribute)
+   {
+    if($includecosmeticattributes==false && $attribute['cosmetic']==1){continue;}
+    if($attribute['type']=='note')
+    {
+     $noteElement=new DOMElement('Note', htmlspecialchars($attribute['value'], ENT_XML1 | ENT_COMPAT, 'UTF-8'));
+     $assetElement->appendChild($noteElement);
+    }
+   }
+         
+   $assetnameElement=new DOMElement('AssetName',$app['assetname']); 
+   $assetElement->appendChild($assetnameElement);       
+  
+   $appnumber++;
+  }
+  
+  
+  
+  // -------
+  
+  
   
   $footerElement=new DOMElement('Footer');
   $root->appendChild($footerElement);

@@ -371,7 +371,7 @@ class setup
         applicationid int unsigned null,
         assetid varchar(255) not null,
         representation varchar(255) not null,
-        assetItemOrder tinyint unsigned not null,
+        assetItemOrder int unsigned not null,
         cosmetic tinyint unsigned not null,
         PRIMARY KEY (id),
         INDEX idx_applicationid (applicationid))";

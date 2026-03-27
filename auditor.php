@@ -223,6 +223,13 @@ foreach($partnumbers as $partnumber)
     // 
   
 $appids=$pim->getAppIDsByRandom(250);
+$appauditrequests=$pim->getAuditRequests('app-general');
+foreach($appauditrequests as $appauditrequest)
+{
+    $appids[]=intval($appauditrequest['requestdata']);
+    $pim->deleteAuditRequest($appauditrequest['id']);
+}
+
 foreach($appids as $appid)
 {
 //    echo $appid."\n";
