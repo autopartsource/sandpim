@@ -1597,6 +1597,27 @@ class setup
         unique key idx_receiverprofileid (receiverprofileid,applicationid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiver_applicationstate ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiver_applicationstate ('.$db->conn->error.')';}
         
+        $sql="CREATE TABLE internalattribute (
+        attributename varchar(255) NOT NULL,
+        descriprion varchar(255) not null,
+        format varchar(255) not null,
+        uom varchar(255) not null,
+        PRIMARY KEY (attributename))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_internalattribute ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_internalattribute ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE part_internalattribute (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partnumber varchar(255) NOT NULL,
+        attributename varchar(255) not null,
+        attributevalue varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_partnumber (partnumber),
+        INDEX idx_part_attribute (partnumber,attributename),
+        INDEX idx_attributename (attributename),
+        INDEX idx_attribute_value (attributename,attributevalue))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - part_internalattribute ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - part_internalattribute ('.$db->conn->error.')';}
+
+        
         $sql="CREATE TABLE navelement (
         navid varchar(255) not null,
         category varchar(255) not null,

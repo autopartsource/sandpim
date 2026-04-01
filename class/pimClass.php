@@ -2196,6 +2196,54 @@ function countAppsByPartcategories($partcategories)
   }
   $db->close();
  }
+ 
+ function getPartInternalAttributes($partnumber)
+ {
+  $db = new mysql; $db->connect(); $keyedattributes=array(); $attributes=array();
+
+  $basepart=$this->basepartOfPart($partnumber);
+  if($basepart)
+  {// this part has a base - we need to deal with inheritance
+   // unique key for identifying attributes is PAID+userDefinedAttributeName+uom
+   
+   if($stmt=$db->conn->prepare('select id,part_internalattribute.attributename,attributevalue,descriprion,format,uom from part_internalattribute,internalattribute where part_internalattribute.attributename=internalattribute.attributename and partnumber=?'))
+   {
+    $stmt->bind_param('s',$basepart);
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $key=$row['attributename'].'|'.$row['uom'];
+     $keyedattributes[$key]=array('id'=>$row['id'],'attributename'=>$row['attributename'],'descriprion'=>$row['description'],'attributevalue'=>$row['attributevalue'],'uom'=>$row['uom'],'format'=>$row['format'],'inheritedfrom'=>$basepart);
+    }
+   }   
+  }
+  
+  if($stmt=$db->conn->prepare('select id,part_internalattribute.attributename,attributevalue,descriprion,format,uom from part_internalattribute,internalattribute where part_internalattribute.attributename=internalattribute.attributename and partnumber=?'))
+  {
+   $stmt->bind_param('s',$partnumber);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $key=$row['attributename'].'|'.$row['uom'];
+    $keyedattributes[$key]=array('id'=>$row['id'],'attributename'=>$row['attributename'],'description'=>$row['description'],'attributevalue'=>$row['attributevalue'],'uom'=>$row['uom'],'format'=>$row['format'],'inheritedfrom'=>'');
+   }
+  }
+  
+  foreach($keyedattributes as $keyedattribute)
+  {
+      $attributes[]=$keyedattribute;
+  }
+  
+  $db->close();
+  return $attributes;
+ }
+
+ 
+ 
+ 
+ 
 
  function getPartEXPIs($partnumber)
  {

@@ -24,13 +24,63 @@ if(!$pim->userHasNavelement($_SESSION['userid'], 'PARTS/LIFECYCLE'))
  exit;    
 }
 
+$requirements=
+ array(
+    '0-release'=>array(
+        'Division set to 18 in ERP',
+        'Prime vendor is set to BP1 or BR1 (un-sourced) in ERP'),
+    '1-electronic'=>array(
+        'OE partnumber(s) added to part',
+        'Aftermarket interchanges added to part',
+        'Proper division (not 18) set in ERP',
+        'GTIN Assigned in ERP and PIM',
+        'Catalog applications added to part',
+        'Technical drawing connected to part',
+        'PAdb attributes added to part',
+        'Generic marketing photo connected to part',
+        'Estimated first-stock date set',
+        'Vendor cost, partnumber and MOQ set in ERP',
+        'Competitor market prices have been researched',
+        'Viability Scorecard completed',
+        'Financial commitment of tooling and/or PO',
+        'Estimated first-stock date is set'),
+    '3-available'=>array(
+        'Standard cost set in ERP',
+        'Weight in ERP',
+        'Packages in PIM',
+        'Published selling price in ERP and PIM',
+        'Primary photo of actual part',
+        'We actually have inventory'),
+    '1-available'=>array(
+        'OE partnumber(s) added to part',
+        'Aftermarket interchanges added to part',
+        'Proper division (not 18) set in ERP',
+        'GTIN Assigned in ERP and PIM',
+        'Catalog applications added to part',
+        'Technical drawing connected to part',
+        'PAdb attributes added to part',
+        'Generic marketing photo connected to part',
+        'Estimated first-stock date set',
+        'Vendor cost, partnumber and MOQ set in ERP',
+        'Competitor market prices have been researched',
+        'Viability Scorecard completed',
+        'Financial commitment of tooling and/or PO',
+        'Estimated first-stock date is set',
+        'Standard cost set in ERP',
+        'Weight in ERP',
+        'Packages in PIM',
+        'Published selling price in ERP and PIM',
+        'Primary photo of actual part',
+        'We actually have inventory'));
+
+
 $pcdb = new pcdb;
 $configGet = new configGet;
 $partnumber = $pim->sanitizePartnumber($_GET['partnumber']);
 $part = $pim->getPart($partnumber);
 $balance=$pim->getPartBalance($partnumber);
 $action='';
-if(in_array($_GET['action'], ['propose','electronic','available','whilesupplieslast','supersede','discontinue','obsolete']))
+if(in_array($_GET['action'], ['propose','release','electronic','available','whilesupplieslast','supersede','discontinue','obsolete']))
 {
  $action=$_GET['action']; 
 }
@@ -44,13 +94,23 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
   case 'propose':
    $pim->setPartLifecyclestatus($partnumber, '0', true);
    $newoid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Proposed', $newoid);
+   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']).' to Proposed', $newoid);
+   break;
+
+  case 'release':
+   $pim->setPartLifecyclestatus($partnumber, '1', true);
+   $newoid=$pim->getOIDofPart($partnumber);
+   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']).' to Released', $newoid);
+   if(array_key_exists('addnotification', $_POST))
+   {
+    $pim->addNotificationToQueue('PART-RELEASE', 'partnumber:'.$partnumber.';releaseddate:'.$actiondate);       
+   }
    break;
 
   case 'electronic':
    $pim->setPartLifecyclestatus($partnumber, '3', true);
    $newoid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Electronically Announced', $newoid);
+   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']).' to Electronically Announced', $newoid);
    if(array_key_exists('addnotification', $_POST))
    {
     $pim->addNotificationToQueue('PART-ELECTRONIC', 'partnumber:'.$partnumber.';availabledate:'.$actiondate);       
@@ -61,7 +121,7 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
    $pim->setPartAvailableDate($partnumber, $actiondate, false);
    $pim->setPartLifecyclestatus($partnumber, '2', true);
    $newoid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Available to order', $newoid);
+   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']).' to Available to order', $newoid);
    if(array_key_exists('addnotification', $_POST))
    {
     $pim->addNotificationToQueue('PART-AVAILABLE', 'partnumber:'.$partnumber.';availabledate:'.$actiondate);       
@@ -72,7 +132,7 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
    $pim->setPartAvailableDate($partnumber, $actiondate, false);
    $pim->setPartLifecyclestatus($partnumber, 'A', true);
    $newoid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Available while supplies last', $newoid);
+   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']).' to Available while supplies last', $newoid);
    if(array_key_exists('addnotification', $_POST))
    {
     $pim->addNotificationToQueue('PART-AVAILABLE-WHILE-SUPPLIES-LAST', 'partnumber:'.$partnumber.';availabledate:'.$actiondate);
@@ -83,7 +143,7 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
    $pim->setPartSupersededdDate($partnumber, $actiondate, false);
    $pim->setPartLifecyclestatus($partnumber, '7', true);
    $newoid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Superseded', $newoid);
+   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']).' to Superseded', $newoid);
    if(array_key_exists('addnotification', $_POST))
    {
     $pim->addNotificationToQueue('PART-SUPERDEDED', 'partnumber:'.$partnumber.';supersededdate:'.$actiondate);
@@ -94,7 +154,7 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
    $pim->setPartDiscontinuedDate($partnumber, $actiondate, false);      
    $pim->setPartLifecyclestatus($partnumber, '8', true);
    $newoid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Discontinued', $newoid);
+   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']).' to Discontinued', $newoid);
    if(array_key_exists('addnotification', $_POST))
    {
     $pim->addNotificationToQueue('PART-DISCONTINUED', 'partnumber:'.$partnumber.';discontinueddate:'.$actiondate);
@@ -105,7 +165,7 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
    $pim->setPartObsoletedDate($partnumber, $actiondate, false);
    $pim->setPartLifecyclestatus($partnumber, '9', true);
    $newoid=$pim->getOIDofPart($partnumber);
-   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$part['lifecyclestatus'].' to Obsolete', $newoid);
+   $pim->logPartEvent($partnumber, $_SESSION['userid'], 'lifecycle changed from '.$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']).' to Obsolete', $newoid);
    if(array_key_exists('addnotification', $_POST))
    {
     $pim->addNotificationToQueue('PART-OBSOLETE', 'partnumber:'.$partnumber.';obsoleteddate:'.$actiondate);
@@ -129,17 +189,26 @@ $showaddtoqueuecheck=false;
 $fromtostatus=$part['lifecyclestatus'].'-'.$action;
 switch($fromtostatus)
 {
- case '0-electronic': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Electronically Announced<strong>'; $showaddtoqueuecheck=true; break;
- case '0-available': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Available to Order</strong>'; $showavailabledate=true; $showaddtoqueuecheck=true; break;
+ case '0-release': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Released</strong>'; break;
+ case '0-electronic': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Electronically Announced</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showaddtoqueuecheck=true; break;
+ case '0-available': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Available to Order</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showavailabledate=true; $showaddtoqueuecheck=true; break;
+ case '0-whilesupplieslast': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Available While Supplies Last</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; break;
+ case '0-discontinue': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Discontinued</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; $showaddtoqueuecheck=false; break;
+ case '0-obsolete': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Obsolete</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showobsoletedate=true; $showaddtoqueuecheck=false; break;
  case '1-propose': $message='You are about to change the status of this part from <strong>Released</strong> back to <strong>Proposed</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
  case '1-electronic': $message='You are about to change the status of this part from <strong>Released</strong> to <strong>Electronically Announced</strong>'; $showaddtoqueuecheck=true; break;
  case '1-available': $message='You are about to change the status of this part from <strong>Released</strong> to <strong>Available to Order</strong>'; $showavailabledate=true; break;
  case '2-propose': $message='You are about to change the status of this part from <strong>Available to Order</strong> back to <strong>Proposed</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
+ case '2-release': $message='You are about to change the status of this part from <strong>Available to Order</strong> back to <strong>Released</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
+ case '2-electronic': $message='You are about to change the status of this part from <strong>Available to Order</strong> to <strong>Electronically Announced</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
  case '2-whilesupplieslast': $message='You are about to change the status of this part from <strong>Available to Order</strong> to <strong>Available Only While Supplies Last</strong>.'; $showaddtoqueuecheck=true; break; 
  case '2-supersede': $message='You are about to change the status of this part from <strong>Available to Order</strong> to <strong>Superseded</strong>'; $showsupersededdate=true;  $showaddtoqueuecheck=true; break; 
  case '2-discontinue': $message='You are about to change the status of this part from <strong>Available to Order</strong> to <strong>Discontinued</strong>'; $showdiscontinuedate=true; $showaddtoqueuecheck=true; break;
  case '3-propose': $message='You are about to change the status of this part from <strong>Electronically Announced</strong> back to <strong>Proposed</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
+ case '3-release': $message='You are about to change the status of this part from <strong>Electronically Announced</strong> back to <strong>Released</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
  case '3-available': $message='You are about to change the status of this part from <strong>Electronically Announced</strong> to <strong>Available to Order</strong>'; $showavailabledate=true; $showaddtoqueuecheck=true; break;
+ case '3-discontinue': $message='You are about to change the status of this part from <strong>Electronically Announced</strong> to <strong>Discontinued</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; $showaddtoqueuecheck=true; break;
+ case '3-supersede': $message='You are about to change the status of this part from <strong>Electronically Announced</strong> to <strong>Superseded</strong>'; $showsupersededdate=true; $showaddtoqueuecheck=true; break;
  case '4-propose': $message='You are about to change the status of this part from <strong>Announced</strong> back to <strong>Proposed</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
  case '4-electronic': $message='You are about to change the status of this part from <strong>Announced</strong> to <strong>Electronically Announced</strong>'; $showaddtoqueuecheck=true; break;
  case '4-available': $message='You are about to change the status of this part from <strong>Announced</strong> to <strong>Available to Order</strong>'; $showavailabledate=true; $showaddtoqueuecheck=true; break;
@@ -147,11 +216,15 @@ switch($fromtostatus)
  case '6-supersede': $message='You are about to change the status of this part from <strong>Re-Numbered</strong> to <strong>Superseded</strong>'; $showsupersededdate=true; $showaddtoqueuecheck=true; break;
  case '6-discontinue': $message='You are about to change the status of this part from <strong>Re-Numbered</strong> to <strong>Superseded</strong>'; $showdiscontinuedate=true; $showaddtoqueuecheck=true; break;
  case '7-available': $message='You are about to change the status of this part from <strong>Superseded</strong> back to <strong>Available to Order</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showavailabledate=true; break;
+ case '7-whilesupplieslast': $message='You are about to change the status of this part from <strong>Superseded</strong> back to <strong>Available While Supplies Last</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; break;
  case '7-discontinue': $message='You are about to change the status of this part from <strong>Superseded</strong> to <strong>Discontinued</strong>'; $showdiscontinuedate=true; $showaddtoqueuecheck=true; break;
+ case '7-obsolete': $message='You are about to change the status of this part from <strong>Superseded</strong> to <strong>Obsolete</strong>'; $showobsoletedate=true; $showaddtoqueuecheck=true; break;
  case '8-available': $message='You are about to change the status of this part from <strong>Discontinued</strong> back to <strong>Available to Order</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showavailabledate=true; break;
+ case '8-whilesupplieslast': $message='You are about to change the status of this part from <strong>Discontinued</strong> back to <strong>Available While Supplies Last</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; break;
  case '8-obsolete': $message='You are about to change the status of this part from <strong>Discontinued</strong> to <strong>Obsolete</strong>'; $showobsoletedate=true; $showaddtoqueuecheck=true; break;
  case '9-whilesupplieslast': $message='You are about to change the status of this part from <strong>Obsolete</strong> back to <strong>Available While Supplies Last</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; break;
  case '9-discontinue': $message='You are about to change the status of this part from <strong>Obsolete</strong> back to <strong>Discontinued</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; break;
+ case '9-supersede': $message='You are about to change the status of this part from <strong>Obsolete</strong> to <strong>Superseded</strong>'; $showsupersededdate=true; $showaddtoqueuecheck=true; break;
  case 'A-available': $message='You are about to change the status of this part from <strong>Available only while supplies last</strong> to <strong>Available to Order</strong>'; $showavailabledate=true; $showaddtoqueuecheck=true; break;
  case 'A-supersede': $message='You are about to change the status of this part from <strong>Available only while supplies last</strong> to <strong>Superseded</strong>'; $showsupersededdate=true; $showaddtoqueuecheck=true; break;
  case 'A-discontinue': $message='You are about to change the status of this part from <strong>Available only while supplies last</strong> to <strong>Discontinued</strong>'; $showdiscontinuedate=true; $showaddtoqueuecheck=true; break;
@@ -161,6 +234,11 @@ switch($fromtostatus)
  default: $message='unknown from-to'; break;
 }
 
+$requirementshtml='';
+if(array_key_exists($fromtostatus, $requirements))
+{
+ $requirementshtml='<div><div style="padding:10px;"><strong>Verify that these conditions have been met before making this change:</strong></div><div style="padding:30px;">'.implode('<div></div>',$requirements[$fromtostatus]).'</div></div>';
+}
 
 ?>
 <!DOCTYPE html>
@@ -198,9 +276,17 @@ switch($fromtostatus)
                             } ?>
                             
                             <form method="post" action="./partLifecycleConfirm.php?action=<?php echo $action;?>&partnumber=<?php echo $partnumber;?>">
+                                
+                                <?php echo $requirementshtml;?>                                
+                                
+                                
                                 <div style="padding:10px;">
                                 <?php if($showavailabledate){ ?>                
                                 Set Available Date to <input style="text-align: center;" type="text" size="8" name="date" value="<?php echo date('Y-m-d');?>"/>
+                                <?php }?>
+
+                                <?php if($showareleasedate){ ?>                
+                                Set Release Date to <input style="text-align: center;" type="text" size="8" name="date" value="<?php echo date('Y-m-d');?>"/>
                                 <?php }?>
                                 
                                 <?php if($showdiscontinuedate){ ?>                
@@ -216,10 +302,12 @@ switch($fromtostatus)
                                 <?php }?>
 
                                 <?php if($showaddtoqueuecheck){ ?>                
-                                <div style="padding:10px;">Notify the outside world of this change <input type="checkbox" name="addnotification" checked/></div>
+                                <div style="padding:10px;">Add this change to lifecycle events notification feed <input type="checkbox" name="addnotification" checked/></div>
                                 <?php }?>
                                 
                                 </div>
+                                
+                                
                                 <input type="submit" name="submit" value="Confirm"/>
                             </form>
                         </div>

@@ -57,6 +57,7 @@ $part = $pim->getPart($partnumber);
 $apps = $pim->getAppsByPartnumber($partnumber);
 $appsummarystruct = $pim->getAppSummary($partnumber);
 $attributes = $pim->getPartAttributes($partnumber);
+$internalattributes=$pim->getPartInternalAttributes($partnumber);
 $expis=$pim->getPartEXPIs($partnumber);
 $validexpis=$pcdb->getAllEXPIcodes();
 $validpadbattributes=$padb->getAttributesForParttype($part['parttypeid']);
@@ -808,6 +809,8 @@ $pim->addAuditRequest('part-general', $partnumber);
                                     <?php /*    <tr><th>UNSPC</th><td><input type="text" id="unspc" value="<?php echo $part['UNSPC']?>"/><button class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','unspc');">Update</button></td><tr> */ ?>
                                     <tr><th>Replaced By</th><td><div style="float:left;"><input type="text" id="replacedby" oninput="flagUnsavedReplacedby();" value="<?php echo $part['replacedby']?>"/></div><div style="float:left;"><button id="btnUpdateReplacedby" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','replacedby'); unflagUnsavedReplacedby();">Update</button></div><div style="clear:both;"></div></td><tr>
                                     <?php if($balance){?> <tr><th>Balance</th><td>On-Hand: <b><?php echo round($balance['qoh'],0);?></b>, Demand: <b><?php echo $balance['amd'];?></b> units/month</td><tr> <?php }?>
+                                    <?php if(count($internalattributes)){?>
+                                    <tr><th>Internal Attributes</th><td><?php foreach($internalattributes as $internalattribute){echo '<div>'.$internalattribute['attributename'].': '.$internalattribute['attributevalue'].' '.$internalattribute['uom'].'</div>';}?></td><tr> <?php }?>
                                     <tr><th>Internal<br/>Notes</th><td><textarea style="width:90%;" id="internalnotes" oninput="flagUnsavedNotes()"><?php echo $part['internalnotes']?></textarea><div><button id="btnUpdateNotes" class="btn btn-sm btn-outline-secondary"  onclick="updatePart('<?php echo $partnumber;?>','text','internalnotes'); unflagUnsavedNotes();">Update</button></div></td><tr>
                                     <tr>
                                         <th>Interchange</th>

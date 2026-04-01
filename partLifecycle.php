@@ -133,68 +133,77 @@ $balance=$pim->getPartBalance($partnumber);
                                             {
                                                 case '0':
                                                     //proposed
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=electronic&partnumber='.$part['partnumber'].'">Electronically Announce</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=release&partnumber='.$part['partnumber'].'">Release</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=obsolete&partnumber='.$part['partnumber'].'">Obsolete</a></div>';
                                                     break;
                                                 case '1':
                                                     // released
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=electronic&partnumber='.$part['partnumber'].'">Electronically Announce</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=electronic&partnumber='.$part['partnumber'].'">Electronically Announce</a></div>';
                                                     break;
                                                 case '2':
                                                     // Available to order
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=whilesupplieslast&partnumber='.$part['partnumber'].'">While Supplies Last</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=release&partnumber='.$part['partnumber'].'">Release</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=electronic&partnumber='.$part['partnumber'].'">Electronically Announce</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=whilesupplieslast&partnumber='.$part['partnumber'].'">While Supplies Last</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a></div>';
                                                     break;
                                                 case '3':
                                                     // Electronically Announced
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=release&partnumber='.$part['partnumber'].'">Release</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a></div>';
                                                     break;
                                                 case '4':
                                                     // Announced
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=electronic&partnumber='.$part['partnumber'].'">Electronically Announce</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=electronic&partnumber='.$part['partnumber'].'">Electronically Announce</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a></div>';
                                                     break;
                                                 case '5':
                                                     //Temporarily Unavailable
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a></div>';
                                                     break;
                                                 case '6':
                                                     //re-numbered
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a></div>';
                                                     break;
                                                 case '7':
                                                     //Superseded
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=whilesupplieslast&partnumber='.$part['partnumber'].'">While Supplies Last</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=obsolete&partnumber='.$part['partnumber'].'">Obsolete</a></div>';
                                                     break;
                                                 case '8':
                                                     // Discontinued
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=obsolete&partnumber='.$part['partnumber'].'">Obsolete</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=whilesupplieslast&partnumber='.$part['partnumber'].'">While Supplies Last</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=obsolete&partnumber='.$part['partnumber'].'">Obsolete</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a></div>';
                                                     break;
                                                 case '9':
                                                     //Obsolete
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=whilesupplieslast&partnumber='.$part['partnumber'].'">While Supplies Last</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=whilesupplieslast&partnumber='.$part['partnumber'].'">While Supplies Last</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a></div>';
                                                     break;
                                                 case 'A':
                                                     //Available only while supplies last
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=obsolete&partnumber='.$part['partnumber'].'">Obsolete</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=supersede&partnumber='.$part['partnumber'].'">Supersede</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=discontinue&partnumber='.$part['partnumber'].'">Discontinue</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=obsolete&partnumber='.$part['partnumber'].'">Obsolete</a></div>';
                                                     break;
                                                 case 'B':
                                                     //not yet available
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a>';
-                                                    echo '<a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=available&partnumber='.$part['partnumber'].'">Make Available</a></div>';
                                                     break;                                                
                                                 default:
                                                     break;
