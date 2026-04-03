@@ -2219,7 +2219,7 @@ function countAppsByPartcategories($partcategories)
    }   
   }
   
-  if($stmt=$db->conn->prepare('select id,part_internalattribute.attributename,attributevalue,descriprion,format,uom from part_internalattribute,internalattribute where part_internalattribute.attributename=internalattribute.attributename and partnumber=?'))
+  if($stmt=$db->conn->prepare('select id,part_internalattribute.attributename,attributevalue,description,format,uom from part_internalattribute,internalattribute where part_internalattribute.attributename=internalattribute.attributename and partnumber=?'))
   {
    $stmt->bind_param('s',$partnumber);
    $stmt->execute();
@@ -2239,10 +2239,50 @@ function countAppsByPartcategories($partcategories)
   $db->close();
   return $attributes;
  }
+ 
+ // sss
 
- 
- 
- 
+ function writePartInternalAttribute($partnumber,$attributename,$attributevalue)
+ {
+  $id=false; $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into part_internalattribute values(null,?,?,?)'))
+  {
+   $stmt->bind_param('sss',$partnumber,$attributename,$attributevalue);
+   $stmt->execute();
+   $id=$db->conn->insert_id;
+  }
+  $db->close();
+  return $id;
+ }
+
+ function getPartInternalAttribute($partnumber,$attributename)
+ {
+  $db = new mysql; $db->connect(); $attribute=false;  
+  if($stmt=$db->conn->prepare('select id,attributename,attributevalue from part_internalattribute where partnumber=? and attributename=?'))
+  {
+   $stmt->bind_param('ss',$partnumber,$attributename);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $attribute=array('id'=>$row['id'],'attributename'=>$row['attributename'],'attributevalue'=>$row['attributevalue']);
+   }
+  }    
+  $db->close();
+  return $attribute;
+ }
+  
+ function updatePartInternalAttribute($partnumber,$attributename,$attributevalue)
+ {
+  $id=false; $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part_internalattribute set attributevalue=? where partnumber=? and attributename=?'))
+  {
+   $stmt->bind_param('sss',$attributevalue,$partnumber,$attributename);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+  
  
 
  function getPartEXPIs($partnumber)
@@ -4965,7 +5005,7 @@ function allowedHost($address)
      $db->result = $stmt->get_result();
      if($row = $db->result->fetch_assoc())
      {
-      $balance=array('qoh'=>$row['qoh'],'amd'=>$row['amd'], 'updateddate'=>$row['updateddate']);
+      $balance=array('qoh'=>$row['qoh'],'amd'=>$row['amd'], 'cost'=>$row['cost'],'updateddate'=>$row['updateddate']);
      }
     }
    }

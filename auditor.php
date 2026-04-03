@@ -11,6 +11,8 @@
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/assetClass.php');
 include_once(__DIR__.'/class/interchangeClass.php');
+include_once(__DIR__.'/class/pricingClass.php');
+include_once(__DIR__.'/class/packagingClass.php');
 include_once(__DIR__.'/class/vcdbClass.php');
 include_once(__DIR__.'/class/pcdbClass.php');
 include_once(__DIR__.'/class/padbClass.php');
@@ -26,6 +28,8 @@ $interchange=new interchange();
 $pcdb=new pcdb();
 $padb=new padb();
 $vcdb=new vcdb();
+$pricing = new pricing();
+$packaging = new packaging();
 $logs=new logs();
 $sandpiperPrimary=new sandpiperPrimary();
 
@@ -48,7 +52,7 @@ $mylockid=$pim->addLock('AUDITOR', 'pid:'. getmypid());
 // --- get a random group of items to examine 
 //$pim->recordIssue('SYSTEM/HEARTBEAT','test',1,'testtest','background auditor', '1234567890');
 
-$partnumbergroupsize=200;
+$partnumbergroupsize=500;
 $partnumbers=$pim->getPartnumbersByRandom($partnumbergroupsize);
 
 $partauditrequests=$pim->getAuditRequests('part-general');
@@ -59,7 +63,7 @@ foreach($partauditrequests as $partauditrequest)
 }
 
 
-$downloadlimit=8;
+$downloadlimit=10;
 
 foreach($partnumbers as $partnumber)
 {       
@@ -210,6 +214,65 @@ foreach($partnumbers as $partnumber)
             }
         }
     }
+    
+    // look for missing prices
+    $foundpricerec=false;
+    $internalattribute=$pim->getPartInternalAttribute($partnumber, 'ERPpriceLevel8USD'); //array('id'=>$row['id'],'attributename'=>$row['attributename'],'attributevalue'=>$row['attributevalue']);
+    if($internalattribute!==false && floatval($internalattribute['attributevalue'])>0)
+    {// we have a non-zero value for ERPpriceLevel8USD
+     $prices=$pricing->getPricesByPartnumber($partnumber); //array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'pricesheetnumber'=>$row['pricesheetnumber'],'amount'=>$row['amount'],'currency'=>$row['currency'],'priceuom'=>$row['priceuom'],'pricetype'=>$row['pricetype'],'effectivedate'=>$row['effectivedate'],'expirationdate'=>$row['expirationdate'],'niceprice'=>$niceprice);
+     foreach($prices as $price)
+     {
+      if($price['pricesheetnumber']=='WD NET' && $price['currency']=='USD' &&  $price['pricetype']=='NET')
+      {
+       $foundpricerec=true;
+       if($price['amount']!=floatval($internalattribute['attributevalue']))
+       {
+        $issuehash=md5('PART/PRICE/MISMATCH'.$partnumber.'0'.'ERP level8 price ['.floatval($internalattribute['attributevalue']).'] does not agree with PIM price ['.$price['amount'].']'.'background auditor');
+        if(!$pim->getIssueByHash($issuehash))
+        {// this issue is not already recorded 
+         $pim->recordIssue('PART/PRICE/MISMATCH',$partnumber,0,'ERP level8 price ['.floatval($internalattribute['attributevalue']).'] does not agree with PIM price ['.$price['amount'].']','background auditor', $issuehash);
+        }           
+       }
+      }        
+     }
+     if(!$foundpricerec)
+     {
+      $issuehash=md5('PART/PRICE/MISSING'.$partnumber.'0'.'ERP level8 price ['.floatval($internalattribute['attributevalue']).'] is set, but missing in PIM'.'background auditor');
+      if(!$pim->getIssueByHash($issuehash))
+      {// this issue is not already recorded 
+       $pim->recordIssue('PART/PRICE/MISSING',$partnumber,0,'ERP level8 price ['.floatval($internalattribute['attributevalue']).'] is set, but missing in PIM','background auditor', $issuehash);
+      }         
+     }
+    }
+    
+    // look for packages that disagree with ERP weight
+    $foundpackagerec=false;
+    $internalattribute=$pim->getPartInternalAttribute($partnumber, 'ERPweight'); //array('id'=>$row['id'],'attributename'=>$row['attributename'],'attributevalue'=>$row['attributevalue']);
+    if($internalattribute!==false && floatval($internalattribute['attributevalue'])>0)
+    {// we have a non-zero value for ERPweight. Check for a package that corroborates it
+     $packages=$packaging->getPackagesByPartnumber($partnumber); //array('id'=>$row['id'],'partnumber'=>$row['partnumber'],'packageuom'=>$row['packageuom'],'quantityofeaches'=>$row['quantityofeaches'],'innerquantity'=>$innerquantity,'innerquantityuom'=>$row['innerquantityuom'],'weight'=>$weight,'weightsuom'=>$row['weightsuom'],'packagelevelGTIN'=>$row['packagelevelGTIN'],'packagebarcodecharacters'=>$row['packagebarcodecharacters'],'shippingheight'=>$shippingheight,'shippingwidth'=>$shippingwidth,'shippinglength'=>$shippinglength,'merchandisingheight'=>$merchandisingheight,'merchandisingwidth'=>$merchandisingwidth,'merchandisinglength'=>$merchandisinglength,'dimensionsuom'=>$row['dimensionsuom'],'orderable'=>$row['orderable'],'nicepackage'=>$nicepackage,'nicepackagehtml'=>$nicepackagehtml);
+     foreach($packages as $package)
+     {
+      if($package['weight']==floatval($internalattribute['attributevalue']))
+      {
+       $foundpackagerec=true; break;          
+      }
+     }
+     if(!$foundpackagerec)
+     {
+      $issuehash=md5('PART/PACKAGE/MISSING'.$partnumber.'0'.'ERP weight ['.floatval($internalattribute['attributevalue']).'] is non-zero, but no package with same weight is in PIM'.'background auditor');
+      if(!$pim->getIssueByHash($issuehash))
+      {// this issue is not already recorded 
+       $pim->recordIssue('PART/PACKAGE/MISSING',$partnumber,0,'ERP weight ['.floatval($internalattribute['attributevalue']).'] is non-zero, but no package with same weight is in PIM','background auditor', $issuehash);
+      }
+     }
+    }
+    
+    // find parts that are good candidates for retirements
+      // status 2, low VIO (10,000?), negative VIO trens (10% or faster), low AMD  
+    
+    
     
     // find description longer than their PCdb type-code allow. Ex: description type code DES is up to 80 characters long according to the 2021-09-24 version of the PCdb
     

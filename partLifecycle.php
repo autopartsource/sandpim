@@ -33,6 +33,7 @@ $historyevents=$logs->getPartEvents($partnumber,200);
 $part = $pim->getPart($partnumber);
 
 $balance=$pim->getPartBalance($partnumber);
+$internalattributes=$pim->getPartInternalAttributes($partnumber);
 
 
 ?>
@@ -211,7 +212,12 @@ $balance=$pim->getPartBalance($partnumber);
                                         </td>
                                     <tr/>
                                     
-                                    <?php if($balance){?> <tr><th>Balance</th><td>On-Hand: <b><?php echo round($balance['qoh'],0);?></b>, Demand: <b><?php echo $balance['amd'];?></b> units/month</td><tr> <?php }?>
+                                    <?php if($balance){?> <tr><th>Balance</th><td>On-Hand: <b><?php echo round($balance['qoh'],0);?></b>, AMD: <b><?php echo $balance['amd'];?></b> units/month, Cost: <b><?php echo $balance['cost'];?></b></td><tr> <?php }?>
+                                        
+                                    <?php if(count($internalattributes)){?>
+                                    <tr><th>Internal Attributes</th><td><?php foreach($internalattributes as $internalattribute){echo '<div>'.$internalattribute['attributename'].': <b>'.$internalattribute['attributevalue'].'</b> '.$internalattribute['uom'].'</div>';}?></td><tr> <?php }?>
+                                        
+                                        
                                     <tr><th>Internal<br/>Notes</th><td><?php echo $part['internalnotes']?></td><tr>
                                     <tr><th>Dates</th>
                                         <td>

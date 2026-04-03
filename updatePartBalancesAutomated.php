@@ -72,24 +72,87 @@ if(isset($_POST['input']))
  {
   $fields = explode("\t", $record);  
   if(count($fields)==1 && $fields[0]==''){continue;}
-    
-  if(count($fields) == 7) 
+  
+  // added 3 fields on 4/2/2026: div, weight, price
+  if(count($fields) == 7 || count($fields) == 10) 
   {
    $partnumber = trim(strtoupper($fields[0]));
    $qoh= (double)filter_var($fields[1],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
    $amd= (double)filter_var($fields[2],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-   $cost=(double)filter_var($fields[3],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);   
+   $cost=(double)filter_var($fields[3],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
    $GTIN=trim(strtoupper($fields[4]));
    $erpstatus=trim(strtoupper($fields[5]));
    $replacedby=trim(strtoupper($fields[6]));
-      
-      
+   
+   $div=0;$weight=0;$price=0;
+   if(count($fields) == 10)
+   {
+    $div=intval($fields[7]);
+    $weight=(double)filter_var($fields[8],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    $price=(double)filter_var($fields[9],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);      
+   }
+   
    if(strlen($partnumber) <= 20 && strlen($partnumber) > 0) 
    {    
     $part=$pim->getPart($partnumber);   
     if($part)
     {
      $pim->updatePartBalance($partnumber, $qoh, $amd, $cost);
+     
+     // ingest "interanalattributes"
+
+     $internalattribute=$pim->getPartInternalAttribute($partnumber, 'ERPdivision');
+     if($internalattribute===false)
+     {// record does not exist
+      $pim->writePartInternalAttribute($partnumber, 'ERPdivision', $div);
+     }
+     else
+     { // internal_attribute records already exists - determine if update is needed
+      if(intval($internalattribute['attributevalue'])!=$div)
+      { // division is diff from local value - update it
+       $pim->updatePartInternalAttribute($partnumber, 'ERPdivision', $div);
+      }  
+     }
+     
+     $internalattribute=$pim->getPartInternalAttribute($partnumber, 'ERPprimeVendor');
+     if($internalattribute===false)
+     {// record does not exist
+      $pim->writePartInternalAttribute($partnumber, 'ERPprimeVendor', $erpstatus);
+     }
+     else
+     { // internal_attribute records already exists - determine if update is needed
+      if($internalattribute['attributevalue']!=$erpstatus)
+      { // division is diff from local value - update it
+       $pim->updatePartInternalAttribute($partnumber, 'ERPprimeVendor', $erpstatus);
+      }
+     }
+
+     $internalattribute=$pim->getPartInternalAttribute($partnumber, 'ERPweight');
+     if($internalattribute===false && $weight>0)
+     {// record does not exist
+      $pim->writePartInternalAttribute($partnumber, 'ERPweight', $weight);
+     }
+     else
+     { // internal_attribute records already exists - determine if update is needed
+      if($internalattribute['attributevalue']!=$weight && $weight>0)
+      { // division is diff from local value - update it
+       $pim->updatePartInternalAttribute($partnumber, 'ERPweight', $weight);
+      }  
+     }
+
+     $internalattribute=$pim->getPartInternalAttribute($partnumber, 'ERPpriceLevel8USD');
+     if($internalattribute===false && $price>0)
+     {// record does not exist
+      $pim->writePartInternalAttribute($partnumber, 'ERPpriceLevel8USD', $price);
+     }
+     else
+     { // internal_attribute records already exists - determine if update is needed
+      if($internalattribute['attributevalue']!=$price && $price>0)
+      { // division is diff from local value - update it
+       $pim->updatePartInternalAttribute($partnumber, 'ERPpriceLevel8USD', $price);
+      }  
+     }     
+     
      if($part['GTIN']!=$GTIN)
      {
       $issuehash=md5('PART/GTIN/MISMATCH'.$partnumber.$part['GTIN'].$GTIN);

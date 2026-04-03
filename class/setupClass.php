@@ -1599,7 +1599,7 @@ class setup
         
         $sql="CREATE TABLE internalattribute (
         attributename varchar(255) NOT NULL,
-        descriprion varchar(255) not null,
+        description varchar(255) not null,
         format varchar(255) not null,
         uom varchar(255) not null,
         PRIMARY KEY (attributename))";
