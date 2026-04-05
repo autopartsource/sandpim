@@ -74,7 +74,7 @@ if(isset($_POST['input']))
   if(count($fields)==1 && $fields[0]==''){continue;}
   
   // added 3 fields on 4/2/2026: div, weight, price
-  if(count($fields) == 7 || count($fields) == 10) 
+  if(count($fields) == 10) 
   {
    $partnumber = trim(strtoupper($fields[0]));
    $qoh= (double)filter_var($fields[1],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
@@ -84,13 +84,9 @@ if(isset($_POST['input']))
    $erpstatus=trim(strtoupper($fields[5]));
    $replacedby=trim(strtoupper($fields[6]));
    
-   $div=0;$weight=0;$price=0;
-   if(count($fields) == 10)
-   {
-    $div=intval($fields[7]);
-    $weight=(double)filter_var($fields[8],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-    $price=(double)filter_var($fields[9],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);      
-   }
+   $div=intval($fields[7]);
+   $weight=(double)filter_var($fields[8],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+   $price=(double)filter_var($fields[9],FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);      
    
    if(strlen($partnumber) <= 20 && strlen($partnumber) > 0) 
    {    

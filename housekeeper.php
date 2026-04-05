@@ -56,25 +56,41 @@ if($viogeography && $vioyearquarter)
 {
  $basevehicles=$vcdb->getAllBaseVehicles(); //     $basevehicles[$row['BaseVehicleID']] = array('makename'=>$row['MakeName'],'modelname'=>$row['ModelName'],'year'=>$row['YearID'],'vehicletypeid'=>$row['VehicleTypeID'])
  $partsproposed=$pim->getParts('', 'contains', 'any', 'any', '0', 'any', 100000); //array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
+ $partreleased=$pim->getParts('', 'contains', 'any', 'any', '1', 'any', 100000); //array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
  $partsavail=$pim->getParts('', 'contains', 'any', 'any', '2', 'any', 100000); //array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description']);
  $partsannounced=$pim->getParts('', 'contains', 'any', 'any', '3', 'any', 100000);
  $partsdisconued=$pim->getParts('', 'contains', 'any', 'any', '8', 'any', 100000);
  
- $activeparts= array_merge($partsproposed,$partsavail,$partsannounced,$partsdisconued);
+ $activeparts= array_merge($partsproposed,$partreleased,$partsavail,$partsannounced,$partsdisconued);
          
  foreach($activeparts as $part)
  {
-  $piorecords=$pim->getPartVIOrecords($part['partnumber'],$viogeography,$vioyearquarter);
-  $needupdate=false; $foundrecord=false;
-  foreach($piorecords as $piorecord)
+  $currentpiorecords=$pim->getPartVIOrecords($part['partnumber'],$viogeography,$vioyearquarter);
+  $refpiorecords=$pim->getPartVIOrecords($part['partnumber'],$viogeography,$vioyearquarterref); // 'id'=>$row['id'], 'partnumber'=>$row['partnumber'], 'yearquarter'=>$row['yearQuarter'],'geography'=>$row['geography'], 'capturedate'=>$row['capturedate'],'vehiclecount'=>$row['vehicleCount'],'recordage'=>$row['age'],'startyear'=>$row['startyear'],'endyear'=>$row['endyear'],'meanyear'=>$row['meanyear'],'growthtrend'=>$row['growthtrend']
+   
+  $needupdatecurrent=false; $foundrecordcurrent=false;
+  foreach($currentpiorecords as $piorecord)
   {
-   if($piorecord['recordage']>1){$needupdate=true;}
-   $foundrecord=true;
+   if($piorecord['recordage']>1){$needupdatecurrent=true;}
+   $foundrecordcurrent=true;
   }
   
-  if($needupdate || !$foundrecord)
+  $needupdateref=false; $foundrecordref=false;
+  foreach($refpiorecords as $piorecord)
+  {
+   if($piorecord['recordage']>1){$needupdateref=true;}
+   $foundrecordref=true;
+  }
+    
+  if($needupdatecurrent || !$foundrecordcurrent)
   {
    $pim->computePartVIO($part['partnumber'], $viogeography, $vioyearquarter, $basevehicles);
+   $updatedpartcount++;
+  }
+  
+  if($needupdateref || !$foundrecordref)
+  {
+   $pim->computePartVIO($part['partnumber'], $viogeography, $vioyearquarterref, $basevehicles);
    $updatedpartcount++;
   }
   
@@ -85,7 +101,7 @@ if($viogeography && $vioyearquarter)
    $vionow=floatval($piorecordscurrent[0]['vehiclecount']);
    $viothen=floatval($piorecordsref[0]['vehiclecount'])+1;
    $viotrend=round((($vionow-$viothen)/$viothen)*100,2);
-   $pim->updatePartVIOgrowthtrend($part['partnumber'],$viogeography,$vioyearquarter,$viotrend);
+   $pim->updatePartVIOgrowthtrend($part['partnumber'],$viogeography,$vioyearquarter,$viotrend);   
   }  
  } 
 }
