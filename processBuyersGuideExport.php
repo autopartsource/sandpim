@@ -41,6 +41,10 @@ if(count($jobs))
  $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
  $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 
+ 
+ 
+ 
+ 
  $forcesummaryupdate=true;
   
  $file_name=$jobs[0]['outputfile'];
@@ -105,6 +109,7 @@ if(count($jobs))
   {
     $temppartcount++; $processedcount++;
     $vio=$pim->partVIOtotal($part['partnumber'], $viogeography, $vioyearquarter);
+    $viogrowthtrend=$pim->partVIOgrowthTrend($part['partnumber'], $viogeography, $vioyearquarter);
     $summarytemp=$pim->getAppSummary($part['partnumber']);
     $apppositionids=$pim->appPositions($part['partnumber']);    
     $namedpositions=[];
@@ -261,7 +266,7 @@ if(count($jobs))
     
     $firststockeddate=$part['firststockedDate'];
     
-    $tabbedoutputrecord=$part['partnumber']."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$ucc14."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$part['firststockedDate']."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$pricevalue."\t".$qoh."\t".$amd."\t".$caseqty."\t".$vio."\t".$oldestyear."\t".$newestyear."\t".$summary."\t".implode('/', $namedpositions);
+    $tabbedoutputrecord=$part['partnumber']."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$ucc14."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$part['firststockedDate']."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$pricevalue."\t".$qoh."\t".$amd."\t".$caseqty."\t".$vio."\t".$viogrowthtrend."\t".$oldestyear."\t".$newestyear."\t".$summary."\t".implode('/', $namedpositions);
     $tabbedoutputrecords[]=$tabbedoutputrecord;
     $tabbedoutput.=$tabbedoutputrecord."\r\n";
   
@@ -275,7 +280,7 @@ if(count($jobs))
  }
   
  $writer->setAuthor('SandPIM');
- $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','UCC14'=>'string','Part Type'=>'string','First Stocked'=>'string','Status'=>'string','Replaced By'=>'string',$pricesheetdescription=>'0.00','QoH'=>'#,##0','AMD'=>'#,##0.0','Case Qty'=>'integer','VIO ('.$viogeography.' '.$vioyearquarter.')'=>'#,##0','First model-year'=>'integer','Last model-year'=>'integer','Applications'=>'string','Positions'=>'string'), array('widths'=>array(12,25,13,14,20,11,15,11,10,10,10,8,16,14,14,150,20),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+ $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','UCC14'=>'string','Part Type'=>'string','First Stocked'=>'string','Status'=>'string','Replaced By'=>'string',$pricesheetdescription=>'0.00','QoH'=>'#,##0','AMD'=>'#,##0.0','Case Qty'=>'integer','VIO ('.$viogeography.' '.$vioyearquarter.')'=>'#,##0','VIO Trend %'=>'0.0','First model-year'=>'integer','Last model-year'=>'integer','Applications'=>'string','Positions'=>'string'), array('widths'=>array(12,25,13,14,20,11,15,11,10,10,10,8,16,15,14,14,150,20),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
  foreach($tabbedoutputrecords as $tabbedoutputrecord)
  {
   $row=explode("\t",$tabbedoutputrecord);

@@ -85,7 +85,7 @@ if(in_array($_GET['action'], ['propose','release','electronic','available','whil
  $action=$_GET['action']; 
 }
 
-if(isset($_POST) && $_POST['submit']=='Confirm')
+if(isset($_POST) && isset($_POST['submit']) && $_POST['submit']=='Confirm')
 {
  $actiondate=date('Y-m-d'); if(strlen($_POST['date'])==10){$actiondate=$_POST['date'];}
     
@@ -179,9 +179,9 @@ if(isset($_POST) && $_POST['submit']=='Confirm')
  exit;   
 }
 
-
 $showavailabledate=false;
 $showdiscontinuedate=false;
+$showareleasedate=false;
 $showsupersededdate=false;
 $showobsoletedate=false;
 $showaddtoqueuecheck=false;

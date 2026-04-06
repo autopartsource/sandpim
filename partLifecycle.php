@@ -35,6 +35,13 @@ $part = $pim->getPart($partnumber);
 $balance=$pim->getPartBalance($partnumber);
 $internalattributes=$pim->getPartInternalAttributes($partnumber);
 
+$viogeography=$configGet->getConfigValue('VIOdefaultGeography');
+$vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
+$vio=$pim->partVIOtotal($partnumber, $viogeography, $vioyearquarter);
+$viogrowthtrend=$pim->partVIOgrowthTrend($partnumber, $viogeography, $vioyearquarter);
+$viomeanyear=$pim->partVIOmeanYear($partnumber, $viogeography, $vioyearquarter);
+$viostartyear=$pim->partVIOstartYear($partnumber, $viogeography, $vioyearquarter);
+$vioendyear=$pim->partVIOendYear($partnumber, $viogeography, $vioyearquarter);
 
 ?>
 <!DOCTYPE html>
@@ -231,6 +238,9 @@ $internalattributes=$pim->getPartInternalAttributes($partnumber);
                                             ?>
                                         </td>
                                     <tr>
+                                    
+                                    <?php if($vio){echo '<tr><th>VIO ('.$viogeography.' '.$vioyearquarter.')</th><td>'.number_format($vio,0,'.',',').'<br/>Trend: '.$viogrowthtrend.'%<br/>Min,Mean,Max: '.$viostartyear.', '.$viomeanyear.', '.$vioendyear.'</td><tr>';}?>
+                                    
                                     <tr><th>Health Score</th><td><div style="float:left;"></div><?php echo $pim->partHealthScore($part['partnumber']);?><div style="clear:both;"></div></td><tr>
                                 </table>
                             </div>

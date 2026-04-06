@@ -107,6 +107,7 @@ $balance=$pim->getPartBalance($partnumber);
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
 $vio=$pim->partVIOtotal($partnumber, $viogeography, $vioyearquarter);
+$viogrowthtrend=$pim->partVIOgrowthTrend($partnumber, $viogeography, $vioyearquarter);
 $viomeanyear=$pim->partVIOmeanYear($partnumber, $viogeography, $vioyearquarter);
 $viostartyear=$pim->partVIOstartYear($partnumber, $viogeography, $vioyearquarter);
 $vioendyear=$pim->partVIOendYear($partnumber, $viogeography, $vioyearquarter);
@@ -1048,7 +1049,7 @@ $pim->addAuditRequest('part-general', $partnumber);
                                     <?php }?>
 
                                     <tr><th>Base Part</th><td><div style="float:left;"><input type="text" id="basepart" oninput="flagUnsavedBasepart();" value="<?php echo $part['basepart']?>"/></div><div style="float:left;"><button id="btnUpdateBasepart" class="btn btn-sm btn-outline-secondary" onclick="updatePart('<?php echo $partnumber;?>','text','basepart'); unflagUnsavedBasepart();">Update</button></div><div style="clear:both;"></div></td><tr>
-                                    <?php if($vio){echo '<tr><th>VIO ('.$viogeography.' '.$vioyearquarter.')</th><td>'.number_format($vio,0,'.',',').'<br/>Min,Mean,Max: '.$viostartyear.', '.$viomeanyear.', '.$vioendyear.'</td><tr>';}?>
+                                    <?php if($vio){echo '<tr><th>VIO ('.$viogeography.' '.$vioyearquarter.')</th><td>'.number_format($vio,0,'.',',').'<br/>Trend: '.$viogrowthtrend.'%<br/>Min,Mean,Max: '.$viostartyear.', '.$viomeanyear.', '.$vioendyear.'</td><tr>';}?>
                                     <tr><th>Dates</th>
                                         <td>
                                             <div>Created in PIM: <?php echo $part['createdDate'];?></div>
