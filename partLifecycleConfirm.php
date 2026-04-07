@@ -2,11 +2,17 @@
 include_once('./includes/loginCheck.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/packagingClass.php');
+include_once('./class/pricingClass.php');
+include_once('./class/interchangeClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/logsClass.php');
 $navCategory = 'parts';
 
 $pim = new pim;
+$packaging= new packaging;
+$pricing = new pricing;
+$interchange = new interchange;
 $logs=new logs;
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
@@ -23,6 +29,8 @@ if(!$pim->userHasNavelement($_SESSION['userid'], 'PARTS/LIFECYCLE'))
  http_response_code(404); // nothing to see here, folks
  exit;    
 }
+
+$validerpdivisions=[35,36,37,39,41,42,43,44,45];
 
 $requirements=
  array(
@@ -78,8 +86,14 @@ $pcdb = new pcdb;
 $configGet = new configGet;
 $partnumber = $pim->sanitizePartnumber($_GET['partnumber']);
 $part = $pim->getPart($partnumber);
+if(!$part){exit;}
+
+$packages=$packaging->getPackagesByPartnumber($partnumber);
+$prices=$pricing->getPricesByPartnumber($partnumber);
+$interchangerecs=$interchange->getInterchangeByPartnumber($partnumber);
 $balance=$pim->getPartBalance($partnumber);
 $action='';
+
 if(in_array($_GET['action'], ['propose','release','electronic','available','whilesupplieslast','supersede','discontinue','obsolete']))
 {
  $action=$_GET['action']; 
@@ -185,12 +199,76 @@ $showareleasedate=false;
 $showsupersededdate=false;
 $showobsoletedate=false;
 $showaddtoqueuecheck=false;
+$showconfirmbutton=true;
+$guardrailmessage='';
+
+$erpsellingprice=0;
+$erpdivision=0;
+$erpprimevendor='';
+$internalattributes=$pim->getPartInternalAttributes($partnumber);
+foreach($internalattributes as $internalattribute)
+{
+ if($internalattribute['attributename']=='ERPpriceLevel8USD'){$erpsellingprice=floatval($internalattribute['attributevalue']);}
+ if($internalattribute['attributename']=='ERPdivision'){$erpdivision=intval($internalattribute['attributevalue']);}
+ if($internalattribute['attributename']=='ERPprimeVendor'){$erpprimevendor=$internalattribute['attributevalue'];} 
+}
+
 
 $fromtostatus=$part['lifecyclestatus'].'-'.$action;
 switch($fromtostatus)
 {
- case '0-release': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Released</strong>'; break;
- case '0-electronic': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Electronically Announced</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showaddtoqueuecheck=true; break;
+ case '0-release': 
+       $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Released</strong>';
+       if(!in_array($erpdivision,$validerpdivisions))
+       {
+        $showconfirmbutton=false;
+        $guardrailmessage='ERP division is not valid. Lifecycle change not allowed.';
+       }     
+     
+       break;
+ 
+ case '0-electronic': 
+     $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Electronically Announced</strong>. <span style="color:red;"><strong>This is not normal</strong></span>';
+     $showaddtoqueuecheck=true;
+     
+     if(!in_array($erpdivision,$validerpdivisions))
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>ERP division is not valid. Lifecycle change not allowed</div>';
+     }
+
+     if(trim($part['GTIN'])=='')
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>GTIN is blank for part. Lifecycle change not allowed</div>';
+     }
+     
+     if(count($packages)==0)
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>No packages exist for part. Lifecycle change not allowed</div>';
+     }
+
+     if(count($prices)==0)
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>No prices exist for part. Lifecycle change not allowed</div>';
+     }
+     
+     if(count($interchangerecs)==0)
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>No competitor interchanges exist for part. Lifecycle change not allowed</div>';
+     }
+
+     if($balance['cost']==0)
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>Standar cost from ERP is zero. Lifecycle change not allowed</div>';
+     }
+
+     break;
+ 
  case '0-available': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Available to Order</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showavailabledate=true; $showaddtoqueuecheck=true; break;
  case '0-whilesupplieslast': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Available While Supplies Last</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; break;
  case '0-discontinue': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Discontinued</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; $showaddtoqueuecheck=false; break;
@@ -307,8 +385,9 @@ if(array_key_exists($fromtostatus, $requirements))
                                 
                                 </div>
                                 
-                                
+                                <?php if($showconfirmbutton){ ?>
                                 <input type="submit" name="submit" value="Confirm"/>
+                                <?php }else{echo '<div style="color:red;">'.$guardrailmessage.'</div>';}?>
                             </form>
                         </div>
                     </div>                    

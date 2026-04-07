@@ -146,7 +146,7 @@ $vioendyear=$pim->partVIOendYear($partnumber, $viogeography, $vioyearquarter);
                                                     break;
                                                 case '1':
                                                     // released
-                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a></div>';
+                                                    echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=propose&partnumber='.$part['partnumber'].'">Propose</a></div>';                                                    
                                                     echo '<div><a class="btn btn-block btn-secondary" style="margin:5px" href="partLifecycleConfirm.php?action=electronic&partnumber='.$part['partnumber'].'">Electronically Announce</a></div>';
                                                     break;
                                                 case '2':
