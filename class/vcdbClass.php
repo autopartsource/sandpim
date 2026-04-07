@@ -716,7 +716,7 @@ class vcdb
 
   if($attributePair['name'] == 'WheelBase')
   {
-   if($stmt=$db->conn->prepare('SELECT WheelBase from WheelBase WHERE WheelBaseid = ?'))
+   if($stmt=$db->conn->prepare('SELECT WheelBase from WheelBase WHERE WheelBaseID = ?'))
    {
     $stmt->bind_param('i',$attributePair['value']); $stmt->execute(); $db->result = $stmt->get_result();
     if($row = $db->result->fetch_assoc()){$nicevalue=$row['WheelBase'].' Inch Wheelbase';}
@@ -1040,14 +1040,14 @@ function getBrakeConfigsForVehicleid($vehicleid)
   if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;}
   $db->connect();
   $wheelbases=array();
-  if($stmt=$db->conn->prepare('SELECT VehicleToWheelbase.WheelbaseID,Wheelbase FROM  Vehicle,VehicleToWheelbase,WheelBase WHERE Vehicle.VehicleID=VehicleToWheelbase.VehicleID  AND VehicleToWheelbase.WheelbaseID=WheelBase.WheelbaseID AND Vehicle.VehicleID=?'))
+  if($stmt=$db->conn->prepare('SELECT VehicleToWheelBase.WheelBaseID,WheelBase FROM  Vehicle,VehicleToWheelBase,WheelBase WHERE Vehicle.VehicleID=VehicleToWheelBase.VehicleID AND VehicleToWheelBase.WheelbaseID=WheelBase.WheelBaseID AND Vehicle.VehicleID=?'))
   {
    $stmt->bind_param('i', $vehicleid);
    $stmt->execute();
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $wheelbases[]=array('wheelbase'=>$row['Wheelbase'],'wheelbaseid'=>$row['WheelbaseID']);
+    $wheelbases[]=array('wheelbase'=>$row['WheelBase'],'wheelbaseid'=>$row['WheelBaseID']);
    }
   }
   $db->close();
@@ -1214,8 +1214,8 @@ function getBrakeConfigsForVehicleid($vehicleid)
   $targets[]=array('description'=>'SpringTypeConfig/SpringType (rear)','sql'=>'select SpringTypeConfig.SpringTypeConfigID as id from SpringTypeConfig left join SpringType on SpringTypeConfig.RearSpringTypeID=SpringType.SpringTypeID where SpringType.SpringTypeID is null');
   $targets[]=array('description'=>'VehicleToSteeringConfig/Vehicle','sql'=>'select VehicleToSteeringConfig.VehicleToSteeringConfigID as id from VehicleToSteeringConfig left join Vehicle on VehicleToSteeringConfig.VehicleID = Vehicle.VehicleID where Vehicle.VehicleID is null');
   $targets[]=array('description'=>'VehicleToTransmission/Vehicle','sql'=>'select VehicleToTransmission.VehicleToTransmissionID as id from VehicleToTransmission left join Vehicle on VehicleToTransmission.VehicleID =Vehicle.VehicleID where Vehicle.VehicleID is null');
-  $targets[]=array('description'=>'VehicleToWheelbase/Vehicle','sql'=>'select VehicleToWheelbase.VehicleToWheelbaseID as id from VehicleToWheelbase left join Vehicle on VehicleToWheelbase.VehicleID =Vehicle.VehicleID where Vehicle.VehicleID is null');
-  $targets[]=array('description'=>'VehicleToWheelbase/WheelBase','sql'=>'select VehicleToWheelbase.VehicleToWheelbaseID as id from VehicleToWheelbase left join WheelBase on VehicleToWheelbase.WheelbaseID=WheelBase.WheelBaseID where WheelBase.WheelBaseID is null');
+  $targets[]=array('description'=>'VehicleToWheelBase/Vehicle','sql'=>'select VehicleToWheelBase.VehicleToWheelBaseID as id from VehicleToWheelBase left join Vehicle on VehicleToWheelBase.VehicleID =Vehicle.VehicleID where Vehicle.VehicleID is null');
+  $targets[]=array('description'=>'VehicleToWheelBase/WheelBase','sql'=>'select VehicleToWheelBase.VehicleToWheelBaseID as id from VehicleToWheelBase left join WheelBase on VehicleToWheelBase.WheelBaseID=WheelBase.WheelBaseID where WheelBase.WheelBaseID is null');
   $targets[]=array('description'=>'VehicleToBedConfig/BedConfig','sql'=>'select VehicleToBedConfig.VehicleToBedConfigID as id from VehicleToBedConfig left join BedConfig on VehicleToBedConfig.BedConfigID = BedConfig.BedConfigID where BedConfig.BedConfigID is null');
   $targets[]=array('description'=>'BedConfig/BedLength','sql'=>'select BedConfig.BedConfigID as id from BedConfig left join BedLength on BedConfig.BedLengthID = BedLength.BedLengthID where BedLength.BedLengthID is null');
   $targets[]=array('description'=>'BedConfig/BedType','sql'=>'select BedConfig.BedConfigID as id from BedConfig left join BedType on BedConfig.BedTypeID = BedType.BedTypeID where BedType.BedTypeID is null');
@@ -1257,7 +1257,8 @@ function getBrakeConfigsForVehicleid($vehicleid)
   
   
   foreach($targets as $target)
-  {  
+  {
+ //     echo $target['description']."\n";   
    $db->sql = $target['sql'];
    $db->result = $db->conn->query($db->sql);
    while($row = $db->result->fetch_assoc()) 
