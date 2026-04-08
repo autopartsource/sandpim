@@ -30,7 +30,7 @@ if(!$pim->userHasNavelement($_SESSION['userid'], 'PARTS/LIFECYCLE'))
  exit;    
 }
 
-$validerpdivisions=[35,36,37,39,41,42,43,44,45];
+$validerpdivisions=[31,35,36,37,39,41,42,43,44,45,46,50,53,58,59,62,77,88];
 
 $requirements=
  array(
@@ -219,7 +219,7 @@ switch($fromtostatus)
 {
  case '0-release': 
        $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Released</strong>';
-       if(!in_array($erpdivision,$validerpdivisions))
+       if(!in_array($erpdivision,[18]))
        {
         $showconfirmbutton=false;
         $guardrailmessage='ERP division is not valid. Lifecycle change not allowed.';
@@ -269,7 +269,49 @@ switch($fromtostatus)
 
      break;
  
- case '0-available': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Available to Order</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showavailabledate=true; $showaddtoqueuecheck=true; break;
+ case '0-available': 
+     $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Available to Order</strong>. <span style="color:red;"><strong>This is not normal</strong></span>';
+     $showavailabledate=true; 
+     $showaddtoqueuecheck=true;
+     
+     if(!in_array($erpdivision,$validerpdivisions))
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>ERP division is not valid. Lifecycle change not allowed</div>';
+     }
+
+     if(trim($part['GTIN'])=='')
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>GTIN is blank for part. Lifecycle change not allowed</div>';
+     }
+     
+     if(count($packages)==0)
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>No packages exist for part. Lifecycle change not allowed</div>';
+     }
+
+     if(count($prices)==0)
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>No prices exist for part. Lifecycle change not allowed</div>';
+     }
+     
+     if(count($interchangerecs)==0)
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>No competitor interchanges exist for part. Lifecycle change not allowed</div>';
+     }
+
+     if($balance['cost']==0)
+     {
+      $showconfirmbutton=false; $showaddtoqueuecheck=false;
+      $guardrailmessage.='<div>Standar cost from ERP is zero. Lifecycle change not allowed</div>';
+     }     
+     
+     break;
+ 
  case '0-whilesupplieslast': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Available While Supplies Last</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; break;
  case '0-discontinue': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Discontinued</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showdiscontinuedate=true; $showaddtoqueuecheck=false; break;
  case '0-obsolete': $message='You are about to change the status of this part from <strong>Proposed</strong> to <strong>Obsolete</strong>. <span style="color:red;"><strong>This is not normal</strong></span>'; $showobsoletedate=true; $showaddtoqueuecheck=false; break;
