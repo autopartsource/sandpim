@@ -864,8 +864,22 @@ class asset
   return $asset;
  }
 
-  
- 
+ function getAssetRecordsByAssettagid($assettagid)
+ {
+  $db=new mysql; $db->connect(); $records=[];
+  if($stmt=$db->conn->prepare('select asset.* from asset,asset_assettag,assettag where asset.assetid =asset_assettag.assetid and asset_assettag.assettagid=assettag.id and assettag.id=?'))
+  {
+   $stmt->bind_param('i',$assettagid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+       $records[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode'],'assetlabel'=>$row['assetlabel'],'frame'=>$row['frame'],'totalFrames'=>$row['totalFrames'],'plane'=>$row['plane'],'totalPlanes'=>$row['totalPlanes']);
+   }
+  }
+  $db->close();
+  return $records;
+ }
  
  
  

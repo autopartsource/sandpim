@@ -1504,7 +1504,28 @@ class setup
         INDEX idx_version (recipeid)
         )";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - descriptionrecipeblock ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - descriptionrecipeblock ('.$db->conn->error.')';}
-                        
+
+        $sql="CREATE TABLE assetrecipe (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        partcategory int unsigned not null,
+        parttypeid int unsigned not null,
+        constraints text NOT NULL,
+        assettypecode varchar(255) not null,
+        PRIMARY KEY (id),
+        INDEX idx_category_typeid (partcategory,parttypeid)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - assetrecipe ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - assetrecipe ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE assetrecipedetail (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,        
+        assetrecipeid int unsigned not null,
+        assetid varchar(255) NOT NULL,
+        sequence int unsigned not null,
+        PRIMARY KEY (id),
+        INDEX idx_assetid (assetid)
+        )";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - assetrecipedetail ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - assetrecipedetail ('.$db->conn->error.')';}
+        
         $sql="CREATE TABLE wmapisession (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         state varchar(255) NOT NULL,
@@ -1687,8 +1708,9 @@ class setup
         $sql="insert into navelement values('SETTINGS/BACKGROUNDJOBS','SETTINGS','Background import/export jobs','backgroundJobs.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/SANDPIPER','SETTINGS','Sandpiper','sandpiper.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/DESCRIPTIONRECIPES','SETTINGS','Description Recipes','descriptionRecipes.php',14);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('SETTINGS/PROCESSLOCKS','SETTINGS','Process Locks','processLocks.php',15);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('SETTINGS/EXPORTS','SETTINGS','Manage Exports','exports.php',16);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/ASSETRECIPES','SETTINGS','Asset Recipes','assetRecipes.php',15);"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
+        $sql="insert into navelement values('SETTINGS/PROCESSLOCKS','SETTINGS','Process Locks','processLocks.php',16);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/EXPORTS','SETTINGS','Manage Exports','exports.php',17);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
                 
         $sql="insert into navelement values('IMPORT/ACESFILEUPLOAD','IMPORT','ACES File Upload','importACESupload.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/ACESSNIPPET','IMPORT','ACES xml snippet','importACESxml.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();

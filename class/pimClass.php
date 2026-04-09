@@ -2071,6 +2071,45 @@ function countAppsByPartcategories($partcategories)
   }
   $db->close();
  }
+
+ function getAssetRecipes()
+ {
+  $recipes=array(); $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('select * from assetrecipe'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    while($row = $db->result->fetch_assoc())
+    {
+     $recipes[]=array('id'=>$row['id'], 'partcategory'=>$row['partcategory'],'parttypeid'=>$row['parttypeid'],'constraints'=>$row['constraints'],'assettypecode'=>$row['assettypecode']);
+    }
+   }
+  }
+  $db->close();
+  return $recipes;
+ }
+
+ function getAssetRecipeDetails($recipeid)
+ {
+  $db = new mysql; $db->connect(); $details=array();
+  if($stmt=$db->conn->prepare('select assetrecipedetail.id,assetrecipedetail.assetid,fileType,filename,uri,sequence from assetrecipedetail left join asset on assetrecipedetail.assetid=asset.assetID where assetrecipeid=? order by sequence'))
+  {
+   if($stmt->bind_param('i',$recipeid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $details[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'fileType'=>$row['fileType'],'filename'=>$row['filename'],'uri'=>$row['uri'],'sequence'=>$row['sequence']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $details;
+ }
  
  
 
