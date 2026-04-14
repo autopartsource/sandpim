@@ -40,6 +40,7 @@ $tabbedoutputrecords=array();
 $streamXLSX=false;
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
+$viosecondarygeography=$configGet->getConfigValue('VIOsecondaryGeography');
 
 $forcesummaryupdate=true;
 
@@ -57,10 +58,16 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
   {   
    if($part=$pim->getPart(trim($fields[0])))
    {
-    //$vio=$pim->partVIOexperian($part['partnumber'], $viogeography, $vioyearquarter);
-    $vio=$pim->partVIOtotal($part['partnumber'], $viogeography, $vioyearquarter);
+    $vio=$pim->partVIOtotal($part['partnumber'], $viogeography, $vioyearquarter);    
     $meanyear=$pim->partVIOmeanYear($part['partnumber'], $viogeography, $vioyearquarter);
     $viogrowthtrend=$pim->partVIOgrowthTrend($part['partnumber'], $viogeography, $vioyearquarter);
+    
+    $viosecondary=0;
+    if($viosecondarygeography)
+    {
+     $viosecondary=$pim->partVIOtotal($part['partnumber'], $viosecondarygeography, $vioyearquarter);
+    }
+    
     $summarytemp=$pim->getAppSummary($part['partnumber']);
     
     $apppositionids=$pim->appPositions($part['partnumber']);    
@@ -193,7 +200,7 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
      $nicepackagestring=$partpackages[0]['nicepackage'];
     }
         
-    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$qoh."\t".$amd."\t".$nicepackagestring."\t".$vio."\t".$oldestyear."\t".$meanyear."\t".$newestyear."\t".$viogrowthtrend."\t".$summary."\t". implode('/', $namedpositions);
+    $tabbedoutputrecord=$fields[0]."\t".$pim->partCategoryName($part['partcategory'])."\t".$part['GTIN']."\t".$pcdb->parttypeName($part['parttypeid'])."\t".$pcdb->lifeCycleCodeDescription($part['lifecyclestatus'])."\t".$part['replacedby']."\t".$qoh."\t".$amd."\t".$nicepackagestring."\t".$vio."\t".$viosecondary."\t".$oldestyear."\t".$meanyear."\t".$newestyear."\t".$viogrowthtrend."\t".$summary."\t". implode('/', $namedpositions);
     $tabbedoutputrecords[]=$tabbedoutputrecord;
     $tabbedoutput.=$tabbedoutputrecord."\r\n";
    }
@@ -212,7 +219,7 @@ if(isset($_POST['submit']) && strlen($_POST['input'])>0)
  {
   $writer = new XLSXWriter();
   $writer->setAuthor('SandPIM');
-  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','QoH'=>'#,##0','AMD'=>'#,##0.0','Packages'=>'string','VIO ('.$viogeography.' '.$vioyearquarter.')'=>'#,##0','First model-year'=>'integer','Mean Model-Year'=>'integer','Last model-year'=>'integer','VIO Trend %'=>'0.00','Applications'=>'string','Positions'=>'string'), array('widths'=>array(18,20,13,30,20,18,10,10,20,16,14,15,14,11,150,20),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+  $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Category'=>'string','UPC'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','Replaced By'=>'string','QoH'=>'#,##0','AMD'=>'#,##0.0','Packages'=>'string','VIO pri ('.$viogeography.' '.$vioyearquarter.')'=>'#,##0','VIO sec ('.$viosecondarygeography.' '.$vioyearquarter.')'=>'#,##0','First model-year'=>'integer','Mean Model-Year'=>'integer','Last model-year'=>'integer','VIO Trend %'=>'0.00','Applications'=>'string','Positions'=>'string'), array('widths'=>array(18,20,13,30,20,18,10,10,20,16,14,15,14,11,11,150,20),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
   foreach($tabbedoutputrecords as $tabbedoutputrecord)
   {
    $row=explode("\t",$tabbedoutputrecord);
