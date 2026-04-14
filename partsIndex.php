@@ -35,21 +35,40 @@ $validpartcategoryids=array(); foreach ($partcategories as $partcategory) {$vali
 
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $searchtype = 'contains';
-
+$availdays=9999;
+$limit = 20;
+ 
 if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) 
 {
  if (isset($_GET['searchtype']) && ($_GET['searchtype'] == 'contains' || $_GET['searchtype'] == 'startswith' || $_GET['searchtype'] == 'endswith')) {$searchtype = $_GET['searchtype'];}
 
  $partnumber = strtoupper($_GET['partnumber']);
  $basepart = strtoupper($_GET['basepart']);
+ 
+ if(isset($_GET['limit']) && intval($_GET['limit'])>0){$limit=intval($_GET['limit']);} 
 
- $limit = 10; if(isset($_GET['limit']) && intval($_GET['limit'])>0){$limit=intval($_GET['limit']);}
+ if(isset($_GET['availdays'])){$availdays=intval($_GET['availdays']);}
  
  $lifecyclestatus=$_GET['lifecyclestatus']; if(!in_array($_GET['lifecyclestatus'], $validlifecyclestatuscodes)){$lifecyclestatus='any';} 
  $partcategory=$_GET['partcategory']; if(!in_array($_GET['partcategory'], $validpartcategoryids)){$partcategory='any';} 
  $parttypeid='any'; if(intval($_GET['parttypeid'])>0){$parttypeid=intval($_GET['parttypeid']);}
-        
- $parts = $pim->getParts($partnumber, $searchtype, $partcategory, $parttypeid, $lifecyclestatus, $basepart,  $limit);
+
+ $partstemp = $pim->getParts($partnumber, $searchtype, $partcategory, $parttypeid, $lifecyclestatus, $basepart, 100000);
+ $thresholdepoch=time()-(24*3600*$availdays);
+
+ foreach($partstemp as $part)
+ {
+  $datetemp=$part['availableDate']; if(strlen($datetemp)!=10){$datetemp='1995-01-01';}
+  
+//  echo '*'.$datetemp.'*<br/>';
+  if(strtotime($datetemp) < $thresholdepoch){continue;}
+  
+  $parts[]=$part;
+  
+  if(count($parts)>=$limit){break;}
+ }
+
+ 
 }
 
 
@@ -87,15 +106,28 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                                     <option value="equals" <?php if($searchtype=='equals'){echo ' selected';}?>>exactly equal to</option>
                                 </select>
                                 <input type="text" name="partnumber" value="<?php if(isset($_GET['partnumber'])){echo substr(strtoupper(trim($_GET['partnumber'])),0,20); }?>"/></div>
+
+                            <div style="padding:3px;">Made Available 
+                                <select name="availdays">
+                                    <option value="9999"<?php if($availdays==9999){echo ' selected';}?>>Ever</option> 
+                                    <option value="7"<?php if($availdays==7){echo ' selected';}?>>In the past week</option> 
+                                    <option value="30"<?php if($availdays==30){echo ' selected';}?>>In the past month</option> 
+                                    <option value="90"<?php if($availdays==90){echo ' selected';}?>>In the past 90 days</option> 
+                                    <option value="365"<?php if($availdays==365){echo ' selected';}?>>In the past year</option> 
+                                </select>
+                            </div>
+                                
+                                
                             <div style="padding:3px;">In Category 
                                 <select name="partcategory">
                                     <option value="any">Any Category</option><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>" <?php if(isset($_GET['partcategory']) && $_GET['partcategory']==$partcategory['id']){echo ' selected';}?>><?php echo $partcategory['name']; ?></option><?php } ?> 
                                 </select>
                             </div>
+                                
                             <div style="padding:3px;">Of type <select name="parttypeid"><option value="any">Any Part Type</option><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>" <?php if(isset($_GET['parttypeid']) && $_GET['parttypeid']==$parttype['id']){echo ' selected';}?>><?php echo $parttype['name'];?></option><?php }?></select></div>
                             <div style="padding:3px;">With status <select name="lifecyclestatus"><option value="any">Any Status</option><?php foreach($lifecyclestatuses as $lifecyclestatus){?> <option value="<?php echo $lifecyclestatus['code'];?>" <?php if(isset($_GET['lifecyclestatus']) && $_GET['lifecyclestatus']==$lifecyclestatus['code']){echo ' selected';}?>><?php echo $lifecyclestatus['description'];?></option><?php }?></select></div>
                             <div style="padding:3px;">With basepart <input type="text" name="basepart" value="<?php if(isset($_GET['basepart'])){echo substr(strtoupper(trim($_GET['basepart'])),0,20); }?>"/></div>
-                            <div style="padding:3px;">Limit results to <select name="limit"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option><option value="500">500</option></select></div>
+                            <div style="padding:3px;">Limit results to <select name="limit"><option value="10"<?php if($limit==10){echo ' selected';}?>>10</option><option value="20"<?php if($limit==20){echo ' selected';}?>>20</option><option value="50"<?php if($limit==50){echo ' selected';}?>>50</option><option value="100"<?php if($limit==100){echo ' selected';}?>>100</option><option value="200"<?php if($limit==200){echo ' selected';}?>>200</option><option value="500"<?php if($limit==500){echo ' selected';}?>>500</option><option value="1000"<?php if($limit==1000){echo ' selected';}?>>1000</option></select></div>
                             <div style="padding:3px;"><input type="submit" name="submit" value="Search"/></div>
                         </form>
                         </div>
@@ -108,7 +140,8 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                             <table class="table" border="1">
                                 <tr><th>Part Number</th><th>Type</th><th>Category</th><th>Description</th><th>Status</th></tr>
                                 <?php
-                                foreach ($parts as $part) {
+                                foreach ($parts as $part)
+                                {
                                     echo '<tr><td><a href="showPart.php?partnumber=' . urlencode($part['partnumber']) . '" class="btn btn-secondary">' . $part['partnumber'] . '</a></td><td>' . $pcdb->parttypeName($part['parttypeid']) . '</td><td>' . $part['partcategoryname'] . '</td><td>'.$part['description'].'</td><td>' . $pcdb->lifeCycleCodeDescription($part['lifecyclestatus']) . '</td><tr>';
                                 }
                                 ?>
@@ -134,7 +167,7 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
             </div>
         </div>    
         <!-- End of Content Container -->
-
+        
         <!-- Footer -->
         <?php include('./includes/footer.php'); ?>
     </body>

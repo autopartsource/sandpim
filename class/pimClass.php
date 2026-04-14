@@ -1341,7 +1341,7 @@ function countAppsByPartcategories($partcategories)
      $db->result = $stmt->get_result();
      while($row = $db->result->fetch_assoc())
      {
-      $parts[]=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description'],'basepart'=>$row['basepart']);
+      $parts[]=array('partnumber'=>$row['partnumber'],'oid'=>$row['oid'],'parttypeid'=>$row['parttypeid'],'lifecyclestatus'=>$row['lifecyclestatus'],'partcategory'=>$row['partcategory'],'partcategoryname'=>$row['partcategoryname'],'replacedby'=>$row['replacedby'],'description'=>$row['description'],'basepart'=>$row['basepart'],'availableDate'=>$row['availableDate']);
      }
     }
    }
