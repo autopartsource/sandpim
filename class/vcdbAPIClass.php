@@ -129,10 +129,12 @@ class vcdbapi
  public $updatecount;
  public $deletecount;
  public $deleteorphancount;
+ public $tablerecordcounts;
+ public $pagesize;
  
  public function __construct($_localdbname=false)
  {
-  $this->tableslist=array('Abbreviation','Aspiration','BaseVehicle','BedConfig','BedLength','BedType','BodyNumDoors','BodyStyleConfig','BodyType','BrakeABS','BrakeConfig','BrakeSystem','BrakeType','Class','CylinderHeadType','DriveType','ElecControlled','EngineBase','EngineBase2','EngineBlock','EngineBoreStroke','EngineConfig','EngineConfig2','EngineDesignation','EngineVIN','EngineVersion','FuelDeliveryConfig','FuelDeliverySubType','FuelDeliveryType','FuelSystemControlType','FuelSystemDesign','FuelType','IgnitionSystemType','Make','Mfr','MfrBodyCode','Model','PowerOutput','PublicationStage','Region','SpringType','SpringTypeConfig','SteeringConfig','SteeringSystem','SteeringType','SubModel','Transmission','TransmissionBase','TransmissionControlType','TransmissionMfrCode','TransmissionNumSpeeds','TransmissionType','VCdbChanges','Valves','Vehicle','VehicleToBedConfig','VehicleToBodyConfig','VehicleToBodyStyleConfig','VehicleToBrakeConfig','VehicleToClass','VehicleToDriveType','VehicleToEngineConfig','VehicleToMfrBodyCode','VehicleToSpringTypeConfig','VehicleToSteeringConfig','VehicleToTransmission','VehicleToWheelBase','VehicleType','VehicleTypeGroup','WheelBase','Year');
+  $this->tableslist=array('Abbreviation','Aspiration','BaseVehicle','BedConfig','BedLength','BedType','BodyNumDoors','BodyStyleConfig','BodyType','BrakeABS','BrakeConfig','BrakeSystem','BrakeType','Class','CylinderHeadType','DriveType','ElecControlled','EngineBase','EngineBase2','EngineBlock','EngineBoreStroke','EngineConfig','EngineConfig2','EngineDesignation','EngineVIN','EngineVersion','FuelDeliveryConfig','FuelDeliverySubType','FuelDeliveryType','FuelSystemControlType','FuelSystemDesign','FuelType','IgnitionSystemType','Make','Mfr','MfrBodyCode','Model','PowerOutput','PublicationStage','Region','SpringType','SpringTypeConfig','SteeringConfig','SteeringSystem','SteeringType','SubModel','Transmission','TransmissionBase','TransmissionControlType','TransmissionMfrCode','TransmissionNumSpeeds','TransmissionType','Valves','Vehicle','VehicleToBedConfig','VehicleToBodyConfig','VehicleToBodyStyleConfig','VehicleToBrakeConfig','VehicleToClass','VehicleToDriveType','VehicleToEngineConfig','VehicleToMfrBodyCode','VehicleToSpringTypeConfig','VehicleToSteeringConfig','VehicleToTransmission','VehicleToWheelBase','VehicleType','VehicleTypeGroup','WheelBase','Year');
   //$this->tableslist=array('VehicleToBodyStyleConfig'); 
   $this->tablekeyslist=array('Abbreviation'=>'Abbreviation','Aspiration'=>'AspirationID','BaseVehicle'=>'BaseVehicleID','BedConfig'=>'BedConfigID','BedLength'=>'BedLengthID','BedType'=>'BedTypeID','BodyNumDoors'=>'BodyNumDoorsID','BodyStyleConfig'=>'BodyStyleConfigID','BodyType'=>'BodyTypeID','BrakeABS'=>'BrakeABSID','BrakeConfig'=>'BrakeConfigID','BrakeSystem'=>'BrakeSystemID','BrakeType'=>'BrakeTypeID','Class'=>'ClassID','CylinderHeadType'=>'CylinderHeadTypeID','DriveType'=>'DriveTypeID','ElecControlled'=>'ElecControlledID','EngineBase'=>'EngineBaseID','EngineBase2'=>'EngineBaseID','EngineBlock'=>'EngineBlockID','EngineBoreStroke'=>'EngineBoreStrokeID','EngineConfig'=>'EngineConfigID','EngineConfig2'=>'EngineConfigID','EngineDesignation'=>'EngineDesignationID','EngineVIN'=>'EngineVINID','EngineVersion'=>'EngineVersionID','FuelDeliveryConfig'=>'FuelDeliveryConfigID','FuelDeliverySubType'=>'FuelDeliverySubTypeID','FuelDeliveryType'=>'FuelDeliveryTypeID','FuelSystemControlType'=>'FuelSystemControlTypeID','FuelSystemDesign'=>'FuelSystemDesignID','FuelType'=>'FuelTypeID','IgnitionSystemType'=>'IgnitionSystemTypeID','Make'=>'MakeID','Mfr'=>'MfrID','MfrBodyCode'=>'MfrBodyCodeID','Model'=>'ModelID','PowerOutput'=>'PowerOutputID','PublicationStage'=>'PublicationStageID','Region'=>'RegionID','SpringType'=>'SpringTypeID','SpringTypeConfig'=>'SpringTypeConfigID','SteeringConfig'=>'SteeringConfigID','SteeringSystem'=>'SteeringSystemID','SteeringType'=>'SteeringTypeID','SubModel'=>'SubModelID','Transmission'=>'TransmissionID','TransmissionBase'=>'TransmissionBaseID','TransmissionControlType'=>'TransmissionControlTypeID','TransmissionMfrCode'=>'TransmissionMfrCodeID','TransmissionNumSpeeds'=>'TransmissionNumSpeedsID','TransmissionType'=>'TransmissionTypeID','VCdbChanges'=>'ID','Valves'=>'ValvesID','Vehicle'=>'VehicleID','VehicleToBedConfig'=>'VehicleToBedConfigID','VehicleToBodyConfig'=>'VehicleToBodyConfigID','VehicleToBodyStyleConfig'=>'VehicleToBodyStyleConfigID','VehicleToBrakeConfig'=>'VehicleToBrakeConfigID','VehicleToClass'=>'VehicleToClassID','VehicleToDriveType'=>'VehicleToDriveTypeID','VehicleToEngineConfig'=>'VehicleToEngineConfigID','VehicleToMfrBodyCode'=>'VehicleToMfrBodyCodeID','VehicleToSpringTypeConfig'=>'VehicleToSpringTypeConfigID','VehicleToSteeringConfig'=>'VehicleToSteeringConfigID','VehicleToTransmission'=>'VehicleToTransmissionID','VehicleToWheelBase'=>'VehicleToWheelBaseID','VehicleType'=>'VehicleTypeID','VehicleTypeGroup'=>'VehicleTypeGroupID','WheelBase'=>'WheelBaseID','Year'=>'YearID');
   $this->pagelimit=0;
@@ -143,6 +145,8 @@ class vcdbapi
   $this->updatecount=0;
   $this->deletecount=0;
   $this->deleteorphancount=0;
+  $this->pagesize=1000;
+  $this->tablerecordcounts=array();
   
   $this->localdbname=$_localdbname;  // default to the hard-coded dbname from the class file (prob "vcdb")
   if(!$_localdbname)
@@ -332,7 +336,7 @@ class vcdbapi
   else
   {// no continuation link exists - this is the inital call
 // curl_setopt($ch, CURLOPT_URL,'https://'.$database.'.autocarevip.com/api/v1.0/'.$database.'/'.$table.'?CultureId='.$cultureid.$sincedateclause);
-   $url='https://'.$database.'.autocarevip.com/api/v2.0/'.$database.'/'.$table.'?CultureId='.$cultureid.$sincedateclause;
+   $url='https://'.$database.'.autocarevip.com/api/v2.0/'.$database.'/'.$table.'?CultureId='.$cultureid.'&PageSize='.$this->pagesize.$sincedateclause;
    curl_setopt($ch, CURLOPT_URL,$url);
   }
   
@@ -363,11 +367,17 @@ class vcdbapi
   if(array_key_exists('x-pagination',$headers))
   {
    $paginationarray=json_decode($headers['x-pagination'][0],true);
+   
    if(array_key_exists('nextPageLink',$paginationarray)&&trim($paginationarray['nextPageLink'])!='')
    {
     $this->nextpagelink= str_replace('http:','https:', $paginationarray['nextPageLink']);    
     $this->morepages=true;
    }
+   
+   if(array_key_exists('totalCount',$paginationarray))
+   {
+    $this->tablerecordcounts[$table]=intval(trim($paginationarray['totalCount']));        
+   }   
   }  
   
   if($this->debug){echo 'CURL url: '.$url."\r\n";}    
@@ -427,6 +437,26 @@ class vcdbapi
   return $existingids;
  }
  
+
+ function getTableRecordCount($tablename)
+ {
+  // returns the number of records in the given table
+  $db = new mysql; $db->dbname=$this->localdbname; $db->connect(); $count=-1;
+  if($stmt=$db->conn->prepare('select count(*) recordcount from '.$tablename))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $count=$row['recordcount'];
+    }
+   }
+  }
+  $db->close();
+  return $count;
+ }
+
  
  function populateTable($tablename,$records,$deletelocalorphans)
  {
