@@ -188,6 +188,27 @@ class vcdbapi
   $db->close();
   return $returnval;
  }
+ 
+ function version()
+ {
+  $returnval='not found';
+  $db = new mysql; $db->dbname=$this->localdbname; $db->connect();
+  if($stmt=$db->conn->prepare('select VersionDate from Version'))
+  {
+   if($stmt->execute())
+   {
+    if($db->result = $stmt->get_result())
+    {
+     if($row = $db->result->fetch_assoc())
+     {
+      $returnval=$row['VersionDate'];
+     }
+    }       
+   }
+  }
+  $db->close();
+  return $returnval;     
+ } 
 
  function getAccessToken()
  {

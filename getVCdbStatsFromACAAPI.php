@@ -82,7 +82,7 @@ if($vcdbapi->activetoken)
    $localrecordcount=$vcdbapi->getTableRecordCount($tablename);   
    if($localrecordcount!=$vcdbapi->tablerecordcounts[$tablename])
    {
-    $diffs[]=$tablename.' - API:'.$vcdbapi->tablerecordcounts[$tablename].' Local:'.$localrecordcount;   
+    $diffs[]=$tablename.' --- API: '.$vcdbapi->tablerecordcounts[$tablename].', local: '.$localrecordcount;
    }   
    if($vcdbapi->debug){print_r($vcdbapi->records);}   
   }
@@ -98,7 +98,7 @@ if($vcdbapi->activetoken)
  if($failurecount==0)
  {
   if($vcdbapi->debug){print_r($vcdbapi->tablerecordcounts);}
-  $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API vs. local diffs:'.implode('<br/>',$diffs));
+  $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API vs. local ('.$vcdbapi->version().') record count comparisons<br/>'.implode('<br/>',$diffs));
  }
  else
  {

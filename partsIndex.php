@@ -36,7 +36,7 @@ $validpartcategoryids=array(); foreach ($partcategories as $partcategory) {$vali
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $searchtype = 'contains';
 $availdays=9999;
-$limit = 20;
+$limit = 100;
  
 if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) 
 {
@@ -58,14 +58,16 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
 
  foreach($partstemp as $part)
  {
-  $datetemp=$part['availableDate']; if(strlen($datetemp)!=10){$datetemp='1995-01-01';}
-  
-//  echo '*'.$datetemp.'*<br/>';
+  if(count($parts)>=$limit){break;}
+  if($availdays==9999){  $parts[]=$part; continue;}
+        
+  $datetemp=$part['availableDate'];
+  if(strlen($datetemp)!=10 || $datetemp=='0000-00-00'){$datetemp='1995-01-01';}
+    
   if(strtotime($datetemp) < $thresholdepoch){continue;}
   
   $parts[]=$part;
   
-  if(count($parts)>=$limit){break;}
  }
 
  
