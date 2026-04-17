@@ -132,10 +132,9 @@ class vcdbapi
  
  public function __construct($_localdbname=false)
  {
-  $this->tableslist=array('Abbreviation','Aspiration','BaseVehicle','BedConfig','BedLength','BedType','BodyNumDoors','BodyStyleConfig','BodyType','BrakeABS','BrakeConfig','BrakeSystem','BrakeType','Class','CylinderHeadType','DriveType','ElecControlled','EngineBase','EngineBase2','EngineBlock','EngineBoreStroke','EngineConfig','EngineConfig2','EngineDesignation','EngineVIN','EngineVersion','FuelDeliveryConfig','FuelDeliverySubType','FuelDeliveryType','FuelSystemControlType','FuelSystemDesign','FuelType','IgnitionSystemType','Make','Mfr','MfrBodyCode','Model','PowerOutput','PublicationStage','Region','SpringType','SpringTypeConfig','SteeringConfig','SteeringSystem','SteeringType','SubModel','Transmission','TransmissionBase','TransmissionControlType','TransmissionMfrCode','TransmissionNumSpeeds','TransmissionType','VCdbChanges','Valves','Vehicle','VehicleToBedConfig','VehicleToBodyConfig','VehicleToBodyStyleConfig','VehicleToBrakeConfig','VehicleToClass','VehicleToDriveType','VehicleToEngineConfig','VehicleToMfrBodyCode','VehicleToSpringTypeConfig','VehicleToSteeringConfig','VehicleToTransmission','VehicleToWheelbase','VehicleType','VehicleTypeGroup','WheelBase','Year');
-  //$this->tableslist=array('VehicleToBodyStyleConfig');
-  $this->tablekeyslist=array('Abbreviation'=>'Abbreviation','Aspiration'=>'AspirationID','BaseVehicle'=>'BaseVehicleID','BedConfig'=>'BedConfigID','BedLength'=>'BedLengthID','BedType'=>'BedTypeID','BodyNumDoors'=>'BodyNumDoorsID','BodyStyleConfig'=>'BodyStyleConfigID','BodyType'=>'BodyTypeID','BrakeABS'=>'BrakeABSID','BrakeConfig'=>'BrakeConfigID','BrakeSystem'=>'BrakeSystemID','BrakeType'=>'BrakeTypeID','Class'=>'ClassID','CylinderHeadType'=>'CylinderHeadTypeID','DriveType'=>'DriveTypeID','ElecControlled'=>'ElecControlledID','EngineBase'=>'EngineBaseID','EngineBase2'=>'EngineBaseID','EngineBlock'=>'EngineBlockID','EngineBoreStroke'=>'EngineBoreStrokeID','EngineConfig'=>'EngineConfigID','EngineConfig2'=>'EngineConfigID','EngineDesignation'=>'EngineDesignationID','EngineVIN'=>'EngineVINID','EngineVersion'=>'EngineVersionID','FuelDeliveryConfig'=>'FuelDeliveryConfigID','FuelDeliverySubType'=>'FuelDeliverySubTypeID','FuelDeliveryType'=>'FuelDeliveryTypeID','FuelSystemControlType'=>'FuelSystemControlTypeID','FuelSystemDesign'=>'FuelSystemDesignID','FuelType'=>'FuelTypeID','IgnitionSystemType'=>'IgnitionSystemTypeID','Make'=>'MakeID','Mfr'=>'MfrID','MfrBodyCode'=>'MfrBodyCodeID','Model'=>'ModelID','PowerOutput'=>'PowerOutputID','PublicationStage'=>'PublicationStageID','Region'=>'RegionID','SpringType'=>'SpringTypeID','SpringTypeConfig'=>'SpringTypeConfigID','SteeringConfig'=>'SteeringConfigID','SteeringSystem'=>'SteeringSystemID','SteeringType'=>'SteeringTypeID','SubModel'=>'SubModelID','Transmission'=>'TransmissionID','TransmissionBase'=>'TransmissionBaseID','TransmissionControlType'=>'TransmissionControlTypeID','TransmissionMfrCode'=>'TransmissionMfrCodeID','TransmissionNumSpeeds'=>'TransmissionNumSpeedsID','TransmissionType'=>'TransmissionTypeID','VCdbChanges'=>'ID','Valves'=>'ValvesID','Vehicle'=>'VehicleID','VehicleToBedConfig'=>'VehicleToBedConfigID','VehicleToBodyConfig'=>'VehicleToBodyConfigID','VehicleToBodyStyleConfig'=>'VehicleToBodyStyleConfigID','VehicleToBrakeConfig'=>'VehicleToBrakeConfigID','VehicleToClass'=>'VehicleToClassID','VehicleToDriveType'=>'VehicleToDriveTypeID','VehicleToEngineConfig'=>'VehicleToEngineConfigID','VehicleToMfrBodyCode'=>'VehicleToMfrBodyCodeID','VehicleToSpringTypeConfig'=>'VehicleToSpringTypeConfigID','VehicleToSteeringConfig'=>'VehicleToSteeringConfigID','VehicleToTransmission'=>'VehicleToTransmissionID','VehicleToWheelbase'=>'VehicleToWheelbaseID','VehicleType'=>'VehicleTypeID','VehicleTypeGroup'=>'VehicleTypeGroupID','WheelBase'=>'WheelBaseID','Year'=>'YearID');   
-
+  $this->tableslist=array('Abbreviation','Aspiration','BaseVehicle','BedConfig','BedLength','BedType','BodyNumDoors','BodyStyleConfig','BodyType','BrakeABS','BrakeConfig','BrakeSystem','BrakeType','Class','CylinderHeadType','DriveType','ElecControlled','EngineBase','EngineBase2','EngineBlock','EngineBoreStroke','EngineConfig','EngineConfig2','EngineDesignation','EngineVIN','EngineVersion','FuelDeliveryConfig','FuelDeliverySubType','FuelDeliveryType','FuelSystemControlType','FuelSystemDesign','FuelType','IgnitionSystemType','Make','Mfr','MfrBodyCode','Model','PowerOutput','PublicationStage','Region','SpringType','SpringTypeConfig','SteeringConfig','SteeringSystem','SteeringType','SubModel','Transmission','TransmissionBase','TransmissionControlType','TransmissionMfrCode','TransmissionNumSpeeds','TransmissionType','VCdbChanges','Valves','Vehicle','VehicleToBedConfig','VehicleToBodyConfig','VehicleToBodyStyleConfig','VehicleToBrakeConfig','VehicleToClass','VehicleToDriveType','VehicleToEngineConfig','VehicleToMfrBodyCode','VehicleToSpringTypeConfig','VehicleToSteeringConfig','VehicleToTransmission','VehicleToWheelBase','VehicleType','VehicleTypeGroup','WheelBase','Year');
+  //$this->tableslist=array('VehicleToBodyStyleConfig'); 
+  $this->tablekeyslist=array('Abbreviation'=>'Abbreviation','Aspiration'=>'AspirationID','BaseVehicle'=>'BaseVehicleID','BedConfig'=>'BedConfigID','BedLength'=>'BedLengthID','BedType'=>'BedTypeID','BodyNumDoors'=>'BodyNumDoorsID','BodyStyleConfig'=>'BodyStyleConfigID','BodyType'=>'BodyTypeID','BrakeABS'=>'BrakeABSID','BrakeConfig'=>'BrakeConfigID','BrakeSystem'=>'BrakeSystemID','BrakeType'=>'BrakeTypeID','Class'=>'ClassID','CylinderHeadType'=>'CylinderHeadTypeID','DriveType'=>'DriveTypeID','ElecControlled'=>'ElecControlledID','EngineBase'=>'EngineBaseID','EngineBase2'=>'EngineBaseID','EngineBlock'=>'EngineBlockID','EngineBoreStroke'=>'EngineBoreStrokeID','EngineConfig'=>'EngineConfigID','EngineConfig2'=>'EngineConfigID','EngineDesignation'=>'EngineDesignationID','EngineVIN'=>'EngineVINID','EngineVersion'=>'EngineVersionID','FuelDeliveryConfig'=>'FuelDeliveryConfigID','FuelDeliverySubType'=>'FuelDeliverySubTypeID','FuelDeliveryType'=>'FuelDeliveryTypeID','FuelSystemControlType'=>'FuelSystemControlTypeID','FuelSystemDesign'=>'FuelSystemDesignID','FuelType'=>'FuelTypeID','IgnitionSystemType'=>'IgnitionSystemTypeID','Make'=>'MakeID','Mfr'=>'MfrID','MfrBodyCode'=>'MfrBodyCodeID','Model'=>'ModelID','PowerOutput'=>'PowerOutputID','PublicationStage'=>'PublicationStageID','Region'=>'RegionID','SpringType'=>'SpringTypeID','SpringTypeConfig'=>'SpringTypeConfigID','SteeringConfig'=>'SteeringConfigID','SteeringSystem'=>'SteeringSystemID','SteeringType'=>'SteeringTypeID','SubModel'=>'SubModelID','Transmission'=>'TransmissionID','TransmissionBase'=>'TransmissionBaseID','TransmissionControlType'=>'TransmissionControlTypeID','TransmissionMfrCode'=>'TransmissionMfrCodeID','TransmissionNumSpeeds'=>'TransmissionNumSpeedsID','TransmissionType'=>'TransmissionTypeID','VCdbChanges'=>'ID','Valves'=>'ValvesID','Vehicle'=>'VehicleID','VehicleToBedConfig'=>'VehicleToBedConfigID','VehicleToBodyConfig'=>'VehicleToBodyConfigID','VehicleToBodyStyleConfig'=>'VehicleToBodyStyleConfigID','VehicleToBrakeConfig'=>'VehicleToBrakeConfigID','VehicleToClass'=>'VehicleToClassID','VehicleToDriveType'=>'VehicleToDriveTypeID','VehicleToEngineConfig'=>'VehicleToEngineConfigID','VehicleToMfrBodyCode'=>'VehicleToMfrBodyCodeID','VehicleToSpringTypeConfig'=>'VehicleToSpringTypeConfigID','VehicleToSteeringConfig'=>'VehicleToSteeringConfigID','VehicleToTransmission'=>'VehicleToTransmissionID','VehicleToWheelBase'=>'VehicleToWheelBaseID','VehicleType'=>'VehicleTypeID','VehicleTypeGroup'=>'VehicleTypeGroupID','WheelBase'=>'WheelBaseID','Year'=>'YearID');
   $this->pagelimit=0;
   $this->totalcalls=0;
   $this->activetoken=false;
@@ -4155,26 +4154,26 @@ class vcdbapi
        
     break;
 
-   case 'VehicleToWheelbase':
-    if($stmt=$db->conn->prepare('insert into VehicleToWheelbase values(?,?,?)'))
+   case 'VehicleToWheelBase':
+    if($stmt=$db->conn->prepare('insert into VehicleToWheelBase values(?,?,?)'))
     {
-     $stmt->bind_param('iii', $VehicleToWheelbaseID, $VehicleID, $WheelbaseID);
+     $stmt->bind_param('iii', $VehicleToWheelBaseID, $VehicleID, $WheelBaseID);
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $VehicleToWheelbaseID=$record['VehicleToWheelbaseID']; $VehicleID=$record['VehicleID']; $WheelbaseID=$record['WheelbaseID'];
+        $VehicleToWheelBaseID=$record['VehicleToWheelBaseID']; $VehicleID=$record['VehicleID']; $WheelBaseID=$record['WheelBaseID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
      }
     }
     
-    if($stmt=$db->conn->prepare('delete from VehicleToWheelbase where VehicleToWheelbaseID=?'))
+    if($stmt=$db->conn->prepare('delete from VehicleToWheelBase where VehicleToWheelBaseID=?'))
     {
-     if($stmt->bind_param('i', $VehicleToWheelbaseID))
+     if($stmt->bind_param('i', $VehicleToWheelBaseID))
      {
       foreach($records as $record)
       {
@@ -4182,27 +4181,27 @@ class vcdbapi
        {// a date present implies the record was deleted ex: 11/15/2024 00:50:19          
         if(array_key_exists($record[$keyfieldname],$existingids))
         {// key found in local tables - do the delete
-         $VehicleToWheelbaseID=$record['VehicleToWheelbaseID']; if($stmt->execute()){$this->deletecount++;}
+         $VehicleToWheelBaseID=$record['VehicleToWheelBaseID']; if($stmt->execute()){$this->deletecount++;}
         }
        }
       }   
       foreach($localorphanids as $localorphanid)
       {
-       $VehicleToWheelbaseID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
+       $VehicleToWheelBaseID=$localorphanid; if($stmt->execute()){$this->deletecount++; $this->deleteorphancount++;}
       }
      }
     }
  
-    if($stmt=$db->conn->prepare('update VehicleToWheelbase set VehicleID=?, WheelbaseID=? where VehicleToWheelbaseID=?'))
+    if($stmt=$db->conn->prepare('update VehicleToWheelBase set VehicleID=?, WheelBaseID=? where VehicleToWheelBaseID=?'))
     {
-     if($stmt->bind_param('iii', $VehicleID, $WheelbaseID, $VehicleToWheelbaseID))
+     if($stmt->bind_param('iii', $VehicleID, $WheelBaseID, $VehicleToWheelBaseID))
      {
       foreach($records as $record)
       {
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(array_key_exists($record[$keyfieldname],$existingids))
        {// key found in local tables - do the update
-        $VehicleToWheelbaseID=$record['VehicleToWheelbaseID']; $VehicleID=$record['VehicleID']; $WheelbaseID=$record['WheelbaseID'];
+        $VehicleToWheelBaseID=$record['VehicleToWheelBaseID']; $VehicleID=$record['VehicleID']; $WheelBaseID=$record['WheelBaseID'];
         if($stmt->execute()){$this->updatecount++;}
        }
       }

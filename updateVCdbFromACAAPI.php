@@ -28,7 +28,7 @@ $sincedate=false; //'2024-12-01'; // set this data to false to query the API for
 
 $lastsync=$configGet->getConfigValue('lastSuccessfulVCdbAPIsync');
 
-      $lastsync=false;
+//     $lastsync=false;
   
 if($lastsync)
 {
@@ -41,7 +41,7 @@ else
 
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
 
-  $clearfirst=true;
+//  $clearfirst=true;
 
 $deletelocalorphans=false; // cause records in each local table (identified by primary keys) to be deleted if they are not present in API results 
 
@@ -56,8 +56,7 @@ $vcdbapi->getAccessToken();
 $vcdbapi->pagelimit=0;
 $vcdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
 
-//-------
-  $vcdbapi->debug=true;
+// $vcdbapi->debug=true;
 
 
 if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync started'); }
@@ -116,7 +115,7 @@ if($vcdbapi->activetoken)
    if(!$vcdbapi->activetoken)
    {
     if($vcdbapi->debug){echo " Request failed. Terminating process.\r\n";}
-    $logs->logSystemEvent('AutoCare API Client', 0,'Token refresh rquest failed. Exiting Process.');    
+    $logs->logSystemEvent('AutoCare API Client', 0,'Token refresh rquest failed after '.$vcdbapi->tokenrefreshcount.' refreshes. Exiting Process. Raw server response:'.$vcdbapi->errormessage);    
     break;
    }
    
@@ -133,8 +132,8 @@ if($vcdbapi->activetoken)
  }
  
  $runtime=time()-$starttime;
- if($vcdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls."\r\n";}
- $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. SinceDate set to:'.$sincedate);
+ if($vcdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls.'. Token refreshes:'.$vcdbapi->tokenrefreshcount."\r\n";}
+ $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. SinceDate used:'.$sincedate);
  $configSet->setConfigValue('lastSuccessfulVCdbAPIsync', time());
  $vcdbapi->setVersionDate(date('Y-m-d'));
 }

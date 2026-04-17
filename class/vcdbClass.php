@@ -1040,7 +1040,7 @@ function getBrakeConfigsForVehicleid($vehicleid)
   if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;}
   $db->connect();
   $wheelbases=array();
-  if($stmt=$db->conn->prepare('SELECT VehicleToWheelBase.WheelBaseID,WheelBase FROM  Vehicle,VehicleToWheelBase,WheelBase WHERE Vehicle.VehicleID=VehicleToWheelBase.VehicleID AND VehicleToWheelBase.WheelbaseID=WheelBase.WheelBaseID AND Vehicle.VehicleID=?'))
+  if($stmt=$db->conn->prepare('SELECT VehicleToWheelBase.WheelBaseID,WheelBase FROM Vehicle,VehicleToWheelBase,WheelBase WHERE Vehicle.VehicleID=VehicleToWheelBase.VehicleID AND VehicleToWheelBase.WheelBaseID=WheelBase.WheelBaseID AND Vehicle.VehicleID=?'))
   {
    $stmt->bind_param('i', $vehicleid);
    $stmt->execute();
