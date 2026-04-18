@@ -22,6 +22,7 @@ $tokenrefreshlimit=100; // how many new-token requests are allowed in this sessi
 $loggingverbosity=1; // (1-10) Ten is the most verbose 
 $sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
 $failurecount=0;
+$localrecordcounttotal=0;
 $diffs=[];
 
 $vcdbapi=new vcdbapi;
@@ -79,7 +80,8 @@ if($vcdbapi->activetoken)
   $success=$vcdbapi->getRecordsPage('VCDB', $tablename, 'en-US', $sincedate);
   if($success)
   {
-   $localrecordcount=$vcdbapi->getTableRecordCount($tablename);   
+   $localrecordcount=$vcdbapi->getTableRecordCount($tablename);
+   $localrecordcounttotal+=$localrecordcount;
    if($localrecordcount!=$vcdbapi->tablerecordcounts[$tablename])
    {
     $diffs[]=$tablename.' --- API: '.$vcdbapi->tablerecordcounts[$tablename].', local: '.$localrecordcount;
@@ -98,7 +100,14 @@ if($vcdbapi->activetoken)
  if($failurecount==0)
  {
   if($vcdbapi->debug){print_r($vcdbapi->tablerecordcounts);}
-  $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API vs. local ('.$vcdbapi->version().') record count comparisons<br/>'.implode('<br/>',$diffs));
+  if(count($diffs))
+  { // there are record-count diffs between local vcdbcach and the api's just-reported counts
+   $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API vs. local ('.$vcdbapi->version().') record count comparisons<br/>'.implode('<br/>',$diffs));
+  }
+  else
+  {
+   $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API vs. local ('.$vcdbapi->version().') - no table count differences found across '.count($vcdbapi->tableslist).' tables, '.$localrecordcounttotal.' total records');
+  }
  }
  else
  {
