@@ -124,9 +124,17 @@ if($vcdbapi->activetoken)
   }
   
   if($vcdbapi->debug){echo ' '.$tablename.'...';}
-  $success=$vcdbapi->getRecords('VCDB',$tablename,'en-US',$sincedate);
-  //print_r($vcdbapi->records);
-  $vcdbapi->populateTable($tablename, $vcdbapi->records, $deletelocalorphans);
+  $success=$vcdbapi->getRecords('VCDB',$tablename,'en-US',$sincedate);  //print_r($vcdbapi->records);
+  if($success)
+  {
+   $vcdbapi->populateTable($tablename, $vcdbapi->records, $deletelocalorphans);
+  }
+  else
+  {// non-success getting records for the current table
+   if($vcdbapi->debug){echo ' Failure getting records for table: '.$tablename.'. http status: '.$vcdbapi->httpstatus.". No action taken with the local table.\r\n";}
+   $logs->logSystemEvent('AutoCare API Client', 0, 'Failure getting records for table: '.$tablename.'. http status: '.$vcdbapi->httpstatus.'. No action taken with the local table.');
+  }
+  
   if($vcdbapi->debug){echo ' inserts: '.$vcdbapi->insertcount.', updates:'.$vcdbapi->updatecount.', deletes: '.$vcdbapi->deletecount.', orphan deletes: '.$vcdbapi->deleteorphancount.' on local database records in '.(time()-$timetemp)." seconds\r\n";}
   if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, $tablename.' - inserts: '.$vcdbapi->insertcount.', updates: '.$vcdbapi->updatecount.', deletes: '.$vcdbapi->deletecount.', orphan deletes: '.$vcdbapi->deleteorphancount.' in '.(time()-$timetemp).' seconds');}
  }
