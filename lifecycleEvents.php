@@ -23,7 +23,7 @@ $status='PENDING';
 $sincedays=30; if(isset($_GET['sincedays'])){$sincedays=intval($_GET['sincedays']);}
 $sincedate=date('Y-m-d', time()-(24*3600*$sincedays));
 
-$eventtypes=array('PART-AVAILABLE','PART-ELECTRONIC','PART-DISCONTINUED','PART-SUPERDEDED','PART-AVAILABLE-WHILE-SUPPLIES-LAST','PART-OBSOLETE');
+$eventtypes=array('PART-AVAILABLE','PART-ELECTRONIC','PART-DISCONTINUED','PART-SUPERSEDED','PART-AVAILABLE-WHILE-SUPPLIES-LAST','PART-OBSOLETE');
 
 if(isset($_GET['lifecyclegroup']) && $_GET['lifecyclegroup']=='birth')
 { 
@@ -32,7 +32,7 @@ if(isset($_GET['lifecyclegroup']) && $_GET['lifecyclegroup']=='birth')
 
 if(isset($_GET['lifecyclegroup']) && $_GET['lifecyclegroup']=='retirement')
 { 
- $eventtypes=array('PART-DISCONTINUED','PART-SUPERDEDED','PART-AVAILABLE-WHILE-SUPPLIES-LAST');
+ $eventtypes=array('PART-DISCONTINUED','PART-SUPERSEDED','PART-AVAILABLE-WHILE-SUPPLIES-LAST');
 }
 
 if(isset($_GET['lifecyclegroup']) && $_GET['lifecyclegroup']=='death')
