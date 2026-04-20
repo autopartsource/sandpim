@@ -36,6 +36,7 @@ $validpartcategoryids=array(); foreach ($partcategories as $partcategory) {$vali
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $searchtype = 'contains';
 $availdays=9999;
+$firststockedsincedays=9999;
 $limit = 100;
  
 if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) 
@@ -48,26 +49,31 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
  if(isset($_GET['limit']) && intval($_GET['limit'])>0){$limit=intval($_GET['limit']);} 
 
  if(isset($_GET['availdays'])){$availdays=intval($_GET['availdays']);}
+ if(isset($_GET['firststockedsincedays'])){$firststockedsincedays=intval($_GET['firststockedsincedays']);}
  
  $lifecyclestatus=$_GET['lifecyclestatus']; if(!in_array($_GET['lifecyclestatus'], $validlifecyclestatuscodes)){$lifecyclestatus='any';} 
  $partcategory=$_GET['partcategory']; if(!in_array($_GET['partcategory'], $validpartcategoryids)){$partcategory='any';} 
  $parttypeid='any'; if(intval($_GET['parttypeid'])>0){$parttypeid=intval($_GET['parttypeid']);}
 
  $partstemp = $pim->getParts($partnumber, $searchtype, $partcategory, $parttypeid, $lifecyclestatus, $basepart, 100000);
- $thresholdepoch=time()-(24*3600*$availdays);
-
+ $availthresholdepoch=time()-(24*3600*$availdays);
+ $stockedthresholdepoch=time()-(24*3600*$firststockedsincedays);
+ 
  foreach($partstemp as $part)
  {
   if(count($parts)>=$limit){break;}
-  if($availdays==9999){  $parts[]=$part; continue;}
-        
-  $datetemp=$part['availableDate'];
-  if(strlen($datetemp)!=10 || $datetemp=='0000-00-00'){$datetemp='1995-01-01';}
-    
-  if(strtotime($datetemp) < $thresholdepoch){continue;}
+//  if($availdays==9999){  $parts[]=$part; continue;}
+
+  
+  $availdatetemp=$part['availableDate'];
+  if(strlen($availdatetemp)!=10 || $availdatetemp=='0000-00-00'){$availdatetemp='2000-01-01';}
+  if(strtotime($availdatetemp) < $availthresholdepoch){continue;}
+  
+  $stockeddatetemp=$part['firststockedDate'];
+  if(strlen($stockeddatetemp)!=10 || $stockeddatetemp=='0000-00-00'){$stockeddatetemp='2000-01-01';}
+  if(strtotime($stockeddatetemp) < $stockedthresholdepoch){continue;}
   
   $parts[]=$part;
-  
  }
 
  
@@ -116,9 +122,20 @@ if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20)
                                     <option value="30"<?php if($availdays==30){echo ' selected';}?>>In the past month</option> 
                                     <option value="90"<?php if($availdays==90){echo ' selected';}?>>In the past 90 days</option> 
                                     <option value="365"<?php if($availdays==365){echo ' selected';}?>>In the past year</option> 
+                                    <option value="1096"<?php if($availdays==1096){echo ' selected';}?>>In the past 3 years</option> 
                                 </select>
                             </div>
                                 
+                            <div style="padding:3px;">First Stocked 
+                                <select name="firststockedsincedays">
+                                    <option value="9999"<?php if($firststockedsincedays==9999){echo ' selected';}?>>Ever</option> 
+                                    <option value="7"<?php if($firststockedsincedays==7){echo ' selected';}?>>In the past week</option> 
+                                    <option value="30"<?php if($firststockedsincedays==30){echo ' selected';}?>>In the past month</option> 
+                                    <option value="90"<?php if($firststockedsincedays==90){echo ' selected';}?>>In the past 90 days</option> 
+                                    <option value="365"<?php if($firststockedsincedays==365){echo ' selected';}?>>In the past year</option> 
+                                    <option value="1096"<?php if($firststockedsincedays==1096){echo ' selected';}?>>In the past 3 years</option> 
+                                </select>
+                            </div>
                                 
                             <div style="padding:3px;">In Category 
                                 <select name="partcategory">
