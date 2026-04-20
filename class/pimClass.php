@@ -5750,7 +5750,7 @@ function allowedHost($address)
  function getNotificationEvents($status)
  {
   $db = new mysql; $db->connect(); $events=array();
-  if($stmt=$db->conn->prepare('select * from notificationqueue where status=? order by createdDate'))
+  if($stmt=$db->conn->prepare('select * from notificationqueue where status=? order by createdDate desc'))
   {
    $stmt->bind_param('s', $status);      
    if($stmt->execute())
