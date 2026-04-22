@@ -1,12 +1,14 @@
 <?php
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
 include_once(__DIR__.'/class/vcdbAPIClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
+include_once(__DIR__.'/class/vcdbClass.php');
 include_once(__DIR__.'/class/logsClass.php');
 include_once(__DIR__.'/class/configGetClass.php');
 include_once(__DIR__.'/class/configSetClass.php');
 
 $starttime=time();
 $pim = new pim();
+$vcdb=new vcdb();
 $logs = new logs();
 $configGet = new configGet();
 $configSet = new configSet();
@@ -151,4 +153,16 @@ else
  if($vcdbapi->debug){echo 'API auth failed - http status:'.$vcdbapi->httpstatus."\r\n";}
  $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync failed (http response: '.$vcdbapi->httpstatus.')'); 
 }
+
+// VCdb integrity check
+$integrityissues=$vcdb->integrityCheck();
+if(count($integrityissues)==0)
+{
+ $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb integrity check clean');
+}
+else
+{
+ $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb integrity check failed: '.implode(',',$integrityissues));
+}
+
 $pim->removeLockById($mylockid);

@@ -53,6 +53,20 @@ $mylockid=$pim->addLock('AUDITOR', 'pid:'. getmypid());
 //$pim->recordIssue('SYSTEM/HEARTBEAT','test',1,'testtest','background auditor', '1234567890');
 
 $partnumbergroupsize=500;
+$appgroupsize=250;
+$downloadlimit=10;
+$longrunthreshold=30;
+
+$timeodaymode='day';
+$currenthour=intval(date("H"));
+if($currenthour > 20 || $currenthour < 8)
+{
+ $partnumbergroupsize=$partnumbergroupsize*4;
+ $appgroupsize=$appgroupsize*4;
+ $longrunthreshold=$longrunthreshold*4;
+ $timeodaymode='night';
+}
+
 $partnumbers=$pim->getPartnumbersByRandom($partnumbergroupsize);
 
 $partauditrequests=$pim->getAuditRequests('part-general');
@@ -63,7 +77,6 @@ foreach($partauditrequests as $partauditrequest)
 }
 
 
-$downloadlimit=10;
 
 foreach($partnumbers as $partnumber)
 {       
@@ -285,7 +298,7 @@ foreach($partnumbers as $partnumber)
     // invalid VCdb references (basevehilce, etc)
     // 
   
-$appids=$pim->getAppIDsByRandom(250);
+$appids=$pim->getAppIDsByRandom($appgroupsize);
 $appauditrequests=$pim->getAuditRequests('app-general');
 foreach($appauditrequests as $appauditrequest)
 {
@@ -542,12 +555,10 @@ foreach ($slices as $slice)
 // update issue snoozes. look for status3 records with a snoozeduntil before now and set them back to status1
 $pim->updateSnoozes();
 
-
 $runtime=time()-$starttime;
-if($runtime > 30)
+if($runtime > $longrunthreshold)
 {
- $logs->logSystemEvent('auditor', 0, 'Background auditor process ran for '.$runtime.' seconds');
+ $logs->logSystemEvent('auditor', 0, 'Background auditor process (in '.$timeodaymode.' mode) ran for '.$runtime.' seconds');
 }
 
 $pim->removeLockById($mylockid);
-?>
