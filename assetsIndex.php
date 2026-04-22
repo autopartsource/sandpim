@@ -38,7 +38,7 @@ if(isset($_GET['submit']) && $_GET['submit']=='Search')
 
 
 
-$assets = $asset->getRecentAssets(20);
+$assets = $asset->getRecentAssets(30);
 $orientationviewcodes=$pcdb->getAssetOrientationViewCodes();
 
 ?>
