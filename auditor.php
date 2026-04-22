@@ -52,14 +52,14 @@ $mylockid=$pim->addLock('AUDITOR', 'pid:'. getmypid());
 // --- get a random group of items to examine 
 //$pim->recordIssue('SYSTEM/HEARTBEAT','test',1,'testtest','background auditor', '1234567890');
 
-$partnumbergroupsize=500;
-$appgroupsize=250;
+$partnumbergroupsize=400;
+$appgroupsize=200;
 $downloadlimit=10;
 $longrunthreshold=30;
 
 $timeodaymode='day';
 $currenthour=intval(date("H"));
-if($currenthour > 20 || $currenthour < 8)
+if($currenthour < 7)
 {
  $partnumbergroupsize=$partnumbergroupsize*4;
  $appgroupsize=$appgroupsize*4;
