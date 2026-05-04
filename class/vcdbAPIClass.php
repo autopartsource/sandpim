@@ -3774,7 +3774,7 @@ class vcdbapi
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $VehicleToBrakeConfigID=$record['VehicleToBrakeConfigID']; $VehicleID=$record['VehicleID']; $BrakeConfigID=$record['BrakeConfigID']; $Source=$record['Source'];      
+        $VehicleToBrakeConfigID=$record['VehicleToBrakeConfigID']; $VehicleID=$record['VehicleID']; $BrakeConfigID=$record['BrakeConfigID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -3829,7 +3829,7 @@ class vcdbapi
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $VehicleToClassID=$record['VehicleToClassID']; $VehicleID=$record['VehicleID']; $ClassID=$record['ClassID']; $Source=$record['Source'];
+        $VehicleToClassID=$record['VehicleToClassID']; $VehicleID=$record['VehicleID']; $ClassID=$record['ClassID'];
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -3939,7 +3939,7 @@ class vcdbapi
        if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
        if(!array_key_exists($record[$keyfieldname],$existingids))
        {// key not found in local tables - do the insert
-        $VehicleToEngineConfigID=$record['VehicleToEngineConfigID']; $VehicleID=$record['VehicleID']; $EngineConfigID=$record['EngineConfigID']; $Source=$record['Source'];      
+        $VehicleToEngineConfigID=$record['VehicleToEngineConfigID']; $VehicleID=$record['VehicleID']; $EngineConfigID=$record['EngineConfigID'];      
         if($stmt->execute()){$this->insertcount++;}
        }
       }
@@ -4476,6 +4476,718 @@ class vcdbapi
   return $inserts;
  }
 
+ function readLocalJSONrecords($filepath)
+ {
+  $filedata = file_get_contents($filepath);
+  $json = json_decode($filedata, true);
+  return $json;
+ }
+ 
+ 
+ 
+ function makeASCIIrecords($tablename,$records,$delimiter,$versionyyyymmdd)
+ {
+  $delimitedrecords=array();
+
+  switch($tablename)
+  {
+   case 'Abbreviation':
+    $delimitedrecords[]='Abbreviation'.$delimiter.'Description'.$delimiter.'LongDescription';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;} // skip records that are deleted
+     $delimitedrecords[]=$record['Abbreviation'].$delimiter.$record['Description'].$delimiter.$record['LongDescription'];
+    }
+    break;
+
+   case 'Aspiration':
+    $delimitedrecords[]='AspirationID'.$delimiter.'AspirationName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['AspirationID'].$delimiter.$record['AspirationName'];
+    }
+    break;
+    
+   case 'Attachment':
+    $delimitedrecords[]='AttachmentID'.$delimiter.'AttachmentTypeID'.$delimiter.'AttachmentFileName'.$delimiter.'AttachmentURL'.$delimiter.'AttachmentDescription';
+    break;
+
+   case 'AttachmentType':
+    $delimitedrecords[]='AttachmentTypeID'.$delimiter.'AttachmentTypeName';
+    break;
+
+   case 'BaseVehicle':
+    $delimitedrecords[]='BaseVehicleID'.$delimiter.'YearID'.$delimiter.'MakeID'.$delimiter.'ModelID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BaseVehicleID'].$delimiter.$record['YearID'].$delimiter.$record['MakeID'].$delimiter.$record['ModelID'];
+    }
+    break;
+
+   case 'BedConfig':
+    $delimitedrecords[]='BedConfigID'.$delimiter.'BedLengthID'.$delimiter.'BedTypeID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BedConfigID'].$delimiter.$record['BedLengthID'].$delimiter.$record['BedTypeID'];
+    }       
+    break;
+
+   case 'BedLength':
+    $delimitedrecords[]='BedLengthID'.$delimiter.'BedLength'.$delimiter.'BedLengthMetric';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BedLengthID'].$delimiter.$record['BedLength'].$delimiter.$record['BedLengthMetric'];
+    }    
+    break;
+
+   case 'BedType':
+    $delimitedrecords[]='BedTypeID'.$delimiter.'BedTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BedTypeID'].$delimiter.$record['BedTypeName'];
+    }
+    break;
+
+   case 'BodyNumDoors':
+    $delimitedrecords[]='BodyNumDoorsID'.$delimiter.'BodyNumDoors';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BodyNumDoorsID'].$delimiter.$record['BodyNumDoors'];
+    }
+    break;
+    
+   case 'BodyStyleConfig':
+    $delimitedrecords[]='BodyStyleConfigID'.$delimiter.'BodyNumDoorsID'.$delimiter.'BodyTypeID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BodyStyleConfigID'].$delimiter.$record['BodyNumDoorsID'].$delimiter.$record['BodyTypeID'];
+    }
+    break;
+
+   case 'BodyType':
+    $delimitedrecords[]='BodyTypeID'.$delimiter.'BodyTypeName';   
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BodyTypeID'].$delimiter.$record['BodyTypeName'];
+    }
+    break;
+
+   case 'BrakeABS':
+    $delimitedrecords[]='BrakeABSID'.$delimiter.'BrakeABSName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BrakeABSID'].$delimiter.$record['BrakeABSName'];
+    }    
+    break;
+
+   case 'BrakeConfig':
+    $delimitedrecords[]='BrakeConfigID'.$delimiter.'FrontBrakeTypeID'.$delimiter.'RearBrakeTypeID'.$delimiter.'BrakeSystemID'.$delimiter.'BrakeABSID';          
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BrakeConfigID'].$delimiter.$record['FrontBrakeTypeID'].$delimiter.$record['RearBrakeTypeID'].$delimiter.$record['BrakeSystemID'].$delimiter.$record['BrakeABSID']; 
+    }    
+    break;
+
+   case 'BrakeSystem':
+    $delimitedrecords[]='BrakeSystemID'.$delimiter.'BrakeSystemName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BrakeSystemID'].$delimiter.$record['BrakeSystemName'];
+    }
+    break;
+
+   case 'BrakeType':
+    $delimitedrecords[]='BrakeTypeID'.$delimiter.'BrakeTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['BrakeTypeID'].$delimiter.$record['BrakeTypeName']; 
+    }
+    break;
+    
+   case 'ChangeAttributeStates':
+    $delimitedrecords[]='ChangeAttributeStateID'.$delimiter.'ChangeAttributeState';
+    break;
+
+   case 'ChangeDetails':
+    $delimitedrecords[]='ChangeDetailID'.$delimiter.'ChangeID'.$delimiter.'ChangeAttributeStateID'.$delimiter.'TableNameID'.$delimiter.'PrimaryKeyColumnName'.$delimiter.'PrimaryKeyBefore'.$delimiter.'PrimaryKeyAfter'.$delimiter.'ColumnName'.$delimiter.'ColumnValueBefore'.$delimiter.'ColumnValueAfter';
+    break;
+
+   case 'ChangeReasons':
+    $delimitedrecords[]='ChangeReasonID'.$delimiter.'ChangeReason';
+    break;
+
+   case 'Changes':
+    $delimitedrecords[]='ChangeID'.$delimiter.'RequestID'.$delimiter.'ChangeReasonID'.$delimiter.'RevDate';
+    break;
+
+   case 'ChangeTableNames':
+    $delimitedrecords[]='TableNameID'.$delimiter.'TableName'.$delimiter.'TableDescription';
+    break;
+
+   case 'Class':
+    $delimitedrecords[]='ClassID'.$delimiter.'ClassName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['ClassID'].$delimiter.$record['ClassName'];
+    }
+    break;
+
+   case 'CylinderHeadType':
+    $delimitedrecords[]='CylinderHeadTypeID'.$delimiter.'CylinderHeadTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['CylinderHeadTypeID'].$delimiter.$record['CylinderHeadTypeName']; 
+    }
+    break;
+
+   case 'DriveType':
+    $delimitedrecords[]='DriveTypeID'.$delimiter.'DriveTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['DriveTypeID'].$delimiter.$record['DriveTypeName']; 
+    }
+    break;
+
+   case 'ElecControlled':
+    $delimitedrecords[]='ElecControlledID'.$delimiter.'ElecControlled';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['ElecControlledID'].$delimiter.$record['ElecControlled'];
+    }
+    break;
+
+   case 'EngineBase':
+    $delimitedrecords[]='EngineBaseID'.$delimiter.'Liter'.$delimiter.'CC'.$delimiter.'CID'.$delimiter.'Cylinders'.$delimiter.'BlockType'.$delimiter.'EngBoreIn'.$delimiter.'EngBoreMetric'.$delimiter.'EngStrokeIn'.$delimiter.'EngStrokeMetric';       
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['EngineBaseID'].$delimiter.$record['Liter'].$delimiter.$record['CC'].$delimiter.$record['CID'].$delimiter.$record['Cylinders'].$delimiter.$record['BlockType'].$delimiter.$record['EngBoreIn'].$delimiter.$record['EngBoreMetric'].$delimiter.$record['EngStrokeIn'].$delimiter.$record['EngStrokeMetric'];
+    }
+    break;
+
+   case 'EngineBase2':
+    $delimitedrecords[]='EngineBaseID'.$delimiter.'EngineBlockID'.$delimiter.'EngineBoreStrokeID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['EngineBaseID'].$delimiter.$record['EngineBlockID'].$delimiter.$record['EngineBoreStrokeID']; 
+    }    
+    break;
+
+   case 'EngineBlock':
+    $delimitedrecords[]='EngineBlockID'.$delimiter.'Liter'.$delimiter.'CC'.$delimiter.'CID'.$delimiter.'Cylinders'.$delimiter.'BlockType';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['EngineBlockID'].$delimiter.$record['Liter'].$delimiter.$record['CC'].$delimiter.$record['CID'].$delimiter.$record['Cylinders'].$delimiter.$record['BlockType'];
+    }
+    break;
+
+   case 'EngineBoreStroke':
+    $delimitedrecords[]='EngineBoreStrokeID'.$delimiter.'EngBoreIn'.$delimiter.'EngBoreMetric'.$delimiter.'EngStrokeIn'.$delimiter.'EngStrokeMetric';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['EngineBoreStrokeID'].$delimiter.$record['EngBoreIn'].$delimiter.$record['EngBoreMetric'].$delimiter.$record['EngStrokeIn'].$delimiter.$record['EngStrokeMetric'];
+    }
+    break;
+
+   case 'EngineConfig':
+    $delimitedrecords[]='EngineConfigID'.$delimiter.'EngineDesignationID'.$delimiter.'EngineVINID'.$delimiter.'ValvesID'.$delimiter.'EngineBaseID'.$delimiter.'FuelDeliveryConfigID'.$delimiter.'AspirationID'.$delimiter.'CylinderHeadTypeID'.$delimiter.'FuelTypeID'.$delimiter.'IgnitionSystemTypeID'.$delimiter.'EngineMfrID'.$delimiter.'EngineVersionID'.$delimiter.'PowerOutputID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['EngineConfigID'].$delimiter.$record['EngineDesignationID'].$delimiter.$record['EngineVINID'].$delimiter.$record['ValvesID'].$delimiter.$record['EngineBaseID'].$delimiter.$record['FuelDeliveryConfigID'].$delimiter.$record['AspirationID'].$delimiter.$record['CylinderHeadTypeID'].$delimiter.$record['FuelTypeID'].$delimiter.$record['IgnitionSystemTypeID'].$delimiter.$record['EngineMfrID'].$delimiter.$record['EngineVersionID'].$delimiter.$record['PowerOutputID'];
+    }    
+    break;
+        
+   case 'EngineConfig2':
+    $delimitedrecords[]='EngineConfigID'.$delimiter.'EngineDesignationID'.$delimiter.'EngineVINID'.$delimiter.'ValvesID'.$delimiter.'EngineBaseID'.$delimiter.'EngineBlockID'.$delimiter.'EngineBoreStrokeID'.$delimiter.'FuelDeliveryConfigID'.$delimiter.'AspirationID'.$delimiter.'CylinderHeadTypeID'.$delimiter.'FuelTypeID'.$delimiter.'IgnitionSystemTypeID'.$delimiter.'EngineMfrID'.$delimiter.'EngineVersionID'.$delimiter.'PowerOutputID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['EngineConfigID'].$delimiter.$record['EngineDesignationID'].$delimiter.$record['EngineVINID'].$delimiter.$record['ValvesID'].$delimiter.$record['EngineBaseID'].$delimiter.$record['EngineBlockID'].$delimiter.$record['EngineBoreStrokeID'].$delimiter.$record['FuelDeliveryConfigID'].$delimiter.$record['AspirationID'].$delimiter.$record['CylinderHeadTypeID'].$delimiter.$record['FuelTypeID'].$delimiter.$record['IgnitionSystemTypeID'].$delimiter.$record['EngineMfrID'].$delimiter.$record['EngineVersionID'].$delimiter.$record['PowerOutputID'];
+    }
+    break;
+
+   case 'EngineDesignation':
+    $delimitedrecords[]='EngineDesignationID'.$delimiter.'EngineDesignationName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['EngineDesignationID'].$delimiter.$record['EngineDesignationName'];
+    }
+    break;
+
+   case 'EngineVersion':
+    $delimitedrecords[]='EngineVersionID'.$delimiter.'EngineVersion';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['EngineVersionID'].$delimiter.$record['EngineVersion'];
+    }
+    break;
+
+   case 'EngineVIN':
+    $delimitedrecords[]='EngineVINID'.$delimiter.'EngineVINName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['EngineVINID'].$delimiter.$record['EngineVINName'];
+    }
+    break;
+
+   case 'FuelDeliveryConfig':
+    $delimitedrecords[]='FuelDeliveryConfigID'.$delimiter.'FuelDeliveryTypeID'.$delimiter.'FuelDeliverySubTypeID'.$delimiter.'FuelSystemControlTypeID'.$delimiter.'FuelSystemDesignID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['FuelDeliveryConfigID'].$delimiter.$record['FuelDeliveryTypeID'].$delimiter.$record['FuelDeliverySubTypeID'].$delimiter.$record['FuelSystemControlTypeID'].$delimiter.$record['FuelSystemDesignID'];
+    }    
+    break;
+    
+   case 'FuelDeliverySubType':
+    $delimitedrecords[]='FuelDeliverySubTypeID'.$delimiter.'FuelDeliverySubTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['FuelDeliverySubTypeID'].$delimiter.$record['FuelDeliverySubTypeName'];
+    }
+    break;
+
+   case 'FuelDeliveryType':
+    $delimitedrecords[]='FuelDeliveryTypeID'.$delimiter.'FuelDeliveryTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['FuelDeliveryTypeID'].$delimiter.$record['FuelDeliveryTypeName'];
+    }
+    break;
+    
+   case 'FuelSystemControlType':
+    $delimitedrecords[]='FuelSystemControlTypeID'.$delimiter.'FuelSystemControlTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['FuelSystemControlTypeID'].$delimiter.$record['FuelSystemControlTypeName'];
+    }    
+    break;
+
+   case 'FuelSystemDesign':
+    $delimitedrecords[]='FuelSystemDesignID'.$delimiter.'FuelSystemDesignName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['FuelSystemDesignID'].$delimiter.$record['FuelSystemDesignName'];
+    }
+    break;
+    
+   case 'FuelType':
+    $delimitedrecords[]='FuelTypeID'.$delimiter.'FuelTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['FuelTypeID'].$delimiter.$record['FuelTypeName'];
+    }
+    break;
+
+   case 'IgnitionSystemType':
+    $delimitedrecords[]='IgnitionSystemTypeID'.$delimiter.'IgnitionSystemTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['IgnitionSystemTypeID'].$delimiter.$record['IgnitionSystemTypeName'];
+    }    
+    break;
+    
+   case 'Language':
+    $delimitedrecords[]='LanguageID'.$delimiter.'LanguageName'.$delimiter.'DialectName';
+    break;
+        
+   case 'LanguageTranslation':
+    $delimitedrecords[]='LanguageID'.$delimiter.'LanguageName'.$delimiter.'DialectName';
+    break;
+
+   case 'LanguageTranslationAttachment':
+    $delimitedrecords[]='LanguageTranslationAttachmentID'.$delimiter.'LanguageTranslationID'.$delimiter.'AttachmentID';
+    break;
+
+
+   case 'Make':
+    $delimitedrecords[]='MakeID'.$delimiter.'MakeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['MakeID'].$delimiter.$record['MakeName'];
+    }    
+    break;
+    
+   case 'Mfr':
+    $delimitedrecords[]='MfrID'.$delimiter.'MfrName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['MfrID'].$delimiter.$record['MfrName'];
+    }    
+    break;
+
+   case 'MfrBodyCode':
+    $delimitedrecords[]='MfrBodyCodeID'.$delimiter.'MfrBodyCodeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['MfrBodyCodeID'].$delimiter.$record['MfrBodyCodeName'];
+    }
+    break;
+    
+   case 'Model':
+    $delimitedrecords[]='ModelID'.$delimiter.'ModelName'.$delimiter.'VehicleTypeID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['ModelID'].$delimiter.$record['ModelName'].$delimiter.$record['VehicleTypeID'];
+    }
+    break;
+
+   case 'PowerOutput':
+    $delimitedrecords[]='PowerOutputID'.$delimiter.'HorsePower'.$delimiter.'KilowattPower';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['PowerOutputID'].$delimiter.$record['HorsePower'].$delimiter.$record['KilowattPower'];
+    }   
+    break;
+
+   case 'PublicationStage':
+    $delimitedrecords[]='PublicationStageID'.$delimiter.'PublicationStageName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['PublicationStageID'].$delimiter.$record['PublicationStageName'];
+    }    
+    break;
+        
+   case 'Region':
+    $delimitedrecords[]='RegionID'.$delimiter.'ParentID'.$delimiter.'RegionAbbr'.$delimiter.'RegionName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['RegionID'].$delimiter.$record['RegionAbbr'].$delimiter.$record['RegionName'];
+    }
+    break;
+    
+   case 'SpringType':
+    $delimitedrecords[]='SpringTypeID'.$delimiter.'SpringTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['SpringTypeID'].$delimiter.$record['SpringTypeName'];
+    }    
+    break;
+
+   case 'SpringTypeConfig':
+    $delimitedrecords[]='SpringTypeConfigID'.$delimiter.'FrontSpringTypeID'.$delimiter.'RearSpringTypeID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['SpringTypeConfigID'].$delimiter.$record['FrontSpringTypeID'].$delimiter.$record['RearSpringTypeID'];
+    }    
+    break;
+
+   case 'SteeringConfig':
+    $delimitedrecords[]='SteeringConfigID'.$delimiter.'SteeringTypeID'.$delimiter.'SteeringSystemID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['SteeringConfigID'].$delimiter.$record['SteeringTypeID'].$delimiter.$record['SteeringSystemID'];
+    }    
+    break;
+
+   case 'SteeringSystem':
+    $delimitedrecords[]='SteeringSystemID'.$delimiter.'SteeringSystemName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['SteeringSystemID'].$delimiter.$record['SteeringSystemName'];
+    }    
+    break;
+
+   case 'SteeringType':
+    $delimitedrecords[]='SteeringTypeID'.$delimiter.'SteeringTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['SteeringTypeID'].$delimiter.$record['SteeringTypeName'];
+    }
+    break;
+    
+   case 'SubModel':
+    $delimitedrecords[]='SubModelID'.$delimiter.'SubModelName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['SubModelID'].$delimiter.$record['SubModelName'];
+    }       
+    break;
+
+   case 'Transmission':
+    $delimitedrecords[]='TransmissionID'.$delimiter.'TransmissionBaseID'.$delimiter.'TransmissionMfrCodeID'.$delimiter.'TransmissionElecControlledID'.$delimiter.'TransmissionMfrID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['TransmissionID'].$delimiter.$record['TransmissionBaseID'].$delimiter.$record['TransmissionMfrCodeID'].$delimiter.$record['TransmissionElecControlledID'].$delimiter.$record['TransmissionMfrID'];
+    }
+    break;
+
+   case 'TransmissionBase':
+    $delimitedrecords[]='TransmissionBaseID'.$delimiter.'TransmissionTypeID'.$delimiter.'TransmissionNumSpeedsID'.$delimiter.'TransmissionControlTypeID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['TransmissionBaseID'].$delimiter.$record['TransmissionTypeID'].$delimiter.$record['TransmissionNumSpeedsID'].$delimiter.$record['TransmissionControlTypeID'];
+    }
+    break;
+        
+   case 'TransmissionControlType':
+    $delimitedrecords[]='TransmissionControlTypeID'.$delimiter.'TransmissionControlTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['TransmissionControlTypeID'].$delimiter.$record['TransmissionControlTypeName'];
+    }
+    break;
+
+   case 'TransmissionMfrCode':
+    $delimitedrecords[]='TransmissionMfrCodeID'.$delimiter.'TransmissionMfrCode';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['TransmissionMfrCodeID'].$delimiter.$record['TransmissionMfrCode'];
+    }    
+    break;
+
+   case 'TransmissionNumSpeeds':
+    $delimitedrecords[]='TransmissionNumSpeedsID'.$delimiter.'TransmissionNumSpeeds';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['TransmissionNumSpeedsID'].$delimiter.$record['TransmissionNumSpeeds'];
+    }    
+    break;
+
+   case 'TransmissionType':
+    $delimitedrecords[]='TransmissionTypeID'.$delimiter.'TransmissionTypeName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['TransmissionTypeID'].$delimiter.$record['TransmissionTypeName'];
+    }    
+    break;
+
+   case 'Valves':
+    $delimitedrecords[]='ValvesID'.$delimiter.'ValvesPerEngine';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['ValvesID'].$delimiter.$record['ValvesPerEngine'];
+    }
+    break;
+    
+   case 'VCdbChanges':
+    $delimitedrecords[]='VersionDate'.$delimiter.'TableName'.$delimiter.'ID'.$delimiter.'Action';
+    break;
+    
+   case 'Vehicle':
+    $delimitedrecords[]='VehicleID'.$delimiter.'BaseVehicleID'.$delimiter.'SubmodelID'.$delimiter.'RegionID'.$delimiter.	'Source'.$delimiter.'PublicationStageID'.$delimiter.'PublicationStageSource'.$delimiter.'PublicationStageDate';
+
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     //pre 2.0 scema PublicationStageDate format: 1/27/2012 12:00:00 AM
+     //post 2.0 schema EffectiveDateTime format: 2017-04-21T13:21:29
+     $fixeddate='2000-01-01T00:00:00'; $datepartsa=explode('T',$record['EffectiveDateTime']);
+     if(count($datepartsa)==2)
+     {
+      $datepartsb=explode('-',$datepartsa[0]); if(count($datepartsb)==3){$fixeddate=intval($datepartsb[1]).'/'.intval($datepartsb[2]).'/'.$datepartsb[0].' 12:00:00 AM';}
+     }
+     $delimitedrecords[]=$record['VehicleID'].$delimiter.$record['BaseVehicleID'].$delimiter.$record['SubModelID'].$delimiter.$record['RegionID'].$delimiter.$delimiter.$record['PublicationStageID'].$delimiter.$delimiter.$fixeddate;
+    }
+    break;
+    
+   case 'VehicleToBedConfig':
+    $delimitedrecords[]='VehicleToBedConfigID'.$delimiter.'VehicleID'.$delimiter.'BedConfigID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToBedConfigID'].$delimiter.$record['VehicleID'].$delimiter.$record['BedConfigID'].$delimiter;
+    }
+    break;
+
+   case 'VehicleToBodyConfig':
+    $delimitedrecords[]='VehicleToBodyConfigID'.$delimiter.'VehicleID'.$delimiter.'WheelBaseID'.$delimiter.'BedConfigID'.$delimiter.'BodyStyleConfigID'.$delimiter.'MfrBodyCodeID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToBodyConfigID'].$delimiter.$record['VehicleID'].$delimiter.$record['WheelBaseID'].$delimiter.$record['BedConfigID'].$delimiter.$record['BodyStyleConfigID'].$delimiter.$record['MfrBodyCodeID'].$delimiter;
+    }
+    break;
+    
+   case 'VehicleToBodyStyleConfig':
+    $delimitedrecords[]='VehicleToBodyStyleConfigID'.$delimiter.'VehicleID'.$delimiter.'BodyStyleConfigID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToBodyStyleConfigID'].$delimiter.$record['VehicleID'].$delimiter.$record['BodyStyleConfigID'].$delimiter;
+    }  
+    break;    
+    
+   case 'VehicleToBrakeConfig':
+    $delimitedrecords[]='VehicleToBrakeConfigID'.$delimiter.'VehicleID'.$delimiter.'BrakeConfigID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToBrakeConfigID'].$delimiter.$record['VehicleID'].$delimiter.$record['BrakeConfigID'].$delimiter;
+    }    
+    break;
+
+   case 'VehicleToClass':
+    $delimitedrecords[]='VehicleToClassID'.$delimiter.'VehicleID'.$delimiter.'ClassID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToClassID'].$delimiter.$record['VehicleID'].$delimiter.$record['ClassID'].$delimiter;
+    }    
+    break;
+
+   case 'VehicleToDriveType':
+    $delimitedrecords[]='VehicleToDriveTypeID'.$delimiter.'VehicleID'.$delimiter.'DriveTypeID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToDriveTypeID'].$delimiter.$record['VehicleID'].$delimiter.$record['DriveTypeID'].$delimiter;
+    }    
+    break;
+    
+   case 'VehicleToEngineConfig':
+    $delimitedrecords[]='VehicleToEngineConfigID'.$delimiter.'VehicleID'.$delimiter.'EngineConfigID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToEngineConfigID'].$delimiter.$record['VehicleID'].$delimiter.$record['EngineConfigID'].$delimiter;
+    }
+    break;
+
+   case 'VehicleToMfrBodyCode':
+    $delimitedrecords[]='VehicleToMfrBodyCodeID'.$delimiter.'VehicleID'.$delimiter.'MfrBodyCodeID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToMfrBodyCodeID'].$delimiter.$record['VehicleID'].$delimiter.$record['MfrBodyCodeID'].$delimiter;
+    }
+    break;
+
+   case 'VehicleToSpringTypeConfig':
+    $delimitedrecords[]='VehicleToSpringTypeConfigID'.$delimiter.'VehicleID'.$delimiter.'SpringTypeConfigID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToSpringTypeConfigID'].$delimiter.$record['VehicleID'].$delimiter.$record['SpringTypeConfigID'].$delimiter;
+    }
+    break;
+
+   case 'VehicleToSteeringConfig':
+    $delimitedrecords[]='VehicleToSteeringConfigID'.$delimiter.'VehicleID'.$delimiter.'SteeringConfigID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToSteeringConfigID'].$delimiter.$record['VehicleID'].$delimiter.$record['SteeringConfigID'].$delimiter;
+    }    
+    break;
+
+   case 'VehicleToTransmission':
+    $delimitedrecords[]='VehicleToTransmissionID'.$delimiter.'VehicleID'.$delimiter.'TransmissionID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToTransmissionID'].$delimiter.$record['VehicleID'].$delimiter.$record['TransmissionID'].$delimiter;
+    }
+    break;
+
+   case 'VehicleToWheelBase':
+    $delimitedrecords[]='VehicleToWheelbaseID'.$delimiter.'VehicleID'.$delimiter.'WheelbaseID'.$delimiter.'Source';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleToWheelBaseID'].$delimiter.$record['VehicleID'].$delimiter.$record['WheelBaseID'].$delimiter;
+    }    
+    break;
+
+   case 'VehicleType':
+    $delimitedrecords[]='VehicleTypeID'.$delimiter.'VehicleTypeName'.$delimiter.'VehicleTypeGroupID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleTypeID'].$delimiter.$record['VehicleTypeName'].$delimiter.$record['VehicleTypeGroupID'];
+    }    
+    break;
+
+   case 'VehicleTypeGroup':
+    $delimitedrecords[]='VehicleTypeGroupID'.$delimiter.'VehicleTypeGroupName';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['VehicleTypeGroupID'].$delimiter.$record['VehicleTypeGroupName'];
+    }
+    break;
+
+   case 'Version':
+    $delimitedrecords[]='VersionDate';
+    break;
+    
+   case 'WheelBase':
+    $delimitedrecords[]='WheelBaseID'.$delimiter.'WheelBase'.$delimiter.'WheelBaseMetric';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['WheelBaseID'].$delimiter.$record['WheelBase'].$delimiter.$record['WheelBaseMetric'];
+    }    
+    break;
+
+   case 'Year':
+    $delimitedrecords[]='YearID';
+    foreach($records as $record)
+    {
+     if(isset($record['EndDateTime']) && strlen($record['EndDateTime'])>=10){continue;}
+     $delimitedrecords[]=$record['YearID'];
+    }    
+    break;
+    
+   default: break;      
+  }
+  
+  return $delimitedrecords;
+ }
+ 
+ 
+ 
+ 
+ 
  
  
  
