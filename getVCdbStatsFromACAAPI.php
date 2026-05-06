@@ -22,10 +22,19 @@ $tokenrefreshlimit=100; // how many new-token requests are allowed in this sessi
 $loggingverbosity=1; // (1-10) Ten is the most verbose 
 $sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
 $failurecount=0;
+$totalfails=0;
+$tableattemptcount=0;
 $localrecordcounttotal=0;
+$failedsync=false;
 $diffs=[];
 
 $vcdbapi=new vcdbapi;
+
+// process any command-line args (in a manual call situation)
+foreach($argv as $i=>$arg)
+{
+ if($arg=='-debug'){ $vcdbapi->debug=true;}
+}
 
 $vcdbapi->clientid=$configGet->getConfigValue('AutoCareAPIclientid');
 $vcdbapi->clientsecret=$configGet->getConfigValue('AutoCareAPIclientsecret');
@@ -35,7 +44,6 @@ $vcdbapi->password=$configGet->getConfigValue('AutoCareAPIpassword');
 $vcdbapi->getAccessToken();
 $vcdbapi->pagelimit=0;
 $vcdbapi->pagesize=1; // number of records in each response
-$vcdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
 
 if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API - get stats started'); }
 
@@ -73,31 +81,55 @@ if($vcdbapi->activetoken)
    if($loggingverbosity>2){$logs->logSystemEvent('AutoCare API Client', 0,'Successful request of new token. Expires in '.$vcdbapi->tokenLife().' seconds');}  
   }
   
-  if($vcdbapi->debug){echo ' '.$tablename.'...';}
+  $tableattemptcount=0;
+  while(true)
+  {
+   $tableattemptcount++;
+   if($vcdbapi->debug){echo '  ---- '.$tablename.' (attempt number: '.$tableattemptcount.") ---- \n";}
   
-  $vcdbapi->records=array();
-  $vcdbapi->morepages=false;
-  $success=$vcdbapi->getRecordsPage('VCDB', $tablename, 'en-US', $sincedate);
-  if($success)
-  {
-   $localrecordcount=$vcdbapi->getTableRecordCount($tablename);
-   $localrecordcounttotal+=$localrecordcount;
-   if($localrecordcount!=$vcdbapi->tablerecordcounts[$tablename])
+   $vcdbapi->records=array(); $vcdbapi->morepages=false;
+   if($vcdbapi->getRecordsPage('VCDB', $tablename, 'en-US', $sincedate))
    {
-    $diffs[]=$tablename.' --- API: '.$vcdbapi->tablerecordcounts[$tablename].', local: '.$localrecordcount;
-   }   
-   if($vcdbapi->debug){print_r($vcdbapi->records);}   
+    $localrecordcount=$vcdbapi->getTableRecordCount($tablename);
+    $localrecordcounttotal+=$localrecordcount;
+    if($localrecordcount!=$vcdbapi->tablerecordcounts[$tablename])
+    {
+     $diffs[]=$tablename.' --- API: '.$vcdbapi->tablerecordcounts[$tablename].', local: '.$localrecordcount;
+    }
+    if($vcdbapi->debug){print_r($vcdbapi->records);}
+    break; // this breaks the endless "while"
+   }
+   else
+   {
+    if($vcdbapi->debug){echo " Failed to get records (http status:".$vcdbapi->httpstatus.").\r\n";}
+    $logs->logSystemEvent('AutoCare API Client', 0," Failed to get records (http status:".$vcdbapi->httpstatus.") getting stats for ".$tablename);
+    
+    if($tableattemptcount>=3)
+    {
+     $failedsync=true;
+     break; // this breaks the endless "while"        
+    }
+   }
   }
-  else
+  
+  if($failedsync)
   {
-   $failurecount++;
-   if($vcdbapi->debug){echo " Failed to get records (http status:".$vcdbapi->httpstatus.").\r\n";}
-   $logs->logSystemEvent('AutoCare API Client', 0," Failed to get records (http status:".$vcdbapi->httpstatus.") getting stats for ".$tablename);   
-  }
+   if($vcdbapi->debug){echo ' gave up on: '.$tablename.". after ".$tableattemptcount." attempts. Terminating process.\n";}
+   $logs->logSystemEvent('AutoCare API Client', 0, 'Failure getting records for table: '.$tablename.'. http status: '.$vcdbapi->httpstatus.'. Terminating process.');
+   break; // this breaks the foreach tables list 
+  }  
+
+  
+  
+  
+  
   
  }
  
- if($failurecount==0)
+ $runtime=time()-$starttime;
+
+ 
+ if(!$failedsync)
  {
   if($vcdbapi->debug){print_r($vcdbapi->tablerecordcounts);}
   if(count($diffs))
@@ -106,18 +138,14 @@ if($vcdbapi->activetoken)
   }
   else
   {
-   $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API vs. local ('.$vcdbapi->version().') - no table count differences found across '.count($vcdbapi->tableslist).' tables, '.$localrecordcounttotal.' total records');
+   $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API stats query completed in '.$runtime.' seconds. '.'VCdb API vs. local ('.$vcdbapi->version().') - no table count differences found across '.count($vcdbapi->tableslist).' tables, '.$localrecordcounttotal.' total records');
   }
  }
  else
  {
   if($vcdbapi->debug){echo " Failed to get a full and valid dataset.\r\n";}
  }
- 
- 
- $runtime=time()-$starttime;
- if($vcdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls.'. Token refreshes:'.$vcdbapi->tokenrefreshcount."\r\n";}
- $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API stats query completed in '.$runtime.' seconds. ');
+  
 }
 else
 {
