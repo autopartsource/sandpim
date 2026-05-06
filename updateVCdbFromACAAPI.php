@@ -26,8 +26,24 @@ $tokenlowlifeseconds=3000; //every time a new records page is requested, the rem
 $tokenrefreshlimit=100; // how many new-token requests are allowed in this session (this php script execution)
 $loggingverbosity=1; // (1-10) Ten is the most verbose 
 $sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
+$failedsync=false;
 
+$vcdbapi=new vcdbapi;
+$vcdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
 
+$pickupattablename='';
+ // pgm0 first1 second2 third3 fourth4
+foreach($argv as $i=>$arg)
+{
+ if($arg=='-pickup' && $i<$argc && in_array($argv[$i+1], $vcdbapi->tableslist))
+ {
+  $pickupattablename=$argv[$i+1];     
+ }
+ if($arg=='-debug'){ $vcdbapi->debug=true;}
+}
+
+echo 'pickingup at: '.$pickupattablename."\n";
+ 
 $lastsync=$configGet->getConfigValue('lastSuccessfulVCdbAPIsync');
 
 //     $lastsync=false;
@@ -47,8 +63,6 @@ $clearfirst=false;  // deletes all rec in every named table before engaging with
 
 $deletelocalorphans=false; // cause records in each local table (identified by primary keys) to be deleted if they are not present in API results 
 
-$vcdbapi=new vcdbapi;
-
 $vcdbapi->clientid=$configGet->getConfigValue('AutoCareAPIclientid');
 $vcdbapi->clientsecret=$configGet->getConfigValue('AutoCareAPIclientsecret');
 $vcdbapi->username=$configGet->getConfigValue('AutoCareAPIusername');
@@ -56,10 +70,6 @@ $vcdbapi->password=$configGet->getConfigValue('AutoCareAPIpassword');
         
 $vcdbapi->getAccessToken();
 $vcdbapi->pagelimit=0;
-$vcdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
-
-// $vcdbapi->debug=true;
-
 
 if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync started'); }
 
@@ -87,8 +97,24 @@ if($vcdbapi->activetoken)
 
  $totalinserts=0; $totalupdates=0; $totaldeletes=0;
  
+ $reachedpickuptable=false;
+  
  foreach($vcdbapi->tableslist as $tablename)
  {
+  if(!$reachedpickuptable && $pickupattablename!='')
+  {
+   if($tablename==$pickupattablename)
+   {
+    $reachedpickuptable=true;
+   }
+   else
+   {
+    continue;
+   }
+  }
+     
+     
+     
   $timetemp=time();
 
   $totalinserts+=$vcdbapi->insertcount;
@@ -135,6 +161,7 @@ if($vcdbapi->activetoken)
   {// non-success getting records for the current table
    if($vcdbapi->debug){echo ' Failure getting records for table: '.$tablename.'. http status: '.$vcdbapi->httpstatus.". No action taken with the local table. Terminating process.\r\n";}
    $logs->logSystemEvent('AutoCare API Client', 0, 'Failure getting records for table: '.$tablename.'. http status: '.$vcdbapi->httpstatus.'. No action taken with the local table. Terminating process.');
+   $failedsync=true;
    break;
   }
 
@@ -145,7 +172,7 @@ if($vcdbapi->activetoken)
  $runtime=time()-$starttime;
  if($vcdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls.'. Token refreshes:'.$vcdbapi->tokenrefreshcount."\r\n";}
  $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. SinceDate used:'.$sincedate);
- $configSet->setConfigValue('lastSuccessfulVCdbAPIsync', time());
+ if(!$failedsync){$configSet->setConfigValue('lastSuccessfulVCdbAPIsync', time());}
  $vcdbapi->setVersionDate(date('Y-m-d'));
 }
 else
