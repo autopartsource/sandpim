@@ -243,6 +243,33 @@ class pim
   $db->close();
   return $apps;
  }
+ 
+ function getAppsByAssetid($assetid)
+ {
+  $db = new mysql; $db->connect(); $apps=array();
+  $sql='select application.*,part.partcategory,partcategory.mfrlabel, application_asset.id as connectionid, application_asset.representation, application_asset.assetItemOrder from application left join part on application.partnumber=part.partnumber left join partcategory on part.partcategory=partcategory.id left join application_asset on application.id=application_asset.applicationid where application_asset.assetid =?';  
+  
+  if($stmt=$db->conn->prepare($sql))
+  {
+   $stmt->bind_param('s', $assetid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   { // ddd
+    $attributes=$this->getAppAttributes($row['id']);       
+    $cosmeticattributecount=0;
+    foreach ($attributes as $attribute){if($attribute['cosmetic']>0){$cosmeticattributecount++;}}
+    $attributeshash=$this->appAttributesHash($attributes);
+    $apps[]=array('id'=>$row['id'],'oid'=>$row['oid'],'basevehicleid'=>$row['basevehicleid'],'makeid'=>$row['makeid'],'equipmentid'=>$row['equipmentid'],'parttypeid'=>$row['parttypeid'],'positionid'=>$row['positionid'],'quantityperapp'=>$row['quantityperapp'],'partnumber'=>$row['partnumber'],'status'=>$row['status'],'cosmetic'=>$row['cosmetic'],'attributes'=>$attributes,'attributeshash'=>$attributeshash,'cosmeticattributecount'=>$cosmeticattributecount,'connectionid'=>$row['connectionid'],'representation'=>$row['representation']);
+   }
+  }
+  $db->close();
+  return $apps;
+ }
+ 
+ 
+ 
+ 
 
  function getAppsByPartcategoriesOld($partcategories,$statuslist=false)
  {

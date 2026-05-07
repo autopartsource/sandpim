@@ -3,6 +3,7 @@ include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/interchangeClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/vcdbClass.php');
 include_once('./class/configGetClass.php');
 include_once('./class/logsClass.php');
 
@@ -26,6 +27,7 @@ if (!isset($_SESSION['userid'])) {
 $asset = new asset;
 $interchange=new interchange;
 $pcdb = new pcdb;
+$vcdb = new vcdb;
 $configGet= new configGet;
 $logs=new logs;
 
@@ -58,6 +60,7 @@ if($asset->validAsset($assetid))
  $connectedparts=$asset->getPartsConnectedToAsset($assetid);
  $connectedbrands=$asset->getBrandsConnectedToAsset($assetid);
  $assettags=$asset->getAssettagsForAsset($assetid);
+ $apps=$pim->getAppsByAssetid($assetid);
 }
 else
 {// passed-in asset is not valid - blank it out of caution 
@@ -65,7 +68,6 @@ else
 }
 
 $brands=$interchange->getCompetitivebrands();
-
 
 ?>
 <!DOCTYPE html>
@@ -183,6 +185,19 @@ $brands=$interchange->getCompetitivebrands();
              xhr.send();
             }
 
+            function disconnectApp(appid,connectionid)
+            {
+             var appdiv = document.getElementById('appassetconnectionid_'+connectionid);
+             assetdiv.parentNode.removeChild(appdiv);
+
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDisconnectAppAsset.php?connectionid='+connectionid+'&appid='+appid);
+             xhr.onload = function()
+             {
+              var response=JSON.parse(xhr.responseText);
+             };
+             xhr.send();
+            }
 
             function openLinkEdit()
             {
@@ -477,6 +492,30 @@ $brands=$interchange->getCompetitivebrands();
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="card shadow-sm">
+                        <h5 class="card-header">
+                            App Connections
+                            <ul class="nav nav-tabs" id="appconnectionstab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="connectedapps-tab" data-bs-toggle="tab" href="#connectedapps" role="tab" aria-controls="connectedapps" aria-selected="true">Existing</a>
+                                </li>
+                            </ul>
+                        </h5>
+                        <div class="tab-content" id="appconnectionscontent">
+                            <div class="tab-pane fade show active text-start m-3" id="connectedapps" role="tabpanel" aria-labelledby="connectedapps-tab">
+                                <?php foreach($apps as $app){
+                                    $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);                                    
+                                    ?>
+                                <div id="appassetconnectionid_<?php echo $app['connectionid'];?>" style="padding: 2px;"> 
+                                   <button type="button" class="btn btn-light" onclick="disconnectApp('<?php echo $connectedapp['id'];?>','<?php echo $connectedapp['connectionid'];?>')"><i class="bi bi-x"></i></button>
+                                   <a class="btn btn-secondary" href="showApp.php?appid=<?php echo $app['id'];?>"><?php echo $mmy['makename'].' '.$mmy['modelname'].' '.$mmy['year'];?></a>
+                                </div>
+                                <?php }?>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>    
