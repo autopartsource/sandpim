@@ -29,7 +29,7 @@ $sincedate=false; //'2024-12-01'; // set this data to false to query the API for
 $tableattemptcount=0;
 $totalfails=0;
 $failedsync=false;
-
+$errormessages=[];
 
 $vcdbapi=new vcdbapi;
 $vcdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
@@ -168,7 +168,7 @@ if($vcdbapi->activetoken)
    {// non-success getting records for the current table
     $totalfails++;
     if($vcdbapi->debug){echo ' Failure getting records for table: '.$tablename.'. http status: '.$vcdbapi->httpstatus."\n";}
-    $logs->logSystemEvent('AutoCare API Client', 0, 'Failure getting records for table: '.$tablename.'. http status: '.$vcdbapi->httpstatus);
+    $errormessages[]='Failure getting '.$tablename.'. http status: '.$vcdbapi->httpstatus;
     
     if($tableattemptcount>=3)
     {
@@ -192,7 +192,7 @@ if($vcdbapi->activetoken)
  
  $runtime=time()-$starttime;
  if($vcdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls.'. Token refreshes:'.$vcdbapi->tokenrefreshcount.'. Total failed api calls: '.$totalfails."\r\n";}
- $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. Total failed api calls: '.$totalfails.'. SinceDate used:'.$sincedate);
+ $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. Total failed api calls: '.$totalfails.'. SinceDate used:'.$sincedate.'<br/>'.implode('<br/>',$errormessages));
  if(!$failedsync){$configSet->setConfigValue('lastSuccessfulVCdbAPIsync', time());}
  $vcdbapi->setVersionDate(date('Y-m-d'));
 }
