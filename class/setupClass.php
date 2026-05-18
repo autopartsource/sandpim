@@ -1618,6 +1618,19 @@ class setup
         INDEX idx_exportid (exportid),
         unique key idx_receiverprofileid (receiverprofileid,applicationid))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiver_applicationstate ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiver_applicationstate ('.$db->conn->error.')';}
+
+        $sql="CREATE TABLE receiver_assetstate (
+        id int UNSIGNED NOT NULL AUTO_INCREMENT,
+        receiverprofileid int UNSIGNED NOT NULL,
+        assetid varchar(255) not null default '',
+        oid varchar(255) not null default '',
+        exportid int UNSIGNED NOT NULL,        
+        PRIMARY KEY (id),
+        INDEX idx_oid (oid),
+        INDEX idx_rec_app_oid (receiverprofileid,assetid,oid),
+        INDEX idx_exportid (exportid),
+        unique key idx_receiverprofileid (receiverprofileid,assetid))";
+        if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - receiver_assetstate ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - receiver_assetstate ('.$db->conn->error.')';}
         
         $sql="CREATE TABLE internalattribute (
         attributename varchar(255) NOT NULL,

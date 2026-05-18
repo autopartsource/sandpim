@@ -39,6 +39,9 @@ if(count($jobs))
  }
 
  $receiverprofileid=intval($parameters['receiverprofile']);
+ $updatereceiverassetstates=false; if(array_key_exists('UpdateReceiverAssetStates', $parameters) && $parameters['UpdateReceiverAssetStates']=='yes'){$updatereceiverassetstates=true;}
+ $exporttype='FULL'; if(array_key_exists('ExportType', $parameters) && $parameters['ExportType']=='UPDATE'){$exporttype='UPDATE';}
+ $exportpurpose=''; if(array_key_exists('ExportPurpose', $parameters) && trim($parameters['ExportPurpose'])!=''){$exportpurpose='Exported for '.$parameters['ExportPurpose'];}
  $verbosity=0; if(array_key_exists('verbosity', $parameters)){intval($parameters['verbosity']);}
  $verifyhashes=false;if(array_key_exists('verifyhashes', $parameters)){$verifyhashes=true;}
   
@@ -73,6 +76,8 @@ if(count($jobs))
  $totalretrycount=0;
  $retrycount=0;
  
+ $exportid=$pim->logExport($receiverprofileid, 'Assets-zip', $zipfilename, 'Asset files for '. count($partnumbers).' parts - '.$exportpurpose); 
+ 
  $shellresult= shell_exec('mkdir '.$outputpath.$tempdirname);
  $pim->logBackgroundjobEvent($jobid, 'Profile: '.$profilename);
  $pim->logBackgroundjobEvent($jobid, 'Created temp directory ('.$outputpath.$tempdirname.') '.$shellresult);
@@ -89,7 +94,7 @@ if(count($jobs))
    {
     $digitalassetrecords=$assets->getAssetRecordsByAssetid($digitalassetconnection['assetid']);
     foreach($digitalassetrecords as $digitalassetrecord)
-    {        
+    {
      $assettags=$assets->getAssettagsForAsset($digitalassetrecord['assetid']); //$tags[]=array('id'=>$row['id'],'assettagid'=>$row['assettagid'],'tagtext'=>$row['tagtext']);
      // short (continue) the loop if this asset's tag list dosn't include any tags in the profile's list
      $foundtag=false; $firstmatchedtagtext='';
@@ -102,7 +107,8 @@ if(count($jobs))
      }
      
      if(!$foundtag){continue;}
-
+     
+     $newoid='';
      $filename=$digitalassetrecord['filename'];
      $assetid=$digitalassetrecord['assetid'];
      $assetype=$digitalassetconnection['assettypecode'];
@@ -115,6 +121,7 @@ if(count($jobs))
      $assetrecordid=$digitalassetrecord['id'];
      
      if(in_array($filename,$uniquefilenames)){continue;} // skip file if it has already been added
+     $uniquefilenames[]=$filename;
                
      if($uri!='' && in_array($filetype,['JPG','PNG','PDF','BMP','TIF']))
      { 
@@ -164,24 +171,54 @@ if(count($jobs))
          $newoid=$assets->updateAssetOID($assetrecordid);
          $assets->logAssetEvent($assetrecordid, 0, 'AssetBundle process fixed incorrect filesize after downloading file from CND and validating hash', $newoid);
         }
-        
-        
        }
        
-       $uniquefilenames[]=$filename;
+       //----------
+       $includefileinoutput=true;
+       $oidtosaveinexport=$digitalassetrecord['oid']; if($newoid!=''){$oidtosaveinexport=$newoid;}
        
-       if(file_put_contents($outputpath.$tempdirname.'/'.$filename,$assetfilecontents)===false)
-       {// local write to the temp folder failed
-        $pim->logBackgroundjobEvent($jobid, $filename.' - local save to '.$outputpath.$tempdirname.'/'.$filename.' failed');
-        $errorcount++;
+       if($updatereceiverassetstates)
+       {
+        $receiversoid=$pim->getReceiverAssetState($receiverprofileid, $digitalassetrecord['assetid']);
+        if($receiversoid===false)
+        {// receiver does not have this asset (it missing from their local store)
+         $pim->writeReceiverAssetState($receiverprofileid, $digitalassetrecord['assetid'], $oidtosaveinexport, $exportid);
+        }
+        else
+        {// the receiver does have assetid 
+         if($receiversoid==$oidtosaveinexport)
+         {// receiver store agrees with current truth - no action needed
+          if($exporttype=='UPDATE')
+          {
+           $includefileinoutput=false;
+          }
+         }
+         else
+         {// receiver's state does not match current truth
+          $pim->updateReceiverAssetState($receiverprofileid, $digitalassetrecord['assetid'], $oidtosaveinexport, $exportid);              
+         }
+        }
+       }       
+       
+       //--------------
+              
+       if($includefileinoutput)
+       {    
+        if(file_put_contents($outputpath.$tempdirname.'/'.$filename,$assetfilecontents)===false)
+        {// local write to the temp folder failed
+         $pim->logBackgroundjobEvent($jobid, $filename.' - local save to '.$outputpath.$tempdirname.'/'.$filename.' failed');
+         $errorcount++;
+        }
+        else
+        {// successful local write of the file          
+         // add the file to the hitlist for later delete
+         $hitlistfiles[]=$outputpath.$tempdirname.'/'.$filename;
+         $uncompressedbytetotal+=$downloadsize;        
+         // record the export        
+         $pim->logExportDetail($exportid, 'ASSET', serialize($digitalassetrecord), $digitalassetrecord['id'], $digitalassetrecord['assetid'],$oidtosaveinexport);        
+        }
        }
-       else
-       {// successful local write of the file
-          
-        // add the file to the hitlist for later delete
-        $hitlistfiles[]=$outputpath.$tempdirname.'/'.$filename;
-        $uncompressedbytetotal+=$downloadsize;
-       }
+       
        
       }
       else
@@ -230,7 +267,9 @@ if(count($jobs))
  }
  else
  {
-  $pim->updateBackgroundjobDone($jobid, 'failed', date('Y-m-d H:i:s'));     
+  $pim->updateBackgroundjobDone($jobid, 'failed', date('Y-m-d H:i:s'));
+  // delete export header and detail recs
+  $pim->deleteExport($exportid);
  }
  
  $pim->updateBackgroundjobOutputfile($jobid, $outputpath.$zipfilename);

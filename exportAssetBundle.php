@@ -33,11 +33,13 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
 if(isset($_POST['submit']) && $_POST['submit']=='Export')
 {
  $receiverprofile=intval($_POST['receiverprofile']);
- $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofile);
- 
- $pim->createBackgroundjob('AssetBundle', 'started', $_SESSION['userid'], '', $exportsdirectory, 'receiverprofile:'.$receiverprofile.';verifyhashes:yes;', date('Y-m-d H:i:s'), 'application/zip', '');   
+ $exporttype='FULL'; if(in_array($_POST['exporttype'], ['FULL','UPDATE'])){$exporttype=$_POST['exporttype'];}
+ $exportpurpose=''; if(in_array($_POST['purpose'], ['audit','candidate','publish'])){$exportpurpose=$_POST['purpose'];}
+ $updatereceiveraassettates='yes'; if(in_array($_POST['updatereceiverassetstates'], ['yes','no'])){$updatereceiverassetstates=$_POST['updatereceiverassetstates'];}
+ $user->setUserPreference($_SESSION['userid'], 'last receiverprofileid used', $receiverprofile);  
+ $pim->createBackgroundjob('AssetBundle', 'started', $_SESSION['userid'], '', $exportsdirectory, 'receiverprofile:'.$receiverprofile.';verifyhashes:yes;ExportPurpose:'.$exportpurpose.';ExportType:'.$exporttype.';UpdateReceiverAssetStates:'.$updatereceiverassetstates, date('Y-m-d H:i:s'), 'application/zip', '');   
  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./backgroundJobs.php'\" /></head><body></body></html>";
- exit;   
+ exit;
 }
 
 ?>
@@ -67,6 +69,15 @@ if(isset($_POST['submit']) && $_POST['submit']=='Export')
                             <form action="exportAssetBundle.php" method="post">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f0f0f0">
                                     <div style="padding:8px;">Receiver Profile <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select></div>
+                                    <div style="margin:10px;">
+                                        Export Purpose <select name="purpose"><option value="audit">Internal Audit</option><option value="candidate">Release Candidate</option><option value="publish">Publishing to external receiver</option></select>
+                                    </div>
+                                    <div style="margin:10px;">
+                                        Export Type <select name="exporttype"><option value="FULL">FULL</option><option value="UPDATE">UPDATE</option></select>
+                                    </div>
+                                    <div style="margin:10px;">
+                                        Update Receiver Asset States <select name="updatereceiverassetstates"><option value="yes">Yes</option><option value="no">No</option></select>
+                                    </div>
                                     <input type="submit" name="submit" value="Export"/>
                                 </div>
                             </form>

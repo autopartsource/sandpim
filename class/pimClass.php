@@ -6363,6 +6363,80 @@ function allowedHost($address)
   }
   $db->close();
  }
+
+
+ function getReceiverAssetState($receiverprofileid,$assetid)
+ {
+  $db = new mysql; $db->connect(); $oid=false;
+  if($stmt=$db->conn->prepare('select oid from receiver_assetstate where receiverprofileid=? and assetid=?'))
+  {
+   if($stmt->bind_param('is',$receiverprofileid,$assetid))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     if($row = $db->result->fetch_assoc())
+     {
+      $oid=$row['oid'];
+     }
+    }
+   }
+  }
+  $db->close();
+  return $oid;
+ }
+
+ function writeReceiverAssetState($receiverprofileid,$assetid,$oid,$exportid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('insert into receiver_assetstate values(null,?,?,?,?)'))
+  {
+   if($stmt->bind_param('issi',$receiverprofileid,$assetid,$oid,$exportid))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+
+ function updateReceiverAssetState($receiverprofileid,$assetid,$oid,$exportid)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update receiver_assetstate set oid=?, exportid=? where receiverprofileid=? and assetid=?'))
+  {
+   if($stmt->bind_param('siis',$oid,$exportid,$receiverprofileid,$assetid))
+   {
+    $stmt->execute();
+   }
+  }
+  $db->close();
+ }
+ 
+ function deleteReceiverAssetState($receiverprofileid,$assetid=false)
+ {
+  $db = new mysql; $db->connect();
+  $sql='delete from receiver_assetstate where receiverprofileid=? and assetid=?';
+  if($applicationid===false){$sql='delete from receiver_assetstate where receiverprofileid=?';}
+  
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($applicationid===false)
+   {
+    $stmt->bind_param('i',$receiverprofileid);
+   }
+   else
+   {
+    $stmt->bind_param('is',$receiverprofileid,$assetid);
+   }
+   $stmt->execute();
+  }
+  $db->close();
+ }
+
+
+
+
+
  
 
 }?>
