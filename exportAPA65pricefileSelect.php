@@ -53,7 +53,7 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                         <h3 class="card-header text-start">Export APA/AWDA price spreadsheet for portal upload</h3>
 
                         <div class="card-body">
-                            <form action="exportAPA65pricefileStream.php" method="get">
+                            <form action="exportAPA65simplePricefileStream.php" method="get">
                                 <div style="border:solid #808080 1px;margin:20px;padding:10px;background-color: #f8f8f8">                                    
                                     <select name="receiverprofile"><?php foreach ($receiverprofiles as $receiverprofile) { ?><option value="<?php echo $receiverprofile['id']; ?>" <?php if($receiverprofile['id']==$preferedreceiverprofileid){echo ' selected';} ?>><?php echo $receiverprofile['name']; ?></option><?php } ?></select>
                                     <select name="pricesheetnumber" <option value="">select...</option><?php foreach($pricesheets as $pricesheet){echo '<option value="'.$pricesheet['number'].'">'.$pricesheet['description'].'</option>';}?></select>
