@@ -174,6 +174,7 @@ class pcdb
  
  function version()
  {
+     /*
   $versiondate='not found';
   $db = new mysql; 
   $db->dbname=$db->pcdbname; 
@@ -188,6 +189,34 @@ class pcdb
     $versiondate=$row['VersionDate'];
    }
   }
+  $db->close();
+  return $versiondate;
+      */
+     
+  $versiondate='not found';
+  $db = new mysql; 
+  $db->dbname=$db->vcdbname; 
+  if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;}
+  $db->connect();
+    
+  if($stmt=$db->conn->prepare('select * from Version'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {       
+    if(array_key_exists('PublicationDate', $row))
+    {// this is the "2.0" schema (like "2026-03-26 00:00:00")
+     $versiondatetime=$row['PublicationDate'];     
+     if(strlen($versiondatetime)==19 && substr($versiondatetime, 10, 1)==' ')         
+     $versiondate=substr($versiondatetime, 0, 10);
+    }
+    else
+    {// must be pre-2.0 schema (like "2026-02-26")
+     $versiondate=$row['VersionDate'];        
+    }
+   }
+  }  
   $db->close();
   return $versiondate;
  }
