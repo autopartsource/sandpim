@@ -10,7 +10,7 @@ class pcdb
   $this->pcdbversion=$_pcdbversion;
   if(!$_pcdbversion)
   { // no secific vsersion was passed in. Consult pim database for the name
-    // of the active vcdb database. It will be something like pcdb20210827      
+    // of the active pcdb database. It will be something like pcdb20210827      
    $db = new mysql; $db->connect();
    if($stmt=$db->conn->prepare("select configvalue from config where configname='pcdbProductionDatabase'"))
    {
@@ -195,8 +195,8 @@ class pcdb
      
   $versiondate='not found';
   $db = new mysql; 
-  $db->dbname=$db->vcdbname; 
-  if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;}
+  $db->dbname=$db->pcdbname; 
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
     
   if($stmt=$db->conn->prepare('select * from Version'))
