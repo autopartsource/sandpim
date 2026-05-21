@@ -561,7 +561,7 @@ class pcdb
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
   $sql='select * from PIESExpiCode order by Expicode';
-  if($db->dbname=='pcdbcache'){$sql='select EXPICode as ExpiCode,EXPICodeDescription as ExpiCodeDescription from PIESEXPICode order by Expicode';}
+  if($this->schemaversion=='2.0'){$sql='select EXPICode as ExpiCode,EXPICodeDescription as ExpiCodeDescription from PIESEXPICode order by Expicode';}
   if($stmt=$db->conn->prepare($sql))
   {
    $stmt->execute();
@@ -586,9 +586,10 @@ function getValidEXPIvalues($code)
  {
   $options=array();
   $db = new mysql; $db->dbname=$db->pcdbname;
-  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
-  $db->connect();
-  if($stmt=$db->conn->prepare('select ExpiCode,CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode,PIESExpiCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESExpiCodeId=PIESExpiCode.PIESExpiCodeId and ExpiCode=? order by ExpiCode,CodeValue'))
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;} $db->connect();
+  $sql='select ExpiCode,CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode,PIESExpiCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESExpiCodeId=PIESExpiCode.PIESExpiCodeId and ExpiCode=? order by ExpiCode,CodeValue';
+  if($this->schemaversion=='2.0'){$sql='select EXPICode,CodeValue,CodeDescription from PIESReferenceFieldCode, PIESEXPICode, PIESCode where PIESReferenceFieldCode.EXPICodeID=PIESEXPICode.EXPICodeID and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and EXPICode=? order by CodeValue';}
+  if($stmt=$db->conn->prepare($sql))
   {
    $stmt->bind_param('s', $code);
    $stmt->execute();
@@ -600,8 +601,10 @@ function getValidEXPIvalues($code)
   }
   
   if(count($options)==0)
-  {// no valid value optioions exist for this EXPI code - see if the code itself is valid
-   if($stmt=$db->conn->prepare('select ExpiCode,ExpiCodeDescription from PIESExpiCode where ExpiCode=?'))
+  {// no valid value optioions exist for this EXPI code - see if the code itself is valid   
+   $sql='select ExpiCode,ExpiCodeDescription from PIESExpiCode where ExpiCode=?';
+   if($this->schemaversion=='2.0'){$sql='select EXPICode,ExpiCodeDescription from PIESEXPICode where ExpiCode=?';}
+   if($stmt=$db->conn->prepare($sql))
    {
     $stmt->bind_param('s', $code);
     $stmt->execute();
