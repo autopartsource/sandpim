@@ -97,7 +97,7 @@ class pcdb
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
   $sql='select * from CodeMaster where PartTerminologyID=? and PositionID=?';
-  if($db->dbname=='pcdbcache')
+  if($this->schemaversion=='2.0')
   { // API-based schema is different
    $sql='select * from PartPosition where PartTerminologyID=? and PositionID=?';   
   }
@@ -469,7 +469,7 @@ class pcdb
   $db->connect();
 //ccc
   $sql='select CodeValue,CodeDescription,FieldFormat from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESFieldId=60 order by CodeDescription';
-  if($db->dbname=='pcdbcache')
+  if($this->schemaversion=='2.0')
   {
    $sql='select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=60 order by CodeDescription';
   }
@@ -493,7 +493,7 @@ class pcdb
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
   $sql='select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=31 order by CodeDescription';
-  if($db->dbname=='pcdbcache')
+  if($this->schemaversion=='2.0')
   {
    $sql='select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=31 order by CodeDescription';
   }
@@ -520,7 +520,7 @@ class pcdb
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
   $sql='select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=60 and CodeValue=?';
-  if($db->dbname=='pcdbcache'){$sql='select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESReferenceFieldCode.FieldId=60 and CodeValue=?';}  
+  if($this->schemaversion=='2.0'){$sql='select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESReferenceFieldCode.FieldId=60 and CodeValue=?';}  
   if($stmt=$db->conn->prepare($sql))
   {
    $stmt->bind_param('s', $code);
