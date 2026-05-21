@@ -645,7 +645,7 @@ function getValidEXPIvalues($code)
   }
 
  $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=? order by CodeDescription';
- if($db->dbname=='pcdbcache')
+ if($this->schemaversion=='2.0')
  {
   $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=? order by CodeDescription';
  }
