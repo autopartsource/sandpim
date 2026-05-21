@@ -4,10 +4,12 @@ include_once("mysqlClass.php");
 class pcdb
 {
  public $pcdbversion;
-    
+ public $schemaversion;
+ 
  public function __construct($_pcdbversion=false) 
  {
   $this->pcdbversion=$_pcdbversion;
+  $this->schemaversion='1.0';
   if(!$_pcdbversion)
   { // no secific vsersion was passed in. Consult pim database for the name
     // of the active pcdb database. It will be something like pcdb20210827      
@@ -26,7 +28,13 @@ class pcdb
     }
     $db->close();
    }
-  }  
+  }
+  
+  // version will either be pcdbcache or like pcdb20260430  
+  if($this->pcdbversion=='pcdbcache' || (strlen($this->pcdbversion)==12 && intval(substr($this->pcdbversion,4,6))>=20260326))
+  {
+   $this->schemaversion='2.0';
+  }
  }
     
  function addIndexes()
@@ -309,7 +317,7 @@ class pcdb
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
   $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESReferenceFieldCode.PIESFieldId=93 order by CodeDescription';
-  if($db->dbname=='pcdbcache')
+  if($this->schemaversion=='2.0')
   {// the API-based schema has diffenent naming of some fields
    $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and  PIESReferenceFieldCode.FieldId=93 order by CodeDescription';
   }
@@ -335,7 +343,7 @@ class pcdb
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
   $sql='select CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=93 and CodeValue=?';
-  if($db->dbname=='pcdbcache')
+  if($this->schemaversion=='2.0')
   {
    $sql='select CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=93 and CodeValue=?';
   }
@@ -359,7 +367,6 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
-//  if($stmt=$db->conn->prepare('select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=39 order by CodeValue'))
   if($stmt=$db->conn->prepare('select CodeValue,CodeDescription,FieldFormat from PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=60 order by CodeValue'))
   {
    $stmt->execute();
@@ -405,12 +412,13 @@ class pcdb
   $db = new mysql; $db->dbname=$db->pcdbname;
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
+  
   $sql='select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=32 order by CodeValue';
-  if($db->dbname=='pcdbcache')
+  if($this->schemaversion=='2.0')
   {
    $sql='select CodeValue, CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=32 order by CodeValue';
   }
-
+  
   if($stmt=$db->conn->prepare($sql))
   {
    $stmt->execute();
