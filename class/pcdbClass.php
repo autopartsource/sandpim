@@ -677,7 +677,7 @@ function getValidEXPIvalues($code)
   $records=array();
 
   $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.PIESFieldId=PIESField.PIESFieldId and PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESField.PIESFieldId=34 order by CodeDescription';
-  if($db->dbname=='pcdbcache')
+  if($this->schemaversion=='2.0')
   {
    $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=34 order by CodeDescription';
   }
@@ -705,7 +705,7 @@ function getValidEXPIvalues($code)
   $db->connect();
 
   $sql='select CodeValue,CodeDescription from  PIESReferenceFieldCode,PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and  PIESFieldId=47 order by CodeValue';
-  if($db->dbname=='pcdbcache')
+  if($this->schemaversion=='2.0')
   {
    $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=47 order by CodeDescription';
   }
@@ -754,7 +754,7 @@ function getValidEXPIvalues($code)
   if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
   $db->connect();
   $sql="select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=103 and CodeDescription <>'User Defined' order by CodeDescription";
-  if($db->dbname=='pcdbcache')
+  if($this->schemaversion=='2.0')
   {
    $sql="select CodeValue, CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=103 and CodeDescription <>'User Defined' order by CodeValue";
   }
