@@ -51,8 +51,6 @@
 
 </script>
 
-</script>
-
 <style>
 .navbar-custom {background-color: #<?php if(isset($pim)){echo $pim->navbarColor();}else{echo '404040';}?>;}
 .navbar-custom .navbar-brand,

@@ -3526,24 +3526,26 @@ function countAppsByPartcategories($partcategories)
  }
 
  function logAppEvent($applicationid,$userid,$description,$newoid)
- { // fff
-  $db=new mysql; $db->connect();
-  
+ {
+  $db=new mysql; $db->connect();  
   $app=$this->getApp($applicationid);
-  $parteventdescription='app '.$applicationid.': '.$description;
-  $partnumber=$app['partnumber'];
-  $partoid='';
+  if($app!==false)
+  {// only do the deed is the app was found
+   $parteventdescription='app '.$applicationid.': '.$description;
+   $partnumber=$app['partnumber'];
+   $partoid='';
   
-  if($stmt=$db->conn->prepare('insert into application_history (id,applicationid,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
-  {
-   $stmt->bind_param('iiss', $applicationid,$userid,$description,$newoid);
-   $stmt->execute();
-  }
+   if($stmt=$db->conn->prepare('insert into application_history (id,applicationid,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
+   {
+    $stmt->bind_param('iiss', $applicationid,$userid,$description,$newoid);
+    $stmt->execute();
+   }
   
-  if($stmt=$db->conn->prepare('insert into part_history (id,partnumber,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
-  {
-   $stmt->bind_param('siss', $partnumber, $userid, $parteventdescription,$partoid);
-   $stmt->execute();
+   if($stmt=$db->conn->prepare('insert into part_history (id,partnumber,eventdatetime,userid,description,new_oid) values(null,?,now(),?,?,?)'))
+   {
+    $stmt->bind_param('siss', $partnumber, $userid, $parteventdescription,$partoid);
+    $stmt->execute();
+   }
   }
   $db->close();
  }
