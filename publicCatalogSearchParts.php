@@ -1,12 +1,14 @@
 <?php
 include_once('./class/logsClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/pcdbClass.php');
 include_once('./class/interchangeClass.php');
 $navCategory = 'search';
 session_start();
 
 $logs=new logs();
 $pim=new pim();
+$pcdb=new pcdb();
 $interchange=new interchange();
 
 $results=false;
@@ -17,9 +19,7 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
  $qsanitized=$pim->sanitizePartnumber($_GET['q']);
  $results=$pim->getParts($qsanitized, 'contains', 'any', 'any', 'any', 'any', 30);
  
-  $compresults=$interchange->getInterchangeBySearch($qsanitized, 'contains', '%', 30, 1684);     
- 
- 
+ $compresults=$interchange->getInterchangeBySearch($qsanitized, 'contains', '%', 30, 1684);
 }
 
 ?>
@@ -62,17 +62,33 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
                         </div>
                     </div>
 
+                    
+                    
+                    
                     <?php if($results){?>
                     <div class="card shadow-sm">
                         <h5 class="card-header text-start">VGX Results</h5>
-                        <div class="card-body">                            
-                        <?php foreach($results as $result){?>                            
-                            <div>                                
-                            <?php echo $result['partnumber'];?>                                                                
-                            </div>
-                        <?php }?>
-                        </div>
-                    </div>                    
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Part</th>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($results as $result){?>                            
+                                    <tr>
+                                       <td><a href="publicCatalogPart.php?partnumber=<?php echo $result['partnumber'];?>" class="btn btn-secondary"><?php echo $result['partnumber'];?></a></td>
+                                       <td><?php echo $result['partcategoryname'];?></td>
+                                       <td><?php echo $pcdb->lifeCycleCodeDescription($result['lifecyclestatus']);?></td>
+                                    </tr>                           
+                                    <?php }?>
+                                </tbody>
+                            </table>
+                        </div>                        
+                    </div>              
                     <?php }?>
  
                     <?php if($compresults){?>
