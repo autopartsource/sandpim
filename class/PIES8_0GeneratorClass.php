@@ -35,11 +35,11 @@ class PIESgenerator
   if(array_key_exists('ParentDUNSNumber',$header)){$ParentDUNSNumberElement=new DOMElement('ParentDUNSNumber',$header['ParentDUNSNumber']);  $headerElement->appendChild($ParentDUNSNumberElement);}
   if(array_key_exists('ParentGLN',$header)){$ParentGLNelement=new DOMElement('ParentGLN',$header['ParentGLN']);  $headerElement->appendChild($ParentGLNelement);}
   if(array_key_exists('ParentVMRSID',$header)){$ParentVMRSIDelement=new DOMElement('ParentVMRSID',$header['ParentVMRSID']);  $headerElement->appendChild($ParentVMRSIDelement);}
-  if(array_key_exists('ParentAAIAID',$header)){$ParentIDelement=new DOMElement('ParentID',$header['ParentAAIAID']);  $headerElement->appendChild($ParentIDelement);}
+  if(array_key_exists('ParentID',$header)){$ParentIDelement=new DOMElement('ParentID',$header['ParentID']);  $headerElement->appendChild($ParentIDelement);}
   if(array_key_exists('BrandOwnerDUNS',$header)){$BrandOwnerDUNSelement=new DOMElement('BrandOwnerDUNS',$header['BrandOwnerDUNS']);  $headerElement->appendChild($BrandOwnerDUNSelement);}
   if(array_key_exists('BrandOwnerGLN',$header)){$BrandOwnerGLNelement=new DOMElement('BrandOwnerGLN',$header['BrandOwnerGLN']);  $headerElement->appendChild($BrandOwnerGLNelement);}
   if(array_key_exists('BrandOwnerVMRSID', $header)){$BrandOwnerVMRSIDelement=new DOMElement('BrandOwnerVMRSID',$header['BrandOwnerVMRSID']);  $headerElement->appendChild($BrandOwnerVMRSIDelement);}
-//  if(array_key_exists('BrandOwnerAAIAID', $header)){$BrandOwnerIDelement=new DOMElement('BrandOwnerID',$header['BrandOwnerAAIAID']); $headerElement->appendChild($BrandOwnerIDelement);}   
+//  if(array_key_exists('BrandOwnerID', $header)){$BrandOwnerIDelement=new DOMElement('BrandOwnerID',$header['BrandOwnerID']); $headerElement->appendChild($BrandOwnerIDelement);}   
   if(array_key_exists('BuyerDuns',$header)){$BuyerDunsElement=new DOMElement('BuyerDuns',$header['BuyerDuns']); $headerElement->appendChild($BuyerDunsElement);}   
   if(array_key_exists('CurrencyCode',$header)){$CurrencyCodeElement=new DOMElement('CurrencyCode',$header['CurrencyCode']); $headerElement->appendChild($CurrencyCodeElement);}
   if(array_key_exists('LanguageCode',$header)){$LanguageCodeElement=new DOMElement('LanguageCode',$header['LanguageCode']); $headerElement->appendChild($LanguageCodeElement);}
@@ -120,9 +120,9 @@ class PIESgenerator
    }
    
    $ItemElement->appendChild($PartNumberElement);
-   $BrandIDelement= $doc->createElement('BrandID',$item['BrandAAIAID']); $ItemElement->appendChild($BrandIDelement);
-   if(array_key_exists('SubBrandAAIAID', $item)){$SubBrandIDelement= $doc->createElement('SubBrandID',$item['SubBrandAAIAID']); $ItemElement->appendChild($SubBrandIDelement);}
-   if(array_key_exists('BrandLabel', $item)){$BrandLabelElement= $doc->createElement('BrandLabel',$item['BrandLabel']); $ItemElement->appendChild($BrandLabelElement); }
+   $BrandIDelement= $doc->createElement('BrandID',$item['BrandID']); $ItemElement->appendChild($BrandIDelement);
+   if(array_key_exists('SubBrandID', $item)){$SubBrandIDelement= $doc->createElement('SubBrandID',$item['SubBrandID']); $ItemElement->appendChild($SubBrandIDelement);}
+   //if(array_key_exists('BrandLabel', $item)){$BrandLabelElement= $doc->createElement('BrandLabel',$item['BrandLabel']); $ItemElement->appendChild($BrandLabelElement); }
    if(array_key_exists('VMRSBrandID', $item)){$VMRSBrandIDelement= $doc->createElement('VMRSBrandID',$item['VMRSBrandID']); $ItemElement->appendChild($VMRSBrandIDelement); }
    if(array_key_exists('ACESApplications', $item)){$ACESApplicationsElement= $doc->createElement('ACESApplications',$item['ACESApplications']); $ItemElement->appendChild($ACESApplicationsElement);}
    if(array_key_exists('ItemQuantitySize', $item) && array_key_exists('ItemQuantitySizeUOM', $item)){$ItemQuantitySizeElement= $doc->createElement('ItemQuantitySize',$item['ItemQuantitySize']); $ItemQuantitySizeElement->setAttribute('UOM', $item['ItemQuantitySizeUOM']); $ItemElement->appendChild($ItemQuantitySizeElement);}
@@ -148,7 +148,7 @@ class PIESgenerator
     $ItemElement->appendChild($ManufacturerProductCodesElement);
    }
    
-   if(array_key_exists('AAIAProductCategoryCode', $item)){$AAIAProductCategoryCodeElement= $doc->createElement('AAIAProductCategoryCode',$item['AAIAProductCategoryCode']); $ItemElement->appendChild($AAIAProductCategoryCodeElement); }
+   if(array_key_exists('ProductCategoryCode', $item)){$ProductCategoryCodeElement= $doc->createElement('ProductCategoryCode',$item['ProductCategoryCode']); $ItemElement->appendChild($ProductCategoryCodeElement); }
    if(array_key_exists('UNSPSC', $item)){$UNSPSCElement= $doc->createElement('UNSPSC',$item['UNSPSC']); $ItemElement->appendChild($UNSPSCElement); }
 
    $PartTerminologyIDelement= $doc->createElement('PartTerminologyID',$item['PartTerminologyID']); $ItemElement->appendChild($PartTerminologyIDelement);
@@ -343,29 +343,29 @@ class PIESgenerator
       $KitComponentElement->appendChild($ComponentPartNumberElement);
      }
      
-     if(array_key_exists('ComponentBrand',$kit) && trim($kit['ComponentBrand'])!='')
+     if(array_key_exists('ComponentBrandID',$kit) && trim($kit['ComponentBrandID'])!='')
      {
-      $ComponentBrandElement=$doc->createElement('ComponentBrand',$kit['ComponentBrand']);
+      $ComponentBrandElement=$doc->createElement('ComponentBrandID',$kit['ComponentBrandID']);
       $KitComponentElement->appendChild($ComponentBrandElement);
      }     
 
-     if(array_key_exists('ComponentBrandLabel',$kit) && trim($kit['ComponentBrandLabel'])!='')
-     {
-      $ComponentBrandLabelElement=$doc->createElement('ComponentBrandLabel',$kit['ComponentBrandLabel']);
-      $KitComponentElement->appendChild($ComponentBrandLabelElement);
-     }     
+     //if(array_key_exists('ComponentBrandLabel',$kit) && trim($kit['ComponentBrandLabel'])!='')
+     //{
+     // $ComponentBrandLabelElement=$doc->createElement('ComponentBrandLabel',$kit['ComponentBrandLabel']);
+     // $KitComponentElement->appendChild($ComponentBrandLabelElement);
+     //}     
 
-     if(array_key_exists('ComponentSubBrand',$kit) && trim($kit['ComponentSubBrand'])!='')
+     if(array_key_exists('ComponentSubBrandID',$kit) && trim($kit['ComponentSubBrandID'])!='')
      {
-      $ComponentSubBrandElement=$doc->createElement('ComponentSubBrand',$kit['ComponentSubBrand']);
+      $ComponentSubBrandElement=$doc->createElement('ComponentSubBrandID',$kit['ComponentSubBrandID']);
       $KitComponentElement->appendChild($ComponentSubBrandElement);
      }     
 
-     if(array_key_exists('ComponentSubBrandLabel',$kit) && trim($kit['ComponentSubBrandLabel'])!='')
-     {
-      $ComponentSubBrandLabelElement=$doc->createElement('ComponentSubBrandLabel',$kit['ComponentSubBrandLabel']);
-      $KitComponentElement->appendChild($ComponentSubBrandLabelElement);
-     }     
+     //if(array_key_exists('ComponentSubBrandLabel',$kit) && trim($kit['ComponentSubBrandLabel'])!='')
+     //{
+     // $ComponentSubBrandLabelElement=$doc->createElement('ComponentSubBrandLabel',$kit['ComponentSubBrandLabel']);
+     // $KitComponentElement->appendChild($ComponentSubBrandLabelElement);
+     //}     
      
      if(array_key_exists('Description',$kit) && trim($kit['Description'])!='')
      {
@@ -419,11 +419,11 @@ class PIESgenerator
     {
      $PartInterchangeElement=$doc->createElement('PartInterchange');
      $PartInterchangeElement->setAttribute('MaintenanceType','A');
-     $PartInterchangeElement->setAttribute('BrandID',$interchange['BrandAAIAID']);
+     $PartInterchangeElement->setAttribute('BrandID',$interchange['BrandID']);
 
-     if(array_key_exists('BrandLabel',$interchange)){$PartInterchangeElement->setAttribute('BrandLabel',$interchange['BrandLabel']);}
-     if(array_key_exists('SubBrandAAIAID',$interchange) && $interchange['SubBrandAAIAID']!=''){$PartInterchangeElement->setAttribute('SubBrandID',$interchange['SubBrandAAIAID']);}
-     if(array_key_exists('SubBrandLabel',$interchange)){$PartInterchangeElement->setAttribute('SubBrandLabel',$interchange['SubBrandLabel']);}
+     //if(array_key_exists('BrandLabel',$interchange)){$PartInterchangeElement->setAttribute('BrandLabel',$interchange['BrandLabel']);}
+     if(array_key_exists('SubBrandID',$interchange) && $interchange['SubBrandID']!=''){$PartInterchangeElement->setAttribute('SubBrandID',$interchange['SubBrandID']);}
+     //if(array_key_exists('SubBrandLabel',$interchange)){$PartInterchangeElement->setAttribute('SubBrandLabel',$interchange['SubBrandLabel']);}
      if(array_key_exists('VMRSBrandID',$interchange)){$PartInterchangeElement->setAttribute('VMRSBrandID',$interchange['VMRSBrandID']);}
      if(array_key_exists('ItemEquivalentUOM',$interchange)){$PartInterchangeElement->setAttribute('ItemEquivalentUOM',$interchange['ItemEquivalentUOM']);}
      if(array_key_exists('QualityGradeLevel',$interchange)){$PartInterchangeElement->setAttribute('QualityGradeLevel',$interchange['QualityGradeLevel']);}
