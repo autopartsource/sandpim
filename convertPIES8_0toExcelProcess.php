@@ -11,7 +11,7 @@ session_start();
 $pim = new pim();
 $logs=new logs();
 $pcdb = new pcdb($_POST['pcdbversion']);
-$pcdbVersion=$pcdb->version();
+$pcdbversion=$pcdb->version();
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
@@ -95,7 +95,7 @@ if($validUpload)
 {
  // ---------- header ---------------
 
- $header=array('BlanketEffectiveDate'=>'','ChangesSinceDate'=>'','ParentDUNSNumber'=>'','ParentGLN'=>'','ParentVMRSID'=>'','ParentID'=>'','BrandOwnerDUNS'=>'','BrandOwnerGLN'=>'','BrandOwnerVMRSID'=>'','BrandOwnerID'=>'','BuyerDuns'=>'','CurrencyCode'=>'','LanguageCode'=>'','TechnicalContact'=>'','ContactEmail'=>'','PCdbVersionDate'=>'','PAdbVersionDate'=>'');
+ $header=array('BlanketEffectiveDate'=>'','ChangesSinceDate'=>'','ParentDUNSNumber'=>'','ParentGLN'=>'','ParentVMRSID'=>'','ParentID'=>'','BrandOwnerDUNS'=>'','BrandOwnerGLN'=>'','BrandOwnerVMRSID'=>'','BrandOwnerID'=>'','BuyerDuns'=>'','CurrencyCode'=>'','LanguageCode'=>'','TechnicalContact'=>'','ContactEmail'=>'','PCdbPublicationDate'=>'','PAdbPublicationDate'=>'');
 
  $headerElement=$doc->getElementsByTagName('Header');
  if(count($headerElement))
@@ -145,11 +145,11 @@ if($validUpload)
   $contactemailElement=$headerElement[0]->getElementsByTagName('ContactEmail');
   if(count($contactemailElement)){$header['ContactEmail']=$contactemailElement[0]->nodeValue;}
   
-  $pcdbversiondateElement=$headerElement[0]->getElementsByTagName('PCdbVersionDate');
-  if(count($pcdbversiondateElement)){$header['PCdbVersionDate']=$pcdbversiondateElement[0]->nodeValue;}
+  $pcdpublicationdateElement=$headerElement[0]->getElementsByTagName('PCdbPublicationDate');
+  if(count($pcdbpublicationdateElement)){$header['PCdbPublicationDate']=$pcdbpublicationdateElement[0]->nodeValue;}
   
-  $padbversiondateElement=$headerElement[0]->getElementsByTagName('PAdbVersionDate');
-  if(count($padbversiondateElement)){$header['PAdbVersionDate']=$padbversiondateElement[0]->nodeValue;}
+  $padbpublicationdateElement=$headerElement[0]->getElementsByTagName('PAdbPublicationDate');
+  if(count($padbpublicationdateElement)){$header['PAdbPublicationDate']=$padbpublicationdateElement[0]->nodeValue;}
   
  }
  
@@ -730,10 +730,10 @@ if($validUpload)
  
  $writer->writeSheetHeader('Header', array('TechnicalContact'=>'string',$header['TechnicalContact']=>'string'),array('widths'=>array(20,60)));
  $row=array('ContactEmail',$header['ContactEmail']); $writer->writeSheetRow('Header', $row);
- $row=array('PCdbPublicationDate',$header['PCdbVersionDate']); $writer->writeSheetRow('Header', $row);
+ $row=array('PCdbPublicationDate',$header['PCdbPublicationDate']); $writer->writeSheetRow('Header', $row);
  $row=array('BlanketEffectiveDate',$header['BlanketEffectiveDate']); $writer->writeSheetRow('Header', $row);
  $row=array('LanguageCode',$header['LanguageCode']); $writer->writeSheetRow('Header', $row);
- $row=array('PAdbPublicationDate',$header['PAdbVersionDate']); $writer->writeSheetRow('Header', $row);
+ $row=array('PAdbPublicationDate',$header['PAdbPublicationDate']); $writer->writeSheetRow('Header', $row);
  $row=array('ChangesSinceDate',$header['ChangesSinceDate']); $writer->writeSheetRow('Header', $row);
  $row=array('CurrencyCode',$header['CurrencyCode']); $writer->writeSheetRow('Header', $row);
  $row=array('ParentID',$header['ParentID']); $writer->writeSheetRow('Header', $row);
@@ -967,7 +967,7 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
 
                         <div class="card-body">
                             <h5 class="alert alert-secondary">Step 2: Analyze results and download spreadsheet</h5>
-                            <div class="alert alert-info"><em>Validation done against PCdb version: <?php echo $pcdbVersion;?></em></div>
+                            <div class="alert alert-info"><em>Validation done against PCdb version: <?php echo $pcdbversion;?></em></div>
                             <?php
                             if(!$validUpload){?>
                             <div style="padding:10px;background-color:#FF0000;font-size:1.5em;">Your input file has problems:</div>
