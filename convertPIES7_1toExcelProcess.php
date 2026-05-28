@@ -2,6 +2,7 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/XLSXWriterClass.php');
 $navCategory = 'utilities';
 
@@ -10,8 +11,11 @@ session_start();
 
 $pim = new pim();
 $logs=new logs();
-$pcdb = new pcdb($_POST['pcdbversion']);
+$configGet=new configGet();
+$pcdb = new pcdb($_POST['pcdbdatabasename']);
+$pcdbdatabasename=$_POST['pcdbdatabasename'];
 $pcdbVersion=$pcdb->version();
+$jobid=false;
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
@@ -27,10 +31,10 @@ $validUpload=false;
 $schemaresults=array();
 $inputFileLog=array();
 $errors=array(); 
+$itemtotal=0;
 
 $gtinmasterlist=array();
-
-
+$userid=0; if(isset($_SESSION['userid'])){$userid=$_SESSION['userid'];}
 
 if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
 {
@@ -38,7 +42,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
  {
   if($_FILES['fileToUpload']['size']<$anonSizeLimit || isset($_SESSION['userid']))   
   {     
-   $originalFilename= basename($_FILES['fileToUpload']['name']);
+   $originalFilename= basename($_FILES['fileToUpload']['name']);   
    $doc = new DOMDocument('1.0', 'UTF-8');
    $doc->load($_FILES['fileToUpload']['tmp_name']);
    
@@ -63,14 +67,27 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
        break;
      }
      $errormessage.= trim($schemaerror->message);
-     $schemaresults[]=$errormessage;   
+     $schemaresults[]=$errormessage;     
     }
     libxml_clear_errors();
    }
    
    if(count($schemaresults)==0)
    {
-       $validUpload=true;
+    $validUpload=true;
+    if(isset($_POST['backgroundprocess']))
+    {
+     $tempdir=$configGet->getConfigValue('ACESuploadsDirectory', '/var/www/html/ACESuploads');
+     $randomname=random_int(1000000, 9000000);
+     $inputfile = $tempdir.'/rhubarb_in_'.$randomname;
+     move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $inputfile);
+     
+     // create the background job
+     $outputfile = $tempdir.'/rhubarb_out_'.$randomname;
+     $parameters='pcdbdatabasename:'.$pcdbdatabasename.';originalfilename:'.$originalFilename;
+     $datetimetostart=date('Y-m-d H:i:s');
+     $jobid=$pim->createBackgroundjob('RHUBARB71XLSX','started',$userid,$inputfile,$outputfile,$parameters,$datetimetostart, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $originalFilename.'_flat.xlsx');
+    }       
    }
    else
    {
@@ -91,7 +108,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
  }
 }
 
-if($validUpload)
+if($validUpload && !$jobid)
 {
  // ---------- header ---------------
 
@@ -709,14 +726,6 @@ if($validUpload)
     $digitalassets[]=array('FileName'=>$filename, 'AssetType'=>$assettype,'AssetID'=>$assetid, 'FileType'=>$filetype, 'Representation'=>$representation, 'Background'=>$background, 'OrientationView'=>$orientationview, 'URI'=>$uri, 'Country'=>$country, 'LanguageCode'=>$languagecode,'FileSize'=>$filesize,'Resolution'=>$resolution,'ColorMode'=>$colormode,'FilePath'=>$filepath,'Frame'=>$frame,'TotalFrames'=>$totalframes,'Plane'=>$plane,'Hemisphere'=>$hemisphere,'Plunge'=>$plunge,'TotalPlanes'=>$totalplanes,'AssetHeight'=>$assetheight,'AssetWidth'=>$assetwidth,'UOM'=>$assetdimensionsuom ,'Description'=>$assetdescription,'DescriptionCode'=>$assetdescriptioncode,'DescriptionLanguageCode'=>$assetdescriptionlanguagecode,'AssetDate'=>$assetdate,'AssetDateType'=>$assetdatetype,'Duration'=>'','DurationUOM'=>'');
    }
   }
-
-
-
-
-
-
-
-
   
   //----- jam all the segments into the items array
   $items[$partnumber]=array('PartTerminologyID'=>$partterminologyid,'BrandAAIAID'=>$brandaaiaid,'ItemLevelGTIN'=>$itemlevelgtin,'GTINQualifier'=>$gtinqualifier,'MinimumOrderQuantity'=>$minimumorderquantity,'MinimumOrderQuantityUOM'=>$minimumorderquantityuom,'HazardousMaterialCode'=>$hazardousmaterialcode,'BaseItemID'=>$baseitemid,'ItemEffectiveDate'=>$itemeffectivedate,'AvailableDate'=>$availabledate,'ACESApplications'=>$ACESapplications,'ItemQuantitySize'=>$itemquantitysize,'ItemQuantitySizeUOM'=>$itemquantitysizeuom,'ContainerType'=>$containertype,'QuantityPerApplication'=>$quantityperapplication,'QuantityPerApplicationUOM'=>$quantityperapplicationuom,'BrandLabel'=>$brandlabel,'VMRSBrandID'=>$VMRSbrandid,'UNSPSC'=>$UNSPSC,'NicePartTerminologyName'=>$niceparttypename,'descriptions'=>$descriptions,'prices'=>$prices,'expis'=>$expis,'attributes'=>$attributes,'packages'=>$packages,'kits'=>$kits,'interchanges'=>$interchanges,'digitalassets'=>$digitalassets);
@@ -760,6 +769,7 @@ if($validUpload)
  {
   $row=array($partnumber,$item['PartTerminologyID'],$item['BrandAAIAID'],$item['NicePartTerminologyName'],$item['ItemLevelGTIN'],$item['GTINQualifier'],$item['MinimumOrderQuantity'],$item['MinimumOrderQuantityUOM'],$item['HazardousMaterialCode'],$item['BaseItemID'],$item['ItemEffectiveDate'],$item['AvailableDate'],$item['ACESApplications'],$item['ItemQuantitySize'],$item['ItemQuantitySizeUOM'],$item['ContainerType'],$item['QuantityPerApplication'],$item['QuantityPerApplicationUOM'],$item['BrandLabel'],$item['VMRSBrandID'],$item['UNSPSC']);
   $writer->writeSheetRow('Items', $row);
+  $itemtotal++;
  }
 
 //----------- descriptions ---------------
@@ -1002,8 +1012,7 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
                             <?php }?>
                         </div>
                     </div>
-                    
-                 
+                                        
                 </div>
                 <!-- End of Main Content -->
                 
@@ -1021,7 +1030,14 @@ if((count($errors)>0 && !isset($_POST['ignorelogic'])) || count($schemaresults)>
 </html>
 <?php 
 }
-$logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.count($items).';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
+
+if($jobid)
+{
+ echo 'Your file will be converted by background processing (job:'.$jobid.')<br/><br/>';
+ echo '<a href="./backgroundJobs.php">Click here</a> to see all background jobs.<br/>'; 
+}
+
+$logs->logSystemEvent('rhubarb', 0, 'file:'.$originalFilename.';items:'.$itemtotal.';xsd:'.count($schemaresults).';logic:'.count($errors).';by:'.$_SERVER['REMOTE_ADDR']);
 
 if($streamXLSX)
 {   
