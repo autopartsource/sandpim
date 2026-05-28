@@ -73,9 +73,10 @@ if(count($jobs))
  
  $doc = new DOMDocument('1.0', 'UTF-8');
  $doc->load($inputputfilename);
-   
+ $schemasdirectory=$configGet->getConfigValue('XMLschemasDirectory', '/var/www/html');
+ 
  libxml_use_internal_errors(true);
- if(!$doc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
+ if(!$doc->schemaValidate($schemasdirectory.'/PIES_7_1_r4_XSD.xsd'))
  {
   $schemavalidated=false;
   $schemaerrors = libxml_get_errors();
