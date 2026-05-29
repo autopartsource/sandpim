@@ -145,7 +145,7 @@ if($validUpload)
   $contactemailElement=$headerElement[0]->getElementsByTagName('ContactEmail');
   if(count($contactemailElement)){$header['ContactEmail']=$contactemailElement[0]->nodeValue;}
   
-  $pcdpublicationdateElement=$headerElement[0]->getElementsByTagName('PCdbPublicationDate');
+  $pcdbpublicationdateElement=$headerElement[0]->getElementsByTagName('PCdbPublicationDate');
   if(count($pcdbpublicationdateElement)){$header['PCdbPublicationDate']=$pcdbpublicationdateElement[0]->nodeValue;}
   
   $padbpublicationdateElement=$headerElement[0]->getElementsByTagName('PAdbPublicationDate');
