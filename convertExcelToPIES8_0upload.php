@@ -31,7 +31,7 @@ $databaseversions=$pim->getAutocareDatabaseList('pcdb');
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
 			<!-- Header -->
-                        <h3 class="card-header text-start"><img src="./rhubarb_to_pies.png" class="img-thumbnail" width="120"/>Build PIES (8.0) xml from <a title="This is the template spreadsheet (Excel .xlsx) to use as a guide. Fill in your own product data and upload it using the form on this page. There is sample data in the spreadsheet that can be deleted." href="./Rhubarb_8_0_B.xlsx">spreadsheet</a> of flat product data</h3>
+                        <h3 class="card-header text-start"><img src="./rhubarb_to_pies.png" class="img-thumbnail" width="120"/>Build PIES (8.0) xml from <a title="This is the template spreadsheet (Excel .xlsx) to use as a guide. Fill in your own product data and upload it using the form on this page. There is sample data in the spreadsheet that can be deleted." href="./Rhubarb_8_0_D.xlsx">spreadsheet</a> of flat product data</h3>
 
                         <div class="card-body">
                             <form method="post" action="convertExcelToPIES8_0process.php" enctype="multipart/form-data">
