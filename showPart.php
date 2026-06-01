@@ -827,7 +827,7 @@ $pim->addAuditRequest('part-general', $partnumber);
                                                           <th scope="col">Delete</th>
                                                         </tr>
                                                     </thead>
-                                                    <?php foreach($competitorparts as $competitorpart){;?>
+                                                    <?php foreach($competitorparts as $competitorpart){?>
                                                     <tr style="font-size: 80%;">
                                                         <th scope="row" id="interchangeid_<?php echo $competitorpart['id'];?>"><?php echo $interchange->brandsubbrandName($competitorpart['brandAAIAID'],$competitorpart['subbrandAAIAID'])?></th>
                                                         <td><?php echo $competitorpart['competitorpartnumber'] ?></td>

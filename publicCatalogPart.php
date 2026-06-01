@@ -3,6 +3,7 @@ include_once('./class/logsClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/padbClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/pricingClass.php');
 include_once('./class/interchangeClass.php');
@@ -13,6 +14,7 @@ $logs=new logs();
 $pim=new pim();
 $vcdb=new vcdb();
 $pcdb=new pcdb();
+$padb=new padb();
 $asset = new asset();
 $pricing = new pricing();
 $interchange=new interchange();
@@ -82,6 +84,24 @@ if(isset($_GET['partnumber']))
   
   $apps = $pim->getAppsByPartnumber($partnumber);
   $attributes = $pim->getPartAttributes($partnumber);
+  
+  
+  $allinterchangeparts=$interchange->getInterchangeByPartnumber($partnumber);
+  $competitorparts=[]; $oemparts=[];
+  
+  foreach($allinterchangeparts as $allinterchangepart)
+  {
+   if($allinterchangepart['brandAAIAID']=='FLQR')
+   {
+    $oemparts[]=$allinterchangepart['competitorpartnumber'];
+   }
+   else
+   {
+    $competitorparts[]=$interchange->brandsubbrandName($allinterchangepart['brandAAIAID'],$allinterchangepart['subbrandAAIAID']).': '.$allinterchangepart['competitorpartnumber'];
+   }      
+  }
+  asort($oemparts); asort($competitorparts);
+  
   $expis=$pim->getPartEXPIs($partnumber);
   $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
   $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
@@ -93,6 +113,62 @@ if(isset($_GET['partnumber']))
 <html>
     <head>
         <?php include('./includes/header.php'); ?>
+                
+        <script>
+            function showhideApplicationDetail()
+            {
+             var x = document.getElementById("applicationdetail");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+            
+            function showhideAttributeDetail()
+            {
+             var x = document.getElementById("attributedetail");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+            
+            function showhideInterchangeDetail()
+            {
+             var x = document.getElementById("interchangedetail");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+            
+            function showhideOEMdetail()
+            {
+             var x = document.getElementById("oemdetail");
+             if (x.style.display === "none") 
+             {
+              x.style.display = "block";
+             }
+             else
+             {
+              x.style.display = "none";
+             }
+            }
+            
+        </script>
+        
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -109,21 +185,20 @@ if(isset($_GET['partnumber']))
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-10 my-col colMain">
 
-                    <h1><?php echo $partnumber;?></h1>
-                    <h4><?php echo $title;?></h4>
-                    
-                    <?php if($primaryphotouri!==false){?><div><a href="./showAsset.php?assetid=<?php echo $primaryphotouri;?>"><img class="img-thumbnail" src="<?php echo $primaryphotouri;?>" /></a></div><?php }?>
-
-
-
+                    <h1><div style="padding:20px;"><?php echo $partnumber;?></div></h1>
+                    <h4><div style="padding:20px;"><?php echo $title;?></div></h4>
                     
                     <?php 
+                    if($primaryphotouri!==false)
+                    {
+                        echo '<div><a href="'.$primaryphotouri.'"><img class="img-thumbnail" src="'.$primaryphotouri.'"/></a></div>';
+                    }
+                     
                     if(count($apps)>0){
                     echo '<div id="apps" style="text-align:left; padding-top:30px;">';
                     echo '<div class="card shadow-sm">';
-                    echo '<h4 class="card-header text-start">Vehicle Applications</h4>';
-                    echo '<div class="card-body" style="display:block;">';
-
+                    echo '<h4 class="card-header text-start" onclick="showhideApplicationDetail()">Vehicle Applications</h4>';
+                    echo '<div id="applicationdetail" class="card-body" style="display:none;">';
 
                     $niceapps=array(); $makesindex=array(); $modelsindex=array(); $yearsindex=array();
                     foreach($apps as $rowid=>$app)
@@ -143,16 +218,52 @@ if(isset($_GET['partnumber']))
                     array_multisort($makesindex,SORT_ASC,$modelsindex,SORT_ASC,$yearsindex,SORT_DESC,$niceapps);
                     foreach($niceapps as $app)
                     {
-                        echo '<div>'.$app['niceappdescription'].'</div>';
-                        //echo '<div style="display:none;" data-appid="'.$app['id'].'" data-description-app="'. base64_encode($app['niceappdescription']).'">'.$app['id'].'</div>';
+                        echo '<div style="padding-left:15px;">'.$app['niceappdescription'].'</div>';
                     }
 
                     echo '</div></div></div>';
+                    }
+                    
+                    if(count($attributes)>0)
+                    {
+                        echo '<div id="attributes" style="text-align:left; padding-top:30px;">';
+                        echo '<div class="card shadow-sm">';
+                        echo '<h4 class="card-header text-start" onclick="showhideAttributeDetail()">Part Attributes</h4>';
+                        echo '<div id="attributedetail" class="card-body" style="display:none;">';
+                        foreach($attributes as $attribute)
+                        {
+                            $niceattributename=$attribute['name']; if(intval($attribute['PAID'])>0){$niceattributename=$padb->PAIDname($attribute['PAID']);}
+                            echo '<div style="padding-left:15px;">'.$niceattributename.': <strong>'.$attribute['value'].'</strong> '.$attribute['uom'].'</div>';
+                        }
+                        echo '</div></div></div>';
+                    }
+                    
+                    if(count($competitorparts)>0)
+                    {
+                        echo '<div id="interchange" style="text-align:left; padding-top:30px;">';
+                        echo '<div class="card shadow-sm">';
+                        echo '<h4 class="card-header text-start" onclick="showhideInterchangeDetail()">Equivalent Competitor Parts</h4>';
+                        echo '<div id="interchangedetail" class="card-body" style="display:none;">';
+                        foreach($competitorparts as $competitorpart)
+                        {
+                            echo '<div style="padding-left:15px;">'.$competitorpart.'</div>';
+                        }
+                        echo '</div></div></div>';
+                    }
+                    
+                    if(count($oemparts)>0)
+                    {
+                        echo '<div id="oem" style="text-align:left; padding-top:30px;">';
+                        echo '<div class="card shadow-sm">';
+                        echo '<h4 class="card-header text-start" onclick="showhideOEMdetail()">Equivalent OEM Parts</h4>';
+                        echo '<div id="oemdetail" class="card-body" style="display:none;">';
+                        foreach($oemparts as $oempart)
+                        {
+                            echo '<div style="padding-left:15px;">'.$oempart.'</div>';
+                        }
+                        echo '</div></div></div>';
                     }?>
-
-
-
-
+                    
 
                 </div>
                 <!-- End of Main Content -->

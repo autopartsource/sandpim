@@ -26,7 +26,6 @@ if (isset($_GET['all'])) {
     $makes = $vcdb->getMakes();
 } else {
     $makes = $pim->getFavoriteMakes();
-    ;
 }
 
 $makecount = count($makes);

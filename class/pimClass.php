@@ -29,7 +29,7 @@ class pim
  {
   $output=trim(strtoupper($input));
   if(strlen($input)>20){$output= substr($input, 0, 20);}
-  $output=str_replace(array('"',';',"'","\t","\n","\r",'?',',','.','>','<','`','!','@','$','%','^','&','*','(',')','+','=',':','[',']','{','}','|','~'), '-', $output);
+  $output=str_replace(array('"',';',"'","\t","\n","\r",'?',',','>','<','`','!','@','$','%','^','&','*','(',')','+','=',':','[',']','{','}','|','~'), '-', $output);
   return $output;
  }
  
@@ -1165,7 +1165,7 @@ function countAppsByPartcategories($partcategories)
   $typicalPosition=$this->typicalAppPosition($partnumber);
   $typicalQty=$this->typicalQuantityPerApp($partnumber);
   
-  if($stmt=$db->conn->prepare('select part.*,partcategory.name,partcategory.brandID from part left join partcategory on part.partcategory=partcategory.id where partnumber=?'))
+  if($stmt=$db->conn->prepare('select part.*,partcategory.name as partcategoryname,partcategory.brandID from part left join partcategory on part.partcategory=partcategory.id where partnumber=?'))
   {
    $stmt->bind_param('s', $partnumber);
    $stmt->execute();
@@ -1177,6 +1177,7 @@ function countAppsByPartcategories($partcategories)
         'parttypeid'=>$row['parttypeid'],
         'lifecyclestatus'=>$row['lifecyclestatus'],
         'partcategory'=>$row['partcategory'],
+        'partcategoryname'=>$row['partcategoryname'],        
         'replacedby'=>$row['replacedby'],
         'internalnotes'=> base64_decode($row['internalnotes']),
         'description'=>$row['description'],'GTIN'=>$row['GTIN'],'UNSPC'=>$row['UNSPC'],

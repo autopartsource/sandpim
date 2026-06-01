@@ -81,9 +81,9 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
   break;
 
   case 'gtin':
-   if(strlen($_GET['value'])==12 && is_numeric($_GET['value']))
+   if($_GET['value']=='' || (strlen($_GET['value'])==12 && is_numeric($_GET['value'])))
    {
-    if($pim->isValidBarcode($_GET['value']))
+    if($_GET['value']=='' || $pim->isValidBarcode($_GET['value']))
     {
      $pim->setPartGTIN($partnumber,$_GET['value'],true);
      $oid=$pim->getOIDofPart($partnumber);
@@ -97,7 +97,7 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
    }
    else
    {// input was not 12 digits of numeric digits
-    $message='GTIN must be 12 numeric digits';              
+    $message='GTIN must be 12 numeric digits';
    }
   break;
 
@@ -181,4 +181,4 @@ if(isset($_SESSION['userid']) && isset($_GET['partnumber']) && isset($_GET['elem
  
  $result=array('success'=>$success,'oid'=>$oid, 'message'=>$message);
  echo json_encode($result);
-}?>
+}
