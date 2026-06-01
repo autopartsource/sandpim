@@ -104,7 +104,22 @@ if(isset($_GET['partnumber']))
   
   $expis=$pim->getPartEXPIs($partnumber);
   $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
-  $primaryphotouri=$asset->primaryPhotoURIofPart($partnumber);
+  
+  $primaryphotouri=''; $nonprimaryphotouris=[];  
+  foreach($connectedassets as $connectedasset)
+  {
+   if($connectedasset!='')
+   {
+    if($connectedasset['assettypecode']=='P04')
+    {
+     $primaryphotouri=$connectedasset['uri'];
+    }
+    else
+    {
+     $nonprimaryphotouris[]=$connectedasset['uri'];
+    }
+   }
+  }
  }
 }
 
@@ -173,27 +188,41 @@ if(isset($_GET['partnumber']))
     <body>
         <!-- Navigation Bar -->
         
-        <!-- Header -->
-            
-            
-            
+        <!-- Header -->            
         
         <!-- Content Container -->
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 
                 <!-- Main Content -->
-                <div class="col-xs-12 col-md-10 my-col colMain">
+                <div class="col-xs-12 col-md-12 my-col colMain">
 
                     <h1><div style="padding:20px;"><?php echo $partnumber;?></div></h1>
                     <h4><div style="padding:20px;"><?php echo $title;?></div></h4>
                     
-                    <?php 
-                    if($primaryphotouri!==false)
-                    {
-                        echo '<div><a href="'.$primaryphotouri.'"><img class="img-thumbnail" src="'.$primaryphotouri.'"/></a></div>';
-                    }
+                    <div id="imageCarousel" class="carousel slide" data-bs-interval="false">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="<?php echo $primaryphotouri;?>" class="d-block w-100" alt="First Slide">
+                            </div>
+
+                            <?php foreach($nonprimaryphotouris as $uri){?>
+                            <div class="carousel-item">
+                                <img src="<?php echo $uri;?>" class="d-block w-100">
+                            </div>
+                            <?php }?>
+
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
                      
+
+                    
                     if(count($apps)>0){
                     echo '<div id="apps" style="text-align:left; padding-top:30px;">';
                     echo '<div class="card shadow-sm">';

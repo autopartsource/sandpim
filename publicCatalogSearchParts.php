@@ -6,7 +6,7 @@ include_once('./class/interchangeClass.php');
 $navCategory = 'search';
 session_start();
 
-$categorylist=array(122,123,133);
+$categorylist=array(101,122,123,133);
 $parttypelist=array(1684);
 $lifecyclestatuses=array('2','3','4','7','8');
 
