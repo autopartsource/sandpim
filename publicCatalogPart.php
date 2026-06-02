@@ -223,7 +223,7 @@ if(isset($_GET['partnumber']))
                      
 
                     
-                    if(count($apps)>0){
+                    <?php if(count($apps)>0){
                     echo '<div id="apps" style="text-align:left; padding-top:30px;">';
                     echo '<div class="card shadow-sm">';
                     echo '<h4 class="card-header text-start" onclick="showhideApplicationDetail()">Vehicle Applications</h4>';
