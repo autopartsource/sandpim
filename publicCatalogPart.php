@@ -103,12 +103,12 @@ if(isset($_GET['partnumber']))
   asort($oemparts); asort($competitorparts);
   
   $expis=$pim->getPartEXPIs($partnumber);
-  $connectedassets=$asset->getAssetsConnectedToPart($partnumber);
+  $connectedassets=$asset->getAssetsConnectedToPart($partnumber,true);
   
   $primaryphotouri=''; $nonprimaryphotouris=[];  
   foreach($connectedassets as $connectedasset)
   {
-   if($connectedasset!='')
+   if($connectedasset['uri']!='' && in_array($connectedasset['filetype'],['JPG','PNG']))
    {
     if($connectedasset['assettypecode']=='P04')
     {
@@ -186,20 +186,28 @@ if(isset($_GET['partnumber']))
         
     </head>
     <body>
-        <!-- Navigation Bar -->
         
-        <!-- Header -->            
-        
-        <!-- Content Container -->
-        <div class="container-fluid padding my-container">
-            <div class="row padding my-row">
-                
-                <!-- Main Content -->
-                <div class="col-xs-12 col-md-12 my-col colMain">
+        <div class="row">
 
-                    <h1><div style="padding:20px;"><?php echo $partnumber;?></div></h1>
-                    <h4><div style="padding:20px;"><?php echo $title;?></div></h4>
-                    
+            <!-- hidden in mobile mode, left content in desktop mode-->
+            <div class="d-none d-md-block col-md-6 col-lg-4 " style="background-color: #f0f0f0;">
+                <div style="padding:10px;"><a href="<?php echo $primaryphotouri;?>"><img class="img-thumbnail" src="<?php echo $primaryphotouri;?>" /></a></div>
+                <?php foreach($nonprimaryphotouris as $uri){?>
+                <div style="padding:10px;"><a href="<?php echo $uri;?>"><img class="img-thumbnail" src="<?php echo $uri;?>" /></a></div>
+                <?php }?>
+            </div>
+
+            <!-- main content in mobile mode, right content in desktop mode-->
+            <div class="col-12 col-md-5 col-lg-7">
+
+                <h1><div style="padding:20px;"><?php echo $partnumber;?></div></h1>
+                <h4><div style="padding:20px;"><?php echo $title;?></div></h4>
+
+
+                <!-- carousel for mobile mode -->
+
+                <?php if($primaryphotouri!=''){?>
+                <div class="d-block d-md-none">
                     <div id="imageCarousel" class="carousel slide" data-bs-interval="false">
                         <div class="carousel-inner">
                             <div class="carousel-item active">
@@ -220,87 +228,85 @@ if(isset($_GET['partnumber']))
                             <span class="carousel-control-next-icon"></span>
                         </button>
                     </div>
-                     
-
-                    
-                    <?php if(count($apps)>0){
-                    echo '<div id="apps" style="text-align:left; padding-top:30px;">';
-                    echo '<div class="card shadow-sm">';
-                    echo '<h4 class="card-header text-start" onclick="showhideApplicationDetail()">Vehicle Applications</h4>';
-                    echo '<div id="applicationdetail" class="card-body" style="display:none;">';
-
-                    $niceapps=array(); $makesindex=array(); $modelsindex=array(); $yearsindex=array();
-                    foreach($apps as $rowid=>$app)
-                    {
-                     $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
-                     $makesindex[$rowid]=$mmy['makename'];
-                     $modelsindex[$rowid]=$mmy['modelname'];
-                     $yearsindex[$rowid]=$mmy['year'];
-
-                     $niceattributes='';
-                     if($showAppAttributesInSummary){ $niceattributes=' '.niceAppAttributes($app['attributes']);}
-                     $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']).' '.$niceattributes;
-
-                     $niceapps[$rowid]=array('id'=>$app['id'],'niceappdescription'=>$niceappdescription,'makename'=>$mmy['makename'],'modelname'=>$mmy['modelname'],'year'=>$mmy['year']);
-                    }
-
-                    array_multisort($makesindex,SORT_ASC,$modelsindex,SORT_ASC,$yearsindex,SORT_DESC,$niceapps);
-                    foreach($niceapps as $app)
-                    {
-                        echo '<div style="padding-left:15px;">'.$app['niceappdescription'].'</div>';
-                    }
-
-                    echo '</div></div></div>';
-                    }
-                    
-                    if(count($attributes)>0)
-                    {
-                        echo '<div id="attributes" style="text-align:left; padding-top:30px;">';
-                        echo '<div class="card shadow-sm">';
-                        echo '<h4 class="card-header text-start" onclick="showhideAttributeDetail()">Part Attributes</h4>';
-                        echo '<div id="attributedetail" class="card-body" style="display:none;">';
-                        foreach($attributes as $attribute)
-                        {
-                            $niceattributename=$attribute['name']; if(intval($attribute['PAID'])>0){$niceattributename=$padb->PAIDname($attribute['PAID']);}
-                            echo '<div style="padding-left:15px;">'.$niceattributename.': <strong>'.$attribute['value'].'</strong> '.$attribute['uom'].'</div>';
-                        }
-                        echo '</div></div></div>';
-                    }
-                    
-                    if(count($competitorparts)>0)
-                    {
-                        echo '<div id="interchange" style="text-align:left; padding-top:30px;">';
-                        echo '<div class="card shadow-sm">';
-                        echo '<h4 class="card-header text-start" onclick="showhideInterchangeDetail()">Equivalent Competitor Parts</h4>';
-                        echo '<div id="interchangedetail" class="card-body" style="display:none;">';
-                        foreach($competitorparts as $competitorpart)
-                        {
-                            echo '<div style="padding-left:15px;">'.$competitorpart.'</div>';
-                        }
-                        echo '</div></div></div>';
-                    }
-                    
-                    if(count($oemparts)>0)
-                    {
-                        echo '<div id="oem" style="text-align:left; padding-top:30px;">';
-                        echo '<div class="card shadow-sm">';
-                        echo '<h4 class="card-header text-start" onclick="showhideOEMdetail()">Equivalent OEM Parts</h4>';
-                        echo '<div id="oemdetail" class="card-body" style="display:none;">';
-                        foreach($oemparts as $oempart)
-                        {
-                            echo '<div style="padding-left:15px;">'.$oempart.'</div>';
-                        }
-                        echo '</div></div></div>';
-                    }?>
-                    
-
                 </div>
-                <!-- End of Main Content -->
-                
+                <?php }?> 
+                <!-- end of carousel for mobile mode -->
+
+
+                <?php if(count($apps)>0){
+                echo '<div id="apps" style="text-align:left; padding-top:30px;">';
+                echo '<div class="card shadow-sm">';
+                echo '<h4 class="card-header text-start" onclick="showhideApplicationDetail()">Vehicle Applications</h4>';
+                echo '<div id="applicationdetail" class="card-body" style="display:none;">';
+
+                $niceapps=array(); $makesindex=array(); $modelsindex=array(); $yearsindex=array();
+                foreach($apps as $rowid=>$app)
+                {
+                 $mmy=$vcdb->getMMYforBasevehicleid($app['basevehicleid']);
+                 $makesindex[$rowid]=$mmy['makename'];
+                 $modelsindex[$rowid]=$mmy['modelname'];
+                 $yearsindex[$rowid]=$mmy['year'];
+
+                 $niceattributes='';
+                 if($showAppAttributesInSummary){ $niceattributes=' '.niceAppAttributes($app['attributes']);}
+                 $niceappdescription=$vcdb->niceMMYofBasevid($app['basevehicleid']).' '.$niceattributes;
+
+                 $niceapps[$rowid]=array('id'=>$app['id'],'niceappdescription'=>$niceappdescription,'makename'=>$mmy['makename'],'modelname'=>$mmy['modelname'],'year'=>$mmy['year']);
+                }
+
+                array_multisort($makesindex,SORT_ASC,$modelsindex,SORT_ASC,$yearsindex,SORT_DESC,$niceapps);
+                foreach($niceapps as $app)
+                {
+                    echo '<div style="padding-left:15px;">'.$app['niceappdescription'].'</div>';
+                }
+
+                echo '</div></div></div>';
+                }
+
+                if(count($attributes)>0)
+                {
+                    echo '<div id="attributes" style="text-align:left; padding-top:30px;">';
+                    echo '<div class="card shadow-sm">';
+                    echo '<h4 class="card-header text-start" onclick="showhideAttributeDetail()">Part Attributes</h4>';
+                    echo '<div id="attributedetail" class="card-body" style="display:none;">';
+                    foreach($attributes as $attribute)
+                    {
+                        $niceattributename=$attribute['name']; if(intval($attribute['PAID'])>0){$niceattributename=$padb->PAIDname($attribute['PAID']);}
+                        echo '<div style="padding-left:15px;">'.$niceattributename.': <strong>'.$attribute['value'].'</strong> '.$attribute['uom'].'</div>';
+                    }
+                    echo '</div></div></div>';
+                }
+
+                if(count($competitorparts)>0)
+                {
+                    echo '<div id="interchange" style="text-align:left; padding-top:30px;">';
+                    echo '<div class="card shadow-sm">';
+                    echo '<h4 class="card-header text-start" onclick="showhideInterchangeDetail()">Equivalent Competitor Parts</h4>';
+                    echo '<div id="interchangedetail" class="card-body" style="display:none;">';
+                    foreach($competitorparts as $competitorpart)
+                    {
+                        echo '<div style="padding-left:15px;">'.$competitorpart.'</div>';
+                    }
+                    echo '</div></div></div>';
+                }
+
+                if(count($oemparts)>0)
+                {
+                    echo '<div id="oem" style="text-align:left; padding-top:30px;">';
+                    echo '<div class="card shadow-sm">';
+                    echo '<h4 class="card-header text-start" onclick="showhideOEMdetail()">Equivalent OEM Parts</h4>';
+                    echo '<div id="oemdetail" class="card-body" style="display:none;">';
+                    foreach($oemparts as $oempart)
+                    {
+                        echo '<div style="padding-left:15px;">'.$oempart.'</div>';
+                    }
+                    echo '</div></div></div>';
+                }?>
+
+
             </div>
-        </div>    
-        <!-- End of Content Container -->
-                
-        <!-- Footer -->
+
+        </div>
+        
     </body> 
 </html>
