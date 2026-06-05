@@ -46,6 +46,7 @@ if(count($jobs))
  $writer = new XLSXWriter();
 
  $schemaresults=[]; 
+ $validatexsd=false;
  $schemavalidated=false;
  $validupload=false;
  $xlsxdata='';
@@ -53,6 +54,7 @@ if(count($jobs))
  $inputputfilename=$jobs[0]['inputfile'];
  $gtinmasterlist=[];
  $errors=[];
+ $xmlparseerrors=false;
 
  $parameters=array();
  $parameterbits=explode(';',$jobs[0]['parameters']);
@@ -70,13 +72,15 @@ if(count($jobs))
 //$validEXPIcodes=$pcdb->getAllEXPIcodes();
 //$validPartTypes=array(); $partTypes=$pcdb->getPartTypes('%'); foreach($partTypes as $partType){$validPartTypes[$partType['id']]=$partType['name'];}
 
- 
+ libxml_use_internal_errors(true);
+ libxml_clear_errors(); 
  $doc = new DOMDocument('1.0', 'UTF-8');
  $doc->load($inputputfilename);
+ $xmlparseerrors = libxml_get_errors();
+  
  $schemasdirectory=$configGet->getConfigValue('XMLschemasDirectory', '/var/www/html');
  
- libxml_use_internal_errors(true);
- if(!$doc->schemaValidate($schemasdirectory.'/PIES_7_1_r4_XSD.xsd'))
+ if($validatexsd && !$doc->schemaValidate($schemasdirectory.'/PIES_7_1_r4_XSD.xsd'))
  {
   $schemavalidated=false;
   $schemaerrors = libxml_get_errors();
@@ -96,7 +100,7 @@ if(count($jobs))
      break;
    }
    $errormessage.= trim($schemaerror->message);
-   $schemaresults[]=$errormessage;     
+   $schemaresults[]=$errormessage;
   }
   libxml_clear_errors();
  }
@@ -851,9 +855,16 @@ if(count($jobs))
   }
 
   //-------- errors ------------ 
-  if(count($errors))
+  if(count($errors) || $xmlparseerrors!==false)
   {
    $writer->writeSheetHeader('Errors', array('Error Type'=>'string','Description'=>'string'), array('widths'=>array(37,100),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+
+   foreach($xmlparseerrors as $error)
+   {
+    $row=array('xml parser',$error->message);
+    $writer->writeSheetRow('Errors', $row);
+   }
+
    foreach($errors as $error)
    {
     $row=explode("\t",$error);
