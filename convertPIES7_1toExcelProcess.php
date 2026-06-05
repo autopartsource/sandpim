@@ -15,6 +15,7 @@ $configGet=new configGet();
 $pcdb = new pcdb($_POST['pcdbdatabasename']);
 $pcdbdatabasename=$_POST['pcdbdatabasename'];
 $pcdbVersion=$pcdb->version();
+$validatexsd=false; if(isset($_POST['validatexsd'])){$validatexsd=true;}
 $jobid=false;
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
@@ -47,7 +48,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
    $doc->load($_FILES['fileToUpload']['tmp_name']);
    
    libxml_use_internal_errors(true);
-   if(!$doc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
+   if($validatexsd && !$doc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
    {
     $schemavalidated=false;
     $schemaerrors = libxml_get_errors();

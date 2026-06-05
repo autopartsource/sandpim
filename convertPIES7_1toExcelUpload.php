@@ -36,8 +36,9 @@ $databaseversions=$pim->getAutocareDatabaseList('pcdb');
                         <div class="card-body">
                             <form method="post" action="convertPIES7_1toExcelProcess.php" enctype="multipart/form-data">
                                 <div style="padding:5px;text-align: left;"><input type="file" name="fileToUpload" id="fileToUpload" accept=".xml"/></div>
-                                <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelogic" name="ignorelogic"/><label for="ignorelogic">Ignore logic flaws</label></div>
-                                <div style="padding:5px;text-align: left;"><input type="checkbox" id="backgroundprocess" name="backgroundprocess"/><label for="backgroundprocess">Process this file in background</label></div>
+                                <div style="padding:5px;text-align: left;"><input type="checkbox" id="validatexsd" name="validatexsd" checked="checked"/> <label for="validatexsd">Validate against XSD</label></div>
+                                <div style="padding:5px;text-align: left;"><input type="checkbox" id="ignorelogic" name="ignorelogic"/> <label for="ignorelogic"> Ignore logic flaws</label></div>
+                                <div style="padding:5px;text-align: left;"><input type="checkbox" id="backgroundprocess" name="backgroundprocess"/> <label for="backgroundprocess"> Process this file in background</label></div>
                                 <div style="padding:5px;text-align: left;">PCdb Version for validation <select name="pcdbdatabasename"><?php foreach($databaseversions as $databaseversion){ echo '<option value="'.$databaseversion['name'].'">'.$databaseversion['versiondate'].'</option>';}?></select></div>
                                 <hr>
                                 <div style="padding:5px;"><input name="submit" type="submit" value="Generate Excel file"/></div>

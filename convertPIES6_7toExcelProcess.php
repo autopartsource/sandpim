@@ -2,6 +2,7 @@
 include_once('./class/pimClass.php');
 include_once('./class/logsClass.php');
 include_once('./class/pcdbClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/XLSXWriterClass.php');
 $navCategory = 'utilities';
 
@@ -10,8 +11,13 @@ session_start();
 
 $pim = new pim();
 $logs=new logs();
+$configGet=new configGet();
 $pcdb = new pcdb($_POST['pcdbversion']);
+$pcdbdatabasename=$_POST['pcdbdatabasename'];
 $pcdbVersion=$pcdb->version();
+$validatexsd=false; if(isset($_POST['validatexsd'])){$validatexsd=true;}
+$jobid=false;
+
 
 $validAssetTypes=array(); $assetTypeCodes=$pcdb->getAssetTypeCodes(); foreach($assetTypeCodes as $assetTypeCode){$validAssetTypes[$assetTypeCode['code']]=$assetTypeCode['description'];}
 $validDescriptionCodes=array(); $descriptionCodes=$pcdb->getItemDescriptionCodes(); foreach($descriptionCodes as $descriptionCode){$validDescriptionCodes[$descriptionCode['code']]=$descriptionCode['description'];}
@@ -43,7 +49,7 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
    $doc->load($_FILES['fileToUpload']['tmp_name']);
    
    libxml_use_internal_errors(true);
-   if(!$doc->schemaValidate('PIES_6_7_r5_XSD.xsd'))
+   if($validatexsd && !$doc->schemaValidate('PIES_6_7_r5_XSD.xsd'))
    {
     $schemavalidated=false;
     $schemaerrors = libxml_get_errors();
