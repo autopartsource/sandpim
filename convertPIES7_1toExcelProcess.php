@@ -31,7 +31,8 @@ $originalFilename='';
 $validUpload=false;
 $schemaresults=array();
 $inputFileLog=array();
-$errors=array(); 
+$errors=array();
+$xmlparseerrors=false;
 $itemtotal=0;
 
 $gtinmasterlist=array();
@@ -44,10 +45,12 @@ if(isset($_POST['submit']) && $_POST['submit']=='Generate Excel file')
   if($_FILES['fileToUpload']['size']<$anonSizeLimit || isset($_SESSION['userid']))   
   {     
    $originalFilename= basename($_FILES['fileToUpload']['name']);   
-   $doc = new DOMDocument('1.0', 'UTF-8');
-   $doc->load($_FILES['fileToUpload']['tmp_name']);
-   
    libxml_use_internal_errors(true);
+   libxml_clear_errors();
+   $doc = new DOMDocument('1.0', 'UTF-8');   
+   $doc->load($_FILES['fileToUpload']['tmp_name']);
+   $xmlparseerrors = libxml_get_errors();
+   
    if($validatexsd && !$doc->schemaValidate('PIES_7_1_r4_XSD.xsd'))
    {
     $schemavalidated=false;
@@ -931,10 +934,16 @@ $digitalasset['DescriptionLanguageCode']);
  }
 
  //-------- errors ------------
- 
- if(count($errors))
+
+ if($xmlparseerrors!==false || count($errors))
  {
   $writer->writeSheetHeader('Errors', array('Error Type'=>'string','Description'=>'string'), array('widths'=>array(37,100),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+  foreach($xmlparseerrors as $error)
+  {
+   $row=array('xml parser',$error->message);
+   $writer->writeSheetRow('Errors', $row);
+  }
+
   foreach($errors as $error)
   {
    $row=explode("\t",$error);
