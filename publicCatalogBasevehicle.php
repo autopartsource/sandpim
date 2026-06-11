@@ -130,7 +130,7 @@ if(isset($_GET['makeid']) && isset($_GET['modelid']) && isset($_GET['yearid']))
                 <div style="padding:5px;">
                 
                     <div style="float:left;width:45%;padding:5px;">
-                        <a href="./publicCatalogPart.php?partnumber=<?php echo $app['partnumber'];?>"><img class="img-thumbnail" src="<?php echo $primaryphotouri;?>" /></a>
+                        <a href="./publicCatalogPart.php?basevid=<?php echo $basevehicleid;?>&partnumber=<?php echo $app['partnumber'];?>"><img class="img-thumbnail" src="<?php echo $primaryphotouri;?>" /></a>
                     </div>
 
                     <div style="float:left;text-align: left;width:50%;padding:5px;">
@@ -176,7 +176,7 @@ if(isset($_GET['makeid']) && isset($_GET['modelid']) && isset($_GET['yearid']))
                           {
                            foreach ($appmatrix[$fitmentrowkey][$fitmentcolumnkey] as $app)
                            {
-                            echo '<div style="padding:5px;"><a href="publicCatalogPart.php?partnumber='.$app['partnumber'].'" class="btn btn-secondary">'.$app['partnumber'].'</a></div>';
+                            echo '<div style="padding:5px;"><a href="publicCatalogPart.php?basevid='.$basevehicleid.'&partnumber='.$app['partnumber'].'" class="btn btn-secondary">'.$app['partnumber'].'</a></div>';
                            }
                           }
 

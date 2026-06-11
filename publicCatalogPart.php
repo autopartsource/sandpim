@@ -49,8 +49,11 @@ function niceAppAttributes($appattributes)
 
 
 
-
-
+$mmy=false;
+if(isset($_GET['basevid']))
+{
+ $mmy=$vcdb->getMMYforBasevehicleid(intval($_GET['basevid']));
+}
 
 if(isset($_GET['partnumber']))
 {
@@ -200,6 +203,10 @@ if(isset($_GET['partnumber']))
             <!-- main content in mobile mode, right content in desktop mode-->
             <div class="col-12 col-md-5 col-lg-7">
 
+                <?php if($mmy!==false){?>                                
+                <h3 class="card-header text-start"><a href="./publicCatalogBasevehicle.php?makeid=<?php echo $mmy['MakeID'];?>&modelid=<?php echo $mmy['ModelID'];?>&yearid=<?php echo $mmy['year'];?>"><< <?php echo $mmy['makename'].' '.$mmy['modelname'].' '.$mmy['year'];?></a></h3>
+                <?php }?>                
+                
                 <h1><div style="padding:20px;"><?php echo $partnumber;?></div></h1>
                 <h4><div style="padding:20px;"><?php echo $title;?></div></h4>
 

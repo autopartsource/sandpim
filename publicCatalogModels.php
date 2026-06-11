@@ -6,6 +6,7 @@ session_start();
 
 $pim=new pim();
 $vcdb=new vcdb();
+$partcategories=array(122,123,133);
 
 if(isset($_GET['makeid']))
 {
@@ -29,7 +30,10 @@ if(isset($_GET['makeid']))
                     <div class="card-body">
                     <?php foreach ($models as $model)
                     {
-                        echo '<div style="font-size:1.5em;padding:8px;"><a href="publicCatalogYears.php?makeid=' . $makeid .'&modelid='.$model['id'].'" class="btn btn-secondary" role="button" aria-disabled="true" style="font-size:1.1em;">' . $model['name'] . '</a></div>';
+                        $basevids=$vcdb->getBaseVidsForMakeModelRegion($makeid, $model['id'], false);
+                        $appcount=$pim->countAppsByBasevidsAndPartcategories($basevids, $partcategories);
+                        if($appcount==0){continue;}
+                        echo '<div style="font-size:1.5em;padding:8px;"><a href="publicCatalogYears.php?makeid=' . $makeid .'&modelid='.$model['id'].'" class="btn btn-secondary" role="button" aria-disabled="true" style="font-size:1.1em;">' . $model['name'] .'</a></div>';
                     }?>
                     </div>
                 </div>

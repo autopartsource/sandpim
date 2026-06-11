@@ -613,6 +613,32 @@ function countAppsByPartcategories($partcategories)
   return $count;
 }
 
+function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
+{
+  $basevidarray=array(); foreach($basevids as $basevid){$basevidarray[]=intval($basevid);} $basevidlist=implode(',',$basevidarray); // sanitize input
+  $categoryarray=array(); foreach($partcategories as $partcategory){$categoryarray[]=intval($partcategory);} $categorylist=implode(',',$categoryarray); // sanitize input
+  $db = new mysql;  $db->connect();
+  $count=0;  
+  $sql='select count(*) as appcount from application left join part on application.partnumber=part.partnumber where part.partcategory in('.$categorylist.') and application.basevehicleid in('.$basevidlist.') and application.status=0';
+  if(count($partcategories)==0)
+  {
+      $sql='select count(*) as appcount from application where basevehicleid in('.$basevidlist.') and status=0'; 
+  }
+  
+  if($stmt=$db->conn->prepare($sql))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   if($row = $db->result->fetch_assoc())
+   {
+    $count=$row['appcount'];
+   }
+  }
+  $db->close();
+  return $count;
+}
+
+
 
  function getAppsByPartnumber($partnumber,$excludeattributes=false)
  {

@@ -7,6 +7,9 @@ session_start();
 $pim=new pim();
 $vcdb=new vcdb();
 
+$partcategories=array(122,123,133);
+
+
 if(isset($_GET['makeid']) && isset($_GET['modelid']))
 {
  $makeid=intval($_GET['makeid']);
@@ -31,7 +34,10 @@ if(isset($_GET['makeid']) && isset($_GET['modelid']))
                     <div class="card-body">
                     <?php foreach ($years as $year)
                     {
-                        echo '<div style="font-size:1.5em;padding:8px;"><a href="publicCatalogBasevehicle.php?makeid=' . $makeid .'&modelid='.$modelid.'&yearid='.$year['id'].'" class="btn btn-secondary" role="button" aria-disabled="true" style="font-size:1.1em;">' . $year['id'] . '</a></div>';
+                        $basevid=$vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $year['id']);
+                        $appcount=$pim->countAppsByBasevidsAndPartcategories(array($basevid), $partcategories);
+                        $disabled=''; if($appcount==0){$disabled=' disabled';}
+                        echo '<div style="font-size:1.5em;padding:8px;"><a href="publicCatalogBasevehicle.php?makeid=' . $makeid .'&modelid='.$modelid.'&yearid='.$year['id'].'" class="btn btn-secondary'.$disabled.'" role="button" aria-disabled="true" style="font-size:1.1em;">' . $year['id'] .'</a></div>';
                     }?>
                     </div>
                 </div>

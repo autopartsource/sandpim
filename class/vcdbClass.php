@@ -1154,9 +1154,32 @@ function getBrakeConfigsForVehicleid($vehicleid)
   return $results;
  }
 
- 
- 
- 
+ function getBaseVidsForMakeModelRegion($makeid,$modelid,$regionid=false)
+ {
+  $db = new mysql; $db->dbname=$db->vcdbname;
+  if($this->vcdbversion!==false){$db->dbname=$this->vcdbversion;}
+  $db->connect();
+  $basevids=array();
+  
+  $regionclause='';
+  if($regionid!==false)
+  {
+   $regionclause=' and Vehicle.RegionID='.intval($regionid);
+  }
+     
+  if($stmt=$db->conn->prepare('select distinct BaseVehicle.BaseVehicleID as basevid from Vehicle, BaseVehicle where Vehicle.BaseVehicleID = BaseVehicle.BaseVehicleID and BaseVehicle.MakeID=? and BaseVehicle.ModelID=?'.$regionclause))
+  {
+   $stmt->bind_param('ii', $makeid,$modelid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $basevids[]=$row['basevid'];
+   }
+  }
+  $db->close();
+  return $basevids;
+ }  
  
  function version()
  {
