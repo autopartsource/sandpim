@@ -82,6 +82,7 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
                             <div style="clear:both;"></div> 
                         </form>
 
+                        
                         <?php if(count($results)){?>
                         <div class="card shadow-sm">
                             <h5 class="card-header text-start">VGX Results</h5>
