@@ -62,108 +62,159 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
         <?php include('./includes/header.php'); ?>
     </head>
     <body>
-        <!-- Navigation Bar -->
-        
-        <!-- Header -->
-            
-        
-        <!-- Content Container -->
-        <div class="container-fluid padding my-container">
-            <div class="row padding my-row">
-                <!-- Left Column -->
-                <div class="col-xs-12 col-md-1 my-col colLeft">
-                    
-                </div>
-                
-                <!-- Main Content -->
-                <div class="col-xs-12 col-md-10 my-col colMain">
-                    <div class="card shadow-sm">
-                        <h3 class="card-header text-start"><a href="./publicCatalog.php">Catalog Home</a> > Part Number Search</h3>
-                        <div class="card-body">
-                            <form method="get">
-                                <div style="float:left;">
-                                    <label class="sr-only" for="inputPart">Part</label>
-                                    <input type="text" name="q" class="form-control mb-2 mr-sm-2" id="inputPart" placeholder="part number" value="<?php echo $qsanitized;?>"/>
-                                </div>
-                                <div style="float:left;"> 
-                                     <button type="submit" class="btn btn-primary mb-2">Search</button>
-                                </div>
-                                <div style="clear:both;"></div> 
-                            </form>
-                            
-                            <?php if(count($results)){?>
-                            <div class="card shadow-sm">
-                                <h5 class="card-header text-start">VGX Results</h5>
-                                <div class="card-body">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Part</th>
-                                                <th scope="col">Category</th>
-                                                <th scope="col">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach($results as $result){?>                            
-                                            <tr>
-                                               <td><a href="publicCatalogPart.php?partnumber=<?php echo $result['partnumber'];?>" class="btn btn-secondary"><?php echo $result['partnumber'];?></a></td>
-                                               <td><?php echo $result['partcategoryname'];?></td>
-                                               <td><?php echo $pcdb->lifeCycleCodeDescription($result['lifecyclestatus']);?></td>
-                                            </tr>                           
-                                            <?php }?>
-                                        </tbody>
-                                    </table>
-                                </div>                        
-                            </div>              
-                            <?php }?>
+        <div class="row">
 
-                            <?php if(count($compresults)){?>
-                            <div class="card shadow-sm">                           
-                                <h5 class="card-header text-start">Competitor Results</h5>
-                                <div class="card-body">
-                                    
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Partnumber</th>
-                                                <th scope="col">Competitor</th>
-                                                <th scope="col">VGX Part</th>
-                                                <th scope="col">Category</th>
-                                                <th scope="col">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach($compresults as $compresult){?>
-                                            <tr>
-                                               <td><?php echo $compresult['competitorpartnumber'];?></td>
-                                               <td><?php echo $compresult['brandname'];?></td>
-                                               <td><a href="publicCatalogPart.php?partnumber=<?php echo $compresult['partnumber'];?>" class="btn btn-secondary"><?php echo $compresult['partnumber'];?></a></td>
-                                               <td><?php echo $compresult['partcategoryname'];?></td>
-                                               <td><?php echo $compresult['lifecyclestatusname'];?></td>
-                                            </tr>
-                                            <?php }?>
-                                        </tbody>
-                                    </table>
-                                </div>
+            
+            <!-- mobile content (display in sm) -->
+            <div class="col-12 d-block d-md-none">
+            
+                <div class="card shadow-sm">
+                    <h3 class="card-header text-start"><a href="./publicCatalog.php">Catalog Home</a> > Part Number Search</h3>
+                    <div class="card-body">
+                        <form method="get">
+                            <div style="float:left;">
+                                <label class="sr-only" for="inputPart">Part</label>
+                                <input type="text" name="q" class="form-control mb-2 mr-sm-2" id="inputPart" placeholder="part number" value="<?php echo $qsanitized;?>"/>
                             </div>
-                            <?php }?>
-                            
+                            <div style="float:left;"> 
+                                 <button type="submit" class="btn btn-primary mb-2">Search</button>
+                            </div>
+                            <div style="clear:both;"></div> 
+                        </form>
+
+                        <?php if(count($results)){?>
+                        <div class="card shadow-sm">
+                            <h5 class="card-header text-start">VGX Results</h5>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tbody>
+                                        <?php foreach($results as $result){?>                            
+                                        <tr>
+                                           <td><a href="publicCatalogPart.php?partnumber=<?php echo $result['partnumber'];?>" class="btn btn-secondary"><?php echo $result['partnumber'];?></a></td>
+                                           <td><?php echo $result['partcategoryname'];?></td>
+                                        </tr>                           
+                                        <?php }?>
+                                    </tbody>
+                                </table>
+                            </div>                        
+                        </div>              
+                        <?php }?>
+
+                        <?php if(count($compresults)){?>
+                        <div class="card shadow-sm">                           
+                            <h5 class="card-header text-start">Competitor Results</h5>
+                            <div class="card-body">
+
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Competitor</th>
+                                            <th scope="col">VGX Part</th>
+                                            <th scope="col">Category</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($compresults as $compresult){?>
+                                        <tr>
+                                           <td><?php echo $compresult['brandname'].'<br/>'.$compresult['competitorpartnumber'];?></td>                                           
+                                           <td><a href="publicCatalogPart.php?partnumber=<?php echo $compresult['partnumber'];?>" class="btn btn-secondary"><?php echo $compresult['partnumber'];?></a></td>
+                                           <td><?php echo $compresult['partcategoryname'];?></td>
+                                        </tr>
+                                        <?php }?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+                        <?php }?>
+
                     </div>
-                    
-                    
-                    
                 </div>
-                <!-- End of Main Content -->
                 
-                <!-- Right Column -->
-                <div class="col-xs-12 col-md-1 my-col colRight">
-                    
+            </div>
+            <!-- end of mobile  -->
+            
+            
+            <!-- desktop content (display in md and lg ) -->
+            <div class="d-none d-md-block col-1 col-lg-2"></div>
+            <div class="d-none d-md-block col-10 col-lg-8">
+                        
+                <div class="card shadow-sm">
+                    <h3 class="card-header text-start"><a href="./publicCatalog.php">Catalog Home</a> > Part Number Search</h3>
+                    <div class="card-body">
+                        <form method="get">
+                            <div style="float:left;">
+                                <label class="sr-only" for="inputPart">Part</label>
+                                <input type="text" name="q" class="form-control mb-2 mr-sm-2" id="inputPart" placeholder="part number" value="<?php echo $qsanitized;?>"/>
+                            </div>
+                            <div style="float:left;"> 
+                                 <button type="submit" class="btn btn-primary mb-2">Search</button>
+                            </div>
+                            <div style="clear:both;"></div> 
+                        </form>
+
+                        <?php if(count($results)){?>
+                        <div class="card shadow-sm">
+                            <h5 class="card-header text-start">VGX Results</h5>
+                            <div class="card-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Part</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($results as $result){?>                            
+                                        <tr>
+                                           <td><a href="publicCatalogPart.php?partnumber=<?php echo $result['partnumber'];?>" class="btn btn-secondary"><?php echo $result['partnumber'];?></a></td>
+                                           <td><?php echo $result['partcategoryname'];?></td>
+                                           <td><?php echo $pcdb->lifeCycleCodeDescription($result['lifecyclestatus']);?></td>
+                                        </tr>                           
+                                        <?php }?>
+                                    </tbody>
+                                </table>
+                            </div>                        
+                        </div>              
+                        <?php }?>
+
+                        <?php if(count($compresults)){?>
+                        <div class="card shadow-sm">                           
+                            <h5 class="card-header text-start">Competitor Results</h5>
+                            <div class="card-body">
+
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Partnumber</th>
+                                            <th scope="col">Competitor</th>
+                                            <th scope="col">VGX Part</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach($compresults as $compresult){?>
+                                        <tr>
+                                           <td><?php echo $compresult['competitorpartnumber'];?></td>
+                                           <td><?php echo $compresult['brandname'];?></td>
+                                           <td><a href="publicCatalogPart.php?partnumber=<?php echo $compresult['partnumber'];?>" class="btn btn-secondary"><?php echo $compresult['partnumber'];?></a></td>
+                                           <td><?php echo $compresult['partcategoryname'];?></td>
+                                           <td><?php echo $compresult['lifecyclestatusname'];?></td>
+                                        </tr>
+                                        <?php }?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <?php }?>
+
+                    </div>
                 </div>
             </div>
+            <div class="d-none d-md-block col-1 col-lg-2"></div>
+            <!-- end of desktop -->
         </div>    
-        <!-- End of Content Container -->
-                
-        <!-- Footer -->
+        
     </body> 
 </html>

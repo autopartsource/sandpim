@@ -6,6 +6,7 @@ include_once('./class/pcdbClass.php');
 include_once('./class/padbClass.php');
 include_once('./class/assetClass.php');
 include_once('./class/pricingClass.php');
+include_once('./class/packagingClass.php');
 include_once('./class/interchangeClass.php');
 $navCategory = 'search';
 session_start();
@@ -18,6 +19,7 @@ $padb=new padb();
 $asset = new asset();
 $pricing = new pricing();
 $interchange=new interchange();
+$packaging = new packaging;
 
 $results=false;
 $qsanitized='';
@@ -87,7 +89,7 @@ if(isset($_GET['partnumber']))
   
   $apps = $pim->getAppsByPartnumber($partnumber);
   $attributes = $pim->getPartAttributes($partnumber);
-  
+  $packages=$packaging->getPackagesByPartnumber($partnumber);
   
   $allinterchangeparts=$interchange->getInterchangeByPartnumber($partnumber);
   $competitorparts=[]; $oemparts=[];
@@ -239,7 +241,15 @@ if(isset($_GET['partnumber']))
                 <?php }?> 
                 <!-- end of carousel for mobile mode -->
 
-
+                <div style="font-size: 1.75em;padding:20px;text-align: left;">
+                GTIN: <?php echo $part['GTIN'];?><br/>
+                <?php if(count($packages)){echo $packages[0]['nicepackage'];}?>
+                </div>
+                
+                
+                
+                
+                
                 <?php if(count($apps)>0){
                 echo '<div id="apps" style="text-align:left; padding-top:30px;">';
                 echo '<div class="card shadow-sm">';
