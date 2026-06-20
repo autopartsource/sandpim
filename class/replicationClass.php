@@ -18,7 +18,7 @@ class replication
  function getPeers($identifier,$type,$role)
  {
   $db=new mysql; $db->connect(); $peers=array();
-  if($stmt=$db->conn->prepare('select * from replicationpeer where identifier like ? and `type`=? and role=?'))
+  if($stmt=$db->conn->prepare('select * from replicationpeer where identifier like ? and `type` = ? and role = ?'))
   {
    if($stmt->bind_param('sss',$identifier,$type,$role))
    {
@@ -36,6 +36,21 @@ class replication
   return $peers;
  }
 
+ function getAllPeers()
+ {
+  $db=new mysql; $db->connect(); $peers=array();
+  if($stmt=$db->conn->prepare('select * from replicationpeer order by id'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $peers[]=array('id'=>$row['id'],'identifier'=>$row['identifier'],'description'=>$row['description'],'type'=>$row['type'],'role'=>$row['role'],'uri'=>$row['uri'],'objectlimit'=>$row['objectlimit'],'sharedsecret'=>$row['sharedsecret'],'enabled'=>$row['enabled']);
+   }
+  }
+  $db->close();
+  return $peers;
+ }
 
  
 }?>

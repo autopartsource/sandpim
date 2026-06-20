@@ -76,4 +76,5 @@ class configGet
     $db->close();
     return $value;
  }
-}?>
+
+}

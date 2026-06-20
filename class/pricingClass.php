@@ -152,12 +152,18 @@ class pricing
  }
  
  
- function getPricesheets()
+ function getPricesheets($showexpired=false)
  {
   $db=new mysql; $db->connect();
   $records=array();
 
-  if($stmt=$db->conn->prepare('select * from pricesheet where expirationdate>=DATE(NOW()) order by description'))
+  $sql='select * from pricesheet where expirationdate>=DATE(NOW()) order by description';      
+  if($showexpired)
+  {
+   $sql='select * from pricesheet order by description';
+  }    
+      
+  if($stmt=$db->conn->prepare($sql))
   {
    if($stmt->execute())
    {

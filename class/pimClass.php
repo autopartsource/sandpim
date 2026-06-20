@@ -6,7 +6,7 @@ class pim
 
  function buildVersion()
  {
-  return '2026-03-07';
+  return '2026-06-19';
  }
 
  function uuidv4()
@@ -4854,7 +4854,22 @@ function gtinCheckDigit($barcode)
   return $resulttext;
  }
  
- 
+function getAllowedHosts()
+{
+ $db = new mysql; $db->connect(); $returnval=array();
+ if($stmt=$db->conn->prepare('select * from allowedhosts'))
+ {
+  $stmt->execute();
+  $db->result = $stmt->get_result();
+  while($row = $db->result->fetch_assoc())
+  {
+   $returnval[]=$row['address'];
+  }
+ }
+ $db->close();
+ return $returnval;
+}
+
 function allowedHost($address)
 {
  $db = new mysql; $db->connect();
