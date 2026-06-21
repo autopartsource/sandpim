@@ -328,7 +328,8 @@ $brands=$interchange->getCompetitivebrands();
                                         $asset->setAssetHash($assetrecord['id'], $urifilehash);
                                         $asset->setAssetFilesize($assetrecord['id'], $urifilesize);
                                         $newoid=$asset->updateAssetOID($assetrecord['id']);
-                                        $asset->logAssetEvent($assetrecord['id'], $_SESSION['userid'], 'hash and/or size updated based on downloaded uri', $newoid);                                       
+                                        //$asset->logAssetEvent($assetrecord['id'], $_SESSION['userid'], 'hash and/or size updated based on downloaded uri', $newoid);                                   
+                                        $asset->logAssetEvent($assetrecord['assetid'], $_SESSION['userid'], 'hash and/or size updated from downloaded uri. Asset record id ['.$assetrecord['id'].']', $newoid);
                                     }
                                 }
                             }

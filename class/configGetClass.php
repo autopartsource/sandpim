@@ -40,6 +40,25 @@ class configGet
   return $configs;
  }
  
+ function validConfigOption($configname)
+ {
+  $db=new mysql; $db->connect(); $returnvalue=false;
+  if($stmt=$db->conn->prepare('select * from config_options where configname=?'))
+  {
+   $stmt->bind_param('s',$configname);
+   if($stmt->execute())
+   {    
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $returnvalue=true;
+    }
+   }
+  }
+  $db->close();
+  return $returnvalue;
+ }
+ 
  function getConfigValue($configname,$defaultvalue=false)
  {
  // if name is not found, and $defaultvalue is not false, write a new config record with the $defaultvalue

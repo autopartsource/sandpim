@@ -78,12 +78,14 @@ if(!$pim->userHasNavelement($_SESSION['userid'], 'UTILITIES/BACKUPRESTORE')){ech
                         <h3 class="card-header text-start">Import System Settings</h3>
 
                         <div class="card-body">
-                            Upload XML settings file. Its content will replace the current settings. If you want to only import specific settings and leave the other untouched, you can 
-                            delete sections of the XML file. For example, if you only wanted to replace replicationpeers, the XML files should only contain the replicationpeers section.
-
+                            <div style="padding-bottom: 20px;">Paste XML settings file content in the text area below. The XML content will replace the current settings. If any problems are detected 
+                            with the data, no changes will be made. If you want to only import specific settings and leave the other untouched, you can 
+                            delete sections of the XML file. For example, if you only wanted to replace replicationpeers, the XML files should only contain the replicationpeers section.</div>
                             
-                            <form method="post" action="importSystem.php" enctype="multipart/form-data">
-                                <div style="padding:5px;text-align: left;"> <input type="file" name="fileToUpload" id="fileToUpload" accept=".xml"/></div>
+                            <form method="post" action="importSystem.php">
+                                <textarea name="input" style="width:95%;height: 200px;"></textarea>
+                                <div style="padding:10px;"><label><input type="checkbox" name="test"/>Test data without importing</label></div>
+
                                 <div style="padding:5px;"><input name="submit" type="submit" value="Import"/></div>
                             </form>
                         </div>

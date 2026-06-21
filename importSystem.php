@@ -1,8 +1,10 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/configGetClass.php');
 $navCategory = 'utilities';
 
 $pim = new pim;
+$configGet=new configGet();
 
 //ip-based ACL enforcement 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
@@ -25,16 +27,15 @@ $importresults=array();
 if (isset($_POST['input'])) 
 {
  $xml = simplexml_load_string($_POST['input']);
- $app_count=count($xml->App);
- if($app_count)
+ foreach($xml->configs[0] as $config)
  {
-  $imported_app_count=$pim->createAppFromACESsnippet($xml,$_POST['partcategory']);
-  $importresults[]= $app_count . ' apps created';
+  if(!$configGet->validConfigOption((string)$config['name']))
+  {
+   $errors[]=(string)$config['name'].' = '.base64_decode((string)$config['value']);
+  }
  }
- else
- {
-  $errors[]='No app tags were found in input text';   
- }
+ 
+ 
 }?>
 <!DOCTYPE html>
 <html>
@@ -56,18 +57,10 @@ if (isset($_POST['input']))
                 <!-- Main Content -->
                 <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
-			<!-- Header -->
-                        <h3 class="card-header text-start">Import applications from ACES xml</h3>
+                       <h3 class="card-header text-start">System Import Results</h3>
                         <div class="card-body">
-                            <form method="post">
-
-                                <div class="alert alert-secondary" role="alert">
-                                    <h6 class="alert-heading">Paste xml content from an ACES file</h6>
-                                </div>
-                                <textarea style="width:100%;height:200px;" name="input"></textarea>
-                                <div>Category for part creation <select name="partcategory"><option value="0">Do not create parts</option> <?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
-                                <div style="padding:10px;"><input name="submit" type="submit" value="Import"/></div>                                    
-                            </form>
+                            
+                            
                         </div>
                     </div>
                     
