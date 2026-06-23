@@ -9,6 +9,7 @@ $logs=new logs();
 $pim=new pim();
 $configGet=new configGet();
 $catalogname=$configGet->getConfigValue('publicCatalogName');
+$mainsitelink=$configGet->getConfigValue('publicCatalogMainSiteLink');
 
 ?>
 <!DOCTYPE html>
@@ -39,7 +40,7 @@ $catalogname=$configGet->getConfigValue('publicCatalogName');
                             <div class="d-grid gap-2 col-6 mx-auto">
                                 <a class="btn btn-secondary" href="./publicCatalogSearchParts.php" style="margin:5px">Part Number Search</a>
                                 <a class="btn btn-secondary" href="./publicCatalogMakes.php" style="margin:5px">Vehicle Lookup - Make/Model/Year</a>
-                                <a class="btn btn-secondary" href="" style="margin:5px">Main Site</a>
+                                <a class="btn btn-secondary" href="<?php echo $mainsitelink;?>" style="margin:5px">Main Site</a>
                             </div>
                         </div>
                     </div>

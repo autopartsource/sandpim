@@ -945,6 +945,8 @@ class setup
         $sql="insert into config_options values('unrestrictedLifecycleEdits','AN1/255','yes,no','yes','If yes, any user can change a part lifecycle status on the showPart page. Otherwise, parts/lifecycle management page must be used');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('VIOyearQuarterRef','AN1/255','','','YearQuarter (like 2025Q4) for use in VIO trend calculation against the VIOdefaultYearQuarter in the VIOdefaultGeography');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('publicCatalogName','AN1/255','','','For titling the public-facing catalog page and nav links');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('publicCatalogMainSiteLink','AN1/255','','','Link to main site page on publicCatalog page');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('publicCatalogCategories','AN1/255','','','comma-delimited list of categories for public catalog');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
 
 
         

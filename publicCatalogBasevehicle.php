@@ -4,6 +4,8 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/configGetClass.php');
+
 $navCategory = 'search';
 session_start();
 
@@ -12,8 +14,13 @@ $vcdb=new vcdb();
 $pcdb=new pcdb();
 $qdb=new qdb();
 $asset=new asset();
+$configGet = new configGet();
 
-$partcategories=array(122,123,133);
+$partcategories= array();
+$categoriesstrings=explode(',',$configGet->getConfigValue('publicCatalogCategories'));
+foreach($categoriesstrings as $categoriesstring){$partcategories[]=intval($categoriesstring);}
+
+
 $parttypelist=array(1684);
 $lifecyclestatuses=array('2','3','4','7','8');
 

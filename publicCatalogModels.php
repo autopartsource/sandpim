@@ -1,12 +1,17 @@
 <?php
 include_once('./class/pimClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/vcdbClass.php');
 $navCategory = 'search';
 session_start();
 
 $pim=new pim();
 $vcdb=new vcdb();
-$partcategories=array(122,123,133);
+$configGet = new configGet();
+
+$partcategories= array();
+$categoriesstrings=explode(',',$configGet->getConfigValue('publicCatalogCategories'));
+foreach($categoriesstrings as $categoriesstring){$partcategories[]=intval($categoriesstring);}
 
 if(isset($_GET['makeid']))
 {
