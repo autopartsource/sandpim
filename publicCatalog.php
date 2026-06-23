@@ -1,11 +1,14 @@
 <?php
 include_once('./class/logsClass.php');
 include_once('./class/pimClass.php');
+include_once('./class/configGetClass.php');
 $navCategory = 'search';
 session_start();
 
 $logs=new logs();
 $pim=new pim();
+$configGet=new configGet();
+$catalogname=$configGet->getConfigValue('publicCatalogName');
 
 ?>
 <!DOCTYPE html>
@@ -32,11 +35,10 @@ $pim=new pim();
                     <div class="card shadow-sm">
 			<!-- Header -->                           
                         <div class="card-body">
-                            <h5 class="alert alert-secondary" type="alert">VGX Brakes Catalog</h5>
+                            <h5 class="alert alert-secondary" type="alert"><?php echo $catalogname;?></h5>
                             <div class="d-grid gap-2 col-6 mx-auto">
                                 <a class="btn btn-secondary" href="./publicCatalogSearchParts.php" style="margin:5px">Part Number Search</a>
                                 <a class="btn btn-secondary" href="./publicCatalogMakes.php" style="margin:5px">Vehicle Lookup - Make/Model/Year</a>
-                                <a class="btn btn-secondary" href="" style="margin:5px">Vehicle Lookup - Make/System</a>
                                 <a class="btn btn-secondary" href="" style="margin:5px">Main Site</a>
                             </div>
                         </div>
