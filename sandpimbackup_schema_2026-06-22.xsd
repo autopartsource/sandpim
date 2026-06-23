@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <!-- version 2026-06-22 -->
+
+  <xs:simpleType name="Base64String">
+    <xs:restriction base="xs:base64Binary"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="IDType">
+    <xs:restriction base="xs:int">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="UserStatusType">
+    <xs:restriction base="xs:int">
+      <xs:enumeration value="0"/>
+      <xs:enumeration value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="NavIdType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]+(/[A-Z0-9]+)+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LifecycleCodeType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z0-9]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="PartTranslationType">
+    <xs:attribute name="internalpart" type="PartnumberType" use="required"/>
+    <xs:attribute name="externalpart" type="PartnumberType" use="required"/>
+  </xs:complexType>
+
+  <xs:simpleType name="UsernameType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-zA-Z0-9._@\-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="PartnumberType">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-zA-Z0-9._\- ]{3,30}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="URLType">
+    <xs:restriction base="xs:anyURI"/>
+  </xs:simpleType>
+
+  <xs:complexType name="ConfigType">
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="value" type="Base64String" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="NavElementType">
+    <xs:attribute name="navid" type="NavIdType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="PartCategoryRefType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="UserType">
+    <xs:sequence>
+      <xs:element name="navelements" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="navelement" type="NavElementType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="partcategories" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="partcategory" type="PartCategoryRefType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="username" type="UsernameType" use="required"/>
+    <xs:attribute name="name" type="Base64String" use="required"/>
+    <xs:attribute name="hash" type="Base64String" use="required"/>
+    <xs:attribute name="environment" type="Base64String" use="required"/>
+    <xs:attribute name="status" type="UserStatusType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="AssetTagRefType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="DeliveryGroupRefType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="LifecycleStatusType">
+    <xs:attribute name="code" type="LifecycleCodeType" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="ReceiverProfileType">
+    <xs:sequence>
+
+      <xs:element name="assettags" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="assettag" type="AssetTagRefType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="deliverygroups" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="deliverygroup" type="DeliveryGroupRefType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="lifecyclestatuses" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="lifecyclestatus" type="LifecycleStatusType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="parttranslations" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="parttranslation" type="PartTranslationType" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="pricesheetnumber" type="xs:string" minOccurs="0"/>
+
+    </xs:sequence>
+
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="name" type="Base64String" use="required"/>
+    <xs:attribute name="data" type="Base64String" use="optional"/>
+    <xs:attribute name="notes" type="Base64String" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="PartCategoryType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="logouri" type="URLType" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="DeliveryGroupType">
+    <xs:sequence>
+      <xs:element name="partcategory" type="PartCategoryRefType"
+                  maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="description" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="CompetitiveBrandType">
+    <xs:attribute name="code" type="xs:string" use="required"/>
+    <xs:attribute name="description" type="Base64String" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="PartDescriptionRecipeBlockType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="blocktype" type="xs:string" use="required"/>
+    <xs:attribute name="blockparameters" type="Base64String" use="optional"/>
+    <xs:attribute name="sequence" type="xs:int" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="PartDescriptionRecipeType">
+    <xs:sequence>
+      <xs:element name="block" type="PartDescriptionRecipeBlockType" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="partcategory" type="IDType" use="required"/>
+    <xs:attribute name="parttypeid" type="IDType" use="required"/>
+    <xs:attribute name="descriptioncode" type="xs:string" use="required"/>
+    <xs:attribute name="languagecode" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="ReplicationPeerType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="identifier" type="xs:string" use="required"/>
+    <xs:attribute name="description" type="Base64String" use="optional"/>
+    <xs:attribute name="type" type="xs:string" use="required"/>
+    <xs:attribute name="role" type="xs:string" use="required"/>
+    <xs:attribute name="uri" type="URLType" use="required"/>
+    <xs:attribute name="objectlimit" type="xs:int" use="optional"/>
+    <xs:attribute name="sharedsecret" type="Base64String" use="optional"/>
+    <xs:attribute name="enabled" type="xs:boolean" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="AssetTagType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="tagtext" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="PriceSheetType">
+    <xs:attribute name="number" type="xs:string" use="required"/>
+    <xs:attribute name="description" type="Base64String" use="required"/>
+    <xs:attribute name="currency" type="xs:string" use="required"/>
+    <xs:attribute name="pricetype" type="xs:string" use="required"/>
+    <xs:attribute name="effectivedate" type="xs:date" use="required"/>
+    <xs:attribute name="expirationdate" type="xs:date" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="MakeType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="name" type="Base64String" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="ParttypeType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="name" type="Base64String" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="PositionType">
+    <xs:attribute name="id" type="IDType" use="required"/>
+    <xs:attribute name="name" type="Base64String" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="HostType">
+    <xs:attribute name="address" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <!-- ===================== -->
+  <!-- ROOT ELEMENT          -->
+  <!-- ===================== -->
+
+  <xs:element name="SandPIM">
+    <xs:complexType>
+      <xs:sequence>
+
+        <xs:element name="configs" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="config" type="ConfigType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="users" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="user" type="UserType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="receiverprofiles" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="receiverprofile" type="ReceiverProfileType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="partcategories" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="partcategory" type="PartCategoryType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="deliverygroups" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="deliverygroup" type="DeliveryGroupType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="pricesheets" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="pricesheet" type="PriceSheetType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="favoritemakes" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="make" type="MakeType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="parttypes" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="parttype" type="ParttypeType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="positions" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="position" type="PositionType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="competitivebrands" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="competitivebrand" type="CompetitiveBrandType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="partdescriptionrecipes" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="recipe" type="PartDescriptionRecipeType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="replicationpeers" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="peer" type="ReplicationPeerType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="assettags" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="assettag" type="AssetTagType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="allowedhosts" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="host" type="HostType" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+      </xs:sequence>
+
+      <xs:attribute name="schemaversion" type="xs:string" use="required"/>
+      <xs:attribute name="systembuild" type="xs:string" use="required"/>
+      <xs:attribute name="exportdatetime" type="xs:dateTime" use="required"/>
+
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

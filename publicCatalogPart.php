@@ -8,6 +8,7 @@ include_once('./class/assetClass.php');
 include_once('./class/pricingClass.php');
 include_once('./class/packagingClass.php');
 include_once('./class/interchangeClass.php');
+include_once('./class/configGetClass.php');
 $navCategory = 'search';
 session_start();
 
@@ -20,9 +21,17 @@ $asset = new asset();
 $pricing = new pricing();
 $interchange=new interchange();
 $packaging = new packaging;
+$configGet = new configGet();
+
+$contacturi=$configGet->getConfigValue('publicCatalogContactURI');
+$copyrightname=$configGet->getConfigValue('publicCatalogCopyrightName');
+$logouri=$configGet->getConfigValue('publicCatalogLogoURI');
+
+
 
 $results=false;
 $qsanitized='';
+
 
 $title='Not Found';
 $subtitle='Not Found';
@@ -325,5 +334,14 @@ if(isset($_GET['partnumber']))
 
         </div>
         
-    </body> 
+        <hr/>
+        <footer class="footer"><div>© MomentumUSA,inc <?php echo date('Y');?></div>
+            <div><a href="<?php echo $contacturi;?>">Contact us</a></div>
+        </footer>
+        
+    </body>
+
 </html>
+
+
+
