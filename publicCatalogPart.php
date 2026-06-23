@@ -73,6 +73,8 @@ if(isset($_GET['partnumber']))
  {
   $partnumber=$part['partnumber'];
   $descriptions=$pim->getPartDescriptions($partnumber);
+  $logs->logSystemEvent('info', 0, 'publicCatalogPart queried with valid partnumber ['.$_GET['partnumber'].']');
+    
   foreach($descriptions as $description)
   {
    if($description['descriptioncode']=='EXT' && $description['languagecode']=='EN')
@@ -134,6 +136,10 @@ if(isset($_GET['partnumber']))
     }
    }
   }
+ }
+ else
+ {// part in GET is no valid
+  $logs->logSystemEvent('security', 0, 'publicCatalogPart queried with invalid partnumber (base64encoded for safty) ['.base64_ecode($_GET['partnumber']).']');
  }
 }
 
@@ -204,7 +210,8 @@ if(isset($_GET['partnumber']))
         <div class="row">
 
             <!-- hidden in mobile mode, left content in desktop mode-->
-            <div class="d-none d-md-block col-md-6 col-lg-4 " style="background-color: #f0f0f0;">
+            <div class="d-none d-md-block col-md-6 col-lg-4 " style="">
+                <img src="<?php echo $logouri;?>" width="150px" alt="logo"/>
                 <div style="padding:10px;"><a href="<?php echo $primaryphotouri;?>"><img class="img-thumbnail" src="<?php echo $primaryphotouri;?>" /></a></div>
                 <?php foreach($nonprimaryphotouris as $uri){?>
                 <div style="padding:10px;"><a href="<?php echo $uri;?>"><img class="img-thumbnail" src="<?php echo $uri;?>" /></a></div>
@@ -214,6 +221,7 @@ if(isset($_GET['partnumber']))
             <!-- main content in mobile mode, right content in desktop mode-->
             <div class="col-12 col-md-5 col-lg-7">
 
+                
                 <?php if($mmy!==false){?>                                
                 <h3 class="card-header text-start"><a href="./publicCatalogBasevehicle.php?makeid=<?php echo $mmy['MakeID'];?>&modelid=<?php echo $mmy['ModelID'];?>&yearid=<?php echo $mmy['year'];?>"><< <?php echo $mmy['makename'].' '.$mmy['modelname'].' '.$mmy['year'];?></a></h3>
                 <?php }?>                
@@ -335,7 +343,7 @@ if(isset($_GET['partnumber']))
         </div>
         
         <hr/>
-        <footer class="footer"><div>© MomentumUSA,inc <?php echo date('Y');?></div>
+        <footer class="footer"><div>© <?php echo $copyrightname;?> <?php echo date('Y');?></div>
             <div><a href="<?php echo $contacturi;?>">Contact us</a></div>
         </footer>
         

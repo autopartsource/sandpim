@@ -4,6 +4,7 @@ include_once('./class/vcdbClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/qdbClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/logsClass.php');
 include_once('./class/configGetClass.php');
 
 $navCategory = 'search';
@@ -15,6 +16,7 @@ $pcdb=new pcdb();
 $qdb=new qdb();
 $asset=new asset();
 $configGet = new configGet();
+$logs=new logs();
 
 $partcategories= array();
 $categoriesstrings=explode(',',$configGet->getConfigValue('publicCatalogCategories'));
@@ -34,8 +36,8 @@ if(isset($_GET['makeid']) && isset($_GET['modelid']) && isset($_GET['yearid']))
  $yearid = intval($_GET['yearid']);
  $basevehicleid=$vcdb->getBasevehicleidForMidMidYid($makeid, $modelid, $yearid);
  $apps=$pim->getAppsByBasevehicleid($basevehicleid, $partcategories);
- 
- 
+ $logs->logSystemEvent('info', 0, 'publicCatalogBasevehilce ['.$basevehicleid.'] queried. ['.count($apps).'] apps found.');
+
  $fitmentrowkeys = array();
  $fitmentcolumnkeys = array();
  $appmatrix = array();

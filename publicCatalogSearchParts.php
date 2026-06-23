@@ -3,18 +3,23 @@ include_once('./class/logsClass.php');
 include_once('./class/pimClass.php');
 include_once('./class/pcdbClass.php');
 include_once('./class/interchangeClass.php');
+include_once('./class/configGetClass.php');
 $navCategory = 'search';
 session_start();
 
-$categorylist=array(101,122,123,133);
-$parttypelist=array(1684);
-$lifecyclestatuses=array('2','3','4','7','8');
-
-
-$logs=new logs();
 $pim=new pim();
 $pcdb=new pcdb();
+$logs=new logs();
 $interchange=new interchange();
+$configGet = new configGet();
+
+$partcategories= array();
+$categoriesstrings=explode(',',$configGet->getConfigValue('publicCatalogCategories'));
+foreach($categoriesstrings as $categoriesstring){$partcategories[]=intval($categoriesstring);}
+
+
+$parttypelist=array(1684);
+$lifecyclestatuses=array('2','3','4','7','8');
 
 $results=array();
 $compresults=array();
@@ -24,14 +29,18 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
 {
  $qsanitized=$pim->sanitizePartnumber($_GET['q']);
  $rawresults=$pim->getParts($qsanitized, 'contains', 'any', '1684', 'any', 'any', 30); 
+ 
  foreach ($rawresults as $rawresult)
  {
-  if(!in_array($rawresult['partcategory'], $categorylist)){continue;}
+  if(!in_array($rawresult['partcategory'], $partcategories)){continue;}
   if(!in_array($rawresult['lifecyclestatus'], $lifecyclestatuses)){continue;}  
   if(count($parttypelist) && !in_array($rawresult['parttypeid'],$parttypelist)){continue;}
 
   $results[]=$rawresult;  
  }
+ 
+ $logs->logSystemEvent('info', 0, 'publicCatalogSearchParts queried with (base64encoded for safty) ['.base64_encode($_GET['q']).']');
+ 
  
  $rawcompresults=$interchange->getInterchangeBySearch($qsanitized, 'contains', '%', 30, false);
  foreach($rawcompresults as $rawcompresult)
@@ -39,7 +48,7 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
   if(count($parttypelist) && !in_array($rawcompresult['parttypeid'],$parttypelist)){continue;}
   $part=$pim->getPart($rawcompresult['partnumber']);
   if(!$part){continue;}
-  if(!in_array($part['partcategory'], $categorylist)){continue;}
+  if(!in_array($part['partcategory'], $partcategories)){continue;}
   if(!in_array($part['lifecyclestatus'], $lifecyclestatuses)){continue;}  
 
   $compresults[]=array(
