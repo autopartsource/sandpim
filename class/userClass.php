@@ -12,19 +12,33 @@ class user
  public $hash;
  public $status;
 
- function addUser($username,$pwd_hashed,$realname)
+ function addUser($username,$pwd_hashed,$realname,$_userid=false,$_status=false, $_environment=false)
  {
-  $db = new mysql; 
-  //$db->dbname='pim'; 
-  $db->connect();
-  $userid=false; $environment='';
-  if($stmt=$db->conn->prepare('insert into user (id,status,failedcount,`name`,username,hash,environment) values(null,1,0,?,?,?,?)'))
+  $db = new mysql; $db->connect(); $userid=false;
+  
+  $environment=''; if($_environment!==false){$environment=$_environment;}
+  $status=1; if($_status!==false){$status=$_status;}
+
+  $sql='insert into user (id,status,failedcount,`name`,username,hash,environment) values(?,?,0,?,?,?,?)';
+  if($_userid===false)
   {
-   if($stmt->bind_param('ssss',$realname,$username,$pwd_hashed,$environment))
-   {
-    if($stmt->execute())
+   $sql='insert into user (id,status,failedcount,`name`,username,hash,environment) values(null,?,0,?,?,?,?)';
+  }
+  
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($_userid===false)
+   {// user record id was not passed in (let the autoinc generate it
+    if($stmt->bind_param('issss',$status,$realname,$username,$pwd_hashed,$environment))
     {
-     $userid=$db->conn->insert_id;
+     if($stmt->execute()){$userid=$db->conn->insert_id;}
+    }
+   }
+   else
+   {// user record id was passed in - use it
+    if($stmt->bind_param('iissss',$_userid,$status,$realname,$username,$pwd_hashed,$environment))
+    {
+     if($stmt->execute()){$userid=$db->conn->insert_id;}
     }
    }
   }
@@ -144,7 +158,7 @@ class user
    $db->result = $stmt->get_result();
    while($row = $db->result->fetch_assoc())
    {
-    $users[]=array('id'=>$row['id'],'username'=>$row['username'],'name'=>$row['name'],'status'=>$row['status'],'failedcount'=>$row['failedcount']);
+    $users[]=array('id'=>$row['id'],'username'=>$row['username'],'name'=>$row['name'],'status'=>$row['status'],'failedcount'=>$row['failedcount'],'hash'=>$row['hash'],'environment'=>$row['environment']);
    }
   }
   $db->close();

@@ -37,11 +37,11 @@ $configs=$configGet->getAllConfigValues();
 $xml='<SandPIM schemaversion="1.0" systembuild="'.$pim->buildVersion().'" exportdatetime="'.date('Y-m-d').'T'.date('H:i:s').'">'."\r\n";
 $xml.=" <configs>\r\n"; foreach($configs as $config){$xml.='  <config name="'.$config['configname'].'" value="'. base64_encode($config['configvalue']).'"/>'."\r\n";} $xml.=" </configs>\r\n";  
 
-$users=$userclass->getUsers();//    $users[]=array('id'=>$row['id'],'username'=>$row['username'],'name'=>$row['name'],'status'=>$row['status'],'failedcount'=>$row['failedcount']);
+$users=$userclass->getUsers();//    $users[]=array('id'=>$row['id'],'username'=>$row['username'],'name'=>$row['name'],'status'=>$row['status'],'failedcount'=>$row['failedcount'],'hash'=>$row['hash'],'environment'=>$row['environment']);
 $xml.=" <users>\r\n";
 foreach($users as $user)
 {
- $xml.='  <user id="'.$user['id'].'" username="'. $user['username'].'" name="'. base64_encode($user['name']).'" status="'.$user['status'].'">'."\r\n";
+ $xml.='  <user id="'.$user['id'].'" username="'. $user['username'].'" name="'.base64_encode($user['name']).'" hash="'.base64_encode($user['hash']).'" environment="'.base64_encode($user['environment']).'" status="'.$user['status'].'">'."\r\n";
  $usernavelements=$pim->getUserNavelements($user['id']);
  $xml.='   <navelements>'."\r\n";
  foreach($usernavelements as $usernavelement)
