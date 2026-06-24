@@ -73,7 +73,7 @@ if(isset($_GET['partnumber']))
  {
   $partnumber=$part['partnumber'];
   $descriptions=$pim->getPartDescriptions($partnumber);
-  $logs->logSystemEvent('info', 0, 'publicCatalogPart queried with valid partnumber ['.$_GET['partnumber'].']');
+  $logs->logSystemEvent('info', 0, 'publicCatalogPart queried for ['.$_GET['partnumber'].'] by client ['.$_SERVER['REMOTE_ADDR'].']');
     
   foreach($descriptions as $description)
   {
@@ -139,7 +139,7 @@ if(isset($_GET['partnumber']))
  }
  else
  {// part in GET is no valid
-  $logs->logSystemEvent('security', 0, 'publicCatalogPart queried with invalid partnumber (base64encoded for safty) ['.base64_ecode($_GET['partnumber']).']');
+  $logs->logSystemEvent('security', 0, 'publicCatalogPart queried for invalid partnumber (base64encoded for safty) ['.base64_ecode($_GET['partnumber']).'] by client ['.$_SERVER['REMOTE_ADDR'].']');
  }
 }
 
@@ -289,9 +289,14 @@ if(isset($_GET['partnumber']))
                 }
 
                 array_multisort($makesindex,SORT_ASC,$modelsindex,SORT_ASC,$yearsindex,SORT_DESC,$niceapps);
+                
+                
+                $distinctniceapps=[];
                 foreach($niceapps as $app)
                 {
+                    if(array_key_exists($app['niceappdescription'], $distinctniceapps)){continue;}
                     echo '<div style="padding-left:15px;">'.$app['niceappdescription'].'</div>';
+                    $distinctniceapps[$app['niceappdescription']]='';
                 }
 
                 echo '</div></div></div>';

@@ -39,7 +39,7 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
   $results[]=$rawresult;  
  }
  
- $logs->logSystemEvent('info', 0, 'publicCatalogSearchParts queried with (base64encoded for safty) ['.base64_encode($_GET['q']).']');
+ $logs->logSystemEvent('info', 0, 'publicCatalogSearchParts queried with (base64encoded for safty) ['.base64_encode($_GET['q']).'] by client ['.$_SERVER['REMOTE_ADDR'].']');
  
  
  $rawcompresults=$interchange->getInterchangeBySearch($qsanitized, 'contains', '%', 30, false);
