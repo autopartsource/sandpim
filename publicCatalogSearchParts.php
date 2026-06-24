@@ -94,7 +94,7 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
                         
                         <?php if(count($results)){?>
                         <div class="card shadow-sm">
-                            <h5 class="card-header text-start">VGX Results</h5>
+                            <h5 class="card-header text-start">Our Parts</h5>
                             <div class="card-body">
                                 <table class="table">
                                     <tbody>
@@ -119,7 +119,7 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
                                     <thead>
                                         <tr>
                                             <th scope="col">Competitor</th>
-                                            <th scope="col">VGX Part</th>
+                                            <th scope="col">Our Part</th>
                                             <th scope="col">Category</th>
                                         </tr>
                                     </thead>
@@ -164,7 +164,7 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
 
                         <?php if(count($results)){?>
                         <div class="card shadow-sm">
-                            <h5 class="card-header text-start">VGX Results</h5>
+                            <h5 class="card-header text-start">Our Results</h5>
                             <div class="card-body">
                                 <table class="table">
                                     <thead>
@@ -198,7 +198,7 @@ if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
                                         <tr>
                                             <th scope="col">Partnumber</th>
                                             <th scope="col">Competitor</th>
-                                            <th scope="col">VGX Part</th>
+                                            <th scope="col">Our Part</th>
                                             <th scope="col">Category</th>
                                             <th scope="col">Status</th>
                                         </tr>

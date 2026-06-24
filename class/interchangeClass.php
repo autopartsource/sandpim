@@ -200,6 +200,8 @@ class interchange
   }     
  }
 
+ 
+ /*
  function brandName($brandAAIAID)
  {
   $db=new mysql; $db->connect();
@@ -249,6 +251,86 @@ class interchange
   $db->close();
   return $name;   
  }
+ 
+ */
+
+ function brandName($brandid)
+ {
+  $db=new mysql; $db->connect();
+  $name='not found ('.$brandid.')';
+    
+  if(strlen($brandid)==9 && substr($brandid,4,1)=='.')
+  {  // see if the brandcode is in the form xxxx.xxxx
+     //  this indicates that brand.subbrand are specified - use the new brand table
+   $bits=explode('.',$brandid); $brandcode=$bits[0]; $subbrandcode=$bits[1];
+      
+   if($stmt=$db->conn->prepare('select BrandName,SubBrandName from autocarebrand where BrandID=? and SubBrandID=?'))
+   {
+    if($stmt->bind_param('ss',$brandcode,$subbrandcode))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      if($row = $db->result->fetch_assoc())
+      {
+       $name=$row['BrandName'].' / '.$row['SubBrandName'];
+      }
+     }
+    }
+   }
+      
+  }
+  else
+  { // brandcode is not in xxxx.xxxx format - treat it simply as brandcode lookup
+   $found=false;
+   if($stmt=$db->conn->prepare('select BrandName from autocarebrand where BrandID=?'))
+   {
+    if($stmt->bind_param('s',$brandid))
+    {
+     if($stmt->execute())
+     {
+      $db->result = $stmt->get_result();
+      if($row = $db->result->fetch_assoc())
+      {
+       $name=$row['BrandName']; $found=true;
+      }
+     }
+    }
+   }
+      
+   if(!$found)
+   {// no hit on autocarebrand table - now fallback to our internal brand table
+    if($stmt=$db->conn->prepare('select BrandName from brand where BrandID=?'))
+    {
+     if($stmt->bind_param('s',$brandid))
+     {
+      if($stmt->execute())
+      {
+       $db->result = $stmt->get_result();
+       if($row = $db->result->fetch_assoc())
+       {
+        $name=$row['BrandName'];
+       }
+      }
+     }
+    }
+   }   
+  }
+
+  $db->close();
+  return $name;   
+ }
+
+
+
+
+
+
+
+
+
+
+
  
  function validBrand($brandAAIAID)
  {     
