@@ -153,52 +153,78 @@ if(isset($_GET['partnumber']))
             function showhideApplicationDetail()
             {
              var x = document.getElementById("applicationdetail");
+             var y = document.getElementById("vehiclesshowicon");
+             var z = document.getElementById("vehicleshideicon");
              if (x.style.display === "none") 
              {
               x.style.display = "block";
+              y.style.display = "none";
+              z.style.display = "block";
              }
              else
              {
               x.style.display = "none";
+              y.style.display = "block";
+              z.style.display = "none";
              }
+
+             
             }
             
             function showhideAttributeDetail()
             {
              var x = document.getElementById("attributedetail");
+             var y = document.getElementById("attributeshowicon");
+             var z = document.getElementById("attributehideicon");
              if (x.style.display === "none") 
              {
               x.style.display = "block";
+              y.style.display = "none";
+              z.style.display = "block";
              }
              else
              {
               x.style.display = "none";
+              y.style.display = "block";
+              z.style.display = "none";
              }
             }
             
             function showhideInterchangeDetail()
             {
              var x = document.getElementById("interchangedetail");
+             var y = document.getElementById("interchangeshowicon");
+             var z = document.getElementById("interchangehideicon");
              if (x.style.display === "none") 
              {
               x.style.display = "block";
+              y.style.display = "none";
+              z.style.display = "block";
              }
              else
              {
               x.style.display = "none";
+              y.style.display = "block";
+              z.style.display = "none";
              }
             }
             
             function showhideOEMdetail()
             {
              var x = document.getElementById("oemdetail");
+             var y = document.getElementById("oemshowicon");
+             var z = document.getElementById("oemhideicon");
              if (x.style.display === "none") 
              {
               x.style.display = "block";
+              y.style.display = "none";
+              z.style.display = "block";
              }
              else
              {
               x.style.display = "none";
+              y.style.display = "block";
+              z.style.display = "none";
              }
             }
             
@@ -270,7 +296,7 @@ if(isset($_GET['partnumber']))
                 <?php if(count($apps)>0){
                 echo '<div id="apps" style="text-align:left; padding-top:30px;">';
                 echo '<div class="card shadow-sm">';
-                echo '<h4 class="card-header text-start" onclick="showhideApplicationDetail()">Vehicle Applications</h4>';
+                echo '<h3 class="card-header text-start" onclick="showhideApplicationDetail()"><img id="vehicleshideicon" src="./expandless.png" style="float:left;padding:5px;display:none;"/><img id="vehiclesshowicon" src="./expandmore.png" style="float:left;padding:5px;display:block;"/> <div style="float:left"> Vehicle Applications</div><div style="clear:both;"></div></h3>';
                 echo '<div id="applicationdetail" class="card-body" style="display:none;">';
 
                 $niceapps=array(); $makesindex=array(); $modelsindex=array(); $yearsindex=array();
@@ -306,7 +332,7 @@ if(isset($_GET['partnumber']))
                 {
                     echo '<div id="attributes" style="text-align:left; padding-top:30px;">';
                     echo '<div class="card shadow-sm">';
-                    echo '<h4 class="card-header text-start" onclick="showhideAttributeDetail()">Part Attributes</h4>';
+                    echo '<h3 class="card-header text-start" onclick="showhideAttributeDetail()"><img id="attributehideicon" src="./expandless.png" style="float:left;padding:5px;display:none;"/><img id="attributeshowicon" src="./expandmore.png" style="float:left;padding:5px;display:block;"/> <div style="float:left"> Specifications</div><div style="clear:both;"></div></h3>';
                     echo '<div id="attributedetail" class="card-body" style="display:none;">';
                     foreach($attributes as $attribute)
                     {
@@ -320,7 +346,7 @@ if(isset($_GET['partnumber']))
                 {
                     echo '<div id="interchange" style="text-align:left; padding-top:30px;">';
                     echo '<div class="card shadow-sm">';
-                    echo '<h4 class="card-header text-start" onclick="showhideInterchangeDetail()">Equivalent Competitor Parts</h4>';
+                    echo '<h3 class="card-header text-start" onclick="showhideInterchangeDetail()"><img id="interchangehideicon" src="./expandless.png" style="float:left;padding:5px;display:none;"/><img id="interchangeshowicon" src="./expandmore.png" style="float:left;padding:5px;display:block;"/> <div style="float:left"> Equivalent Competitor Parts</div><div style="clear:both;"></div></h3>';
                     echo '<div id="interchangedetail" class="card-body" style="display:none;">';
                     foreach($competitorparts as $competitorpart)
                     {
@@ -333,7 +359,7 @@ if(isset($_GET['partnumber']))
                 {
                     echo '<div id="oem" style="text-align:left; padding-top:30px;">';
                     echo '<div class="card shadow-sm">';
-                    echo '<h4 class="card-header text-start" onclick="showhideOEMdetail()">Equivalent OEM Parts</h4>';
+                    echo '<h3 class="card-header text-start" onclick="showhideOEMdetail()"><img id="oemhideicon" src="./expandless.png" style="float:left;padding:5px;display:none;"/><img id="oemshowicon" src="./expandmore.png" style="float:left;padding:5px;display:block;"/> <div style="float:left"> Equivalent OEM Parts</div><div style="clear:both;"></div></h3>';
                     echo '<div id="oemdetail" class="card-body" style="display:none;">';
                     foreach($oemparts as $oempart)
                     {
