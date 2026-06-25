@@ -28,7 +28,6 @@ $copyrightname=$configGet->getConfigValue('publicCatalogCopyrightName');
 $logouri=$configGet->getConfigValue('publicCatalogLogoURI');
 
 
-
 $results=false;
 $qsanitized='';
 
@@ -72,6 +71,8 @@ if(isset($_GET['partnumber']))
  if($part)
  {
   $partnumber=$part['partnumber'];
+  $parttypename=$pcdb->parttypeName($part['parttypeid']);
+  
   $descriptions=$pim->getPartDescriptions($partnumber);
   $logs->logSystemEvent('info', 0, 'publicCatalogPart queried for ['.$_GET['partnumber'].'] by client ['.$_SERVER['REMOTE_ADDR'].']');
     
@@ -237,7 +238,6 @@ if(isset($_GET['partnumber']))
 
             <!-- hidden in mobile mode, left content in desktop mode-->
             <div class="d-none d-md-block col-md-6 col-lg-4 " style="">
-                <img src="<?php echo $logouri;?>" width="150px" alt="logo"/>
                 <div style="padding:10px;"><a href="<?php echo $primaryphotouri;?>"><img class="img-thumbnail" src="<?php echo $primaryphotouri;?>" /></a></div>
                 <?php foreach($nonprimaryphotouris as $uri){?>
                 <div style="padding:10px;"><a href="<?php echo $uri;?>"><img class="img-thumbnail" src="<?php echo $uri;?>" /></a></div>
@@ -251,10 +251,16 @@ if(isset($_GET['partnumber']))
                 <?php if($mmy!==false){?>                                
                 <h3 class="card-header text-start"><a href="./publicCatalogBasevehicle.php?makeid=<?php echo $mmy['MakeID'];?>&modelid=<?php echo $mmy['ModelID'];?>&yearid=<?php echo $mmy['year'];?>"><< <?php echo $mmy['makename'].' '.$mmy['modelname'].' '.$mmy['year'];?></a></h3>
                 <?php }?>                
-                
-                <h1><div style="padding:20px;"><?php echo $partnumber;?></div></h1>
-                <h4><div style="padding:20px;"><?php echo $title;?></div></h4>
 
+                <div style="padding:20px;">
+                <div style="float:left;"><img src="<?php echo $logouri;?>" width="175px" alt="logo"/></div>
+                <div style="float:left;padding-left:15px;">
+                    <div style="font-size: 2.5em; font-weight: bold;"><?php echo $partnumber;?></div>
+                    <div style="padding:5px;"><?php echo $parttypename;?></div>
+                </div>
+                <div style="clear:both;"></div>
+                </div>
+ 
 
                 <!-- carousel for mobile mode -->
 
@@ -284,8 +290,10 @@ if(isset($_GET['partnumber']))
                 <?php }?> 
                 <!-- end of carousel for mobile mode -->
 
+                <h4><div style="text-align: left;padding:20px;"><?php echo $title;?></div></h4>
+                
                 <div style="font-size: 1.75em;padding:20px;text-align: left;">
-                GTIN: <?php echo $part['GTIN'];?><br/>
+                UPC: <?php echo $part['GTIN'];?><br/>
                 <?php if(count($packages)){echo $packages[0]['nicepackage'];}?>
                 </div>
                 
@@ -346,7 +354,7 @@ if(isset($_GET['partnumber']))
                 {
                     echo '<div id="interchange" style="text-align:left; padding-top:30px;">';
                     echo '<div class="card shadow-sm">';
-                    echo '<h3 class="card-header text-start" onclick="showhideInterchangeDetail()"><img id="interchangehideicon" src="./expandless.png" style="float:left;padding:5px;display:none;"/><img id="interchangeshowicon" src="./expandmore.png" style="float:left;padding:5px;display:block;"/> <div style="float:left"> Equivalent Competitor Parts</div><div style="clear:both;"></div></h3>';
+                    echo '<h3 class="card-header text-start" onclick="showhideInterchangeDetail()"><img id="interchangehideicon" src="./expandless.png" style="float:left;padding:5px;display:none;"/><img id="interchangeshowicon" src="./expandmore.png" style="float:left;padding:5px;display:block;"/> <div style="float:left"> Competitor Parts</div><div style="clear:both;"></div></h3>';
                     echo '<div id="interchangedetail" class="card-body" style="display:none;">';
                     foreach($competitorparts as $competitorpart)
                     {
