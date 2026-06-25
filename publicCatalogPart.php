@@ -102,6 +102,7 @@ if(isset($_GET['partnumber']))
   $apps = $pim->getAppsByPartnumber($partnumber);
   $attributes = $pim->getPartAttributes($partnumber);
   $packages=$packaging->getPackagesByPartnumber($partnumber);
+  $prices=$pricing->getPrices($partnumber, 'WD NET', 'USD', 'PE', 'NET');
   
   $allinterchangeparts=$interchange->getInterchangeByPartnumber($partnumber);
   $competitorparts=[]; $oemparts=[];
@@ -114,7 +115,7 @@ if(isset($_GET['partnumber']))
    }
    else
    {
-    $competitorparts[]=$interchange->brandsubbrandName($allinterchangepart['brandAAIAID'],$allinterchangepart['subbrandAAIAID']).': '.$allinterchangepart['competitorpartnumber'];
+    $competitorparts[]=$interchange->brandsubbrandName($allinterchangepart['brandAAIAID'],$allinterchangepart['subbrandAAIAID'])."\t".$allinterchangepart['competitorpartnumber'];
    }      
   }
   asort($oemparts); asort($competitorparts);
@@ -252,13 +253,14 @@ if(isset($_GET['partnumber']))
                 <h3 class="card-header text-start"><a href="./publicCatalogBasevehicle.php?makeid=<?php echo $mmy['MakeID'];?>&modelid=<?php echo $mmy['ModelID'];?>&yearid=<?php echo $mmy['year'];?>"><< <?php echo $mmy['makename'].' '.$mmy['modelname'].' '.$mmy['year'];?></a></h3>
                 <?php }?>                
 
-                <div style="padding:20px;">
-                <div style="float:left;"><img src="<?php echo $logouri;?>" width="175px" alt="logo"/></div>
-                <div style="float:left;padding-left:15px;">
-                    <div style="font-size: 2.5em; font-weight: bold;"><?php echo $partnumber;?></div>
-                    <div style="padding:5px;"><?php echo $parttypename;?></div>
+                <div style="padding-top:10px;">
+                <div style="float:left;padding-top:10px;"><img src="<?php echo $logouri;?>" width="150px" alt="logo"/></div>
+                <div style="float:left;padding-left:10px;">
+                    <div style="font-size: 2.1em; font-weight: bold;text-align: left;"><?php echo $partnumber;?></div>
+                    <div style="padding-left:0px;text-align: left;"><?php echo $parttypename;?></div>
                 </div>
                 <div style="clear:both;"></div>
+                <hr/>
                 </div>
  
 
@@ -290,17 +292,35 @@ if(isset($_GET['partnumber']))
                 <?php }?> 
                 <!-- end of carousel for mobile mode -->
 
-                <h4><div style="text-align: left;padding:20px;"><?php echo $title;?></div></h4>
+                <h4><div style="text-align: left;padding:10px;"><?php echo $title;?></div></h4>
                 
-                <div style="font-size: 1.75em;padding:20px;text-align: left;">
-                UPC: <?php echo $part['GTIN'];?><br/>
-                <?php if(count($packages)){echo $packages[0]['nicepackage'];}?>
+                <div style="font-size: 1.25em;padding:10px;text-align: left;">
+                    
+                    <table class="table">
+                        <tr><th>UPC </th><td><?php echo $part['GTIN'];?></td></tr>
+                <?php 
+                if(count($packages))
+                {
+                    foreach($packages as $package)
+                    {
+                        if($package['packageuom']!='EA'){continue;}
+                        if($package['weight']!=0)
+                        {
+                            echo '<tr><th>Weight</th><td>'.$package['weight'].' '.$package['weightsuom'].'</td></tr>';
+                            break;
+                        }
+                    }
+                }
+                
+                if(count($prices))
+                {
+                    echo '<tr><th>Price ('.$prices[0]['pricesheetnumber'].')</th><td>'.round($prices[0]['amount'],2).' '.$price[0]['currency'].'</td></tr>';
+                } ?>
+                
+                    </table>
                 </div>
                 
-                
-                
-                
-                
+                             
                 <?php if(count($apps)>0){
                 echo '<div id="apps" style="text-align:left; padding-top:30px;">';
                 echo '<div class="card shadow-sm">';
@@ -342,12 +362,13 @@ if(isset($_GET['partnumber']))
                     echo '<div class="card shadow-sm">';
                     echo '<h3 class="card-header text-start" onclick="showhideAttributeDetail()"><img id="attributehideicon" src="./expandless.png" style="float:left;padding:5px;display:none;"/><img id="attributeshowicon" src="./expandmore.png" style="float:left;padding:5px;display:block;"/> <div style="float:left"> Specifications</div><div style="clear:both;"></div></h3>';
                     echo '<div id="attributedetail" class="card-body" style="display:none;">';
+                    echo '<table class="table">';
                     foreach($attributes as $attribute)
                     {
                         $niceattributename=$attribute['name']; if(intval($attribute['PAID'])>0){$niceattributename=$padb->PAIDname($attribute['PAID']);}
-                        echo '<div style="padding-left:15px;">'.$niceattributename.': <strong>'.$attribute['value'].'</strong> '.$attribute['uom'].'</div>';
+                        echo '<tr><td>'.$niceattributename.'</td><td>'.$attribute['value'].' '.$attribute['uom'].'</td></tr>';
                     }
-                    echo '</div></div></div>';
+                    echo '</table></div></div></div>';
                 }
 
                 if(count($competitorparts)>0)
@@ -356,11 +377,13 @@ if(isset($_GET['partnumber']))
                     echo '<div class="card shadow-sm">';
                     echo '<h3 class="card-header text-start" onclick="showhideInterchangeDetail()"><img id="interchangehideicon" src="./expandless.png" style="float:left;padding:5px;display:none;"/><img id="interchangeshowicon" src="./expandmore.png" style="float:left;padding:5px;display:block;"/> <div style="float:left"> Competitor Parts</div><div style="clear:both;"></div></h3>';
                     echo '<div id="interchangedetail" class="card-body" style="display:none;">';
+                    echo '<table class="table">';
                     foreach($competitorparts as $competitorpart)
                     {
-                        echo '<div style="padding-left:15px;">'.$competitorpart.'</div>';
+                        $compbits=explode("\t",$competitorpart);
+                        echo '<tr><td>'.$compbits[0].'</td><td>'.$compbits[1].'</td></tr>';
                     }
-                    echo '</div></div></div>';
+                    echo '</table></div></div></div>';
                 }
 
                 if(count($oemparts)>0)
