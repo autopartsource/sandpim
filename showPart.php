@@ -653,7 +653,20 @@ $pim->addAuditRequest('part-general', $partnumber);
                  // console.log(newapps[i].id);
                appscontainer.innerHTML+='<a class="btn btn-block btn-secondary" style="margin:5px" href="showApp.php?appid='+newapps[i].id+'">'+newapps[i].niceappdescription+'</a>';
               }
-             }
+             };
+             xhr.send();
+            }
+
+            function deleteIssue(id)
+            {
+             var issuediv = document.getElementById('issue_'+id);
+             issuediv.parentNode.removeChild(issuediv);
+             
+             var xhr = new XMLHttpRequest();
+             xhr.open('GET', 'ajaxDeleteIssue.php?id='+id);
+             xhr.onload = function()
+             {
+             };
              xhr.send();
             }
 
@@ -686,11 +699,16 @@ $pim->addAuditRequest('part-general', $partnumber);
                     <h5 class="card-header">
                         Issues
                     </h5>
-                    <div class="card-body">
+                    <div class="card-body" id="assetissues">
                         <?php
-                        foreach($issues as $issue)
+                        foreach($issues as $i=>$issue)
                         {
-                            echo '<div><a href="showIssue.php?id='.$issue['id'].'">'.$issue['description'].'</a></div>';
+                            $shortissue= substr($issue['description'], 0,20);
+                            if($shortissue!=$issue['description']){$shortissue.='...';}
+                            
+                            echo '<div id="issue_'.$issue['id'].'"><a href="showIssue.php?id='.$issue['id'].'" title="'.$issue['description'].'">'.$shortissue.'</a> <button class="btn btn-sm btn-outline-danger" title="Close this issue" onclick="deleteIssue(\''.$issue['id'].'\')"><i class="bi bi-x"></i></button></div>';
+                            if($i<count($issues)-1){echo '<hr/>';}
+
                         }?>
                     </div>
                 </div>
