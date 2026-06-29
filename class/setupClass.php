@@ -1709,21 +1709,22 @@ class setup
         $sql="insert into navelement values('REPORTS/NOTIFICATIONSQUEUE','REPORTS','Lifecycle Events','lifecycleEvents.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         $sql="insert into navelement values('UTILITIES/TWOPARTMATCH','UTILITIES','Two-Part Match-maker','pairPart.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/FULLVEHICLEPARTMATCH','UTILITIES','Full-Vehicle Kit Match-maker','bundlePart.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/CLEARDATA','UTILITIES','Clear Data','clearDataSelect.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/BACKUPRESTORE','UTILITIES','Backup/Restore settings','backupRestoreSettings.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
-        $sql="insert into navelement values('UTILITIES/BUYERSGUIDEBUILDER','UTILITIES','Buyers Guide Builder','buyersGuideBuilder.php',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/BASEVIDSTOMMYS','UTILITIES','Convert BaseVehicleIDs to Makes/Models/Years','basevidsToMMYinput.php',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/MMYSTOBASEVIDS','UTILITIES','Convert Makes/Models/Years to BaseVehicleIDs','MMYtoBasevidsInput.php',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/CODEDVALUSETOACES','UTILITIES','Convert coded-value spreadsheet to ACES','convertAiExcelToACES4_1upload.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/RHUBARB80','UTILITIES','Rhubarb 8.0','rhubarb8_0Index.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/RHUBARB71','UTILITIES','Rhubarb 7.1','rhubarb7_1Index.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/RHUBARB67','UTILITIES','Rhubarb 6.7','rhubarb6_7Index.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/WMUPLOADER','UTILITIES','Walmart Content uploader','wmSessions.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/UUID','UTILITIES','UUID Generator','UUIDgenerator.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();  
-        $sql="insert into navelement values('UTILITIES/NOTECONVERTER','UTILITIES','Note Converter','noteConverterInput.php',14);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/APPTOUCHER','UTILITIES','App Toucher','appToucher.php',15);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into navelement values('UTILITIES/PARTTOUCHER','UTILITIES','Part Toucher','partToucher.php',16);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/TWOPARTMATCHBULK','UTILITIES','Two-Part Match-maker (bulk)','pairPartBulk.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/FULLVEHICLEPARTMATCH','UTILITIES','Full-Vehicle Kit Match-maker','bundlePart.php',3);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/CLEARDATA','UTILITIES','Clear Data','clearDataSelect.php',4);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/BACKUPRESTORE','UTILITIES','Backup/Restore settings','backupRestoreSettings.php',5);"; $stmt=$db->conn->prepare($sql); $stmt->execute();        
+        $sql="insert into navelement values('UTILITIES/BUYERSGUIDEBUILDER','UTILITIES','Buyers Guide Builder','buyersGuideBuilder.php',6);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/BASEVIDSTOMMYS','UTILITIES','Convert BaseVehicleIDs to Makes/Models/Years','basevidsToMMYinput.php',7);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/MMYSTOBASEVIDS','UTILITIES','Convert Makes/Models/Years to BaseVehicleIDs','MMYtoBasevidsInput.php',8);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/CODEDVALUSETOACES','UTILITIES','Convert coded-value spreadsheet to ACES','convertAiExcelToACES4_1upload.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/RHUBARB80','UTILITIES','Rhubarb 8.0','rhubarb8_0Index.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/RHUBARB71','UTILITIES','Rhubarb 7.1','rhubarb7_1Index.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/RHUBARB67','UTILITIES','Rhubarb 6.7','rhubarb6_7Index.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/WMUPLOADER','UTILITIES','Walmart Content uploader','wmSessions.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/UUID','UTILITIES','UUID Generator','UUIDgenerator.php',14);"; $stmt=$db->conn->prepare($sql); $stmt->execute();  
+        $sql="insert into navelement values('UTILITIES/NOTECONVERTER','UTILITIES','Note Converter','noteConverterInput.php',15);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/APPTOUCHER','UTILITIES','App Toucher','appToucher.php',16);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('UTILITIES/PARTTOUCHER','UTILITIES','Part Toucher','partToucher.php',17);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         $sql="insert into navelement values('SETTINGS/CATEGORIES','SETTINGS','Part Categories','partCategories.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/DELIVERYGROUPS','SETTINGS','Delivery Groups','deliveryGroups.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
