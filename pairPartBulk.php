@@ -29,7 +29,7 @@ $logs=new logs;
 $configGet = new configGet;
 $user=new user;
 
-$partcategories = $pim->getPartCategories();
+$deliverygroups = $pim->getDeliverygroups();
 $favoriteparttypes=$pim->getFavoriteParttypes();
 $viogeography=$configGet->getConfigValue('VIOdefaultGeography');
 $vioyearquarter=$configGet->getConfigValue('VIOdefaultYearQuarter');
@@ -38,13 +38,14 @@ $exportsdirectory = $configGet->getConfigValue('ExportsDirectory', '');
 
 if(isset($_POST['submit']))
 {
- $positionmode='same'; $pairwithparttypeid=0; $partcategoryid=0; $exportformat ='default'; 
+ $positionmode='same'; $pairwithparttypeid=0; $exportformat ='default'; $viodisplaymode='percentage';
 
- if(in_array($_POST['positionmode'], ['same','different'])){$positionmode=$_POST['positionmode'];}
+ if(in_array($_POST['positionmode'], ['same','different'])){$viodisplaymode=$_POST['viodisplaymode'];}
+ if(in_array($_POST['viodisplaymode'], ['percentage','actual'])){$positionmode=$_POST['positionmode'];}
  $pairwithparttypeid=intval($_POST['pairwith']);
- $partcategoryid=intval($_POST['partcategory']);
+ $deliverygroupid=intval($_POST['deliverygroup']);
  
- $clientfilename='pairedparts_'.$positionmode.'_'.$pairwithparttypeid.'_'.$partcategoryid.'_'.date('Y-m-d').'.xlsx';
+ $clientfilename='pairedparts_'.$positionmode.'_'.$pairwithparttypeid.'_'.$deliverygroupid.'_'.date('Y-m-d').'.xlsx';
  $randomstring=$pim->newoid();
  $outputfile= $exportsdirectory.$randomstring;  
  
@@ -62,7 +63,7 @@ if(isset($_POST['submit']))
  
 // createBackgroundjob($jobtype,$status,$userid,$inputfile,$outputfile,$parameters,$datetimetostart,$contenttype,$clientfilename)
     
- $pim->createBackgroundjob('PairPartBulk', 'started', $_SESSION['userid'], '', $outputfile, 'exportformat:'.$exportformat.';positionmode:'.$positionmode.';pairwithparttypeid:'.$pairwithparttypeid.';partcategory:'.$partcategoryid.';viogeography:'.$viogeography.';vioyearquarter:'.$vioyearquarter.';partnumbers:'.$partnumbersencoded, date('Y-m-d H:i:s'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $clientfilename);
+ $pim->createBackgroundjob('PairPartBulk', 'started', $_SESSION['userid'], '', $outputfile, 'exportformat:'.$exportformat.';positionmode:'.$positionmode.';pairwithparttypeid:'.$pairwithparttypeid.';viogeography:'.$viogeography.';vioyearquarter:'.$vioyearquarter.';viodisplaymode:'.$viodisplaymode.';deliverygroup:'.$deliverygroupid.';partnumbers:'.$partnumbersencoded, date('Y-m-d H:i:s'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $clientfilename);
  echo "<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0;URL='./backgroundJobs.php'\" /></head><body></body></html>";
  exit;
 
@@ -86,12 +87,12 @@ if(isset($_POST['submit']))
         <div class="container-fluid padding my-container">
             <div class="row padding my-row">
                 <!-- Left Column -->
-                <div class="col-xs-12 col-md-3 my-col colLeft">
+                <div class="col-xs-12 col-md-2 my-col colLeft">
 
                 </div>
 
                 <!-- Main Content -->
-                <div class="col-xs-12 col-md-6 my-col colMain">
+                <div class="col-xs-12 col-md-8 my-col colMain">
                     <div class="card shadow-sm">
                         <!-- Header -->
                         <h3 class="card-header text-start">Two-Part paring - Bulk</h3>
@@ -106,7 +107,8 @@ if(isset($_POST['submit']))
                                 <div style="float:left;padding-left:20px;">
                                     <div style="padding:10px;">Pair with <select name="positionmode"><option value="same">Same</option><option value="different">Different</option></select> positioned parts</div>
                                     <div style="padding:10px;">with part type <select name="pairwith"><?php foreach($favoriteparttypes as $parttype){?> <option value="<?php echo $parttype['id'];?>"><?php echo $parttype['name'];?></option><?php }?></select></div>
-                                    <div style="padding:10px;">in category <select name="partcategory"><option value="any">any</option><?php foreach ($partcategories as $partcategory) { ?> <option value="<?php echo $partcategory['id']; ?>"<?php if(isset($_GET['partcategory']) && $partcategory['id']==$_GET['partcategory']){echo ' selected';}?>><?php echo $partcategory['name']; ?></option><?php } ?></select></div>
+                                    <div style="padding:10px;">in delivery group <select name="deliverygroup"><?php foreach ($deliverygroups as $deliverygroup) { ?> <option value="<?php echo $deliverygroup['id']; ?>"><?php echo $deliverygroup['description']; ?></option><?php } ?></select></div>
+                                    <div style="padding:10px;">Show VIO as <select name="viodisplaymode"><option value="percentage">Percentage</option><option value="actual">Actual</option></select></div>
                                 </div>
                                 
                                 <div style="clear:both;"></div>
@@ -127,7 +129,7 @@ if(isset($_POST['submit']))
                 <!-- End of Main Content -->
 
                 <!-- Right Column -->
-                <div class="col-xs-12 col-md-3 my-col colRight">
+                <div class="col-xs-12 col-md-2 my-col colRight">
                 </div>
             </div>
         </div>    

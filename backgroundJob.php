@@ -76,7 +76,7 @@ $job = $pim->getBackgroundjob(intval($_GET['id']));
                                     <tr><th>Server-side Output File</th><td><?php echo $job['outputfile']; ?></td></tr>
                                     <tr><th>Client-side Filename</th><td><?php echo $job['clientfilename']; ?></td></tr>
                                     <tr><th>Content Type</th><td><?php echo $job['contenttype']; ?></td></tr>
-                                    <tr><th>Parameters</th><td><textarea><?php echo $job['parameters']; ?></textarea></td></tr>
+                                    <tr><th>Parameters</th><td><textarea style="width:90%;height: 100px;"><?php echo $job['parameters']; ?></textarea></td></tr>
                                     <tr><th>Created on</th><td><?php echo $job['datetimecreated']; ?></td></tr>
                                     <tr><th>Started on</th><td><?php echo $job['datetimestarted']; ?></td></tr>
                                     <tr><th>Ended on</th><td><?php echo $job['datetimeended']; ?></td></tr>

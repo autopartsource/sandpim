@@ -48,12 +48,14 @@ if(count($jobs))
  $mylockid=$pim->addLock('PairPartBulk', 'pid:'. getmypid());
   
  $writer->setAuthor('SandPIM');
- $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Match 1 Part'=>'string','Match 1 Share'=>'number','Match 2'=>'string','Match 2 Share'=>'number','Match 3'=>'string','Match 3 Share'=>'number','Match 4'=>'string','Match 4 Share'=>'number','Match 5'=>'string','Match 6'=>'string','Match 7'=>'string','Match 8'=>'string'), array('widths'=>array(20,15,13,15,13,15,13,15,13,15,15,15,15),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
+ $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Match 1 Part'=>'string','Match 1 Share'=>'#,##0','Match 2'=>'string','Match 2 Share'=>'#,##0','Match 3'=>'string','Match 3 Share'=>'#,##0','Match 4'=>'string','Match 4 Share'=>'#,##0','Match 5'=>'string','Match 6'=>'string','Match 7'=>'string','Match 8'=>'string'), array('widths'=>array(20,15,13,15,13,15,13,15,13,15,15,15,15),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
  $tabbedoutputrecords=[];
  
  $positionmode='same';
  $pairwithparttypeid=0;
- $partcategory='any'; 
+ $partcategories=[];
+ $viodisplaymode='percentage';
+ 
  
  $filename=$jobs[0]['outputfile'];
  $jobid=$jobs[0]['id'];
@@ -71,22 +73,28 @@ if(count($jobs))
  
  $exportformat='default';
  if(array_key_exists('exportformat', $parameters)){$exportformat=$parameters['exportformat'];}
-
  if(array_key_exists('positonmode', $parameters)){$positionmode=$parameters['positonmode'];} 
- if(array_key_exists('partcategory', $parameters)){$partcategory=$parameters['partcategory'];}
- if($partcategory=='any'){$partcategory=array();}else{$partcategory=array(intval($partcategory));} 
  if(array_key_exists('pairwithparttypeid', $parameters)){$pairwithparttypeid=intval($parameters['pairwithparttypeid']);}
  if(array_key_exists('viogeography', $parameters)){$viogeography=$parameters['viogeography'];}
  if(array_key_exists('vioyearquarter', $parameters)){$vioyearquarter=$parameters['vioyearquarter'];}
+ if(array_key_exists('viodisplaymode', $parameters)){$viodisplaymode=$parameters['viodisplaymode'];}
  
+ if(array_key_exists('deliverygroup', $parameters))
+ {
+  $partcategoriestemp=$pim->getDeliverygroupPartcategories(intval($parameters['deliverygroup']));    
+  foreach($partcategoriestemp as $p)
+  {
+   $partcategories[]=$p['id'];
+  }
+ }
+ 
+ $pim->logBackgroundjobEvent($jobid, 'Input Categories: '.implode(',',$partcategories));
  
  $partnumbers=[]; 
  if(array_key_exists('partnumbers', $parameters)){$partnumbers=explode("\t", base64_decode($parameters['partnumbers']));}
 
  foreach($partnumbers as $partnumberindex=>$partnumber)
  {
-  $pim->logBackgroundjobEvent($jobid, 'Processing part: '.$partnumber);
-  
   $outputs=[];
   $leftapps=$pim->getAppsByPartnumber($partnumber);
   //$digitassets=$asset->getAssetsConnectedToPart($partnumber);
@@ -148,7 +156,7 @@ if(count($jobs))
   $qualifyingpartstemp=array(); 
   foreach($basevidspositions as $basevid=>$positions)
   {
-   $appstemp=$pim->getAppsByBasevehicleid($basevid, $partcategory);
+   $appstemp=$pim->getAppsByBasevehicleid($basevid, $partcategories);
    foreach($positions as $position)
    {
     foreach($appstemp as $app)
@@ -174,7 +182,7 @@ if(count($jobs))
  
   foreach($basevidspositions as $basevid=>$positions)
   {
-   $appstemp=$pim->getAppsByBasevehicleid($basevid, $partcategory);
+   $appstemp=$pim->getAppsByBasevehicleid($basevid, $partcategories);
    foreach($positions as $position)
    {
     foreach($appstemp as $apptemp)
@@ -262,22 +270,54 @@ if(count($jobs))
   $matchedpart2=''; $matchedpart2vio='';
   $matchedpart3=''; $matchedpart3vio='';
   $matchedpart4=''; $matchedpart4vio='';
-  $matchedpart5=''; $matchedpart5vio=0;
-  $matchedpart6=''; $matchedpart6vio=0;
-  $matchedpart7=''; $matchedpart7vio=0;
-  $matchedpart8=''; $matchedpart8vio=0;
+  $matchedpart5=''; $matchedpart5vio='';
+  $matchedpart6=''; $matchedpart6vio='';
+  $matchedpart7=''; $matchedpart7vio='';
+  $matchedpart8=''; $matchedpart8vio='';
   
-  if(count($outputs)>0){$matchedpart1=$outputs[0]['partnumber']; $matchedpart1vio=round(($outputs[0]['score']/$totalscores)*100,0);}
-  if(count($outputs)>1){$matchedpart2=$outputs[1]['partnumber']; $matchedpart2vio=round(($outputs[1]['score']/$totalscores)*100,0);}
-  if(count($outputs)>2){$matchedpart3=$outputs[2]['partnumber']; $matchedpart3vio=round(($outputs[2]['score']/$totalscores)*100,0);}
-  if(count($outputs)>3){$matchedpart4=$outputs[3]['partnumber']; $matchedpart4vio=round(($outputs[3]['score']/$totalscores)*100,0);}
-  if(count($outputs)>4){$matchedpart5=$outputs[4]['partnumber']; $matchedpart5vio=round(($outputs[4]['score']/$totalscores)*100,0);}
-  if(count($outputs)>5){$matchedpart6=$outputs[5]['partnumber']; $matchedpart6vio=round(($outputs[5]['score']/$totalscores)*100,0);}
-  if(count($outputs)>6){$matchedpart7=$outputs[6]['partnumber']; $matchedpart7vio=round(($outputs[6]['score']/$totalscores)*100,0);}
-  if(count($outputs)>7){$matchedpart8=$outputs[7]['partnumber']; $matchedpart8vio=round(($outputs[7]['score']/$totalscores)*100,0);}
+  if(count($outputs)>0){$matchedpart1=$outputs[0]['partnumber'];}
+  if(count($outputs)>1){$matchedpart2=$outputs[1]['partnumber'];}
+  if(count($outputs)>2){$matchedpart3=$outputs[2]['partnumber'];}
+  if(count($outputs)>2){$matchedpart3=$outputs[2]['partnumber'];}
+  if(count($outputs)>3){$matchedpart4=$outputs[3]['partnumber'];}
+  if(count($outputs)>4){$matchedpart5=$outputs[4]['partnumber'];}
+  if(count($outputs)>5){$matchedpart6=$outputs[5]['partnumber'];}
+  if(count($outputs)>6){$matchedpart7=$outputs[6]['partnumber'];}
+  if(count($outputs)>7){$matchedpart8=$outputs[7]['partnumber'];}
+
+  
+  if($viodisplaymode=='percentage')
+  {
+   if(count($outputs)>0){$matchedpart1vio=round(($outputs[0]['score']/$totalscores)*100,0);}
+   if(count($outputs)>1){$matchedpart2vio=round(($outputs[1]['score']/$totalscores)*100,0);}
+   if(count($outputs)>2){$matchedpart3vio=round(($outputs[2]['score']/$totalscores)*100,0);}
+   if(count($outputs)>3){$matchedpart4vio=round(($outputs[3]['score']/$totalscores)*100,0);}
+   if(count($outputs)>4){$matchedpart5vio=round(($outputs[4]['score']/$totalscores)*100,0);}
+   if(count($outputs)>5){$matchedpart6vio=round(($outputs[5]['score']/$totalscores)*100,0);}
+   if(count($outputs)>6){$matchedpart7vio=round(($outputs[6]['score']/$totalscores)*100,0);}
+   if(count($outputs)>7){$matchedpart8vio=round(($outputs[7]['score']/$totalscores)*100,0);}
+  }
+  
+  if($viodisplaymode=='actual')
+  {
+   if(count($outputs)>0){$matchedpart1vio=$outputs[0]['score'];}
+   if(count($outputs)>1){$matchedpart2vio=$outputs[1]['score'];}
+   if(count($outputs)>2){$matchedpart3vio=$outputs[2]['score'];}
+   if(count($outputs)>3){$matchedpart4vio=$outputs[3]['score'];}
+   if(count($outputs)>4){$matchedpart5vio=$outputs[4]['score'];}
+   if(count($outputs)>5){$matchedpart6vio=$outputs[5]['score'];}
+   if(count($outputs)>6){$matchedpart7vio=$outputs[6]['score'];}
+   if(count($outputs)>7){$matchedpart8vio=$outputs[7]['score'];}
+  }
+  
+  
+  
   
   // write the output row to spreadsheet (choose the the first 8 results) 
   $tabbedoutputrecords[]=$partnumber."\t".$matchedpart1."\t".$matchedpart1vio."\t".$matchedpart2."\t".$matchedpart2vio."\t".$matchedpart3."\t".$matchedpart3vio."\t".$matchedpart4."\t".$matchedpart4vio."\t".$matchedpart5."\t".$matchedpart6."\t".$matchedpart7."\t".$matchedpart8;
+ 
+  $pim->logBackgroundjobEvent($jobid, 'Processed: '.$partnumber.', found '.count($outputs).' matches');
+
   
   $pim->updateBackgroundjobStatus($jobid, 'running', round((($partnumberindex+1)/count($partnumbers))*100,0));
  }
