@@ -173,13 +173,19 @@ class pim
 
  function addUserNavelement($userid,$navid)
  {
-  $db = new mysql; $db->connect();
+  $db = new mysql; $db->connect(); $id=false;
   if($stmt=$db->conn->prepare('insert into user_navelement values(null,?,?)'))
   {
-   $stmt->bind_param('is', $userid, $navid);
-   $stmt->execute();
+   if($stmt->bind_param('is', $userid, $navid))
+   {
+    if($stmt->execute())
+    {
+     $id=$db->conn->insert_id;        
+    }
+   }
   }
   $db->close();
+  return $id;
  }
  
  function removeUserNavelement($userid,$navid)
@@ -4187,15 +4193,30 @@ function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
   return $pricesheetnumber;
  }
  
- function createReceiverprofile($name, $data)
+ function createReceiverprofile($name, $data, $id=false)
  {
-  $db = new mysql; $db->connect();
-  if($stmt=$db->conn->prepare("insert into receiverprofile values(null,0,?,?,30,'0000-00-00','')"))
+  $db = new mysql; $db->connect(); $insertid=false;
+  $sql="insert into receiverprofile values(?,0,?,?,30,'0000-00-00','')";
+  if($id===false)
   {
-   $stmt->bind_param('ss',$name,$data);
+   $sql="insert into receiverprofile values(null,0,?,?,30,'0000-00-00','')";
+  }
+  if($stmt=$db->conn->prepare($sql))
+  {
+   if($id===false)
+   {
+    $stmt->bind_param('ss',$name,$data);
+   }
+   else
+   {
+    $stmt->bind_param('iss',$id,$name,$data);       
+   }
+   
    $stmt->execute();
+   $insertid=$db->conn->insert_id;
   }
   $db->close();
+  return $insertid;
  }
  
  function updateReceiverprofile($id, $name, $data, $notes)
