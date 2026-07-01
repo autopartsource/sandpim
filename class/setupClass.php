@@ -897,7 +897,6 @@ class setup
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - config_options ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - config_options ('.$db->conn->error.')';}
 
         $sql="insert into config_options values('ACESuploadsDirectory','A1/255','','/var/www/html/ACESuploads','full path (no trailing slash) where uploads of ACES and PIES etc. can be uploaded by clients');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
-        $sql="insert into config_options values('AutoCareResourceListURI','A1/255','','https://aps.dev/sandpim/AutoCareTechnology.php','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareFTPserver','A1/255','','52.168.10.67','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareFTPusername','A1/255','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareFTPpassword','A1/255','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
