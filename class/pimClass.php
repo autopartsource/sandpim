@@ -4407,7 +4407,7 @@ function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
  
  
  
-
+/* commented out - 7/2/2026 during cleanup
  function removePartcategoryFromReceiverProfile($receiverprofileid,$partcategoryid)
  {
   $db = new mysql; $db->connect(); $success=false;
@@ -4421,7 +4421,7 @@ function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
   $db->close();
   return $success;
  }
- 
+ */
  
  function getMarketingcopyByReceiverprofileId($receiverprofileid)
  {
