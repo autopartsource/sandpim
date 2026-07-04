@@ -73,7 +73,7 @@ if(count($jobs))
  
  $exportformat='default';
  if(array_key_exists('exportformat', $parameters)){$exportformat=$parameters['exportformat'];}
- if(array_key_exists('positonmode', $parameters)){$positionmode=$parameters['positonmode'];} 
+ if(array_key_exists('positionmode', $parameters)){$positionmode=$parameters['positionmode'];} 
  if(array_key_exists('pairwithparttypeid', $parameters)){$pairwithparttypeid=intval($parameters['pairwithparttypeid']);}
  if(array_key_exists('viogeography', $parameters)){$viogeography=$parameters['viogeography'];}
  if(array_key_exists('vioyearquarter', $parameters)){$vioyearquarter=$parameters['vioyearquarter'];}

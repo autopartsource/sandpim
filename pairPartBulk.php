@@ -40,8 +40,8 @@ if(isset($_POST['submit']))
 {
  $positionmode='same'; $pairwithparttypeid=0; $exportformat ='default'; $viodisplaymode='percentage';
 
- if(in_array($_POST['positionmode'], ['same','different'])){$viodisplaymode=$_POST['viodisplaymode'];}
- if(in_array($_POST['viodisplaymode'], ['percentage','actual'])){$positionmode=$_POST['positionmode'];}
+ if(in_array($_POST['positionmode'], ['same','different'])){$positionmode=$_POST['positionmode'];}
+ if(in_array($_POST['viodisplaymode'], ['percentage','actual'])){$viodisplaymode=$_POST['viodisplaymode'];}
  $pairwithparttypeid=intval($_POST['pairwith']);
  $deliverygroupid=intval($_POST['deliverygroup']);
  
