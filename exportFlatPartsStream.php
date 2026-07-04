@@ -34,7 +34,6 @@ $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
 $lifecyclestatuses=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
 $partnumbers=$pim->getPartnumbersByPartcategories($partcategories,$lifecyclestatuses);
 
-        
 $writer->writeSheetHeader('Sheet1', array('Partnumber'=>'string','Part Type'=>'string','Lifecycle Status'=>'string','GTIN'=>'string','Replaced By'=>'string','Part Category'=>'string','Created On'=>'string','First Stocked On'=>'string','Discontinued Date'=>'string'), array('widths'=>array(12,30,22,15,11,25,10,15,16),'freeze_rows'=>1, ['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0'],['fill'=>'#c0c0c0']));
        
 foreach($partnumbers as $partnumber)
@@ -42,8 +41,7 @@ foreach($partnumbers as $partnumber)
  $part=$pim->getPart($partnumber);
  if($part)
  {
-     
-  $row=array($partnumber,$pcdb->parttypeName($part['parttypeid']),$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']), $part['GTIN'],$part['replacedby'],$pim->partCategoryName($part['partcategory']),$part['createdDate'],$part['firststockedDate'],$part['discontinuedDate']);
+  $row=array($partnumber,$pcdb->parttypeName($part['parttypeid']),$pcdb->lifeCycleCodeDescription($part['lifecyclestatus']), $part['GTIN'],$part['replacedby'],$part['partcategoryname'],$part['createdDate'],$part['firststockedDate'],$part['discontinuedDate']);
  }
  else
  { // part is not in the part master list
@@ -57,7 +55,7 @@ $writer->setAuthor('SandPIM');
 $xlsxdata=$writer->writeToString();
 $streamXLSX=true;
 
-$logs->logSystemEvent('export', 0, 'Exported '.count($partnumbers).' parts; by:'.$_SERVER['REMOTE_ADDR']);
+$logs->logSystemEvent('export', $_SESSION['userid'], 'Exported '.count($partnumbers).' parts; by:'.$_SERVER['REMOTE_ADDR']);
 
 if($streamXLSX)
 {   

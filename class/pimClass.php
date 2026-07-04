@@ -3,10 +3,11 @@ include_once("mysqlClass.php");
 
 class pim
 {
+ public $partcategoryNameCache=[];
 
  function buildVersion()
  {
-  return '2026-06-19';
+  return '2026-07-04';
  }
 
  function uuidv4()
@@ -1194,8 +1195,10 @@ function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
  {
   $db = new mysql; $db->connect();
   $part=false;
-  $typicalPosition=$this->typicalAppPosition($partnumber);
-  $typicalQty=$this->typicalQuantityPerApp($partnumber);
+  //$typicalPosition=$this->typicalAppPosition($partnumber);
+  //$typicalQty=$this->typicalQuantityPerApp($partnumber);
+  $typicalPosition='none';
+  $typicalQty=0;
   
   if($stmt=$db->conn->prepare('select part.*,partcategory.name as partcategoryname,partcategory.brandID from part left join partcategory on part.partcategory=partcategory.id where partnumber=?'))
   {
@@ -2715,6 +2718,7 @@ function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
  
  function partCategoryName($partcategoryid)
  {
+  if(array_key_exists($partcategoryid, $this->partcategoryNameCache)){return $this->partcategoryNameCache[$partcategoryid];}    
   $name='('.$partcategoryid.') Not Found';
   $db = new mysql; 
   //$db->dbname='pim'; 
@@ -2727,6 +2731,7 @@ function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
    while($row = $db->result->fetch_assoc())
    {
     $name=$row['name'];
+    $this->partcategoryNameCache[$partcategoryid]=$name;
    }
   }
   $db->close();

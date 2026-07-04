@@ -5,6 +5,9 @@ class pcdb
 {
  public $pcdbversion;
  public $schemaversion;
+ public $parttypenamecache=[];
+ public $lifecycledescriptioncache=[];
+ public $positionnamecache=[];
  
  public function __construct($_pcdbversion=false) 
  {
@@ -49,10 +52,9 @@ class pcdb
  
  function positionName($positionid)
  {
+  if(array_key_exists($positionid, $this->positionnamecache)){return $this->positionnamecache[$positionid];}
   $name='not found';
-  $db = new mysql; $db->dbname=$db->pcdbname; 
-  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
-  $db->connect();
+  $db = new mysql; $db->dbname=$db->pcdbname; if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;} $db->connect();
   if($stmt=$db->conn->prepare('select Position from Positions where PositionID=?'))
   {
    $stmt->bind_param('i', $positionid);
@@ -61,6 +63,7 @@ class pcdb
    if($row = $db->result->fetch_assoc())
    {
     $name=$row['Position'];
+    $this->positionnamecache[$positionid]=$name;
    }
   }
   $db->close();
@@ -115,15 +118,33 @@ class pcdb
   return $valid;
  }
  
+ function cacheAllParttypeNames()
+ {
+  $db = new mysql; $db->dbname=$db->pcdbname;
+  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;} $db->connect(); 
+  $this->parttypenamecache=[];  
+  if($stmt=$db->conn->prepare('select PartTerminologyID, PartTerminologyName from Parts'))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $this->parttypenamecache[intval($row['PartTerminologyID'])]=$row['PartTerminologyName'];
+   }
+  }
+  $db->close();
+  return count($this->parttypenamecache);
+ }
  
  
  
  function parttypeName($parttypeid)
- {
-  $name='not found';
-  $db = new mysql; $db->dbname=$db->pcdbname;
-  if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
-  $db->connect();
+ {  
+  if(array_key_exists($parttypeid, $this->parttypenamecache)){return $this->parttypenamecache[$parttypeid];}
+  
+  $db = new mysql; $db->dbname=$db->pcdbname; if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect(); $name='not found';
+
   if($stmt=$db->conn->prepare('select PartTerminologyName from Parts where PartTerminologyID=?'))
   {
    $stmt->bind_param('i', $parttypeid);
@@ -132,6 +153,7 @@ class pcdb
    if($row = $db->result->fetch_assoc())
    {
     $name=$row['PartTerminologyName'];
+    $this->parttypenamecache[$parttypeid]=$name;
    }
   }
   $db->close();
@@ -335,8 +357,32 @@ class pcdb
   return $codes;    
  }
 
+ function cacheAllLifeCycleCodeDescriptions()
+ {
+  $db = new mysql; $db->dbname=$db->pcdbname; if($this->pcdbversion!==false){$db->dbname=$this->pcdbversion;}
+  $db->connect();
+  
+  $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode, PIESCode where PIESReferenceFieldCode.PIESCodeId=PIESCode.PIESCodeId and PIESReferenceFieldCode.PIESFieldId=93';
+  if($this->schemaversion=='2.0')
+  {
+   $sql='select CodeValue,CodeDescription from PIESReferenceFieldCode,PIESField,PIESCode where PIESReferenceFieldCode.FieldId=PIESField.FieldId and PIESReferenceFieldCode.CodeValueID=PIESCode.CodeValueID and PIESField.FieldId=93';
+  }
+  if($stmt=$db->conn->prepare($sql))
+  {
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $this->lifecycledescriptioncache[$row['CodeValue']]=$row['CodeDescription'];
+   }
+  }
+  $db->close();
+  return count($this->lifecycledescriptioncache);
+ }
+  
  function lifeCycleCodeDescription($code)
  {
+  if(array_key_exists($code, $this->lifecycledescriptioncache)){return $this->lifecycledescriptioncache[$code];}  
   if(trim($code)==''){return 'not set (blank)';}
   $description='not found';
   $db = new mysql; $db->dbname=$db->pcdbname;
@@ -355,6 +401,7 @@ class pcdb
    if($row = $db->result->fetch_assoc())
    {
     $description=$row['CodeDescription'];
+    $this->lifecycledescriptioncache[$code]=$description;
    }
   }
   $db->close();
