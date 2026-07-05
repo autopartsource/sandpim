@@ -264,6 +264,40 @@ foreach($partnumbers as $partnumber)
 }
 
 
+// purge audit log older than x days
+$purgestarttime=time();
+$auditlogcountpre=$pim->auditLogCount();
+$auditlogretentiondays=$configGet->getConfigValue('auditlogRetentionDays',7);
+$purgesuccess=$pim->purgeAuditLog($auditlogretentiondays,true);
+$auditlogcountpost=$pim->auditLogCount();
+$purgeendtime=time();
+
+if($purgesuccess)
+{
+ $logs->logSystemEvent('housekeeper', 0, 'successful auditlog purge of '.($auditlogcountpre-$auditlogcountpost).' records took '.($purgeendtime-$purgestarttime).' seconds. Retention: '.$auditlogretentiondays.' days'); 
+}
+else
+{// purge failed
+ $logs->logSystemEvent('housekeeper', 0, 'failed auditlog purge of '.($auditlogcountpre-$auditlogcountpost).' records took '.($purgeendtime-$purgestarttime).' seconds. Retention: '.$auditlogretentiondays.' days'); 
+}
+
+// purge system history log older than x days
+$purgestarttime=time();
+$historycountpre=$logs->systemhistoryCount();
+$systemhistoryretentiondays=$configGet->getConfigValue('systemhistoryRetentionDays',2557); //default to 7 years
+$purgesuccess=$logs->purgeSystemhistory($systemhistoryretentiondays, true);
+$historycountpost=$logs->systemhistoryCount();
+$purgeendtime=time();
+
+if($purgesuccess)
+{
+ $logs->logSystemEvent('housekeeper', 0, 'successful systemhistory purge of '.($historycountpre-$historycountpost).' records took '.($purgeendtime-$purgestarttime).' seconds. Retention: '.$systemhistoryretentiondays.' days'); 
+}
+else
+{// purge failed
+ $logs->logSystemEvent('housekeeper', 0, 'failed systemhistory purge of '.($historycountpre-$historycountpost).' records took '.($purgeendtime-$purgestarttime).' seconds. Retention: '.$systemhistoryretentiondays.' days'); 
+}
+
 $runtime=time()-$starttime;
 if($runtime > 30)
 {
@@ -271,4 +305,3 @@ if($runtime > 30)
 }
 
 $pim->removeLockById($mylockid);
-?>

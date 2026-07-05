@@ -5978,7 +5978,54 @@ function allowedHost($address)
   $db->close();
   return $need;
  }
+ 
+ function purgeAuditLog($days,$optimizetable=false)
+ {
+  $db = new mysql; $db->connect(); $purgesuccess=false; $optimizesuccess=true;
+  if($stmt=$db->conn->prepare('delete from auditlog where auditdatetime < date_sub(NOW(),INTERVAL ? DAY)'))
+  {
+   if($stmt->bind_param('i', $days))
+   {
+    $purgesuccess=$stmt->execute();      
+   }
+  }
 
+  if($optimizetable)
+  {
+   $optimizesuccess=false;
+   if($stmt=$db->conn->prepare('optimize table auditlog'))
+   {
+    $optimizesuccess=$stmt->execute();
+   }
+  }
+  
+  $db->close();
+  return ($purgesuccess && $optimizesuccess);
+ }
+
+ function auditLogCount()
+ {
+  $db = new mysql; $db->connect(); $count=0;
+  if($stmt=$db->conn->prepare('select count(*) as recordcount from auditlog'))
+  {
+   if($stmt->execute())
+   {
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $count=$row['recordcount'];
+    }
+   }
+  }
+  $db->close();
+  return $count;
+ }
+ 
+ 
+ 
+ 
+ 
+ 
 
  function partHealthScore($partnumber)
  {

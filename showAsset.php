@@ -60,7 +60,8 @@ if($asset->validAsset($assetid))
  $connectedparts=$asset->getPartsConnectedToAsset($assetid);
  $connectedbrands=$asset->getBrandsConnectedToAsset($assetid);
  $assettags=$asset->getAssettagsForAsset($assetid);
- $apps=$pim->getAppsByAssetid($assetid);
+ $apps=$pim->getAppsByAssetid($assetid);             
+ $pim->addAuditRequest('asset-general', $assetid); // request audit from backend
 }
 else
 {// passed-in asset is not valid - blank it out of caution 

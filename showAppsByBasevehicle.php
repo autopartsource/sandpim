@@ -154,6 +154,7 @@ if (count($apps))
         $fitmentcolumnkeys[$columnkey] = urlencode(base64_encode(serialize(array('positionid' => $app['positionid'], 'parttypeid' => $app['parttypeid']))));
 
         $appmatrix[$rowkey][$columnkey][] = $app;
+        $pim->addAuditRequest('app-general', $app['id']);
     }
 }
 

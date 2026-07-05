@@ -2,13 +2,10 @@
 /*
  * To be run on a cron schedule (php CLI) every few minutes
  * problems found are added to the issue table (assuming they don't already exist there)
- * 
- * 
- * 
- * Third Git Test Bump
  */
 
 include_once(__DIR__.'/class/pimClass.php');  // the __DIR__ will provide the full path for when command-line (cronjob) execution is happening
+include_once(__DIR__.'/class/configGetClass.php');
 include_once(__DIR__.'/class/assetClass.php');
 include_once(__DIR__.'/class/interchangeClass.php');
 include_once(__DIR__.'/class/pricingClass.php');
@@ -23,6 +20,7 @@ include_once(__DIR__.'/class/sandpiperPrimaryClass.php');
 $starttime=time();
 
 $pim=new pim();
+$configGet=new configGet();
 $asset=new asset();
 $interchange=new interchange();
 $pcdb=new pcdb();
@@ -32,6 +30,13 @@ $pricing = new pricing();
 $packaging = new packaging();
 $logs=new logs();
 $sandpiperPrimary=new sandpiperPrimary();
+
+$housekeeperlocks=$pim->getLocksByType('HOUSEKEEPER');
+if(count($housekeeperlocks))
+{
+ $logs->logSystemEvent('auditor', 0, 'Background auditor found housekeeper lock record (id:'.$housekeeperlocks[0]['id'].') and declined to run out of deference to houskeeper');
+ exit; 
+}
 
 $existinglocks=$pim->getLocksByType('AUDITOR');
 if(count($existinglocks))
@@ -49,21 +54,20 @@ $mylockid=$pim->addLock('AUDITOR', 'pid:'. getmypid());
     // Invalid PAdb attributes
     // missing assets
 
-// --- get a random group of items to examine 
-//$pim->recordIssue('SYSTEM/HEARTBEAT','test',1,'testtest','background auditor', '1234567890');
-
-$partnumbergroupsize=100;
-$appgroupsize=100;
-$downloadlimit=10;
-$longrunthreshold=30;
+$partnumbergroupsize=intval($configGet->getConfigValue('auditPartnumberGroupSize', '100'));
+$appgroupsize=intval($configGet->getConfigValue('auditAppGroupSize', '100'));
+$downloadcount=intval($configGet->getConfigValue('auditDownloadCount', '10'));
+$longrunthreshold=intval($configGet->getConfigValue('auditLongRunThreshold', '30'));
+$nightfactor=intval($configGet->getConfigValue('auditNightFactor', '5'));
 
 $timeodaymode='day';
 $currenthour=intval(date("H"));
 if($currenthour < 7)
 {
- $partnumbergroupsize=$partnumbergroupsize*4;
- $appgroupsize=$appgroupsize*4;
- $longrunthreshold=$longrunthreshold*4;
+ $partnumbergroupsize=$partnumbergroupsize*$nightfactor;
+ $appgroupsize=$appgroupsize*$nightfactor;
+ $downloadcount=$downloadcount*$nightfactor;
+ $longrunthreshold=$longrunthreshold*$nightfactor;
  $timeodaymode='night';
 }
 
@@ -470,7 +474,7 @@ foreach($orphans as $orphan)
 // if local filehash is blank, quietly write it to the local database
 // if local hash is non-blank and the calculated hash is different, write an issue record
 
-$assetrecords=$asset->getAssetsByRandom(4); // grab a few randomly-selected assets to pull down from their CDN host and verify the hash.  $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode']);
+$assetrecords=$asset->getAssetsByRandom($downloadcount); // grab a few randomly-selected assets to pull down from their CDN host and verify the hash.  $assets[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'filename'=>$row['filename'],'localpath'=>$row['localpath'],'uri'=>$row['uri'],'orientationViewCode'=>$row['orientationViewCode'],'colorModeCode'=>$row['colorModeCode'],'assetHeight'=>$row['assetHeight'],'assetWidth'=>$row['assetWidth'],'dimensionUOM'=>$row['dimensionUOM'],'background'=>$row['background'],'fileType'=>$row['fileType'],'createdDate'=>$row['createdDate'],'public'=>$row['public'],'approved'=>$row['approved'],'description'=>$row['description'],'oid'=>$row['oid'],'fileHashMD5'=>$row['fileHashMD5'],'filesize'=>$row['filesize'],'resolution'=>$row['resolution'],'languagecode'=>$row['languagecode']);
 $assetauditrequests=$pim->getAuditRequests('asset-general');
 foreach($assetauditrequests as $assetauditrequest)
 {
@@ -494,8 +498,11 @@ foreach($assetrecords as $assetrecord)
   
   if(trim($assetrecord['fileHashMD5'])=='')
   {
-   $logs->logSystemEvent('asstes', 0, 'md5('.$assetrecord['assetid'].') -> '. $hash); 
+   $logs->logSystemEvent('asstes', 0, 'auditor updated asset ['.$assetrecord['assetid'].'] hash from blank to ['. $hash.']'); 
    $asset->setAssetHash($assetrecord['id'], $hash);
+   $newoid=$asset->updateAssetOIDbyRecordID($assetrecord['id']);
+   $asset->logAssetEvent($assetrecord['assetid'], 0, 'auditor updated hash from blank to ['.$hash.'] for record id ['.$assetrecord['id'].']', $newoid);
+   
   }
   else
   {
@@ -511,29 +518,14 @@ foreach($assetrecords as $assetrecord)
 
   if(intval($assetrecord['filesize'])!=intval($size))
   {
-   $logs->logSystemEvent('asstes', 0, 'size('.$assetrecord['assetid'].') updated from '.intval($assetrecord['filesize']).' to '. $size); 
-
+   $logs->logSystemEvent('asstes', 0, 'auditor update asset ['.$assetrecord['assetid'].'] file size from ['.intval($assetrecord['filesize']).'] to ['. $size. '] for record ['.$assetrecord['id'].']'); 
    $asset->setAssetFilesize($assetrecord['id'], $size);
-   
-   /*
-   $issuehash=md5('ASSET/SIZE/MISMATCH'.$assetrecord['assetid'].'filesize from ['.$assetrecord['uri'].'] does not match the size in the local metatdata store'.'background auditor');
-   if(!$pim->getIssueByHash($issuehash))
-   {// this issue is not already recorded 
-    $pim->recordIssue('ASSET/SIZE/MISMATCH','',$assetrecord['assetid'].'filesize from ['.$assetrecord['uri'].'] does not match the size in the local metatdata store','background auditor', $issuehash);
-   }
-       */
-       
+   $newoid=$asset->updateAssetOIDbyRecordID($assetrecord['id']);
+   $asset->logAssetEvent($assetrecord['assetid'], 0, 'auditor changed file size from ['.intval($assetrecord['filesize']).'] to ['.$size.'] for record id ['.$assetrecord['id'].']', $newoid);
   }
-
  
  }
 }
-
-
-
-
-
-
 
 
 
@@ -558,7 +550,7 @@ $pim->updateSnoozes();
 $runtime=time()-$starttime;
 if($runtime > $longrunthreshold)
 {
- $logs->logSystemEvent('auditor', 0, 'Background auditor process (in '.$timeodaymode.' mode) ran for '.$runtime.' seconds');
+ $logs->logSystemEvent('auditor', 0, 'Background auditor process (in '.$timeodaymode.' mode) ran for '.$runtime.' seconds. Parts:'.count($partnumbers).'; Apps:'.count($appids).'; Assets:'.count($assetrecords));
 }
 
 $pim->removeLockById($mylockid);

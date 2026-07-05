@@ -897,6 +897,13 @@ class setup
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - config_options ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - config_options ('.$db->conn->error.')';}
 
         $sql="insert into config_options values('ACESuploadsDirectory','A1/255','','/var/www/html/ACESuploads','full path (no trailing slash) where uploads of ACES and PIES etc. can be uploaded by clients');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('auditlogRetentionDays','N10','','0','Number of days to keep in the auditlog table. Housekeeper enforces this by deleting and optimizing table each run');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('systemhistoryRetentionDays','N10','','0','Number of days to keep in the system_history table. Housekeeper enforces this by deleting and optimizing table each run');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('auditAppGroupSize','N10','','0','Number of apps to be randomly selected by the auditor each run');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('auditDownloadCount','N10','','0','Number of assets to be randomly downloaded from CDN URIs on each run');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('auditLongRunThreshold','N10','','0','Number of seconds of auditor runtime to be considered long and trigger a log entry');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('auditNightFactor','N10','','0','Multiplier factor to expand audit scope at night');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('auditPartnumberGroupSize','N10','','0','Number of parts to be randomly selected by the auditor each run');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareFTPserver','A1/255','','52.168.10.67','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareFTPusername','A1/255','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('AutoCareFTPpassword','A1/255','','','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
@@ -1456,7 +1463,8 @@ class setup
         id int UNSIGNED NOT NULL AUTO_INCREMENT,
         requesttype varchar(255) NOT NULL,
         requestdata varchar(255) NOT NULL,
-        PRIMARY KEY (id))";
+        PRIMARY KEY (id),
+        INDEX idx_type_data (requesttype,requestdata))";
         if($stmt=$db->conn->prepare($sql)){if(!$stmt->execute()){$returnvalue['log'][]='execute failed - auditrequest ('.$db->conn->error.')';}}else{$returnvalue['log'][]='prepare failed - auditrequest ('.$db->conn->error.')';}
 
         $sql="CREATE TABLE auditlog (
