@@ -12,6 +12,7 @@ $starttime=time();
 
 $pim = new pim();
 $logs=new logs();
+$configGet -new configGet();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
