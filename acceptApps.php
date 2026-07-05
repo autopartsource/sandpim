@@ -15,6 +15,23 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
+$paused=true;
+if($paused)
+{
+ echo json_encode(array('status'=>'paused'));
+ $logs->logSystemEvent('replication', 0, 'acceptApps gave paused status response to client '.$_SERVER['REMOTE_ADDR']);    
+ exit;
+}
+
+$busy=true;
+if($busy)
+{
+ echo json_encode(array('status'=>'busy'));
+ $logs->logSystemEvent('replication', 0, 'acceptApps gave busy status response to client '.$_SERVER['REMOTE_ADDR']);    
+ exit;
+}
+
+
 $newappcount=0;  $droppedappcount=0;
 
 if(array_key_exists('detail',$_GET))
@@ -26,7 +43,7 @@ if(array_key_exists('detail',$_GET))
  if($_GET['detail']=='hash')
  {
   $hash=md5($localoidliststring);
-  echo json_encode(array('hash'=> $hash,'status'=>'busy'));
+  echo json_encode(array('hash'=> $hash));
   $logs->logSystemEvent('replication', 0, 'gave hash ('.$hash.') of '.count($localoids).' local app oids to client '.$_SERVER['REMOTE_ADDR']);
  }
  else

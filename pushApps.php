@@ -58,12 +58,16 @@ if(count($localoids)==0)
  
  if(array_key_exists('status',$responsedecoded))
  {
-  $logs->logSystemEvent('replication', 0, 'status response '.$peer['description'].': '.$responsedecoded['status']);    
+  if($responsedecoded['status']=='busy' || $responsedecoded['status']=='paused')
+  {
+   $logs->logSystemEvent('replication', 0, 'pushApps - status response ['.$responsedecoded['status'].'] from peer ['.$peer['description'].']. Skipping replication.');
+   continue;
+  }
  }
  
  if(!array_key_exists('hash',$responsedecoded))
  {
-  $logs->logSystemEvent('replication', 0, 'unexpected response form '.$peer['description'].':'.$resp);    
+  $logs->logSystemEvent('replication', 0, 'pushApps - unexpected response form '.$peer['description'].':'.$resp);    
   continue;
  }
  
