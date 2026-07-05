@@ -12,7 +12,7 @@ $starttime=time();
 
 $pim = new pim();
 $logs=new logs();
-$configGet -new configGet();
+$configGet =new configGet();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
@@ -45,7 +45,6 @@ $packaging = new packaging();
 $interchange = new interchange();
 $asset = new asset();
 $replication = new replication();
-$configGet = new configGet();
 
 $newpartcount=0;  $droppedpartcount=0;
 
