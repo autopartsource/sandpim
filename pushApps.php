@@ -56,6 +56,11 @@ if(count($localoids)==0)
 
  $responsedecoded= json_decode($resp, true); 
  
+ if(array_key_exists('status',$responsedecoded))
+ {
+  $logs->logSystemEvent('replication', 0, 'status response '.$peer['description'].': '.$responsedecoded['status']);    
+ }
+ 
  if(!array_key_exists('hash',$responsedecoded))
  {
   $logs->logSystemEvent('replication', 0, 'unexpected response form '.$peer['description'].':'.$resp);    

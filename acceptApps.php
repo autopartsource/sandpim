@@ -26,7 +26,7 @@ if(array_key_exists('detail',$_GET))
  if($_GET['detail']=='hash')
  {
   $hash=md5($localoidliststring);
-  echo json_encode(array('hash'=> $hash));
+  echo json_encode(array('hash'=> $hash,'status'=>'busy'));
   $logs->logSystemEvent('replication', 0, 'gave hash ('.$hash.') of '.count($localoids).' local app oids to client '.$_SERVER['REMOTE_ADDR']);
  }
  else
