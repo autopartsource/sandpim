@@ -32,6 +32,7 @@ if($paused)
 {
  echo json_encode(array('status'=>'paused'));
  $logs->logSystemEvent('replication', 0, 'acceptApps gave paused status response to client '.$_SERVER['REMOTE_ADDR']);    
+ $pim->removeLockById($mylockid);
  exit;
 }
 
@@ -65,6 +66,7 @@ if(strlen($bodyraw)>0)
  if(!array_key_exists('identifier',$body) || !array_key_exists('signature',$body))
  {
   $logs->logSystemEvent('replication', 0, 'invalid data (missing identifier or signature) from client '.$_SERVER['REMOTE_ADDR']);
+  $pim->removeLockById($mylockid);
   exit;
  }
  
@@ -72,7 +74,8 @@ if(strlen($bodyraw)>0)
  $peers=$replication->getPeers($body['identifier'],'app', 'primary');
  if(count($peers)==0)
  {
-  $logs->logSystemEvent('replication', 0, 'unknown identifier ['.$body['identifier'].'] from client '.$_SERVER['REMOTE_ADDR']);  
+  $logs->logSystemEvent('replication', 0, 'unknown identifier ['.$body['identifier'].'] from client '.$_SERVER['REMOTE_ADDR']);
+  $pim->removeLockById($mylockid);
   exit;
  }
  
@@ -81,6 +84,7 @@ if(strlen($bodyraw)>0)
  if($body['signature']!=$computedsignature)
  {
   $logs->logSystemEvent('replication', 0, 'invalid signature on payload - no adds/drops accepted from peer identified by: '.$body['identifier']);
+  $pim->removeLockById($mylockid);
   exit;
  }
  
