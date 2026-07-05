@@ -4,6 +4,7 @@ include_once("mysqlClass.php");
 class qdb
 {
  public $qdbversion;
+ public $schemaversion;
     
  public function __construct($_qdbversion=false) 
  {
@@ -160,13 +161,22 @@ class qdb
   $versiondate='not found';
   $db = new mysql; $db->dbname=$db->qdbname; if($this->qdbversion!==false){$db->dbname=$this->qdbversion;} 
   $db->connect();
-  if($stmt=$db->conn->prepare('select date(VersionDate) as qdbversion from Version'))
+  if($stmt=$db->conn->prepare('select * from Version'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $versiondate=$row['qdbversion'];
+    if(array_key_exists('PublicationDate', $row))
+    {// this is the "2.0" schema (like "2026-03-26 00:00:00")
+     $versiondatetime=$row['PublicationDate'];     
+     if(strlen($versiondatetime)==19 && substr($versiondatetime, 10, 1)==' ')         
+     $versiondate=substr($versiondatetime, 0, 10);
+    }
+    else
+    {// must be pre-2.0 schema (like "2026-02-26")
+     $versiondate=$row['VersionDate'];        
+    }
    }
   }
   $db->close();
