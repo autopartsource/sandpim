@@ -22,13 +22,13 @@ if(count($existinglocks))
 {
  echo json_encode(array('status'=>'busy'));
  $logs->logSystemEvent('replication', 0, 'acceptApps found lock record ['.$existinglocks[0]['id'].'] and declined request. Busy response returned to client '.$_SERVER['REMOTE_ADDR']);
- exit; 
+ exit;
 }
 
 $mylockid=$pim->addLock('ACCEPTAPPS', 'pid:'. getmypid());
 
-$paused=false;
-if($paused)
+$paused=intval($configGet->getConfigValue('inboundReplicationPaused','0'));
+if($paused==1)
 {
  echo json_encode(array('status'=>'paused'));
  $logs->logSystemEvent('replication', 0, 'acceptApps gave paused status response to client '.$_SERVER['REMOTE_ADDR']);    

@@ -1,6 +1,7 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/replicationClass.php');
 include_once('./class/logsClass.php');
 
@@ -8,6 +9,7 @@ $starttime=time();
 
 $pim = new pim();
 $logs=new logs();
+$configGet = new configGet();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
@@ -15,6 +17,24 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
+$existinglocks=$pim->getLocksByType('ACCEPTASSETS');
+
+if(count($existinglocks))
+{
+ echo json_encode(array('status'=>'busy'));
+ $logs->logSystemEvent('replication', 0, 'acceptAssets found lock record ['.$existinglocks[0]['id'].'] and declined request. Busy response returned to client '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+$mylockid=$pim->addLock('ACCEPTASSETS', 'pid:'. getmypid());
+
+$paused=intval($configGet->getConfigValue('inboundReplicationPaused','0'));
+if($paused==1)
+{
+ echo json_encode(array('status'=>'paused'));
+ $logs->logSystemEvent('replication', 0, 'acceptAssets gave paused status response to client '.$_SERVER['REMOTE_ADDR']);
+ $pim->removeLockById($mylockid);
+ exit;
+}
 
 $asset=new asset();
 $replication = new replication();
@@ -49,6 +69,7 @@ if(strlen($bodyraw)>0)
  if(!array_key_exists('identifier',$body) || !array_key_exists('signature',$body))
  {
   $logs->logSystemEvent('replication', 0, 'invalid data (missing identifier or signature) posted to acceptAssets API from client '.$_SERVER['REMOTE_ADDR']);
+  $pim->removeLockById($mylockid);
   exit;
  }
 
@@ -57,6 +78,7 @@ if(strlen($bodyraw)>0)
  if(count($peers)==0)
  {
   $logs->logSystemEvent('replication', 0, 'unknown identifier ['.$body['identifier'].'] posted to acceptAsset API from client '.$_SERVER['REMOTE_ADDR']);  
+  $pim->removeLockById($mylockid);
   exit;
  }
  
@@ -65,6 +87,7 @@ if(strlen($bodyraw)>0)
  if($body['signature']!=$computedsignature)
  {
   $logs->logSystemEvent('replication', 0, 'invalid signature on payload - no adds/drops accepted by acceptAssets API from peer identified by: '.$body['identifier']);
+  $pim->removeLockById($mylockid);
   exit;
  }
  
@@ -104,4 +127,4 @@ if($newassetcount || $runtime>10)
 {
  $logs->logSystemEvent('replication', 0, 'Asset acceptor added '.$newassetcount.', dropped '.$droppedassetcount.' assets records in '.$runtime.' seconds');   
 }
-?>
+ $pim->removeLockById($mylockid);

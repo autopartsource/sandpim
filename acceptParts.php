@@ -4,6 +4,7 @@ include_once('./class/pricingClass.php');
 include_once('./class/packagingClass.php');
 include_once('./class/interchangeClass.php');
 include_once('./class/assetClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/replicationClass.php');
 include_once('./class/logsClass.php');
 
@@ -18,11 +19,32 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
+$existinglocks=$pim->getLocksByType('ACCEPTPARTS');
+
+if(count($existinglocks))
+{
+ echo json_encode(array('status'=>'busy'));
+ $logs->logSystemEvent('replication', 0, 'acceptParts found lock record ['.$existinglocks[0]['id'].'] and declined request. Busy response returned to client '.$_SERVER['REMOTE_ADDR']);
+ exit;
+}
+
+$mylockid=$pim->addLock('ACCEPTPARTS', 'pid:'. getmypid());
+
+$paused=intval($configGet->getConfigValue('inboundReplicationPaused','0'));
+if($paused==1)
+{
+ echo json_encode(array('status'=>'paused'));
+ $logs->logSystemEvent('replication', 0, 'acceptParts gave paused status response to client '.$_SERVER['REMOTE_ADDR']);
+ $pim->removeLockById($mylockid);
+ exit;
+}
+
 $pricing = new pricing();
 $packaging = new packaging();
 $interchange = new interchange();
 $asset = new asset();
 $replication = new replication();
+$configGet = new configGet();
 
 $newpartcount=0;  $droppedpartcount=0;
 
@@ -55,6 +77,7 @@ if(strlen($bodyraw)>0)
   if(!array_key_exists('identifier',$body) || !array_key_exists('signature',$body))
  {
   $logs->logSystemEvent('replication', 0, 'invalid data (missing identifier or signature) posted to acceptParts API from client '.$_SERVER['REMOTE_ADDR']);
+  $pim->removeLockById($mylockid);
   exit;
  }
 
@@ -63,6 +86,7 @@ if(strlen($bodyraw)>0)
  if(count($peers)==0)
  {
   $logs->logSystemEvent('replication', 0, 'unknown identifier ['.$body['identifier'].'] posted to acceptPatrs API from client '.$_SERVER['REMOTE_ADDR']);  
+  $pim->removeLockById($mylockid);
   exit;
  }
  
@@ -71,6 +95,7 @@ if(strlen($bodyraw)>0)
  if($body['signature']!=$computedsignature)
  {
   $logs->logSystemEvent('replication', 0, 'invalid signature on payload - no adds/drops accepted by acceptParts API from peer identified by: '.$body['identifier']);
+  $pim->removeLockById($mylockid);
   exit;
  }
 
@@ -155,5 +180,4 @@ if($newpartcount || $runtime>10)
 {
  $logs->logSystemEvent('replication', 0, 'Added '.$newpartcount.', dropped '.$droppedpartcount.' parts in '.$runtime.' seconds from '.$_SERVER['REMOTE_ADDR']);
 }
-
-?>
+ $pim->removeLockById($mylockid);

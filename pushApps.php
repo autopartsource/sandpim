@@ -67,7 +67,7 @@ if(count($localoids)==0)
  
  if(!array_key_exists('hash',$responsedecoded))
  {
-  $logs->logSystemEvent('replication', 0, 'pushApps - unexpected response form '.$peer['description'].':'.$resp);    
+  $logs->logSystemEvent('replication', 0, 'pushApps - unexpected response (no json hash variable) form '.$peer['description'].':'.$resp);    
   continue;
  }
  

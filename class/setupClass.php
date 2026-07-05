@@ -957,6 +957,7 @@ class setup
         $sql="insert into config_options values('publicCatalogLogoURI','AN1/255','','','Logo uri for public catalog');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('publicCatalogCopyrightName','AN1/255','','','name of copyright owner on public catalog pages');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('publicCatalogContactURI','AN1/255','','','uri for contact-us link on public catalog pages');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('inboundReplicationPaused','N1','','0','0 or 1 indicating if acceptParts, acceptApps and acceptsAssets AIPs are paused. A value of 0 indicated incoming data will be accepted.');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         
         $sql="CREATE TABLE issue (
         id int UNSIGNED NOT NULL AUTO_INCREMENT,

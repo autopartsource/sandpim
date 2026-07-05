@@ -61,9 +61,19 @@ foreach($peers as $peer)
 
  $responsedecoded= json_decode($resp, true); 
  
+ if(array_key_exists('status',$responsedecoded))
+ {
+  if($responsedecoded['status']=='busy' || $responsedecoded['status']=='paused')
+  {
+   $logs->logSystemEvent('replication', 0, 'pushParts - status response ['.$responsedecoded['status'].'] from peer ['.$peer['description'].']. Skipping replication.');
+   continue;
+  }
+ }
+
+ 
  if(!isset($responsedecoded['hash']))
  {
-  $logs->logSystemEvent('partpusher', 0, 'unexpected response in pushParts form '.$peer['description'].':'.$resp);    
+  $logs->logSystemEvent('partpusher', 0, 'pushParts - unexpected response (no json hash variable) form '.$peer['description'].':'.$resp);    
   continue; // iterate to next peer
  }
  
