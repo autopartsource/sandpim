@@ -1,11 +1,13 @@
 <?php
 include_once('./class/pimClass.php');
 include_once('./class/replicationClass.php');
+include_once('./class/configGetClass.php');
 include_once('./class/logsClass.php');
 
 $starttime=time();
 
 $pim = new pim();
+$configGet = new configGet();
 $replication = new replication();
 $logs=new logs();
 
@@ -15,22 +17,23 @@ if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
  exit;
 }
 
-$paused=true;
+$existinglocks=$pim->getLocksByType('ACCEPTAPPS');
+if(count($existinglocks))
+{
+ echo json_encode(array('status'=>'busy'));
+ $logs->logSystemEvent('replication', 0, 'acceptApps found lock record ['.$existinglocks[0]['id'].'] and declined request. Busy response returned to client '.$_SERVER['REMOTE_ADDR']);
+ exit; 
+}
+
+$mylockid=$pim->addLock('ACCEPTAPPS', 'pid:'. getmypid());
+
+$paused=false;
 if($paused)
 {
  echo json_encode(array('status'=>'paused'));
  $logs->logSystemEvent('replication', 0, 'acceptApps gave paused status response to client '.$_SERVER['REMOTE_ADDR']);    
  exit;
 }
-
-$busy=true;
-if($busy)
-{
- echo json_encode(array('status'=>'busy'));
- $logs->logSystemEvent('replication', 0, 'acceptApps gave busy status response to client '.$_SERVER['REMOTE_ADDR']);    
- exit;
-}
-
 
 $newappcount=0;  $droppedappcount=0;
 
@@ -117,4 +120,5 @@ if($newappcount || $runtime>10)
 {
  $logs->logSystemEvent('replication', 0, 'Added '.$newappcount.' apps, dropped '.$droppedappcount.' in '.$runtime.' seconds');   
 }
-?>
+
+$pim->removeLockById($mylockid);

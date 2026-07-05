@@ -163,4 +163,3 @@ if(count($localoids)==0)
 }
 
 $pim->removeLockById($mylockid);
-?>
