@@ -4,6 +4,7 @@ include_once("mysqlClass.php");
 class padb
 {
  public $padbversion;
+ public $schemaversion;
  
  public function __construct($_padbversion=false) 
  {
@@ -112,13 +113,22 @@ function version()
   $versiondate='not found';
   $db = new mysql; 
   $db->dbname=$db->padbname; if($this->padbversion!==false){$db->dbname=$this->padbversion;} $db->connect();
-  if($stmt=$db->conn->prepare('select PAdbPublication from Version'))
+  if($stmt=$db->conn->prepare('select * from Version'))
   {
    $stmt->execute();
    $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {
-    $versiondate=$row['PAdbPublication'];
+    if(array_key_exists('PublicationDate', $row))
+    {// this is the "2.0" schema (like "2026-03-26 00:00:00")
+     $versiondatetime=$row['PublicationDate'];     
+     if(strlen($versiondatetime)==19 && substr($versiondatetime, 10, 1)==' ')         
+     $versiondate=substr($versiondatetime, 0, 10);
+    }
+    else
+    {// must be pre-2.0 schema (like "2026-02-26")
+     $versiondate=$row['VersionDate'];        
+    }
    }
   }
   $db->close();
