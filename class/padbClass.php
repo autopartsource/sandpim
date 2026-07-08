@@ -127,8 +127,12 @@ function version()
     }
     else
     {// must be pre-2.0 schema (like "2026-02-26")
-     $versiondate=$row['VersionDate'];        
+     $versiondate=$row['VersionDate'];
     }
+    
+    
+    
+    
    }
   }
   $db->close();
