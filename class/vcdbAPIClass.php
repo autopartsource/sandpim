@@ -125,12 +125,15 @@ class vcdbapi
  public $pagelimit;
  public $totalcalls;
  public $tokenrefreshcount;
+ public $tokenrefreshthreshold; 
  public $insertcount;
  public $updatecount;
  public $deletecount;
  public $deleteorphancount;
  public $tablerecordcounts;
  public $pagesize;
+ public $failedsync;
+ public $loggingverbosity;
  
  public function __construct($_localdbname=false)
  {
@@ -141,12 +144,15 @@ class vcdbapi
   $this->totalcalls=0;
   $this->activetoken=false;
   $this->tokenrefreshcount=0;
+  $this->tokenrefreshthreshold=3000;
   $this->insertcount=0;
   $this->updatecount=0;
   $this->deletecount=0;
   $this->deleteorphancount=0;
   $this->pagesize=1000;
   $this->tablerecordcounts=array();
+  $this->failedsync=false;
+  $this->loggingverbosity=0;
   
   $this->localdbname=$_localdbname;  // default to the hard-coded dbname from the class file (prob "vcdb")
   if(!$_localdbname)
@@ -310,7 +316,7 @@ class vcdbapi
  }
   
  
- function getRecords($database,$table,$cultureid,$sincedate)
+ function getRecords($database,$table,$cultureid,$sincedate,$asofdate)
  {
   $pagecount=0;
   $this->morepages=false;
@@ -318,13 +324,13 @@ class vcdbapi
   $this->nextpagelink='';
   while(true)
   {
-   $success=$this->getRecordsPage($database, $table, $cultureid, $sincedate);
-   if(!$success){return false;}
+   $success=$this->getRecordsPage($database, $table, $cultureid, $sincedate,$asofdate);
+   if(!$success){$this->failedsync=true; return false;}
    $pagecount++;
    if(!$this->morepages){break;}
    if($this->pagelimit > 0 && $pagecount>=$this->pagelimit){break;}
    
-   if($this->tokenLife()<300)
+   if($this->tokenLife()<$this->tokenrefreshthreshold)
    {// need to refresh token - it less than 5 minutes life left
     if($this->debug){echo " Token-refresh needed before table complete.\r\n";}
 
@@ -332,6 +338,7 @@ class vcdbapi
     if(!$this->activetoken)
     {
      if($this->debug){echo " Token refresh request failed.\r\n";}
+     $this->failedsync=true;
      return false;
     }
    }
@@ -340,10 +347,12 @@ class vcdbapi
  } 
  
  
- function getRecordsPage($database,$table,$cultureid,$sincedate)
+ function getRecordsPage($database,$table,$cultureid,$sincedate,$asofdate)
  {
   $url='';
   $sincedateclause=''; if($sincedate){$sincedateclause='&SinceDate='.$sincedate;}
+  $asofdateclause=''; if($asofdate){$asofdateclause='&AsOfDate='.$asofdate;}
+   
   $ch = curl_init();
   $headers = [];
   
@@ -357,7 +366,7 @@ class vcdbapi
   else
   {// no continuation link exists - this is the inital call
 // curl_setopt($ch, CURLOPT_URL,'https://'.$database.'.autocarevip.com/api/v1.0/'.$database.'/'.$table.'?CultureId='.$cultureid.$sincedateclause);
-   $url='https://'.$database.'.autocarevip.com/api/v2.0/'.$database.'/'.$table.'?CultureId='.$cultureid.'&PageSize='.$this->pagesize.$sincedateclause;
+   $url='https://'.$database.'.autocarevip.com/api/v2.0/'.$database.'/'.$table.'?CultureId='.$cultureid.'&PageSize='.$this->pagesize.$sincedateclause.$asofdateclause;
    curl_setopt($ch, CURLOPT_URL,$url);
   }
   

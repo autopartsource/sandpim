@@ -22,17 +22,23 @@ if(count($existinglocks))
 $mylockid=$pim->addLock('UPDATEFROMVCDBAPI', 'pid:'. getmypid());
 
 $daysback=7;
-$tokenlowlifeseconds=3000; //every time a new records page is requested, the remaining life of the active token is checked. If lif is less than this number, a nre token is requested 
 $tokenrefreshlimit=100; // how many new-token requests are allowed in this session (this php script execution)
-$loggingverbosity=1; // (1-10) Ten is the most verbose 
 $sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
+$asofdate=date('Y-m-d',time()-(25*3600));
 $tableattemptcount=0;
 $totalfails=0;
-$failedsync=false;
 $errormessages=[];
 
 $vcdbapi=new vcdbapi;
 $vcdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
+if($configGet->getConfigValue('VCdbAPIdebugMode','0')=='1')
+{
+ $vcdbapi->debug=false;
+}
+
+$vcdbapi->loggingverbosity=intval($configGet->getConfigValue('VCdbAPIloggingVerbosity','1')); // (1-10) Ten is the most verbose 
+
+$vcdbapi->failedsync=false;
 
 $pickupattablename='';
 // process any command-line args (in a manual call situation)
@@ -46,10 +52,8 @@ foreach($argv as $i=>$arg)
 }
 if($vcdbapi->debug && $pickupattablename!=''){echo 'pickingup at table: '.$pickupattablename."\n";}
  
-$lastsync=$configGet->getConfigValue('lastSuccessfulVCdbAPIsync');
+$lastsync=intval($configGet->getConfigValue('lastSuccessfulVCdbAPIsync',0));
 
-//     $lastsync=false;
-  
 if($lastsync)
 {
  $sincedate=date('Y-m-d', intval($lastsync)-(24*3600*$daysback));  // set sincedate to [daysback] days before last sync
@@ -60,8 +64,11 @@ else
 }
 
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
-
-//  $clearfirst=true;
+if($configGet->getConfigValue('VCdbAPIclearFirst','0')=='1')
+{
+ $clearfirst=true;
+ $configSet->setConfigValue('VCdbAPIclearFirst', '0');
+}
 
 $deletelocalorphans=false; // cause records in each local table (identified by primary keys) to be deleted if they are not present in API results 
 
@@ -69,31 +76,33 @@ $vcdbapi->clientid=$configGet->getConfigValue('AutoCareAPIclientid');
 $vcdbapi->clientsecret=$configGet->getConfigValue('AutoCareAPIclientsecret');
 $vcdbapi->username=$configGet->getConfigValue('AutoCareAPIusername');
 $vcdbapi->password=$configGet->getConfigValue('AutoCareAPIpassword');
-        
+
 $vcdbapi->getAccessToken();
 $vcdbapi->pagelimit=0;
 
-if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync started'); }
+if($vcdbapi->loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync started. SinceDate='.$sincedate.', AsOfDate='.$asofdate); }
 
 if($vcdbapi->activetoken)
 {
  if($vcdbapi->debug){echo "Got API auth token\r\n";}
- if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'Got Token ('.substr($vcdbapi->token,0,20).'...). Expires in: '.$vcdbapi->tokenLife().' seconds'); }
+ if($vcdbapi->loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, 'Got Token ('.substr($vcdbapi->token,0,20).'...). Expires in: '.$vcdbapi->tokenLife().' seconds'); }
 //            $vcdbapi->getDatabaseses();
 //            print_r($vcdbapi->databases);
 //            $tables=$vcdbapi->getTables('VCDB');
 //            print_r($tables);
 
+ $configSet->setConfigValue('lastSuccessfulVCdbAPIsync', '0');
+ 
  if($clearfirst)
  {
-  if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0,'Clearing '.count($vcdbapi->tableslist).' local tables');}
+  if($vcdbapi->loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0,'Clearing '.count($vcdbapi->tableslist).' local tables');}
   foreach($vcdbapi->tableslist as $tablename)
   {
    $timetemp=time();
    if($vcdbapi->debug){echo 'Clearing Local Table '.$tablename."...";}
    $vcdbapi->clearTable($tablename);
    if($vcdbapi->debug){echo ' Done - '.(time()-$timetemp)." seconds\r\n";}
-   if($loggingverbosity>2){$logs->logSystemEvent('AutoCare API Client', 0, 'Cleared Local Table '.$tablename.' in '.(time()-$timetemp).' seconds');}
+   if($vcdbapi->loggingverbosity>2){$logs->logSystemEvent('AutoCare API Client', 0, 'Cleared Local Table '.$tablename.' in '.(time()-$timetemp).' seconds');}
   }
  }
 
@@ -129,7 +138,7 @@ if($vcdbapi->activetoken)
   $vcdbapi->deletecount=0;
   $vcdbapi->deleteorphancount=0;
   
-  if($vcdbapi->tokenLife()<$tokenlowlifeseconds)
+  if($vcdbapi->tokenLife()<$vcdbapi->tokenrefreshthreshold)
   {
    if($vcdbapi->tokenrefreshcount>=$tokenrefreshlimit)
    {
@@ -139,7 +148,7 @@ if($vcdbapi->activetoken)
    }
    
    if($vcdbapi->debug){echo "  Active token expires in: ".$vcdbapi->tokenLife()." seconds. Requesting new token...\r\n";}
-   if($loggingverbosity>2){$logs->logSystemEvent('AutoCare API Client', 0,'Active token expires in: '.$vcdbapi->tokenLife().' seconds. Requesting new token');}
+   if($vcdbapi->loggingverbosity>2){$logs->logSystemEvent('AutoCare API Client', 0,'Active token expires in: '.$vcdbapi->tokenLife().' seconds. Requesting new token');}
    
    $vcdbapi->activetoken=false;
    $vcdbapi->getAccessToken();
@@ -151,7 +160,7 @@ if($vcdbapi->activetoken)
    }
 
    if($vcdbapi->debug){echo " Success. New token expires in ".$vcdbapi->tokenLife()." seconds\r\n";}
-   if($loggingverbosity>2){$logs->logSystemEvent('AutoCare API Client', 0,'Successful request of new token. Expires in '.$vcdbapi->tokenLife().' seconds');}  
+   if($vcdbapi->loggingverbosity>2){$logs->logSystemEvent('AutoCare API Client', 0,'Successful request of new token. Expires in '.$vcdbapi->tokenLife().' seconds');}  
   }
 
   $tableattemptcount=0;
@@ -159,7 +168,7 @@ if($vcdbapi->activetoken)
   {
    $tableattemptcount++;
    if($vcdbapi->debug){echo '  ---- '.$tablename.' (attempt number: '.$tableattemptcount.") ---- \n";}
-   if($vcdbapi->getRecords('VCDB',$tablename,'en-US',$sincedate))
+   if($vcdbapi->getRecords('VCDB',$tablename,'en-US',$sincedate,$asofdate))
    {
     $vcdbapi->populateTable($tablename, $vcdbapi->records, $deletelocalorphans);
     break; // this breaks the endless "while"        
@@ -170,15 +179,15 @@ if($vcdbapi->activetoken)
     if($vcdbapi->debug){echo ' Failure getting records for table: '.$tablename.'. http status: '.$vcdbapi->httpstatus."\n";}
     $errormessages[]='Failure getting '.$tablename.'. http status: '.$vcdbapi->httpstatus;
     
-    if($tableattemptcount>=3)
+    if($tableattemptcount>=5)
     {
-     $failedsync=true;
+     $vcdbapi->failedsync=true;
      break; // this breaks the endless "while"        
     }    
    }
   }
   
-  if($failedsync)
+  if($vcdbapi->failedsync)
   {
    if($vcdbapi->debug){echo ' gave up on: '.$tablename.". after ".$tableattemptcount." attempts. Terminating process.\n";}
    $logs->logSystemEvent('AutoCare API Client', 0, 'Failure getting records for table: '.$tablename.'. http status: '.$vcdbapi->httpstatus.'. Terminating process.');
@@ -187,14 +196,24 @@ if($vcdbapi->activetoken)
   
 
   if($vcdbapi->debug){echo ' inserts: '.$vcdbapi->insertcount.', updates:'.$vcdbapi->updatecount.', deletes: '.$vcdbapi->deletecount.', orphan deletes: '.$vcdbapi->deleteorphancount.' on local database records in '.(time()-$timetemp)." seconds\r\n";}
-  if($loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, $tablename.' - inserts: '.$vcdbapi->insertcount.', updates: '.$vcdbapi->updatecount.', deletes: '.$vcdbapi->deletecount.', orphan deletes: '.$vcdbapi->deleteorphancount.' in '.(time()-$timetemp).' seconds');}
+  if($vcdbapi->loggingverbosity>1){$logs->logSystemEvent('AutoCare API Client', 0, $tablename.' - inserts: '.$vcdbapi->insertcount.', updates: '.$vcdbapi->updatecount.', deletes: '.$vcdbapi->deletecount.', orphan deletes: '.$vcdbapi->deleteorphancount.' in '.(time()-$timetemp).' seconds');}
  }
  
  $runtime=time()-$starttime;
- if($vcdbapi->debug){echo 'Total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls.'. Token refreshes:'.$vcdbapi->tokenrefreshcount.'. Total failed api calls: '.$totalfails."\r\n";}
- $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. Total failed api calls: '.$totalfails.'. SinceDate used:'.$sincedate.'<br/>'.implode('<br/>',$errormessages));
- if(!$failedsync){$configSet->setConfigValue('lastSuccessfulVCdbAPIsync', time());}
- $vcdbapi->setVersionDate(date('Y-m-d'));
+ if($vcdbapi->failedsync)
+ {
+  if($vcdbapi->debug){echo 'Failed sync - total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls.'. Token refreshes:'.$vcdbapi->tokenrefreshcount.'. Total failed api calls: '.$totalfails."\r\n";}
+  $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync completed in '.$runtime.' seconds. '.$vcdbapi->totalcalls.' API calls, '.$vcdbapi->tokenrefreshcount.' token requests, '.$totalinserts.' inserts, '.$totalupdates.' updates, '.$totaldeletes.' deletes. Total failed api calls: '.$totalfails.'. SinceDate used:'.$sincedate.'<br/>'.implode('<br/>',$errormessages));
+ }
+ else
+ {
+  if($vcdbapi->debug){echo 'Successful sync - total run time: '.$runtime.' seconds. Total API calls: '.$vcdbapi->totalcalls.'. Token refreshes:'.$vcdbapi->tokenrefreshcount.'. Total failed api calls: '.$totalfails."\r\n";}
+  $configSet->setConfigValue('lastSuccessfulVCdbAPIsync', time());
+  $vcdbapi->setVersionDate(date('Y-m-d'));     
+ }
+ 
+ 
+ 
 }
 else
 {

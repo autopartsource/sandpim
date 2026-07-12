@@ -46,7 +46,7 @@ if($configGet->getConfigValue('requireCredentialsForBalanceUpdate')=='yes')
   }
   else
   { // unknown user
-   $logs->logSystemEvent('loginfailure', 0, 'updateBOMsAutomated.php - unknow user ('.$username.') from '.$_SERVER['REMOTE_ADDR']);
+   $logs->logSystemEvent('loginfailure', 0, 'updateBOMsAutomated.php - unknown user ('.$username.') from '.$_SERVER['REMOTE_ADDR']);
    $response=array('message'=>'authentication failed');
    echo json_encode($response);
    exit;

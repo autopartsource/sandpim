@@ -916,6 +916,9 @@ class setup
         $sql="insert into config_options values('lastSuccessfulPCdbAPIsync','N10','','0','Numeric epoch time of last successful PCdb API sync');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('lastSuccessfulQdbAPIsync','N10','','0','Numeric epoch time of last successful Qdb API sync');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('lastSuccessfulVCdbAPIsync','N10','','0','Numeric epoch time of last successful VCdb API sync');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('VCdbAPIloggingVerbosity','N10','','0','0 - 10 integer value for logging verbosity. 10=max');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('VCdbAPIdebugMode','N10','','0','0 or 1. 1=debug to console');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into config_options values('VCdbAPIclearFirst','N10','','0','0 or 1. 1=clear all tables before pulling down data. This value will be changed back to 0 by the update script for safty.');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('localImageStorePath','A1/255','','/var/www/html/images','absolute path for storing image assets');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('logPreviewDescriptionLength','','','80','how many characters are displayed from log entry in a preview list');"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into config_options values('photoAssetHostURI','','','https://s3.amazonaws.com/autopartsourceimages/parts/','');"; $stmt=$db->conn->prepare($sql); $stmt->execute();

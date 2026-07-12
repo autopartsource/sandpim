@@ -75,14 +75,15 @@ class logs {
                 $events[] = array('id' => $row['id'], 'applicationid' => $row['applicationid'], 'eventdatetime' => $row['eventdatetime'], 'userid' => $row['userid'], 'description' => $row['description'], 'new_oid' => $row['new_oid']);
             }
 
-            // sort the results ascending
+            /* commented-out on 7-11-2026. Not sure why it was being sorted
             $sorted = array();
             for ($i = count($events) - 1; $i >= 0; $i--) {
                 $sorted[] = $events[$i];
             }
+             */
         }
         $db->close();
-        return $sorted;
+        return $events;// $sorted;
     }
 
     function getVehicleEvents($basevehicleid,$limit) 

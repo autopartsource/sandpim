@@ -67,7 +67,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         }
     } else { // unknown user
         $error = 'Invalid username or password';
-        $logs->logSystemEvent('loginfailure', 0, 'unknow user ('.$username.') from '.$_SERVER['REMOTE_ADDR']);
+        $logs->logSystemEvent('loginfailure', 0, 'unknown user ('.$username.') login attempt from '.$_SERVER['REMOTE_ADDR']);
     }
 }
 ?>

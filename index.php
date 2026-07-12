@@ -57,11 +57,44 @@ function acaVersionAgeColor($date)
 
 
 $configGet = new configGet;
-$appshistory = $logs->getAppsEvents(100);
-$assetshistory = $logs->getAssetsEvents(100);
-$partshistory = $logs->getPartsEvents(100);
-$systemhistory = $logs->getSystemEvents('%', false, 100);
+$appshistory = $logs->getAppsEvents(200);
+$assetshistory = $logs->getAssetsEvents(200);
+$partshistory = $logs->getPartsEvents(200);
 $sandpiperhistory= $logs->getSandpiperEvents(100);
+
+$systemhistoryraw = $logs->getSystemEvents('%', false, 500);
+$systemhistory=[]; $autcareapihistory=[]; $replicationhistory=[]; $securityhistory=[]; $loginhistory=[];
+foreach($systemhistoryraw as $h)
+{
+ if($h['eventtype']=='AutoCare API Client')
+ {
+  $autcareapihistory[]=$h;
+  continue;
+ }
+ 
+ if($h['eventtype']=='replication')
+ {
+  $replicationhistory[]=$h;
+  continue;
+ }
+ 
+ if($h['eventtype']=='SECURITY' || $h['eventtype']=='loginfailure' || $h['eventtype']=='config')
+ {
+  $securityhistory[]=$h;
+  continue;
+ }
+  
+ if($h['eventtype']=='login')
+ {
+  $loginhistory[]=$h;
+  continue;
+ }
+
+ 
+ 
+ $systemhistory[]=$h;
+}
+    
 
 
 
@@ -367,7 +400,31 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                         <a class="nav-link" id="system-tab" data-bs-toggle="tab" href="#system" role="tab" aria-controls="system" aria-selected="false">System</a>
                                     </li>';
                                     }
- 
+
+                                    if(count($loginhistory)) {
+                                    echo '<li class="nav-item">
+                                        <a class="nav-link" id="login-tab" data-bs-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="false">Login</a>
+                                    </li>';
+                                    }
+                                    
+                                    if(count($replicationhistory)) {
+                                    echo '<li class="nav-item">
+                                        <a class="nav-link" id="replication-tab" data-bs-toggle="tab" href="#replication" role="tab" aria-controls="replication" aria-selected="false">Replication</a>
+                                    </li>';
+                                    }
+
+                                    if(count($autcareapihistory)) {
+                                    echo '<li class="nav-item">
+                                        <a class="nav-link" id="autocareapi-tab" data-bs-toggle="tab" href="#autocareapi" role="tab" aria-controls="autocareapi" aria-selected="false">AutoCare API</a>
+                                    </li>';
+                                    }
+
+                                    if(count($securityhistory)) {
+                                    echo '<li class="nav-item">
+                                        <a class="nav-link" id="security-tab" data-bs-toggle="tab" href="#security" role="tab" aria-controls="security" aria-selected="false">Security</a>
+                                    </li>';
+                                    }
+                                    
                                     if(count($sandpiperhistory)) {
                                     echo '<li class="nav-item">
                                         <a class="nav-link" id="sandpiper-tab" data-bs-toggle="tab" href="#sandpiper" role="tab" aria-controls="sandpiper" aria-selected="false">Sandpiper</a>
@@ -437,6 +494,62 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                             echo '</table></div>';
                                         }      
 
+                                        if(count($loginhistory))
+                                        {
+                                            echo '<div class="tab-pane fade mt-3" id="login" role="tabpanel" aria-labelledby="login-tab">'
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Description</th></tr>';
+                                            foreach ($loginhistory as $record) {
+                                                $nicedescription = $record['description'];
+                                                if (strlen  ($nicedescription) > $logpreviewlength) {
+                                                    $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                                                }
+                                                echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td style="max-width:400px;"><div class="text-truncate">' . $nicedescription . '</div></td></tr>';
+                                            }
+                                            echo '</table></div>';
+                                        }      
+
+                                        if(count($replicationhistory))
+                                        {
+                                            echo '<div class="tab-pane fade mt-3" id="replication" role="tabpanel" aria-labelledby="replication-tab">'
+                                            . '<table class="table"><tr><th>Date/Time</th><th>Description</th></tr>';
+                                            foreach ($replicationhistory as $record) {
+                                                $nicedescription = $record['description'];
+                                                if (strlen  ($nicedescription) > $logpreviewlength) {
+                                                    $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                                                }
+                                                echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td style="max-width:400px;"><div class="text-truncate">' . $nicedescription . '</div></td></tr>';
+                                            }
+                                            echo '</table></div>';
+                                        }      
+
+                                        if(count($autcareapihistory))
+                                        {
+                                            echo '<div class="tab-pane fade mt-3" id="autocareapi" role="tabpanel" aria-labelledby="autocareapi-tab">'
+                                            . '<table class="table"><tr><th>Date/Time</th><th>Description</th></tr>';
+                                            foreach ($autcareapihistory as $record) {
+                                                $nicedescription = $record['description'];
+                                                if (strlen  ($nicedescription) > $logpreviewlength) {
+                                                    $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                                                }
+                                                echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td style="max-width:400px;"><div class="text-truncate">' . $nicedescription . '</div></td></tr>';
+                                            }
+                                            echo '</table></div>';
+                                        }
+
+                                        if(count($securityhistory))
+                                        {
+                                            echo '<div class="tab-pane fade mt-3" id="security" role="tabpanel" aria-labelledby="security-tab">'
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Description</th></tr>';
+                                            foreach ($securityhistory as $record) {
+                                                $nicedescription = $record['description'];
+                                                if (strlen  ($nicedescription) > $logpreviewlength) {
+                                                    $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                                                }
+                                                echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td style="max-width:400px;"><div class="text-truncate">' . $nicedescription . '</div></td></tr>';
+                                            }
+                                            echo '</table></div>';
+                                        }
+                                        
                                         if(count($sandpiperhistory))
                                         {
                                             echo '<div class="tab-pane fade mt-3" id="sandpiper" role="tabpanel" aria-labelledby="sandpiper-tab">'
