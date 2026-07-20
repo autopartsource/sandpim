@@ -21,6 +21,7 @@ $tokenlowlifeseconds=3000; //every time a new records page is requested, the rem
 $tokenrefreshlimit=100; // how many new-token requests are allowed in this session (this php script execution)
 $loggingverbosity=1; // (1-10) Ten is the most verbose 
 $sincedate=false; //'2024-12-01'; // set this data to false to query the API for all records in named tables
+$asofdate=date('Y-m-d',time()-(25*3600)); // set as-of date to 25 hours ago to avoid 
 $failurecount=0;
 $totalfails=0;
 $tableattemptcount=0;
@@ -88,7 +89,7 @@ if($vcdbapi->activetoken)
    if($vcdbapi->debug){echo '  ---- '.$tablename.' (attempt number: '.$tableattemptcount.") ---- \n";}
   
    $vcdbapi->records=array(); $vcdbapi->morepages=false;
-   if($vcdbapi->getRecordsPage('VCDB', $tablename, 'en-US', $sincedate))
+   if($vcdbapi->getRecordsPage('VCDB', $tablename, 'en-US', $sincedate, $asofdate))
    {
     $localrecordcount=$vcdbapi->getTableRecordCount($tablename);
     $localrecordcounttotal+=$localrecordcount;

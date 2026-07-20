@@ -28,7 +28,7 @@ if($enabled=='yes')
  if($part)
  {
   $assets_linked_to_item= $asset->getAssetsConnectedToPart($part['partnumber']);
-  $logs->logSystemEvent('INFO', 0, 'partAssetAPI was queried with for partnumber ['.$_GET['partnumber'].'] by '.$_SERVER['REMOTE_ADDR']);  
+  $logs->logSystemEvent('externalsystem', 0, 'partAssetAPI was queried with for partnumber ['.$_GET['partnumber'].'] by '.$_SERVER['REMOTE_ADDR']);  
  }
  else
  {// part number given is not valid

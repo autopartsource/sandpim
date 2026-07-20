@@ -113,6 +113,7 @@ class vcdbapi
  public $token;
  public $tokenvaliduntil;
  public $errormessage; 
+ public $errornumber;
  public $httpstatus;
  public $response;
  public $responseheaders;
@@ -134,6 +135,7 @@ class vcdbapi
  public $pagesize;
  public $failedsync;
  public $loggingverbosity;
+ public $tokenrefreshlimit;
  
  public function __construct($_localdbname=false)
  {
@@ -153,6 +155,7 @@ class vcdbapi
   $this->tablerecordcounts=array();
   $this->failedsync=false;
   $this->loggingverbosity=0;
+  $this->tokenrefreshlimit=200;
   
   $this->localdbname=$_localdbname;  // default to the hard-coded dbname from the class file (prob "vcdb")
   if(!$_localdbname)
@@ -218,7 +221,14 @@ class vcdbapi
 
  function getAccessToken()
  {
-  $success=false;
+  $this->activetoken=false; $this->errormessage='';
+  if($this->tokenrefreshcount>=$this->tokenrefreshlimit)
+  {
+   $this->writeLog('AutoCare API Client', 'getAccessToken - refresh Limit ('.$this->tokenrefreshlimit.') reached');
+   return false;
+  }
+
+  $success=false;  
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL,'https://autocare-identity.autocare.org/connect/token');
   curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -251,7 +261,7 @@ class vcdbapi
   }
   else
   {
-   $this->errormessage=curl_error($ch);  
+   $this->errormessage=curl_error($ch);
   }  
   curl_close ($ch);
   return $success;
@@ -332,12 +342,11 @@ class vcdbapi
    
    if($this->tokenLife()<$this->tokenrefreshthreshold)
    {// need to refresh token - it less than 5 minutes life left
-    if($this->debug){echo " Token-refresh needed before table complete.\r\n";}
-
+    if($this->loggingverbosity>4){$this->writeLog('AutoCare API Client', 'getRecords - Token-refresh needed mid-table ('.$table.')');}
     $this->activetoken=false;  $this->getAccessToken();
     if(!$this->activetoken)
     {
-     if($this->debug){echo " Token refresh request failed.\r\n";}
+     $this->writeLog('AutoCare API Client', 'getRecords - mid-table ('.$table.') token refresh failed');
      $this->failedsync=true;
      return false;
     }
@@ -347,9 +356,9 @@ class vcdbapi
  } 
  
  
- function getRecordsPage($database,$table,$cultureid,$sincedate,$asofdate)
+ function getRecordsPageOld($database,$table,$cultureid,$sincedate,$asofdate)
  {
-  $url='';
+  $url=''; $this->errormessage='';
   $sincedateclause=''; if($sincedate){$sincedateclause='&SinceDate='.$sincedate;}
   $asofdateclause=''; if($asofdate){$asofdateclause='&AsOfDate='.$asofdate;}
    
@@ -410,11 +419,12 @@ class vcdbapi
    }   
   }  
   
-  if($this->debug){echo 'CURL url: '.$url."\r\n";}    
+  if($this->loggingverbosity>8){$this->writeLog('AutoCare API Client', 'CURL url: '.$url);}
   
   if($this->httpstatus=='200')
   {
-   if($this->debug){echo 'raw http response: '.$this->response."\r\n";}    
+   if($this->loggingverbosity==10){$this->writeLog('AutoCare API Client', 'raw http response: '.$this->response);}
+   
    $recordstemp=json_decode($this->response,true);
    foreach($recordstemp as $recordtemp){$this->records[]=$recordtemp;}      
    curl_close ($ch);
@@ -424,10 +434,107 @@ class vcdbapi
   {
    $this->errormessage=curl_error($ch);
    curl_close ($ch);
-   if($this->debug){echo 'CURL http status code: '.$this->httpstatus.', CURL errormessage:'.$this->errormessage."\r\n";}
+   $this->writeLog('AutoCare API Client','getRecordsPage - CURL http status code: '.$this->httpstatus.', CURL errormessage:'.$this->errormessage);
    return false;
   }
  }
+ 
+ function getRecordsPage($database,$table,$cultureid,$sincedate,$asofdate)
+ {
+  $url=''; $this->errormessage=''; $this->errornumber='';
+  $sincedateclause=''; if($sincedate){$sincedateclause='&SinceDate='.$sincedate;}
+  $asofdateclause=''; if($asofdate){$asofdateclause='&AsOfDate='.$asofdate;}
+   
+  $ch = curl_init();
+  $headers = [];
+  
+  $authorization = "Authorization: Bearer ".$this->token;
+  if($this->morepages)
+  { // continuation link exists
+   $url=$this->nextpagelink;
+   curl_setopt($ch, CURLOPT_URL,$url);  
+  }
+  else
+  {// no continuation link exists - this is the inital call
+   $url='https://'.$database.'.autocarevip.com/api/v2.0/'.$database.'/'.$table.'?CultureId='.$cultureid.'&PageSize='.$this->pagesize.$sincedateclause.$asofdateclause;
+   curl_setopt($ch, CURLOPT_URL,$url);
+  }
+  
+  curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization ));
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+  
+  curl_setopt($ch, CURLOPT_HEADERFUNCTION,
+   function($curl, $header) use (&$headers)
+   {
+    $len = strlen($header);
+    $header = explode(':', $header, 2);
+    if (count($header) < 2) // ignore invalid headers
+      return $len;
+    $headers[strtolower(trim($header[0]))][] = trim($header[1]);
+    return $len;
+   }
+  );
+  
+  $this->response = curl_exec($ch);
+  $this->totalcalls++;
+  $this->nextpagelink='';
+  
+  if($this->response!==false)
+  {
+   $this->httpstatus=curl_getinfo($ch,CURLINFO_HTTP_CODE);
+   $this->responseheaders=$headers;
+   $this->morepages=false;
+
+   if($this->loggingverbosity>8){$this->writeLog('AutoCare API Client', 'getRecordsPage - CURL url: '.$url);}
+
+   if($this->httpstatus=='200')
+   {
+    if($this->loggingverbosity==9){$this->writeLog('AutoCare API Client', 'getRecordsPage - Received success (200) response from server');}
+    if($this->loggingverbosity==10){$this->writeLog('AutoCare API Client', 'getRecordsPage - Raw http response: '.$this->response);}
+
+    if(array_key_exists('x-pagination',$headers))
+    {
+     $paginationarray=json_decode($headers['x-pagination'][0],true);
+     if(array_key_exists('nextPageLink',$paginationarray)&&trim($paginationarray['nextPageLink'])!='')
+     {
+      $this->nextpagelink= str_replace('http:','https:', $paginationarray['nextPageLink']);    
+      $this->morepages=true;
+      if($this->loggingverbosity==9){$this->writeLog('AutoCare API Client', 'getRecordsPage - Found next-page link ('.$this->nextpagelink.') in response header x-pagination element');}
+     }
+     if(array_key_exists('totalCount',$paginationarray))
+     {
+      $this->tablerecordcounts[$table]=intval(trim($paginationarray['totalCount']));
+      if($this->loggingverbosity==9){$this->writeLog('AutoCare API Client', 'getRecordsPage - Found totalCount of records ('.$this->tablerecordcounts[$table].') in response header x-pagination element');}
+     }
+    }
+
+    $recordstemp=json_decode($this->response,true);
+    foreach($recordstemp as $recordtemp){$this->records[]=$recordtemp;}
+    if($this->loggingverbosity==9){$this->writeLog('AutoCare API Client', 'getRecordsPage - added ('.count($recordstemp).') records to local array for '.$table);}
+    curl_close ($ch);
+    return true;
+   }
+   else
+   { // curl response was other than 200
+    $this->errormessage=curl_error($ch);
+    $this->errornumber=curl_errno($ch);
+    curl_close ($ch);
+    $this->writeLog('AutoCare API Client','getRecordsPage - CURL http status code: '.$this->httpstatus.', CURL errormessage:'.$this->errormessage);
+    return false;
+   }
+  }
+  else
+  {  //curl response was ===false
+   $this->writeLog('AutoCare API Client','getRecordsPage - CURL response ===false. errormessage:'.$this->errormessage,', errornumber:'.$this->errornumber);
+   curl_close ($ch); 
+   return false;
+  }
+ }
+
+ 
+ 
   
  function clearTable($tablename)
  {
@@ -445,7 +552,7 @@ class vcdbapi
   $existingids=array();
   if(!array_key_exists($tablename,$this->tablekeyslist))
   {
-   echo 'missing table name in keyfields list: '.$tablename."\r\n";
+   $this->writeLog('AutoCare API Client','getTableIDs - missing table name in keyfields list: '.$tablename);
    return $existingids;
   }
   
@@ -486,7 +593,18 @@ class vcdbapi
   $db->close();
   return $count;
  }
-
+ 
+ function writeLog($eventtype, $text)
+ {
+  $db = new mysql; $db->connect();
+  if(strlen($text)>65534){$text=substr($text,0,65534);}
+  if ($stmt = $db->conn->prepare('insert into system_history (id,eventdatetime,eventtype,userid,description) values(null,now(),?,0,?)'))
+  {
+   $stmt->bind_param('ss', $eventtype, $text);
+   $stmt->execute();
+  }
+  $db->close();
+}
  
  function populateTable($tablename,$records,$deletelocalorphans)
  {

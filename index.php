@@ -57,13 +57,13 @@ function acaVersionAgeColor($date)
 
 
 $configGet = new configGet;
-$appshistory = $logs->getAppsEvents(200);
-$assetshistory = $logs->getAssetsEvents(200);
-$partshistory = $logs->getPartsEvents(200);
+$appshistory = $logs->getAppsEvents(300);
+$assetshistory = $logs->getAssetsEvents(300);
+$partshistory = $logs->getPartsEvents(300);
 $sandpiperhistory= $logs->getSandpiperEvents(100);
 
-$systemhistoryraw = $logs->getSystemEvents('%', false, 500);
-$systemhistory=[]; $autcareapihistory=[]; $replicationhistory=[]; $securityhistory=[]; $loginhistory=[];
+$systemhistoryraw = $logs->getSystemEvents('%', false, 2000);
+$systemhistory=[]; $autcareapihistory=[]; $replicationhistory=[]; $securityhistory=[]; $loginhistory=[]; $importexporthistory=[]; $integrationshistory=[];
 foreach($systemhistoryraw as $h)
 {
  if($h['eventtype']=='AutoCare API Client')
@@ -89,8 +89,18 @@ foreach($systemhistoryraw as $h)
   $loginhistory[]=$h;
   continue;
  }
-
  
+ if($h['eventtype']=='backgroundjob' || $h['eventtype']=='UTILITIES' || $h['eventtype']=='report' || $h['eventtype']=='Export')
+ {
+  $importexporthistory[]=$h;
+  continue;
+ } 
+
+ if($h['eventtype']=='externalsystem' || $h['eventtype']=='INFO')
+ {
+  $integrationshistory[]=$h;
+  continue;
+ }
  
  $systemhistory[]=$h;
 }
@@ -394,6 +404,12 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                         <a class="nav-link" id="parts-tab" data-bs-toggle="tab" href="#parts" role="tab" aria-controls="parts" aria-selected="false">Parts</a>
                                     </li>';
                                     }
+                                    
+                                    if(count($importexporthistory)) {
+                                    echo '<li class="nav-item">
+                                        <a class="nav-link" id="importexport-tab" data-bs-toggle="tab" href="#importexport" role="tab" aria-controls="importexport" aria-selected="false">Import/Export</a>
+                                    </li>';
+                                    }                        
 
                                     if(count($systemhistory)) {
                                     echo '<li class="nav-item">
@@ -416,6 +432,12 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                     if(count($autcareapihistory)) {
                                     echo '<li class="nav-item">
                                         <a class="nav-link" id="autocareapi-tab" data-bs-toggle="tab" href="#autocareapi" role="tab" aria-controls="autocareapi" aria-selected="false">AutoCare API</a>
+                                    </li>';
+                                    }
+
+                                   if(count($integrationshistory)) {
+                                    echo '<li class="nav-item">
+                                        <a class="nav-link" id="integrations-tab" data-bs-toggle="tab" href="#integrations" role="tab" aria-controls="integrations" aria-selected="false">Integrations</a>
                                     </li>';
                                     }
 
@@ -478,7 +500,23 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                                 echo '<tr><td>' . $record['eventdatetime'] . '</td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td><a href="showPart.php?partnumber='.$record['partnumber'].'">'.$record['partnumber'].'</a></td><td>' . $nicedescription . '</td></tr>';
                                             }
                                             echo '</table></div>';
-                                        }
+                                        }                                        
+                                        
+                                        if(count($importexporthistory))
+                                        {
+                                            echo '<div class="tab-pane fade mt-3" id="importexport" role="tabpanel" aria-labelledby="importexport-tab">'
+                                            . '<table class="table"><tr><th>Date/Time</th><th>User</th><th>Eventtype</th><th>Description</th></tr>';
+                                            foreach ($importexporthistory as $record) {
+                                                $nicedescription = $record['description'];
+                                                if (strlen  ($nicedescription) > $logpreviewlength) {
+                                                    $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                                                }
+                                                echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td>' . $user->realNameOfUserid($record['userid']) . '</td><td>'.$record['eventtype'].'</td><td style="max-width:400px;"><div class="text-truncate">' . $nicedescription . '</div></td></tr>';
+                                            }
+                                            echo '</table></div>';
+                                        }      
+                                        
+                                        
                                         
                                         if(count($systemhistory))
                                         {
@@ -536,6 +574,20 @@ $firststockeddaysback = intval($configGet->getConfigValue('recentPartAdditionsDa
                                             echo '</table></div>';
                                         }
 
+                                        if(count($integrationshistory))
+                                        {
+                                            echo '<div class="tab-pane fade mt-3" id="integrations" role="tabpanel" aria-labelledby="integrations-tab">'
+                                            . '<table class="table"><tr><th>Date/Time</th><th>Description</th></tr>';
+                                            foreach ($integrationshistory as $record) {
+                                                $nicedescription = $record['description'];
+                                                if (strlen  ($nicedescription) > $logpreviewlength) {
+                                                    $nicedescription = substr($nicedescription, 0, $logpreviewlength) . '...';
+                                                }
+                                                echo '<tr><td><a href="./showSystemLogEvent.php?id='.$record['id'].'">' . $record['eventdatetime'] . '</a></td><td style="max-width:400px;"><div class="text-truncate">' . $nicedescription . '</div></td></tr>';
+                                            }
+                                            echo '</table></div>';
+                                        }
+                                        
                                         if(count($securityhistory))
                                         {
                                             echo '<div class="tab-pane fade mt-3" id="security" role="tabpanel" aria-labelledby="security-tab">'
