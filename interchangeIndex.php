@@ -33,10 +33,10 @@ $competitivebrands=$interchange->getCompetitivebrands();
 $searchtype = 'contains';
 $limit = 50;
 
-if(isset($_GET['partnumber']) && strlen($_GET['partnumber']) <= 20) 
+if(isset($_GET['partnumber']) && strlen(trim($_GET['partnumber'])) <= 20) 
 {
  if (isset($_GET['searchtype']) && ($_GET['searchtype'] == 'equals' || $_GET['searchtype'] == 'startswith' || $_GET['searchtype'] == 'endswith')) {$searchtype = $_GET['searchtype'];}
- $competitorpartnumber = strtoupper($_GET['partnumber']);
+ $competitorpartnumber = strtoupper(trim($_GET['partnumber']));
 
  $brandAAIAID=$_GET['competitivebrand']; if($brandAAIAID=='any'){$brandAAIAID='%';}
  
