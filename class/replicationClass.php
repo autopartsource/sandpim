@@ -36,6 +36,29 @@ class replication
   return $peers;
  }
 
+ function getPeerById($id)
+ {
+  $db=new mysql; $db->connect(); $peer=false;
+  if($stmt=$db->conn->prepare('select * from replicationpeer where id=?'))
+  {
+   if($stmt->bind_param('i',$id))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+       $peer=array('id'=>$row['id'],'identifier'=>$row['identifier'],'description'=>$row['description'],'type'=>$row['type'],'role'=>$row['role'],'uri'=>$row['uri'],'objectlimit'=>$row['objectlimit'],'sharedsecret'=>$row['sharedsecret'],'enabled'=>$row['enabled']);
+     }
+    }
+   }
+  }
+  $db->close();
+  return $peer;
+ }
+
+ 
+ 
  function getAllPeers()
  {
   $db=new mysql; $db->connect(); $peers=array();

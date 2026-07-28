@@ -1757,6 +1757,7 @@ class setup
         $sql="insert into navelement values('SETTINGS/ASSETRECIPES','SETTINGS','Asset Recipes','assetRecipes.php',15);"; $stmt=$db->conn->prepare($sql); $stmt->execute(); 
         $sql="insert into navelement values('SETTINGS/PROCESSLOCKS','SETTINGS','Process Locks','processLocks.php',16);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('SETTINGS/EXPORTS','SETTINGS','Manage Exports','exports.php',17);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('SETTINGS/REPLICATION','SETTINGS','Replication','replication.php',18);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
                 
         $sql="insert into navelement values('IMPORT/ACESFILEUPLOAD','IMPORT','ACES File Upload','importACESupload.php',1);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/ACESSNIPPET','IMPORT','ACES xml snippet','importACESxml.php',2);"; $stmt=$db->conn->prepare($sql); $stmt->execute();

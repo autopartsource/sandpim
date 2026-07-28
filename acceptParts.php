@@ -16,7 +16,7 @@ $configGet =new configGet();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
- $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'acceptParts - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'acceptParts - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
 

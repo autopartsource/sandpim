@@ -13,7 +13,7 @@ $configGet = new configGet();
 
 if(!$pim->allowedHost($_SERVER['REMOTE_ADDR']))
 {
- $logs->logSystemEvent('accesscontrol',$_SESSION['userid'], 'acceptAssets - access denied to host '.$_SERVER['REMOTE_ADDR']);
+ $logs->logSystemEvent('accesscontrol',0, 'acceptAssets - access denied to host '.$_SERVER['REMOTE_ADDR']);
  exit;
 }
 

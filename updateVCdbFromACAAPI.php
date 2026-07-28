@@ -28,6 +28,7 @@ $tableattemptcount=0;
 $totalfails=0;
 
 $vcdbapi=new vcdbapi;
+$vcdbapi->failedsync=false;
 $vcdbapi->debug=false;// debug is useful for manual command calls. A bunch of stuff is echoed to the console
 if($configGet->getConfigValue('VCdbAPIdebugMode','0')=='1')
 {
@@ -36,20 +37,6 @@ if($configGet->getConfigValue('VCdbAPIdebugMode','0')=='1')
 
 $vcdbapi->loggingverbosity=intval($configGet->getConfigValue('VCdbAPIloggingVerbosity','1')); // (1-10) Ten is the most verbose 
 
-$vcdbapi->failedsync=false;
-
-$pickupattablename='';
-// process any command-line args (in a manual call situation)
-foreach($argv as $i=>$arg)
-{
- if($arg=='-pickup' && $i<$argc && in_array($argv[$i+1], $vcdbapi->tableslist))
- {
-  $pickupattablename=$argv[$i+1];     
- }
- if($arg=='-debug'){ $vcdbapi->debug=true;}
-}
-if($vcdbapi->debug && $pickupattablename!=''){echo 'pickingup at table: '.$pickupattablename."\n";}
- 
 $lastsync=intval($configGet->getConfigValue('lastSuccessfulVCdbAPIsync',0));
 
 if($lastsync)
@@ -59,6 +46,16 @@ if($lastsync)
 else 
 {// no history of last successful sync - setup for full download
  $sincedate=false;
+}
+
+$pickupattablename='';
+$successthroughtable=explode(':',$configGet->getConfigValue('AutoCareAPIsuccessThroughVCdbTable', ''));
+if(count($successthroughtable)==3 && in_array($successthroughtable[0], $vcdbapi->tableslist) && $successthroughtable[0]!='Year')
+{
+ $pickupattablename=$successthroughtable[0];
+ $sincedate=$successthroughtable[1]; if($sincedate==''){$sincedate=false;}// false sincedate is stored as an empty string
+ $asofdate=$successthroughtable[2];
+ $logs->logSystemEvent('AutoCare API Client', 0, 'VCdb API sync started - resuming failed sync at table ['.$pickupattablename.']. SinceDate='.$sincedate.', AsOfDate='.$asofdate);
 }
 
 $clearfirst=false;  // deletes all rec in every named table before engaging with the server - used for testing/debugging work
@@ -172,7 +169,8 @@ if($vcdbapi->activetoken)
     $vcdbapi->populateTable($tablename, $vcdbapi->records, $deletelocalorphans);
     $localwritetime=time()-$localwritetime;
     if($vcdbapi->loggingverbosity>2){$logs->logSystemEvent('AutoCare API Client', 0,'Finished processing ('.count($vcdbapi->records).') records of '.$tablename.' into local cache - took '.$localwritetime.' seconds.');}
-    $configSet->setConfigValue('AutoCareAPIsuccessThroughVCdbTable', $tablename);
+    $sincedatenice=$sincedate; if($sincedate===false){$sincedatenice='';}
+    $configSet->setConfigValue('AutoCareAPIsuccessThroughVCdbTable', $tablename.':'.$sincedatenice.':'.$asofdate);
     break; // this breaks the endless "while"        
    }
    else

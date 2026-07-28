@@ -55,29 +55,38 @@ foreach($peers as $peer)
  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
  $headers = array("Accept: application/json","Content-Type: application/json",);
  curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
- $resp = curl_exec($curl);
+ $curlresponsetime=time();
+ $resp = curl_exec($curl); 
+ $curlresponsetime=time()-$curlresponsetime; 
+ $httpresponseode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
  curl_close($curl);
-
+ 
+ if($resp===false)
+ {
+  $logs->logSystemEvent('replication', 0, 'pushAssets - peerid ['.$peer['id'].'] - curl response===false from peer ['.$peer['description'].']; response time:'.$curlresponsetime.' seconds');
+  continue;     
+ } 
+ 
  $responsedecoded= json_decode($resp, true); 
  
  if(array_key_exists('status',$responsedecoded))
  {
   if($responsedecoded['status']=='busy' || $responsedecoded['status']=='paused')
   {
-   $logs->logSystemEvent('replication', 0, 'pushAssets - status response ['.$responsedecoded['status'].'] from peer ['.$peer['description'].']. Skipping replication.');
+   $logs->logSystemEvent('replication', 0, 'pushAssets - peerid ['.$peer['id'].'] - status response ['.$responsedecoded['status'].'] from peer ['.$peer['description'].']. Skipping replication.');
    continue;
   }
  }
  
  if(!isset($responsedecoded['hash']))
  {
-  $logs->logSystemEvent('replication', 0, 'pushAssets - unexpected response (no json hash variable) form '.$peer['description'].':'.$resp);
+  $logs->logSystemEvent('replication', 0, 'pushAssets - peerid ['.$peer['id'].'] - unexpected response (missing key: hash) form '.$peer['description'].'; Raw http reponse:'.$resp.'; http response code:'.$httpresponseode);
   continue; // iterate to next peer
  }
  
  if($localoidhash == $responsedecoded['hash'])
  {
-  // commented 11-11-2024 to bring the noise down  $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no assets pushed');
+  $logs->logSystemEvent('replication', 0, 'pushAssets - peerid ['.$peer['id'].'] - remote hash ['.$localoidhash.'] on '.$peer['description'].' equals local hash - no assets pushed');
   continue; // iterate to next peer
  }
     
@@ -94,7 +103,7 @@ foreach($peers as $peer)
  
  if(!isset($responsedecoded['oids']))
  {
-  $logs->logSystemEvent('replication', 0, 'unexpected response in pushAssets form peer '.$peer['description'].':'.$resp);    
+  $logs->logSystemEvent('replication', 0, 'pushAssets - peerid ['.$peer['id'].'] - unexpected response (missing key: oids) from '.$peer['description'].'. Raw http response:'.$resp);
   continue; // iterate to next peer
  }
  
@@ -149,8 +158,7 @@ foreach($peers as $peer)
   $assetidkeyedassets=array(); 
   foreach($assetstopush as $a)
   {
-   $assetidkeyedassets[$a['assetid']][]=array('id'=>$a['id'],'assetid'=>$a['assetid'],'filename'=>$a['filename'],'localpath'=>$a['localpath'],'uri'=>$a['uri'],'orientationViewCode'=>$a['orientationViewCode'],'colorModeCode'=>$a['colorModeCode'],'assetHeight'=>$a['assetHeight'],'assetWidth'=>$a['assetWidth'],'dimensionUOM'=>$a['dimensionUOM'],'background'=>$a['background'],'fileType'=>$a['fileType'],'createdDate'=>$a['createdDate'],'public'=>$a['public'],'approved'=>$a['approved'],'description'=>$a['description'],'oid'=>$a['oid'],'fileHashMD5'=>$a['fileHashMD5'],'filesize'=>$a['filesize'],'resolution'=>$a['resolution'],'languagecode'=>$a['languagecode'],'assetlabel'=>$a['assetlabel']);
-  
+   $assetidkeyedassets[$a['assetid']][]=array('id'=>$a['id'],'assetid'=>$a['assetid'],'filename'=>$a['filename'],'localpath'=>$a['localpath'],'uri'=>$a['uri'],'orientationViewCode'=>$a['orientationViewCode'],'colorModeCode'=>$a['colorModeCode'],'assetHeight'=>$a['assetHeight'],'assetWidth'=>$a['assetWidth'],'dimensionUOM'=>$a['dimensionUOM'],'background'=>$a['background'],'fileType'=>$a['fileType'],'createdDate'=>$a['createdDate'],'public'=>$a['public'],'approved'=>$a['approved'],'description'=>$a['description'],'oid'=>$a['oid'],'fileHashMD5'=>$a['fileHashMD5'],'filesize'=>$a['filesize'],'resolution'=>$a['resolution'],'languagecode'=>$a['languagecode'],'assetlabel'=>$a['assetlabel']);  
    $pushsummary.=$a['assetid'].', ';
   }
  
@@ -172,8 +180,7 @@ foreach($peers as $peer)
   $resp = curl_exec($curl);
   curl_close($curl);
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($assetstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. Pushed:'.$pushsummary.'. '.$logstring);
+  $logs->logSystemEvent('replication', 0, 'pushAssets - peerid ['.$peer['id'].'] - pushed/dropped '.count($assetstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. Pushed:'.$pushsummary.'. '.$logstring);
  }
 }
 $pim->removeLockById($mylockid);
-?>

@@ -30,12 +30,11 @@ foreach($peers as $peer)
  $logstring='uri: '.$uri.'; ';
 
  $localoids=$pim->getAppOids();
-if(count($localoids)==0)
-{
- echo "refusing to push an empty local list\r\n";
- $logs->logSystemEvent('replication', 0, 'local app list is empty. No push completed (too risky).');
- continue;
-}
+ if(count($localoids)==0)
+ {
+  $logs->logSystemEvent('replication', 0, 'pushApps - peerid ['.$peer['id'].'] - local app list is empty. No push completed (too risky).');
+  continue;
+ }
  
  sort($localoids);
  $localoidliststring=''; foreach($localoids as $localoid){$localoidliststring.=$localoid;}
@@ -51,30 +50,39 @@ if(count($localoids)==0)
  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
  $headers = array("Accept: application/json","Content-Type: application/json",);
  curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+ $curlresponsetime=time();
  $resp = curl_exec($curl);
+ $curlresponsetime=time()-$curlresponsetime; 
+ $httpresponseode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
  curl_close($curl);
 
+ if($resp===false)
+ {
+  $logs->logSystemEvent('replication', 0, 'pushApps - peerid ['.$peer['id'].'] - curl response===false from peer ['.$peer['description'].']; response time:'.$curlresponsetime.' seconds');
+  continue;     
+ }
+ 
  $responsedecoded= json_decode($resp, true); 
  
  if(array_key_exists('status',$responsedecoded))
  {
   if($responsedecoded['status']=='busy' || $responsedecoded['status']=='paused')
   {
-   $logs->logSystemEvent('replication', 0, 'pushApps - status response ['.$responsedecoded['status'].'] from peer ['.$peer['description'].']. Skipping replication.');
+   $logs->logSystemEvent('replication', 0, 'pushApps - peerid ['.$peer['id'].'] - status response ['.$responsedecoded['status'].'] from peer ['.$peer['description'].']. Skipping replication.');
    continue;
   }
  }
  
  if(!array_key_exists('hash',$responsedecoded))
  {
-  $logs->logSystemEvent('replication', 0, 'pushApps - unexpected response (no json hash variable) form '.$peer['description'].':'.$resp);    
+  $logs->logSystemEvent('replication', 0, 'pushApps - peerid ['.$peer['id'].'] - unexpected response (missing key:hash) form '.$peer['description'].'; Raw response:'.$resp.'; http response code:'.$httpresponseode);
   continue;
  }
  
  
  if($localoidhash == $responsedecoded['hash'])
  {
-  // commented 11-11-2024 to bring the noise down   $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no apps pushed');
+  $logs->logSystemEvent('replication', 0, 'pushApps - peerid ['.$peer['id'].'] - remote hash ['.$localoidhash.'] on '.$peer['description'].' equals local hash - no apps pushed');
   continue;
  }  
     
@@ -86,13 +94,14 @@ if(count($localoids)==0)
  $headers = array("Accept: application/json","Content-Type: application/json",);
  curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
  $resp = curl_exec($curl);
+ $httpresponseode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
  curl_close($curl);
 
  $responsedecoded= json_decode($resp, true); 
  
  if(!array_key_exists('oids',$responsedecoded))
  {
-  $logs->logSystemEvent('replication', 0, 'unexpected response form '.$peer['description'].':'.$resp);
+  $logs->logSystemEvent('replication', 0, 'pushApps - peerid ['.$peer['id'].'] - unexpected response (missing key:oids) form '.$peer['description'].'; Raw response:'.$resp.'; http response code:'.$httpresponseode);
   continue;
  }
  
@@ -157,7 +166,7 @@ if(count($localoids)==0)
   $resp=curl_exec($curl);
   curl_close($curl);
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($appstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
+  $logs->logSystemEvent('replication', 0, 'pushApps - peerid ['.$peer['id'].'] - pushed/dropped '.count($appstopush).'/'.count($oidstodrop).' to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
  }
 
 }

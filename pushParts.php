@@ -56,31 +56,39 @@ foreach($peers as $peer)
  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
  $headers = array("Accept: application/json","Content-Type: application/json",);
  curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+ $curlresponsetime=time();
  $resp = curl_exec($curl);
+ $curlresponsetime=time()-$curlresponsetime; 
+ $httpresponseode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
  curl_close($curl);
 
+ if($resp===false)
+ {
+  $logs->logSystemEvent('replication', 0, 'pushParts - peerid ['.$peer['id'].'] - curl response===false from peer ['.$peer['description'].']; response time:'.$curlresponsetime.' seconds');
+  continue;     
+ } 
+ 
  $responsedecoded= json_decode($resp, true); 
  
  if(array_key_exists('status',$responsedecoded))
  {
   if($responsedecoded['status']=='busy' || $responsedecoded['status']=='paused')
   {
-   $logs->logSystemEvent('replication', 0, 'pushParts - status response ['.$responsedecoded['status'].'] from peer ['.$peer['description'].']. Skipping replication.');
+   $logs->logSystemEvent('replication', 0, 'pushParts - peerid ['.$peer['id'].'] - status response ['.$responsedecoded['status'].'] from peer ['.$peer['description'].']. Skipping replication.');
    continue;
   }
  }
-
  
  if(!isset($responsedecoded['hash']))
  {
-  $logs->logSystemEvent('partpusher', 0, 'pushParts - unexpected response (no json hash variable) form '.$peer['description'].':'.$resp);    
+  $logs->logSystemEvent('partpusher', 0, 'pushParts - peerid ['.$peer['id'].'] - unexpected response (missing key: hash) form '.$peer['description'].'; Raw response:'.$resp.'; http response code:'.$httpresponseode);
   continue; // iterate to next peer
  }
  
 
  if($localoidhash == $responsedecoded['hash'])
  {
-// commented 11-11-2024 to bring the noise down  $logs->logSystemEvent('replication', 0, 'remote hash on '.$peer['description'].' equals local hash - no parts pushed');
+  $logs->logSystemEvent('replication', 0, 'pushParts - peerid ['.$peer['id'].'] - remote hash ['.$localoidhash.'] on '.$peer['description'].' equals local hash - no parts pushed');
   continue; // iterate to next peer
  }  
     
@@ -98,7 +106,7 @@ foreach($peers as $peer)
  
  if(!isset($responsedecoded['oids']))
  {
-  $logs->logSystemEvent('replication', 0, 'unexpected response in pushParts form '.$peer['description'].':'.$resp);    
+  $logs->logSystemEvent('replication', 0, 'pushParts - peerid ['.$peer['id'].'] - unexpected response in pushParts form '.$peer['description'].':'.$resp);    
   continue; // iterate to next peer
  }
  
@@ -142,7 +150,7 @@ foreach($peers as $peer)
    $p['assetconnections']=$assetconnections;
    $partstopush[]=$p;
   }
-  if(count($partstopush)>= $pushlimit){break;} // limit pushlias
+  if(count($partstopush)>= $pushlimit){break;} // limit pushlist
   
  }
 
@@ -182,10 +190,12 @@ foreach($peers as $peer)
   curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($body));
   $resp = curl_exec($curl);
   curl_close($curl);
+  
+  $singlepartnote=''; if(count($partstopush)==1){$singlepartnote=' ('.$partstopush[0]['partnumber'].') ';} // a single part push has high troubleshooting value
+  
   $runtime=time()-$starttime;
-  $logs->logSystemEvent('replication', 0, 'pushed/dropped '.count($partstopush).'/'.count($oidstodrop).' parts to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
+  $logs->logSystemEvent('replication', 0, 'pushParts - peerid ['.$peer['id'].'] -  pushed/dropped '.count($partstopush).'/'.count($oidstodrop).' parts '.$singlepartnote.' to '.$peer['description'].' in '.$runtime.' seconds. '.$logstring);
  }
 
 }
 $pim->removeLockById($mylockid);
-?>
