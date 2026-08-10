@@ -17,8 +17,10 @@ $partcategories= array();
 $categoriesstrings=explode(',',$configGet->getConfigValue('publicCatalogCategories'));
 foreach($categoriesstrings as $categoriesstring){$partcategories[]=intval($categoriesstring);}
 
+$parttypelist=array();
+$parttypesstrings=explode(',',$configGet->getConfigValue('publicCatalogParttypes'));
+foreach($parttypesstrings as $parttypesstring){$parttypelist[]=intval($parttypesstring);}
 
-$parttypelist=array(1684);
 $lifecyclestatuses=array('2','3','4','7','8');
 
 $results=array();
@@ -28,7 +30,7 @@ $qsanitized='';
 if(isset($_GET['q']) && strlen(trim($_GET['q']))>1)
 {
  $qsanitized=$pim->sanitizePartnumber($_GET['q']);
- $rawresults=$pim->getParts($qsanitized, 'contains', 'any', '1684', 'any', 'any', 30); 
+ $rawresults=$pim->getParts($qsanitized, 'contains', 'any', 'any', 'any', 'any', 30);
  
  foreach ($rawresults as $rawresult)
  {
