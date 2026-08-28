@@ -96,7 +96,7 @@ if(count($jobs))
      
   if($exportformat=='decoded')
   {
-   $record='Make'."\t".'Model'."\t".'Year'."\t".'Partnumber'."\t".'Part-Type'."\t".'Position'."\t".'App-Quantity'."\t".'Fitment Qualifiers'."\r\n";
+   $record='AppID'."\t".'Make'."\t".'Model'."\t".'Year'."\t".'Partnumber'."\t".'Part-Type'."\t".'Position'."\t".'App-Quantity'."\t".'Fitment Qualifiers'."\r\n";
    $writeresult=fwrite($fh, $record);  
    foreach($apps as $app)    
    {
@@ -111,7 +111,7 @@ if(count($jobs))
 
     $nicefitmentarray = array();    
     foreach ($niceattributes as $niceattribute){$nicefitmentarray[] = $niceattribute['text'];}
-    $record=$mmy['makename']."\t".$mmy['modelname']."\t".$mmy['year']."\t".$app['partnumber']."\t".$pcdb->parttypeName($app['parttypeid'])."\t".$pcdb->positionName($app['positionid'])."\t".$app['quantityperapp']."\t".implode('; ', $nicefitmentarray)."\r\n";
+    $record=$app['id']."\t".$mmy['makename']."\t".$mmy['modelname']."\t".$mmy['year']."\t".$app['partnumber']."\t".$pcdb->parttypeName($app['parttypeid'])."\t".$pcdb->positionName($app['positionid'])."\t".$app['quantityperapp']."\t".implode('; ', $nicefitmentarray)."\r\n";
     $writeresult=fwrite($fh, $record);  
    }
   }
