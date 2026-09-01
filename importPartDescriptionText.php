@@ -25,7 +25,7 @@ $pcdb=new pcdb();
 
 $errors=array();
 $results='';
-$importcount=0;
+$importcount=0; $updatecount=0; $deletecount=0;
 $failedcount=0;
 $recordnumber=0;
 $showvalidcodes=false;
@@ -51,10 +51,36 @@ if (isset($_POST['input']))
                 {
                     $languagecode = trim($fields[3]);
                     $sequence = intval(trim($fields[4]));
-                    $pim->addPartDescription($partnumber, $descriptiontext, $descriptioncode, $sequence, $languagecode);
-                    $newoid=$pim->updatePartOID($partnumber);
-                    $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Description ['.$descriptiontext.'] written by mass import', $newoid);
-                    $importcount++;
+                    
+                    // check for existing record(s) before adding
+                    $existingdescriptons=$pim->getPartDescriptionsByCodeAndLanguage($partnumber, $descriptioncode, $languagecode);                    
+                    if(count($existingdescriptons))
+                    {
+                        foreach($existingdescriptons as $existingdescripton)
+                        {
+                            if(strlen($descriptiontext)>0)
+                            {// update description text and sequence                             
+                                $pim->updatePartDescriptionById($existingdescripton['id'], $descriptiontext, $descriptioncode, $languagecode, $sequence);
+                                $newoid=$pim->updatePartOID($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Description ['.$existingdescripton['description'].'] ['.$existingdescripton['descriptioncode'].'] ['.$existingdescripton['languagecode'].'] updated to ['.$descriptiontext.'] sequence ['.$sequence.'] by mass import', $newoid);
+                                $updatecount++;
+                            }
+                            else
+                            {// blank description text was imported - delete the matching records
+                                $pim->deletePartDescriptionById($existingdescripton['id']);
+                                $newoid=$pim->updatePartOID($partnumber);
+                                $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Description ['.$existingdescripton['description'].'] ['.$existingdescripton['descriptioncode'].'] ['.$existingdescripton['languagecode'].'] deleted by mass import', $newoid);
+                                $deletecount++;
+                            }                        
+                        }
+                    }
+                    else
+                    {// there are no existing records for this part/code/language - write this new record
+                        $pim->addPartDescription($partnumber, $descriptiontext, $descriptioncode, $sequence, $languagecode);
+                        $newoid=$pim->updatePartOID($partnumber);
+                        $pim->logPartEvent($partnumber, $_SESSION['userid'], 'Description ['.$descriptiontext.'] written by mass import', $newoid);
+                        $importcount++;                        
+                    }                    
                 }
                 else
                 {// description code is not valid (according the the currently loaded PCdb)
@@ -106,6 +132,7 @@ if (isset($_POST['input']))
                                 <div class="alert alert-secondary" role="alert">
                                     <h6 class="alert-heading">Paste five tab-delimited columns (no header row):</h6>
                                     <p>Partnumber, description text, description code (SHO, DES, etc.), language code (EN, ES, etc.), sequence</p>
+                                    <p>If the description record already exists (key=partnumber, description code and language code), it will be updated to the new description text and sequence number. To delete an existing description record, import an empty (zero-length) description text.</p>
                                 </div>
                                     <hr>                               
                                 
@@ -115,6 +142,8 @@ if (isset($_POST['input']))
                             </form>
                             
                             <?php if($importcount>0){ echo '<div>Imported '.$importcount.' records.</div>';}?>
+                            <?php if($updatecount>0){ echo '<div>Updated '.$updatecount.' records.</div>';}?>
+                            <?php if($deletecount>0){ echo '<div>Deleted '.$deletecount.' records.</div>';}?>
                             
                             <?php foreach($errors as $error){ echo '<div>'.$error.'</div>'; }?>
                                          

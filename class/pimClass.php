@@ -1884,6 +1884,38 @@ function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
   $db->close();
   return $attribute;
  }
+ 
+ function getPartDescriptionsByCodeAndLanguage($partnumber,$descriptioncode,$languagecode)
+ {
+  $db = new mysql; $db->connect(); $descriptions=array();
+  if($stmt=$db->conn->prepare('select * from part_description where partnumber=? and descriptioncode=? and languagecode=?'))
+  {
+   if($stmt->bind_param('sss',$partnumber,$descriptioncode,$languagecode))
+   {
+    if($stmt->execute())
+    {
+     $db->result = $stmt->get_result();
+     while($row = $db->result->fetch_assoc())
+     {
+      $descriptions[]=array('id'=>$row['id'],'description'=>$row['description'],'descriptioncode'=>$row['descriptioncode'],'sequence'=>$row['sequence'],'languagecode'=>$row['languagecode'],'inheritedfrom'=>'');       
+     }
+    }
+   }
+  }     
+  $db->close();
+  return $descriptions;
+ }
+ 
+ function updatePartDescriptionById($id,$description,$descriptioncode,$languagecode,$sequence)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part_description set description=?,descriptioncode=?,languagecode=?,sequence=? where id=?'))
+  {
+   $stmt->bind_param('sssii',$description,$descriptioncode,$languagecode,$sequence,$id);
+   $stmt->execute();
+  }
+  $db->close();
+ }
 
  function getPartDescriptions($partnumber)
  {
@@ -1955,14 +1987,6 @@ function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
   return $elements;
  }
  
- 
- 
- 
- 
- 
- 
- 
- 
  function addPartDescription($partnumber,$description,$descriptioncode,$sequence,$languagecode)
  {
   $id=false;
@@ -1975,9 +1999,9 @@ function countAppsByBasevidsAndPartcategories($basevids,$partcategories)
     if($stmt->execute())
     {
      $id=$db->conn->insert_id;
-    }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
-   }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
-  }//else{$fp = fopen('/var/www/html/logs/log.txt', 'a'); fwrite($fp, $db->conn->error."\n");fclose($fp);}
+    }
+   }
+  }
   $db->close();
   return $id;
  }
@@ -5199,8 +5223,6 @@ function allowedHost($address)
   $db=new mysql; $db->connect(); $success=false;
   
   // see if BOM already exists given (left) partnumber
-  //ccc
-
   $seqindex=array(); $cmpnindex=array(); foreach($bom as $id=>$component){$seqindex[$id]=$component['sequence']; $cmpnindex[$id]=$component['partnumber'];}
   array_multisort($seqindex,SORT_ASC,$cmpnindex, SORT_ASC,$bom);
 
@@ -5542,7 +5564,7 @@ function allowedHost($address)
   {
    $stmt->bind_param('sss',$partnumber,$geography,$yearquarter);
    $stmt->execute();
-   $db->result = $stmt->get_result(); //ccc
+   $db->result = $stmt->get_result();
    if($row = $db->result->fetch_assoc())
    {// record exists for this part
     if($stmt=$db->conn->prepare('update part_VIO set capturedate=now(),vehicleCount=?, startyear=?,endyear=?,meanyear=? where partnumber=? and geography=? and yearquarter=?'))
