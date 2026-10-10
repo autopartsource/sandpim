@@ -61,13 +61,14 @@ if(count($jobs))
  $lifecyclestatuslist=array();
  $lifecyclestatusestemp=$pim->getReceiverprofileLifecyclestatuses($receiverprofileid);
  foreach ($lifecyclestatusestemp as $status){$lifecyclestatuslist[]=$status['lifecyclestatus'];}
-
  
  $partcategories=$pim->getReceiverprofilePartcategories($receiverprofileid);
  $apps=$pim->getAppsByPartcategories($partcategories,$lifecyclestatuslist);
  $parttranslations=$pim->getReceiverprofileParttranslations($receiverprofileid);
- 
+ $profileassettagstemp=$pim->getAssettagsForReceiverprofile($receiverprofileid); //$assettags[]=array('id'=>$row['id'],'assettagid'=>$row['assettagid'],'tagtext'=>$row['tagtext']); 
+ $profileassettags=[]; foreach($profileassettagstemp as $profileassettag){$profileassettags[]=$profileassettag['tagtext'];}  
  $pim->logBackgroundjobEvent($jobid, 'Partcategories in export:'.implode(',',$partcategories));
+ $pim->logBackgroundjobEvent($jobid, 'Asset tags wanted by profile:'.implode(',',$profileassettags));
  
  $filename=$jobs[0]['outputfile'];
  $profileelements=explode(';',$profiledata);
@@ -78,7 +79,7 @@ if(count($jobs))
   if(count($bits)==2){$keyedprofile[$bits[0]]=$bits[1];}
  } 
 
- $header=array('Company'=>'not set in profile ['.$profile['name'].']','SenderName'=>'not set in profile ['.$profile['name'].']', 'SenderPhone'=>'not set in profile ['.$profile['name'].']','BrandAAIAID'=>'XXXX','DocumentTitle'=>'not set in profile ['.$profile['name'].']','TransferDate'=>date('Y-m-d'),'EffectiveDate'=>date('Y-m-d'),'SubmissionType'=>$exporttype,'VcdbPublicationDate'=>$vcdb->version(),'QdbPublicationDate'=>$qdb->version(),'PcdbPublicationDate'=>$pcdb->version(),'RegionFor'=>'1,2','PartsApprovedFor'=>'US,CA');
+ $header=array('Company'=>'not set in profile ['.$profile['name'].']','SenderName'=>'not set in profile ['.$profile['name'].']', 'SenderPhone'=>'not set in profile ['.$profile['name'].']','BrandAAIAID'=>'XXXX','DocumentTitle'=>'not set in profile ['.$profile['name'].']','TransferDate'=>date('Y-m-d'),'EffectiveDate'=>date('Y-m-d'),'SubmissionType'=>$exporttype,'VCdbPublicationDate'=>$vcdb->version(),'QdbPublicationDate'=>$qdb->version(),'PCdbPublicationDate'=>$pcdb->version(),'RegionFor'=>'1,2','PartsApprovedFor'=>'US,CA');
  if(array_key_exists('Company', $keyedprofile)){$header['Company']=$keyedprofile['Company'];}
  if(array_key_exists('SenderName', $keyedprofile)){$header['SenderName']=$keyedprofile['SenderName'];}
  if(array_key_exists('SenderPhone', $keyedprofile)){$header['SenderPhone']=$keyedprofile['SenderPhone'];}
@@ -89,9 +90,6 @@ if(count($jobs))
  if(array_key_exists('MapperCompany', $keyedprofile)){$header['MapperCompany']=$keyedprofile['MapperCompany'];}
  if(array_key_exists('MapperContact', $keyedprofile)){$header['MapperContact']=$keyedprofile['MapperContact'];}
 
-
-
- 
  $includecosmeticapps=false; if(array_key_exists('IncludeCosmeticApps', $keyedprofile) && $keyedprofile['IncludeCosmeticApps']=='yes'){$includecosmeticapps=true;}
  $includecosmeticattributes=false; if(array_key_exists('IncludeCosmeticAttributes', $keyedprofile) && $keyedprofile['IncludeCosmeticAttributes']=='yes'){$includecosmeticattributes=true;} 
  $suppressduplicateapps=false; if(array_key_exists('SuppressDuplicateApps', $keyedprofile) && $keyedprofile['SuppressDuplicateApps']=='yes'){$suppressduplicateapps=true;} 
@@ -123,6 +121,44 @@ if(count($jobs))
   }
  }
 
+  // Exrtact a distinct list of assets
+ $citedassets=array();
+ foreach($apps as $app)
+ {
+  if($app['assetname']!='' && !in_array($app['assetname'], $citedassets))
+  {
+   $citedassets[]=$app['assetname'];
+  }
+ }
+ 
+// filter assets down to list of those wanted by this reciver
+ $wantedassets=[];
+ foreach($citedassets as $citedasset)
+ {
+  $citedassetstags=$asset->getAssettagsForAsset($citedasset); //$tags[]=array('id'=>$row['id'],'assettagid'=>$row['assettagid'],'tagtext'=>$row['tagtext']);
+  foreach ($citedassetstags as $citedassetstag)
+  {
+   if(in_array($citedassetstag['tagtext'],$profileassettags))
+   {
+    $wantedassets[]=$citedasset; break;       
+   }
+  }
+ }
+ 
+ if(count($citedassets))
+ {
+  $appstemp=[];
+  foreach($apps as $app)
+  {
+   if(!in_array($app['assetname'],$wantedassets))
+   {
+    $app['assetname']='';
+    $app['assetitemorder']=0;
+   }
+   $appstemp[]=$app;
+  }
+  $apps=$appstemp;
+ } 
  
  // record the export for future nets a posterity
  $appidkeyedoids=array();

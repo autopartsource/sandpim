@@ -67,15 +67,15 @@ class ACESgenerator
     $regionElement=new DOMElement('Region');
     $regionForElement->appendChild($regionElement);
     $regionElement->setAttribute('id', $regionfor);    
-   }   
+   }
   }
   
   if(array_key_exists('SubmissionType', $header)){$submissiontypeElement=new DOMElement('SubmissionType',$header['SubmissionType']); $headerElement->appendChild($submissiontypeElement);}
   if(array_key_exists('MapperCompany', $header)){$mappercompanyElement=new DOMElement('MapperCompany',$header['MapperCompany']); $headerElement->appendChild($mappercompanyElement);}
   if(array_key_exists('MapperContact', $header)){$mappercontactElement=new DOMElement('MapperContact',$header['MapperContact']); $headerElement->appendChild($mappercontactElement);}
-  if(array_key_exists('VcdbPublicationDate', $header)){$vcdbpublicationdateElement=new DOMElement('VcdbPublicationDate',$header['VcdbPublicationDate']); $headerElement->appendChild($vcdbpublicationdateElement);}
+  if(array_key_exists('VCdbPublicationDate', $header)){$vcdbpublicationdateElement=new DOMElement('VCdbPublicationDate',$header['VCdbPublicationDate']); $headerElement->appendChild($vcdbpublicationdateElement);}
   if(array_key_exists('QdbPublicationDate', $header)){$qdbpublicationdateElement=new DOMElement('QdbPublicationDate',$header['QdbPublicationDate']); $headerElement->appendChild($qdbpublicationdateElement);}
-  if(array_key_exists('PcdbPublicationDate', $header)){$pcdbpublicationdateElement=new DOMElement('PcdbPublicationDate',$header['PcdbPublicationDate']); $headerElement->appendChild($pcdbpublicationdateElement);}
+  if(array_key_exists('PCdbPublicationDate', $header)){$pcdbpublicationdateElement=new DOMElement('PCdbPublicationDate',$header['PCdbPublicationDate']); $headerElement->appendChild($pcdbpublicationdateElement);}
           
   // --------------------- apps ---------------------------------   
   $appnumber=1;

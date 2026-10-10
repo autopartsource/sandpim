@@ -61,7 +61,7 @@ $preferedreceiverprofileid = $user->getUserPreference($_SESSION['userid'], 'last
                                         Export Type <select name="exporttype"><option value="FULL">FULL</option><option value="UPDATE">UPDATE</option></select>
                                     </div>
                                     <div style="margin:10px;">
-                                        Update Receiver App States <select name="updatereceiverappstates"><option value="yes">Yes</option><option value="no">No</option></select>
+                                        Update Receiver App States <select name="updatereceiverappstates"><option value="no">No</option><option value="yes">Yes</option></select>
                                     </div>
                                     <div style="margin:10px;">
                                         <input type="submit" name="submit" value="Export"/>
