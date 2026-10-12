@@ -1,6 +1,5 @@
 <?php
 include_once("mysqlClass.php");
-//GRANT create ON *.* TO webservice@'localhost';
 class setup
 {
     function databaseNameExists($dbname)
