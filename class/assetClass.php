@@ -1038,7 +1038,35 @@ class asset
   return $assetlabels;
  }
  
+ function updatePartAssetSequence($partnumber,$connectionid,$sequence)
+ {
+  $db = new mysql; $db->connect();
+  if($stmt=$db->conn->prepare('update part_asset set sequence=? where partnumber=? and id=?'))
+  {
+   $stmt->bind_param('isi', $sequence,$partnumber,$connectionid);
+   $stmt->execute();
+  }
+  $db->close();
+ }
+ 
+ function getPartAssetConnectionByID($connectionid)
+ {
+  $db = new mysql; $db->connect(); $returnval=false;
+  if($stmt=$db->conn->prepare('select * from part_asset where id=?'))
+  {
+   if($stmt->bind_param('i',$connectionid))
+   {
+    $stmt->execute();
+    $db->result = $stmt->get_result();
+    if($row = $db->result->fetch_assoc())
+    {
+     $returnval=array('id'=>$row['id'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation']);
+    }
+   }
+  }
+  $db->close();
+  return $returnval;
+ }
  
  
- 
-}?>
+}
