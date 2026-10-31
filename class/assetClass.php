@@ -22,7 +22,7 @@ class asset
     
  function validAsset($assetid)
  {
-  $db=new mysql; $db->connect(); $returnval=array();
+  $db=new mysql; $db->connect(); $returnval=false;
   if($stmt=$db->conn->prepare('select * from asset where assetid=?'))
   {
    $stmt->bind_param('s',$assetid);
@@ -1048,7 +1048,24 @@ class asset
   }
   $db->close();
  }
- 
+
+ function getPartAssetConnections($partnumber,$assetid)
+ {
+  $db = new mysql; $db->connect(); $connections=array();
+  if($stmt=$db->conn->prepare('select * from part_asset where partnumber=? and assetid=?'))
+  {
+   $stmt->bind_param('ss', $partnumber,$assetid);
+   $stmt->execute();
+   $db->result = $stmt->get_result();
+   while($row = $db->result->fetch_assoc())
+   {
+    $connections[]=array('id'=>$row['id'],'assetid'=>$row['assetid'],'partnumber'=>$row['partnumber'],'assettypecode'=>$row['assettypecode'],'sequence'=>$row['sequence'],'representation'=>$row['representation']);
+   }
+  }
+  $db->close();
+  return $connections;
+ }
+
  function getPartAssetConnectionByID($connectionid)
  {
   $db = new mysql; $db->connect(); $returnval=false;

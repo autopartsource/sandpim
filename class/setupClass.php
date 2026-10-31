@@ -1769,6 +1769,7 @@ class setup
         $sql="insert into navelement values('IMPORT/PRICESFROMTEXT','IMPORT','Prices from text','importPricesText.php',9);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/COMPETITORINTERCHANGEFROMTEXT','IMPORT','Competitor interchange from text','importInterchangeText.php',10);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/ASSETMETADATAFROMTEXT','IMPORT','Asset metadata from text','importAssetText.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
+        $sql="insert into navelement values('IMPORT/PARTASSETMSEQUENCEFROMTEXT','IMPORT','Part-Asset sequence from text','importPartAssetSeqText.php',11);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/ASSETTAGSFROMTEXT','IMPORT','Asset tags from text','importAssetTags.php',12);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/EXPIFROMTEXT','IMPORT','EXPI from text','importPartEXPIText.php',13);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
         $sql="insert into navelement values('IMPORT/PARTBALANCEFROMTEXT','IMPORT','Part balance from text','updatePartBalances.php',14);"; $stmt=$db->conn->prepare($sql); $stmt->execute();
